@@ -5,6 +5,7 @@ import {
   boldNumbers,
   phaseLabel,
   plainTextLength,
+  plateCellHtml,
   plateHtml,
   plateRowHtml,
   shouldStripe,
@@ -38,13 +39,26 @@ test('plate: empty cells and empty rows are dropped', () => {
 // so attribute values must never contain characters that need HTML entities.
 test('plate: tooltips and help keys stay entity-free so the web sanitizer keeps the tag', () => {
   const row = plateRowHtml({ cells: [{ html: 'x', tip: 'say "hi" <b> & co', help: 'Recharge Die!' }, { html: '  ' }] })
-  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" title="say \'hi\' b and co" data-help="recharge-die" tabindex="0">x</div></div>')
+  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" title="say \'hi\' b and co" data-help="recharge-die" tabindex="0"><span class="sb-text">x</span></div></div>')
   const html = plateHtml({
     rows: [{ cells: [{ html: 'a', head: true, tip: '<script>&amp;"' }, { html: 'b', tip: 'Tom & Jerry' }] }],
     body: 'body',
   })
   for (const tag of html.match(/<[^>]*>/g) ?? []) assert.ok(!tag.includes('&'), `entity inside tag: ${tag}`)
   assert.match(plateHtml({ rows: [{ cells: [{ html: 'name', head: true }] }] }), /data-help="entry-name" tabindex="0"/)
+})
+
+// Cells are flex containers (vertical centring); a single inline wrapper keeps `20-foot`,
+// `(DC 15)` and chip spacing as one text flow instead of one flex item per tag.
+test('plate: cell content flows inside one inline wrapper', () => {
+  const scope = 'all creatures in a <strong class="dnd-num">20</strong>-foot radius sphere'
+  assert.strictEqual(
+    plateCellHtml({ html: scope, cls: 'scope-cell' }),
+    `<div class="sb-cell scope-cell"><span class="sb-text">${scope}</span></div>`
+  )
+  const head = plateHtml({ rows: [{ cells: [{ html: '<span class="sb-qual">Recharge 5–6</span> <span class="sb-name">Breath</span>', head: true }] }] })
+  assert.strictEqual((head.match(/class="sb-text"/g) ?? []).length, 1)
+  assert.match(head, /tabindex="0"><span class="sb-text"><span class="sb-qual">Recharge 5–6<\/span> <span class="sb-name">Breath<\/span><\/span><\/div>/)
 })
 
 test('plate: long bodies get reading stripes, measured on visible text', () => {

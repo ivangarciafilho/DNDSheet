@@ -63,7 +63,9 @@ export function plateCellHtml(cell: PlateCell): string {
   const helpText = cell.help ? helpKey(cell.help) : cell.head ? 'entry-name' : ''
   const tip = tipText ? ` title="${tipText}"` : ''
   const help = helpText ? ` data-help="${helpText}" tabindex="0"` : ''
-  return `<div class="${cls}"${tip}${help}>${cell.html}</div>`
+  // Cells are flex containers for vertical centring; one inline wrapper keeps their text, numbers
+  // and chips in a single flow so tags never become separate, gap-spaced flex items (`20 -foot`).
+  return `<div class="${cls}"${tip}${help}><span class="sb-text">${cell.html}</span></div>`
 }
 
 export function plateRowHtml(row: PlateRow): string {
