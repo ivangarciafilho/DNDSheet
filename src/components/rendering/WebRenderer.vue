@@ -512,107 +512,48 @@
         v-html="mythicTrait"
       ></div>
 
-      <!-- Spellcasting is a trait: disclosed above Actions so its rules flow downstream -->
-      <template v-if="true">
-        <div
-          v-if="monster.spellcasting?.atWill?.length > 0"
-          class="innate-spellcasting dnd-cascade-panel spellcasting-panel"
-        >
-          <div class="action-composite-header">
-            <div class="action-composite-pill">
-              <div class="action-cell name-cell">
-                <span class="cell-main-text">Innate Spellcasting</span>
-              </div>
-              <div class="cell-divider"></div>
-              <div class="action-cell type-cell">
-                <span class="cell-sub-text">{{ monster.spellcasting.stat }}</span>
-              </div>
-              <div class="cell-divider"></div>
-              <div class="action-cell save-cell">
-                <span class="cell-sub-text">Save DC {{ monster.spellSave }}</span>
-              </div>
-              <div class="cell-divider"></div>
-              <div class="action-cell range-cell">
-                <span class="cell-sub-text">Spell Attack {{ monster.spellAttackModifier >= 0 ? `+${monster.spellAttackModifier}` : monster.spellAttackModifier }}</span>
-              </div>
-            </div>
-          </div>
-          <div
-            v-if="monster.spellcasting?.useCustomInnatePreamble || (monster.spellcasting?.atWillNotes && monster.spellcasting.atWillNotes.trim())"
-            class="action-body-text zebra-stripe-text"
-            v-html="monster.spellcasting?.useCustomInnatePreamble ? sanitizedInnateSpellcastingPreamble : sanitizeWebString(monster.spellcasting?.atWillNotes)"
-          ></div>
-          <div class="spell-list dnd-cascade-subpanels-col">
-            <div
-              v-for="innate in innateSpellcastingLists"
-              :key="innate.id"
-              class="spell-row dnd-cascade-subpanel"
-            >
-              <span class="spell-label dnd-cascade-subtitle">{{ innate.renderedLabel }}</span>
-              <div class="dnd-cascade-badges-wrap spell-list-entries">
-                <span
-                  v-for="(spName, spIdx) in innate.spells"
-                  :key="'innate-sp-trait-' + spIdx"
-                  class="dnd-cascade-badge spell-entry-badge"
-                >
-                  <span class="spell-name-text">{{ spName }}</span>
-                  <span v-if="getSpellTag(spName)" class="spell-tag-badge">{{ getSpellTag(spName) }}</span>
-                </span>
-              </div>
-            </div>
+      <!-- Innate and class casting share the plate grammar but retain separate resource semantics. -->
+      <div v-if="innateSpellPlate.groups.length > 0" class="innate-spellcasting spellcasting-panel sb-plate">
+        <div class="sb-row">
+          <div class="sb-cell sb-head"><strong>Innate Spellcasting</strong> <span class="sb-qual">({{ innateSpellPlate.stat }})</span></div>
+          <div class="sb-cell">Spell Save DC <strong>{{ innateSpellPlate.save }}</strong></div>
+          <div class="sb-cell">Spell Attack <strong>{{ innateSpellPlate.attack }}</strong></div>
+        </div>
+        <div v-if="innateSpellPlate.processedNotes" class="sb-body" v-html="innateSpellPlate.processedNotes"></div>
+        <div v-for="(group, groupIndex) in innateSpellPlate.groups" :key="'innate-level-' + groupIndex" class="sb-row">
+          <div class="sb-cell sb-head">{{ group.label }}</div>
+          <div v-for="(spell, spellIndex) in group.spells" :key="'innate-spell-' + groupIndex + '-' + spellIndex" class="sb-cell sb-spell">
+            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge">({{ spell.tags }})</span>
           </div>
         </div>
+      </div>
 
-        <div v-if="monster.spellcasting?.standard?.length > 0" class="spellcasting sc-plate">
-          <!-- Row 1: Caster | Save & Attack | Slots & Regain | Prepared & Interval -->
-          <div class="sc-row">
-            <div class="sc-cell sc-head">
-              <strong>{{ spellPlate.title }}</strong> <span class="sc-stat">({{ spellPlate.stat }})</span>
-              <q-tooltip class="bg-grey-10 text-caption">Caster level, class/source and spellcasting ability.</q-tooltip>
-            </div>
-            <div class="sc-cell">
-              Spell Save <strong>{{ spellPlate.save }}</strong>, Spell Attack <strong>{{ spellPlate.attack }}</strong>
-              <q-tooltip class="bg-grey-10 text-caption">DC = 8 + PB + ability mod; attack = PB + ability mod.</q-tooltip>
-            </div>
-            <div v-if="spellPlate.slotsText" class="sc-cell">
-              <span v-html="spellPlate.slotsText"></span>, Regained on <strong>{{ spellPlate.regain }}</strong>
-            </div>
-            <div v-if="spellPlate.prepared > 0" class="sc-cell">
-              <strong>{{ spellPlate.prepared }}</strong> Prepared {{ spellPlate.className }} spells, On <strong>{{ spellPlate.preparedInterval }}</strong>
-            </div>
-          </div>
-          <!-- Row 2: Metamagic pool | Flexible casting -->
-          <div v-if="spellPlate.metamagic" class="sc-row">
-            <div class="sc-cell sc-head">
-              Metamagic (<strong>{{ spellPlate.metamagic.points }}</strong>, Regained on {{ spellPlate.metamagic.regain }})
-            </div>
-            <div class="sc-cell">Spell slot level into <strong>x</strong> points, <strong>x</strong> points into Spell slot level</div>
-          </div>
-          <!-- Row 3: Metamagic options -->
-          <div v-if="spellPlate.metamagic && metamagicOptionDetails.length > 0" class="sc-row">
-            <div v-for="(meta, mIdx) in metamagicOptionDetails" :key="'meta-' + mIdx" class="sc-cell">
-              <strong>{{ meta.cost.replace(/\s*to$/, '') }}</strong> {{ meta.desc }}
-            </div>
-          </div>
-          <!-- Spell level rows: | Header | spell | spell | -->
-          <div v-for="row in spellPlate.levels" :key="'sc-lvl-' + row.level" class="sc-row">
-            <div class="sc-cell sc-head sc-level-head">
-              <template v-if="row.level === 0">Cantrips</template>
-              <template v-else><strong>{{ row.ordinal }}</strong> Level<template v-if="row.slots > 0"> <strong>{{ row.slots }}</strong></template> {{ row.cadence }}</template>
-              <template v-if="row.bonus"> (Bonus Action)</template>
-            </div>
-            <div v-for="sp in row.spells" :key="'sc-sp-' + row.level + '-' + sp" class="sc-cell sc-spell">
-              {{ sp }}<template v-if="getSpellTag(sp)"> <span class="spell-tag-badge">({{ getSpellTag(sp) }})</span></template>
-              <span v-if="getSpellCadenceBadge(sp)" class="spell-cadence-badge q-ml-xs">{{ getSpellCadenceBadge(sp) }}</span>
-            </div>
-          </div>
-          <div
-            v-if="monster.spellcasting?.useCustomClassPreamble || (monster.spellcasting?.notes && monster.spellcasting.notes.trim())"
-            class="action-body-text zebra-stripe-text"
-            v-html="monster.spellcasting?.useCustomClassPreamble ? sanitizedClassSpellcastingPreamble : sanitizeWebString(monster.spellcasting?.notes)"
-          ></div>
+      <div v-if="spellPlate.levels.length > 0" class="class-spellcasting spellcasting sb-plate">
+        <div class="sb-row">
+          <div class="sb-cell sb-head"><strong>{{ spellPlate.title }}</strong> <span class="sb-qual">({{ spellPlate.stat }})</span></div>
+          <div class="sb-cell">Spell Save DC <strong>{{ spellPlate.save }}</strong> · Spell Attack <strong>{{ spellPlate.attack }}</strong></div>
+          <div v-if="spellPlate.resource" class="sb-cell">{{ spellPlate.resource }}</div>
+          <div v-if="spellPlate.prepared" class="sb-cell">{{ spellPlate.prepared }}</div>
         </div>
-      </template>
+        <div v-if="spellPlate.metamagic" class="sb-row">
+          <div class="sb-cell sb-head">Metamagic · <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points · regained on {{ spellPlate.metamagic.refresh }}</div>
+          <div v-for="(meta, index) in spellPlate.metamagic.options" :key="'metamagic-' + index" class="sb-cell">
+            <strong v-if="meta.cost">{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `Cost ${meta.cost} SP` }} · </strong>{{ meta.name }}<template v-if="meta.effect">: {{ meta.effect }}</template>
+          </div>
+        </div>
+        <div v-for="row in spellPlate.levels" :key="'spell-level-' + row.level" class="sb-row">
+          <div class="sb-cell sb-head">
+            <template v-if="row.level === 0">Cantrips</template>
+            <template v-else><strong>{{ row.ordinal }}</strong> Level<template v-if="row.slotCount"> · <strong>{{ row.slotCount }}</strong></template><template v-if="row.cadence"> · {{ row.cadence }}</template></template>
+            <template v-if="row.bonusAction"> · Bonus Action</template>
+          </div>
+          <div v-for="(spell, spellIndex) in row.spells" :key="'spell-' + row.level + '-' + spellIndex" class="sb-cell sb-spell">
+            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge">({{ spell.tags }})</span>
+            <span v-if="spell.cadence" class="spell-cadence-badge">{{ spell.cadence }}</span>
+          </div>
+        </div>
+        <div v-if="sanitizedClassSpellcastingPreamble" class="sb-body" v-html="sanitizedClassSpellcastingPreamble"></div>
+      </div>
     </div>
     <div
       v-if="monster.paragonConfig?.enabled || (monster.paragonConfig?.poolCount && monster.paragonConfig.poolCount > 1)"
@@ -868,15 +809,8 @@ import { useProcessTokens } from './useProcessTokens'
 import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
-import {
-  formatSpellcastingTitle,
-  formatPactMagicPill,
-  formatPreparedSpellsBadge,
-  formatCantripSwitchBadge,
-  formatMetamagicBadge,
-  calculateSpellcastingMetrics,
-  SPELL_POINTS_BY_LEVEL
-} from 'src/core/usecases/AutoSyncSpellcasting'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel } from 'src/core/domain/spell-plate'
+import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { statModifier } from 'src/core/domain/math-utils'
 
 export default defineComponent({
@@ -1196,241 +1130,77 @@ export default defineComponent({
       if (!sc) return 'Spellcasting'
       const primaryClass = sc.class || 'Wizard'
       const primaryLevel = sc.level || 1
-      const secondaryClass = sc.classes?.[1]?.class
-      const secondaryLevel = sc.classes?.[1]?.level
-      const mode = (sc.displayTitleMode as 'class_names' | 'caster_source' | 'split_levels') || 'class_names'
-      return formatSpellcastingTitle(primaryClass, primaryLevel, secondaryClass, secondaryLevel, mode)
-    })
-
-    const renderedSpellcastingResource = computed(() => {
-      const sc = monster.spellcasting
-      if (!sc) return ''
-      const resType = sc.resourceType || 'slots'
-      const refreshRate = sc.refreshRate || 'long_rest'
-      const refreshMap: Record<string, string> = {
-        short_rest: 'Short Rest',
-        long_rest: 'Long Rest',
-        downtime: 'Downtime',
-        daily: 'Daily',
-        per_minute: 'per Minute',
-        per_hour: 'per Hour',
-        at_midnight: 'at Midnight',
-        at_dusk: 'at Dusk',
-        at_dawn: 'at Dawn',
-        custom: sc.customRefreshRate || 'Special',
-      }
-      const refreshText = refreshMap[refreshRate] || refreshRate
-
-      const parts: string[] = []
-
-      // 1. Resource Pool (Pact Magic, Spell Points, Focus Points, etc.)
-      if (resType === 'points') {
-        const pts = SPELL_POINTS_BY_LEVEL[sc.level || 1] || 4
-        parts.push(`${pts} Spell Points (${refreshText})`)
-      } else if (resType === 'focus') {
-        parts.push(`${sc.level || 1} Focus Points (${refreshText})`)
-      } else if (resType === 'pact' || sc.class === 'Warlock') {
-        const pactPill = formatPactMagicPill(sc.slots || [])
-        parts.push(pactPill ? `${pactPill}` : `Pact Magic (${refreshText})`)
-      } else if (refreshRate !== 'long_rest') {
-        parts.push(`Slots (${refreshText})`)
-      }
-
-      // 2. Amount of Prepared Spells + class list + interval
-      const statKey = sc.stat || 'INT'
-      const statVal = (monster.stats as any)?.[statKey] ?? 10
-      const metrics = calculateSpellcastingMetrics(sc.class, sc.level, statModifier(statVal))
-      const prepCount = sc.preparedCountOverride ?? metrics.preparedSpells
-      if (prepCount > 0 && sc.class !== 'Sorcerer') {
-        const prepStr = formatPreparedSpellsBadge([{ className: sc.class || 'Wizard', count: prepCount }], refreshText)
-        if (prepStr) parts.push(prepStr)
-      }
-
-      // 3. Cantrip Switch Interval
-      if (sc.cantripSwitch) {
-        parts.push(formatCantripSwitchBadge(sc.cantripSwitchCount || 1, sc.class, refreshText))
-      }
-
-      return parts.join(' | ')
-    })
-
-    const renderedMetamagicBadge = computed(() => {
-      const meta = monster.spellcasting?.metamagic
-      if (!meta || !meta.enabled) return null
-      return formatMetamagicBadge(
-        meta.sorceryPoints || monster.spellcasting?.level || 1,
-        meta.refreshRate || 'Long Rest',
-        meta.options || []
-      )
-    })
-
-    const renderedSpellcastingResourceSummary = computed(() => {
-      const sc = monster.spellcasting
-      if (!sc) return ''
-      const resType = sc.resourceType || 'slots'
-      const refreshRate = sc.refreshRate || 'long_rest'
-      const refreshMap: Record<string, string> = {
-        short_rest: 'Short Rest',
-        long_rest: 'Long Rest',
-        downtime: 'Downtime',
-        daily: 'Daily',
-      }
-      const refreshText = refreshMap[refreshRate] || refreshRate
-
-      if (sc.class === 'Warlock' || resType === 'pact') {
-        const pactPill = formatPactMagicPill(sc.slots || [])
-        return pactPill || `Pact Slots (Regained on ${refreshText})`
-      }
-      if (resType === 'points') {
-        const pts = SPELL_POINTS_BY_LEVEL[sc.level || 1] || 4
-        return `${pts} Spell Points (Regained on ${refreshText})`
-      }
-      if (resType === 'focus') {
-        return `${sc.level || 1} Focus Points (Regained on ${refreshText})`
-      }
-
-      let totalSlots = 0
-      let maxLvl = 0
-      if (sc.slots) {
-        for (let i = 0; i < sc.slots.length; i++) {
-          if (sc.slots[i] > 0) {
-            totalSlots += sc.slots[i]
-            maxLvl = i + 1
-          }
-        }
-      }
-      if (totalSlots > 0) {
-        return `${totalSlots} Spell Slots of Level 1–${maxLvl}, Regained on ${refreshText}`
-      }
-      return `Regained on ${refreshText}`
-    })
-
-    const renderedPreparedSummary = computed(() => {
-      const sc = monster.spellcasting
-      if (!sc) return ''
-      const statKey = sc.stat || 'INT'
-      const statVal = (monster.stats as any)?.[statKey] ?? 10
-      const metrics = calculateSpellcastingMetrics(sc.class, sc.level, statModifier(statVal))
-      const prepCount = sc.preparedCountOverride ?? metrics.preparedSpells
-      const interval = sc.preparedInterval || 'Long Rest'
-      const clsName = sc.class || 'Caster'
-      return `${prepCount} Prepared ${clsName} spells on ${interval}`
+      const secondary = sc.classes?.[1]
+      const mode = sc.displayTitleMode || 'class_names'
+      const title = formatSpellcastingTitle(primaryClass, primaryLevel, secondary?.className, secondary?.level, mode)
+      if (mode === 'caster_source') return `${ordinalLabel(primaryLevel)} Level ${title}`
+      return title.replace(/Level (\d+) /g, (_match: string, value: string) => `${ordinalLabel(Number(value))} Level `)
     })
 
     const spellPlate = computed(() => {
       const sc = monster.spellcasting
-      const ord = (n: number) => {
-        const s = ['th', 'st', 'nd', 'rd']
-        const v = n % 100
-        return `${n}${s[(v - 20) % 10] || s[v] || s[0]}`
-      }
-      const restMap: Record<string, string> = {
-        short_rest: 'Short Rest', long_rest: 'Long Rest', downtime: 'Downtime', daily: 'Daily',
-        at_will: 'At-Will', '1_day': '1/Day', '2_day': '2/Day', '3_day': '3/Day',
-        recharge_5_6: 'Recharge 5–6', ritual: 'Ritual', at_dawn: 'Dawn', at_dusk: 'Dusk',
-      }
-      const rest = (v?: string) => (v ? restMap[v] || v : '')
-      const lvl = sc?.level || 1
-      const isPact = sc?.class === 'Warlock' || sc?.resourceType === 'pact'
-      const mode = sc?.displayTitleMode || 'class_names'
-      const baseTitle = renderedSpellcastingTitle.value
-      const title = mode === 'caster_source'
-        ? `${ord(lvl)} Level ${baseTitle}`
-        : baseTitle.replace(/Level (\d+) /g, (_m: string, n: string) => `${ord(Number(n))} Level `)
-
-      const slots: number[] = sc?.slots || []
-      let maxLvl = 0
-      let total = 0
-      slots.forEach((c, i) => { if (c > 0) { total += c; maxLvl = i + 1 } })
-      let slotsText = ''
-      if (sc?.resourceType === 'points') {
-        slotsText = `<strong>${SPELL_POINTS_BY_LEVEL[lvl] || 4}</strong> Spell Points`
-      } else if (sc?.resourceType === 'focus') {
-        slotsText = `<strong>${lvl}</strong> Focus Points`
-      } else if (maxLvl > 0) {
-        slotsText = isPact
-          ? `<strong>${slots[maxLvl - 1]}</strong> Spell Slots of <strong>${ord(maxLvl)}</strong> level`
-          : `<strong>${total}</strong> Spell Slots up to <strong>${ord(maxLvl)}</strong> level`
-      }
-      const regain = rest(sc?.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
-
-      const statKey = sc?.stat || 'INT'
-      const statVal = (monster.stats as any)?.[statKey] ?? 10
-      const metrics = calculateSpellcastingMetrics(sc?.class, lvl, statModifier(statVal))
-      const cantrips = monster.knownSpellsOfLevel(0)
-      const leveledKnown = (sc?.standard || []).filter((id: string) => cantrips.indexOf(id) === -1).length
-      const prepared = sc?.preparedCountOverride ?? (metrics.preparedSpells || leveledKnown)
-
-      const levels: { level: number; ordinal: string; slots: number; cadence: string; bonus: boolean; spells: string[] }[] = []
-      for (let l = 0; l <= 9; l++) {
-        const spells = monster.knownSpellsOfLevel(l)
-        if (spells.length === 0) continue
-        const cad = rest(sc?.levelCadenceMap?.[l])
-        const slotCount = l === 0 ? 0 : (isPact ? (slots[maxLvl - 1] || 0) : (slots[l - 1] || 0))
-        levels.push({
-          level: l,
-          ordinal: ord(l),
-          slots: slotCount,
-          cadence: l === 0 ? '' : (cad === 'At-Will' ? 'At-Will' : `Per ${cad || regain}`),
-          bonus: Boolean(sc?.bonusActionLevelMap?.[l]),
-          spells,
-        })
-      }
-
-      const meta = sc?.metamagic?.enabled
-        ? { points: sc.metamagic.sorceryPoints || lvl, regain: sc.metamagic.refreshRate || 'Long Rest' }
-        : null
-
-      return {
-        title,
-        stat: statKey,
+      const className = sc?.class || 'Wizard'
+      const level = sc?.level || 1
+      const stat = sc?.stat || 'INT'
+      const knownCantrips = monster.knownSpellsOfLevel(0)
+      const knownLeveled = (sc?.standard || []).filter((name: string) => !knownCantrips.includes(name)).length
+      const metrics = calculateSpellcastingMetrics(className, level, statModifier(monster.stats[stat] ?? 10))
+      const levelCadenceMap = (sc as typeof sc & { levelCadenceMap?: Record<number, string> })?.levelCadenceMap
+      const bonusActionLevelMap = (sc as typeof sc & { bonusActionLevelMap?: Record<number, boolean> })?.bonusActionLevelMap
+      const metamagic = (sc as typeof sc & { metamagic?: { enabled: boolean; sorceryPoints?: number; refreshRate?: string; options?: string[] } })?.metamagic
+      const pointValue = sc?.resourceType === 'points' ? SPELL_POINTS_BY_LEVEL[level] : undefined
+      const spellLevels = Array.from({ length: 10 }, (_, spellLevel) => ({
+        level: spellLevel,
+        spells: monster.knownSpellsOfLevel(spellLevel).map((name: string) => ({
+          name,
+          tags: getSpellTagString(name),
+          cadence: sc?.spellCadenceMap?.[name],
+        })),
+        cadence: levelCadenceMap?.[spellLevel],
+        bonusAction: Boolean(bonusActionLevelMap?.[spellLevel]),
+      }))
+      return buildSpellPlate({
+        title: renderedSpellcastingTitle.value,
+        stat,
         save: monster.spellSave,
-        attack: monster.spellAttackModifier >= 0 ? `+${monster.spellAttackModifier}` : `${monster.spellAttackModifier}`,
-        slotsText,
-        regain,
-        prepared,
-        className: sc?.class || 'Caster',
-        preparedInterval: sc?.preparedInterval || 'Long Rest',
-        metamagic: meta,
-        levels,
-      }
-    })
-
-    const metamagicOptionDetails = computed(() => {
-      const sc = monster.spellcasting
-      if (!sc?.metamagic?.enabled || !sc.metamagic.options) return []
-      const map: Record<string, { cost: string; desc: string }> = {
-        'Quickened Spell': { cost: '2 to', desc: 'cast a Cantrip or spell as a Bonus Action' },
-        'Distant Spell': { cost: '1', desc: 'Increase spell\'s range by 30ft' },
-        'Empowered Spell': { cost: '1 to', desc: 'Re-roll up to CHA damage dice' },
-        'Extended Spell': { cost: '1 to', desc: 'Double spell duration up to 24h' },
-        'Subtle Spell': { cost: '1 to', desc: 'Cast without Verbal or Somatic components' },
-        'Twinned Spell': { cost: '1/lvl to', desc: 'Target a second creature within range' },
-        'Heightened Spell': { cost: '3 to', desc: 'Give target Disadvantage on first save' },
-        'Transmuted Spell': { cost: '1 to', desc: 'Change damage type to acid/cold/fire/lightning/poison/thunder' },
-        'Careful Spell': { cost: '1 to', desc: 'Protect up to CHA allies from saving throw effects' },
-        'Seeking Spell': { cost: '2 to', desc: 'Reroll a missed spell attack roll' },
-      }
-      return sc.metamagic.options.map((opt) => {
-        if (map[opt]) return map[opt]
-        return { cost: '1 to', desc: opt }
+        attack: monster.spellAttackModifier,
+        className,
+        level,
+        resourceType: sc?.resourceType || 'slots',
+        resourceValue: sc?.resourceType === 'focus' ? level : pointValue,
+        refreshRate: sc?.refreshRate,
+        customRefreshRate: sc?.customRefreshRate,
+        slots: sc?.slots,
+        preparedCount: sc?.preparedCountOverride ?? (metrics.preparedSpells || knownLeveled),
+        preparedInterval: sc?.preparedInterval,
+        levelCadenceMap,
+        metamagic: metamagic ? {
+          enabled: metamagic.enabled,
+          points: metamagic.sorceryPoints || level,
+          refreshRate: metamagic.refreshRate,
+          options: metamagic.options,
+        } : undefined,
+        edition: editorStore.style === '2014' ? '2014' : '2024',
+        spellLevels,
       })
     })
 
-    const getSpellCadenceBadge = (spellName: string): string | null => {
-      const cadence = monster.spellcasting?.spellCadenceMap?.[spellName]
-      if (!cadence) return null
-      switch (cadence) {
-        case 'at_will': return 'At-Will'
-        case 'always': return 'Always Available'
-        case 'short_rest': return 'Short Rest'
-        case 'long_rest': return 'Daily'
-        case 'downtime': return 'Downtime'
-        case 'ritual': return 'Ritual'
-        default: return null
-      }
-    }
-
+    const innateSpellPlate = computed(() => {
+      const sc = monster.spellcasting
+      const processedNotes = sc?.useCustomInnatePreamble
+        ? sanitizedInnateSpellcastingPreamble.value
+        : sanitizeWebString(sc?.atWillNotes || '')
+      return buildInnateSpellPlate({
+        stat: sc?.stat || 'INT',
+        save: monster.spellSave,
+        attack: monster.spellAttackModifier,
+        groups: textRenderer.innateSpellcastingLists.value.map((group) => ({
+          label: group.renderedLabel,
+          spells: group.spells.map((name: string) => ({ name, tags: getSpellTagString(name) })),
+        })),
+        processedNotes: processedNotes.trim() ? processedNotes : '',
+      })
+    })
     const attacks = computed(() =>
       textRenderer.attacks.value.map((a) => sanitizeWebString(a))
     )
@@ -1608,21 +1378,10 @@ export default defineComponent({
       crDisplay,
       ...textRenderer,
       cr,
-      getSpellTag: (name: string) => getSpellTagString(name),
-      getSpellCadenceBadge,
-      renderedSpellcastingTitle,
-      renderedSpellcastingResource,
-      renderedSpellcastingResourceSummary,
-      renderedPreparedSummary,
-      metamagicOptionDetails,
       spellPlate,
-      renderedMetamagicBadge,
+      innateSpellPlate,
       sanitizeWebString,
       sanitizedClassSpellcastingPreamble,
-      sanitizedInnateSpellcastingPreamble,
-      innateSpellcastingLists: textRenderer.innateSpellcastingLists,
-      classSpellcastingSlots: textRenderer.classSpellcastingSlots,
-      classSpellcastingWarlockLabel: textRenderer.classSpellcastingWarlockLabel,
       traits,
       attacks,
       actions,

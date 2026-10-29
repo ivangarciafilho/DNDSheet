@@ -1090,13 +1090,6 @@
     font-weight: 700 !important;
     padding: 0 !important;
     margin-left: 3px !important;
-
-    &::before {
-      content: '(';
-    }
-    &::after {
-      content: ')';
-    }
   }
 }
 

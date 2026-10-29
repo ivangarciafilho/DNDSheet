@@ -694,6 +694,8 @@ import {
 } from 'src/core/usecases/AutoSyncSpellcasting'
 import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
 import { statModifier } from 'src/core/domain/math-utils'
+import { CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS } from 'src/core/domain/catalogs/cadence'
+import { METAMAGIC_OPTIONS } from 'src/core/domain/catalogs/metamagic'
 import { v4 as uuidv4 } from 'uuid'
 
 export default defineComponent({
@@ -714,11 +716,7 @@ export default defineComponent({
       { label: 'Pact Magic Slots', value: 'pact' },
     ]
 
-    const refreshRateOptions = [
-      { label: 'Long Rest (Daily)', value: 'long_rest' },
-      { label: 'Short Rest', value: 'short_rest' },
-      { label: 'Downtime', value: 'downtime' },
-    ]
+    const refreshRateOptions = RESOURCE_REFRESH_OPTIONS
 
     const displayTitleModeOptions = [
       { label: 'Class Names (e.g. Level 9 Wizard)', value: 'class_names' },
@@ -726,18 +724,7 @@ export default defineComponent({
       { label: 'Split Levels (Wizard (9) / Cleric (5))', value: 'split_levels' },
     ]
 
-    const cadenceOptions = [
-      { label: 'Long Rest', value: 'long_rest' },
-      { label: 'Short Rest', value: 'short_rest' },
-      { label: 'At-Will (Cantrip)', value: 'at_will' },
-      { label: '1/Day', value: '1_day' },
-      { label: '2/Day', value: '2_day' },
-      { label: '3/Day', value: '3_day' },
-      { label: 'Recharge 5–6', value: 'recharge_5_6' },
-      { label: 'Downtime', value: 'downtime' },
-      { label: 'Ritual', value: 'ritual' },
-      { label: 'Always Available', value: 'always_available' },
-    ]
+    const cadenceOptions = CADENCE_OPTIONS
 
     const primarySubclass = ref<string>('')
 
@@ -947,18 +934,7 @@ export default defineComponent({
       }
     }
 
-    const metamagicOptionsList = [
-      'Careful Spell',
-      'Distant Spell',
-      'Empowered Spell',
-      'Extended Spell',
-      'Heightened Spell',
-      'Quickened Spell',
-      'Seeking Spell',
-      'Subtle Spell',
-      'Transmuted Spell',
-      'Twinned Spell',
-    ]
+    const metamagicOptionsList = METAMAGIC_OPTIONS.map(({ name }) => name)
 
     const metamagicEnabled = computed({
       get: () => !!monster.spellcasting.metamagic?.enabled,

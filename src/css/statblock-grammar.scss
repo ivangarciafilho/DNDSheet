@@ -297,6 +297,49 @@
   background: rgba(0, 0, 0, 0.16);
 }
 
+/* Spell plates use the same theme tokens; authored tags appear once in their data text. */
+#render .statblock {
+  .class-spellcasting,
+  .innate-spellcasting {
+    margin-block: 6px !important;
+  }
+
+  .sb-plate .spell-tag-badge {
+    display: inline;
+    margin-inline-start: 0.25em;
+    color: inherit;
+    font-size: 0.78em;
+    font-style: normal;
+    font-weight: 700;
+    white-space: normal;
+  }
+
+  .sb-plate .spell-tag-badge::before,
+  .sb-plate .spell-tag-badge::after {
+    content: none !important;
+  }
+
+  .sb-plate .spell-cadence-badge {
+    display: inline-block;
+    margin-inline-start: 0.35em;
+    padding: 1px 5px;
+    border: 1px solid var(--sb-rule);
+    border-radius: 3px;
+    background: var(--sb-body-bg);
+    color: var(--sb-cell-ink);
+    font-size: 0.72em;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .sb-plate .sb-spell {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* Rich tooltips (stat block + editor): readable width, consistent color code */
 .q-tooltip.dnd-tip {
   font-size: 0.8rem;

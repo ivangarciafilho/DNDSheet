@@ -88,6 +88,7 @@ export default {
     spellcasting: {
       class: 'Class',
       level: 'Caster Level',
+      stat: 'Spellcasting Ability',
       ability: 'Spellcasting Ability',
       save: 'Save DC',
       attack: 'Spell Attack Modifier',

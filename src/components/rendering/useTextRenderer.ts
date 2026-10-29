@@ -28,6 +28,7 @@ import _, { capitalize } from 'lodash'
 import { useEditorStore } from 'src/stores/editor-store'
 import { DndStat } from '../models'
 import { SKILL } from 'src/data/SKILL'
+import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
   SKILL_ACTION_GROUPS,
   computeSkillGroupLayout,
@@ -1229,18 +1230,7 @@ export function useTextRenderer() {
       const isBonusAction = monster.spellcasting?.bonusActionLevelMap?.[s.level]
 
       if (levelCadence) {
-        const cadenceMap: Record<string, string> = {
-          short_rest: 'Short Rest',
-          long_rest: 'Long Rest',
-          at_will: 'At-Will',
-          '1_day': '1/Day',
-          '2_day': '2/Day',
-          '3_day': '3/Day',
-          recharge_5_6: 'Recharge 5–6',
-          downtime: 'Downtime',
-          ritual: 'Ritual',
-        }
-        const cadText = cadenceMap[levelCadence] || levelCadence
+        const cadText = cadenceLabel(levelCadence)
         baseLabel = `${baseLabel} (${cadText})`
       }
       if (isBonusAction) {
