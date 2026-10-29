@@ -1,5 +1,5 @@
 <template>
-  <section v-if="action" class="composer-chain" :data-composer-chain="action.id" :aria-label="`${action.name || 'Action'}: composer`">
+  <section v-if="activeEntry" class="composer-chain" :data-composer-chain="activeEntry.id" :aria-label="`${activeEntry.name || 'Action'}: composer`">
     <div v-for="row in chipRows" :key="row.row" class="composer-chain__row" :data-chain-row="row.row">
       <span class="composer-chain__label" aria-hidden="true">{{ rowLabels[row.row] }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="rowLabels[row.row]">
@@ -9,13 +9,14 @@
           :cell="cell"
           :spec="specFor(cell.id)"
           :value="valueFor(cell.id)"
+          :validate="validatorFor(cell.id)"
           @commit="(value: unknown) => commit(cell.id, value)"
           @clear="commit(cell.id, '')"
         />
       </div>
     </div>
 
-    <div class="composer-chain__row composer-preview" :data-composer-preview="action.id">
+    <div class="composer-chain__row composer-preview" :data-composer-preview="activeEntry.id">
       <span class="composer-chain__label" aria-hidden="true">Preview</span>
       <div :class="previewClasses" aria-label="Live stat block preview">
         <!-- eslint-disable-next-line vue/no-v-html -- the stat block's own renderer and sanitizer produce this markup -->
@@ -33,8 +34,10 @@ import { useProcessTokens } from 'src/components/rendering/useProcessTokens'
 import { useAutoUpdateCr } from '../useAutoUpdateCr'
 import { ROLE_CHAINS } from 'src/core/domain/action-composer'
 import type { ComposerCellSpec, ComposerRow } from 'src/core/domain/action-composer'
+import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import { cellPatch, cellValue, chainView } from 'src/core/domain/composer-chain'
 import type { ActionModelRole, ChainContext } from 'src/core/domain/composer-chain'
+import { reactionCellPatch, reactionCellValue, reactionChainView, validateReactionCell } from 'src/core/domain/reaction-composer'
 import ChainCell from './ChainCell.vue'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
@@ -50,7 +53,7 @@ export default defineComponent({
   components: { ChainCell },
   props: {
     actionId: { type: String, required: true },
-    role: { type: String as PropType<ActionModelRole>, required: true },
+    role: { type: String as PropType<ActionComposerRole>, required: true },
     /** Legendary/mythic action-point cost, owned by the role list rather than the action. */
     cost: { type: Number, default: 1 },
   },
@@ -58,11 +61,19 @@ export default defineComponent({
   setup(props, { emit }) {
     const monster = useMonsterStore()
     const editor = useEditorStore()
-    const { processAction, processLegendaryAction, sanitizeWebString, usageText, structuredRenderContext } = useProcessTokens()
+    const { processAction, processLegendaryAction, processReaction, sanitizeWebString, usageText, structuredRenderContext } = useProcessTokens()
     const { autoUpdateCr } = useAutoUpdateCr()
 
     // The live store object: chips write to it exactly as the studio's other controls do.
-    const action = computed(() => monster.actions.find((candidate) => candidate.id === props.actionId))
+    const action = computed(() =>
+      ['action', 'bonus_action', 'legendary', 'mythic'].includes(props.role)
+        ? monster.actions.find((candidate) => candidate.id === props.actionId)
+        : undefined
+    )
+    const reaction = computed(() => props.role === 'reaction'
+      ? monster.reactions.find((candidate) => candidate.id === props.actionId)
+      : undefined)
+    const activeEntry = computed(() => action.value ?? reaction.value)
     const pooled = computed(() => props.role === 'legendary' || props.role === 'mythic')
 
     const context = computed<ChainContext>(() => {
@@ -77,35 +88,52 @@ export default defineComponent({
     })
 
     // Description stays in the rich text editor below the chain; the chips cover everything before it.
-    const chipRows = computed(() =>
-      action.value ? chainView(props.role, action.value, context.value).filter((row) => row.row !== 'prose') : []
-    )
+    const chipRows = computed(() => {
+      if (action.value && ['action', 'bonus_action', 'legendary', 'mythic'].includes(props.role)) {
+        return chainView(props.role as ActionModelRole, action.value, context.value).filter((row) => row.row !== 'prose')
+      }
+      if (reaction.value) return reactionChainView(reaction.value, usageText(reaction.value))
+      return []
+    })
 
     const specFor = (cellId: string): ComposerCellSpec =>
       ROLE_CHAINS[props.role].find((spec) => spec.id === cellId) as ComposerCellSpec
 
     const valueFor = (cellId: string): unknown => {
       if (pooled.value && cellId === 'usage') return String(props.cost)
-      return action.value ? cellValue(action.value, cellId) : undefined
+      if (action.value) return cellValue(action.value, cellId)
+      if (reaction.value) return reactionCellValue(reaction.value, cellId)
+      return undefined
     }
+
+    const validatorFor = (cellId: string) =>
+      props.role === 'reaction' ? (value: unknown) => validateReactionCell(cellId, value) : undefined
 
     const commit = (cellId: string, value: unknown) => {
       const current = action.value
-      if (!current) return
-      if (pooled.value && cellId === 'usage') {
+      if (current && pooled.value && cellId === 'usage') {
         emit('update:cost', Math.min(3, Math.max(1, Number(value) || 1)))
         return
       }
-      const target = current as unknown as Record<string, unknown>
-      for (const [key, next] of Object.entries(cellPatch(current, cellId, value))) target[key] = next
-      if (current.crAnnotation) autoUpdateCr(current.description, current.crAnnotation, current)
+      if (current) {
+        const target = current as unknown as Record<string, unknown>
+        for (const [key, next] of Object.entries(cellPatch(current, cellId, value))) target[key] = next
+        if (current.crAnnotation) autoUpdateCr(current.description, current.crAnnotation, current)
+        return
+      }
+      const currentReaction = reaction.value
+      if (currentReaction) {
+        const target = currentReaction as unknown as Record<string, unknown>
+        for (const [key, next] of Object.entries(reactionCellPatch(currentReaction, cellId, value))) target[key] = next
+      }
     }
 
     // Parity by construction: the same per-entry renderer and sanitizer the stat block uses.
     const previewHtml = computed(() => {
       const current = action.value
-      if (!current) return ''
-      return sanitizeWebString(pooled.value ? processLegendaryAction(current.id, props.cost, monster) : processAction(current, monster))
+      if (current) return sanitizeWebString(pooled.value ? processLegendaryAction(current.id, props.cost, monster) : processAction(current, monster))
+      const currentReaction = reaction.value
+      return currentReaction ? sanitizeWebString(processReaction(currentReaction, monster)) : ''
     })
 
     const previewClasses = computed(() => [
@@ -118,7 +146,7 @@ export default defineComponent({
       `theme-${editor.visualTheme || 'wotc'}`,
     ])
 
-    return { action, pooled, chipRows, specFor, valueFor, commit, previewHtml, previewClasses, rowLabels: ROW_LABELS }
+    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, previewHtml, previewClasses, rowLabels: ROW_LABELS }
   },
 })
 </script>

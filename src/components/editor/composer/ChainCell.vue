@@ -195,6 +195,7 @@ export default defineComponent({
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
     value: { type: null as unknown as PropType<unknown>, default: undefined },
+    validate: { type: Function as PropType<(value: unknown) => string>, default: undefined },
   },
   emits: ['commit', 'clear'],
   setup(props, { emit }) {
@@ -262,7 +263,7 @@ export default defineComponent({
       }
     }
 
-    const error = computed(() => (open.value ? validateCell(props.cell.id, draft.value) : ''))
+    const error = computed(() => (open.value ? (props.validate?.(draft.value) ?? validateCell(props.cell.id, draft.value)) : ''))
     const clearable = computed(() => props.cell.state === 'set' && props.cell.id !== 'name' && props.spec.field !== 'cost')
 
     const apply = () => {
@@ -321,7 +322,10 @@ export default defineComponent({
     }
 
     const tooltip = computed(() => {
-      const parts = [HELP[props.cell.id] ?? props.cell.label]
+      const help = props.cell.id === 'usage' && props.cell.label === 'Uses'
+        ? 'Uses per recharge interval. Enter a count and rate such as 3/Day.'
+        : HELP[props.cell.id] ?? props.cell.label
+      const parts = [help]
       if (props.cell.auto) parts.push('The shown value is automatic.')
       if (props.cell.shadowed) parts.push('Not printed: structured data on this ability replaces it. Clear it or move it into the chips.')
       if (props.cell.invalid) parts.push(props.cell.invalid + '.')
@@ -347,7 +351,11 @@ export default defineComponent({
       },
     ])
 
-    const hint = computed(() => (props.cell.id === 'usage' ? 'Recharge range such as 5–6, or text' : props.cell.legacy ? 'Printed exactly as written' : undefined))
+    const hint = computed(() => props.cell.id === 'usage' && props.cell.label === 'Uses'
+      ? 'Count and recharge rate, such as 3/Day'
+      : props.cell.id === 'usage'
+        ? 'Recharge range such as 5–6, or text'
+        : props.cell.legacy ? 'Printed exactly as written' : undefined)
 
     return {
       listId,

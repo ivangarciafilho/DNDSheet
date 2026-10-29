@@ -115,7 +115,7 @@
               </q-select>
             </div>
 
-            <template v-if="!item.rawAction">
+            <template v-if="!item.rawAction && !item.rawReaction">
               <!-- Far-Left Recharge / Cost Selector -->
               <div class="col-6 col-sm-3 col-md-2">
                 <template v-if="item.role === 'legendary' || item.role === 'mythic'">
@@ -240,28 +240,12 @@
 
           <!-- A7: abilities stored as MonsterAction are edited as a chain of plate cells, in plate order. -->
           <composer-chain
-            v-if="item.rawAction"
+            v-if="item.rawAction || item.rawReaction"
             :action-id="item.id"
             :role="chainRole(item)"
             :cost="item.cost || 1"
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           />
-
-          <!-- Reactions keep their trigger field until their own chain lands. -->
-          <div v-if="item.role === 'reaction' && item.rawReaction" class="row full-width q-mt-xs">
-            <q-input
-              v-model="item.rawReaction.trigger"
-              dense
-              outlined
-              dark
-              hide-bottom-space
-              label="Trigger"
-              placeholder="e.g. When a creature within 5 feet makes an attack against an ally"
-              class="full-width"
-            >
-              <q-tooltip class="text-caption">Condition that triggers this reaction</q-tooltip>
-            </q-input>
-          </div>
 
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
           <monster-text-editor
@@ -291,6 +275,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionModelRole } from 'src/core/domain/composer-chain'
+import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import ComposerChain from './composer/ComposerChain.vue'
 
 export interface UnifiedEntry {
@@ -672,8 +657,10 @@ export default defineComponent({
       return monster.actions?.findIndex((a) => a.id === item.id) ?? 0
     }
 
-    const chainRole = (item: UnifiedEntry): ActionModelRole =>
-      item.role === 'bonus_action' || item.role === 'legendary' || item.role === 'mythic' ? item.role : 'action'
+    const chainRole = (item: UnifiedEntry): ActionComposerRole => {
+      if (item.role === 'reaction') return 'reaction'
+      return (item.role === 'bonus_action' || item.role === 'legendary' || item.role === 'mythic' ? item.role : 'action') as ActionModelRole
+    }
 
     const confirmApplyActionTemplate = (item: UnifiedEntry, template: ActionTemplate) => {
       const action = item.rawAction

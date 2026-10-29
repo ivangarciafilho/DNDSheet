@@ -2646,6 +2646,93 @@ async function runFuzz() {
   if (!step35.success) {
     throw new Error('Step 35 failed: ' + JSON.stringify(step35));
   }
+
+  console.log('\n--- Step 36: Reaction chain edits its typed trigger and previews the rendered reaction ---')
+  const step36Setup = await evalInPage(`
+    async () => {
+      const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+      const monster = pinia._s.get('monster');
+      let reaction = monster.reactions.find((entry) => entry.id === 'a7-reaction-chain-proof');
+      if (!reaction) {
+        monster.addReaction();
+        reaction = monster.reactions[monster.reactions.length - 1];
+      }
+      Object.assign(reaction, {
+        id: 'a7-reaction-chain-proof',
+        name: 'Tail Swipe',
+        trigger: 'When a creature moves within 10 ft.',
+        description: 'The monster makes a tail attack.',
+        limitedUse: { count: 3, rate: 'DAY' },
+      });
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      const chain = reaction && document.querySelector('[data-composer-chain="' + reaction.id + '"]');
+      if (!chain) return { ready: false, reason: 'Reaction chain not mounted' };
+      const host = chain.closest('.q-expansion-item--collapsed');
+      if (host) host.querySelector(':scope > .q-expansion-item__container > .q-item').click();
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      const triggerCell = chain.querySelector('[data-chain-cell="trigger"]');
+      triggerCell?.focus();
+      return {
+        ready: true,
+        rows: [...chain.querySelectorAll('[data-chain-row]')].map((row) => row.getAttribute('data-chain-row')),
+        cells: [...chain.querySelectorAll('[data-chain-cell]')].map((cell) => cell.getAttribute('data-chain-cell')),
+        trigger: triggerCell?.textContent.trim(),
+        focusReady: document.activeElement === triggerCell,
+      };
+    }
+  `)
+  await pressKey('Enter')
+  await pause(500)
+  const step36Edited = await evalInPage(`
+    async () => {
+      const chain = document.querySelector('[data-composer-chain] [data-chain-cell="trigger"]')?.closest('[data-composer-chain]');
+      const trigger = chain?.querySelector('[data-chain-cell="trigger"]');
+      if (!trigger) return { applied: false, reason: 'Trigger cell missing' };
+      const menu = document.querySelector('.chain-editor-menu');
+      const input = menu?.querySelector('input');
+      if (!input) return { applied: false, reason: 'Trigger editor did not open' };
+      input.value = 'When a creature moves within 15 ft.';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      [...menu.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Apply')?.click();
+      await new Promise((resolve) => setTimeout(resolve, 350));
+      const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+      const reaction = pinia._s.get('monster').reactions.find((entry) => entry.id === 'a7-reaction-chain-proof');
+      return {
+        applied: reaction?.trigger === 'When a creature moves within 15 ft.',
+        trigger: reaction?.trigger,
+        menuClosed: document.querySelectorAll('.chain-editor-menu').length === 0,
+        focusReturned: document.activeElement?.getAttribute('data-chain-cell') === 'trigger',
+      };
+    }
+  `)
+  const step36Parity = await evalInPage(`
+    async () => {
+      const chain = document.querySelector('[data-composer-chain] [data-chain-cell="trigger"]')?.closest('[data-composer-chain]');
+      const preview = chain?.querySelector('[data-composer-preview] .action');
+      const renderer = document.querySelector('#render .statblock .action.reaction');
+      return {
+        hasTrigger: (preview?.textContent || '').includes('When a creature moves within 15 ft.'),
+        sameHtml: !!preview && !!renderer && preview.innerHTML === renderer.innerHTML,
+        rendererText: renderer?.textContent?.replace(/\\s+/g, ' ').trim(),
+      };
+    }
+  `)
+  const step36 = {
+    setup: step36Setup,
+    edit: step36Edited,
+    parity: step36Parity,
+  }
+  step36.success = step36Setup?.ready === true &&
+    JSON.stringify(step36Setup.rows) === JSON.stringify(['head', 'mechanics']) &&
+    JSON.stringify(step36Setup.cells) === JSON.stringify(['name', 'usage', 'trigger']) &&
+    step36Setup?.focusReady === true &&
+    step36Edited?.applied === true && step36Edited?.menuClosed === true && step36Edited?.focusReturned === true &&
+    step36Parity?.hasTrigger === true && step36Parity?.sameHtml === true
+  console.log('Step 36 result:', JSON.stringify(step36, null, 2))
+  if (!step36.success) {
+    throw new Error('Step 36 failed: ' + JSON.stringify(step36));
+  }
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)

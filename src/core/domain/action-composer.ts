@@ -86,7 +86,7 @@ const traitChain: readonly ComposerCellSpec[] = [
 
 const reactionChain: readonly ComposerCellSpec[] = [
   { id: 'name', label: 'Name', row: 'head', editor: 'text' },
-  { id: 'usage', label: 'Usage', row: 'head', editor: 'text' },
+  { id: 'usage', label: 'Uses', row: 'head', editor: 'text' },
   { id: 'trigger', label: 'Trigger', row: 'mechanics', editor: 'text' },
   { id: 'description', label: 'Description', row: 'prose', editor: 'text' },
 ]
