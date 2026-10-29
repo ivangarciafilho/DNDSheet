@@ -96,11 +96,12 @@
                   no-caps
                   size="sm"
                   class="q-px-xs"
-                  :color="skill.bonusAction ? 'amber-9' : 'blue-grey-8'"
-                  :label="skill.bonusAction ? 'Bonus Action' : 'Action'"
-                  @click="skill.bonusAction = !skill.bonusAction"
+                  :color="effectiveSkillActionType(skill) === 'Bonus Action' ? 'amber-9' : 'blue-grey-8'"
+                  :outline="typeof skill.bonusAction !== 'boolean'"
+                  :label="effectiveSkillActionType(skill)"
+                  @click="toggleSkillActionType(skill)"
                 >
-                  <q-tooltip class="text-body2">Toggle Action vs Bonus Action execution</q-tooltip>
+                  <q-tooltip class="dnd-tip">Action economy for this skill. <b>Outlined</b> = follows its group (Search, Study, Influence or Hide); click to set it explicitly.</q-tooltip>
                 </q-btn>
                 <q-btn
                   dense
@@ -398,7 +399,7 @@
         </div>
 
         <div class="row q-col-gutter-xs">
-          <!-- SEARCH: Perception, Investigation, Insight, Survival -->
+          <!-- SEARCH: Insight, Perception, Survival -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs">
@@ -419,10 +420,10 @@
                   ]"
                 />
               </div>
-              <div v-for="pKey in ['perception', 'investigation', 'insight', 'survival']" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
-                <div class="col-3 text-caption text-capitalize">{{ pKey }}</div>
+              <div v-for="pKey in groupPassiveKeys('search')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
+                <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
                 <div class="col-3">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -437,10 +438,10 @@
                       label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-2">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -455,7 +456,7 @@
                       label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-4" v-if="getPassive(pKey).override">
                   <q-select
@@ -486,7 +487,7 @@
             </div>
           </div>
 
-          <!-- STUDY: Arcana, History, Investigation, Nature, Religion -->
+          <!-- STUDY: Arcana, History, Investigation, Medicine, Nature, Religion -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs">
@@ -507,10 +508,10 @@
                   ]"
                 />
               </div>
-              <div v-for="pKey in ['arcana', 'history', 'investigation', 'nature', 'religion']" :key="`study-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
-                <div class="col-3 text-caption text-capitalize">{{ pKey }}</div>
+              <div v-for="pKey in groupPassiveKeys('study')" :key="`study-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
+                <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
                 <div class="col-3">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -525,10 +526,10 @@
                       label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-2">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -543,7 +544,7 @@
                       label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-4" v-if="getPassive(pKey).override">
                   <q-select
@@ -595,10 +596,10 @@
                   ]"
                 />
               </div>
-              <div v-for="pKey in ['deception', 'intimidation', 'performance', 'persuasion', 'animalHandling']" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
+              <div v-for="pKey in groupPassiveKeys('influence')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
                 <div class="col-3 text-caption">{{ pKey === 'animalHandling' ? 'Animal Hdl.' : pKey.charAt(0).toUpperCase() + pKey.slice(1) }}</div>
                 <div class="col-3">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -613,10 +614,10 @@
                       label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-2">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
@@ -631,7 +632,7 @@
                       label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-4" v-if="getPassive(pKey).override">
                   <q-select
@@ -662,7 +663,7 @@
             </div>
           </div>
 
-          <!-- HIDE: Stealth -->
+          <!-- HIDE: Acrobatics, Athletics, Sleight of Hand, Stealth -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs">
@@ -683,50 +684,50 @@
                   ]"
                 />
               </div>
-              <div class="row items-center q-col-gutter-xs q-mb-xs">
-                <div class="col-3 text-caption">Stealth</div>
+              <div v-for="pKey in groupPassiveKeys('hide')" :key="`hide-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
+                <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
                 <div class="col-3">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
-                      :color="!getPassive('stealth').override ? 'positive' : 'grey-8'"
+                      :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
                       label="Auto"
-                      @click="getPassive('stealth').override = false"
+                      @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive('stealth').override ? 'warning' : 'grey-8'"
+                      :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
                       label="Ovr"
-                      @click="getPassive('stealth').override = true"
+                      @click="getPassive(pKey).override = true"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
                 <div class="col-2">
-                  <q-btn-Group spread flat dense>
+                  <q-btn-group spread flat dense>
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive('stealth').advantage ? 'positive' : 'grey-9'"
+                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
                       label="▲▲"
-                      @click="getPassive('stealth').advantage = !getPassive('stealth').advantage; if (getPassive('stealth').advantage) getPassive('stealth').disadvantage = false"
+                      @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive('stealth').disadvantage ? 'negative' : 'grey-9'"
+                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
                       label="▼▼"
-                      @click="getPassive('stealth').disadvantage = !getPassive('stealth').disadvantage; if (getPassive('stealth').disadvantage) getPassive('stealth').advantage = false"
+                      @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
-                  </q-btn-Group>
+                  </q-btn-group>
                 </div>
-                <div class="col-4" v-if="getPassive('stealth').override">
+                <div class="col-4" v-if="getPassive(pKey).override">
                   <q-select
                     dense
                     outlined
-                    :model-value="getPassive('stealth').overrideValue ?? 10"
-                    :options="getPassiveOverrideOptions('stealth')"
+                    :model-value="getPassive(pKey).overrideValue ?? 10"
+                    :options="getPassiveOverrideOptions(pKey)"
                     emit-value
                     map-options
                     use-input
@@ -734,15 +735,15 @@
                     hide-selected
                     label="Score"
                     new-value-mode="add-unique"
-                    @input-value="(val) => (getPassive('stealth').overrideValue = validateNumber(val, 10))"
-                    @update:model-value="(val) => (getPassive('stealth').overrideValue = validateNumber(val, 10))"
+                    @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
+                    @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                   />
                 </div>
                 <div class="col-4" v-else>
                   <q-input
                     dense
                     outlined
-                    v-model="getPassive('stealth').condition"
+                    v-model="getPassive(pKey).condition"
                     placeholder="Qualifier"
                   />
                 </div>
@@ -757,6 +758,8 @@
 
 <script lang="ts">
 import { SKILL } from 'src/data/SKILL'
+import { SKILL_ACTION_GROUPS, passiveConfigKey, skillActionGroupFor } from 'src/core/domain/skill-action-groups'
+import type { SkillActionGroupId } from 'src/core/domain/skill-action-groups'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent, watch } from 'vue'
 import { bonusForSkill, statModifier } from '../rendering/mathRendering'
@@ -813,26 +816,44 @@ const STANDARD_5E_TOOLS: Array<{ label: string; value: string; category: string;
   { label: 'Vehicles (Water)', value: 'Vehicles (Water)', category: 'Vehicle', color: 'blue-grey-6', icon: 'fa-solid fa-ship' },
 ]
 
-const SKILL_SCOPE_META: Record<string, { category: string; color: string; icon: string; order: number }> = {
-  PERCEPTION: { category: 'Search (WIS)', color: 'primary', icon: 'fa-solid fa-magnifying-glass', order: 1 },
-  INVESTIGATION: { category: 'Search / Study (INT)', color: 'primary', icon: 'fa-solid fa-magnifying-glass-chart', order: 1 },
-  INSIGHT: { category: 'Search / Influence (WIS)', color: 'primary', icon: 'fa-solid fa-eye', order: 1 },
-  SURVIVAL: { category: 'Search (WIS)', color: 'primary', icon: 'fa-solid fa-compass', order: 1 },
-  ARCANA: { category: 'Study (INT)', color: 'info', icon: 'fa-solid fa-hat-wizard', order: 2 },
-  HISTORY: { category: 'Study (INT)', color: 'info', icon: 'fa-solid fa-scroll', order: 2 },
-  NATURE: { category: 'Study (INT)', color: 'info', icon: 'fa-solid fa-leaf', order: 2 },
-  RELIGION: { category: 'Study (INT)', color: 'info', icon: 'fa-solid fa-ankh', order: 2 },
-  DECEPTION: { category: 'Influence (CHA)', color: 'amber-8', icon: 'fa-solid fa-masks-theater', order: 3 },
-  INTIMIDATION: { category: 'Influence (CHA)', color: 'amber-8', icon: 'fa-solid fa-skull', order: 3 },
-  PERFORMANCE: { category: 'Influence (CHA)', color: 'amber-8', icon: 'fa-solid fa-music', order: 3 },
-  PERSUASION: { category: 'Influence (CHA)', color: 'amber-8', icon: 'fa-solid fa-comments', order: 3 },
-  ANIMAL_HANDLING: { category: 'Influence / Skills (WIS)', color: 'amber-8', icon: 'fa-solid fa-paw', order: 3 },
-  STEALTH: { category: 'Hide (DEX)', color: 'deep-purple-5', icon: 'fa-solid fa-user-ninja', order: 4 },
-  ACROBATICS: { category: 'Skills (DEX)', color: 'teal-6', icon: 'fa-solid fa-person-running', order: 5 },
-  ATHLETICS: { category: 'Skills (STR)', color: 'teal-6', icon: 'fa-solid fa-dumbbell', order: 5 },
-  MEDICINE: { category: 'Skills (WIS)', color: 'teal-6', icon: 'fa-solid fa-kit-medical', order: 5 },
-  SLEIGHT_OF_HAND: { category: 'Skills (DEX)', color: 'teal-6', icon: 'fa-solid fa-hand-sparkles', order: 5 },
+const SKILL_ICONS: Record<string, string> = {
+  PERCEPTION: 'fa-solid fa-magnifying-glass',
+  INVESTIGATION: 'fa-solid fa-magnifying-glass-chart',
+  INSIGHT: 'fa-solid fa-eye',
+  SURVIVAL: 'fa-solid fa-compass',
+  ARCANA: 'fa-solid fa-hat-wizard',
+  HISTORY: 'fa-solid fa-scroll',
+  NATURE: 'fa-solid fa-leaf',
+  RELIGION: 'fa-solid fa-ankh',
+  DECEPTION: 'fa-solid fa-masks-theater',
+  INTIMIDATION: 'fa-solid fa-skull',
+  PERFORMANCE: 'fa-solid fa-music',
+  PERSUASION: 'fa-solid fa-comments',
+  ANIMAL_HANDLING: 'fa-solid fa-paw',
+  STEALTH: 'fa-solid fa-user-ninja',
+  ACROBATICS: 'fa-solid fa-person-running',
+  ATHLETICS: 'fa-solid fa-dumbbell',
+  MEDICINE: 'fa-solid fa-kit-medical',
+  SLIGHT_OF_HAND: 'fa-solid fa-hand-sparkles',
 }
+
+// Category chips follow the stat block grouping (src/core/domain/skill-action-groups.ts)
+const SKILL_SCOPE_META: Record<string, { category: string; color: string; icon: string; order: number }> =
+  Object.fromEntries(
+    Object.keys(SKILL).map((key) => {
+      const groupIdx = SKILL_ACTION_GROUPS.findIndex((g) => g.skills.includes(key))
+      const group = SKILL_ACTION_GROUPS[groupIdx]
+      return [
+        key,
+        {
+          category: group ? `${group.label} (${SKILL[key].stat})` : `Skills (${SKILL[key].stat})`,
+          color: group?.color ?? 'teal-6',
+          icon: SKILL_ICONS[key] ?? group?.icon ?? 'fa-solid fa-dice-d20',
+          order: group ? groupIdx + 1 : SKILL_ACTION_GROUPS.length + 1,
+        },
+      ]
+    })
+  )
 
 export default defineComponent({
   name: 'SkillsEditor',
@@ -960,6 +981,31 @@ export default defineComponent({
       return p[key]
     }
 
+    // passive-config keys for one group card, in table order
+    const groupPassiveKeys = (groupId: SkillActionGroupId): string[] =>
+      (SKILL_ACTION_GROUPS.find((g) => g.id === groupId)?.skills ?? []).map((key) => passiveConfigKey(key))
+
+    const passiveLabel = (cfgKey: string): string => {
+      const key = Object.keys(SKILL).find((k) => passiveConfigKey(k) === cfgKey)
+      return key ? SKILL[key].label : cfgKey
+    }
+
+    // a skill without an explicit economy follows its group's Action / Bonus Action toggle
+    const groupActionTypeFor = (skillKey: string): 'Action' | 'Bonus Action' => {
+      const group = skillActionGroupFor(skillKey)
+      if (!group) return 'Action'
+      const p = passives.value as unknown as Record<string, unknown>
+      return p?.[`${group.id}ActionType`] === 'Bonus Action' ? 'Bonus Action' : 'Action'
+    }
+
+    const effectiveSkillActionType = (skill: MonsterSkill): 'Action' | 'Bonus Action' =>
+      typeof skill.bonusAction === 'boolean' ? (skill.bonusAction ? 'Bonus Action' : 'Action') : groupActionTypeFor(skill.key)
+
+    const toggleSkillActionType = (skill: MonsterSkill) => {
+      const next = effectiveSkillActionType(skill) === 'Action' ? 'Bonus Action' : 'Action'
+      skill.bonusAction = next === groupActionTypeFor(skill.key) ? undefined : next === 'Bonus Action'
+    }
+
     const formatModifier = (val: number): string => {
       return val >= 0 ? `+${val}` : `${val}`
     }
@@ -1043,6 +1089,10 @@ export default defineComponent({
       toolOptions: availableTools,
       onToolSelected,
       passives,
+      groupPassiveKeys,
+      passiveLabel,
+      effectiveSkillActionType,
+      toggleSkillActionType,
       getPassive,
       bonusForSkill,
       calculateToolBonus,

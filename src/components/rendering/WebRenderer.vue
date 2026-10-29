@@ -425,7 +425,7 @@
         <span class="name dnd-cascade-title">{{ defSec.scopeLabel }}</span>
         <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
         <div class="dnd-defense-unified-body q-px-sm flex items-center">
-          <span class="dnd-defense-prose-text">{{ defSec.formattedProse }}</span>
+          <span class="dnd-defense-prose-text" v-html="defSec.formattedProse"></span>
         </div>
       </div>
     </template>
@@ -445,7 +445,7 @@
     <!-- Unified Passives, Skills & Tools Cellular Rows (| Study | Action | ... |, | Skills | Action | ... |, | Tools | Action | ... |) -->
     <template v-for="group in actionPassivesGroups" :key="group.name">
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="'cascade-skill-' + group.scopeLabel.toLowerCase()">
-        <span class="name dnd-cascade-title">{{ group.scopeLabel }}</span>
+        <span class="name dnd-cascade-title">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
         <span class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
         <div class="dnd-cascade-badges-wrap" v-html="group.skills"></div>
       </div>

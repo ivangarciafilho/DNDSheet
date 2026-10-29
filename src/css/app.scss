@@ -2026,3 +2026,6 @@
   .sc-spell .spell-tag-badge { font-style: normal; font-size: 0.85em; color: #6b3fa0; }
   .sc-stat { opacity: 0.9; }
 }
+
+// Shared stat block grammar (kept last so it wins the cascade)
+@import './statblock-grammar.scss';

@@ -27,6 +27,23 @@ import { useProcessTokens } from './useProcessTokens'
 import _, { capitalize } from 'lodash'
 import { useEditorStore } from 'src/stores/editor-store'
 import { DndStat } from '../models'
+import { SKILL } from 'src/data/SKILL'
+import {
+  SKILL_ACTION_GROUPS,
+  computeSkillGroupLayout,
+  effectiveAdvantage,
+  mergeIdenticalEntries,
+  normalizeSkillKey,
+  passiveConfigKey,
+  passiveScore,
+} from 'src/core/domain/skill-action-groups'
+import type {
+  SkillActionType,
+  SkillCheckEntry,
+  SkillCheckInput,
+  SkillGroupRow,
+} from 'src/core/domain/skill-action-groups'
+import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 
 // rendering strings for whatever needs it
 export function useTextRenderer() {
@@ -355,17 +372,7 @@ export function useTextRenderer() {
         ? renderBonus(save.overrideValue)
         : renderBonus(saveModifierForStat(monster, stat as keyof typeof monster.saves))
 
-      let pill = `<strong class="pill-number">${modStr}</strong>`
-      if (hasAdv) {
-        pill = `<span class="dnd-adv-pill"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>`
-      } else if (hasDisadv) {
-        pill = `<span class="dnd-disadv-pill"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>`
-      }
-      const condBadge = cond ? ` <span class="dnd-badge-cond" title="${cond}">(${cond})</span>` : ''
-      const text = `${stat} ${pill}${condBadge}`
-      if (hasAdv) return `<span class="dnd-item-adv">${text}</span>`
-      if (hasDisadv) return `<span class="dnd-item-disadv">${text}</span>`
-      return text
+      return advHtml(`${stat} ${numHtml(modStr)}${condHtml(cond)}`, hasAdv, hasDisadv)
     })
 
     return allSaves.filter((s) => s !== '').join(', ')
@@ -398,15 +405,7 @@ export function useTextRenderer() {
         : renderBonus(
             saveModifierForStat(monster, s.stat as keyof typeof monster.saves)
           )
-      let saveHtml = `<strong class="pill-number">${baseSave}</strong>`
-      if (hasAdv) {
-        saveHtml = `<span class="dnd-item-adv"><span class="dnd-adv-pill"><strong class="pill-number pill-bold">${baseSave}</strong> <span class="dnd-adv-arrow">▲▲</span></span></span>`
-      } else if (hasDisadv) {
-        saveHtml = `<span class="dnd-item-disadv"><span class="dnd-disadv-pill"><strong class="pill-number pill-bold">${baseSave}</strong> <span class="dnd-disadv-arrow">▼▼</span></span></span>`
-      }
-      if (cond) {
-        saveHtml += ` <span class="dnd-badge-cond" title="${cond}">(${cond})</span>`
-      }
+      const saveHtml = advHtml(`${numHtml(baseSave)}${condHtml(cond)}`, hasAdv, hasDisadv)
 
       data[s.stat] = {
         ...s,
@@ -540,16 +539,8 @@ export function useTextRenderer() {
         const bonusStr = s.override
           ? renderBonus(s.overrideValue)
           : renderBonus(bonusForSkill(monster, s))
-        let pill = `<strong class="pill-number">${bonusStr}</strong>`
-        if (s.advantage) {
-          pill = `<span class="dnd-adv-pill dnd-bonus-badge adv"><strong class="pill-number pill-bold">${bonusStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>`
-        } else if (s.disadvantage) {
-          pill = `<span class="dnd-disadv-pill dnd-bonus-badge disadv"><strong class="pill-number pill-bold">${bonusStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>`
-        }
         const cond = s.condition?.trim() || s.conditional?.trim() || ''
-        const condBadge = cond ? ` <span class="dnd-badge-cond" title="${cond}">(${cond})</span>` : ''
-        const pillClass = s.advantage ? 'dnd-item-adv' : (s.disadvantage ? 'dnd-item-disadv' : '')
-        return `<span class="dnd-entry-pill ${pillClass}"><span class="dnd-entry-label">${t(`skill.${s.key}`)}</span> ${pill}${condBadge}</span>`
+        return advHtml(`${t(`skill.${s.key}`)} ${numHtml(bonusStr)}${condHtml(cond)}`, s.advantage, s.disadvantage)
       })
 
     return monsterSkills.join(', ')
@@ -565,16 +556,7 @@ export function useTextRenderer() {
           ? t.overrideValue
           : statMod + (t.proficient ? monster.proficiency : 0) + (t.expertise ? monster.proficiency : 0)
         const bonusStr = renderBonus(bonus)
-        let pill = `<strong class="pill-number">${bonusStr}</strong>`
-        if (t.advantage) {
-          pill = `<span class="dnd-adv-pill dnd-bonus-badge adv"><strong class="pill-number pill-bold">${bonusStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>`
-        } else if (t.disadvantage) {
-          pill = `<span class="dnd-disadv-pill dnd-bonus-badge disadv"><strong class="pill-number pill-bold">${bonusStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>`
-        }
-        const cond = t.condition?.trim()
-        const condBadge = cond ? ` <span class="dnd-badge-cond" title="${cond}">(${cond})</span>` : ''
-        const pillClass = t.advantage ? 'dnd-item-adv' : (t.disadvantage ? 'dnd-item-disadv' : '')
-        return `<span class="dnd-entry-pill ${pillClass}"><span class="dnd-entry-label">${t.name}</span> ${pill}${condBadge}</span>`
+        return advHtml(`${escapeHtml(t.name)} ${numHtml(bonusStr)}${condHtml(t.condition)}`, t.advantage, t.disadvantage)
       })
       .join(', ')
   })
@@ -629,12 +611,31 @@ export function useTextRenderer() {
   })
 
   const cascadingDefenses = computed(() => {
-    const getItems = (list: any[] | undefined, fallback: string[] | undefined): string[] => {
+    // Each entry keeps plain text (sorting, verbosity) and HTML (adv/disadv grammar).
+    type DefenseEntry = { text: string; html: string }
+    const getItems = (list: any[] | undefined, fallback: string[] | undefined): DefenseEntry[] => {
       if (Array.isArray(list) && list.length > 0) {
-        return list.map((item) => formatDefenseItem(item)).filter(Boolean)
+        return list
+          .map((item) => {
+            const mode = item?.mode || (item?.absorbs ? 'absorbs' : item?.advantage ? 'advantage' : item?.disadvantage ? 'disadvantage' : 'none')
+            if (mode === 'advantage' || mode === 'disadvantage') {
+              const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+              if (!plain) return null
+              return {
+                text: `${plain} (${mode === 'advantage' ? 'Advantage' : 'Disadvantage'})`,
+                html: advHtml(escapeHtml(plain), mode === 'advantage', mode === 'disadvantage', `${mode === 'advantage' ? 'Advantage' : 'Disadvantage'} on saving throws against ${plain}`),
+              }
+            }
+            const text = formatDefenseItem(item)
+            return text ? { text, html: escapeHtml(text) } : null
+          })
+          .filter((e): e is DefenseEntry => e != null)
       }
       if (Array.isArray(fallback) && fallback.length > 0) {
-        return fallback.map((s) => String(s).trim()).filter(Boolean)
+        return fallback
+          .map((s) => String(s).trim())
+          .filter(Boolean)
+          .map((text) => ({ text, html: escapeHtml(text) }))
       }
       return []
     }
@@ -649,47 +650,44 @@ export function useTextRenderer() {
     const buildUnifiedSection = (
       key: string,
       scopeLabel: string,
-      damageList: string[],
-      conditionList: string[]
+      damageList: DefenseEntry[],
+      conditionList: DefenseEntry[]
     ) => {
       if (damageList.length === 0 && conditionList.length === 0) return null
 
-      // Sort concise items first, verbose items (with complex conditions, bypasses, parentheses) last
-      const sortVerboseLast = (items: string[]) => {
-        return [...items].sort((a, b) => {
-          const aLen = a.length
-          const bLen = b.length
-          const aHasParen = a.includes('(') || a.includes('that ') || a.includes('from ') || a.includes(';')
-          const bHasParen = b.includes('(') || b.includes('that ') || b.includes('from ') || b.includes(';')
-          if (aHasParen !== bHasParen) return aHasParen ? 1 : -1
-          return aLen - bLen
+      // Concise items first, verbose items (conditions, bypasses, parentheses) last
+      const isVerboseItem = (s: string) => s.includes('(') || s.includes('that ') || s.includes('from ') || s.includes(';')
+      const sortVerboseLast = (items: DefenseEntry[]) =>
+        [...items].sort((a, b) => {
+          const av = isVerboseItem(a.text)
+          const bv = isVerboseItem(b.text)
+          if (av !== bv) return av ? 1 : -1
+          return a.text.length - b.text.length
         })
-      }
 
       const sortedDamages = sortVerboseLast(damageList)
       const sortedConditions = sortVerboseLast(conditionList)
-      const allItems = [...sortedDamages, ...sortedConditions]
+      const join = (items: DefenseEntry[], field: 'text' | 'html') => items.map((i) => i[field]).join(', ')
+      const compose = (field: 'text' | 'html') =>
+        sortedDamages.length > 0 && sortedConditions.length > 0
+          ? `${join(sortedDamages, field)}; ${join(sortedConditions, field)}`
+          : sortedDamages.length > 0
+          ? join(sortedDamages, field)
+          : join(sortedConditions, field)
 
-      let formattedProse = ''
-      if (sortedDamages.length > 0 && sortedConditions.length > 0) {
-        formattedProse = `${sortedDamages.join(', ')}; ${sortedConditions.join(', ')}`
-      } else if (sortedDamages.length > 0) {
-        formattedProse = sortedDamages.join(', ')
-      } else {
-        formattedProse = sortedConditions.join(', ')
-      }
-
-      const isVerbose = formattedProse.length > 65 || (sortedDamages.length + sortedConditions.length) >= 4
+      const formattedText = compose('text')
+      const isVerbose = formattedText.length > 65 || sortedDamages.length + sortedConditions.length >= 4
 
       return {
         key,
         title: scopeLabel,
         scopeLabel,
         subTypeLabel: '',
-        damageItems: sortedDamages,
-        conditionItems: sortedConditions,
-        items: allItems,
-        formattedProse,
+        damageItems: sortedDamages.map((i) => i.text),
+        conditionItems: sortedConditions.map((i) => i.text),
+        items: [...sortedDamages, ...sortedConditions].map((i) => i.text),
+        formattedText,
+        formattedProse: compose('html'),
         isVerbose,
       }
     }
@@ -707,378 +705,166 @@ export function useTextRenderer() {
     return sections
   })
 
+  // Search / Study / Influence / Hide rows, then leftover Skills and Tools rows.
+  // Grouping rules live in src/core/domain/skill-action-groups.ts.
+  const skillLabel = (key: string, fallback?: string): string => {
+    const path = `skill.${key}`
+    const label = t(path)
+    return label === path ? fallback || key : label
+  }
+
+  const formatCheckEntry = (entry: SkillCheckEntry, labels: string[]): string => {
+    const inner = `${numHtml(`${entry.passive}, ${renderBonus(entry.bonus)}`)} ${labels.map(escapeHtml).join(' and ')}${condHtml(entry.condition)}`
+    return `<span class="dnd-check">${advHtml(inner, entry.advantage, entry.disadvantage)}</span>`
+  }
+
+  const formatGroupRow = (row: SkillGroupRow): string => {
+    const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
+    if (!row.base) return parts.join('; ')
+    const baseHtml = numHtml(`${row.base.passive}/${renderBonus(row.base.bonus)}`)
+    return parts.length > 0 ? `${baseHtml}, (${parts.join('; ')})` : baseHtml
+  }
+
   const actionPassivesGroups = computed(() => {
-    const p = monster.actionOrientedPassives
+    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
+    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const passiveCfg = (key: string) => {
+      const cfgKey = passiveConfigKey(key)
+      return editorPassives?.[cfgKey] ?? editorPassives?.[cfgKey.toLowerCase()]
+    }
+    const sharedCondition = (key: string): string => {
+      const cfgKey = passiveConfigKey(key)
+      const raw = aop?.conditions?.[cfgKey] ?? aop?.conditions?.[cfgKey.toLowerCase()]
+      return typeof raw === 'string' ? raw.trim() : ''
+    }
+    const statOf = (key: string): DndStat => ((SKILL as any)[key]?.stat as DndStat) ?? 'INT'
+    const passivePerceptionOverride = (key: string): number | null =>
+      key === 'PERCEPTION' && monster.passivePerception?.override && monster.passivePerception.overrideValue != null
+        ? Number(monster.passivePerception.overrideValue)
+        : null
+
+    const inputs: SkillCheckInput[] = []
+    const seen = new Set<string>()
+
+    // 1. Skills the creature has (proficiency, expertise, overrides, advantage)
+    for (const sk of monster.skills ?? []) {
+      const key = normalizeSkillKey(sk.key)
+      if (!key || key === 'INITIATIVE' || seen.has(key)) continue
+      seen.add(key)
+      const cfg = passiveCfg(key)
+      inputs.push({
+        key,
+        label: skillLabel(sk.key, sk.skill?.label),
+        stat: (sk.skill?.stat as DndStat) ?? statOf(key),
+        bonus: bonusForSkill(monster, sk),
+        advantage: Boolean(sk.advantage || cfg?.advantage),
+        disadvantage: Boolean(sk.disadvantage || cfg?.disadvantage),
+        condition: sk.condition?.trim() || sk.conditional?.trim() || cfg?.condition?.trim() || sharedCondition(key),
+        bonusAction: typeof sk.bonusAction === 'boolean' ? sk.bonusAction : undefined,
+        passiveOverride: cfg?.override && cfg.overrideValue != null ? Number(cfg.overrideValue) : passivePerceptionOverride(key),
+      })
+    }
+
+    // 2. Untrained skills that only carry passive tweaks from the Skills editor
+    for (const group of SKILL_ACTION_GROUPS) {
+      for (const key of group.skills) {
+        if (seen.has(key)) continue
+        const cfg = passiveCfg(key)
+        const condition = cfg?.condition?.trim() || sharedCondition(key)
+        const override = cfg?.override && cfg.overrideValue != null ? Number(cfg.overrideValue) : passivePerceptionOverride(key)
+        if (!cfg?.advantage && !cfg?.disadvantage && !condition && override == null) continue
+        seen.add(key)
+        const stat = statOf(key)
+        inputs.push({
+          key,
+          label: skillLabel(key),
+          stat,
+          bonus: statModifier(monster.stats?.[stat] ?? 10),
+          advantage: Boolean(cfg?.advantage),
+          disadvantage: Boolean(cfg?.disadvantage),
+          condition,
+          passiveOverride: override,
+        })
+      }
+    }
+
+    const groupType = (flag: unknown, editorType: unknown): SkillActionType =>
+      flag || editorType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+    const rows = computeSkillGroupLayout({
+      stats: monster.stats,
+      skills: inputs,
+      groupActionTypes: {
+        search: groupType(aop?.bonusActionSearch, editorPassives?.searchActionType),
+        study: groupType(aop?.bonusActionStudy, editorPassives?.studyActionType),
+        influence: groupType(aop?.bonusActionInfluence, editorPassives?.influenceActionType),
+        hide: groupType(aop?.bonusActionHide, editorPassives?.hideActionType),
+      },
+    })
+
     const groups: {
       name: string
       scopeLabel: string
       subTypeLabel: string
       skills: string
       badges: string[]
-    }[] = []
-
-    const findSkill = (skillKey: string) =>
-      monster.skills?.find((s) => s.key?.toUpperCase() === skillKey.toUpperCase())
-
-    const formatConsolidatedSkillPill = (label: string, skillKey: string, defaultStat: DndStat, condKey: string): string => {
-      const existing = findSkill(skillKey)
-      const baseMod = statModifier(monster.stats?.[defaultStat] ?? 10)
-      const mpItem = (monster.passives as Record<string, any>)?.[condKey.toLowerCase()]
-      const isAdv = existing?.advantage || mpItem?.advantage
-      const isDisadv = existing?.disadvantage || mpItem?.disadvantage
-      const hasOverride = existing?.override || mpItem?.override
-      const ovVal = existing?.override ? existing.overrideValue : (mpItem?.override ? mpItem.overrideValue : null)
-
-      const activeBonus = hasOverride && ovVal != null
-        ? ovVal
-        : (existing ? bonusForSkill(monster, existing) : baseMod)
-      const activeBonusStr = renderBonus(activeBonus)
-
-      let passiveVal = 10 + activeBonus
-      if (isAdv) passiveVal += 5
-      if (isDisadv) passiveVal -= 5
-      if (skillKey.toUpperCase() === 'PERCEPTION' && monster.passivePerception?.override) {
-        passiveVal = monster.passivePerception.overrideValue
+      tip: string
+    }[] = rows.map((row) => {
+      const html = formatGroupRow(row)
+      return {
+        name: `${row.label}${row.actionType === 'Bonus Action' ? ' (Bonus Action)' : ''}`,
+        scopeLabel: row.label,
+        subTypeLabel: row.actionType,
+        skills: html,
+        badges: [html],
+        tip: row.tip,
       }
+    })
 
-      const c = mpItem?.condition?.trim() || p?.conditions?.[condKey.toLowerCase()] || existing?.condition?.trim() || existing?.conditional?.trim() || ''
-      const condStr = c ? ` <span class="dnd-badge-cond">(${c})</span>` : ''
-      const pairStr = `(${passiveVal}/${activeBonusStr})`
-
-      if (isAdv) {
-        return `<span class="dnd-entry-pill dnd-item-adv text-positive"><span class="dnd-entry-label">${label}</span> <strong class="pill-number pill-bold text-positive">${pairStr}</strong> <span class="dnd-adv-arrow">▲▲</span>${condStr}</span>`
-      }
-      if (isDisadv) {
-        return `<span class="dnd-entry-pill dnd-item-disadv text-negative"><span class="dnd-entry-label">${label}</span> <strong class="pill-number pill-bold text-negative">${pairStr}</strong> <span class="dnd-disadv-arrow">▼▼</span>${condStr}</span>`
-      }
-      return `<span class="dnd-entry-pill"><span class="dnd-entry-label">${label}</span> <strong class="pill-number">${pairStr}</strong>${condStr}</span>`
-    }
-
-    const handledSkillKeys = new Set<string>()
-    const disclosedSkillKeys = new Set<string>()
-
-    const buildCompoundedSkillsRow = (
-      name: string,
-      scopeLabel: string,
-      actionType: string,
-      baseStat: DndStat,
-      skillDefs: { label: string; key: string; stat: DndStat; condKey: string }[]
-    ) => {
-      const baseStatScore = monster.stats?.[baseStat] ?? 10
-      const baseStatMod = statModifier(baseStatScore)
-      const baseStatModStr = renderBonus(baseStatMod)
-      const basePassive = 10 + baseStatMod
-
-      // Check whether this scope has active skills or passives configured
-      const relevantSkills = skillDefs.filter((def) => {
-        const sk = findSkill(def.key)
-        const pScope = (p as any)?.[scopeLabel.toLowerCase()]
-        const pEnabled = pScope ? pScope[def.condKey] : false
-        return sk != null || pEnabled || (def.key === 'PERCEPTION' && (pScope?.perception !== false || monster.passivePerception?.override))
-      })
-
-      if (relevantSkills.length === 0) return null
-
-      // Check each skill
-      const differingList: { label: string; passive: number; bonus: number; adv: boolean; disadv: boolean }[] = []
-      let baseHasDisadv = false
-      let baseHasAdv = false
-
-      // Check if stealth has disadvantage (e.g. from heavy armor or explicit disadvantage) or advantage
-      if (scopeLabel.toLowerCase() === 'hide') {
-        const stealthSkill = findSkill('STEALTH')
-        const pStealth = (p as any)?.hide?.stealth
-        if (stealthSkill?.disadvantage || (pStealth && typeof pStealth === 'object' && pStealth.disadvantage)) {
-          baseHasDisadv = true
-        }
-        if (stealthSkill?.advantage || (pStealth && typeof pStealth === 'object' && pStealth.advantage)) {
-          baseHasAdv = true
-        }
-      }
-
-      for (const def of relevantSkills) {
-        const existing = findSkill(def.key)
-        const isScopeBonus = actionType === 'Bonus Action'
-        // If skill has an explicit bonusAction toggle that differs from this scope's actionType, do not absorb it into this scope
-        if (existing && existing.bonusAction !== undefined && Boolean(existing.bonusAction) !== isScopeBonus) {
-          continue
-        }
-        handledSkillKeys.add(def.key)
-        const mpItem = (p as any)?.[scopeLabel.toLowerCase()]?.[def.condKey]
-        const cond =
-          existing?.condition ||
-          (p as any)?.conditions?.[def.condKey] ||
-          (p as any)?.conditions?.[def.key.toLowerCase()] ||
-          (p as any)?.[scopeLabel.toLowerCase()]?.conditions?.[def.condKey] ||
-          (mpItem && typeof mpItem === 'object' ? mpItem.condition : '') ||
-          ''
-        const bonus = existing ? bonusForSkill(monster, existing) : statModifier(monster.stats?.[def.stat] ?? 10)
-        const isAdv = Boolean(existing?.advantage || mpItem?.advantage)
-        const isDisadv = Boolean(existing?.disadvantage || mpItem?.disadvantage)
-
-        let passiveVal = 10 + bonus
-        if (def.key === 'PERCEPTION' && monster.passivePerception?.override && monster.passivePerception.overrideValue != null) {
-          passiveVal = monster.passivePerception.overrideValue
-        } else if (existing?.override && existing.overrideValue != null) {
-          passiveVal = 10 + existing.overrideValue
-        } else {
-          if (isAdv) passiveVal += 5
-          if (isDisadv) passiveVal -= 5
-        }
-
-        // Compare to baseline
-        const isBaseline = !cond && passiveVal === (basePassive + (baseHasAdv ? 5 : 0) - (baseHasDisadv ? 5 : 0)) && bonus === baseStatMod && (isAdv === baseHasAdv) && (isDisadv === baseHasDisadv)
-        if (!isBaseline) {
-          disclosedSkillKeys.add(def.key)
-          differingList.push({
-            label: def.label,
-            passive: passiveVal,
-            bonus,
-            adv: isAdv,
-            disadv: isDisadv,
-            cond,
+    // Tools: same entry grammar as skills ("13, +3 Calligrapher's Supplies")
+    if (Array.isArray(monster.tools) && monster.tools.length > 0) {
+      for (const actionType of ['Action', 'Bonus Action'] as SkillActionType[]) {
+        const entries = monster.tools
+          .filter((tool) => (tool.bonusAction ? 'Bonus Action' : 'Action') === actionType)
+          .map((tool) => {
+            const bonus = tool.override
+              ? tool.overrideValue
+              : statModifier(monster.stats[tool.stat] ?? 10) +
+                (tool.proficient ? monster.proficiency : 0) +
+                (tool.expertise ? monster.proficiency : 0)
+            const mode = effectiveAdvantage(tool.advantage, tool.disadvantage)
+            const entry: SkillCheckEntry = {
+              key: tool.id,
+              label: tool.name,
+              stat: tool.stat,
+              passive: passiveScore(bonus, tool.advantage, tool.disadvantage),
+              bonus,
+              advantage: mode === 'advantage',
+              disadvantage: mode === 'disadvantage',
+              condition: tool.condition?.trim() ?? '',
+            }
+            return formatCheckEntry(entry, [tool.name])
+          })
+        if (entries.length > 0) {
+          const html = entries.join('; ')
+          groups.push({
+            name: `Tools (${actionType})`,
+            scopeLabel: 'Tools',
+            subTypeLabel: actionType,
+            skills: html,
+            badges: [html],
+            tip: 'Tool checks: passive score, then bonus.',
           })
         }
-      }
-
-      const baseArrow = baseHasAdv
-        ? ' <span class="dnd-adv-arrow text-positive">▲▲</span>'
-        : baseHasDisadv
-        ? ' <span class="dnd-disadv-arrow text-negative">▼▼</span>'
-        : ''
-
-      const basePassiveCalculated = basePassive + (baseHasAdv ? 5 : 0) - (baseHasDisadv ? 5 : 0)
-      let rowHtml = `<strong class="pill-number">${basePassiveCalculated}/${baseStatModStr}</strong>${baseArrow}`
-
-      if (differingList.length > 0) {
-        // Group by passive, bonus, adv, disadv, cond
-        const diffGroupsMap = new Map<string, { passive: number; bonus: number; adv: boolean; disadv: boolean; cond: string; labels: string[] }>()
-        for (const item of differingList) {
-          const key = `${item.passive}_${item.bonus}_${item.adv}_${item.disadv}_${item.cond}`
-          if (!diffGroupsMap.has(key)) {
-            diffGroupsMap.set(key, { passive: item.passive, bonus: item.bonus, adv: item.adv, disadv: item.disadv, cond: item.cond, labels: [] })
-          }
-          diffGroupsMap.get(key)!.labels.push(item.label)
-        }
-
-        const diffSnippets: string[] = []
-        for (const grp of diffGroupsMap.values()) {
-          const condStr = grp.cond ? ` (${grp.cond})` : ''
-          const labelsStr = grp.labels.join(' and ')
-          if (grp.adv) {
-            diffSnippets.push(
-              `<span class="dnd-adv-highlight text-positive"><strong class="pill-number text-positive">${grp.passive}, ${renderBonus(grp.bonus)}</strong> ${labelsStr}${condStr} <span class="dnd-adv-arrow">▲▲</span></span>`
-            )
-          } else if (grp.disadv) {
-            diffSnippets.push(
-              `<span class="dnd-disadv-highlight text-negative"><strong class="pill-number text-negative">${grp.passive}, ${renderBonus(grp.bonus)}</strong> ${labelsStr}${condStr} <span class="dnd-disadv-arrow">▼▼</span></span>`
-            )
-          } else {
-            diffSnippets.push(
-              `<span class="dnd-entry-item"><strong class="pill-number">${grp.passive}, ${renderBonus(grp.bonus)}</strong> ${labelsStr}${condStr}</span>`
-            )
-          }
-        }
-
-        rowHtml += `, (${diffSnippets.join('; ')})`
-      }
-
-      return {
-        name,
-        scopeLabel,
-        subTypeLabel: actionType,
-        skills: rowHtml,
-        badges: [rowHtml],
-      }
-    }
-
-    // 1. Search group (Perception, Survival) - Investigation officially listed under Study
-    const searchSkills = [
-      { label: 'Perception', key: 'PERCEPTION', stat: 'WIS' as DndStat, condKey: 'perception' },
-      { label: 'Survival', key: 'SURVIVAL', stat: 'WIS' as DndStat, condKey: 'survival' }
-    ]
-    const isSearchBonus = p?.bonusActionSearch || monster.passives?.searchActionType === 'Bonus Action'
-    const searchRow = buildCompoundedSkillsRow(
-      `Search${isSearchBonus ? ' (Bonus Action)' : ''}`,
-      'Search',
-      isSearchBonus ? 'Bonus Action' : 'Action',
-      'WIS',
-      searchSkills
-    )
-    if (searchRow) groups.push(searchRow)
-
-    // 2. Study group (Arcana, History, Nature, Religion, Investigation, Medicine)
-    const studySkills = [
-      { label: 'Arcana', key: 'ARCANA', stat: 'INT' as DndStat, condKey: 'arcana' },
-      { label: 'History', key: 'HISTORY', stat: 'INT' as DndStat, condKey: 'history' },
-      { label: 'Nature', key: 'NATURE', stat: 'INT' as DndStat, condKey: 'nature' },
-      { label: 'Religion', key: 'RELIGION', stat: 'INT' as DndStat, condKey: 'religion' },
-      { label: 'Investigation', key: 'INVESTIGATION', stat: 'INT' as DndStat, condKey: 'investigation' },
-      { label: 'Medicine', key: 'MEDICINE', stat: 'WIS' as DndStat, condKey: 'medicine' }
-    ]
-    const isStudyBonus = p?.bonusActionStudy || monster.passives?.studyActionType === 'Bonus Action'
-    const studyRow = buildCompoundedSkillsRow(
-      `Study${isStudyBonus ? ' (Bonus Action)' : ''}`,
-      'Study',
-      isStudyBonus ? 'Bonus Action' : 'Action',
-      'INT',
-      studySkills
-    )
-    if (studyRow) groups.push(studyRow)
-
-    // 3. Influence group (Insight, Persuasion, Deception, Intimidation, Animal Handling)
-    const influenceSkills = [
-      { label: 'Insight', key: 'INSIGHT', stat: 'WIS' as DndStat, condKey: 'insight' },
-      { label: 'Persuasion', key: 'PERSUASION', stat: 'CHA' as DndStat, condKey: 'persuasion' },
-      { label: 'Deception', key: 'DECEPTION', stat: 'CHA' as DndStat, condKey: 'deception' },
-      { label: 'Intimidation', key: 'INTIMIDATION', stat: 'CHA' as DndStat, condKey: 'intimidation' },
-      { label: 'Animal Handling', key: 'ANIMAL_HANDLING', stat: 'WIS' as DndStat, condKey: 'animalhandling' }
-    ]
-    const isInfluenceBonus = p?.bonusActionInfluence || monster.passives?.influenceActionType === 'Bonus Action'
-    const influenceRow = buildCompoundedSkillsRow(
-      `Influence${isInfluenceBonus ? ' (Bonus Action)' : ''}`,
-      'Influence',
-      isInfluenceBonus ? 'Bonus Action' : 'Action',
-      'CHA',
-      influenceSkills
-    )
-    if (influenceRow) groups.push(influenceRow)
-
-    // 4. Hide group (Stealth, Athletics, Acrobatics, Sleight of Hand)
-    const hideSkills = [
-      { label: 'Stealth', key: 'STEALTH', stat: 'DEX' as DndStat, condKey: 'stealth' },
-      { label: 'Athletics', key: 'ATHLETICS', stat: 'STR' as DndStat, condKey: 'athletics' },
-      { label: 'Acrobatics', key: 'ACROBATICS', stat: 'DEX' as DndStat, condKey: 'acrobatics' },
-      { label: 'Sleight of Hand', key: 'SLEIGHT_OF_HAND', stat: 'DEX' as DndStat, condKey: 'sleightofhand' }
-    ]
-    const isHideBonus = p?.bonusActionHide || monster.passives?.hideActionType === 'Bonus Action'
-    const hideRow = buildCompoundedSkillsRow(
-      `Hide${isHideBonus ? ' (Bonus Action)' : ''}`,
-      'Hide',
-      isHideBonus ? 'Bonus Action' : 'Action',
-      'DEX',
-      hideSkills
-    )
-    if (hideRow) groups.push(hideRow)
-
-    // 5. Consolidated Skills rows (Action vs Bonus Action) for remaining skills (Animal Handling, Performance, Sleight of Hand, Medicine, etc.)
-    const actionSkills: string[] = []
-    const bonusActionSkills: string[] = []
-
-    const pushRemainingSkill = (label: string, key: string, defaultStat: DndStat, condKey: string, isBonusDefault = false) => {
-      if (handledSkillKeys.has(key)) return
-      const sk = findSkill(key)
-      const isEnabledInPassives =
-        (key === 'ANIMAL_HANDLING' && p?.influence?.animalHandling) ||
-        (key === 'SLEIGHT_OF_HAND' && p?.hide?.sleightOfHand)
-      if (!sk && !isEnabledInPassives) return
-      handledSkillKeys.add(key)
-      const pill = formatConsolidatedSkillPill(label, key, defaultStat, condKey)
-      const useBonus = sk?.bonusAction != null ? sk.bonusAction : isBonusDefault
-      if (useBonus) {
-        bonusActionSkills.push(pill)
-      } else {
-        actionSkills.push(pill)
-      }
-    }
-
-    pushRemainingSkill('Animal Handling', 'ANIMAL_HANDLING', 'WIS', 'animalhandling', false)
-    pushRemainingSkill('Performance', 'PERFORMANCE', 'CHA', 'performance', false)
-    pushRemainingSkill('Medicine', 'MEDICINE', 'WIS', 'medicine', false)
-    pushRemainingSkill('Sleight of Hand', 'SLEIGHT_OF_HAND', 'DEX', 'sleightofhand', Boolean(p?.bonusActionHide))
-
-    const trainedSkillKeys = new Set<string>()
-    if (Array.isArray(monster.skills)) {
-      for (const sk of monster.skills) {
-        const k = sk.key?.toUpperCase()
-        if (!k || k === 'INITIATIVE' || trainedSkillKeys.has(k) || disclosedSkillKeys.has(k) || handledSkillKeys.has(k)) continue
-        trainedSkillKeys.add(k)
-        const label = t(`skill.${sk.key}`)
-        const defaultStat = (sk.skill?.stat as DndStat) || 'INT'
-        const pill = formatConsolidatedSkillPill(label, k, defaultStat, k.toLowerCase())
-        if (sk.bonusAction) {
-          bonusActionSkills.push(pill)
-        } else {
-          actionSkills.push(pill)
-        }
-      }
-    }
-
-    if (actionSkills.length > 0) {
-      groups.push({
-        name: 'Skills (Action)',
-        scopeLabel: 'Skills',
-        subTypeLabel: 'Action',
-        skills: actionSkills.join(' '),
-        badges: actionSkills,
-      })
-    }
-    if (bonusActionSkills.length > 0) {
-      groups.push({
-        name: 'Skills (Bonus Action)',
-        scopeLabel: 'Skills',
-        subTypeLabel: 'Bonus Action',
-        skills: bonusActionSkills.join(' '),
-        badges: bonusActionSkills,
-      })
-    }
-
-    // 6. Consolidated Tools rows (Action vs Bonus Action)
-    if (Array.isArray(monster.tools) && monster.tools.length > 0) {
-      const actionTools: string[] = []
-      const bonusActionTools: string[] = []
-      for (const tool of monster.tools) {
-        const statMod = statModifier(monster.stats[tool.stat] ?? 10)
-        const bonus = tool.override
-          ? tool.overrideValue
-          : statMod + (tool.proficient ? monster.proficiency : 0) + (tool.expertise ? monster.proficiency : 0)
-        const bonusStr = renderBonus(bonus)
-        let passiveVal = 10 + bonus
-        if (tool.advantage) passiveVal += 5
-        if (tool.disadvantage) passiveVal -= 5
-        const pairStr = `(${passiveVal}/${bonusStr})`
-        const cond = tool.condition?.trim()
-        const condBadge = cond ? ` <span class="dnd-badge-cond" title="${cond}">(${cond})</span>` : ''
-        let pillHtml = ''
-        if (tool.advantage) {
-          pillHtml = `<span class="dnd-entry-pill dnd-item-adv"><span class="dnd-entry-label">${tool.name}</span> <span class="dnd-adv-pill dnd-bonus-badge adv" title="Advantage"><strong class="pill-number pill-bold">${pairStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>${condBadge}</span>`
-        } else if (tool.disadvantage) {
-          pillHtml = `<span class="dnd-entry-pill dnd-item-disadv"><span class="dnd-entry-label">${tool.name}</span> <span class="dnd-disadv-pill dnd-bonus-badge disadv" title="Disadvantage"><strong class="pill-number pill-bold">${pairStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>${condBadge}</span>`
-        } else {
-          pillHtml = `<span class="dnd-entry-pill"><span class="dnd-entry-label">${tool.name}</span> <strong class="pill-number">${pairStr}</strong>${condBadge}</span>`
-        }
-        if (tool.bonusAction) {
-          bonusActionTools.push(pillHtml)
-        } else {
-          actionTools.push(pillHtml)
-        }
-      }
-      if (actionTools.length > 0) {
-        groups.push({
-          name: 'Tools (Action)',
-          scopeLabel: 'Tools',
-          subTypeLabel: 'Action',
-          skills: actionTools.join(' '),
-          badges: actionTools,
-        })
-      }
-      if (bonusActionTools.length > 0) {
-        groups.push({
-          name: 'Tools (Bonus Action)',
-          scopeLabel: 'Tools',
-          subTypeLabel: 'Bonus Action',
-          skills: bonusActionTools.join(' '),
-          badges: bonusActionTools,
-        })
       }
     }
 
     return groups
   })
 
+  // plain-text form for the Markdown / Homebrewery exports
   const actionPassives = computed(() => {
     return actionPassivesGroups.value
-      .map((g) => `${g.name}: ${g.skills}`)
+      .map((g) => `${g.name}: ${htmlToText(g.skills)}`)
       .join('; ')
   })
 

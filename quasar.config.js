@@ -99,7 +99,8 @@ module.exports = configure(function (ctx) {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
       // https: true
-      open: true, // opens browser window automatically
+      // opens browser window automatically; set DNDSHEET_NO_OPEN=1 to skip it
+      open: !process.env.DNDSHEET_NO_OPEN,
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework

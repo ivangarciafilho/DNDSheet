@@ -1,0 +1,102 @@
+/*
+ * Stat block grammar: one set of rules shared by every rendered value.
+ * Loaded last from app.scss so these rules win over older one-off styles.
+ *
+ *  .dnd-num            a number (bold, tabular)
+ *  .dnd-adv/.dnd-disadv a value rolled with Advantage / Disadvantage:
+ *                       the whole label takes the ink color, only numbers stay bold
+ *  .dnd-adv-glyph      the ▲▲ / ▼▼ marker inside it
+ *  .dnd-check          one check entry ("18, +3 Religion")
+ */
+
+.statblock {
+  --dnd-adv-ink: #1d6b29;
+  --dnd-disadv-ink: #a8211a;
+}
+
+.statblock.theme-lovecraft_golden,
+.statblock.theme-lovecraft_silver,
+.statblock.theme-lovecraft_toxic,
+.statblock.theme-lovecraft_spooky,
+.statblock.theme-lovecraft_galactic,
+.statblock.theme-lovecraft_fathomless,
+.statblock.theme-dwarves_forge,
+.statblock.theme-dwarves_aetherpunk,
+.statblock.theme-art_deco {
+  --dnd-adv-ink: #7ee08a;
+  --dnd-disadv-ink: #ff8a80;
+}
+
+.statblock.theme-printer {
+  --dnd-adv-ink: #000000;
+  --dnd-disadv-ink: #000000;
+}
+
+.statblock {
+  .dnd-num {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
+  .dnd-check {
+    white-space: normal;
+  }
+
+  .dnd-adv,
+  .dnd-disadv {
+    display: inline;
+    font-weight: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+
+    *:not(.dnd-num) {
+      color: inherit !important;
+    }
+
+    .dnd-num {
+      color: inherit !important;
+      font-weight: 700;
+    }
+  }
+
+  .dnd-adv {
+    color: var(--dnd-adv-ink) !important;
+  }
+
+  .dnd-disadv {
+    color: var(--dnd-disadv-ink) !important;
+  }
+
+  .dnd-adv-glyph {
+    display: inline-block;
+    font-size: 0.7em;
+    font-weight: 900;
+    letter-spacing: -1px;
+    line-height: 1;
+    vertical-align: 0.12em;
+    margin-left: 1px;
+  }
+
+  .dnd-badge-cond {
+    font-style: italic;
+    font-size: 0.92em;
+    margin-left: 2px;
+  }
+}
+
+/* Rich tooltips (stat block + editor): readable width, consistent color code */
+.q-tooltip.dnd-tip {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  background: #1f1b18;
+  color: #f3ead7;
+  border: 1px solid #7a1f12;
+  padding: 6px 10px;
+
+  b,
+  strong {
+    color: #ffd54f;
+  }
+}
