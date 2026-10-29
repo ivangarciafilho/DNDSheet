@@ -1,245 +1,723 @@
-# DNDSheet Development Handoffs
+# DNDSheet — Development Handoffs
 
-**Role:** Preparation and closure guide for the incremental loops in [Implementation Backlog](DNDSheet-Implementation-Backlog.md), grounded in the authoritative [Product and Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md). A loop must not begin without its prerequisites and must not hand off without evidence and a written readiness packet.
+> **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
 
-**Current handoff state (2026-10-29):** Source is `statblock-overhaul` at `be0cf3f`; preserve modified `src/components/rendering/useProcessTokens.ts` and untracked `src/components/rendering/plate.ts`. TASK-001 has captured status; Loop 00 remains open. No app/build/tests were run in this documentation turn. Do not treat screenshots as proof of one runtime or one record.
+| | |
+|---|---|
+| **Version** | v2.0 · 2026-10-29 · supersedes the v1 handoffs (git `b83ee56`) |
+| **State at hand-over** | Code HEAD `c543615` (+ docs commit) · tree clean · 103 / 103 tests · dev server `http://localhost:9100` |
+| **Shipped** | A0 · A1 · A2 · A3 (closing packets in §6.1) |
+| **Next loop** | **A4 · Spellcasting plate** — card §6.2, status 🟢 READY |
 
-## Handoff protocol for every loop
+---
 
-### Preparation gate — before code changes
+## 0. How to use this file
 
-1. Read the loop’s referenced sections in the plan and its exact tasks in the backlog.
-2. Capture branch, commit, dirty paths and source state. Identify overlap with existing user work before touching any file.
-3. Load the mandatory skills named for the loop. Read only directly relevant supporting references; do not load a large plugin catalog as a substitute for understanding the source.
-4. Re-read source files and tests named by the task at the current commit. The previous source inventory is a map, not a guarantee that code has not changed.
-5. Confirm acceptance evidence, non-goals, rollback point, and unresolved decisions. If an input changes an invariant or shared model, update the plan before continuing.
-6. Keep one bounded vertical outcome. No task may depend on future code to become functional; incomplete work stays behind a disabled/unexposed control.
+📍 *Handoffs › 0 Usage* — **Read the card, run the start ritual, work in small green steps, run the close ritual, write the packet.**
 
-### Closure gate — before starting the next loop
-
-Record: loop/task IDs; start/end revision; changed paths; preserved pre-existing diff; user outcome delivered; tests/build/browser scenarios actually run; results and environment; visual/data fixtures; migration/export compatibility; known limitations; rollback point; requirement/decision changes; backlog status; next-loop prerequisites and skills. `Done` requires evidence. If no code fix is justified, close the loop with reproducible evidence and an updated plan/backlog rationale rather than forcing a patch.
-
-## Loop 00 — Evidence baseline and screenshot reproduction
-
-**Backlog:** TASK-001–006. **Plan:** §§2, 24, 27, 29.1–29.4, 30.1–30.2, 30.8–30.9, 31.  
-**Objective:** Establish exact runtime/data facts before diagnosing the screenshots. Protect renderer plate work.
-
-**Load skills:** `superpowers:systematic-debugging`, `engineering:architecture`, `engineering:testing-strategy`, `design:design-critique`, `spec-kit:task-planning`. Use `anthropic-skills:ttrpg-gm-craft` only when checking rules semantics or rules-source claims, not to infer mechanics from visual formatting.
-
-**Preparation/research:** Read `README.md`, `STACK_STATE.md`, `package.json`, route/shell, current diff, `skill-action-groups.ts`, `ActionsEditor.vue`, `MonsterTextEditor.vue`, `ClassCastingEditor.vue`, `useTextRenderer.ts`, `useProcessTokens.ts`, `WebRenderer.vue`, and relevant current tests. Capture browser/version/viewport/theme/renderer mode and source document IDs/revisions. No data fixture may be invented and called the screenshot source.
-
-**Execution:** Reproduce skill display; recreate Soul Barrage and Veil of Radiance as distinct entries; compare editor model → normalized text → renderer → export. For every observation, classify source-data, domain, UI, renderer, adapter, stale-build, or unknown. Keep the two renderer WIP files unchanged pending review.
-
-**Exit evidence:** Baseline packet; exact repro/no-repro result; active diff record; build/test outcomes; corrected impact estimate; open questions. Close plan assumptions before Loop 01. If runtime cannot be launched, document the environment blocker and continue only independent static inventory; do not claim screenshot root cause.
-
-**Next handoff:** Loop 01 receives a stable evidence snapshot, paths, IDs, and unresolved version/identity decisions.
-
-## Loop 01 — Identity and revision contract (WP-01)
-
-**Backlog:** TASK-007–011. **Plan:** §§6, 20, 24.3, 25, 26.2, 29.5, 29.7–29.8.  
-**Objective:** Add document identity and monotonic content revision around the current Monster workflow without a store/component flag day.
-
-**Load skills:** `archetypes:architecture-paradigm-modular-monolith`, `archetypes:architecture-paradigm-functional-core`, `engineering:architecture`, `engineering:testing-strategy`, `superpowers:writing-plans`, `superpowers:test-driven-development`.
-
-**Preparation/research:** Confirm every current Monster type and import path, history subscription semantics, schema version 11, Pinia persistence behavior and direct writer callsites. Close document envelope vs legacy payload version; decide local vs per-document presentation; do not conflate ID, name, hash and revision.
-
-**Execution:** Define `MonsterDocumentId`, envelope, `contentRevision` and session adapter. Keep core pure use cases Monster-level until a real need requires a signature change. Adapt one revision boundary and history; reconcile duplicate model exports narrowly. Add legacy identity behavior only with fixture evidence.
-
-**Exit evidence:** Same-name IDs, migration preservation, monotonic edit/undo/redo revisions, stale operation rejection, no duplicate history entries, current editor still operates. No repository migration in this loop.
-
-**Next handoff:** Loop 02 consumes the ID/revision contract and can attach linter findings to stable fields.
-
-## Loop 02 — Checks and safe repair (WP-02)
-
-**Backlog:** TASK-012–016. **Plan:** F-05, §§5, 18, 20, 22, 25, 29.4, 30.8.  
-**Objective:** Turn existing lint into truthful, navigable and reversible creator feedback.
-
-**Load skills:** `engineering:testing-strategy`, `engineering:architecture`, `superpowers:test-driven-development`, `design:ux-copy`, `design:accessibility-review`. Load TTRPG rules review only for a rule-sensitive diagnostic.
-
-**Preparation/research:** Read linter issue/result types, `autoFixMonster`, `MonsterLintDialog`, `CrFooter`, history behavior and target panels. Reproduce current fixable/action mismatch. Inventory every current issue code; do not infer a target from English issue prose.
-
-**Execution:** Define stable issue IDs and entity/field target; add a registry to scroll/focus real controls; expose no-target reason. Map only safe operations to preview/apply. Bind result and operation to base revision; unsupported repairs remain informational. Recheck after apply and define if export blocks or warns.
-
-**Exit evidence:** Each actionable issue has a real target; cancel is inert; safe fix is one undo step; stale result blocks; recheck reflects current revision; keyboard and empty/error states verified.
-
-**Next handoff:** Loop 03 reuses semantic revision/history operations, not linter-specific UI logic.
-
-## Loop 03 — Explainable CR tune (WP-03)
-
-**Backlog:** TASK-017–020. **Plan:** F-06, §§5, 18, 20, 22, 25, 29.4.  
-**Objective:** Let a creator inspect and selectively apply current CR planner recommendations without promising balance.
-
-**Load skills:** `archetypes:architecture-paradigm-functional-core`, `engineering:testing-strategy`, `superpowers:test-driven-development`, `design:ux-copy`, `anthropic-skills:ttrpg-gm-craft` for mechanic-sensitive review.
-
-**Preparation/research:** Trace `AutoTuneCr` output to every existing field write. Preserve current calculator and tests. Confirm whether attack-bonus recommendations are actually applied; record user overrides and assumptions.
-
-**Execution:** Keep proposal/selection transient; compare source and preview; list exactly changed fields; guard with `baseRevision`; apply via one command/history operation. No repository dependency. Cancel writes nothing.
-
-**Exit evidence:** Formula results unchanged unless separately authorized; output recommendation mapping complete; stale apply rejected; apply/undo/redo verified; limits and estimate copy clear.
-
-**Next handoff:** Loop 04 gets revision-bound preview and the policy for semantic export snapshots.
-
-## Loop 04 — Export parity and bounded semantic adapter (WP-06/F-04)
-
-**Backlog:** TASK-021–025. **Plan:** F-04/F-08, §§6, 18, 21, 24, 29.1, 29.6, 30.3, 30.5, 30.8, 31.  
-**Objective:** Prove that one authored ability keeps one meaning across editor, preview, print and supported export targets.
-
-**Load skills:** `engineering:testing-strategy`, `engineering:architecture`, `design:design-handoff`, `superpowers:test-driven-development`, `anthropic-skills:ttrpg-gm-craft` for content grammar/source integrity. `design:accessibility-review` for output read order.
-
-**Preparation/research:** Inventory `DownloadButton`, `ExportStatblock`, Markdown/HTML/LaTeX/Foundry/Tarrasque/Improved Initiative adapters and which consume renderer HTML. Review current plate diff first. Confirm which screenshot examples are independently authored fixtures.
-
-**Execution:** Define capabilities and source revision on export result. Add semantic fixtures for each complex entry and target. Prototype a read-only adapter for one attack and one save/effect entry; preserve raw prose, IDs, role, unknown fields and order. Fix only the earliest failing layer.
-
-**Exit evidence:** Same revision/fixture agrees at editor/semantic/renderer/export boundaries; omission/transform report matches; sanitation verified; no rules data mutation; no unreviewed change to plate files.
-
-**Next handoff:** Loop 05 may now use stable document IDs for repository records; Loop 07 can reuse projection fixtures.
-
-## Loop 05 — Repository, durable save and recovery (WP-04)
-
-**Backlog:** TASK-026–031. **Plan:** F-07, §§20–21, 24–26, 29.5, 29.7, 29.9.  
-**Objective:** Integrate existing adapters with a single explicit writer and truthful save/recovery states.
-
-**Load skills:** `archetypes:architecture-paradigm-modular-monolith`, `engineering:architecture`, `engineering:testing-strategy`, `superpowers:test-driven-development`, `engineering:documentation`.
-
-**Preparation/research:** Inventory all current Pinia persistence, `dndsheet_monster_` keys, IndexedDB records, adapter fallback behavior and callers. Confirm browser support, version and multi-tab expectations. Do not assume IndexedDB is active because an adapter exists.
-
-**Execution:** Record backend/migration decision. Select backend at startup; operation errors must not switch writers. Add repository boundary and session save state. Migrate one source class at a time, validate/copy/compare, preserve source until verified. Make restore atomic and recovery usable without a successful save.
-
-**Exit evidence:** Supported browser write/reopen/error/migration scenarios, source-preserving rollback, no silent “Saved,” clear recovery route; repository API and limits documented.
-
-**Next handoff:** Loop 06 uses only repository summary/query operations and immutable IDs.
-
-## Loop 06 — Local creature library (WP-05)
-
-**Backlog:** TASK-032–035. **Plan:** F-02/F-07, §§19–21, 25–26, 29.2, 29.4.  
-**Objective:** Help creators resume, find and reuse authored creatures without confusing identity or risking drafts.
-
-**Load skills:** `design:design-system`, `design:accessibility-review`, `design:ux-copy`, `engineering:testing-strategy`, `engineering:architecture`.
-
-**Preparation/research:** Confirm whether current `AppDrawer` can support a library or a route is needed. Recheck repository operations, summary schema, dirty-draft guard and delete recovery policy.
-
-**Execution:** Implement search/filter/sort and summaries against repository queries; add open/create/duplicate/rename/archive/delete. Duplicate gets a new ID, rename retains ID. Provide empty/loading/error/large-list states and accessible controls.
-
-**Exit evidence:** Two same-name records, rename, duplicate, dirty switch, archive/delete recovery and reopen; keyboard/narrow UI; no document loaded by name-only identity.
-
-**Next handoff:** Loop 07 can preserve local custom spell catalogs separately from creature documents.
-
-## Loop 07 — Spellcasting accuracy, provenance and compact projection (WP-11; F-14)
-
-**Backlog:** TASK-036–041. **Plan:** F-14/F-12/F-13, §§2.2, 5, 6, 18, 29.4, 30.2, 30.6, 30.8, 31.  
-**Objective:** Make spell limits, subclass choices, recovery and rendered layout truthful; preserve manual/homebrew authoring.
-
-**Load skills:** `anthropic-skills:ttrpg-gm-craft`, `engineering:testing-strategy`, `archetypes:architecture-paradigm-functional-core`, `design:design-system`, `design:ux-copy`. Treat rules facts as source-backed only; audit dataset license/provenance.
-
-**Preparation/research:** Review `ClassCastingEditor`, `SpellcastingEditor`, `useSpellLevels`, `AutoSyncSpellcasting`, spell data, `useTextRenderer`, `WebRenderer`, and existing spell tests. Confirm primary/subclass filter behavior and what `preparedSpells` means. Verify current Long Rest option; do not recreate existing controls.
-
-**Execution:** Replace plausible error fallback with explicit unavailable state. Separate selected, allowed, granted, remaining and override values. Add subclass candidates only where source data verifies them; mark custom text. Build one compact semantic view model for editor/output; define duplicate policy and deterministic grouping.
-
-**Exit evidence:** Primary/multiclass/subclass/custom-source fixtures, calculation failure state, counts/cadence provenance, narrow/print presentation and semantic parity. No unsupported official-content completeness claim.
-
-**Next handoff:** Record compact output grammar and known data/overflow cases for reuse by Loop 08 where useful. Loop 09 depends on this loop only for a spell-reference field family.
-
-## Loop 08 — Workspace navigation, visual grammar and accessibility (WP-09; F-01/F-03/F-12/F-13)
-
-**Backlog:** TASK-042–048. **Plan:** F-01/F-03/F-12/F-13, §§4, 7–8, 18–19, 23, 29.2, 30.7–30.8, 31.  
-**Objective:** Resolve repeating density, clipping and hierarchy defects through shared interaction/visual rules; make primary actions findable and presentation choices understandable without local cosmetic patches.
-
-**Load skills:** `impeccable`, `design:design-system`, `design:design-handoff`, `design:accessibility-review`, `design:ux-copy`, `superpowers:verification-before-completion`.
-
-**Preparation/research:** Inspect current identity/tokens in Quasar variables, `MainLayout`, app styles, A4 controls and statblock grammar; examine desktop/narrow screenshots and exact content from Loop 00. Review renderer plate changes before styling related paths. Establish viewport, zoom, theme and long-content matrix.
-
-**Execution:** Define semantic tokens for panels/cells/labels/values/status/focus/advantage/disadvantage. Audit repeated patterns, implement wrapping/min-width/scroll behavior where needed, reorganize shell controls into primary and contextual groups, add navigation/focus targets and narrow editor/preview switch, then add Screen/Ink saver/Art plate presets over existing controls. Tooltips supplement visible labels; they do not blanket every element.
-
-**Exit evidence:** No clipping/overlap/unreachable primary content across declared matrix; primary actions findable and appearance controls contextual; preset changes preserve Monster semantics and include reset/fallback; keyboard/touch/200% zoom and screen-reader spot check; print/theme contrast; no color-only meaning; screenshots and before/after linked to revision.
-
-**Next handoff:** Loop 09 inherits token/API names, focus semantics and responsive constraints; expression autocomplete must conform to them.
-
-## Loop 09 — Typed references, completion and ability grammar (WP-12; F-04 evolution)
-
-**Backlog:** TASK-049–054. **Plan:** F-04, §§5–6, 18, 20, 25, 29.4–29.8, 30.3–30.5, 30.10, 31.  
-**Objective:** Make one measured authoring workflow dynamic and composable without forcing every number into a dropdown or all prose into a DSL.
-
-**Load skills:** `archetypes:architecture-paradigm-functional-core`, `engineering:architecture`, `engineering:testing-strategy`, `superpowers:test-driven-development`, `design:design-handoff`, `design:ux-copy`. Load TTRPG craft only where formula context changes a rules assertion.
-
-**Preparation/research:** Inventory numeric/text fields and types; study existing `formula.ts`, `DynamicReferenceSelect`, `MonsterTextEditor`, token processing and legacy action shapes. Confirm the semantic adapter from Loop 04, the spell catalog limits from Loop 07 if relevant, and Loop 08 focus/label/responsive contracts for completion UI. Select one high-value field family and one attack/save effect fixture. Record exact supported types/units/context.
-
-**Execution:** Specify small safe grammar and catalog; literal remains first-class. Add pure evaluator and dependency/cycle/missing-reference diagnostics. Add caret-aware completion with keyboard/accessibility. Normalize one ability subset read-only first; maintain prose as independent authored block. Do not persist new schema until adapter round-trip is proven and decision approved.
-
-**Exit evidence:** Valid/invalid/cyclic/deleted/stale expression cases; no eval; preview reflects current revision; ordinary text intact; import/export/reload/undo preserve legacy role/order/raw text/unknown fields.
-
-**Next handoff:** Future expansion can cover one adjacent field family only after metrics show faster authoring or fewer errors; update the plan with measured result before expansion.
-
-## Loop 10 — Rules provenance and style separation (WP-07)
-
-**Backlog:** TASK-055–056. **Plan:** F-09/F-12, §§6, 18, 20–21, 26, 30.6.  
-**Objective:** Distinguish what edition/source is known from what the UI merely looks like.
-
-**Load skills:** `anthropic-skills:ttrpg-gm-craft`, `engineering:architecture`, `engineering:testing-strategy`, `design:ux-copy`.
-
-**Preparation/research:** Audit imports and current style/ruleset selectors; establish source provenance allowed by datasets. Separate explicit user assertion, imported claim, inferred value and unknown.
-
-**Execution:** Add provenance only at declared document boundary; migrate legacy values to unknown; keep theme/style independent. Export labels only verified information and reports unsupported rules conversions.
-
-**Exit evidence:** Legacy unknown remains unknown; style switch leaves rules payload and calculation unchanged; import/export roundtrip and copy reviewed.
-
-**Next handoff:** Loop 11 uses stable source identities but must not require a ruleset migration unless encounter data needs it.
-
-## Loop 11 — Combatant identity and source snapshots (WP-08)
-
-**Backlog:** TASK-057–059. **Plan:** F-10, §§6, 18, 20, 25–26, 29.4.  
-**Objective:** Keep initiative turn selection stable and encounter mutations out of authored sheets.
-
-**Load skills:** `archetypes:architecture-paradigm-functional-core`, `engineering:testing-strategy`, `superpowers:test-driven-development`, `anthropic-skills:ttrpg-gm-craft` only if interpreting action economy/conditions.
-
-**Preparation/research:** Read `CombatTracker.ts`, `combat-store.ts`, `CombatTrackerDrawer`, encounter persistence and existing tests. Decide active-actor removal/tie behavior and legacy index migration before editing.
-
-**Execution:** Store active ID, migrate old index deterministically, snapshot Monster values when adding, define missing source behavior. Route damage/healing/conditions/turn commands to encounter state only.
-
-**Exit evidence:** Sort, ties, remove active/non-active, advance/back, reload, deleted source and edit-source scenarios pass; source document semantic hash remains unchanged by encounter play.
-
-**Next handoff:** Loop 12 closes the product truth boundary; no combat runtime code is needed for character documentation unless a link is added intentionally.
-
-## Loop 12 — Character scope and final verified documentation (WP-10)
-
-**Backlog:** TASK-060–062. **Plan:** F-11/F-13, §§1, 18, 19, 24–27, 31. TASK-062 closes only after its explicit dependency list is evidenced.  
-**Objective:** Make character support useful within explicit limits and ensure docs describe only tested released behavior.
-
-**Load skills:** `product-management:metrics-review`, `design:ux-copy`, `engineering:documentation`, `engineering:testing-strategy`, `anthropic-skills:ttrpg-gm-craft` for supported rule claims.
-
-**Preparation/research:** Review `CharacterActor`, character store/editor/sheet, current AC/speed sources, release evidence for every documented claim. Decide whether feature stays reference-only or has required inputs/derivations.
-
-**Execution:** Add sourced values or visible unknown/assumption states. Update README/STACK_STATE/feature matrix after code and UI evidence exists. Keep full character creation out of scope absent a separate product decision.
-
-**Exit evidence:** Missing-input and override cases; character capability matrix; TASK-062 dependencies completed or the release claims narrowed to completed packages; docs tied to the exact release revision; handoff set reconciled.
-
-**Next handoff:** Program closure, or create a new plan revision only when evidence/product direction changes. Do not keep looping cosmetic changes without measurable user value.
-
-## Skill and research loading rules
-
-The per-loop lists are the required core. Load an additional skill only when the work crosses its domain: `design:accessibility-review` for interaction/visual changes; `engineering:debug` for a reproduced fault; `engineering:code-review` and `superpowers:verification-before-completion` before closure; `anthropic-skills:ttrpg-gm-craft` for rules/content semantics; `spec-kit:task-planning` when scope/dependencies change. Do not load every named plugin or assume plugin presence means its method applies. Research claims about published rules, licensing or source catalogs from authoritative project files and documented sources; distinguish found evidence from inference.
-
-## Loop closure record template
-
-Copy once per completed loop into the project’s approved engineering log/PR description (not a new active roadmap file):
+**Card anatomy (every loop, same order):**
 
 ```text
-Loop and task IDs:
-Objective/user value:
-Start revision / end revision:
-Dirty paths preserved before work:
-Changed paths:
-Plan requirements/decision references:
-Build/test/browser/visual evidence actually run:
-Fixture IDs and outcomes:
-Data migration/import/export compatibility:
-Known limitations and deferred findings:
-Rollback point and recovery procedure:
-Backlog statuses updated:
-Specification and ADR updates:
-Next loop readiness (yes/no) and remaining prerequisites:
-Next-loop task IDs and required skills/research:
+Goal · Release/feature · Readiness light
+Entry criteria          what must be true before touching code
+Read in the spec        exact sections (§)
+Backlog tasks           ids
+Open first              files with line ranges
+Skills                  exact skill names to load
+Research                questions to settle, with sources
+Traps & blindspots      known pitfalls, BS-ids to verify
+Plan                    numbered steps (the micro-loops)
+Verify                  commands, probes, acceptance → proof
+Exit                    the Done-when of the backlog, restated
+Closing packet          filled at the end (template §1.5)
+Next-loop prep          what to stage for the successor
 ```
 
-## Stop and escalate conditions
+**Readiness lights:** 🟢 ready (all entry criteria met) · 🟡 ready with open questions (defaults recorded) · 🔴 blocked (named blocker).
 
-Stop only the affected task if a working-tree change is unowned, a data migration lacks rollback, an acceptance criterion conflicts with a source invariant, a rules claim lacks authoritative evidence, or a renderer path cannot be determined. Record evidence, preserve unrelated progress, update the backlog with a named blocker, and state exactly what decision/evidence resolves it. Never “solve” uncertainty by silently narrowing user data or replacing authored prose.
+---
+
+## 1. Loop protocol
+
+📍 *Handoffs › 1 Protocol* — **The same ritual every time, so nothing depends on memory.**
+
+### 1.1 Start ritual
+
+```powershell
+Set-Location F:\AI_Resources\DNDSheet
+git status --short                      # must be empty (or only the docs mirror you are about to commit)
+git branch --show-current               # statblock-overhaul
+git log --oneline -3                    # note the starting commit in the packet
+npm test                                # must be green before any change
+Get-NetTCPConnection -LocalPort 9100 -State Listen   # dev server up? else start it (2.2)
+```
+
+Then: read the card · open the spec sections · load the skills · run the card's pre-flight task (`Ax.0`) · turn every surprise into a task or a blindspot **before** writing feature code (§1.6).
+
+### 1.2 Inside the loop — micro-cycles
+
+1. **Smallest testable step first** — a catalog, a pure function, a builder; write its test (node:test) before or with it.
+2. **Green, then visible** — run `npm test`; then probe the running app in the built-in browser (§2.3).
+3. **Commit at green when a slice is meaningful** — short lowercase message (§2.5); never leave the tree red at a pause.
+4. **One outcome per loop** — anything else goes to the backlog as a new task in the right loop (*added Ax*).
+5. **Measure, don't guess** — LOC deltas from `git diff --shortstat`, counts from scripts, colours from computed styles.
+
+### 1.3 Close ritual
+
+```powershell
+npm test                                               # green
+npx eslint --ext .js,.ts,.vue <touched files>          # 0 errors
+git diff --shortstat <start>..HEAD                      # for the packet
+```
+
+Browser: reload with an error marker (§2.3 probe P1), confirm no new console errors, run the loop's probes and theme probe if it touched the renderer. Then the documentation ritual (§1.4) and the packet (§1.5).
+
+### 1.4 Documentation ritual (order matters)
+
+1. **Spec** — status columns (§9 dossier header, §11.1 loop table), defect/blindspot registers (§2.3, §13.2), decisions (§13.3) if any were made.
+2. **Backlog** — tick tasks, header of the loop (`✅ <commit>`), dashboard counts (§1), living timeline row (§2), Now/Next/Later (§3), new tasks appended to future loops.
+3. **Handoffs** — paste the closing packet into the loop's card, flip the next card's readiness light, update the top table.
+4. **Mirror and commit** — the canonical files live in the outputs folder; the repository keeps a versioned mirror:
+
+```powershell
+$out = 'C:\Users\Administrador\Documents\Codex\2026-10-29\ttrpg-gm-craft-c-users-administrador\outputs'
+Copy-Item "$out\DNDSheet-*.md" F:\AI_Resources\DNDSheet\docs\roadmap\ -Force
+Set-Location F:\AI_Resources\DNDSheet
+git add docs/roadmap
+git commit -m "roadmap: close <loop id> (<one-line outcome>)"
+```
+
+### 1.5 Closing packet template
+
+```text
+Loop / tasks ............ A? · A?.0–A?.n (ticked n / total)
+Outcome for the user .... one sentence
+Commits ................. <start> → <end> (code) · <docs commit>
+Diff .................... files · +ins / −del (git diff --shortstat)
+Tests ................... npm test n / n · new tests: …
+Lint .................... eslint touched files: 0 errors
+Browser proofs .......... probes run + key outputs (copy the JSON lines)
+Themes .................. probed themes and result (render loops)
+Requirements proven ..... ids
+Defects closed .......... DEF-…
+Blindspots resolved ..... BS-… (answer) · new BS-… (question)
+Decisions ............... D-… added/changed
+Deviations from plan .... what changed and why
+Known limits ............ what is still not done or not proven
+Rollback point .......... <start commit>
+Next loop readiness ..... 🟢/🟡/🔴 + what to stage
+```
+
+### 1.6 Blindspot expansion — before the first line of feature code
+
+For each card: (1) open every file listed in **Open first** and confirm the line ranges still match; (2) list every assumption the plan makes about that code; (3) test each assumption with a read, a probe or a tiny script; (4) every false assumption becomes a backlog task (*added Ax*) or a blindspot row; (5) only then start the plan. This is task `Ax.0` in every loop.
+
+---
+
+## 2. Environment and tooling
+
+📍 *Handoffs › 2 Environment* — **Everything a fresh session needs to be productive in five minutes.**
+
+### 2.1 Paths and identities
+
+| What | Value |
+|---|---|
+| Repository | `F:\AI_Resources\DNDSheet` (branch `statblock-overhaul`) |
+| Canonical documents | `C:\Users\Administrador\Documents\Codex\2026-10-29\ttrpg-gm-craft-c-users-administrador\outputs\` |
+| Document mirror (versioned) | `F:\AI_Resources\DNDSheet\docs\roadmap\` |
+| v1 documents backup | `outputs\_previous-v1\*.v1-0819.md` and git `b83ee56` |
+| QA helpers (temporary) | `C:\Users\Administrador\AppData\Local\Temp\dnd-*.mjs` and `dnd-*.js` → moved to `tools/qa/` in A17 |
+| Dev server | `http://localhost:9100` (Vite via Quasar) |
+| Built-in browser tab | `seed` (the app); doc check page `/__doccheck.html` (git-excluded) |
+| Persisted state keys | `app.monster`, `app.editor`, `app.spells`, `app.templates`, `app.combat`, `app.character` |
+| Toolchain | Node 22.23 · Quasar ^2.16 · @quasar/app-vite ^1.9 · Pinia ^2 · TypeScript ^4.5 |
+
+### 2.2 Commands
+
+```powershell
+# dev server (no auto-open)
+$env:DNDSHEET_NO_OPEN = '1'; npx quasar dev --port 9100
+# tests (node:test, strip-types; core imports use .ts extensions and `import type`)
+npm test
+node --experimental-strip-types --test test/core/Plate.test.ts      # one suite
+# lint touched files
+npx eslint --ext .js,.ts,.vue src/components/rendering/plate.ts
+# e2e (CDP fuzz; headless Chrome on port 9223)
+npm run test:e2e
+# production build
+npx quasar build
+```
+
+### 2.3 Built-in browser probes (run with the JavaScript tool on tab `seed`)
+
+**P1 · reload with an error marker** — then read console errors; the marker must be the last error.
+
+```js
+console.error('MARK-' + Date.now()); setTimeout(() => location.reload(), 50); 'ok'
+```
+
+**P2 · load the Seraphic Herald fixture** — paste the content of `%TEMP%\dnd-fixture-seraph.js` (it patches the `monster` and `editor` Pinia stores through `#q-app.__vue_app__`).
+
+**P3 · plates and rows**
+
+```js
+({
+  plates: [...document.querySelectorAll('#render .sb-plate')].map(p => p.innerText.replace(/\s+/g, ' ').slice(0, 160)),
+  rows: [...document.querySelectorAll('#render .dnd-cascade-panel, #render .sb-row')].map(r => r.innerText.replace(/\s+/g, ' ').slice(0, 100)),
+})
+```
+
+**P4 · theme probe** (computed colours across themes; restores the class afterwards)
+
+```js
+(() => { const sb = document.querySelector('#render .statblock'), p = document.querySelector('#render .sb-plate'), orig = sb.className, out = {};
+  for (const t of ['theme-wotc','theme-printer','theme-lovecraft_golden','theme-lovecraft_spooky','theme-art_nouveau']) {
+    sb.className = orig.replace(/theme-[a-z_]+/, t);
+    const h = getComputedStyle(p.querySelector('.sb-head')), c = getComputedStyle(p.querySelector('.sb-cell:not(.sb-head)'));
+    out[t] = { head: h.backgroundColor + ' / ' + h.color, cell: c.backgroundColor + ' / ' + c.color, frame: getComputedStyle(p).borderTopColor };
+  } sb.className = orig; return out })()
+```
+
+**P5 · quick overflow probe** (formal version arrives in A13)
+
+```js
+[...document.querySelectorAll('.q-page *')].filter(e => e.clientWidth > 0 && e.scrollWidth > e.clientWidth + 1 && getComputedStyle(e).overflowX === 'visible').slice(0, 20).map(e => e.className.toString().slice(0, 60))
+```
+
+**P6 · formula macros**
+
+```js
+const m = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'); m.name
+```
+
+*(Use P6 as the entry point to inspect store values; render checks go through the stat block DOM.)*
+
+### 2.4 QA helpers
+
+| Script | Usage |
+|---|---|
+| `dnd-shot.mjs` | `node dnd-shot.mjs --url <url> --out <png> [--w 1600] [--h 1200] [--setup <js>] [--selector <css>] [--eval <js>] [--wait 600]` — headless Chrome screenshot + probe |
+| `dnd-fixture-seraph.js` | Seraphic Herald fixture (CHA caster, advantage on Religion, Soul Barrage and Veil of Radiance) |
+| `dnd-splice.mjs` | `node dnd-splice.mjs <file> <startMarker> <endMarker> <replacementFile> [--include-end]` — replace a marked block |
+| `dnd-skills-editor.mjs` | One-off refactor script from A1 (reference only) |
+| `public/__doccheck.html` | Mermaid parse check of `docs/roadmap/*.md` (`?files=a.md,b.md`); git-excluded |
+
+### 2.5 Git conventions
+
+- One branch: `statblock-overhaul`; commit at green; never rewrite pushed history (nothing is pushed — work is local).
+- Messages: short lowercase phrase describing the user-visible change, matching the history (`formula engine for references, custom formulas and text macros`).
+- **No AI-attribution trailers** (no `Co-Authored-By`, no session links, no "Generated with") — owner rule, overrides tooling defaults.
+- Docs commits use the `roadmap:` prefix (`roadmap: close A4 (spellcasting plate)`).
+
+### 2.6 Environment traps (learned the hard way)
+
+| Trap | Effect | Do instead |
+|---|---|---|
+| `$env:TEMP` resolves to `F:\temp` in some shells | scripts written to `C:\…\AppData\Local\Temp` not found | use absolute paths |
+| .NET `[IO.File]` with relative paths | resolves against the process cwd, not `Set-Location` | absolute paths |
+| Reading screenshots as files (`read_media_file`) | dumps ~94 k tokens of base64 | use the browser `screenshot`/`zoom` actions at scale ≤ 0.7 |
+| Puppeteer/Playwright MCP | detached frames, missing browsers | built-in browser + `dnd-shot.mjs` |
+| Vite serving an `.html` outside `public/` | HTTP 500 | put ad-hoc pages in `public/` and git-exclude them |
+| HMR after a half-applied edit | page blank, stale errors in console | reload with P1 and judge only errors after the marker |
+| Legacy `!important` rules | new styles "do nothing" | scope under `#render .statblock`, use tokens (§4.1 of the spec) |
+| Device bridge drops in long sessions | lost context | commit at green; write the packet before long steps |
+| `public/__doccheck.html` is git-excluded but `quasar build` copies `public/` into `dist/` | a QA page in a release build | delete it before release builds; A17 moves it to `tools/qa/` |
+
+---
+
+## 3. Skills library
+
+📍 *Handoffs › 3 Skills* — **Load the skill before the work it governs; every name below exists in this environment.**
+
+| Skill (exact name) | Use it for | Loops |
+|---|---|---|
+| `superpowers:writing-plans` | Turning a card's plan into ordered micro-steps before coding | every loop with ≥ 6 tasks |
+| `superpowers:executing-plans` | Working through the task list with checkpoints | every loop |
+| `superpowers:test-driven-development` | Catalogs, builders, resolvers, grammars — test first | A4, A6, A9, A10, A12, B1–B5 |
+| `superpowers:systematic-debugging` | Any probe output that contradicts the plan | as needed |
+| `superpowers:verification-before-completion` | Close ritual — evidence before claims | every loop |
+| `superpowers:brainstorming` | Open interaction design (chain UI, kit anatomy) | A7, A13 |
+| `superpowers:requesting-code-review` | L-size loops before closing | A8, A9, A14, B5 |
+| `engineering:architecture` | Boundaries, ADR-worthy choices | A6, A9, A12, B1, B5 |
+| `backend-development:architecture-patterns` | Ports/adapters, repository, session adapter | B1, B5 |
+| `documentation-generation:architecture-decision-records` | Writing D-records (D-11, D-13, B-track decisions) | A9, A12, B1, B5, B8 |
+| `engineering:testing-strategy` | Fixture design, golden strings, test pyramid | A4, A6, A17 |
+| `developer-essentials:e2e-testing-patterns` | CDP e2e update | A17 |
+| `developer-essentials:error-handling-patterns` | Broken bindings, metric failures, save errors | A9, A12, B5 |
+| `code-refactoring:refactor-clean` | Pure-move splits, panel retirement | A8, A14, A16 |
+| `code-refactoring:tech-debt` | CSS `!important` paydown, debt table | A16 |
+| `impeccable:impeccable` | Visual quality of plates, rows, chain, kit | A4, A5, A7, A13–A16 |
+| `frontend-design` | Distinctive, intentional look for new UI | A7, A13 |
+| `ui-design:visual-design-foundations` | Typography, hierarchy, colour roles of the grammar | A4, A5 |
+| `ui-design:interaction-design` | Chain cells, completion, select behaviour | A7, A10, A13 |
+| `ui-design:design-system-patterns` | Tokens, kit components, catalogs | A13 |
+| `ui-design:responsive-design` | Fit contract, narrow mode | A14–A16, B7 |
+| `ui-design:accessibility-compliance` | ARIA combobox/listbox/tooltip, WCAG 1.4.13 | A10, A13–A16 |
+| `design:accessibility-review` | Close-ritual accessibility pass | A10, A13–A16, B7 |
+| `design:ux-copy` | Short labels, HelpTip copy, error messages | A5, A13–A16, B2 |
+| `design:design-critique` | Owner-facing review of visual loops | A4, A5, A7, A16 |
+| `anthropic-skills:ttrpg-gm-craft` | Rules accuracy (2024 grammar, metamagic, spells, actions) | A4, A6, A12, B3 |
+| `anthropic-skills:built-in-browser` | Every browser probe | every loop |
+| `context7:docs` | Current Quasar/Vue/Pinia API details | A9, A10, A13 |
+| `modern-web-guidance:modern-web-guidance` | Caret geometry, `:has()`, modern CSS/DOM APIs | A5, A10, A13 |
+| `avoid-ai-writing:avoid-ai-writing` | Release notes, README, help dictionary copy | A13, A17, B10 |
+| `skill-forge-essentials:ai-debt-detector` | Spotting generated-code debt during sweeps | A16, A17 |
+
+---
+
+## 4. Research library
+
+📍 *Handoffs › 4 Research* — **Where facts come from, and the open questions each loop must settle before it builds.**
+
+### 4.1 Sources
+
+| Topic | Source | Extract |
+|---|---|---|
+| Search / Study / Influence / Hide | [Free Rules 2024 — Rules Glossary](https://www.dndbeyond.com/sources/dnd/free-rules/rules-glossary) | skill lists, DC 15 Hide |
+| 2024 stat block grammar | [How to Use a Monster (2024)](https://www.dndbeyond.com/sources/dnd/br-2024/how-to-use-a-monster) | Attack Roll lines, Hit/Miss, Recharge X–Y, Spellcasting placement |
+| Metamagic costs (2024) | [dnd2024.wikidot — Sorcerer Metamagic](http://dnd2024.wikidot.com/sorcerer:metamagic) | 10 options and costs |
+| SRD subclasses | [Open 5e SRD explorer](https://dnd5esrd.vercel.app/explore/subclasses) · [D&D Beyond SRD page](https://www.dndbeyond.com/srd) | the 12 SRD subclasses; SRD licence (CC BY 4.0) |
+| 2014 rules cross-check | [5e SRD (5esrd.com)](https://www.5esrd.com) · [dnd5e.wikidot](https://dnd5e.wikidot.com) | 2014 values for ruleset-aware catalogs |
+| Quasar components | [QSelect](https://quasar.dev/vue-components/select) · [QTooltip](https://quasar.dev/vue-components/tooltip) · [QEditor](https://quasar.dev/vue-components/editor) · [QMenu](https://quasar.dev/vue-components/menu) · [QVirtualScroll](https://quasar.dev/vue-components/virtual-scroll) | slots, events, virtual scroll, caret helpers |
+| Vue | [Custom directives](https://vuejs.org/guide/reusability/custom-directives.html) | `v-help` lifecycle |
+| Pinia | [Pinia docs](https://pinia.vuejs.org/) · [persistedstate](https://prazdevs.github.io/pinia-plugin-persistedstate/) | `$patch`, `$subscribe`, hydration of new keys |
+| Caret geometry | [MDN Range.getBoundingClientRect](https://developer.mozilla.org/en-US/docs/Web/API/Range/getBoundingClientRect) · [textarea-caret-position](https://github.com/component/textarea-caret-position) | contenteditable and input caret rectangles |
+| Accessibility | [APG Combobox](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/) · [APG Tooltip](https://www.w3.org/WAI/ARIA/apg/patterns/tooltip/) · [WCAG 1.4.13](https://www.w3.org/WAI/WCAG21/Understanding/content-on-hover-or-focus.html) · [1.4.10 Reflow](https://www.w3.org/WAI/WCAG21/Understanding/reflow.html) | roles, keys, dismissal, reflow |
+| CSS `:has()` | [MDN :has()](https://developer.mozilla.org/en-US/docs/Web/CSS/:has) | support matrix |
+| Diagrams | [Mermaid](https://mermaid.js.org/intro/) | syntax for doc updates |
+
+### 4.2 Standing research questions
+
+| Loop | Question | Default if unresolved |
+|---|---|---|
+| A4 | Sorcerer *Font of Magic* conversion table (2024) for the Metamagic head tip | Tip omits numbers, links the class |
+| A4 | Multiclass head title format (BS-18) | "Warlock 5 / Sorcerer 10 (CHA)" |
+| A5 | Should the classic template change? (BS-12) | Untouched |
+| A6 | `<1d0>` typo (BS-22); economy chip in plates (BS-23) | `1d10`; no chip inside sections |
+| A8 | Villain actions and CR cards (BS-26, BS-27) | Villain stays a panel; CR cards stay in studio |
+| A9 | Decimals in formulas (BS-16) | Integers only |
+| A12 | PHB'24 prepared-spell table; SRD subclass expanded lists; multiclass slots (BS-29, BS-30) | SRD 5.2.1 values; others custom |
+| A13 | Ordinal ordering (Q-1); localisation of help (BS-33) | Natural order for ordinals; English |
+
+---
+
+## 5. Release checklist (R1 … R10)
+
+📍 *Handoffs › 5 Release* — **A release closes only when this list is green on one commit.**
+
+- [ ] Every loop in the release is ✅ with a closing packet in §6.
+- [ ] `npm test` green; ESLint 0 errors on every file touched by the release.
+- [ ] Acceptance rows of every dossier in the release proven (tests, probes, screenshots listed in packets).
+- [ ] Theme probe for render-affecting releases (R1, R5, R6): 5 themes minimum, 13 at R6.
+- [ ] No open high-severity defect in the release's scope (spec §2.3).
+- [ ] Spec status columns, backlog dashboard and timeline, handoff cards updated.
+- [ ] Docs mirror committed (`roadmap: release Rn`).
+- [ ] R6 only: `npx quasar build` clean; `npm run test:e2e` green; README and STACK_STATE rewritten from evidence; local tag `v2.5.0-statblock`.
+
+---
+
+## 6. Loop cards
+
+📍 *Handoffs › 6 Cards* — **Shipped loops keep their closing packets; the next loop is fully armed; later loops carry everything known today and are re-armed at their pre-flight.**
+
+### 6.1 Shipped — closing packets
+
+#### A0 · Baseline snapshot ✅
+
+```text
+Loop / tasks ............ A0 · A0.1–A0.4 (4 / 4)
+Outcome for the user .... the local work is frozen and reviewable; QA tooling (dev server, fixture) ready
+Commits ................. 387f827 (upstream) → 52355c2
+Diff .................... 135 files · +41 791 / −2 884 (pre-existing local work, not authored in this overhaul)
+Tests ................... npm test 69 / 69 at baseline
+Browser proofs .......... Seraphic Herald fixture renders on http://localhost:9100
+Known limits ............ STACK_STATE.md claims not reproduced (BS-03)
+Rollback point .......... 387f827
+Next loop readiness ..... A1 🟢
+```
+
+#### A1 · Check rows + whole-label advantage ✅
+
+```text
+Loop / tasks ............ A1 · A1.1–A1.9 (9 / 9)
+Outcome for the user .... skills read as Search / Study / Influence / Hide rows; no duplicate Skills row; advantage colours the whole label
+Commits ................. 52355c2 → 574f196
+Diff .................... 9 files · +868 / −486
+Tests ................... 79 / 79 · new: SkillActionGroups.test.ts (10)
+Browser proofs .......... "Search ACTION 13/+3, (15, +5 Insight)" · "Study ACTION 11/+1, (13, +3 Investigation; 15, +5 Medicine; 18, +3 Religion ▲▲)"
+                          · "Influence ACTION 15/+5, (17, +7 Persuasion)" · "Hide BONUS ACTION 11/+1, (13, +3 Sleight of Hand)" · no Skills row
+Requirements proven ..... CHK-001…004, SBG-003 (rows)
+Decisions ............... D-01 (owner skill groups)
+Known limits ............ text exports may still print a Skills line (BS-13)
+Rollback point .......... 52355c2
+Next loop readiness ..... A2 🟢
+```
+
+#### A2 · Formula engine, references and text macros ✅
+
+```text
+Loop / tasks ............ A2 · A2.1–A2.8 (8 / 8)
+Outcome for the user .... {…} macros and formulas render correct numbers anywhere; no code execution from text
+Commits ................. 574f196 → be0cf3f
+Diff .................... 8 files · +1 409 / −106
+Tests ................... 98 / 98 · new: Formula.test.ts (18) + ProcessTokens macro case (1)
+Browser proofs .......... {CANTRIP_DICE d10} → "16 (3d10)" · {spellcasting.attack} → "+7" · {HIT_DIE} → "4 (1d8)"
+                          · {8 + PB + CHA_MOD} → "15" · {spellcasting.nonsense} left verbatim
+Requirements proven ..... REF-001, REF-003…006
+Decisions ............... D-04 (small grammar, no eval)
+Known limits ............ fields still store flat numbers (A9); no caret completion yet (A10)
+Rollback point .......... 574f196
+Next loop readiness ..... A3 🟢
+```
+
+#### A3 · Plate grammar for abilities ✅
+
+```text
+Loop / tasks ............ A3 · A3.1–A3.5 (5 / 5)
+Outcome for the user .... traits, actions, attacks, reactions and legendary entries are framed plates with crimson heads and parchment cells
+Commits ................. be0cf3f → c543615
+Diff .................... 4 files · +494 / −186
+Tests ................... 103 / 103 · new: Plate.test.ts (5)
+Lint .................... 0 errors (two quote warnings fixed in useProcessTokens.ts)
+Browser proofs .......... WotC: head rgb(88,24,13) / ink rgb(253,241,220); cells rgb(251,242,227); body stripes 24 px / 48 px at line-height 24 px;
+                          container frame removed; console clean after a marked reload
+Themes .................. wotc · printer · lovecraft_golden · lovecraft_spooky · art_nouveau — palettes applied
+Requirements proven ..... SBG-001…004; SBG-005 for 5 themes
+Blindspots resolved ..... BS-01 (plate WIP was this overhaul's own work) · BS-02 (app runs from the tree)
+Decisions ............... D-03 (one HTML plate builder)
+Deviations from plan .... the plate builder started before a context reset; CSS finished and committed in this loop
+Known limits ............ spellcasting still legacy markup (A4); top rows legacy (A5); e2e expectations (A17)
+Rollback point .......... be0cf3f
+Next loop readiness ..... A4 🟢
+```
+
+---
+
+### 6.2 A4 · Spellcasting plate — 🟢 READY (next)
+
+| | |
+|---|---|
+| **Goal** | Class and innate spellcasting render as plate rows in the owner's grammar: summary · metamagic · cantrips · one row per level; spells as cells |
+| **Release · feature** | R1 · SB-04 · fixes DEF-01…04, DEF-15…17 |
+| **Entry criteria** | A3 ✅ · tree clean · `npm test` 103 / 103 · dev server on 9100 · Seraphic Herald fixture loaded |
+| **Read in the spec** | §9 SB-04 · §6.6 Spellcasting model · §7.6 projection · §4.1–4.2 grammar · §2.3 DEF-01…04, 15…17 · §13.2 BS-04, 05, 08, 17, 18 · §13.3 D-02, D-08, D-14 |
+| **Backlog tasks** | A4.0 – A4.11 |
+
+**Open first**
+
+| File | Where | Why |
+|---|---|---|
+| `src/components/rendering/WebRenderer.vue` | L515–615 | innate block (L517–564, legacy composite markup) and class block (L566–614, `sc-plate`) to replace |
+| same | L1320–1432 | `spellPlate`, `metamagicOptionDetails`, `getSpellCadenceBadge` to move into the builder |
+| same | grep `innateSpellcastingLists`, `renderedSpellcastingTitle`, `getSpellTag`, `sanitizedClassSpellcastingPreamble` | inputs the builder needs |
+| `src/components/rendering/plate.ts` | all (92) | reuse `plateHtml`, `boldNumbers` |
+| `src/css/app.scss` | L715, L1083–1100, L2026 | `.spell-tag-badge` pseudo parentheses (DEF-17), `.sc-spell` |
+| `src/css/statblock-grammar.scss` | tokens + plate section | add spell cells and badges |
+| `src/core/domain/spell-metadata.ts` | `getSpellTagString` | returns `"V, S, C"` without parentheses |
+| `src/stores/monster-store.ts` | `knownSpellsOfLevel`, `spellSave`, `spellAttackModifier` | data the builder reads |
+| `src/components/editor/ClassCastingEditor.vue` | `cadenceOptions` | cadence vocabulary to unify |
+| `src/core/usecases/AutoSyncSpellcasting.ts` | `calculateSpellcastingMetrics`, `SPELL_POINTS_BY_LEVEL` | prepared and point values used by the plate |
+
+**Skills** — `superpowers:writing-plans` · `superpowers:test-driven-development` · `anthropic-skills:ttrpg-gm-craft` · `ui-design:visual-design-foundations` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion`.
+
+**Research**
+- Sorcerer *Font of Magic* conversion table (2024) for the Metamagic head tip — source in §4.1; if not confirmed, tip links the class without numbers.
+- Pact Magic recovery wording (2024): Short or Long Rest — confirm before writing the default "Regained on Short Rest".
+- Multiclass head title (BS-18) — default "Warlock 5 / Sorcerer 10 (CHA)".
+
+**Traps & blindspots**
+- Two cadence vocabularies: level cadences use `long_rest/short_rest/…/always_available`; per-spell cadences use `always`, `long_rest`… → `CADENCE_LABELS` must accept both `always` and `always_available`.
+- Pact detection is `class === 'Warlock' || resourceType === 'pact'`; points/focus resource types print points, not slots.
+- `prepared` currently falls back to `metrics.preparedSpells || leveledKnown` — keep the semantics; honest metrics are A12's job (do not widen scope).
+- Custom spell names reach `v-html` → escape them in the builder.
+- The two existing `q-tooltip`s on the class plate disappear with `v-html`; emit `data-help` keys (host arrives in A5) and keep a `title` fallback.
+- Do not touch the editor in this loop.
+
+**Plan**
+1. **A4.0** baseline: `npx quasar build`, `npm run test:e2e`, P1 + console scan → packet notes.
+2. **A4.1–A4.2** fixtures as builders in `SpellPlate.test.ts`; render them through the store (P6) and record today's output.
+3. **A4.3–A4.4** catalogs `metamagic.ts`, `cadence.ts` + invariant tests (sorted, unique, every entry sourced).
+4. **A4.5–A4.7** `spellPlate.ts` (`buildSpellPlate`, `buildInnatePlate`, components formatter) — tests first.
+5. **A4.8** swap the two template blocks for `v-html` plates; delete the three computeds.
+6. **A4.9** grammar SCSS (spell cells, badges, wrap), neutralise pseudo parentheses, add `monster.spellcasting.stat`.
+7. **A4.10** browser: fixture + four FX-SP fixtures, P3 + P4, console clean.
+8. **A4.11** close ritual, commit, documentation ritual.
+
+**Verify**
+
+```js
+// no doubled parentheses, no placeholder, correct cadence label
+(() => { const t = document.querySelector('#render').innerText;
+  return { doubleParens: t.includes('(('), placeholderX: /into x points/i.test(t), daily: /\bDaily\b/.test(t),
+           rows: [...document.querySelectorAll('#render .sb-plate')].filter(p => /Spell Save/.test(p.innerText)).map(p => p.innerText.replace(/\s+/g, ' ').slice(0, 200)) } })()
+```
+
+Console: `read_console_messages` with pattern `intlify` must return nothing new after the P1 marker.
+
+**Exit** — SBG-006…009, SPELL-002 (render), SPELL-005 (2024 costs) proven; DEF-01, 02, 04, 15, 16, 17 closed; DEF-03 data fixed; tests and lint green; docs ritual done.
+
+**Next-loop prep (for A5)** — list every row head and plate head kind that needs a help entry; capture the 5-theme colour baseline (P4) before A5 starts; count `dnd-cascade` lines per theme in `app.scss`.
+
+**Closing packet** — *(fill at close, template §1.5)*
+
+---
+
+### 6.3 A5 · Row grammar + head tooltips — 🟡 (open questions with defaults)
+
+| | |
+|---|---|
+| **Goal** | Top-block rows adopt the head/data grammar and tokens; every row head and plate head explains itself (delegated tooltip host) |
+| **Release · feature** | R1 · SB-05 |
+| **Entry criteria** | A4 ✅ (or A3 ✅ if run in parallel) · baseline colours captured |
+| **Read in the spec** | §9 SB-05 · §4.1, §4.5 · §6.4 · §13.2 BS-12, 14, 19, 20 · D-09 |
+| **Backlog tasks** | A5.0 – A5.7 |
+| **Open first** | `WebRenderer.vue` L280–475 (top plate, AC/HP/Speed, defenses, senses, checks, languages) · `app.scss` L544–1700 (`dnd-cascade-*` per theme) · `useTextRenderer.ts` (`actionPassivesGroups`, defenses) · `useProcessTokens.ts` (`usageText`) |
+| **Skills** | `ui-design:visual-design-foundations` · `impeccable:impeccable` · `design:ux-copy` · `modern-web-guidance:modern-web-guidance` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion` |
+| **Research** | WCAG 1.4.13 behaviour for the host; event delegation with `mouseover/focusin` on `#render` |
+| **Traps** | Deleting theme blocks before parity (diff colours with P4 first) · tooltip host must not trap focus · `v-html` content re-renders replace nodes (host listens on the container, not the cells) |
+| **Plan** | A5.0 baseline → A5.1 classes on rows → A5.2 tokens + delete duplicates → A5.3 host → A5.4 dictionary seed → A5.5 recharge die tip → A5.6 verify → A5.7 close |
+| **Verify** | P4 parity per theme · count of `#render .sb-head` equals rows + plates · focus a head with Tab → tip visible · `app.scss` line delta |
+| **Exit** | SBG-010…012, HELP-002, TIP-006 (statblock) proven |
+| **Defaults** | BS-12 classic template untouched · BS-14 row named "Other checks" · BS-20 ability grid unchanged |
+| **Next-loop prep** | Collect real action entries from templates and AI ingest for A6 inference fixtures |
+
+---
+
+### 6.4 A6 · Ability composer model — 🟡
+
+| | |
+|---|---|
+| **Goal** | Actions carry reach, source, targeting and outcomes (optional); plates and 2024 text read them through one grammar module |
+| **Release · feature** | R2 · AU-01 · fixes DEF-05 |
+| **Entry criteria** | A3 ✅ · fixtures from templates/AI ingest staged |
+| **Read in the spec** | §9 AU-01 (grammar → fields → outputs table) · §6.5 · §7.5 · §8.6 · §13.2 BS-06, 09, 10, 22, 23 · D-10 |
+| **Backlog tasks** | A6.0 – A6.9 |
+| **Open first** | `components/models.ts` (`MonsterAction` L≈590) · `core/domain/types.ts` (mirror type) · `useProcessTokens.ts` modern branches (`processAction`, `processAttack`, `buildPlateEntry`) · `src/data/templates/*` · `core/usecases/IngestAiStatblock.ts` output shape |
+| **Skills** | `superpowers:test-driven-development` · `engineering:architecture` · `anthropic-skills:ttrpg-gm-craft` · `engineering:testing-strategy` |
+| **Research** | 2024 phrasing of targets and areas ("each creature in a 20-foot Emanation originating from it") — How to Use a Monster + sample 2024 monsters |
+| **Traps** | Inference must never write to the store · phrase tables, not string concatenation spread over branches · keep legacy output byte-identical when fields are absent (fixture diff) |
+| **Plan** | A6.0 inference prototype over templates → A6.1 types → A6.2 grammar tables/builders → A6.3 inference → A6.4 `text2024` → A6.5 wire into tokens → A6.6 tests → A6.7 hydration → A6.8 browser → A6.9 close |
+| **Verify** | `AbilityGrammar.test.ts` (FX-AB-01…05) · P3 shows `Ranged Spell Attack +7` and Veil's full scope · old payload hydrates |
+| **Exit** | CMP-001…008, COMP-001 (screen/text), COMP-003 proven |
+| **Defaults** | `1d0` → `1d10` · no economy chip inside its own section |
+| **Next-loop prep** | Field → chain-cell table for A7 |
+
+---
+
+### 6.5 A7 · Composer chain and templates — 🟡
+
+| | |
+|---|---|
+| **Goal** | Each ability is edited as a chain of chips in plate order, with a live plate preview and a template picker |
+| **Release · feature** | R2 · AU-03 (part 1) · fixes DEF-12 |
+| **Entry criteria** | A6 ✅ (fields and phrases exist) |
+| **Read in the spec** | §9 AU-03 (concept, W-05) · §6.7 `ComposerChain` · §8.3 · §4.2 precedence |
+| **Backlog tasks** | A7.0 – A7.8 |
+| **Open first** | `components/editor/ActionsEditor.vue` (944 LOC: category tabs L10–30, presets L204–215, Quick Attack Composer L216–330, description editor L408, `UnifiedEntry` L≈450, `applyActionPreset` L838, `injectComposedAttack` L878) |
+| **Skills** | `superpowers:brainstorming` · `ui-design:interaction-design` · `frontend-design` · `impeccable:impeccable` · `design:ux-copy` · `superpowers:test-driven-development` |
+| **Research** | Keyboard model for chip rows (roving tabindex) — APG "toolbar"/"grid" patterns |
+| **Traps** | Do not lose fields that only the old composer edits (A7.0 table) · keep authored casing in templates · chain cells must not mutate on hover/preview |
+| **Plan** | A7.0 field table → A7.1 role descriptors → A7.2 cell → A7.3 chain → A7.4 preview → A7.5 templates → A7.6 remove strip → A7.7 tests → A7.8 close |
+| **Verify** | chain order equals the rendered plate order for each role (component test) · preview HTML equals stat block plate HTML for the same entry |
+| **Exit** | CMP-009…011 proven; DEF-12 closed |
+| **Next-loop prep** | Capability matrix draft for A8 |
+
+### 6.6 A8 · One Actions module — 🟡
+
+| | |
+|---|---|
+| **Goal** | The studio covers every role; seven (or eight) duplicate panels retire; storage unchanged |
+| **Release · feature** | R2 · AU-03 (part 2) · fixes DEF-08 |
+| **Entry criteria** | A7 ✅ · capability matrix complete · BS-26/27 decided or defaulted |
+| **Read in the spec** | §9 AU-03 capability table · §13.3 D-10 · §14 CMP-012…015 |
+| **Backlog tasks** | A8.0 – A8.8 |
+| **Open first** | `pages/MonsterBuilder.vue` L37–57 · `TraitsEditor.vue` (388) · `widgets/AttackPanel.vue` (586) · `MultiattackEditor.vue` (222) · `ReactionsEditor.vue` (152) · `LegendaryActionsEditor.vue` (243) · `MythicActionsEditor.vue` (150) · `LairActionsEditor.vue` (132) · `VillainActionsEditor.vue` |
+| **Skills** | `code-refactoring:refactor-clean` · `superpowers:requesting-code-review` · `engineering:testing-strategy` · `ui-design:interaction-design` |
+| **Research** | none beyond the matrix |
+| **Traps** | Multiattack references by id survive reorder · legendary costs and pools live in different arrays · deleting components breaks imports elsewhere (grep before delete) · e2e steps that open removed panels |
+| **Plan** | A8.0 matrix → A8.1 role headers → A8.2 attack role → A8.3 multiattack → A8.4 reaction/trait chips → A8.5 unmount + delete → A8.6 fixture diff → A8.7 e2e → A8.8 close |
+| **Verify** | builder panel count ≤ 14 (DOM probe) · three saved monsters render byte-identical plates · every matrix row ticked |
+| **Exit** | CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed |
+| **Defaults** | Villain actions stay a panel; CR annotation cards stay in the studio |
+| **Next-loop prep** | List the numeric fields of the studio chips for A9's registry |
+
+### 6.7 A9 · NumericBinding fields — 🟡
+
+| | |
+|---|---|
+| **Goal** | Numeric fields bind to references or formulas through `FormulaField`; a resolver keeps values in sync |
+| **Release · feature** | R3 · AU-02 · fixes DEF-09 |
+| **Entry criteria** | A2 ✅ · BS-24/25 settled |
+| **Read in the spec** | §9 AU-02 (W-06) · §6.2 · §7.4 · §8.1 · §8.5 · §13.1 R-04, R-06 · D-05, D-11 |
+| **Backlog tasks** | A9.0 – A9.10 |
+| **Open first** | `widgets/DynamicReferenceSelect.vue` (619) · `BasicsEditor.vue` L204, 305, 322, 927, 973, 1281 · `widgets/AttackPanel.vue` L52, 122, 135, 148, 161, 186, 213 · `core/domain/formula.ts` (`NumericBinding`, `resolveNumeric`, `describeBinding`) · `stores/monster-store.ts` · history store / `useHistoryShortcuts` |
+| **Skills** | `engineering:architecture` · `documentation-generation:architecture-decision-records` (D-11) · `superpowers:test-driven-development` · `developer-essentials:error-handling-patterns` · `context7:docs` (QSelect) · `ui-design:accessibility-compliance` |
+| **Research** | Pinia `$patch` + `$subscribe` ordering; how the history ledger detects changes (to flag resolver patches) |
+| **Traps** | Resolver writing on every keystroke (equality check) · cycles · array paths by index break on reorder (use ids) · persisted payload size |
+| **Plan** | A9.0 → A9.1 formula additions → A9.2 registry → A9.3 store → A9.4 history filter → A9.5 composable → A9.6 component → A9.7 migrate + delete old widget → A9.8 tests → A9.9 browser sequence → A9.10 close |
+| **Verify** | `Bindings.test.ts` · §8.5 sequence in the browser (one undo step) · reload keeps bindings |
+| **Exit** | BND-001…008, REF-001 (fields), REF-002 proven; DEF-09 closed |
+| **Next-loop prep** | Formula-mode input element exposed for A10's completion |
+
+### 6.8 A10 · Caret intellisense and macro menus — 🟡
+
+| | |
+|---|---|
+| **Goal** | `{` opens the catalog at the caret with live values; toolbar menus come from the same catalog; the bottom strip is gone |
+| **Release · feature** | R3 · AU-04 |
+| **Entry criteria** | A9 ✅ · BS-21/28 checked |
+| **Read in the spec** | §9 AU-04 (W-07) · §7.7 · §8.2 · §14 ITL-001…008 |
+| **Backlog tasks** | A10.0 – A10.8 |
+| **Open first** | `MonsterTextEditor.vue` (411: toolbar menus L20–160, `allIntellisenseTokens` L315) · `useTokens.ts` (251) · `ActionsEditor.vue` L408 · `formula.ts` `suggestFormulaRefs` |
+| **Skills** | `ui-design:interaction-design` · `ui-design:accessibility-compliance` · `modern-web-guidance:modern-web-guidance` · `context7:docs` (QEditor) · `superpowers:test-driven-development` |
+| **Research** | Range rect in contenteditable; textarea caret mirror; `execCommand('insertText')` support in Chromium |
+| **Traps** | Focus stealing by the menu · caret lost after insert · IME composition events · menu clipped at the viewport bottom |
+| **Plan** | A10.0 → A10.1 catalog → A10.2 composable → A10.3 menu → A10.4 editor → A10.5 toolbar → A10.6 formula mode → A10.7 remove strip → A10.8 close |
+| **Verify** | type `{SPE` → three items with values; Enter inserts; Esc closes; narrow width; screen reader announcement |
+| **Exit** | ITL-001…008 proven |
+
+### 6.9 A11 · Binding sweep — 🟡
+
+| | |
+|---|---|
+| **Goal** | Every remaining binding-capable numeric field accepts references and formulas |
+| **Release · feature** | R3 · AU-02 |
+| **Entry criteria** | A9 ✅ |
+| **Read in the spec** | §9 AU-02 · §14 BND-009 |
+| **Backlog tasks** | A11.0 – A11.4 |
+| **Open first** | output of the A11.0 inventory script (77 numeric inputs) |
+| **Skills** | `code-refactoring:refactor-clean` · `superpowers:verification-before-completion` |
+| **Traps** | Some numbers are *derived* (read-only) — never bind them; slots tables are literal by nature |
+| **Plan** | inventory → classify → register → migrate → audit + close |
+| **Exit** | BND-009, BND-002 (global) proven |
+
+### 6.10 A12 · Spellcasting authoring accuracy — 🟡
+
+| | |
+|---|---|
+| **Goal** | Subclasses for every caster, persisted; honest counters; SRD subclass spells always prepared; complete cadence pickers |
+| **Release · feature** | R4 · AU-05 · fixes DEF-06, DEF-07, BS-07 |
+| **Entry criteria** | A4 ✅ · A9 ✅ · research BS-29/30 done |
+| **Read in the spec** | §9 AU-05 (W-10, data governance) · §6.6 · §8.4 · §13.3 D-08, D-13 |
+| **Backlog tasks** | A12.0 – A12.7 |
+| **Open first** | `ClassCastingEditor.vue` (1 056: subclass L27–35, L256, `primarySubclass` L742, metrics `catch` L762, `spellOptionsByLevel` L593) · `AutoSyncSpellcasting.ts` (556: `SRD_SUBCLASSES_BY_CLASS` L273, `calculateSpellcastingMetrics`, multiclass) · `data/spells.json` · `components/spell/useSpellLevels.ts` |
+| **Skills** | `anthropic-skills:ttrpg-gm-craft` · `superpowers:test-driven-development` · `documentation-generation:architecture-decision-records` (D-13) · `developer-essentials:error-handling-patterns` · `design:ux-copy` |
+| **Research** | SRD 5.2.1 class tables and subclass spell lists; 2014 values for ruleset variants (§4.1 sources) |
+| **Traps** | Licensing: only SRD content curated · granted spells must not count · removing a subclass must not silently delete authored spells · multiclass slot math unchanged unless researched |
+| **Plan** | A12.0 research + BS-07 repro → A12.1 catalogs → A12.2 metrics → A12.3 persistence → A12.4 editor → A12.5 candidates → A12.6 metamagic by ruleset → A12.7 close |
+| **Verify** | reload keeps subclass · Fiend Patron fixture adds its spells with badges · counters show over-limit · forced metric failure shows "limit unavailable" |
+| **Exit** | SPELL-001…008 proven |
+
+### 6.11 A13 · Interaction kit — 🟡
+
+| | |
+|---|---|
+| **Goal** | `CatalogSelect`, `HelpTip`, `v-help`, delegated host, help dictionary, coverage and fit audits |
+| **Release · feature** | R5 · UX-01, UX-02 |
+| **Entry criteria** | A9 ✅ (FormulaField anatomy) · Q-1 ordinal ordering answered or defaulted |
+| **Read in the spec** | §9 UX-01, UX-02, UX-03 · §4.3–4.7 · §6.7 · §14 SEL, TIP, QA-005 |
+| **Backlog tasks** | A13.0 – A13.7 |
+| **Open first** | three representative selects in `BasicsEditor.vue`, `ClassCastingEditor.vue`, `SkillsEditor.vue` · existing `q-tooltip` usages · `css/statblock-grammar.scss` `.q-tooltip.dnd-tip` |
+| **Skills** | `ui-design:design-system-patterns` · `frontend-design` · `impeccable:impeccable` · `ui-design:accessibility-compliance` · `design:ux-copy` · `avoid-ai-writing:avoid-ai-writing` · `context7:docs` |
+| **Traps** | Directive cost at scale (BS-32) · headers selectable by keyboard (must be skipped) · tooltips hiding errors |
+| **Plan** | inventory → CatalogSelect → catalogs → HelpTip/directive/host → dictionary → audits → close |
+| **Exit** | SEL-002…008, TIP-002…005, TIP-007, QA-005 proven |
+
+### 6.12 A14 · Sweep 1 — Basics — 🟡
+
+| | |
+|---|---|
+| **Goal** | Split `BasicsEditor.vue` into six panels, adopt the kit, 100 % tips, zero overflow |
+| **Release · feature** | R5 · UX-01…03 |
+| **Entry criteria** | A13 ✅ |
+| **Read in the spec** | §9 UX-01…03 · §12.4 debt targets · §13.1 R-13 |
+| **Backlog tasks** | A14.1 – A14.6 |
+| **Open first** | `BasicsEditor.vue` (4 445 LOC) — map its sections before moving |
+| **Skills** | `code-refactoring:refactor-clean` · `superpowers:requesting-code-review` · `ui-design:responsive-design` · `design:accessibility-review` |
+| **Traps** | Moves and behaviour changes in the same commit (forbidden: move first, then adopt the kit) · shared local state across sections |
+| **Exit** | SEL-001, TIP-001, FIT-001…003 proven for Basics |
+
+### 6.13 A15 · Sweep 2 — casting, checks, senses, defenses — 🟡
+
+| | |
+|---|---|
+| **Goal** | The rules-heavy panels adopt the kit, tips and fit |
+| **Release · feature** | R5 · UX-01…03 |
+| **Entry criteria** | A13 ✅ · A12 ✅ |
+| **Backlog tasks** | A15.1 – A15.6 |
+| **Open first** | `ClassCastingEditor.vue`, `SpellcastingEditor.vue`, `AtWillCastingEditor.vue`, `SkillsEditor.vue`, `SavesEditor.vue`, `SensesEditor.vue`, `SpeedsEditor.vue`, `ResistancesEditor.vue`, `InventoryEditor.vue` |
+| **Skills** | `ui-design:responsive-design` · `design:ux-copy` · `design:accessibility-review` |
+| **Exit** | SEL-001, TIP-001, FIT-001…003 proven for these panels |
+
+### 6.14 A16 · Sweep 3 — studio, A4, toolbar, CSS cleanup — 🟡
+
+| | |
+|---|---|
+| **Goal** | Last surfaces adopt the kit; legacy statblock CSS removed; app-wide audits green |
+| **Release · feature** | R5 · UX-01…03 · fixes DEF-10, DEF-11 |
+| **Entry criteria** | A13 ✅ · A8 ✅ |
+| **Backlog tasks** | A16.1 – A16.7 |
+| **Open first** | Actions Studio + composer · `A4LayerStudio.vue` (1 416) · `MainLayout.vue` (378) · `css/app.scss` blocks: `.action-composite-*` (L804–905, L1354–1366), `.zebra-stripe-text` (L1104), cascade blocks |
+| **Skills** | `code-refactoring:tech-debt` · `skill-forge-essentials:ai-debt-detector` · `impeccable:impeccable` · `design:accessibility-review` |
+| **Traps** | CSS still used by the classic template or exports (grep markup before deleting) |
+| **Exit** | SEL-001, TIP-001, FIT-001…005 app-wide; DEF-10, DEF-11 closed; `!important` < 200 |
+
+### 6.15 A17 · Hardening and release — 🟡
+
+| | |
+|---|---|
+| **Goal** | Prove everything once more, write only proven claims, tag the overhaul |
+| **Release · feature** | R6 · QA-01 · fixes DEF-13, DEF-14 |
+| **Entry criteria** | A4…A16 ✅ |
+| **Read in the spec** | §9 QA-01 · §15 · §11.4 · §13.2 BS-03, 15, 36, 37 |
+| **Backlog tasks** | A17.1 – A17.9 |
+| **Open first** | `test/exhaustive-ui-fuzz.js` (2 416) · `README.md` · `STACK_STATE.md` · QA helpers in `%TEMP%` |
+| **Skills** | `developer-essentials:e2e-testing-patterns` · `engineering:testing-strategy` · `superpowers:verification-before-completion` · `avoid-ai-writing:avoid-ai-writing` |
+| **Exit** | QA-001…006, SBG-005 (13 themes), NFR-001 (Track A) proven; tag `v2.5.0-statblock` |
+
+---
+
+### 6.16 Track B cards — 🔵 specified (re-arm at each pre-flight)
+
+Every Track B card inherits the protocol of §1 and the v1 package notes; the rows below are what a fresh session needs to start.
+
+| Loop | Goal | Read in the spec | Open first | Skills | Key traps | Exit |
+|---|---|---|---|---|---|---|
+| **B1** Identity & revision | Envelope with immutable id and monotonic revision around the current store | §10 F-00 · §6.8 · D-11 | `core/domain/types.ts` · `components/models.ts` · `MigrateMonsterSchema.ts` · history store · stores holding monster copies (BS-38) | `engineering:architecture` · `backend-development:architecture-patterns` · `documentation-generation:architecture-decision-records` · `superpowers:test-driven-development` | No schema bump without D-record; resolver patches excluded from revisions | DOM-002, DOM-003 (contract), DATA-001 |
+| **B2** Checks & safe repair | Navigable, honest, undoable checks incl. Track A families | §10 F-05 · §8 (states) | `LintMonster.ts` · `MonsterLintDialog.vue` · `CrFooter.vue` · section/field targets | `design:ux-copy` · `design:accessibility-review` · `superpowers:test-driven-development` | "fixable" only when an operation exists; stale results never shown as current | UX-003, DOM-001, DOM-003 |
+| **B3** CR tuner | Preview-first, selective, one-undo tuning | §10 F-06 | `AutoTuneCr.ts` · `AutoTuneDialog.vue` · `CalculateCr.ts` | `anthropic-skills:ttrpg-gm-craft` · `superpowers:test-driven-development` | Prefer tuning sources when fields are bound | DOM-001, DOM-003 |
+| **B4** Exports | Capability report and preview for each target | §10 F-08 · AU-01 `text2024` | `ExportStatblock.ts` · `DownloadButton.vue` · renderer adapters | `engineering:testing-strategy` · `design:ux-copy` | Plates need grammar CSS in HTML/PNG (BS-11); Skills line (BS-13); Spellcasting placement (D-02) | DATA-002, SEC-001, COMP-001…002 |
+| **B5** Repository & recovery | One startup-selected backend, truthful save, verified migration | §10 F-07 | `StoragePort.ts` · `LocalStorageAdapter.ts` · `IndexedDbStorageAdapter.ts` · Pinia persistence | `backend-development:architecture-patterns` · `developer-essentials:error-handling-patterns` · `documentation-generation:architecture-decision-records` | Never silent per-operation failover; keep sources until verified | DATA-001, DATA-003, NFR-003, SEC-002, ARC-002 |
+| **B6** Library | Find/open/duplicate/rename/delete by id | §10 F-02 | repository from B5 · router/drawer | `ui-design:responsive-design` · `design:accessibility-review` | Duplicate must remap bindings and nested ids | DOM-002, UX-004 |
+| **B7** Workspace | Toolbar groups, section strip, narrow tabs, presets | §10 F-01/F-03/F-12 · W-01, W-02 | `MainLayout.vue` · `MonsterBuilder.vue` · `editor-store.ts` | `ui-design:responsive-design` · `ui-design:interaction-design` · `design:accessibility-review` | Presets must not touch mechanics | UX-001, UX-002, UX-005, NFR-004 |
+| **B8** Provenance | Explicit/unknown ruleset; ruleset-aware catalogs | §10 F-09 · D-08 | envelope from B1 · catalogs with `ruleset` | `anthropic-skills:ttrpg-gm-craft` · `engineering:architecture` | Style switch is not a rules switch | DOM-004 |
+| **B9** Combat | Stable combatant ids, snapshots | §10 F-10 | `CombatTracker.ts` · `combat-store.ts` · `CombatTrackerDrawer.vue` | `superpowers:test-driven-development` | Active actor removal policy; legacy index migration | DOM-005 |
+| **B10** Character & docs | Honest character values; final documentation from evidence | §10 F-11 · QA-01 | `CharacterSheet.vue` · `character-store.ts` · `README.md` · `STACK_STATE.md` | `design:ux-copy` · `avoid-ai-writing:avoid-ai-writing` | Claims only from release evidence | DOM-006, PRD-002…003, REL-002 |
+
+---
+
+## 7. Stop and escalate
+
+📍 *Handoffs › 7 Stop* — **Stop the affected task — not the whole loop — and write down exactly what would unblock it.**
+
+| Condition | Action |
+|---|---|
+| A change would alter saved data shape without a decision record | Stop; draft the D-record with migration and fixtures; ask the owner |
+| A rules fact lacks a cited source | Label it custom/owner variant or stop the task; add a research row |
+| The working tree contains changes you did not make | Do not reset or overwrite; inspect, record, ask |
+| A probe contradicts a passing unit test | Treat the probe as truth; `superpowers:systematic-debugging`; add a failing test first |
+| A loop needs a later loop to be useful | Split it; ship the independent slice (G-6) |
+| The device bridge is unstable | Commit at the last green state; write the packet; resume from §8 |
+
+---
+
+## 8. Session hand-over note
+
+📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
+
+1. **State** — branch `statblock-overhaul`; code HEAD `c543615`; documentation v2 committed on top; tree clean; `npm test` 103 / 103.
+2. **What exists** — check rows (A1), formula engine (A2), plate grammar (A3); everything else is planned in the three documents.
+3. **What to do next** — run the A4 card (§6.2) from its start ritual; its pre-flight task A4.0 records the build and e2e baselines.
+4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
+5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
+
