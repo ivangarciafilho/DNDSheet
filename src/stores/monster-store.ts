@@ -53,6 +53,14 @@ export const useMonsterStore = defineStore('monster', {
       languages: '',
       AC: 10,
       ACType: '',
+      acConfig: {
+        enabled: false,
+        baseMode: 'flat',
+        abilityBonus: 'none',
+        defenseItem: 'none',
+        temporary: 'none',
+        conditional: 'none',
+      },
       CR: 0,
       lairCr: -1,
       lairCrNote: 'in lair',
@@ -127,6 +135,7 @@ export const useMonsterStore = defineStore('monster', {
         truesight: 0,
       },
       sensesNotes: '',
+      sensesList: [] as MonsterSenseItem[],
       passivePerception: {
         override: false,
         overrideValue: 0,
@@ -157,6 +166,34 @@ export const useMonsterStore = defineStore('monster', {
         customClassPreamble: '',
         useCustomInnatePreamble: false,
         customInnatePreamble: '',
+        resourceType: 'slots' as 'slots' | 'points' | 'focus' | 'pact',
+        refreshRate: 'long_rest' as 'long_rest' | 'short_rest' | 'downtime',
+        displayTitleMode: 'class_names' as 'class_names' | 'caster_source' | 'split_levels',
+        bypassSlotLevelFilter: false,
+        spellCadenceMap: {} as Record<string, string>,
+        levelCadenceMap: {} as Record<number, string>,
+        bonusActionLevelMap: {} as Record<number, boolean>,
+        metamagic: {
+          enabled: false,
+          sorceryPoints: 0,
+          refreshRate: 'Long Rest',
+          options: [] as string[],
+        },
+        cantripSwitch: false,
+        cantripSwitchCount: 1,
+        cantripSwitchInterval: 'Short Rest',
+        preparedCountOverride: undefined as number | undefined,
+        preparedInterval: 'Long Rest',
+        customRefreshRate: '',
+        classes: [] as Array<{
+          id: string
+          className: string
+          level: number
+          stat: DndStat
+          slots?: number[]
+          bypassSlotFilter?: boolean
+          spells?: string[]
+        }>,
       },
       attacks: [],
       actions: [],
@@ -189,6 +226,127 @@ export const useMonsterStore = defineStore('monster', {
       regionalEffectDescription: '',
       inventory: '',
       autoEstimateDefenseCr: true,
+      portrait: {
+        url: '',
+        position: 'none',
+        width: 220,
+        caption: '',
+      },
+      extendedHp: {
+        showBloodied: false,
+        bloodiedSource: 'none',
+        bloodiedDice: '2d8',
+        damageThresholdSource: 'flat',
+        damageThresholdDice: '2d6',
+        damageThresholdDisruption: 'none',
+        damageReductionSource: 'flat',
+        damageReductionDice: '1d6',
+        damageReductionDisruption: 'none',
+        invulnerability: {
+          enabled: false,
+          rule: 'none',
+          customRule: '',
+          firstXCount: 1,
+          disruption: 'none',
+          customDisruption: '',
+          displayLocation: 'ac',
+          combiner: 'or',
+          customLogic: '',
+        },
+        bloodiedOverride: null,
+        damageThreshold: null,
+        damageReduction: null,
+        regeneration: {
+          enabled: false,
+          recoveryType: 'regen',
+          valueSource: 'flat',
+          amount: 10,
+          timeframe: 'turn',
+          frequency: 'turn_start',
+          diceFormula: '',
+          disruptedByTypes: ['acid', 'fire'],
+          disruptedByNote: '',
+          displayMode: 'minimalist',
+          conditionModifier: 'none',
+          maxHpReductionUntil: 'short rest',
+          styleMode: 'concise',
+        },
+        deathPrevention: {
+          enabled: false,
+          name: 'Mortal',
+          dcRule: 'CON save DC 5 + damage taken',
+          returnHpSource: '1',
+          returnHpValue: 1,
+          returnHpDice: '2d8',
+          requiresSave: false,
+          saveStat: 'CON',
+          saveDc: 15,
+          hideHp: false,
+          critHitsToKill: 3,
+          exceptions: ['radiant', 'critical hit'],
+          customNote: '',
+          displayMode: 'minimalist',
+        },
+      },
+      detailedDamageModifiers: [],
+      actionOrientedPassives: {
+        bonusActionSearch: false,
+        bonusActionStudy: false,
+        bonusActionHide: false,
+        bonusActionInfluence: false,
+        search: { perception: false, investigation: false, survival: false },
+        study: { arcana: false, history: false, nature: false, religion: false },
+        hide: { stealth: false, acrobatics: false, sleightOfHand: false },
+        influence: { insight: false, persuasion: false, deception: false, intimidation: false },
+      },
+      resistancesList: [],
+      immunitiesList: [],
+      vulnerabilitiesList: [],
+      conditionsList: [],
+      languagesList: [],
+      tools: [],
+      initiativeConfig: {
+        proficient: false,
+        secondaryStat: 'none',
+        statMode: 'add',
+        advantage: false,
+        cantBeSurprised: false,
+      },
+      speedTraversal: {
+        ignoresDifficultTerrain: false,
+        bonusActionDash: false,
+        bonusActionDodge: false,
+        bonusActionDisengage: false,
+        bonusActionSpeed: 0,
+        trackingSpeed: 0,
+        stealthSpeed: 0,
+        note: '',
+      },
+      villainActions: [],
+      bloodiedActions: [],
+      reactiveActions: [],
+      comboActions: [],
+      anatomyParts: [],
+      conditionVulnerabilitiesList: [],
+      conditionResistancesList: [],
+      specialCommunicationArchetype: 'none',
+      runehammerTrack: {
+        enabled: false,
+        timerDie: 'd4',
+        name: 'Escalation Track',
+        events: [],
+      },
+      paragonConfig: {
+        enabled: false,
+        poolCount: 1,
+        poolHp: [],
+        initiativeStep: 'Initiative 20 & 10',
+        enrageNote: '',
+        activePoolFilter: 'all',
+        phaseName: 'Phase',
+        bloodiedPerPhase: [],
+        phaseConfigs: [],
+      },
     }
   },
   getters: {
@@ -208,17 +366,21 @@ export const useMonsterStore = defineStore('monster', {
     },
     computedPassivePerception: (state) => {
       // first check the override
-      if (state.passivePerception.override) {
+      if (state.passivePerception?.override) {
         return state.passivePerception.overrideValue
       }
 
       // non-override, default computation
       // check if perception is in the skills
-      const perception = state.skills.find((s) => s.key === 'PERCEPTION')
+      const perception = state.skills.find(
+        (s) => s.key?.toUpperCase() === 'PERCEPTION'
+      )
       let passive = 10
 
       if (perception) {
         passive += bonusForSkill(state, perception)
+        if (perception.advantage) passive += 5
+        if (perception.disadvantage) passive -= 5
       } else {
         passive += statModifier(state.stats.WIS)
       }
@@ -261,24 +423,24 @@ export const useMonsterStore = defineStore('monster', {
       }
     },
     spellSave(): number {
-      if (this.spellcasting.save.override) {
+      if (this.spellcasting?.save?.override) {
         return this.spellcasting.save.overrideValue
       } else {
-        return this.defaultSpellSave(this.spellcasting.stat)
+        return this.defaultSpellSave(this.spellcasting?.stat || 'INT')
       }
     },
     spellAttackModifier(): number {
-      if (this.spellcasting.attack.override) {
+      if (this.spellcasting?.attack?.override) {
         return this.spellcasting.attack.overrideValue
       } else {
-        return this.defaultSpellAttackModifier(this.spellcasting.stat)
+        return this.defaultSpellAttackModifier(this.spellcasting?.stat || 'INT')
       }
     },
     spellAbilityModifier(): number {
-      if (this.spellcasting.modifier.override) {
+      if (this.spellcasting?.modifier?.override) {
         return this.spellcasting.modifier.overrideValue
       } else {
-        return this.defaultSpellModifier(this.spellcasting.stat)
+        return this.defaultSpellModifier(this.spellcasting?.stat || 'INT')
       }
     },
     attackModifier: (state) => {
@@ -352,16 +514,16 @@ export const useMonsterStore = defineStore('monster', {
     expectedAttackDamage: (state) => {
       return (attack: DndAttack) => {
         const primary =
-          avgRoll(attack.damage.count, attack.damage.dice) +
-          (attack.damage.modifier.override
-            ? attack.damage.modifier.overrideValue
-            : statModifier(state.stats[attack.damage.modifier.stat]))
+          avgRoll(attack.damage?.count ?? 0, attack.damage?.dice ?? 'd6') +
+          (attack.damage?.modifier?.override
+            ? (attack.damage.modifier.overrideValue ?? 0)
+            : statModifier(state.stats[attack.damage?.modifier?.stat ?? 'STR']))
 
         const secondary =
-          avgRoll(attack.alternateDamage.count, attack.alternateDamage.dice) +
-          (attack.alternateDamage.modifier.override
-            ? attack.alternateDamage.modifier.overrideValue
-            : statModifier(state.stats[attack.alternateDamage.modifier.stat]))
+          avgRoll(attack.alternateDamage?.count ?? 0, attack.alternateDamage?.dice ?? 'd6') +
+          (attack.alternateDamage?.modifier?.override
+            ? (attack.alternateDamage.modifier.overrideValue ?? 0)
+            : statModifier(state.stats[attack.alternateDamage?.modifier?.stat ?? 'STR']))
 
         const base = attack.alternateDamage.active
           ? Math.max(primary, secondary)
@@ -517,24 +679,24 @@ export const useMonsterStore = defineStore('monster', {
     },
     attackName: (state) => {
       return (attackId: string) => {
+        if (!attackId) return ''
         const attack = state.attacks.find((a) => a.id === attackId)
-
-        if (attack) {
-          return attack.name
-        } else {
-          return '[Invalid Attack Id]'
-        }
+        if (attack) return attack.name
+        const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const byName = state.attacks.find((a) => norm(a.name) === norm(attackId))
+        if (byName) return byName.name
+        return attackId.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
       }
     },
     actionName: (state) => {
       return (actionId: string) => {
+        if (!actionId) return ''
         const action = state.actions.find((a) => a.id === actionId)
-
-        if (action) {
-          return action.name
-        } else {
-          return '[Invalid Action Id]'
-        }
+        if (action) return action.name
+        const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const byName = state.actions.find((a) => norm(a.name) === norm(actionId))
+        if (byName) return byName.name
+        return actionId.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
       }
     },
     attacksAndActions: (state) => {
@@ -563,34 +725,68 @@ export const useMonsterStore = defineStore('monster', {
     },
     legendaryActionName: (state) => {
       return (id: string) => {
-        const maybeAction = state.actions.find((a) => a.id === id)
+        if (!id) return ''
+        const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const targetNorm = norm(id)
 
+        // 1. Exact ID match
+        const maybeAction = state.actions.find((a) => a.id === id)
         if (maybeAction) return maybeAction.name
 
         const maybeAttack = state.attacks.find((a) => a.id === id)
-
         if (maybeAttack) return maybeAttack.name
 
-        return '[Invalid Id]'
+        // 2. Case-insensitive or normalized name match
+        const actionByName = state.actions.find((a) => a.name.trim().toLowerCase() === id.trim().toLowerCase() || norm(a.name) === targetNorm)
+        if (actionByName) return actionByName.name
+
+        const attackByName = state.attacks.find((a) => a.name.trim().toLowerCase() === id.trim().toLowerCase() || norm(a.name) === targetNorm)
+        if (attackByName) return attackByName.name
+
+        // 3. Fallback clean name instead of [Invalid Id]
+        return id.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
       }
     },
     legendaryAction: (state) => {
       return (id: string) => {
-        const maybeAction = state.actions.find((a) => a.id === id)
+        if (!id) return undefined
+        const norm = (s: string) => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+        const targetNorm = norm(id)
 
-        if (maybeAction)
-          return {
-            action: maybeAction,
-            type: 'action',
-          }
+        // 1. Exact ID match
+        const maybeAction = state.actions.find((a) => a.id === id)
+        if (maybeAction) return { action: maybeAction, type: 'action' }
 
         const maybeAttack = state.attacks.find((a) => a.id === id)
+        if (maybeAttack) return { action: maybeAttack, type: 'attack' }
 
-        if (maybeAttack)
-          return {
-            action: maybeAttack,
-            type: 'attack',
-          }
+        // 2. Name or slug match
+        const actionByName = state.actions.find((a) => a.name.trim().toLowerCase() === id.trim().toLowerCase() || norm(a.name) === targetNorm)
+        if (actionByName) return { action: actionByName, type: 'action' }
+
+        const attackByName = state.attacks.find((a) => a.name.trim().toLowerCase() === id.trim().toLowerCase() || norm(a.name) === targetNorm)
+        if (attackByName) return { action: attackByName, type: 'attack' }
+
+        // 3. Graceful fallback synthesis
+        const fallbackName = id.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+        return {
+          action: {
+            id,
+            name: fallbackName,
+            description: '',
+            recharge: '',
+            legendaryOnly: true,
+            limitedUse: { count: 0, rate: '' },
+            stat: 'none' as any,
+            save: { override: false, overrideValue: 0 },
+            range: '',
+            effects: [],
+            customPreamble: false,
+            bonusAction: false,
+            crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: false, automatic: true }
+          },
+          type: 'action'
+        }
       }
     },
     attackOrActionFromId(): (
@@ -839,23 +1035,41 @@ export const useMonsterStore = defineStore('monster', {
 
       return data
     },
-    initiative(): { mod: number; passive: number } {
+    initiative(): { mod: number; passive: number; advantage?: boolean; disadvantage?: boolean; cantBeSurprised?: boolean } {
       const skillDefined = this.skills.find((s) => s.key === 'INITIATIVE')
+      let baseMod = statModifier(this.stats.DEX)
+
+      if (this.initiativeConfig) {
+        if (this.initiativeConfig.secondaryStat && this.initiativeConfig.secondaryStat !== 'none') {
+          const secMod = statModifier(this.stats[this.initiativeConfig.secondaryStat as DndStat])
+          if (this.initiativeConfig.statMode === 'replace') {
+            baseMod = secMod
+          } else {
+            baseMod += secMod
+          }
+        }
+        if (this.initiativeConfig.proficient) {
+          baseMod += this.proficiency
+        }
+      }
 
       if (skillDefined) {
         const bonus = skillDefined.override
           ? skillDefined.overrideValue
           : this.defaultSkillBonus(skillDefined)
-        return {
-          mod: bonus,
-          passive: 10 + bonus,
-        }
-      } else {
-        // this is just the dex mod
-        return {
-          mod: statModifier(this.stats.DEX),
-          passive: 10 + statModifier(this.stats.DEX),
-        }
+        baseMod = bonus
+      }
+
+      const hasAdv = !!this.initiativeConfig?.advantage || !!skillDefined?.advantage
+      const hasDisadv = !!this.initiativeConfig?.disadvantage || !!skillDefined?.disadvantage
+      const passiveMod = hasAdv && !hasDisadv ? 5 : hasDisadv && !hasAdv ? -5 : 0
+
+      return {
+        mod: baseMod,
+        passive: 10 + baseMod + passiveMod,
+        advantage: hasAdv,
+        disadvantage: hasDisadv,
+        cantBeSurprised: !!this.initiativeConfig?.cantBeSurprised,
       }
     },
   },
@@ -934,11 +1148,11 @@ export const useMonsterStore = defineStore('monster', {
         this.speeds.splice(index, 1)
       }
     },
-    addSkill(skillName: keyof typeof SKILL) {
+    addSkill(skillName: keyof typeof SKILL, proficient = true) {
       this.skills.push({
         skill: SKILL[skillName],
         key: skillName,
-        proficient: false,
+        proficient: proficient,
         expertise: false,
         override: false,
         overrideValue: 0,
@@ -1110,6 +1324,9 @@ export const useMonsterStore = defineStore('monster', {
       }
     },
     addLegendaryAction(actionId: string, cost = 1) {
+      if (this.legendaryActions.count === 0) {
+        this.legendaryActions.count = 3
+      }
       if (
         this.legendaryActions.actions.find((la) => la.actionId === actionId) ==
         null
@@ -1119,6 +1336,22 @@ export const useMonsterStore = defineStore('monster', {
           cost,
         })
       }
+    },
+    createStandaloneLegendaryAction(name = 'New Legendary Action', description = '', cost = 1) {
+      if (this.legendaryActions.count === 0) {
+        this.legendaryActions.count = 3
+      }
+      const act = defaultAction()
+      act.name = name
+      act.description = description || '{NAME} makes a Perception check or moves up to half its speed.'
+      act.legendaryOnly = true
+      act.customPreamble = true
+      this.actions.push(act)
+      this.legendaryActions.actions.push({
+        actionId: act.id,
+        cost,
+      })
+      return act.id
     },
     deleteLegendaryAction(actionId: string) {
       const idx = this.legendaryActions.actions.findIndex(
@@ -1219,25 +1452,138 @@ export const useMonsterStore = defineStore('monster', {
         })
       }
     },
+    addTool(name: string, stat: DndStat = 'DEX') {
+      if (!Array.isArray(this.tools)) {
+        this.tools = []
+      }
+      this.tools.push({
+        id: uuidv4(),
+        name,
+        proficient: true,
+        expertise: false,
+        stat,
+        override: false,
+        overrideValue: 0,
+        advantage: false,
+        disadvantage: false,
+        condition: '',
+      })
+    },
+    deleteTool(id: string) {
+      if (!Array.isArray(this.tools)) return
+      const idx = this.tools.findIndex((t) => t.id === id)
+      if (idx !== -1) {
+        this.tools.splice(idx, 1)
+      }
+    },
+    addVillainAction(round: 1 | 2 | 3 = 1) {
+      if (!Array.isArray(this.villainActions)) this.villainActions = []
+      this.villainActions.push({
+        id: uuidv4(),
+        round,
+        name: `Villain Action (Round ${round})`,
+        description: '',
+        trigger: "At the end of another creature's turn",
+      })
+    },
+    deleteVillainAction(id: string) {
+      if (!Array.isArray(this.villainActions)) return
+      const idx = this.villainActions.findIndex((a) => a.id === id)
+      if (idx !== -1) this.villainActions.splice(idx, 1)
+    },
+    addBloodiedAction() {
+      if (!Array.isArray(this.bloodiedActions)) this.bloodiedActions = []
+      this.bloodiedActions.push({
+        id: uuidv4(),
+        name: 'Bloodied Surge',
+        triggerType: 'immediate_reaction',
+        description: 'When reduced to half hit points or fewer, immediately recharges all abilities and moves up to its speed.',
+      })
+    },
+    deleteBloodiedAction(id: string) {
+      if (!Array.isArray(this.bloodiedActions)) return
+      const idx = this.bloodiedActions.findIndex((a) => a.id === id)
+      if (idx !== -1) this.bloodiedActions.splice(idx, 1)
+    },
+    addReactiveAction() {
+      if (!Array.isArray(this.reactiveActions)) this.reactiveActions = []
+      this.reactiveActions.push({
+        id: uuidv4(),
+        name: 'Reactive Parry',
+        trigger: 'When a creature within reach misses with a melee attack',
+        description: 'Retaliates with a strike or gains +3 AC.',
+        usesPerRound: 1,
+      })
+    },
+    deleteReactiveAction(id: string) {
+      if (!Array.isArray(this.reactiveActions)) return
+      const idx = this.reactiveActions.findIndex((a) => a.id === id)
+      if (idx !== -1) this.reactiveActions.splice(idx, 1)
+    },
+    addComboAction() {
+      if (!Array.isArray(this.comboActions)) this.comboActions = []
+      this.comboActions.push({
+        id: uuidv4(),
+        name: 'Grab and Crush',
+        leadAction: 'Bite',
+        followUpAction: 'Constrict',
+        condition: 'Target is grappled',
+        description: 'Immediately follows up with automatic crushing damage.',
+      })
+    },
+    deleteComboAction(id: string) {
+      if (!Array.isArray(this.comboActions)) return
+      const idx = this.comboActions.findIndex((a) => a.id === id)
+      if (idx !== -1) this.comboActions.splice(idx, 1)
+    },
+    addAnatomyPart(name = 'Wings') {
+      if (!Array.isArray(this.anatomyParts)) this.anatomyParts = []
+      this.anatomyParts.push({
+        id: uuidv4(),
+        name,
+        hp: 30,
+        ac: 14,
+        threshold: 10,
+        breakEffect: 'Disabled: Loses flying speed when reduced to 0 HP.',
+      })
+    },
+    deleteAnatomyPart(id: string) {
+      if (!Array.isArray(this.anatomyParts)) return
+      const idx = this.anatomyParts.findIndex((p) => p.id === id)
+      if (idx !== -1) this.anatomyParts.splice(idx, 1)
+    },
+    addTrackEvent(round = 1) {
+      if (!this.runehammerTrack) {
+        this.runehammerTrack = { enabled: true, timerDie: 'd4', name: 'Escalation Track', events: [] }
+      }
+      this.runehammerTrack.events.push({
+        id: uuidv4(),
+        round,
+        name: `Escalation Round ${round}`,
+        description: '',
+      })
+    },
+    deleteTrackEvent(id: string) {
+      if (!this.runehammerTrack?.events) return
+      const idx = this.runehammerTrack.events.findIndex((e) => e.id === id)
+      if (idx !== -1) this.runehammerTrack.events.splice(idx, 1)
+    },
     swapItems(target: SwappableField, source: number, dest: number) {
-      const targetArray = this[target]
+      const targetArray = this[target] as unknown[] | undefined
+      if (!Array.isArray(targetArray)) return
+      if (source < 0 || source >= targetArray.length || dest < 0 || dest >= targetArray.length) return
 
       const tmp = targetArray[dest]
       targetArray[dest] = targetArray[source]
       targetArray[source] = tmp
     },
     moveItemUp(target: SwappableField, source: number) {
-      // already at top
-      if (source === 0) return
-
+      if (source <= 0) return
       this.swapItems(target, source, source - 1)
     },
     moveItemDown(target: SwappableField, source: number) {
-      const targetLen = this[target].length
-
-      // already at the bottom
-      if (source === targetLen - 1) return
-
+      const targetArray = this[target] as unknown[] | undefined
+      if (!Array.isArray(targetArray) || source >= targetArray.length - 1) return
       this.swapItems(target, source, source + 1)
     },
   },

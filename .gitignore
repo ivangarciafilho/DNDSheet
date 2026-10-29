@@ -31,3 +31,7 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+
+deployed-site-reference/
+.chrome-tmp/
+.chrome-fuzz-tmp/

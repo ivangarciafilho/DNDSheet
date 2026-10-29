@@ -99,10 +99,10 @@ export function useTarrasqueRenderer() {
     tio.damage_vulnerabilities = renderer.vulnerabilities.value
     tio.damage_resistances = renderer.resistances.value
     tio.damage_immunities = renderer.immunities.value
-    tio.condition_immunities = renderer.immunities.value
+    tio.condition_immunities = renderer.conditions.value
     tio.senses = renderer.senses.value
 
-    tio.languages = monster.languages
+    tio.languages = renderer.languages.value
     tio.challenge_rating = CR[monster.CR].cr
 
     // traits

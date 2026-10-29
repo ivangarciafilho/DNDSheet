@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DNDSheet — Monster Maker Quick Launcher & Guide</title>
+  <link rel="icon" type="image/ico" href="public/favicon.ico">
+  <style>
+    :root {
+      --bg-parchment: #fdf1dc;
+      --border-gold: #c9ad6a;
+      --red-dnd: #58180d;
+      --red-accent: #7a2012;
+      --text-dark: #1f1f1f;
+      --gold-dark: #8b6e2d;
+    }
+    body {
+      margin: 0;
+      padding: 30px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: #242424;
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 95vh;
+    }
+    .card {
+      background-color: var(--bg-parchment);
+      border: 3px solid var(--border-gold);
+      border-radius: 10px;
+      box-shadow: 0 12px 36px rgba(0,0,0,0.6);
+      max-width: 780px;
+      width: 100%;
+      padding: 32px 40px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    .header {
+      border-bottom: 2px solid var(--red-dnd);
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      margin: 0 0 6px 0;
+      color: var(--red-dnd);
+      font-size: 28px;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .subtitle {
+      color: #665;
+      font-style: italic;
+      font-size: 14px;
+    }
+    .status-box {
+      background: rgba(0,0,0,0.04);
+      border: 1px dashed var(--border-gold);
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin: 18px 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: #f39c12;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+      flex-shrink: 0;
+    }
+    .status-dot.online {
+      background-color: #27ae60;
+      animation: none;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.1); }
+      100% { opacity: 0.5; transform: scale(0.9); }
+    }
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, var(--red-accent) 0%, var(--red-dnd) 100%);
+      color: white;
+      text-decoration: none;
+      padding: 15px 30px;
+      font-size: 17px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(88,24,13,0.35);
+      transition: all 0.2s;
+      cursor: pointer;
+      border: none;
+      width: 100%;
+      box-sizing: border-box;
+      gap: 10px;
+    }
+    .action-btn:hover {
+      background: linear-gradient(180deg, #912716 0%, var(--red-accent) 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(88,24,13,0.45);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin: 24px 0 16px 0;
+    }
+    .feature-card {
+      background: #f7e8ce;
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      padding: 12px 14px;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .feature-title {
+      font-weight: bold;
+      color: var(--red-dnd);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .instructions {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+      font-size: 13.5px;
+      line-height: 1.6;
+    }
+    .step {
+      margin-bottom: 10px;
+    }
+    code {
+      background: #eae2cf;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 12.5px;
+      font-family: Consolas, Monaco, monospace;
+      color: #333;
+    }
+    .badge {
+      display: inline-block;
+      background: #27ae60;
+      color: white;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+    .badge-gold {
+      background: var(--gold-dark);
+    }
+    .links-bar {
+      margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .links-bar a {
+      color: var(--red-accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .links-bar a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h1>
+        <span>⚔️ DNDSheet Studio</span>
+        <span class="badge">100% Offline PWA</span>
+        <span class="badge badge-gold">2014 & 2024 MM</span>
+      </h1>
+      <div class="subtitle">5e Monster Maker & Character Sheet Engine — Decoupled Hexagonal Release Candidate</div>
+    </div>
+
+    <div class="status-box" id="statusBox">
+      <div class="status-dot" id="statusDot"></div>
+      <div id="statusText">Checking local offline server at <code>http://localhost:8080/</code>...</div>
+    </div>
+
+    <a href="http://localhost:8080/#/" class="action-btn" id="launchBtn">
+      <span>🚀 Open DNDSheet Studio</span>
+    </a>
+
+    <!-- Creator QoL Highlights Grid -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-title">↺ Undo / Redo Ledger</div>
+        <div>Full snapshot history ledger with <code>Ctrl+Z</code> / <code>Ctrl+Y</code> keyboard shortcuts and top-toolbar controls.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">✨ AI Ingestion Studio</div>
+        <div>Paste markdown or raw prompt responses from ChatGPT, Claude, or local LLMs with auto-migration and 1-click import.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">⚔️ Combat Tracker HUD</div>
+        <div>Live battle cards with round counters, initiative sorting, quick HP deltas, Temp HP shields, and condition chips.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">🧙 Player Character Mode</div>
+        <div>Toggle between Monster Builder and 5e Player Character Sheet with inventory encumbrance, spell slots, and hit dice.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">⚖️ DMG CR Auto-Tuner</div>
+        <div>1-click inverse CR scaling with archetype bias (Brute, Standard, Glass Cannon) and real-time DPR balance.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-title">💾 12 Export Formats</div>
+        <div>Export to 5emm JSON, Homebrewery v2/v3 Markdown, LaTeX, Improved Initiative, Tarrasque.io, Foundry VTT Actor5e, and PNG.</div>
+      </div>
+    </div>
+
+    <div class="instructions">
+      <div class="step">
+        <strong>⚡ 1-Click Desktop Startup:</strong><br>
+        Double-click <code>Launch-DNDSheet.bat</code> or <code>Launch-DNDSheet-Silent.vbs</code> located in this folder. Your browser opens immediately!
+      </div>
+      <div class="step">
+        <strong>🌐 100% Offline PWA Installation:</strong><br>
+        In Chrome, Edge, or Brave, click the <strong>Install</strong> button in the browser address bar to install DNDSheet as a standalone desktop application.
+      </div>
+    </div>
+
+    <div class="links-bar">
+      <a href="http://localhost:8080/#/" target="_blank">🔗 Local Server URL (Port 8080)</a>
+      <a href="https://ebshimizu.github.io/5emm/#/" target="_blank">📖 Upstream 5emm Reference</a>
+    </div>
+  </div>
+
+  <script>
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const launchBtn = document.getElementById('launchBtn');
+
+    async function checkServer() {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1200);
+
+        await fetch('http://localhost:8080/manifest.json', {
+          mode: 'no-cors',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+
+        // Server is online!
+        statusDot.classList.add('online');
+        statusText.innerHTML = '<strong>Local Server Active!</strong> Redirecting to DNDSheet in <span id="countdown">2</span>s...';
+
+        let count = 2;
+        const interval = setInterval(() => {
+          count--;
+          const el = document.getElementById('countdown');
+          if (el) el.innerText = count;
+          if (count <= 0) {
+            clearInterval(interval);
+            window.location.href = 'http://localhost:8080/#/';
+          }
+        }, 1000);
+
+      } catch (err) {
+        // Server not running yet
+        statusDot.classList.remove('online');
+        statusText.innerHTML = 'Local server is currently stopped. Double-click <code>Launch-DNDSheet.bat</code> to start it.';
+        setTimeout(checkServer, 2500);
+      }
+    }
+
+    // Start checking server
+    checkServer();
+  </script>
+</body>
+</html>

@@ -1,9 +1,12 @@
 <template>
   <q-btn
-    push
+    flat
+    dense
+    round
     :icon="locked ? 'lock' : 'lock_open'"
-    :color="locked ? 'dark' : 'warning'"
-    size="md"
+    :color="locked ? 'grey-8' : 'warning'"
+    size="sm"
+    class="q-ma-none"
   >
     <q-tooltip class="text-body2">
       {{ locked ? lockTooltip : unlockTooltip }}

@@ -133,7 +133,7 @@ export function useImprovedInitRenderer() {
       )
     }
 
-    ii.Languages = monster.languages.split(',')
+    ii.Languages = (renderer.languages.value || monster.languages).split(',').map((s: string) => s.trim())
     ii.Challenge = CR[monster.CR].cr
 
     // traits

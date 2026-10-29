@@ -2,6 +2,7 @@
   <q-page style="min-height: calc(100vh - 120px)">
     <q-table
       v-model:selected="selected"
+      :dark="$q.dark.isActive"
       :title="$t('editor.template.title')"
       :rows="templates"
       :columns="columns"

@@ -1,7 +1,25 @@
 <template>
   <q-btn round flat icon="download">
     <q-menu>
-      <q-list>
+      <q-list v-if="editorStore.activeMode === 'character'">
+        <q-item v-close-popup clickable @click="saveCharJson()">
+          <q-item-section>Export Character JSON (.json)</q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="saveCharMd()">
+          <q-item-section>Export Character Markdown (.md)</q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="saveCharTxt()">
+          <q-item-section>Export Character Plain Text (.txt)</q-item-section>
+        </q-item>
+        <q-separator />
+        <q-item v-close-popup clickable @click="savePng()">
+          <q-item-section>Save Sheet as PNG</q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="copyCharMd()">
+          <q-item-section>Copy Character Markdown</q-item-section>
+        </q-item>
+      </q-list>
+      <q-list v-else>
         <q-item v-close-popup clickable @click="save5emm()">
           <q-item-section>{{ $t('io.export.default') }}</q-item-section>
         </q-item>
@@ -19,6 +37,16 @@
         </q-item>
         <q-item v-close-popup clickable @click="saveMd()">
           <q-item-section>{{ $t('io.export.md') }}</q-item-section>
+        </q-item>
+        <q-separator />
+        <q-item v-close-popup clickable @click="exportFoundry()">
+          <q-item-section>Foundry VTT (Actor5e JSON)</q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="exportPlainText()">
+          <q-item-section>Plain Text (.txt)</q-item-section>
+        </q-item>
+        <q-item v-close-popup clickable @click="exportHtml()">
+          <q-item-section>HTML Snippet (.html)</q-item-section>
         </q-item>
         <q-separator />
         <q-item v-close-popup clickable @click="savePng()">
@@ -51,6 +79,16 @@ import { snapdom } from '@zumer/snapdom'
 
 import jsonurl from 'json-url'
 import { useEditorStore } from 'src/stores/editor-store'
+import { useCharacterStore } from 'src/stores/character-store'
+import {
+  exportToFoundryJson,
+  exportToHtml,
+  exportToPlainText,
+  exportCharacterToMarkdown,
+  exportCharacterToPlainText,
+  exportCharacterToJson,
+} from 'src/core/usecases/ExportStatblock'
+import type { Monster } from 'src/core/domain/types'
 
 export default defineComponent({
   name: 'DownloadButton',
@@ -156,11 +194,74 @@ export default defineComponent({
       )
     }
 
+    const charStore = useCharacterStore()
+
+    const saveCharJson = () => {
+      try {
+        const json = exportCharacterToJson(charStore.actor)
+        download(json, `${charStore.actor.name || 'Hero'}.character.json`, 'application/json')
+        $q.notify({
+          message: 'Exported Character JSON',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({ message: 'Failed to export Character JSON', type: 'negative' })
+      }
+    }
+
+    const saveCharMd = () => {
+      try {
+        const md = exportCharacterToMarkdown(charStore.actor)
+        download(md, `${charStore.actor.name || 'Hero'}.md`, 'text/markdown')
+        $q.notify({
+          message: 'Exported Character Markdown',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({ message: 'Failed to export Character Markdown', type: 'negative' })
+      }
+    }
+
+    const saveCharTxt = () => {
+      try {
+        const txt = exportCharacterToPlainText(charStore.actor)
+        download(txt, `${charStore.actor.name || 'Hero'}.txt`, 'text/plain')
+        $q.notify({
+          message: 'Exported Character Plain Text',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({ message: 'Failed to export Character Plain Text', type: 'negative' })
+      }
+    }
+
+    const copyCharMd = () => {
+      try {
+        const md = exportCharacterToMarkdown(charStore.actor)
+        copy(md)
+        $q.notify({
+          message: 'Copied Character Markdown to Clipboard',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({ message: 'Failed to copy Character Markdown', type: 'negative' })
+      }
+    }
+
     const savePng = () => {
-      const node = document.getElementById('renderer')
+      const isChar = editorStore.activeMode === 'character'
+      const node = isChar
+        ? document.getElementById('char-sheet')
+        : document.getElementById('renderer')
+      const targetName = isChar ? (charStore.actor.name || 'Hero') : monster.name
 
       if (node != null) {
         if (
+          !isChar &&
           editorStore.statBlockColumns > 1 &&
           window.navigator.userAgent.includes('Mozilla')
         ) {
@@ -179,7 +280,7 @@ export default defineComponent({
           .then((result) => {
             const blobUrl = URL.createObjectURL(result)
             const link = document.createElement('a')
-            link.download = `${monster.name}.png`
+            link.download = `${targetName}.png`
             link.href = blobUrl
             link.click()
           })
@@ -225,7 +326,68 @@ export default defineComponent({
       }
     }
 
+    const exportFoundry = () => {
+      try {
+        const jsonStr = exportToFoundryJson(
+          monster.$state as unknown as Monster,
+          editorStore.style as '2014' | '2024'
+        )
+        download(jsonStr, `${monster.name}.foundry.json`, 'application/json')
+        $q.notify({
+          message: 'Exported Foundry VTT Actor5e JSON',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({
+          message: 'Failed to export Foundry VTT JSON',
+          type: 'negative',
+        })
+      }
+    }
+
+    const exportPlainText = () => {
+      try {
+        const txt = exportToPlainText(
+          monster.$state as unknown as Monster,
+          editorStore.style as '2014' | '2024'
+        )
+        download(txt, `${monster.name}.txt`, 'text/plain')
+        $q.notify({
+          message: 'Exported plain text statblock',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({
+          message: 'Failed to export plain text',
+          type: 'negative',
+        })
+      }
+    }
+
+    const exportHtml = () => {
+      try {
+        const html = exportToHtml(
+          monster.$state as unknown as Monster,
+          editorStore.style as '2014' | '2024'
+        )
+        download(html, `${monster.name}.html`, 'text/html')
+        $q.notify({
+          message: 'Exported HTML statblock',
+          type: 'positive',
+        })
+      } catch (e) {
+        console.error(e)
+        $q.notify({
+          message: 'Failed to export HTML',
+          type: 'negative',
+        })
+      }
+    }
+
     return {
+      editorStore,
       save5emm,
       saveMd,
       saveMd3,
@@ -235,6 +397,13 @@ export default defineComponent({
       savePng,
       saveImprovedInit,
       copyLink,
+      exportFoundry,
+      exportPlainText,
+      exportHtml,
+      saveCharJson,
+      saveCharMd,
+      saveCharTxt,
+      copyCharMd,
     }
   },
 })

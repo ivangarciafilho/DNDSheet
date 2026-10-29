@@ -66,7 +66,7 @@ module.exports = configure(function (ctx) {
 
       // rebuildCache: true, // rebuilds Vite/linter/etc cache on startup
 
-      publicPath: '/5emm',
+      publicPath: process.env.PUBLIC_PATH || '/',
       // analyze: true,
       env: {
         PACKAGE_VERSION: version,
@@ -166,13 +166,15 @@ module.exports = configure(function (ctx) {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'generateSW', // or 'injectManifest'
+      workboxMode: 'injectManifest', // or 'injectManifest'
       injectPwaMetaTags: true,
       swFilename: 'sw.js',
       manifestFilename: 'manifest.json',
       useCredentialsForManifestTag: false,
       // extendGenerateSWOptions (cfg) {}
-      // extendInjectManifestOptions (cfg) {},
+      extendInjectManifestOptions(cfg) {
+        cfg.globPatterns = ['**/*.{js,css,html,png,svg,ico,woff,woff2,ttf,otf,json}'];
+      },
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
     },

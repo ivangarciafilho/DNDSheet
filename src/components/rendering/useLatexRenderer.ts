@@ -343,19 +343,19 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
       renderer.skills.value
     }},
     ${
-      monster.vulnerabilities.length === 0 ? '%' : ''
+      renderer.vulnerabilities.value === '' ? '%' : ''
     }damage-vulnerabilities = {${renderer.vulnerabilities.value}},
-    ${monster.resistances.length === 0 ? '%' : ''}damage-resistances = {${
+    ${renderer.resistances.value === '' ? '%' : ''}damage-resistances = {${
       renderer.resistances.value
     }},
-    ${monster.immunities.length === 0 ? '%' : ''}damage-immunities = {${
+    ${renderer.immunities.value === '' ? '%' : ''}damage-immunities = {${
       renderer.immunities.value
     }},
-    ${monster.conditions.length === 0 ? '%' : ''}condition-immunities = {${
+    ${renderer.conditions.value === '' ? '%' : ''}condition-immunities = {${
       renderer.conditions.value
     }},
     senses = {${renderer.senses.value}},
-    languages = {${monster.languages}},
+    languages = {${renderer.languages.value}},
     challenge = {${CR[monster.CR].cr}},
   ]
 

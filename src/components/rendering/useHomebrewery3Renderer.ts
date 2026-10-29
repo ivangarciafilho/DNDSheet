@@ -16,13 +16,20 @@ export function useMd3Renderer() {
   const { t } = useI18n()
 
   const getTraits = () => {
-    const traits = renderer.traits.value
+    const g = renderer.groupedTraits.value
+    const parts: string[] = []
 
-    const mdTraits =
-      monster.traits.length === 0
-        ? ''
-        : `${traits.map((t) => `${mdFormatter(t)}`).join('\n:\n')}\n`
-    return mdTraits
+    if (g.standard.length > 0) {
+      parts.push(g.standard.map((t) => `${mdFormatter(t)}`).join('\n:\n'))
+    }
+    for (const sec of g.rechargeSections) {
+      parts.push(`### ${sec.section}\n${sec.traits.map((t) => `${mdFormatter(t)}`).join('\n:\n')}`)
+    }
+    for (const cond of g.conditionals) {
+      parts.push(`### ${cond.trigger}\n${cond.traits.map((t) => `${mdFormatter(t)}`).join('\n:\n')}`)
+    }
+
+    return parts.length === 0 ? '' : `${parts.join('\n:\n')}\n`
   }
 
   const getInnate = () => {
@@ -155,6 +162,66 @@ ${renderer.regionalEffectPreamble.value}`
     )}`
   }
 
+  const getVillainActions = () => {
+    const list = renderer.villainActionsList.value
+    if (!list || list.length === 0) return ''
+    const parts = list.map(
+      (va) => `***Round ${va.round}: ${va.name}.*** ${mdFormatter(va.description)}`
+    )
+    return `\n### Villain Actions\n${parts.join('\n:\n')}`
+  }
+
+  const getBloodiedActions = () => {
+    const list = renderer.bloodiedActionsList.value
+    if (!list || list.length === 0) return ''
+    const parts = list.map(
+      (ba) => `***${ba.name} (${ba.trigger || 'Bloodied'}).*** ${mdFormatter(ba.description)}`
+    )
+    return `\n### Bloodied Actions\n${parts.join('\n:\n')}`
+  }
+
+  const getReactiveActions = () => {
+    const list = renderer.reactiveActionsList.value
+    if (!list || list.length === 0) return ''
+    const parts = list.map(
+      (ra) => `***${ra.name} (${ra.trigger}).*** ${mdFormatter(ra.description)}`
+    )
+    return `\n### Reactive Actions\n${parts.join('\n:\n')}`
+  }
+
+  const getComboActions = () => {
+    const list = renderer.comboActionsList.value
+    if (!list || list.length === 0) return ''
+    const parts = list.map(
+      (ca) => `***${ca.name} (${ca.leadAction} ➔ ${ca.followup}).*** ${mdFormatter(ca.description)}`
+    )
+    return `\n### Combo Actions\n${parts.join('\n:\n')}`
+  }
+
+  const getDracoAnatomy = () => {
+    const list = renderer.anatomyPartsList.value
+    if (!list || list.length === 0) return ''
+    const parts = list.map(
+      (ap) => `- **${ap.part}** (AC ${ap.ac}, ${ap.hp} HP): ${ap.severEffect}`
+    )
+    return `\n### Breakable Anatomy\n${parts.join('\n')}`
+  }
+
+  const getRunehammerTrack = () => {
+    const track = renderer.runehammerTrackData.value
+    if (!track?.enabled || !track.events?.length) return ''
+    const parts = track.events.map(
+      (ev) => `- **Round ${ev.round}: ${ev.name}** — ${ev.effect}`
+    )
+    return `\n### Escalation Track (${track.die.toUpperCase()})\n${parts.join('\n')}`
+  }
+
+  const getParagonPools = () => {
+    const p = renderer.paragonData.value
+    if (!p?.enabled) return ''
+    return `\n### Paragon Boss Pools\nThe creature has **${p.poolsCount} stage pools** (${p.actionsPerTurn} actions/pool/round). ${p.transitionEffect ? p.transitionEffect : ''}`
+  }
+
   // formatted for the Homebrewery system, version 3
   // https://homebrewery.naturalcrit.com/
   const renderMarkdownV3 = (twoCol = false) => {
@@ -206,6 +273,13 @@ ${renderer.regionalEffectPreamble.value}`
     const legendary = getLegendaryActions()
     const mythic = getMythicActions()
     const reactions = getReactions()
+    const villainActions = getVillainActions()
+    const bloodiedActions = getBloodiedActions()
+    const reactiveActions = getReactiveActions()
+    const comboActions = getComboActions()
+    const dracoAnatomy = getDracoAnatomy()
+    const runehammer = getRunehammerTrack()
+    const paragon = getParagonPools()
     const lair = getLairActions()
     const regional = getRegionalEffects()
     const inventory = getInventory()
@@ -217,12 +291,10 @@ ___
 **${t('monster.armorClass')}** :: ${monster.AC} ${
       monster.ACType === '' ? '' : `(${monster.ACType})`
     }
-**${t('monster.hp.full')}** :: ${
-      avgRoll(monster.HP.HD, monster.HP.type) + monster.HP.modifier
-    } (${monster.HP.HD}d${monster.HP.type}${renderBonus(monster.HP.modifier)})
-**${t('monster.movement.speed')}** :: ${monster.speeds
-      .map((s) => `${s.speed} ft. ${s.type}${s.note === '' ? '' : s.note}`)
-      .join(', ')}
+**${t('monster.hp.full')}** :: ${renderer.hp.value}
+
+
+**${t('monster.movement.speed')}** :: ${renderer.speeds.value}
 ___
 |  STR  |  DEX  |  CON  |  INT  |  WIS  |  CHA  |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
@@ -232,9 +304,9 @@ ___
       s.WIS.bonus
     })|${s.CHA.score} (${s.CHA.bonus})|
 ___
-${saves !== '' ? saves : ''}${skills}${vuln}${resist}${immune}${condition}
-**${t('editor.senses.label')}** :: ${renderer.senses.value}
-**${t('monster.languages')}** :: ${monster.languages}
+${saves !== '' ? saves : ''}${skills}${renderer.tools.value ? `\n**Tools** :: ${renderer.tools.value}` : ''}${vuln}${resist}${immune}${condition}
+**${t('editor.senses.label')}** :: ${renderer.senses.value}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${renderer.actionPassives.value}` : ''}
+**${t('monster.languages')}** :: ${renderer.languages.value}
 **${t('monster.challenge')}** :: ${renderer.cr.value}
 ___
 ${traits}${mythicTrait}### ${t(
@@ -243,7 +315,7 @@ ${traits}${mythicTrait}### ${t(
       monster.spellcasting.standard.length === 0 ? '' : `${spellcasting}`
     }${
       monster.spellcasting.atWill.length === 0 ? '' : `${innate}`
-    }${bonusActions}${legendary}${mythic}${reactions}${lair}${regional}${inventory}
+    }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${inventory}
 }}`
   }
 

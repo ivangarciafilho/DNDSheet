@@ -1,3 +1,396 @@
+export interface MonsterSenseItem {
+  id: string
+  name: string
+  range?: number
+  rangeUnit?: 'ft' | 'miles'
+  blindBeyond?: boolean
+  acrossPlanes?: boolean
+  echolocation?: boolean
+  devilsSight?: boolean
+  webSense?: boolean
+  lifeSense?: boolean
+  detectionMode?: 'presence' | 'location' | 'identity' | 'all'
+  targetCreatureTypes?: string[]
+  gatheredInfo?: string[]
+  perceptionPrecision?: 'detailed' | 'comparative'
+  observationRequirement?: 'immediate' | 'observing' | 'fighting' | 'both'
+  observationMinutes?: number
+  requiresStudyAction?: boolean
+  lightImpairment?: 'none' | 'bright_light' | 'daylight' | 'dim_and_bright'
+  senseSentienceMode?: 'none' | 'location_intelligent' | 'presence_intelligent' | 'telepathy_creatures'
+  keenTypes?: ('hearing' | 'smell' | 'sight')[]
+  sunlightSensitivity?: boolean
+  note?: string
+}
+
+
+export type DefenseModifierMode = 'none' | 'advantage' | 'disadvantage' | 'absorbs'
+
+export interface DamageDefenseItem {
+  id: string
+  type: string
+  name?: string
+  category?: 'damage' | 'condition'
+  nonmagical?: boolean
+  mode?: DefenseModifierMode
+  absorbs?: boolean
+  advantage?: boolean
+  disadvantage?: boolean
+  saveOutcome?: string
+  acquiredCondition?: string
+  conditionDuration?: string
+  customCondition?: string
+  triggeredBenefit?: string
+  benefitTrigger?: string
+  benefitDuration?: string
+  trigger?: string
+  duration?: string
+  note?: string
+}
+
+export interface MonsterLanguageAnimalHandling {
+  enabled?: boolean
+  dc?: number
+  peacefulOutcome?: string
+  commandOutcome?: string
+  recruitOutcome?: string
+  customNotes?: string
+}
+
+export interface MonsterSpecialLanguageAnimals {
+  understandsOnly?: boolean
+  simpleConceptsOnly?: boolean
+  beastsOnly?: boolean
+  specificSubtype?: string
+  note?: string
+}
+
+export interface MonsterSpecialLanguagePlants {
+  understandsOnly?: boolean
+  canQuestionPastDay?: boolean
+  difficultTerrainNegotiation?: boolean
+  note?: string
+}
+
+export interface MonsterSpecialLanguageUndead {
+  commandMindless?: boolean
+  understandsOnly?: boolean
+  telepathicRange?: number
+  note?: string
+}
+
+export interface MonsterSpecialLanguageDead {
+  maxQuestions?: number
+  corpseMustHaveMouth?: boolean
+  answersCryptic?: boolean
+  deadWithinYears?: string
+  note?: string
+}
+
+export interface MonsterLanguageItem {
+  id: string
+  name: string
+  understandsOnly?: boolean
+  telepathy?: boolean
+  telepathyRange?: number
+  // Mutually exclusive radio options
+  languageRequirement?: 'none' | 'must_understand' | 'must_share'
+  creatureTarget?: 'all' | 'intelligent_only' | 'non_intelligent_only'
+  creatureConcentrationFilter?: 'all' | 'concentrating_only' | 'concentration_check'
+  // Split communication flow
+  broadcast?: boolean
+  noReply?: boolean
+  simpleConceptsOnly?: boolean
+  acrossPlanes?: boolean
+  multiverseWide?: boolean
+
+  // Special Sensory Traits
+  sensesSentient?: boolean
+  locatesSentient?: boolean
+  telepathicEavesdrop?: boolean
+  telepathicAwareness?: boolean
+
+  // Probing
+  learnDesires?: boolean
+  readThoughts?: boolean
+  senseEmotions?: boolean
+  senseAlignment?: boolean
+  senseIntentions?: boolean
+  detectSincerity?: boolean
+  accessMemories?: boolean
+
+  // Sensory
+  shareOwnSenses?: boolean
+  probeCreatureSenses?: boolean
+
+  // Dual Saving Throws: Probing vs Sensory
+  probeRequiresSave?: boolean
+  probeSaveType?: 'WIS' | 'INT' | 'CHA'
+  probeSaveDc?: number
+  probeSaveAwareness?: 'always_unaware' | 'unaware_on_fail' | 'aware'
+
+  sensoryRequiresSave?: boolean
+  sensorySaveType?: 'WIS' | 'INT' | 'CHA'
+  sensorySaveDc?: number
+  syncSaves?: boolean
+
+  // Legacy Save fields
+  requiresSave?: boolean
+  saveType?: 'WIS' | 'INT' | 'CHA'
+  saveDc?: number
+  saveAwareness?: 'always_unaware' | 'unaware_on_fail'
+
+  // Disruption & Initiation
+  disruptedByPsychicDamage?: boolean
+  triggerCondition?: string
+  interceptMessages?: boolean
+  senseTelepathicPresence?: boolean
+  creatureMustSensePresence?: boolean
+  concentration?: 'none' | 'monster_only' | 'creature_only' | 'both'
+  concentrationMode?: 'none' | 'concentration_negates' | 'forced_concentration' | 'requires_concentration'
+
+  // Special Languages Modules
+  animalHandling?: MonsterLanguageAnimalHandling
+  animalsConfig?: MonsterSpecialLanguageAnimals
+  plantsConfig?: MonsterSpecialLanguagePlants
+  undeadConfig?: MonsterSpecialLanguageUndead
+  deadConfig?: MonsterSpecialLanguageDead
+
+  // Backward compatibility legacy fields
+  mustUnderstandAtLeastOne?: boolean
+  mustShareLanguage?: boolean
+  intelligentOnly?: boolean
+  nonIntelligentOnly?: boolean
+  broadcastNoReply?: boolean
+
+  note?: string
+}
+
+export interface VillainAction {
+  id: string
+  round: 1 | 2 | 3
+  name: string
+  description: string
+  trigger?: string
+}
+
+export interface BloodiedAction {
+  id: string
+  name: string
+  triggerType: 'immediate_reaction' | 'while_bloodied'
+  description: string
+}
+
+export interface ReactiveAction {
+  id: string
+  name: string
+  trigger: string
+  description: string
+  usesPerRound?: number
+}
+
+export interface ComboAction {
+  id: string
+  name: string
+  leadAction: string
+  followUpAction: string
+  condition: string
+  description: string
+}
+
+export interface AnatomyPart {
+  id: string
+  name: string
+  hp: number
+  ac?: number
+  threshold?: number
+  breakEffect: string
+}
+
+export interface RunehammerTrackEvent {
+  id: string
+  round: number | string
+  name: string
+  description: string
+}
+
+export interface RunehammerTrack {
+  enabled: boolean
+  timerDie?: string
+  name?: string
+  events: RunehammerTrackEvent[]
+}
+
+
+export interface InvulnerabilityConfig {
+  enabled?: boolean
+  rule: string
+  conditions?: string[]
+  nthAttack?: number
+  attackRuleMode?: 'only_nth' | 'first_x_miss'
+  saveStat?: string
+  saveDc?: number
+  alignmentFilter?: string
+  damageTypesFilter?: string[]
+  customRule?: string
+  firstXCount?: number
+  disruption?: string
+  customDisruption?: string
+  displayLocation?: 'ac' | 'hp'
+  combiner?: 'and' | 'or'
+  customLogic?: string
+}
+
+export interface ParagonPhaseConfig {
+  name: string
+  source: string
+  override?: number | null
+  hpOverride?: number | null
+  diceFormula?: string
+  initiativeBonus?: string | number
+  isBloodied?: boolean
+}
+
+export interface ParagonConfig {
+  enabled: boolean
+  poolCount: number
+  poolHp: number[]
+  poolsCount?: number
+  actionsPerTurn?: number
+  separateHpPools?: boolean
+  transitionEffect?: string
+  initiativeStep?: string
+  enrageNote?: string
+  activePoolFilter?: string
+  phaseName?: string
+  bloodiedPerPhase?: number[]
+  phaseConfigs?: ParagonPhaseConfig[]
+}
+
+export interface MonsterPortrait {
+  url: string
+  position: 'none' | 'left' | 'right'
+  width?: number
+  caption?: string
+}
+
+export interface MonsterExtendedHp {
+  showBloodied?: boolean
+  bloodiedSource?: string
+  bloodiedOverride?: number | null
+  bloodiedDice?: string
+  bloodiedAtPhase?: string
+  damageThresholdDisruption?: string
+  damageReductionDisruption?: string
+  invulnerability?: InvulnerabilityConfig
+  damageThreshold?: number | null
+  damageThresholdSource?: string
+  damageThresholdDice?: string
+  damageReduction?: number | null
+  damageReductionSource?: string
+  damageReductionDice?: string
+  paragonPools?: number
+  paragonPoolHp?: number | number[]
+  tempHp?: {
+    amount: number
+    trigger: string
+    damageType?: string
+  }
+  regeneration?: {
+    enabled?: boolean
+    recoveryType?: string
+    valueSource?: string
+    amount: number
+    timeframe?: string
+    frequency?: string
+    triggerCondition?: string
+    diceFormula?: string
+    disruptedByTypes?: string[]
+    disruptedByNote?: string
+    displayMode?: 'minimalist' | 'detailed' | 'both'
+    disruptedBy?: string
+    triggeredByDamageType?: string
+    providesHpOrTempHp?: 'hp' | 'tempHp'
+    conditionModifier?: string
+    maxHpReductionUntil?: string
+    styleMode?: 'concise' | 'natural'
+  }
+  deathPrevention?: {
+    enabled?: boolean
+    name?: string
+    disruptionMode?: 'return_hp' | 'hide_hp' | 'until_x_crits'
+    hideHp?: boolean
+    critCount?: number
+    critHitsToKill?: number
+    returnHpSource?: string
+    returnHpAmount?: number
+    returnHpValue?: number
+    returnHpAbility?: DndStat
+    returnHpDice?: string
+    requiresSave?: boolean
+    saveAbility?: string
+    saveStat?: string
+    saveDcMode?: 'flat' | '5_plus_damage'
+    saveDc?: number
+    dcRule?: string
+    exceptions?: string[]
+    customNote?: string
+    displayMode?: 'minimalist' | 'detailed' | 'both'
+    returnTimeframe?: 'none' | 'immediate' | 'at_end_of_turn' | 'start_of_next_turn' | string
+    triggerCondition?: 'not_reduced_by' | 'death_save_success' | 'save_success' | 'bloodied' | 'upon_death_burst' | 'custom' | string
+    uponDeathDealsDamage?: boolean
+    deathBurstDamageSource?: string
+    deathBurstDamageAmount?: number
+    deathBurstDamageDice?: string
+    deathBurstDamageType?: string
+    deathBurstTargetFilter?: string
+    deathBurstRange?: number
+  }
+}
+
+export interface DetailedDamageModifier {
+  id: string
+  damageType: string
+  category: 'resistance' | 'immunity' | 'vulnerability'
+  nonmagicalOnly?: boolean
+  silvered?: boolean
+  adamantine?: boolean
+  regainHp?: boolean
+  advantageOnSaves?: boolean
+  disadvantageOnSaves?: boolean
+  conditionNote?: string
+}
+
+export interface ActionOrientedPassives {
+  bonusActionSearch?: boolean
+  bonusActionStudy?: boolean
+  bonusActionHide?: boolean
+  bonusActionInfluence?: boolean
+  conditions?: Record<string, string>
+  search?: {
+    perception?: boolean
+    investigation?: boolean
+    survival?: boolean
+  }
+  study?: {
+    arcana?: boolean
+    history?: boolean
+    nature?: boolean
+    religion?: boolean
+  }
+  hide?: {
+    stealth?: boolean
+    acrobatics?: boolean
+    sleightOfHand?: boolean
+  }
+  influence?: {
+    insight?: boolean
+    persuasion?: boolean
+    deception?: boolean
+    intimidation?: boolean
+  }
+}
+
 import { DICE } from 'src/data/DICE'
 import { SKILL } from 'src/data/SKILL'
 import { v4 } from 'uuid'
@@ -15,6 +408,9 @@ export interface MonsterSave {
   proficient: boolean
   override: boolean
   overrideValue: number
+  advantage?: boolean
+  disadvantage?: boolean
+  condition?: string
 }
 
 export interface MonsterSpeed {
@@ -22,6 +418,117 @@ export interface MonsterSpeed {
   type?: string // type can be nulled in the picker text entry
   speed: number
   note: string
+  hover?: boolean
+}
+
+export interface MonsterSpeedTraversal {
+  ignoresDifficultTerrain?: boolean
+  bonusActionDash?: boolean
+  bonusActionDodge?: boolean
+  bonusActionDisengage?: boolean
+  bonusActionSpeed?: number
+  trackingSpeed?: number
+  stealthSpeed?: number
+  note?: string
+
+  // Amorphous movement options
+  amorphous1Inch?: boolean
+  amorphousCannotEnterLiquids?: boolean
+  moveThroughCreaturesDifficultTerrain?: boolean
+  moveThroughCreaturesShunt?: boolean
+  moveThroughCreaturesShuntDamage?: string
+  shuntDestination?: 'nearest_unoccupied' | 'ethereal_plane'
+  shuntDamageChoice?: string
+  etherealJaunt?: 'none' | 'bonus_action' | 'action' | 'at_will'
+  moveThroughCreaturesTwoSizesDifferent?: boolean
+
+  // Aquatic / Breathing options
+  aquaticBreathing?: 'none' | 'underwater' | 'amphibious' | 'water_only' | 'hold_breath'
+  holdBreathDuration?: string
+}
+
+export interface MonsterAcConfig {
+  enabled?: boolean
+  baseMode?: 'flat' | '10' | 'armor' | 'ability' | string
+  baseArmor?: string
+  baseAbility?: DndStat
+  abilityBonus?: 'none' | DndStat | 'level' | 'cr' | 'pb' | 'hd'
+  defenseItem?: 'none' | 'shield' | 'animated_shield' | 'cloak_of_protection' | 'ring_of_protection' | 'defender' | 'bracers_of_defense' | 'custom'
+  defenseItemCustomBonus?: number
+  defenseItemCustomName?: string
+  temporary?: 'none' | 'spell_shield' | 'spell_shield_of_faith' | 'parry_pb' | 'parry_custom'
+  temporaryCustomBonus?: number
+  conditional?: 'none' | 'all_attacks_beyond_first' | 'first_y_attacks'
+  conditionalBonus?: number
+  conditionalCount?: number
+  conditionalTimeframe?: string
+  customFormula?: string
+  // Enhanced Defensive Mechanics & Permutable Invulnerability Integration (37 Mechanics)
+  secondaryAc?: number
+  conditionMode?: string
+  conditionSecondaryBonus?: number
+  customCondition?: string
+  conditionDamageTypes?: string[]
+  conditionCreatureTypes?: string[]
+  conditionAttackTypes?: string[]
+  saveStat?: string
+  saveVerb?: 'must_succeed' | 'makes' | 'must_succeed_to_hit' | string
+  saveDcSource?: 'spell_save_dc' | 'custom' | 'special_save_dc' | string
+  saveDc?: number
+  saveDcCustom?: number
+  onSaveFailure?: string
+  onSaveFailureDamageAmount?: number
+  onSaveFailureDamageSource?: string
+  onSaveFailureDamageDice?: string
+  onSaveFailureDamageType?: string
+  onSaveSuccess?: string
+  onSaveSuccessDamageAmount?: number
+  onSaveSuccessDamageSource?: string
+  onSaveSuccessDamageDice?: string
+  onSaveSuccessDamageType?: string
+  reflectionMode?: 'none' | 'hit_another_target' | 'reflect_back_attacker'
+  parryCount?: number
+  movedDistance?: number
+  // Decoupled On Miss & When Hit Logic
+  onMiss?: 'none' | 'hits_attacker' | 'hits_target_range' | 'hits_target_feet' | 'damage_attacker' | 'knocks_prone'
+  onMissDistance?: number
+  onMissDamageAmount?: number
+  onMissDamageType?: string
+  onHit?: 'none' | 'damage_attacker' | 'knocks_prone' | 'retaliate_melee'
+  onHitDamageAmount?: number
+  onHitDamageType?: string
+  // Dynamic Timeframes & Light Levels
+  tookDamageType?: string
+  tookDamageTimeframe?: string
+  lightLevel?: string
+}
+
+export interface MonsterInitiativeConfig {
+  proficient?: boolean
+  secondaryStat?: DndStat | 'none'
+  statMode?: 'add' | 'replace'
+  advantage?: boolean
+  disadvantage?: boolean
+  cantBeSurprised?: boolean
+  useLairInitiative?: boolean
+  lairInitiative?: number
+  specialTrigger?: string
+  specialTriggerSpell?: string
+  customEffectNote?: string
+}
+
+export interface MonsterToolProficiency {
+  id: string
+  name: string
+  proficient: boolean
+  expertise: boolean
+  stat: DndStat
+  override: boolean
+  overrideValue: number
+  advantage?: boolean
+  disadvantage?: boolean
+  condition?: string
+  bonusAction?: boolean
 }
 
 export interface MonsterSkill {
@@ -38,6 +545,10 @@ export interface MonsterSkill {
    * Conditional string value to display after the stat modifier. New in 2024.
    */
   conditional?: string
+  condition?: string
+  advantage?: boolean
+  disadvantage?: boolean
+  bonusAction?: boolean
 }
 
 export interface MonsterCrAnnotation {
@@ -64,6 +575,14 @@ export interface MonsterTrait {
   limitedUse: DndLimitedUse
   customPreamble: boolean
   crAnnotation: MonsterCrAnnotation
+  rechargeSection?: string
+  renderInRechargeSection?: boolean
+  conditionalTrigger?: string
+  isConditional?: boolean
+  rechargeTiming?: string
+  rechargeCount?: number
+  rechargeTagOverride?: string
+  stagePool?: number | 'all'
 }
 
 export interface ActionEffect {
@@ -76,6 +595,11 @@ export interface MonsterAction {
   id: string
   description: string
   recharge: string
+  rechargeMin?: number
+  rechargeMax?: number
+  actionType?: string
+  attackBonus?: number
+  targetsText?: string
   legendaryOnly: boolean
   limitedUse: DndLimitedUse
   stat: DndStat | 'none'
@@ -87,7 +611,16 @@ export interface MonsterAction {
   effects: ActionEffect[]
   customPreamble: boolean
   bonusAction: boolean
+  stagePool?: number | string | 'all'
   crAnnotation: MonsterCrAnnotation
+  // Compoundable Actions Architecture
+  school?: string
+  spellLevel?: string
+  components?: string[]
+  duration?: string
+  areaShape?: string
+  areaDistance?: string
+  deliveryType?: 'Attack' | 'Save' | 'Aura' | 'Utility' | string
 }
 
 export interface LairAction {
@@ -172,6 +705,7 @@ export interface DndAttack {
   legendaryOnly: boolean
   useCustomRenderer: boolean
   customRenderer: string
+  stagePool?: string
 }
 
 export interface LegendaryAction {
@@ -185,6 +719,7 @@ export interface MonsterReaction {
   description: string
   limitedUse: DndLimitedUse
   trigger: string
+  stagePool?: number | string | 'all'
 }
 
 export interface CrAttackInfo {
@@ -252,6 +787,19 @@ export type SwappableField =
   | 'reactions'
   | 'lairActions'
   | 'regionalEffects'
+  | 'speeds'
+  | 'skills'
+  | 'tools'
+  | 'languagesList'
+  | 'resistancesList'
+  | 'immunitiesList'
+  | 'vulnerabilitiesList'
+  | 'conditionsList'
+  | 'villainActions'
+  | 'bloodiedActions'
+  | 'reactiveActions'
+  | 'comboActions'
+  | 'anatomyParts'
 
 // the big one is the monster definition
 export interface Monster {
@@ -335,6 +883,43 @@ export interface Monster {
     customClassPreamble: string
     useCustomInnatePreamble: boolean
     customInnatePreamble: string
+    multiclass?: {
+      enabled: boolean
+      secondaryClass: string
+      secondaryLevel: number
+      secondaryStat: DndStat
+      secondarySaveDc?: number
+      secondarySpellAttack?: number
+    }
+    resourceType?: 'slots' | 'points' | 'focus' | 'pact'
+    refreshRate?: 'long_rest' | 'short_rest' | 'downtime'
+    displayTitleMode?: 'class_names' | 'caster_source' | 'split_levels'
+    bypassSlotLevelFilter?: boolean
+    spellCadenceMap?: Record<string, string>
+    levelCadenceMap?: Record<number, string>
+    bonusActionLevelMap?: Record<number, boolean>
+    metamagic?: {
+      enabled: boolean
+      sorceryPoints: number
+      refreshRate: string
+      options: string[]
+    }
+    cantripSwitch?: boolean
+    cantripSwitchCount?: number
+    cantripSwitchInterval?: string
+    preparedCountOverride?: number
+    preparedInterval?: string
+    customRefreshRate?: string
+    classes?: Array<{
+      id: string
+      className: string
+      subclass?: string
+      level: number
+      stat: DndStat
+      slots?: number[]
+      bypassSlotFilter?: boolean
+      spells?: string[]
+    }>
   }
   attacks: DndAttack[]
   actions: MonsterAction[]
@@ -365,6 +950,29 @@ export interface Monster {
   regionalEffectDescription: string
   inventory: string
   autoEstimateDefenseCr: boolean
+  acConfig?: MonsterAcConfig
+  portrait?: MonsterPortrait
+  extendedHp?: MonsterExtendedHp
+  detailedDamageModifiers?: DetailedDamageModifier[]
+  actionOrientedPassives?: ActionOrientedPassives
+  vulnerabilitiesList?: DamageDefenseItem[]
+  conditionVulnerabilitiesList?: DamageDefenseItem[]
+  resistancesList?: DamageDefenseItem[]
+  conditionResistancesList?: DamageDefenseItem[]
+  immunitiesList?: DamageDefenseItem[]
+  conditionsList?: DamageDefenseItem[]
+  languagesList?: MonsterLanguageItem[]
+  specialCommunicationArchetype?: 'none' | 'firbolg' | 'monk'
+  tools?: MonsterToolProficiency[]
+  initiativeConfig?: MonsterInitiativeConfig
+  speedTraversal?: MonsterSpeedTraversal
+  villainActions?: VillainAction[]
+  bloodiedActions?: BloodiedAction[]
+  reactiveActions?: ReactiveAction[]
+  comboActions?: ComboAction[]
+  anatomyParts?: AnatomyPart[]
+  runehammerTrack?: RunehammerTrack
+  paragonConfig?: ParagonConfig
 }
 
 // uhhhhhh

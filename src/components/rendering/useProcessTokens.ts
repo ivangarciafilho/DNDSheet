@@ -1,3 +1,4 @@
+import { computeTraitTag } from 'src/core/domain/defense-and-traits-utils'
 import { MaybeRef } from '@vueuse/core'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { unref } from 'vue'
@@ -8,13 +9,13 @@ import {
   MonsterReaction,
   MonsterTrait,
 } from '../models'
-import { avgRoll, renderBonus, saveForAction } from './mathRendering'
+import { renderBonus, saveForAction, safeToWords, safeToOrdinal, statModifier } from './mathRendering'
 import _ from 'lodash'
 import { useI18n } from 'vue-i18n'
-import N2W from 'number-to-words'
+
 import { useClasses } from 'src/data/CLASS'
-import { getCrByNumber, getCrByString } from 'src/data/CR'
 import { useEditorStore } from 'src/stores/editor-store'
+import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTokens'
 
 export type MonsterContext =
   | MonsterTrait
@@ -52,115 +53,32 @@ export function useProcessTokens() {
 
   const processMonsterTokens = (
     input: string,
-    monster: ReturnType<typeof useMonsterStore>
+    monster: ReturnType<typeof useMonsterStore> | Monster
   ) => {
-    // hehe cheating
-    // monster hp
-    const hp = RegExp(/\{monster.hp\}/gi)
-    input = input.replace(hp, () => {
-      return `{${monster.HP.HD}d${monster.HP.type}+${monster.HP.modifier}}`
-    })
-
-    // dice: {xdy+z}
-    const dice = RegExp(/\{(\d+)d(\d+)[ ]*([+-][ ]*\d+)?\}/gi)
-    input = input.replace(dice, (match, count, dice, modifier) => {
-      const cleanModifier =
-        modifier && modifier !== '' ? parseInt(modifier.replace(' ', '')) : 0
-
-      const diceVal = parseInt(dice)
-      const countVal = parseInt(count)
-
-      const avg = avgRoll(countVal, diceVal) + cleanModifier
-
-      if (diceVal === 1 || countVal === 0) {
-        return `${avg}`
-      }
-
-      return `${avg} (${count}d${dice}${
-        modifier ? renderBonus(cleanModifier) : ''
-      })`
-    })
-
-    // saves
-    const save = RegExp(/\{DC:(\w{3})\}/gi)
-    input = input.replace(save, (match, stat) => {
-      if (stat in monster.stats) {
-        return `DC ${monster.defaultSpellSave(stat)}`
-      } else return match
-    })
-
-    // attack modifier
-    const attack = RegExp(/\{A:(\w{3})\}/gi)
-    input = input.replace(attack, (match, stat) => {
-      if (stat in monster.stats) {
-        return renderBonus(monster.defaultSpellAttackModifier(stat))
-      } else return match
-    })
-
-    // monster name
-    // TODO: this is en-us specific
-    input = input.replace(
-      /\{NAME\}/gi,
-      `${monster.useArticleInToken ? 'the ' : ''}${
-        monster.nickname !== '' ? monster.nickname : monster.name
-      }`
-    )
-
-    // continuing with caps for name token
-    // this is case sensitive actually
-    input = input.replace(/(?:\.\s*|^)\s*(?:<\/?[b|i]>)*\s*(the)/gm, (match) =>
-      match.replace('the', 'The')
-    )
-
-    // XP rendering
-    const xp = RegExp(/\{XP:([\d/]+|monster)(\+)?\}/gi)
-    input = input.replace(xp, (match, cr, additive) => {
-      // change lookup based on token used
-      const crData =
-        cr.toLowerCase() === 'monster'
-          ? getCrByNumber(monster.CR)
-          : getCrByString(cr)
-
-      if (crData) {
-        if (additive != null) {
-          // add xp to the monster's cr
-          const monsterCr = getCrByNumber(monster.CR)
-
-          return `${(crData.xp + monsterCr.xp).toLocaleString()} XP`
-        } else {
-          return `${crData.xp.toLocaleString()} XP`
-        }
-      } else {
-        return match
-      }
-    })
-
-    // generic tokens
-    const generic = RegExp(/\{monster.([\w\d\[\].]+)}/gi)
-    input = input.replace(generic, (match, prop) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const value: any = _.get(monster, prop)
-
-      return value
-    })
-
-    return input
+    if (!input) return ''
+    if (!monster) return input
+    const state = (monster as any).$state ?? monster
+    return coreProcessTokens(input, state as Monster)
   }
 
   const processTraitTokens = (input: string, context: MonsterTrait) => {
-    // limitedUse is a special case
-    const limitedUse = ` (${context.limitedUse.count}/${t(
-      `recharge.${context.limitedUse.rate}`
-    )})`
+    if (!context) return input;
+    // consolidated trait tag
+    const tag = computeTraitTag(context)
+    const limitedUse = tag
+      ? ` (${tag})`
+      : context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate
+      ? ` (${context.limitedUse.count}/${context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''})`
+      : ''
     input = input.replace(
-      /\{trait.limitedUse\}/gi,
-      `${context.limitedUse.count > 0 ? limitedUse : ''}`
+      /{trait.limitedUse}/gi,
+      limitedUse
     )
 
     // localize the rate string
     input = input.replace(
-      /\{trait.limitedUse.rate\}/gi,
-      t(`recharge.${context.limitedUse.rate}`)
+      /{trait.limitedUse.rate}/gi,
+      context.limitedUse?.rate ? context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : '' : ''
     )
 
     return input
@@ -174,7 +92,7 @@ export function useProcessTokens() {
     // level but ordinal
     input = input.replace(
       /\{spellcasting.ordinal\}/gi,
-      N2W.toOrdinal(context.level)
+      safeToOrdinal(context.level)
     )
 
     // stat
@@ -262,7 +180,7 @@ export function useProcessTokens() {
         `, ${t(
           'editor.attack.targets',
           {
-            count: N2W.toWords(context.targets),
+            count: safeToWords(context.targets),
           },
           context.targets
         )}`
@@ -326,54 +244,68 @@ export function useProcessTokens() {
   }
 
   const processActionTokens = (input: string, context: MonsterAction) => {
+    if (!context) return input;
     // format the effects
     // we run this replacement first, because the effects can have other tokens in them
-    const effects = context.effects
-      .map((e) => `<i>${e.case}:</i> ${e.effect}`)
-      .join(' ')
+        const effects = Array.isArray(context?.effects)
+      ? context.effects
+          .map((e) => `<i>${e.case}:</i> ${e.effect}`)
+          .join(' ')
+      : ''
     input = input.replace(/\{action.effects\}/gi, effects)
 
-    // limitedUse is a special case
-    const limitedUse =
-      context.recharge === ''
-        ? ` (${context.limitedUse.count}/${t(
-            `recharge.${context.limitedUse.rate}`
-          )})`
-        : ` ${t('editor.action.recharge', [context.recharge])}`
-
-    input = input.replace(
-      /\{action.limitedUse\}/gi,
-      `${
-        context.limitedUse.count > 0 || context.recharge !== ''
-          ? limitedUse
-          : ''
-      }`
+    // limitedUse / recharge formatting (no empty Recharge leaks)
+    let rechargeVal = (context.recharge || (context as any).limitedUse?.recharge || '').trim()
+    if (!rechargeVal && context.rechargeMin) {
+      const min = context.rechargeMin
+      const max = context.rechargeMax || 6
+      rechargeVal = min < max ? `${min}–${max}` : `${min}`
+    }
+    if (!rechargeVal && context.limitedUse?.rate === 'RECHARGE') {
+      rechargeVal = '5–6'
+    }
+    const hasRecharge = rechargeVal !== ''
+    const hasLimitedUse = Boolean(
+      context.limitedUse &&
+      context.limitedUse.count > 0 &&
+      context.limitedUse.rate &&
+      context.limitedUse.rate !== 'RECHARGE'
     )
+
+    let limitedUseStr = ''
+    if (hasRecharge) {
+      limitedUseStr = ` ${t('editor.action.recharge', [rechargeVal])}`
+    } else if (hasLimitedUse) {
+      const rateLabel = t(`recharge.${context.limitedUse.rate}`)
+      const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
+      limitedUseStr = ` (${context.limitedUse.count}/${cleanRate})`
+    }
+
+    input = input.replace(/\{action.limitedUse\}/gi, limitedUseStr)
 
     // localize the rate string
     input = input.replace(
       /\{action.limitedUse.rate\}/gi,
-      t(`recharge.${context.limitedUse.rate}`)
+      context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''
     )
 
     return input
   }
 
   const processReactionTokens = (input: string, context: MonsterReaction) => {
+    if (!context) return input;
     // limitedUse is a special case
-    const limitedUse = ` (${context.limitedUse.count}/${t(
-      `recharge.${context.limitedUse.rate}`
-    )})`
+    const limitedUse = context.limitedUse && context.limitedUse.rate ? ` (${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)})` : ''
 
     input = input.replace(
       /\{reaction.limitedUse\}/gi,
-      `${context.limitedUse.count > 0 ? limitedUse : ''}`
+      `${(context.limitedUse && context.limitedUse.count > 0) ? limitedUse : ''}`
     )
 
     // localize the rate string
     input = input.replace(
       /\{reaction.limitedUse.rate\}/gi,
-      t(`recharge.${context.limitedUse.rate}`)
+      context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''
     )
 
     return input
@@ -406,7 +338,7 @@ export function useProcessTokens() {
       const attacks = Object.entries(collatedAttacks).map(([id, count]) => {
         return t(
           'editor.multiattack.attack',
-          { a: `${N2W.toWords(count)} ${monster.attackName(id)}` },
+          { a: `${safeToWords(count)} ${monster.attackName(id)}` },
           count
         )
       })
@@ -428,7 +360,7 @@ export function useProcessTokens() {
           'editor.multiattack.action',
           {
             a: monster.actionName(id),
-            count: N2W.toWords(count),
+            count: safeToWords(count),
           },
           count
         )
@@ -552,17 +484,127 @@ export function useProcessTokens() {
     return input
   }
 
+  const buildHeaderPillHtml = (
+    monster: ReturnType<typeof useMonsterStore>,
+    stagePool: string | undefined,
+    name: string,
+    extraCells: { text: string; cls?: string }[] = []
+  ): string => {
+    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
+
+    // Cluster 1: Identity & Tags (Phase, Recharge, Discipline/Tier, Name, Components, Duration)
+    const idCells: string[] = []
+    if (stagePool && stagePool !== 'all') {
+      idCells.push(`<div class="action-cell phase-cell"><span class="cell-phase-text">${pName} ${stagePool}</span></div>`)
+    }
+
+    const rechargeCell = extraCells.find((c) => c.cls?.includes('recharge-cell'))
+    if (rechargeCell && rechargeCell.text?.trim()) {
+      idCells.push(`<div class="action-cell ${rechargeCell.cls || 'recharge-cell'}"><span class="cell-sub-text">${rechargeCell.text.trim()}</span></div>`)
+    }
+
+    const schoolCell = extraCells.find((c) => c.cls?.includes('school-cell'))
+    if (schoolCell && schoolCell.text?.trim()) {
+      idCells.push(`<div class="action-cell ${schoolCell.cls}"><span class="cell-sub-text">${schoolCell.text.trim()}</span></div>`)
+    }
+
+    // Name cell in crimson red background
+    idCells.push(`<div class="action-cell name-cell"><span class="cell-main-text">${name}</span></div>`)
+
+    const componentCell = extraCells.find((c) => c.cls?.includes('component-cell'))
+    if (componentCell && componentCell.text?.trim()) {
+      idCells.push(`<div class="action-cell ${componentCell.cls}"><span class="cell-sub-text">${componentCell.text.trim()}</span></div>`)
+    }
+
+    const durationCell = extraCells.find((c) => c.cls?.includes('duration-cell'))
+    if (durationCell && durationCell.text?.trim()) {
+      idCells.push(`<div class="action-cell ${durationCell.cls}"><span class="cell-sub-text">${durationCell.text.trim()}</span></div>`)
+    }
+
+    // Cluster 2: Mechanics (Attack Roll or Save DC)
+    const mechCells: string[] = []
+    const attackCell = extraCells.find((c) => c.cls === 'type-cell' || (c.cls?.includes('type-cell') && !c.cls?.includes('school-cell')))
+    if (attackCell && attackCell.text?.trim()) {
+      mechCells.push(`<div class="action-cell type-cell mech-cell"><span class="cell-sub-text">${attackCell.text.trim()}</span></div>`)
+    }
+    const saveCell = extraCells.find((c) => c.cls?.includes('save-cell'))
+    if (saveCell && saveCell.text?.trim()) {
+      mechCells.push(`<div class="action-cell save-cell mech-cell"><span class="cell-sub-text">${saveCell.text.trim()}</span></div>`)
+    }
+
+    // Cluster 3: Scope & Range / Target
+    const scopeCells: string[] = []
+    const targetCell = extraCells.find((c) => c.cls?.includes('target-cell'))
+    if (targetCell && targetCell.text?.trim()) {
+      scopeCells.push(`<div class="action-cell target-cell scope-cell"><span class="cell-sub-text">${targetCell.text.trim()}</span></div>`)
+    }
+    const rangeCell = extraCells.find((c) => c.cls?.includes('range-cell'))
+    if (rangeCell && rangeCell.text?.trim()) {
+      scopeCells.push(`<div class="action-cell range-cell scope-cell"><span class="cell-sub-text">${rangeCell.text.trim()}</span></div>`)
+    }
+
+    // Any other remaining cells go into idCells
+    const handledIndices = new Set([
+      extraCells.indexOf(rechargeCell as any),
+      extraCells.indexOf(schoolCell as any),
+      extraCells.indexOf(componentCell as any),
+      extraCells.indexOf(durationCell as any),
+      extraCells.indexOf(attackCell as any),
+      extraCells.indexOf(saveCell as any),
+      extraCells.indexOf(targetCell as any),
+      extraCells.indexOf(rangeCell as any),
+    ])
+
+    for (let i = 0; i < extraCells.length; i++) {
+      if (!handledIndices.has(i) && extraCells[i]?.text?.trim()) {
+        idCells.push(`<div class="action-cell ${extraCells[i].cls || 'meta-cell'}"><span class="cell-sub-text">${extraCells[i].text.trim()}</span></div>`)
+      }
+    }
+
+    const pills: string[] = []
+    if (idCells.length > 0) {
+      pills.push(`<div class="action-composite-pill identity-pill">${idCells.join('<div class="cell-divider"></div>')}</div>`)
+    }
+    if (mechCells.length > 0) {
+      pills.push(`<div class="action-composite-pill mech-pill">${mechCells.join('<div class="cell-divider"></div>')}</div>`)
+    }
+    if (scopeCells.length > 0) {
+      pills.push(`<div class="action-composite-pill scope-pill">${scopeCells.join('<div class="cell-divider"></div>')}</div>`)
+    }
+
+    return `<div class="action-composite-header">${pills.join('')}</div>`
+  }
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
+    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+    const isModern = editorStore.visualTemplate === 'modern'
+
+    if (isModern && !context.customPreamble) {
+      const tag = computeTraitTag(context)
+      const limitedUseCell = tag
+        ? tag
+        : context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate
+        ? `${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)}`
+        : ''
+      const headerPill = buildHeaderPillHtml(
+        monster,
+        context?.stagePool,
+        context.name,
+        limitedUseCell ? [{ text: limitedUseCell, cls: 'recharge-cell' }] : []
+      )
+      const desc = processTokens(context.description, context, monster, 'trait')
+      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+    }
 
     if (context.customPreamble) {
-      return processTokens(context.description, context, monster, 'trait')
+      return poolBadge + processTokens(context.description, context, monster, 'trait')
     } else {
       return processTokens(
-        `<b><i>{trait.name}{trait.limitedUse}.</i></b> ${context.description}`,
+        `${poolBadge}<b><i>{trait.name}{trait.limitedUse}.</i></b> ${context.description}`,
         context,
         monster,
         'trait'
@@ -575,12 +617,107 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
+    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+
+    const isModern = editorStore.visualTemplate === 'modern'
+
+    if (isModern && !context.customPreamble) {
+      const extraCells: { text: string; cls?: string }[] = []
+
+      // 1. Compound School & Level (e.g. "2nd Level Abjuration" or "Abjuration")
+      const schoolLevelParts: string[] = []
+      if (context.spellLevel && context.spellLevel !== 'None') {
+        schoolLevelParts.push(context.spellLevel)
+      }
+      if (context.school && context.school !== 'None') {
+        schoolLevelParts.push(context.school)
+      }
+      if (schoolLevelParts.length > 0) {
+        extraCells.push({ text: schoolLevelParts.join(' '), cls: 'type-cell school-cell' })
+      }
+
+      // 2. Compound Components (e.g. "V, S" or "V, C")
+      if (Array.isArray(context.components) && context.components.length > 0) {
+        extraCells.push({ text: context.components.join(', '), cls: 'component-cell' })
+      }
+
+      // 3. Compound Duration (e.g. "1 minute")
+      if (context.duration && context.duration.trim()) {
+        extraCells.push({ text: context.duration.trim(), cls: 'duration-cell' })
+      }
+
+      // 4. Target / Range / Area Scope (e.g. "Self (20ft of you) across Material and Ethereal Plane")
+      const scopeParts: string[] = []
+      if (context.range && context.range.trim()) {
+        scopeParts.push(context.range.trim())
+      }
+      if (context.areaDistance && context.areaDistance.trim()) {
+        scopeParts.push(context.areaDistance.trim())
+      }
+      if (context.areaShape && context.areaShape.trim()) {
+        scopeParts.push(context.areaShape.trim())
+      }
+      if (context.targetsText && context.targetsText.trim()) {
+        scopeParts.push(context.targetsText.trim())
+      }
+      if (scopeParts.length > 0) {
+        extraCells.push({ text: scopeParts.join(' '), cls: 'target-cell' })
+      }
+
+      if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
+        const label = context.actionType === 'spell_attack' ? 'Spell Attack' : 'Weapon Attack'
+        const bonus = context.attackBonus != null ? renderBonus(context.attackBonus) : renderBonus(monster.spellAttackModifier)
+        extraCells.push({ text: `${label} ${bonus}`, cls: 'type-cell' })
+      }
+
+      if (context.stat && context.stat !== 'none') {
+        const dcVal = saveForAction(monster, context.stat, context.save)
+        extraCells.push({ text: `${t(`statFull.${context.stat}`)} DC ${dcVal}`, cls: 'save-cell' })
+      }
+
+      let rechargeStr = (context.recharge || '').trim()
+      if (!rechargeStr && context.rechargeMin) {
+        const min = context.rechargeMin
+        const max = context.rechargeMax || 6
+        rechargeStr = min < max ? `${min}–${max}` : `${min}`
+      }
+      if (!rechargeStr && (context as any).limitedUse?.recharge) {
+        rechargeStr = ((context as any).limitedUse.recharge || '').trim()
+      }
+      if (!rechargeStr && context.limitedUse?.rate === 'RECHARGE') {
+        rechargeStr = '5–6'
+      }
+      if (rechargeStr) {
+        extraCells.push({ text: `Recharge ${rechargeStr}`, cls: 'recharge-cell' })
+      } else if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
+        const rateLabel = t(`recharge.${context.limitedUse.rate}`)
+        const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
+        extraCells.push({ text: `${context.limitedUse.count}/${cleanRate}`, cls: 'recharge-cell' })
+      }
+
+      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
+      const effectsStr = Array.isArray(context?.effects) && context.effects.length > 0
+        ? context.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
+        : ''
+      let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
+
+      // Strip redundant leading saving throw or attack preamble if already shown in composite header cells
+      if (context.stat && context.stat !== 'none') {
+        desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
+      }
+      if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
+        desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
+      }
+
+      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+    }
 
     if (context.customPreamble) {
-      return processTokens(context.description, context, monster, 'action')
+      return poolBadge + processTokens(context.description, context, monster, 'action')
     } else if (context.stat !== 'none') {
       return processTokens(
-        `<b><i>{action.name}{action.limitedUse}.</i></b> <i>${t(
+        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> <i>${t(
           `statFull.${context.stat}`
         )} Saving Throw:</i> DC ${saveForAction(
           monster,
@@ -593,7 +730,7 @@ export function useProcessTokens() {
       )
     } else {
       return processTokens(
-        `<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description}`,
+        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description}`,
         context,
         monster,
         'action'
@@ -606,6 +743,22 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const isModern = editorStore.visualTemplate === 'modern'
+
+    if (isModern) {
+      const extraCells: { text: string; cls?: string }[] = []
+      if (context.trigger && context.trigger.trim()) {
+        extraCells.push({ text: `Trigger: ${context.trigger.trim()}`, cls: 'range-cell' })
+      }
+      if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
+        const rateLabel = t(`recharge.${context.limitedUse.rate}`)
+        const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
+        extraCells.push({ text: `${context.limitedUse.count}/${cleanRate}`, cls: 'recharge-cell' })
+      }
+      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
+      const desc = processTokens(context.description, context, monster, 'reaction')
+      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+    }
 
     // case on the presence of a Trigger to choose old style rendering or new
     if (context.trigger === '') {
@@ -634,11 +787,50 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
+    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+
+    const isModern = editorStore.visualTemplate === 'modern'
+
+    if (isModern && !context.useCustomRenderer) {
+      const extraCells: { text: string; cls?: string }[] = []
+
+      const kindLabel = context.kind === 'SPELL' ? 'Spell' : 'Weapon'
+      const distStr =
+        context.distance === 'MELEE'
+          ? `Melee ${kindLabel} Attack`
+          : context.distance === 'RANGED'
+          ? `Ranged ${kindLabel} Attack`
+          : `Melee/Ranged ${kindLabel} Attack`
+      const statMod = statModifier(monster.stats[context.modifier.stat] ?? 10)
+      const toHit = context.modifier.override
+        ? context.modifier.overrideValue
+        : statMod + (context.modifier.proficient ? monster.proficiency : 0)
+      extraCells.push({ text: `${distStr} ${renderBonus(toHit)}`, cls: 'type-cell' })
+
+      if (context.distance === 'MELEE' && context.range.reach) {
+        extraCells.push({ text: `Reach ${context.range.reach} ft.`, cls: 'range-cell' })
+      } else if (context.distance === 'RANGED' && context.range.standard) {
+        extraCells.push({ text: `Range ${context.range.standard}/${context.range.long} ft.`, cls: 'range-cell' })
+      } else if (context.distance === 'BOTH') {
+        extraCells.push({ text: `Reach ${context.range.reach} ft. or Range ${context.range.standard}/${context.range.long} ft.`, cls: 'range-cell' })
+      }
+
+      const targetStr = context.targets ? `${context.targets} target${context.targets > 1 ? 's' : ''}` : '1 target'
+      extraCells.push({ text: targetStr, cls: 'target-cell' })
+
+      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
+
+      // Build ONLY the Hit & description portion without repeating the attack/to-hit/reach/targets preamble!
+      const damageOnlyTemplate = `<i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}`
+      const body = processTokens(damageOnlyTemplate, context, monster, 'attack').trim()
+      return `${headerPill}<div class="action-body-text zebra-stripe-text">${body}</div>`
+    }
 
     if (context.useCustomRenderer) {
-      return processTokens(context.customRenderer, context, monster, 'attack')
+      return poolBadge + processTokens(context.customRenderer, context, monster, 'attack')
     } else {
-      return processTokens(t('presets.attack'), context, monster, 'attack')
+      return poolBadge + processTokens(t('presets.attack'), context, monster, 'attack')
     }
   }
 
@@ -695,6 +887,7 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const isModern = editorStore.visualTemplate === 'modern'
     if (monster.multiattackOptions.useCustomRenderer) {
       return processTokens(
         monster.multiattackOptions.customMultiattackRenderer,
@@ -702,17 +895,20 @@ export function useProcessTokens() {
         monster,
         'multiattack'
       )
-    } else {
-      // not doing i18n for this right now since it's just tokens.
-      return processTokens(
-        `<b><i>${t(
-          'editor.multiattack.label'
-        )}.</i></b> {multiattack.all}. {multiattack.postscript}`,
-        context,
-        monster,
-        'multiattack'
-      )
     }
+    if (isModern) {
+      const headerPill = buildHeaderPillHtml(monster, undefined, t('editor.multiattack.label'), [])
+      const body = processTokens(`{multiattack.all}. {multiattack.postscript}`, context, monster, 'multiattack').trim()
+      return `${headerPill}<div class="action-body-text zebra-stripe-text">${body}</div>`
+    }
+    return processTokens(
+      `<b><i>${t(
+        'editor.multiattack.label'
+      )}.</i></b> {multiattack.all}. {multiattack.postscript}`,
+      context,
+      monster,
+      'multiattack'
+    )
   }
 
   const processLegendaryPreamble = (
@@ -744,16 +940,16 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const action = monster.legendaryAction(actionId)
+    const isModern = editorStore.visualTemplate === 'modern'
 
     if (action) {
       // process the name
       const count = cost > 1 ? t('editor.legendary.renderedCost', [cost]) : ''
+      const costCell = cost > 1 ? `Costs ${cost} Actions` : '1 Action'
 
       let description = ''
       if (action.type === 'action') {
-        // process
         if (action.action.legendaryOnly) {
-          // need it without the name attached
           description = processTokens(
             action.action.description,
             action.action as MonsterAction,
@@ -769,7 +965,6 @@ export function useProcessTokens() {
           )
         }
       } else if (action.type === 'attack') {
-        // process
         description = processTokens(
           t('presets.legendaryAttack', [action.action.name]),
           undefined,
@@ -778,10 +973,22 @@ export function useProcessTokens() {
         )
       }
 
+      if (isModern) {
+        const headerPill = buildHeaderPillHtml(
+          monster,
+          (action.action as any)?.stagePool,
+          action.action.name,
+          [{ text: costCell, cls: 'recharge-cell' }]
+        )
+        return `${headerPill}<div class="action-body-text zebra-stripe-text">${description}</div>`
+      }
+
       return `<b><i>${action.action.name}${count}.</b></i> ${description}`
     }
 
-    return '[Invalid Attack or Action ID]'
+    const fallbackName = (actionId || 'Legendary Action').replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    const count = cost > 1 ? t('editor.legendary.renderedCost', [cost]) : ''
+    return `<b><i>${fallbackName}${count}.</b></i>`
   }
 
   const processMythicActionTrait = (
@@ -827,14 +1034,19 @@ export function useProcessTokens() {
   }
 
   const sanitizeWebString = (input: string) => {
-    // allowed tags are: bold, italic, underline
+    // allowed tags are: bold, italic, underline, br, div, span, svg, path
     input = input.replace(/>/gi, '&gt;')
     input = input.replace(/</gi, '&lt;')
 
-    // allow b/i/u
-    const allowedTags = /\&lt;(\/?[b|i|u]|br)\&gt;/gi
+    // allow b/i/u/br/strong
+    const allowedTags = /\&lt;(\/?[b|i|u]|br|strong)\&gt;/gi
     input = input.replace(allowedTags, (match, tag) => {
-      return `<${tag}>`
+      return '<' + tag + '>'
+    })
+
+    const allowedStrongWithAttrs = /\&lt;(\/?strong[^\&]*)\&gt;/gi
+    input = input.replace(allowedStrongWithAttrs, (match, tag) => {
+      return '<' + tag + '>'
     })
 
     // linebreak time
@@ -843,10 +1055,22 @@ export function useProcessTokens() {
       return '<div><br></div>'
     })
 
-    // div wrapper?
-    const allowedDiv = /\&lt;(\/?div)\&gt;/gi
+    // div wrapper
+    const allowedDiv = /\&lt;(\/?div[^\&]*)\&gt;/gi
     input = input.replace(allowedDiv, (match, tag) => {
-      return `<${tag}>`
+      return '<' + tag + '>'
+    })
+
+    // allow span with classes, titles, styles
+    const allowedSpan = /\&lt;(\/?span[^\&]*)\&gt;/gi
+    input = input.replace(allowedSpan, (match, tag) => {
+      return '<' + tag + '>'
+    })
+
+    // allow inline svg and path
+    const allowedSvg = /\&lt;(\/?(?:svg|path)[^\&]*)\&gt;/gi
+    input = input.replace(allowedSvg, (match, tag) => {
+      return '<' + tag + '>'
     })
 
     return input

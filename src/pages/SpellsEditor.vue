@@ -2,6 +2,7 @@
   <q-page style="min-height: calc(100vh - 120px)">
     <q-table
       v-model:selected="selected"
+      :dark="$q.dark.isActive"
       :title="$t('editor.spellcasting.custom.title')"
       :rows="spells"
       :columns="columns"

@@ -17,7 +17,7 @@ export function useAutoUpdateCr() {
     // parse the damage out of the description
     // if we have an action, augment the description with the effect clauses
     // this is a bit of a lazy hack, but we're really just looking for the largest die roll
-    const actionDescriptions = action
+    const actionDescriptions = action && Array.isArray(action.effects)
       ? action.effects.map((e) => e.effect).join(' ')
       : ''
 
@@ -75,10 +75,12 @@ export function useAutoUpdateCr() {
     // actions now have more data we could use so we overwrite stuff here
     if (action) {
       // check the save
-      if (action.stat !== 'none') {
-        annotation.maxSave = action.save.override
-          ? action.save.overrideValue
-          : monster.defaultSpellSave(action.stat)
+      if (action.save?.override) {
+        annotation.maxSave = action.save.overrideValue ?? 10
+      } else if (action.stat && action.stat !== 'none') {
+        annotation.maxSave = monster.defaultSpellSave(action.stat)
+      } else if (action.saveDc != null && action.saveDc > 0) {
+        annotation.maxSave = action.saveDc
       }
     }
 

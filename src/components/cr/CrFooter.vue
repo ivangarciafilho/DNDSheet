@@ -348,6 +348,38 @@
         >
       </q-btn>
     </div>
+    <div class="q-ml-xs row items-center q-gutter-xs">
+      <q-btn
+        push
+        icon="mdi-tune"
+        color="primary"
+        @click="showAutoTune = true"
+      >
+        <q-tooltip class="text-body2">Auto-Tune CR: Scale monster stats to match target CR</q-tooltip>
+      </q-btn>
+
+      <q-btn
+        push
+        :icon="lintIssues.length === 0 ? 'mdi-shield-check' : 'mdi-shield-alert'"
+        :color="lintIssues.length === 0 ? 'teal-8' : lintErrors > 0 ? 'negative' : 'warning'"
+        @click="showLint = true"
+      >
+        <q-badge
+          v-if="lintIssues.length > 0"
+          color="red-10"
+          floating
+          rounded
+        >
+          {{ lintIssues.length }}
+        </q-badge>
+        <q-tooltip class="text-body2">
+          {{ lintIssues.length === 0 ? 'Statblock Linter: Healthy' : `Statblock Linter: ${lintIssues.length} issue(s)` }}
+        </q-tooltip>
+      </q-btn>
+    </div>
+
+    <auto-tune-dialog v-model="showAutoTune" />
+    <monster-lint-dialog v-model="showLint" />
   </div>
 </template>
 
@@ -356,20 +388,45 @@ import { computed, defineComponent, ref } from 'vue'
 import { useCr } from './useCr'
 import MenuHover from '../MenuHover.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useSpellsStore } from 'src/stores/spells-store'
+import AutoTuneDialog from './AutoTuneDialog.vue'
+import MonsterLintDialog from './MonsterLintDialog.vue'
+import { lintMonster } from 'src/core/usecases/LintMonster'
+import type { Monster } from 'src/core/domain/types'
 
 export default defineComponent({
   name: 'CrFooter',
-  components: { MenuHover },
+  components: {
+    MenuHover,
+    AutoTuneDialog,
+    MonsterLintDialog,
+  },
   setup() {
     const monsterStore = useMonsterStore()
+    const spellsStore = useSpellsStore()
     const crData = useCr()
     const damageInfo = ref(false)
     const dprTab = ref(0)
+    const showAutoTune = ref(false)
+    const showLint = ref(false)
+
+    const lintIssues = computed(() => {
+      const monsterData = monsterStore.$state as unknown as Monster
+      return lintMonster(monsterData, spellsStore.spells)
+    })
+
+    const lintErrors = computed(() => {
+      return lintIssues.value.filter((i) => i.severity === 'ERROR').length
+    })
 
     return {
       crData,
       damageInfo,
       dprTab,
+      showAutoTune,
+      showLint,
+      lintIssues,
+      lintErrors,
       monsterStore,
       avgHp: computed(() => monsterStore.avgHp),
       ac: computed(() => monsterStore.AC),

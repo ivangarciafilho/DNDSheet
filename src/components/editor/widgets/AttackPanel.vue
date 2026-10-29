@@ -6,7 +6,16 @@
   >
     <template #header>
       <q-item-section>
-        {{ attack.name }}
+        <div class="row items-center q-gutter-x-xs">
+          <span>{{ attack.name }}</span>
+          <q-badge
+            v-if="(monster.paragonConfig?.enabled || monster.paragonConfig?.poolCount > 1) && attack.stagePool && attack.stagePool !== 'all'"
+            color="deep-purple-3"
+            class="q-ml-xs"
+          >
+            {{ monster.paragonConfig?.phaseName || 'Pool' }} {{ attack.stagePool }}
+          </q-badge>
+        </div>
       </q-item-section>
 
       <q-item-section side>
@@ -20,6 +29,17 @@
           :label="$t('monster.attack.name')"
           class="col-7 q-pa-sm"
         />
+        <q-select
+          v-if="monster.paragonConfig?.enabled || monster.paragonConfig?.poolCount > 1"
+          v-model="attack.stagePool"
+          :options="paragonStageOptions"
+          label="Paragon Stage / Pool"
+          dense
+          outlined
+          emit-value
+          map-options
+          class="col-12 col-sm-4 q-pa-sm"
+        />
         <q-input
           :model-value="attack.targets"
           :label="$t('monster.attack.targets')"
@@ -29,14 +49,14 @@
             (value: string | number | null) => (attack.targets = validateNumber(value, 1))
           "
         />
-        <q-input
+        <dynamic-reference-select
           :model-value="attackModifier"
           :label="$t('monster.attack.bonus')"
-          type="number"
           class="col-4 q-pa-sm"
+          context-type="bonus"
           :disable="!attack.modifier.override"
           @update:model-value="
-            (v: string | number | null) => (attack.modifier.overrideValue = validateNumber(v, 0))
+            (v: number | string) => (attack.modifier.overrideValue = Number(v) || 0)
           "
         >
           <template #after>
@@ -76,7 +96,7 @@
               }}</q-tooltip></q-btn
             >
           </template>
-        </q-input>
+        </dynamic-reference-select>
         <q-select
           v-model="attack.modifier.stat"
           :options="statOptions"
@@ -99,52 +119,53 @@
           emit-value
           class="col-2 q-pa-sm"
         />
-        <q-input
+        <dynamic-reference-select
           v-show="attack.distance === 'MELEE' || attack.distance === 'BOTH'"
           :model-value="attack.range.reach"
           :label="$t('monster.attack.reach')"
-          type="number"
-          min="0"
-          step="5"
+          :min="0"
+          :step="5"
           suffix="ft"
+          context-type="range"
           class="col-1 q-pa-sm"
           @update:model-value="
-            (value: string | number | null) => (attack.range.reach = validateNumber(value, 0))
+            (value: number | string) => (attack.range.reach = Number(value) || 0)
           "
         />
-        <q-input
+        <dynamic-reference-select
           v-show="attack.distance === 'RANGED' || attack.distance === 'BOTH'"
           :model-value="attack.range.standard"
           :label="$t('monster.attack.close')"
-          type="number"
-          min="0"
-          step="5"
+          :min="0"
+          :step="5"
           suffix="ft"
+          context-type="range"
           class="col-1 q-pa-sm"
           @update:model-value="
-            (value: string | number | null) => (attack.range.standard = validateNumber(value, 0))
+            (value: number | string) => (attack.range.standard = Number(value) || 0)
           "
         />
-        <q-input
+        <dynamic-reference-select
           v-show="attack.distance === 'RANGED' || attack.distance === 'BOTH'"
           :model-value="attack.range.long"
           :label="$t('monster.attack.long')"
-          type="number"
-          min="0"
-          step="5"
+          :min="0"
+          :step="5"
           suffix="ft"
+          context-type="range"
           class="col-1 q-pa-sm"
           @update:model-value="
-            (value: string | number | null) => (attack.range.long = validateNumber(value, 0))
+            (value: number | string) => (attack.range.long = Number(value) || 0)
           "
         />
-        <q-input
+        <dynamic-reference-select
           :model-value="attack.save"
           :label="$t('monster.attack.effectDc')"
-          type="number"
+          :min="0"
+          context-type="dc"
           class="col-1 q-pa-sm"
           @update:model-value="
-            (value: string | number | null) => (attack.save = validateNumber(value, 0))
+            (value: number | string) => (attack.save = Number(value) || 0)
           "
         />
       </q-card-section>
@@ -162,22 +183,22 @@
             <q-card>
               <q-card-section>
                 <div class="row">
-                  <q-input
+                  <dynamic-reference-select
                     :model-value="attack.damage.count"
                     :label="$t('monster.attack.count')"
-                    type="number"
-                    min="0"
+                    :min="0"
+                    context-type="dice_count"
                     class="col-2 q-pa-sm"
                     @update:model-value="
-                      (value: string | number | null) =>
-                        (attack.damage.count = validateNumber(value, 0))
+                      (value: number | string) =>
+                        (attack.damage.count = Number(value) || 0)
                     "
                   />
                   <q-select
                     v-model="attack.damage.dice"
                     :options="diceOptions"
                     emit-value
-                    :display-value="diceLookup[attack.damage.dice]"
+                    :display-value="diceLookup[attack.damage.dice] ?? ''"
                     :label="$t('monster.attack.dieType')"
                     class="col-2 q-pa-sm"
                   />
@@ -189,15 +210,15 @@
                     new-value-mode="add-unique"
                     class="col-4 q-pa-sm"
                   />
-                  <q-input
+                  <dynamic-reference-select
                     :model-value="attackDamageModifier"
-                    type="number"
                     :label="$t('monster.attack.damageBonus')"
                     :disable="!attack.damage.modifier.override"
+                    context-type="bonus"
                     class="col-2 q-pa-sm"
                     @update:model-value="
-                      (v: string | number | null) =>
-                        attack.damage.modifier.overrideValue = validateNumber(v, 0)
+                      (v: number | string) =>
+                        (attack.damage.modifier.overrideValue = Number(v) || 0)
                     "
                   >
                     <template #after>
@@ -211,7 +232,7 @@
                         "
                       />
                     </template>
-                  </q-input>
+                  </dynamic-reference-select>
                   <q-select
                     v-model="attack.damage.modifier.stat"
                     :label="$t('monster.attack.stat')"
@@ -247,7 +268,7 @@
                     v-model="additional.dice"
                     :options="diceOptions"
                     emit-value
-                    :display-value="diceLookup[additional.dice]"
+                    :display-value="diceLookup[additional.dice] ?? ''"
                     :label="$t('monster.attack.dieType')"
                     class="col-2 q-pa-sm"
                   />
@@ -338,7 +359,7 @@
                     :disable="!attack.alternateDamage.active"
                     :options="diceOptions"
                     emit-value
-                    :display-value="diceLookup[attack.alternateDamage.dice]"
+                    :display-value="diceLookup[attack.alternateDamage.dice] ?? ''"
                     :label="$t('monster.attack.dieType')"
                     class="col-2 q-pa-sm"
                   />
@@ -364,12 +385,12 @@
                   >
                     <template #after>
                       <lock-toggle-button
-                        :locked="!attack.alternateDamage.modifier.override"
+                        :locked="!attack.alternateDamage?.modifier?.override"
                         :lock-tooltip="$t('editor.attack.lockedToStats')"
                         :unlock-tooltip="$t('editor.attack.unlockedFromStats')"
                         @click="
                           attack.alternateDamage.modifier.override =
-                            !attack.alternateDamage.modifier.override
+                            !attack.alternateDamage?.modifier?.override
                         "
                       />
                     </template>
@@ -454,10 +475,11 @@ import { useTemplatesStore } from 'src/stores/templates-store'
 import NewTemplateDialog from './NewTemplateDialog.vue'
 import { validateNumber } from '../numberInput'
 import SwapButtons from './SwapButtons.vue'
+import DynamicReferenceSelect from './DynamicReferenceSelect.vue'
 
 export default defineComponent({
   name: 'AttackPanel',
-  components: { LockToggleButton, MonsterTextEditor, SwapButtons },
+  components: { LockToggleButton, MonsterTextEditor, SwapButtons, DynamicReferenceSelect },
   props: {
     id: {
       type: String,
@@ -525,7 +547,18 @@ export default defineComponent({
       })
     }
 
+    const paragonStageOptions = computed(() => {
+      const count = monster.paragonConfig?.poolCount || 2
+      const opts = [{ label: 'All Stages', value: 'all' }]
+      for (let i = 1; i <= count; i++) {
+        opts.push({ label: `Stage / Pool ${i} Only`, value: `${i}` })
+      }
+      return opts
+    })
+
     return {
+      monster,
+      paragonStageOptions,
       attack,
       attackModifier,
       deleteAttack,
@@ -542,7 +575,7 @@ export default defineComponent({
       conditionalModifierLocked: computed(
         () =>
           !attack.value.alternateDamage.active ||
-          !attack.value.alternateDamage.modifier.override
+          !attack.value.alternateDamage?.modifier?.override
       ),
       estimatedAttackDamage,
       addTemplate,

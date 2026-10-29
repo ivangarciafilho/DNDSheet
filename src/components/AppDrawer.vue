@@ -3,8 +3,8 @@
     <q-list>
       <q-item clickable to="/">
         <q-item-section avatar><q-icon name="home" /></q-item-section>
-        <q-item-section>{{ $t('editor.home') }}</q-item-section></q-item
-      >
+        <q-item-section>{{ $t('editor.home') }}</q-item-section>
+      </q-item>
       <q-item clickable to="/spells">
         <q-item-section avatar><q-icon name="library_books" /></q-item-section>
         <q-item-section>{{ $t('editor.customSpells') }}</q-item-section>
@@ -13,6 +13,49 @@
         <q-item-section avatar><q-icon name="library_books" /></q-item-section>
         <q-item-section>{{ $t('editor.template.title') }}</q-item-section>
       </q-item>
+      <q-separator />
+
+      <!-- Creator QoL Tools -->
+      <q-item
+        clickable
+        @click="
+          editorStore.activeMode =
+            editorStore.activeMode === 'character' ? 'monster' : 'character';
+          drawerRef?.hide();
+        "
+      >
+        <q-item-section avatar>
+          <q-icon
+            :name="editorStore.activeMode === 'character' ? 'badge' : 'pets'"
+            color="primary"
+          />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Mode: {{ editorStore.activeMode === 'character' ? 'Character Sheet' : 'Monster Maker' }}</q-item-label>
+          <q-item-label caption>Switch to {{ editorStore.activeMode === 'character' ? 'Monster Maker' : 'Character Sheet' }}</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item clickable @click="$emit('open-ai-ingest'); drawerRef?.hide()">
+        <q-item-section avatar>
+          <q-icon name="auto_awesome" color="amber-9" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>AI Ingest Studio</q-item-label>
+          <q-item-label caption>Import LLM statblocks</q-item-label>
+        </q-item-section>
+      </q-item>
+
+      <q-item clickable @click="$emit('open-combat-hud'); drawerRef?.hide()">
+        <q-item-section avatar>
+          <q-icon name="mdi-sword-cross" color="deep-orange" />
+        </q-item-section>
+        <q-item-section>
+          <q-item-label>Combat Tracker HUD</q-item-label>
+          <q-item-label caption>Live battle HP & conditions</q-item-label>
+        </q-item-section>
+      </q-item>
+
       <q-separator />
       <q-item clickable @click="createSpell()">
         <q-item-section avatar><q-icon name="auto_fix_high" /></q-item-section>
@@ -29,7 +72,9 @@
         <q-item-section avatar
           ><q-icon name="restart_alt" color="negative"
         /></q-item-section>
-        <q-item-section>{{ $t('editor.resetMonster') }}</q-item-section>
+        <q-item-section>{{
+          editorStore.activeMode === 'character' ? 'Reset Character Sheet' : $t('editor.resetMonster')
+        }}</q-item-section>
       </q-item>
     </q-list>
   </q-drawer>
@@ -81,6 +126,8 @@
 import { QDrawer, useQuasar } from 'quasar'
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useEditorStore } from 'src/stores/editor-store'
+import { useCharacterStore } from 'src/stores/character-store'
 import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { renderBonus } from './rendering/mathRendering'
@@ -94,9 +141,12 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['open-ai-ingest', 'open-combat-hud'],
   setup() {
     const drawerRef = ref<QDrawer | null>(null)
     const monster = useMonsterStore()
+    const charStore = useCharacterStore()
+    const editorStore = useEditorStore()
     const $q = useQuasar()
     const { t } = useI18n()
     const crTable = ref(false)
@@ -104,12 +154,19 @@ export default defineComponent({
     const reset = () => {
       drawerRef.value?.hide()
 
-      monster.$reset()
-
-      $q.notify({
-        message: t('editor.monsterReset'),
-        type: 'positive',
-      })
+      if (editorStore.activeMode === 'character') {
+        charStore.resetCharacter()
+        $q.notify({
+          message: 'Character sheet reset to defaults',
+          type: 'positive',
+        })
+      } else {
+        monster.$reset()
+        $q.notify({
+          message: t('editor.monsterReset'),
+          type: 'positive',
+        })
+      }
     }
 
     const createSpell = () => {
@@ -141,6 +198,7 @@ export default defineComponent({
       drawerRef,
       crTable,
       crData,
+      editorStore,
     }
   },
 })

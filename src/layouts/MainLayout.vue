@@ -28,20 +28,165 @@
 
         <q-space />
 
-        <div class="q-gutter-sm row items-center no-wrap">
+        <div class="q-gutter-xs row items-center no-wrap">
+          <!-- Undo / Redo -->
+          <q-btn
+            round
+            flat
+            dense
+            icon="undo"
+            :disable="!historyStore.canUndo"
+            @click="historyStore.undo()"
+          >
+            <q-tooltip>Undo (Ctrl+Z)</q-tooltip>
+          </q-btn>
+          <q-btn
+            round
+            flat
+            dense
+            icon="redo"
+            :disable="!historyStore.canRedo"
+            @click="historyStore.redo()"
+          >
+            <q-tooltip>Redo (Ctrl+Y)</q-tooltip>
+          </q-btn>
+
+          <q-separator vertical inset class="q-mx-xs" />
+
+          <!-- Mode Toggle: Monster vs Character -->
+          <q-btn
+            dense
+            rounded
+            unelevated
+            :color="editorStore.activeMode === 'character' ? 'teal-9' : 'blue-grey-8'"
+            :label="editorStore.activeMode === 'character' ? 'Hero Sheet' : 'Monster'"
+            class="text-weight-bold text-caption q-px-sm"
+            @click="editorStore.activeMode = editorStore.activeMode === 'character' ? 'monster' : 'character'"
+          >
+            <q-tooltip>Switch between Monster Maker and Hero Sheet</q-tooltip>
+          </q-btn>
+
+          <!-- Ruleset Toggle (when in monster mode) -->
+          <q-btn
+            v-if="editorStore.activeMode === 'monster'"
+            dense
+            rounded
+            unelevated
+            :color="editorStore.style === '2024' ? 'purple-9' : 'amber-9'"
+            :label="editorStore.style === '2024' ? 'D&D 2024' : 'D&D 2014'"
+            class="text-weight-bold text-caption q-px-sm"
+            @click="editorStore.style = editorStore.style === '2024' ? '2014' : '2024'"
+          >
+            <q-tooltip>Switch between 2014 and 2024 Statblock Rulesets</q-tooltip>
+          </q-btn>
+
+          <!-- Visual Template Switcher (Classic WotC vs Modern Modular) -->
+          <q-btn
+            v-if="editorStore.activeMode === 'monster'"
+            dense
+            rounded
+            unelevated
+            :color="editorStore.visualTemplate === 'modern' ? 'teal-9' : 'blue-grey-8'"
+            :label="editorStore.visualTemplate === 'modern' ? 'Modern Modular' : 'Classic WotC'"
+            icon="dashboard_customize"
+            class="text-weight-bold text-caption q-px-sm"
+            @click="editorStore.visualTemplate = editorStore.visualTemplate === 'modern' ? 'classic' : 'modern'"
+          >
+            <q-tooltip>Switch between Classic WotC Statblock and Modern Modular (Giffyglyph-Inspired) Visual Layout</q-tooltip>
+          </q-btn>
+
+          <!-- Visual Theme Dropdown (12 Art Directions) -->
+          <q-btn-dropdown
+            v-if="editorStore.activeMode === 'monster'"
+            dense
+            rounded
+            unelevated
+            color="deep-purple-9"
+            icon="palette"
+            :label="currentThemeName"
+            class="text-weight-bold text-caption q-px-sm"
+          >
+            <q-list dense style="min-width: 250px;">
+              <q-item-label header class="text-weight-bold text-caption text-grey-5">
+                Art Directions & Themes
+              </q-item-label>
+              <q-item
+                v-for="opt in themeOptions"
+                :key="opt.value"
+                clickable
+                v-close-popup
+                :active="editorStore.visualTheme === opt.value"
+                active-class="bg-deep-purple-10 text-white"
+                @click="editorStore.visualTheme = opt.value"
+              >
+                <q-item-section avatar style="min-width: 28px;">
+                  <q-icon :name="opt.icon" :color="opt.color" size="xs" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label class="text-caption text-weight-medium">{{ opt.label }}</q-item-label>
+                </q-item-section>
+                <q-item-section side>
+                  <q-badge outline :color="opt.color" class="text-caption">{{ opt.category }}</q-badge>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+
+          <!-- AI Ingest Studio -->
+          <q-btn
+            round
+            flat
+            dense
+            icon="auto_awesome"
+            color="amber-4"
+            @click="showAiIngest = true"
+          >
+            <q-tooltip>AI Statblock Ingest Studio</q-tooltip>
+          </q-btn>
+
+          <!-- Combat HUD -->
+          <q-btn
+            round
+            flat
+            dense
+            icon="mdi-sword-cross"
+            color="deep-orange-4"
+            @click="showCombatHud = !showCombatHud"
+          >
+            <q-tooltip>Combat Tracker HUD</q-tooltip>
+          </q-btn>
+
+          <!-- A4 Sheet 1:1 Preview Toggle -->
+          <q-btn
+            round
+            flat
+            dense
+            :icon="editorStore.a4PreviewMode ? 'picture_as_pdf' : 'description'"
+            :color="editorStore.a4PreviewMode ? 'amber-4' : 'grey-4'"
+            @click="editorStore.a4PreviewMode = !editorStore.a4PreviewMode"
+          >
+            <q-tooltip>Toggle A4 Sheet 1:1 Print Preview (210×297mm)</q-tooltip>
+          </q-btn>
+
           <web-renderer-settings-button />
           <q-btn
             round
             flat
             icon="mdi-folder-open"
             @click="loadFileDialog()"
-          ></q-btn>
+          >
+            <q-tooltip>Open File</q-tooltip>
+          </q-btn>
           <download-button />
         </div>
       </q-toolbar>
     </q-header>
 
-    <app-drawer :left-drawer-open="leftDrawerOpen" />
+    <app-drawer
+      :left-drawer-open="leftDrawerOpen"
+      @open-ai-ingest="showAiIngest = true"
+      @open-combat-hud="showCombatHud = true"
+    />
 
     <q-page-container>
       <router-view />
@@ -57,6 +202,12 @@
         </q-card-section>
       </q-card>
     </q-footer>
+
+    <!-- AI Ingest Dialog -->
+    <ai-ingest-dialog v-model="showAiIngest" />
+
+    <!-- Combat Tracker Drawer -->
+    <combat-tracker-drawer v-model="showCombatHud" />
 
     <q-dialog v-model="showDataLoad" persistent>
       <q-card>
@@ -87,13 +238,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue'
+import { computed, defineComponent, onMounted, ref } from 'vue'
 import CrFooter from 'src/components/cr/CrFooter.vue'
 import GenericFooter from 'src/components/GenericFooter.vue'
 import { useFileLoader } from 'src/components/file/useFileLoader'
 import { popFileDialog } from 'src/components/file/popFileDialog'
 import DownloadButton from 'src/components/file/DownloadButton.vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 
 import jsonurl from 'json-url'
 import { useQuasar } from 'quasar'
@@ -101,6 +252,11 @@ import WebRendererSettingsButton from 'src/components/rendering/WebRendererSetti
 import { useV1Updater } from 'src/components/file/useV1Updater'
 import AppDrawer from 'src/components/AppDrawer.vue'
 import TemplateSearch from 'src/components/editor/TemplateSearch.vue'
+import { useEditorStore } from 'src/stores/editor-store'
+import { useHistoryShortcuts } from 'src/components/history/useHistoryShortcuts'
+import AiIngestDialog from 'src/components/ai/AiIngestDialog.vue'
+import CombatTrackerDrawer from 'src/components/combat/CombatTrackerDrawer.vue'
+import { THEME_OPTIONS } from 'src/components/rendering/WebRendererSettingsButton.vue'
 
 export default defineComponent({
   name: 'MainLayout',
@@ -111,13 +267,21 @@ export default defineComponent({
     DownloadButton,
     WebRendererSettingsButton,
     TemplateSearch,
+    AiIngestDialog,
+    CombatTrackerDrawer,
   },
   setup() {
     const leftDrawerOpen = ref(false)
+    const showAiIngest = ref(false)
+    const showCombatHud = ref(false)
     const route = useRoute()
     const codec = jsonurl('lzma')
     const $q = useQuasar()
+    const editorStore = useEditorStore()
     const { loadMonster } = useFileLoader()
+
+    // Initialize history tracking and shortcuts
+    const { historyStore } = useHistoryShortcuts()
 
     // run the v1 updater checks
     useV1Updater()
@@ -158,7 +322,7 @@ export default defineComponent({
       loadDataParam()
     }
 
-    // TODO: load from data param
+    // load from data param
     const loadFromDataParam = () => {
       if (dataParamFound) {
         loadMonster(queryData.value)
@@ -171,11 +335,14 @@ export default defineComponent({
       window.open('https://opendnd.games')
     }
 
+    const currentThemeName = computed(() => {
+      const found = THEME_OPTIONS.find((t) => t.value === editorStore.visualTheme)
+      return found ? found.label.replace('Lovecraftian Gothic-', 'Gothic-').replace('Decaying Elegancy-', '') : 'Theme'
+    })
+
     onMounted(() => {
       // check data param on load, v1 links do not have the right hash
       if (!dataParamFound && window.location.search.startsWith('?data')) {
-        // redirect
-        // a router replace does some... stuff that might cause the url to be too long
         const data = window.location.search
         window.location.search = ''
         window.location.href = `${window.location.origin}${window.location.pathname}#/${data}`
@@ -193,6 +360,12 @@ export default defineComponent({
       loadFromDataParam,
       leftDrawerOpen,
       openDnd,
+      editorStore,
+      historyStore,
+      showAiIngest,
+      showCombatHud,
+      themeOptions: THEME_OPTIONS,
+      currentThemeName,
     }
   },
 })
@@ -200,6 +373,6 @@ export default defineComponent({
 
 <style lang="scss">
 .template-bar {
-  width: 45%;
+  width: 40%;
 }
 </style>

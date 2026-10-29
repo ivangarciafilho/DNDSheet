@@ -1,0 +1,140 @@
+import test from 'node:test'
+import assert from 'node:assert'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import {
+  exportToMarkdown,
+  exportToPlainText,
+  exportToHtml,
+  exportToFoundryActor,
+  exportCharacterToMarkdown,
+  exportCharacterToPlainText,
+  exportCharacterToJson,
+} from '../../src/core/usecases/ExportStatblock.ts'
+import { defaultCharacterActor } from '../../src/core/domain/types.ts'
+import { migrateMonsterSchema } from '../../src/core/usecases/MigrateMonsterSchema.ts'
+
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const projectRoot = path.resolve(__dirname, '../..')
+const templatesDir = path.join(projectRoot, 'src/data/templates/monsters')
+
+test('ExportStatblock - Markdown export format', () => {
+  const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
+  const knight = migrateMonsterSchema(raw)
+
+  const md = exportToMarkdown(knight)
+
+  assert.ok(md.includes('## Knight'))
+  assert.ok(md.includes('**Armor Class** 18'))
+  assert.ok(md.includes('**Hit Points** 52 (8d8 + 16)'))
+  assert.ok(md.includes('|STR|DEX|CON|INT|WIS|CHA|'))
+  assert.ok(md.includes('### Actions'))
+  assert.ok(md.includes('Greatsword.'))
+  assert.ok(md.includes('Brave.'))
+})
+
+test('ExportStatblock - Plain Text export format', () => {
+  const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
+  const knight = migrateMonsterSchema(raw)
+
+  const text = exportToPlainText(knight)
+
+  assert.ok(text.includes('Knight'))
+  assert.ok(text.includes('Armor Class 18'))
+  assert.ok(text.includes('Hit Points 52 (8d8 + 16)'))
+  assert.ok(text.includes('----------------------------------------'))
+  assert.strictEqual(text.includes('**Armor Class**'), false, 'Should strip markdown bold')
+})
+
+test('ExportStatblock - HTML snippet export format', () => {
+  const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
+  const knight = migrateMonsterSchema(raw)
+
+  const html = exportToHtml(knight)
+
+  assert.ok(html.includes('<div class="dnd-statblock classic">'))
+  assert.ok(html.includes('<h2 class="statblock-name">Knight</h2>'))
+  assert.ok(html.includes('<hr class="statblock-divider" />'))
+})
+
+test('ExportStatblock - Foundry VTT Actor5e JSON structure', () => {
+  const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
+  const knight = migrateMonsterSchema(raw)
+
+  const actor = exportToFoundryActor(knight)
+
+  assert.strictEqual(actor.name, 'Knight')
+  assert.strictEqual(actor.type, 'npc')
+  assert.strictEqual(actor.system.abilities.str.value, 16)
+  assert.strictEqual(actor.system.abilities.str.mod, 3)
+  assert.strictEqual(actor.system.attributes.ac.value, 18)
+  assert.strictEqual(actor.system.attributes.hp.value, 52)
+  assert.ok(actor.items.length > 0)
+  assert.strictEqual(actor.items[0].name, 'Greatsword')
+})
+
+test('ExportStatblock - CharacterActor Markdown, Plain Text, and JSON exports', () => {
+  const hero = defaultCharacterActor()
+  hero.name = 'Valeros Brightblade'
+  hero.class = 'Paladin'
+  hero.subclass = 'Oath of Devotion'
+  hero.level = 7
+  hero.features.push({
+    id: 'feat-smite',
+    name: 'Divine Smite',
+    source: 'Paladin 2',
+    description: 'Expend a spell slot to deal extra radiant damage.',
+  })
+  hero.inventory.push({
+    id: 'item-sword',
+    name: '+1 Longsword',
+    quantity: 1,
+    weight: 3,
+  })
+
+  hero.savingThrows = { WIS: true, CHA: true }
+  hero.skills = { Athletics: { proficient: true, expertise: false }, Persuasion: { proficient: true, expertise: true } }
+  hero.spellcasting = { ability: 'CHA' }
+  hero.spells = [
+    { id: 'sp-1', name: 'Bless', level: 1, prepared: true, notes: 'Concentration up to 1 min' },
+    { id: 'sp-2', name: 'Shield of Faith', level: 1, prepared: false },
+  ]
+
+  // Markdown
+  const md = exportCharacterToMarkdown(hero)
+  assert.ok(md.includes('## Valeros Brightblade'))
+  assert.ok(md.includes('Level 7 Oath of Devotion Paladin'))
+  assert.ok(md.includes('|STR|DEX|CON|INT|WIS|CHA|'))
+  assert.ok(md.includes('Divine Smite'))
+  assert.ok(md.includes('+1 Longsword'))
+  assert.ok(md.includes('**Saving Throws**'))
+  assert.ok(md.includes('**Skills**'))
+  assert.ok(md.includes('Athletics'))
+  assert.ok(md.includes('Persuasion'))
+  assert.ok(md.includes('**Spellcasting** Ability: CHA'))
+  assert.ok(md.includes('### Prepared Spells'))
+  assert.ok(md.includes('Bless'))
+
+  // Plain Text
+  const txt = exportCharacterToPlainText(hero)
+  assert.ok(txt.includes('VALEROS BRIGHTBLADE'))
+  assert.ok(txt.includes('Level 7 Oath of Devotion Paladin'))
+  assert.ok(txt.includes('Divine Smite (Paladin 2):'))
+  assert.ok(txt.includes('+1 Longsword (x1)'))
+  assert.ok(txt.includes('Saving Throws:'))
+  assert.ok(txt.includes('Skills:'))
+  assert.ok(txt.includes('Spellcasting: Ability CHA'))
+  assert.ok(txt.includes('PREPARED SPELLS:'))
+  assert.ok(txt.includes('Bless'))
+
+  // JSON
+  const jsonStr = exportCharacterToJson(hero)
+  const parsed = JSON.parse(jsonStr)
+  assert.strictEqual(parsed.name, 'Valeros Brightblade')
+  assert.strictEqual(parsed.class, 'Paladin')
+  assert.strictEqual(parsed.features.length, 1)
+  assert.strictEqual(parsed.spells.length, 2)
+  assert.strictEqual(parsed.skills.Persuasion.expertise, true)
+})
