@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 138** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-138-a7-template-isolation`; build 137/136/135/134 remain preserved; formula-trace provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 138 code commit `761b41a`; immutable earlier candidates: `rc-2.4.3-build-137-a7-templates`, `rc-2.4.3-build-136-a6`, `rc-2.4.3-build-135-a5`, `rc-2.4.3-build-134-pre-a5-closeout` |
+| **Version** | **v2.4.3 build 139** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-139-a7-role-descriptors`; builds 138/137/136/135/134 remain preserved; formula-trace provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 139 commit `98bb899`; protected build 138 is `761b41a`; earlier candidates remain immutable |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **65 / 193 tasks complete; 128 pending** |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -1095,11 +1095,34 @@ classDiagram
     +ChainCellSpec[] cells
     +emit patch
   }
+  class RoleChainCatalog {
+    «L5 · A7»
+    +Record<ActionComposerRole, ComposerCellSpec[]> ROLE_CHAINS
+    +ComposerRow[] COMPOSER_ROW_ORDER
+    +presentation metadata only
+  }
+  class ComposerCellSpec {
+    +string id
+    +string label
+    +ComposerRow row
+    +ComposerEditor editor
+    +string? field
+    +boolean? editable
+  }
+  class ComposerRoleAdapter {
+    «L4 · A7»
+    +ActionComposerRole role
+    +read(role model): ComposerDraft
+    +patch(role model, ComposerDraft): role model
+  }
   CatalogSelect *-- CatalogOption
   FormulaField ..> CatalogSelect : reference picker
   FormulaField ..> CompletionMenu : formula mode
   ComposerChain ..> FormulaField : numeric cells
   ComposerChain ..> CatalogSelect : enumerated cells
+  ComposerChain ..> RoleChainCatalog : chooses role descriptors
+  ComposerChain ..> ComposerRoleAdapter : reads and patches role models
+  RoleChainCatalog *-- ComposerCellSpec
   CatalogSelect ..> HelpTip : option tips
 ```
 
@@ -1902,11 +1925,12 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 **🔎 Evidence** — `ActionsEditor.vue` (944 LOC) already merges traits, actions, bonus actions, reactions, legendary, mythic and lair entries into `UnifiedEntry` rows with category tabs, yet `MonsterBuilder.vue` still mounts `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor` and `VillainActionsEditor` (DEF-08). Presets are three hard-coded buttons with hand-cased names (`Veil Of Radiance`, DEF-12) next to a "Quick Attack Composer" dropdown.
 
-**🧩 Concept** — **The chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. Under the chain, a **live plate preview** rendered by the same `plateHtml`. **Roles** are variants of one entry editor: each role declares which chips it shows and its section header (legendary pool and cost, mythic trigger, lair initiative, reaction trigger). Build 137–138 implements the template catalog/application layer only; it does not implement this chain.
+**🧩 Concept** — **The chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. Under the chain, a **live plate preview** rendered by the same `plateHtml`. **Roles** are variants of one entry editor: each role declares which chips it shows and its section header (legendary pool and cost, mythic trigger, lair initiative, reaction trigger). Build 139 adds the tested `ROLE_CHAINS` descriptor catalog, but it remains data-only; no chain cells or preview are wired to the editor.
 
 **🛠 Techniques**
 - `components/editor/composer/ComposerChain.vue` + `ChainCell.vue`; each cell opens the right editor: `CatalogSelect` (enumerations), `FormulaField` (numbers), text with completion (prose, qualifier, rider).
-- Role descriptors (data): `ROLE_CHAINS: Record<AbilityRole, ChainCellSpec[]>` and `ROLE_HEADERS` (pool counters, preambles).
+- Role descriptors (data): `src/core/domain/action-composer.ts` exports `ROLE_CHAINS: Readonly<Record<ActionComposerRole, readonly ComposerCellSpec[]>>` and `COMPOSER_ROW_ORDER`; build 139 tests all seven roles, unique cell IDs, row sequence, and presence of structured plus legacy action fields. `ROLE_HEADERS` (pool counters, preambles) remains unimplemented. Descriptor `field` paths are metadata, not a promise that every role shares `MonsterAction` or can be directly written by a generic editor.
+- Role-model boundary: action/bonus/legendary/mythic entries share `MonsterAction`, while traits, reactions, and lair actions have distinct persisted shapes. Before wiring editors, add typed adapters for those roles; reaction trigger is not an action field, and lair's displayed label/initiative belong to role context rather than a lair-action name property. Outcomes are projected in the plate body before authored description, despite being a distinct composer row.
 - Templates move to a catalog `ACTION_TEMPLATES` (grouped: Weapon attacks · Spell attacks · Saves & areas · Auras & utility); names keep authored casing (DEF-12). Build 137 uses a grouped Quasar dropdown; a searchable CatalogSelect remains an alternative only if catalog growth makes menu scanning costly, and should reuse the same catalog rather than create another data source.
 - Build 137 establishes the catalog contract in `core/domain/action-templates.ts`: each stable `id` and user-facing name/category/summary maps to a partial `MonsterAction` patch. The grouped picker is a bounded first slice; it does not claim the chain or per-role variants are implemented.
 - Applying a template is an explicit destructive edit: show a confirmation naming the selected template and the field groups replaced; cancel leaves the original object untouched. Confirm replaces the template-owned content fields (including clearing stale optional values omitted by that template) while preserving `id`, storage role/membership, bonus-action flag, limited uses, recharge, stage pool, custom preamble, and CR annotation. Recompute the derived CR display after apply; never mutate the configured sample data as part of setup or release verification.
@@ -1957,7 +1981,7 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 **🧪 Acceptance** — chain order equals plate order for every role; editing any chip updates the preview and stat block in one render; every row of the capability matrix is reachable in the studio (checklist test + e2e); builder mounts ≤ 14 panels; existing saves load and render byte-identical plates (fixture diff) before/after A8; multiattack chips survive reorder; templates insert with authored casing; keyboard: Tab moves across chips, Enter opens, Esc closes. Template contract: cancel is a no-op; confirmation replaces only the disclosed content fields, clears stale template-owned optionals, preserves identity/role/economy/use/recharge/stage/custom-preamble/CR policy, gives each applied action independent nested data, and updates the rendered entry; unknown template IDs do not mutate. Builds 137–138 prove this template slice only. The catalog must never imply 80/320 ft. while the range model represents a single value.
 
-**📏 Impact (forecast, reconciled after first slice)** — Builds 137–138 touched 4 implementation/test files from build 136 (+425/−100 lines; excludes docs and generated build output); they remove two competing authoring controls and add a pure template catalog, confirmation workflow, and deep data isolation. Full A7 remains estimated at ≈5 implementation files plus tests and 3–5 days because chain descriptors, cells, role matrix, preview parity, accessibility/responsive verification, and closeout are pending. A8 remains ≈12 files and 3–5 days. Confidence medium-low until the chain component is measured; avoid treating estimates as commitments.
+**📏 Impact (measured to build 139)** — Build 139 adds 2 source/test files (role descriptor catalog and contract tests), with no persisted schema or editor behavior changes. Build 138 remains a separately tagged and archived candidate. Full A7 still requires descriptor-to-role adapters, `ChainCell`, `ComposerChain` integration, shared preview parity, accessibility/responsive/browser verification, and closeout; the original ≈5-file / 3–5-day estimate is stale because A7.1 increased measured scope and role-model adapters were not counted. Re-estimate after the first integrated editor slice; do not treat the old forecast as a commitment. A8 remains ≈12 files and 3–5 days, subject to its capability matrix.
 
 **🔗 Dependencies** — AU-01 (fields and phrases), AU-02 (numeric cells; plain inputs acceptable until A9), UX-01 (CatalogSelect minimal). **🕳 Blindspots** — BS-26 villain actions home; BS-27 CR annotation cards inside the studio (`CrAnnotationCard`) — keep or move to Checks? **BS-39** ranged attacks require both normal and long range in some rules/models; current single-distance data cannot truthfully express a pair (A7/A8 must decide before expanding the ranged template).
 
@@ -2446,14 +2470,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — 7 / 28 loops shipped; A7 is in progress; 20 loops are not started. Of 193 tracked backlog tasks, 64 are complete, none are active and 129 are pending (66.84 % remains). A6 adds optional structured action data and shared projections; A7 builds 137–138 add a reusable template catalog/picker, safe replacement flow, and per-application deep isolation. Configured sample monster data remains untouched; the browser fixture is transient. Builds 137, 136, 135 and 134 remain preserved.
+**Progress snapshot · 2026-10-29** — 7 / 28 loops shipped; A7 is in progress; 20 loops are not started. Of 193 tracked backlog tasks, 65 are complete, none are active and 128 are pending (66.32 % remains). A6 adds optional structured action data and shared projections; A7 builds 137–138 add the reusable template catalog, safe replacement flow, and per-application deep isolation; build 139 adds tested role-chain descriptor data only. The editor does not yet consume those descriptors, and chain preview parity remains pending. Build 139 passes core 133/133, production build, changed-file lint, and the full 33-step browser sweep with zero runtime exceptions; this does not test the unintegrated descriptor UI. Configured sample monster data remains untouched; browser fixtures use a transient profile. Builds 138, 137, 136, 135 and 134 remain preserved.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 14 / 29 tasks |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 15 / 29 tasks |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3115,5 +3139,6 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.4.3 build 136** | 2026-10-29 | Closed A6: optional structured action model, pure conservative inference/phrase grammar, modern plate integration and opt-in 2024-style Markdown/plain-text export; migration/ingest compatibility retained; build 135 preserved; 124 core tests and 33-step built-app suite pass |
 | **v2.4.3 build 137** | 2026-10-29 | Partial A7 slice: nine catalog-backed action templates, grouped picker, explicit replace/cancel flow, stable identity/economy/policy preservation, old preset/composer controls removed; 129 core tests and 33-step browser suite pass; A7 chain and preview work remain open |
 | **v2.4.3 build 138** | 2026-10-29 | Deep-clone template-owned nested data per application so editing an action cannot mutate the catalog or another action; 130 core tests and 33-step browser suite pass; A7 remains in progress |
+| **v2.4.3 build 139** | 2026-10-29 | Add tested role-chain descriptor data for seven roles and a shared plate-order contract; 133 core tests, production build, and full 33-step browser sweep pass; no visible editor integration or descriptor-specific browser behavior is claimed; A7 remains in progress |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 

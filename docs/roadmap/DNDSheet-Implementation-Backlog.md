@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 138 · 2026-10-29 · A7 template catalog + deep isolation · `rc-2.4.3-build-138-a7-template-isolation` |
-| **Code HEAD** | `761b41a` A7 template isolation · build 137 (`df95179`) and builds 136/135/134 remain preserved · core 130/130, production build succeeds, exhaustive UI 33 steps and zero runtime exceptions |
-| **Progress** | **7 / 28 loops shipped** · **64 / 193 tasks done** (33.16 %) · **0 active** · **129 pending** |
-| **Now** | A7 is in progress. Build 138 adds deep isolation so mutable nested template data is copied per action; replacement confirmation preserves role, uses, recharge, phase, CR policy, and ID. The chip chain and role-parity preview remain pending. |
-| **Next** | Continue A7 with role descriptors and chain cells (A7.1–A7.4); do not begin A8 consolidation until the chain and A7 close criteria are proven |
+| **Version** | v2.4.3 build 139 · 2026-10-29 · A7 role-chain descriptors · `rc-2.4.3-build-139-a7-role-descriptors` |
+| **Code HEAD** | `98bb899` A7 role descriptors · build 138 (`761b41a`) and builds 137/136/135/134 remain preserved · core 133/133, production build succeeds, full 33-step browser sweep passes with 0 runtime exceptions |
+| **Progress** | **7 / 28 loops shipped** · **65 / 193 tasks done** (33.68 %) · **0 active** · **128 pending** |
+| **Now** | A7 is in progress. Build 139 adds tested descriptors for all seven action-studio roles, including structured and legacy fields, in plate reading order. Descriptors are data only; no composer UI or preview parity is claimed yet. |
+| **Next** | Implement and integrate A7.2–A7.4 as an editable, role-aware chain with shared plate preview; then prove keyboard, responsive, and parity criteria in A7.7b. Do not begin A8 consolidation before A7 closes. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ◐ · A8 | 14 / 29 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ◐ · A8 | 15 / 29 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 28 | ☐ |
@@ -49,7 +49,7 @@
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **64 / 193 complete · 0 active · 129 pending** | **33.16 % complete · 66.84 % remaining** |
+| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **65 / 193 complete · 0 active · 128 pending** | **33.68 % complete · 66.32 % remaining** |
 
 ```mermaid
 pie showData
@@ -97,6 +97,7 @@ pie showData
 | 2026-10-29 | `71a8c21` | A6 | Optional action targeting/outcome data, conservative inference, modern plate projection and opt-in 2024-style text export; sample monster data unchanged | Core 124/124; build 136; exhaustive UI 33/33 steps; 0 runtime exceptions |
 | 2026-10-29 | `df95179` | A7 · partial build 137 | Added 9 catalog-backed action templates, grouped picker, explicit replacement confirmation, cancel/apply semantics and removed duplicate hard-coded preset/composer routes; configured sample data unchanged | Core 129/129; production build; exhaustive UI 33/33 including Step 32 cancel/apply; 0 runtime exceptions; focused lint 0 errors |
 | 2026-10-29 | `761b41a` | A7 · partial build 138 | Deep-cloned nested template values per application; edits to one action cannot mutate the shared catalog or another action | Core 130/130 including catalog isolation regression; production build; exhaustive UI 33/33; 0 runtime exceptions |
+| 2026-10-29 | `98bb899` | A7 · partial build 139 | Added `ROLE_CHAINS` data for action, bonus, trait, reaction, legendary, mythic, and lair roles; descriptors represent structured and legacy fields and encode head → mechanics → scope → outcomes → prose order. No editor UI or preview behavior changed. | Core 133/133 including three descriptor-contract tests; build succeeds; changed-file lint 0 errors/0 warnings; full 33-step browser sweep passes with 0 runtime exceptions |
 | 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
 | 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
 
@@ -117,7 +118,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A7 partial candidate build 138: reusable template catalog/picker and data isolation are usable; chip chain and preview parity remain pending | **A7.1–A7.4** role-aware composer chain and preview | A8…A17 (R2–R6), then Track B (R7–R10) |
+| A7 partial candidate build 139: reusable template catalog/picker, isolation, and tested role descriptors are present; no visible chain UI; preview parity remains pending | **A7.2–A7.4** editable role-aware composer chain and preview | A8…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
@@ -279,7 +280,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-138-a7-template-isolation` (partial)
+#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-139-a7-role-descriptors` (partial)
 
 > Editing an ability is clicking chips in the same order the GM reads them.
 
@@ -288,7 +289,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R2 | AU-03 | A6 | 3–5 d | Current slice from build 136: 4 implementation/test files, +425/−100; full chain remains forecast |
 
 - [x] **A7.0** Pre-flight: map every current field to its future chain home and identify preservation boundaries · M · *proof: audit notes below + implementation diff*
-- [ ] **A7.1** `ROLE_CHAINS` descriptors (data) per role · S
+- [x] **A7.1** `src/core/domain/action-composer.ts`: `ROLE_CHAINS` descriptors and shared row precedence for all seven roles; preserve both structured and legacy fields; do not imply UI integration · S · *proof: `test/core/ActionComposer.test.ts` validates role coverage, unique IDs, order, and legacy/structured field coverage*
 - [ ] **A7.2** `components/editor/composer/ChainCell.vue`: plate-like display; editors by kind (CatalogSelect-lite, number/formula input, text) · L
 - [ ] **A7.3** `components/editor/composer/ComposerChain.vue`: head · mechanics · scope · outcome rows; Tab/Enter/Esc keyboard model · L
 - [ ] **A7.4** Live preview under the chain via `plateHtml` · S
@@ -309,6 +310,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | existing UI-only prose/presets and calculated CR synchronization | prose and template workflow; CR recomputed after confirmed application | replaced only after confirmation; CR annotation retained |
 
 **A7.7a verification scope:** known template paths, unknown IDs, stale-field clearing, input immutability, nested template/catalog isolation, and shared data separation are unit tested. Browser evidence covers replacement cancel/apply. Template range strings and structured range data agree; the ranged weapon template is explicitly 80 ft. because the current model cannot represent a long-range pair. Do not describe it as 80/320 until the model and renderer support both values. No persisted schema or configured sample-data edits were made.
+
+**A7.1 descriptor boundary:** `ROLE_CHAINS` is tested domain presentation metadata only. It does not yet drive `ActionsEditor`, edit non-action role models, implement `ROLE_HEADERS`, or render `plateHtml`; `reaction.trigger` and trait/lair fields still need explicit adapters because their persisted models differ from `MonsterAction`. Outcomes render in the plate body before description, even though they have a distinct composer row. A7.2/A7.3 must consume these descriptors without treating every role as a `MonsterAction` or introducing duplicate write paths.
 
 **Done when:** CMP-009…011 proven; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 137 is a deliberate partial slice and does not close A7.
 
