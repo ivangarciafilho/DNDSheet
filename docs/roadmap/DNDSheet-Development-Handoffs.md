@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 135 · 2026-10-29 · A5 closed; one-page A4 print regression fixed; evidence recorded; formula trace belongs to A9 |
-| **State at hand-over** | A5 release candidate `rc-2.4.3-build-135-a5` points to closeout commit `8487335` on `statblock-overhaul`; preserved candidate tag `rc-2.4.3-build-134-pre-a5-closeout` remains unchanged at `a6c87e4`. Roadmap: 50 / 192 tasks complete, 0 active, 142 pending; 6 / 28 loops shipped. Core 115/115, production build, focused help smoke (12 themes and contrast), spell plate smoke (5 themes), exhaustive UI (33 scenarios, zero runtime exceptions), and one-page A4 PDF pass against built candidate 135. Evidence: `docs/evidence/a5/`; historical baseline absent, so no before/after pixel-parity claim. |
-| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 (A4 closeout in §6.2; A5 closeout in §6.3) |
-| **Next loop** | Begin **A6 · Ability composer model** using §6.4 pre-flight; keep A9 binding provenance and A12 spellcasting scope distinct |
+| **Version** | v2.4.3 build 136 · 2026-10-29 · A6 closed; build 135 preserved and remains separately evaluable; formula trace belongs to A9 |
+| **State at hand-over** | New candidate `rc-2.4.3-build-136-a6` points to `71a8c21`; prior `rc-2.4.3-build-135-a5` and preserved `rc-2.4.3-build-134-pre-a5-closeout` are unchanged. Roadmap: 60 / 192 tasks complete, 0 active, 132 pending; 7 / 28 loops shipped. Core 124/124, build 136 succeeds, exhaustive UI 33/33 steps with zero runtime exceptions. The transient browser Soul Barrage verifies structured presentation; configured monster/template data remains untouched. |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 (A4 closeout §6.2; A5 §6.3; A6 §6.4) |
+| **Next loop** | Begin **A7 · Composer chain and templates** using §6.5; keep A8 studio consolidation and A9 formula provenance distinct |
 
 ---
 
@@ -437,24 +437,24 @@ Next loop readiness ..... A4 🟢
 
 ---
 
-### 6.4 A6 · Ability composer model — 🟡
+### 6.4 A6 · Ability composer model — ✅ `rc-2.4.3-build-136-a6`
 
 | | |
 |---|---|
 | **Goal** | Actions carry reach, source, targeting and outcomes (optional); plates and 2024 text read them through one grammar module |
 | **Release · feature** | R2 · AU-01 · fixes DEF-05 |
-| **Entry criteria** | A3 ✅ · fixtures from templates/AI ingest staged |
+| **Entry criteria** | A3 ✅ · inventory completed; bundled legacy data and AI-ingest fixture behavior recorded |
 | **Read in the spec** | §9 AU-01 (grammar → fields → outputs table) · §6.5 · §7.5 · §8.6 · §13.2 BS-06, 09, 10, 22, 23 · D-10 |
 | **Backlog tasks** | A6.0 – A6.9 |
 | **Open first** | `components/models.ts` (`MonsterAction` L≈590) · `core/domain/types.ts` (mirror type) · `useProcessTokens.ts` modern branches (`processAction`, `processAttack`, `buildPlateEntry`) · `src/data/templates/*` · `core/usecases/IngestAiStatblock.ts` output shape |
 | **Skills** | `superpowers:test-driven-development` · `engineering:architecture` · `anthropic-skills:ttrpg-gm-craft` · `engineering:testing-strategy` |
-| **Research** | 2024 phrasing of targets and areas ("each creature in a 20-foot Emanation originating from it") — How to Use a Monster + sample 2024 monsters |
-| **Traps** | Inference must never write to the store · phrase tables, not string concatenation spread over branches · keep legacy output byte-identical when fields are absent (fixture diff) |
-| **Plan** | A6.0 inference prototype over templates → A6.1 types → A6.2 grammar tables/builders → A6.3 inference → A6.4 `text2024` → A6.5 wire into tokens → A6.6 tests → A6.7 hydration → A6.8 browser → A6.9 close |
-| **Verify** | `AbilityGrammar.test.ts` (FX-AB-01…05) · P3 shows `Ranged Spell Attack +7` and Veil's full scope · old payload hydrates |
-| **Exit** | CMP-001…008, COMP-001 (screen/text), COMP-003 proven |
+| **Research** | Repository inventory found no bundled structured-action example or committed Seraph fixture. This pass implements the product text-grammar contract; it does not claim official rules validation. |
+| **Traps** | Inference never writes to the store · malformed optional data is sanitized · ambiguous legacy text remains visible · configured monster data remains unchanged · 2024-style export is opt-in |
+| **Plan** | Completed: inventory → optional types → pure grammar/inference → 2024-style projection → modern plates/export → migration/ingest/core/browser verification |
+| **Verify** | `AbilityGrammar.test.ts` (8 cases) · migration and ingestion round-trip tests · core 124/124 · production build 136 · exhaustive UI 33/33, zero runtime exceptions |
+| **Exit** | CMP-001…008, COMP-001 (screen/text), COMP-003 proven for modeled/fixture cases; no native editor composer yet (A7) |
 | **Defaults** | `1d0` → `1d10` · no economy chip inside its own section |
-| **Next-loop prep** | Field → chain-cell table for A7 |
+| **Next-loop prep** | A7 reads optional `MonsterAction` fields and uses the A6 phrase ordering. Map each existing Actions Studio field to a chain cell before moving UI; do not add required persisted fields unless A7 defines their migration first. |
 
 ---
 
@@ -669,9 +669,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; A5 closeout commit is recorded in backlog §2. Prior tag `rc-2.4.3-build-134-pre-a5-closeout` remains untouched. Core 115/115, production build, focused help smoke (12 themes), spell smoke (5 themes), exhaustive UI (33 scenarios, zero runtime exceptions), and one-page A4 print pass.
-2. **What exists** — A0–A5 shipped. A5 includes the recharge-help correction, print stage/shell sizing fix, configurable e2e target and retained theme/A4/PDF evidence. The configured Ancient Green Dragon remains at `src/data/templates/monsters/Ancient Green Dragon.5emm.json`; previous work verified it through the app share-load path. New visual captures use the fresh default fixture and are not mislabeled as the dragon.
-3. **What to do next** — begin A6 from §6.4. Complete its template/AI-ingest inventory and inference fixtures before coding. Do not start A9 binding provenance early or claim the overall v2.5 overhaul complete.
+1. **State** — branch `statblock-overhaul`; A6 candidate `rc-2.4.3-build-136-a6` points to `71a8c21`. Evaluation: build 136 at `http://localhost:9100/index.html#/`; preserved build 135 at `http://localhost:9101/index.html#/`. Prior tags `rc-2.4.3-build-135-a5` and `rc-2.4.3-build-134-pre-a5-closeout` remain untouched. Core 124/124, production build 136, exhaustive e2e 33 steps with zero runtime exceptions.
+2. **What exists** — A0–A6 shipped. A6 adds optional structured action fields and shared projection/export grammar. Configured monster data remains unchanged; browser coverage injects transient Soul Barrage because existing sample templates had no structured action fixture.
+3. **What to do next** — begin A7 from §6.5. Map existing Actions Studio fields to chain cells before UI moves; do not start A8 consolidation or A9 binding provenance early and do not claim the overall v2.5 overhaul complete.
 4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 

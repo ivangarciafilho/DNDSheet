@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4** · 2026-10-29 · A5 closed in build 135 (`rc-2.4.3-build-135-a5`, commit `8487335`); 12-theme final-state evidence and one-page A4 print verified; historical baseline absent; formula-trace provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · preserved build 134 tag `rc-2.4.3-build-134-pre-a5-closeout` unchanged · current A5 candidate `rc-2.4.3-build-135-a5` at `8487335` |
+| **Version** | **v2.4.3 build 136** · 2026-10-29 · A6 shipped as `rc-2.4.3-build-136-a6`; build 135 and build 134 tags remain unchanged; formula-trace provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · A6 release commit/tag is recorded in the backlog timeline; immutable earlier candidates: `rc-2.4.3-build-135-a5` and `rc-2.4.3-build-134-pre-a5-closeout` |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **6 / 18 loops shipped** (A0–A5) · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped** (A0–A6) · **Track B** — Product Foundations: **0 / 10**, specified |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -1109,7 +1109,7 @@ classDiagram
 |---|---|---|:--:|---|
 | `monster.*` authored fields | Monster | monster-store | `app.monster` | Only explicit edits, presets, resolver write-back |
 | `monster.bindings` | `Record<FieldPath, NumericBinding>` | monster-store (A9) | yes | Every key is a valid numeric field path; no cycles survive resolution |
-| `monster.actions[i].targeting/outcomes/attackReach` | optional structs | monster-store (A6) | yes | Absent ⇒ inferred at render, never written back implicitly |
+| `monster.actions[i].targeting/outcomes/attackReach/attackSource` | optional structs | monster-store (A6) | yes when explicitly authored/imported | Omission is supported; safe display inference is pure and never writes back; malformed optional data is ignored/sanitized; no schema bump |
 | `monster.spellcasting.classes[i].subclass` | string | monster-store (A12) | yes | Survives reload (BS-07 fix) |
 | `editorStore.visualTheme` / `visualTemplate` | enums | editor-store | `app.editor` | Never changes mechanics (G-5) |
 | `history ledger` | `HistoryLedger<Monster>(50)` | history-store | no | One snapshot per user intent; resolver patches excluded (A9) |
@@ -1125,8 +1125,8 @@ classDiagram
 | `renderFormulaMacros(html, ctx)` | L5 | ✓ | Renders known refs/formulas; leaves unknown and context tokens intact | `Formula.test.ts`, `ProcessTokens.test.ts` |
 | `plateHtml(model)` | L3 (pure) | ✓ | Head first, empty cells dropped, attributes escaped | `Plate.test.ts` (5) |
 | `buildSpellPlate(monster, ctx)` | L3 (pure) | ✓ | Slot counts per level; pact = slots of highest level; cadence labels from catalog | A4: `SpellPlate.test.ts` |
-| `inferAbility(action, monster)` | L5 | ✓ | Explicit fields win; inference never writes | A6: `AbilityGrammar.test.ts` |
-| `abilityText2024(spec)` | L5 | ✓ | `Ranged Attack Roll: +7, range 120 ft. Hit: …` / `Charisma Saving Throw: DC 15, …` | A6 |
+| `inferAbility(action)` | L5 | ✓ | Explicit fields win; safe legacy inference fills absent cells; ambiguous text remains raw; never mutates | A6: `AbilityGrammar.test.ts` |
+| `text2024(action, context)` | L5 | ✓ | Emits the app's opt-in 2024-style attack/save/outcome text; this contract is not a claim of official-rules certification | A6: grammar/export tests |
 | `resolveBindings(monster)` | L4 | ✓ (returns patch) | Topological order; cycles reported; failures keep last value + flag | A9: `Bindings.test.ts` |
 | `rankCompletions(query, context)` | L3 | ✓ | Exact > prefix > label > fuzzy; ≤ 50 items | A10 |
 | `computeSpellMetrics(spellcasting, ruleset)` | L5 | ✓ | Returns `unavailable`/`error` instead of defaults | A12 |
@@ -1454,7 +1454,7 @@ sequenceDiagram
 | SB-03 | Formula engine, references and text macros | 🔗 Numbers know their source | A2 ✅ | ✅ |
 | SB-04 | Spellcasting plate | 📖 | A4 | ☐ |
 | SB-05 | Row grammar for the top block + head tooltips | 📖 💡 | A5 | ☐ |
-| AU-01 | Ability composer model and render grammar | ✍ Composes like sentences | A6 | ☐ |
+| AU-01 | Ability composer model and render grammar | ✍ Composes like sentences | A6 | ✅ build 136 |
 | AU-02 | NumericBinding fields (reference pickers + custom formula) | 🔗 | A9 · A11 | ☐ |
 | AU-03 | Actions Studio: composer chain and one Actions module | ✍ | A7 · A8 | ☐ |
 | AU-04 | Inline intellisense and macro menus | 💡 | A10 | ☐ |
@@ -1740,7 +1740,7 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 | … <Veil of Radiance> … | <Charisma Save> <15> | < <all> <creatures> <20ft> <of you> <Across the Ethereal and Material Planes> > |
 ```
 
-💭 The owner's draft reads `<1d0>`; the fixture uses `1d10` (a d0 does not exist) — confirm at A6 start (BS-22).
+💭 The owner's draft reads `<1d0>`; this loop records the intended value as `1d10` (a d0 does not exist); no global dice correction is inferred (BS-22).
 
 **Grammar → fields → outputs**
 
@@ -1806,7 +1806,7 @@ Tests: `test/core/AbilityGrammar.test.ts` (≈ 20 cases), regression of `Process
 
 **📏 Impact (forecast)** — 6 files · +800 / −150 · 2–4 days · risk medium (inference heuristics).
 
-**🔗 Dependencies** — SB-01, SB-03. **⚠ Risks** — R-05 inference misreads exotic free text → inference only fills *absent* cells and prints raw text when unsure. **🕳 Blindspots** — BS-22 `1d0` typo; BS-23 should Bonus Action / Reaction economy appear as a head chip (`BONUS ACTION`) when rendered outside their sections?
+**🔗 Dependencies** — SB-01, SB-03. **⚠ Risks** — R-05 inference misreads exotic free text → inference only fills *absent* cells and prints raw text when unsure. **🕳 Decisions recorded in A6** — BS-22 `<1d0>` means `1d10`; BS-23 economy stays in its section header rather than adding a repeated head chip.
 
 ---
 
@@ -2440,16 +2440,16 @@ stateDiagram-v2
 
 ## 11. Delivery map
 
-📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A5 are shipped, A6 is next, and every loop ships something the owner can see.**
+📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is next, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — 6 / 28 loops shipped, 22 loops not started. Of 192 planned backlog tasks, 50 are complete, none are active and 142 are pending (74.0 % remains). A5 closes with final-state theme evidence and a one-page A4 PDF; the absent historical screenshot baseline is recorded and no pixel-parity claim is made.
+**Progress snapshot · 2026-10-29** — 7 / 28 loops shipped, 21 loops not started. Of 192 planned backlog tasks, 60 are complete, none are active and 132 are pending (68.75 % remains). A6 adds optional structured action data and shared projections; its browser fixture is transient and no configured sample monster was rewritten. Build 135 remains preserved; build 136 is the new candidate.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ☐ |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 10 / 28 tasks |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -2467,7 +2467,7 @@ stateDiagram-v2
 | A3 | Plate grammar for abilities | SB-01 | A2 | — | ✅ `c543615` |
 | A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
 | **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
-| A6 | Ability composer model | AU-01 | A3 | 2–4 | ☐ |
+| A6 | Ability composer model | AU-01 | A3 | 2–4 | ✅ build 136 |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ☐ |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
 | A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ☐ |
@@ -2587,7 +2587,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | Loop | Main files | Files | + | − | Effort | Confidence | Risk |
 |---|---|---:|---:|---:|---|:--:|:--:|
 | A5 | `WebRenderer.vue` rows/help host, grammar SCSS, `app.scss` cascade and print rules, help dictionary, browser/core tests, evidence | 8 | 450 | 450 | shipped · 1 day actual | medium | medium |
-| A6 | `models.ts`, `types.ts`, new `ability-grammar.ts`, `useProcessTokens.ts`, tests | 6 | 800 | 150 | 2–4 d | medium | medium |
+| A6 | `models.ts`, `types.ts`, new `ability-grammar.ts`, `useProcessTokens.ts`, `ExportStatblock.ts`, five test files, `build.json` | 11 | ~590 | ~10 | 2–4 d forecast; implementation completed in this loop | medium | medium |
 | A7 | `ActionsEditor.vue`, new `ComposerChain.vue`, `ChainCell.vue`, `ACTION_TEMPLATES`, test | 5 | 1 100 | 400 | 3–5 d | medium | medium |
 | A8 | `MonsterBuilder.vue`, studio role variants, 7–8 legacy panels removed, e2e | 12 | 650 | 1 400 | 3–5 d | medium | medium |
 | A9 | new `FormulaField.vue`, `useBindings.ts`, `field-types.ts`, store, `formula.ts`, Basics/AttackPanel, tests; delete `DynamicReferenceSelect.vue` | 9 | 1 300 | 800 | 3–5 d | medium | med-high |
@@ -2670,11 +2670,11 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ☐ |
 | BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ☐ |
 | BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ☐ |
-| BS-06 | Persisted-state hydration with new optional keys | Reload with old `app.monster` payload after A6/A9 | A6, A9 | ☐ |
+| BS-06 | Persisted-state hydration with new optional keys | Migration and AI-ingest round trips preserve fields; full saved-browser reload remains broader regression coverage | A6, A9 | ◐ |
 | BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ☐ |
 | BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ☐ |
-| BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Run inference over all templates | A6 | ☐ |
-| BS-10 | AI-ingested actions lack new fields | Ingest sample, render plates | A6 | ☐ |
+| BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Inventory: 44 structured attacks; 28 legacy actions without structured fields; no committed Seraph fixture | A6 | ✅ |
+| BS-10 | AI-ingested actions lack new fields | Ingest fixture carries optional structured action fields through migration | A6 | ✅ |
 | BS-11 | HTML/print exports embed plates without grammar CSS | Export HTML, open standalone | B4 | ☐ |
 | BS-12 | Classic (non-modern) template intentionally untouched? | Preserve classic template unchanged in A5 | A5 | ✅ |
 | BS-13 | Text exports still print a legacy "Skills" line | Export Markdown | B4 | ☐ |
@@ -2686,8 +2686,8 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-19 | Print stylesheet interaction with plates/rows | A5 print preview and exported PDF verified as one A4 page; retain A17 release regression gate | A5, A17 | ✅ A5 |
 | BS-20 | Ability/saves grid stays a grid | Preserve the existing grid | A5 | ✅ |
 | BS-21 | Bottom "Intellisense" strip still present | Inspect `ActionsEditor` around L408 | A10 | ☐ |
-| BS-22 | `<1d0>` in the owner's composer example | Ask owner; assume `1d10` | A6 | ☐ |
-| BS-23 | Economy chip (`BONUS ACTION`) inside plates outside their section | Ask owner | A6 | ☐ |
+| BS-22 | `<1d0>` in the owner's composer example | Recorded default `1d10`; no automatic dice correction added | A6 | ✅ |
+| BS-23 | Economy chip (`BONUS ACTION`) inside plates outside their section | Recorded default: economy stays in its section header | A6 | ✅ |
 | BS-24 | Font Awesome 6 loaded via Quasar extras | Check `quasar.config.js` `extras` | A9 | ☐ |
 | BS-25 | Field paths into arrays need stable ids | Design `attacks[id=…]` paths | A9 | ☐ |
 | BS-26 | Home for villain actions | Ask owner | A8 | ☐ |
@@ -2762,7 +2762,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | CMP-003 | Mechanics phrase: "Ranged Spell Attack +7", "Charisma Save 15" | AU-01 | A6 | FX-AB-01/02 |
 | CMP-004 | Scope phrase from targeting: count · kind · qualifier · range · relation · planes | AU-01 | A6 | FX-AB-01/02 |
 | CMP-005 | Outcome lines "On Hit / On Failure / On Success" with effects and rider | AU-01 | A6 | test |
-| CMP-006 | `text2024` produces PHB'24 statements | AU-01 | A6 | test |
+| CMP-006 | `text2024` produces the specified opt-in 2024-style product statements; official rules conformity requires separately cited review | AU-01 | A6 | grammar/export tests |
 | CMP-007 | Count, range, bonus, DC and dice in phrases may be bindings | AU-01 | A6/A9 | FX-AB-05 |
 | CMP-008 | Structured edits never overwrite authored prose | AU-01 | A6 | test |
 | CMP-009 | Chain cell order equals plate order for every role | AU-03 | A7 | component test |
@@ -3106,5 +3106,6 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.0** | 2026-10-29 | Rebuilt around the owner's overhaul: Track A dossiers (14), measured ground truth, UML for formula/plate/ability/spell/kit models, data flows, state machines, wireframes, code-impact ledger, risk/blindspot/decision registers, requirement families, multi-scale traces; v1 absorbed as Track B |
 | **v2.1** | 2026-10-29 | Recorded A4 implementation at `f35cd6d`, measured impact and focused browser/core evidence; corrected spellcasting architecture to domain projections with Vue text bindings; moved A5 to next and recorded full-suite residuals in delivery tracking |
 | **v2.4** | 2026-10-29 | Closed A5 at build 135 (`8487335`): shared row grammar, accessible delegated help, accurate recharge semantics, 12-theme final-state evidence, one-page A4 print; reconciled loop/task progress and preserved both candidate tags; explicitly deferred formula provenance to A9 |
+| **v2.4.3 build 136** | 2026-10-29 | Closed A6: optional structured action model, pure conservative inference/phrase grammar, modern plate integration and opt-in 2024-style Markdown/plain-text export; migration/ingest compatibility retained; build 135 preserved; 124 core tests and 33-step built-app suite pass |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 

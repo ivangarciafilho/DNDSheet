@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 135 · 2026-10-29 · A5 closed after 12-theme visual evidence and one-page A4 print verification |
-| **Code HEAD** | `8487335` A5 closeout · release tag `rc-2.4.3-build-135-a5` on `statblock-overhaul` (preserved build 134 tag remains at `a6c87e4`) · core 115/115, production build, focused browser checks and exhaustive UI suite pass against built candidate |
-| **Progress** | **6 / 28 loops shipped** · **50 / 192 tasks done** (26.0 %) · **0 active** · **142 pending** |
-| **Now** | A5 is closed. Shared rows, CSS consolidation, delegated help host, contextual dictionary, accurate recharge semantics and one-page A4 print are implemented and verified; formula provenance remains correctly scoped to A9 |
-| **Next** | Arm and begin **A6 · Ability composer model** per Handoffs §6.4; do not skip its research and fixtures |
+| **Version** | v2.4.3 build 136 · 2026-10-29 · A6 model/render grammar shipped as `rc-2.4.3-build-136-a6` |
+| **Code HEAD** | `71a8c21` A6 · `rc-2.4.3-build-136-a6` on `statblock-overhaul` · prior `rc-2.4.3-build-135-a5` remains unchanged · core 124/124, production build, exhaustive UI 33/33 steps and zero runtime exceptions |
+| **Progress** | **7 / 28 loops shipped** · **60 / 192 tasks done** (31.25 %) · **0 active** · **132 pending** |
+| **Now** | A6 adds optional action targeting/outcome fields, a pure conservative grammar, modern plate projection and opt-in 2024-style Markdown/plain-text export. Legacy prose stays the default. No template monster data was rewritten. |
+| **Next** | Arm and begin **A7 · Composer chain and templates** per Handoffs §6.5; preserve A6’s optional model and use its field-to-plate order as the chain contract |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 · A7 · A8 | 0 / 28 | ☐ |
+| R2 · Composes like sentences | A6 ✅ · A7 · A8 | 10 / 28 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 28 | ☐ |
@@ -49,12 +49,12 @@
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **50 / 192 complete · 0 active · 142 pending** | **26.0 % complete · 74.0 % remaining** |
+| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **60 / 192 complete · 0 active · 132 pending** | **31.25 % complete · 68.75 % remaining** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 6
+  "Shipped" : 7
   "In progress" : 0
   "Pending Track A" : 12
   "Pending Track B" : 10
@@ -94,6 +94,7 @@ pie showData
 | 2026-10-29 | `4c6c1cb` | docs | v2 documents: spec bible, this backlog, handoffs; 32 / 32 Mermaid diagrams parse (Mermaid 11.4.1); ids and tables cross-checked | doc check + consistency script |
 | 2026-10-29 | `f35cd6d` | A4 | Class and innate spellcasting plates use shared visual grammar, edition-aware metamagic and cadence catalogs | 111 core tests; build; focused browser smoke across 5 themes |
 | 2026-10-29 | `8487335` | A5 | AC/HP/Speed and related rows share the plate grammar; recharge help is accurate; A4 printing no longer emits a blank second page | 115 core tests; production build 135; focused 12-theme contrast/screenshots; 5-theme spell smoke; 33-scenario full UI; one-page A4 PDF |
+| 2026-10-29 | `71a8c21` | A6 | Optional action targeting/outcome data, conservative inference, modern plate projection and opt-in 2024-style text export; sample monster data unchanged | Core 124/124; build 136; exhaustive UI 33/33 steps; 0 runtime exceptions |
 | 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
 | 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
 
@@ -114,13 +115,13 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A4 shipped; review residual full-suite failures recorded in A5/A15 | **A5** Row grammar → **A6** Composer model | A7…A17 (R2–R6), then Track B (R7–R10) |
+| A6 shipped in build 136; optional structured action data now drives the modern plate and 2024-style text exports | **A7** Composer chain and templates | A8…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
 ## 4. Track A — Statblock & Authoring Overhaul
 
-📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A5 are done, and A6 is next.**
+📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A6 are done, and A7 is next.**
 
 ### R1 · Reads right
 
@@ -253,26 +254,26 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R2 · Composes like sentences
 
-#### A6 · Ability composer model and render grammar ☐
+#### A6 · Ability composer model and render grammar ✅ `rc-2.4.3-build-136-a6`
 
 > The designer's sentence becomes data; plates, previews and text exports read from it.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R2 | AU-01 | A3 ✅ | 2–4 d | 6 files · +800 / −150 |
+| R2 | AU-01 | A3 ✅ | 2–4 d | 11 implementation/build files; 5 source files, 5 test files, +~920 / −~15 |
 
-- [ ] **A6.0** Pre-flight: run a throwaway inference script over `src/data/templates` and an AI-ingest sample (BS-09, BS-10); confirm `1d0` → `1d10` and the economy-chip question with the owner or record defaults (BS-22, BS-23) · M
-- [ ] **A6.1** Types: `AttackReach`, `AttackSource`, `AbilityTargeting`, `RangeSpec`, `AbilityOutcome`, `EffectClause` (optional on `MonsterAction`) in `components/models.ts` and `core/domain/types.ts` · S
-- [ ] **A6.2** `core/domain/ability-grammar.ts`: phrase tables (relations, count words, kind plurals) + `mechanicsPhrase`, `scopePhrase`, `outcomePhrase` · L
-- [ ] **A6.3** `inferAbility(action, ctx)`: reach from range text, targets from `targetsText`/`range`, outcomes from `effects`; explicit fields win; never writes · M
-- [ ] **A6.4** `text2024(spec)`: `Ranged Attack Roll: +7, range 120 ft. Hit: …` / `Charisma Saving Throw: DC 15, …` · M
-- [ ] **A6.5** `useProcessTokens.ts`: action/attack branches consume the grammar; legacy output unchanged when fields are absent (fixture diff) · M
-- [ ] **A6.6** `test/core/AbilityGrammar.test.ts` ≈ 20 cases incl. FX-AB-01…05 · M
-- [ ] **A6.7** Hydration check: load an old `app.monster` payload, then a payload with the new fields (BS-06) · S
-- [ ] **A6.8** Browser: Seraph shows `Ranged Spell Attack +7` and Veil's full scope phrase · S
-- [ ] **A6.9** Close: commit `actions carry reach, targets and outcomes; plates and 2024 text read them`, docs ritual · S
+- [x] **A6.0** Inventory: 44 bundled structured attacks; 28 legacy action rows carry no `actionType`/targets/effects; AI ingest fixture previously contained a structured weapon attack only. No committed Seraph fixture existed. Defaults recorded: malformed `<1d0>` means `1d10`; economy remains in its section header · M
+- [x] **A6.1** Optional shared domain/UI types added; existing schema version unchanged because optional keys are backward-compatible and migration tests preserve them · S
+- [x] **A6.2** `core/domain/ability-grammar.ts`: pure builders, conservative range/target inference, safe sanitation of malformed imported values · L
+- [x] **A6.3** Explicit values win; safe legacy inference fills absent fields; ambiguous text stays visible verbatim; no store writes · M
+- [x] **A6.4** `text2024(action, context)` outputs attack/save, range, outcomes, and authored prose; exported as opt-in style; no official-rules compliance claim · M
+- [x] **A6.5** Modern action plates consume the shared projection; actions without optional fields stay on the legacy render path · M
+- [x] **A6.6** `AbilityGrammar.test.ts` 8 cases incl. explicit precedence, legacy preservation, malformed imports, formula-backed counts, and non-mutation; full core suite 124/124 · M
+- [x] **A6.7** Old-schema migration and AI-ingest round-trip fixtures prove optional fields survive without schema bump · S
+- [x] **A6.8** Built browser suite Step 32 injects a transient Soul Barrage fixture and verifies attack, target, outcome, and authored prose; all 33 scenario steps pass, 0 runtime exceptions · S
+- [x] **A6.9** Build 136 created; prior build 135 preserved; code and roadmap state recorded in §2 · S
 
-**Done when:** CMP-001…008, COMP-001 (screen + text), COMP-003 proven; DEF-05 closed.
+**Done when:** CMP-001…008, COMP-001 (screen + text), COMP-003 proven; DEF-05 closed. Evidence: focused/core tests, migration/ingest fixtures, production build 136, built-app exhaustive UI 33/33 and zero runtime exceptions. Structured rendering is tested with a temporary browser fixture because the bundled sample templates contain no authored structured actions.
 
 ---
 
