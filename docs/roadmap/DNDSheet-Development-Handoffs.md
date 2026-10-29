@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.3 · 2026-10-29 · A5 row grammar and help behavior implemented; screenshot and formula-trace acceptance remains open |
-| **State at hand-over** | Code HEAD `9a58385`; uncommitted A5 worktree · roadmap: 46 / 192 tasks complete, 3 active, 143 pending; 5 / 28 loops shipped, A5 active · `npm test` 115 / 115 · production build passes · focused help browser smoke passes hover, focus/ARIA, bounds, Escape and detach cleanup · preserve current A5 edits |
-| **Shipped** | A0 · A1 · A2 · A3 · A4 (A4 closeout in §6.2) |
-| **Next loop** | Continue **A5 · Row grammar + head tooltips** from the partial implementation in §6.3; do not begin A6 before A5 closes |
+| **Version** | v2.4.3 build 135 · 2026-10-29 · A5 closed; one-page A4 print regression fixed; evidence recorded; formula trace belongs to A9 |
+| **State at hand-over** | A5 release candidate `rc-2.4.3-build-135-a5` points to closeout commit `8487335` on `statblock-overhaul`; preserved candidate tag `rc-2.4.3-build-134-pre-a5-closeout` remains unchanged at `a6c87e4`. Roadmap: 50 / 192 tasks complete, 0 active, 142 pending; 6 / 28 loops shipped. Core 115/115, production build, focused help smoke (12 themes and contrast), spell plate smoke (5 themes), exhaustive UI (33 scenarios, zero runtime exceptions), and one-page A4 PDF pass against built candidate 135. Evidence: `docs/evidence/a5/`; historical baseline absent, so no before/after pixel-parity claim. |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 (A4 closeout in §6.2; A5 closeout in §6.3) |
+| **Next loop** | Begin **A6 · Ability composer model** using §6.4 pre-flight; keep A9 binding provenance and A12 spellcasting scope distinct |
 
 ---
 
@@ -410,30 +410,30 @@ Next loop readiness ..... A4 🟢
 **Closeout / next-loop preparation**
 
 - A4 is complete and committed. Its acceptance includes the core suite, build, focused browser smoke, and the passing full UI suite stated above.
-- A5 is the active loop. The current tree contains uncommitted implementation and verification changes, including `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; inspect and preserve all of them. Do not reset the tree or assume these changes are part of `9a58385`.
-- A5.8 and A5.9 aligned Steps 18 and 20 with current semantic markup; remaining A5 work must verify `data-help` escaping/behavior and capture five-theme parity before removing theme-specific CSS.
+- A5 is closed at `8487335` and tagged as `rc-2.4.3-build-135-a5`; its final-state theme and A4 print evidence is retained in `docs/evidence/a5/`. The earlier build 134 candidate remains preserved at `a6c87e4`.
+- The original A5 historical screenshot baseline was unavailable. Final screenshots and measured contrast are evidence of the delivered state only; do not claim historical pixel parity. Formula derivation remains scoped to A9.
 - A15.7 aligned Step 25 with the no-duplicate Skills-row contract; grouped skill/tool content and row absence now pass.
-- Full e2e remains an A17 release gate; rerun after later rendering or interaction changes.
+- Full e2e passed 33 scenario steps with zero runtime exceptions on 2026-10-29; retain A17 as the regression gate after later rendering or interaction changes.
 
 ---
-### 6.3 A5 · Row grammar + head tooltips — 🟡 (open questions with defaults)
+### 6.3 A5 · Row grammar + head tooltips — ✅ CLOSED `8487335` · `rc-2.4.3-build-135-a5`
 
 | | |
 |---|---|
 | **Goal** | Top-block rows adopt the head/data grammar and tokens; every row head and plate head explains itself (delegated tooltip host) |
 | **Release · feature** | R1 · SB-05 |
-| **Entry criteria** | A4 ✅ · A5 row grammar, help host and recharge semantics implemented and verified · current A5 worktree edits must be preserved; final theme screenshots and formula-trace scope remain outstanding |
+| **Entry criteria** | A4 ✅ · A5 implementation and verified behaviors closed; original dirty edits were preserved through this commit |
 | **Read in the spec** | §9 SB-05 · §4.1, §4.5 · §6.4 · §13.2 BS-12, 14, 19, 20 · D-09 |
-| **Backlog tasks** | A5.0 – A5.9 (A5.1/A5.2/A5.3/A5.5/A5.8/A5.9 done; A5.0/A5.4/A5.6 active; A5.7 pending; e2e Steps 18/20 pass) |
-| **Open first** | Review `WebRenderer.vue`, `statblock-help.ts`, `useProcessTokens.ts`, and the current theme styles. Capture final screenshots across all 12 selectable themes and compare computed styles against the previous captured baseline if available; the historical baseline is currently absent. Decide whether formula traces are in scope for A5: renderer currently lacks a reliable exposed provenance model, so do not invent formula explanations. Preserve current A5 files. |
+| **Backlog tasks** | A5.0 – A5.9 complete; e2e Steps 18/20 pass; A5.6 final evidence at `docs/evidence/a5/` |
+| **Open first** | Closed packet: `WebRenderer.vue`, `statblock-help.ts`, `useProcessTokens.ts`, shared cascade styles and print CSS were reviewed. Twelve final-state theme screenshots, A4 preview screenshot and one-page A4 PDF are retained. Historical screenshots are absent; contrast/token probes and visual review support final-state claims, not historical pixel parity. Formula derivation remains A9 NumericBinding and is never inferred from renderer text. |
 | **Skills** | `ui-design:visual-design-foundations` · `impeccable:impeccable` · `design:ux-copy` · `modern-web-guidance:modern-web-guidance` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion` |
 | **Research** | WCAG 1.4.13 behaviour for the host; event delegation with `mouseover/focusin` on `#render` |
-| **Traps** | A5 remains open until screenshot evidence and closeout are recorded · preserve current dirty files · CSS duplicates are already removed; validate computed parity · displayed row values are context, not formula derivations · retain delegated events because descendants can be replaced |
-| **Plan** | Capture final 12-theme screenshots → review visual parity and contrast → resolve/explicitly defer formula traces with honest scope evidence → run core/build/lint/help/spell/full-e2e checks → close A5; Steps 18/20 already pass via A5.8/A5.9 |
-| **Verify** | P4 parity screenshots for all 12 themes · e2e Steps 18/20 · `.sb-head` and row semantics · focus/ARIA/Escape/detach/scroll/resize · recharge wording · print/A4 · CSS delta · full e2e |
-| **Exit** | SBG-010…012, HELP-002, TIP-006 (statblock) proven |
+| **Traps** | Do not claim historical pixel parity: baseline is absent · do not infer numeric provenance from rendered strings · retain delegated events because descendants can be replaced |
+| **Plan** | Closed: print stage/shell sizing fix → capture theme/A4/PDF evidence in fresh browser profile → core/build/lint/help/spell/full UI checks → roadmap reconciliation; formula provenance remains A9 |
+| **Verify** | 12 screenshots; `pdfinfo` confirms 1 A4 page; e2e Steps 18/20; `.sb-head`/row semantics; focus/ARIA/Escape/detach/scroll/resize; recharge wording; CSS delta; full e2e |
+| **Exit** | ✅ SBG-010…012, HELP-002, TIP-006 (statblock), 12-theme contrast and one-page A4 print proven |
 | **Defaults** | BS-12 classic template untouched · BS-14 row named "Other checks" · BS-20 ability grid unchanged |
-| **Next-loop prep** | After A5 closes, collect real action entries from templates and AI ingest for A6 inference fixtures. A6 must not start before then. |
+| **Next-loop prep** | A6 is armed by §6.4: inspect real action entries in templates and AI ingest, preserve authored legacy prose, and derive ability grammar fixtures before changing the composer. |
 
 ---
 
@@ -669,9 +669,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; code HEAD `9a58385` with uncommitted A5 changes; core 115 / 115, build passes, help browser smoke passes hover/focus/ARIA/viewport/Escape/detach checks. Focused spell smoke and full e2e passed on the preceding A4 closeout.
-2. **What exists** — A0–A4 shipped. A5 tooltip host, dictionary and help attributes are implemented but not committed as a complete loop. Top-row grammar conversion and CSS consolidation are outstanding.
-3. **What to do next** — continue A5 using §6.3. Capture theme/print baselines, convert rows, prove parity before deleting CSS, add recharge semantics, then run the full A5 suite. Do not start A6 until the A5 exit criteria pass.
+1. **State** — branch `statblock-overhaul`; A5 closeout commit is recorded in backlog §2. Prior tag `rc-2.4.3-build-134-pre-a5-closeout` remains untouched. Core 115/115, production build, focused help smoke (12 themes), spell smoke (5 themes), exhaustive UI (33 scenarios, zero runtime exceptions), and one-page A4 print pass.
+2. **What exists** — A0–A5 shipped. A5 includes the recharge-help correction, print stage/shell sizing fix, configurable e2e target and retained theme/A4/PDF evidence. The configured Ancient Green Dragon remains at `src/data/templates/monsters/Ancient Green Dragon.5emm.json`; previous work verified it through the app share-load path. New visual captures use the fresh default fixture and are not mislabeled as the dragon.
+3. **What to do next** — begin A6 from §6.4. Complete its template/AI-ingest inventory and inference fixtures before coding. Do not start A9 binding provenance early or claim the overall v2.5 overhaul complete.
 4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 

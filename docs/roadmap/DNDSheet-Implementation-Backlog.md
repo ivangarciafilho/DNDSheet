@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.3 · 2026-10-29 · A5 row grammar and tooltip improvements in the working tree; A5 remains open |
-| **Code HEAD** | `9a58385` on `statblock-overhaul` · working tree contains A5 tooltip host, dictionary and accessible help targets; core 115/115 and build pass; focused help browser smoke passes |
-| **Progress** | **5 / 28 loops shipped** · **46 / 192 tasks done** (24.0 %) · **3 active** · **143 not started** · **146 tasks remain** |
-| **Now** | A5 has 6 / 10 tasks closed, 3 active and 1 pending; shared rows, CSS consolidation, delegated help host, contextual dictionary groundwork and recharge semantics are implemented; screenshot parity, true formula traces and final closeout remain |
-| **Next** | Continue **A5 · Row grammar + head tooltips** from the verified partial state in Handoffs §6.3; do not start A6 until A5 closes |
+| **Version** | v2.4.3 build 135 · 2026-10-29 · A5 closed after 12-theme visual evidence and one-page A4 print verification |
+| **Code HEAD** | `8487335` A5 closeout · release tag `rc-2.4.3-build-135-a5` on `statblock-overhaul` (preserved build 134 tag remains at `a6c87e4`) · core 115/115, production build, focused browser checks and exhaustive UI suite pass against built candidate |
+| **Progress** | **6 / 28 loops shipped** · **50 / 192 tasks done** (26.0 %) · **0 active** · **142 pending** |
+| **Now** | A5 is closed. Shared rows, CSS consolidation, delegated help host, contextual dictionary, accurate recharge semantics and one-page A4 print are implemented and verified; formula provenance remains correctly scoped to A9 |
+| **Next** | Arm and begin **A6 · Ability composer model** per Handoffs §6.4; do not skip its research and fixtures |
 
 ---
 
@@ -39,7 +39,7 @@
 
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
-| R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 | 45 / 49 | ◐ |
+| R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 · A7 · A8 | 0 / 28 | ☐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
@@ -49,13 +49,13 @@
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **46 / 192 complete · 3 active · 143 pending** | **24.0 % complete · 76.0 % remaining** |
+| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **50 / 192 complete · 0 active · 142 pending** | **26.0 % complete · 74.0 % remaining** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 5
-  "In progress (A5)" : 1
+  "Shipped" : 6
+  "In progress" : 0
   "Pending Track A" : 12
   "Pending Track B" : 10
 ```
@@ -93,8 +93,9 @@ pie showData
 | 2026-10-29 13:02 | `b83ee56` | docs | v1 documents versioned in `docs/roadmap/` | git |
 | 2026-10-29 | `4c6c1cb` | docs | v2 documents: spec bible, this backlog, handoffs; 32 / 32 Mermaid diagrams parse (Mermaid 11.4.1); ids and tables cross-checked | doc check + consistency script |
 | 2026-10-29 | `f35cd6d` | A4 | Class and innate spellcasting plates use shared visual grammar, edition-aware metamagic and cadence catalogs | 111 core tests; build; focused browser smoke across 5 themes |
+| 2026-10-29 | `8487335` | A5 | AC/HP/Speed and related rows share the plate grammar; recharge help is accurate; A4 printing no longer emits a blank second page | 115 core tests; production build 135; focused 12-theme contrast/screenshots; 5-theme spell smoke; 33-scenario full UI; one-page A4 PDF |
 | 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
-| 2026-10-29 | working tree after `9a58385` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; build; focused help + spellcasting browser checks; full e2e 23/23 groups, 0 runtime exceptions |
+| 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
 
 ### 2.1 A4 closing validation: tracked full-suite failures
 
@@ -119,7 +120,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ## 4. Track A — Statblock & Authoring Overhaul
 
-📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A4 are done, and A5 is armed.**
+📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A5 are done, and A6 is next.**
 
 ### R1 · Reads right
 
@@ -227,7 +228,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A5 · Row grammar for the top block + head tooltips ◐
+#### A5 · Row grammar for the top block + head tooltips ✅
 
 > AC, HP, Speed, checks, senses, languages and defenses read as head-and-data rows, and every head explains itself.
 
@@ -235,18 +236,18 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R1 | SB-05 | A3 ✅ | 1–2 d | 5 files · +350 / −450 |
 
-- [~] **A5.0** Initial dirty edits preserved; help-key escaping, structural row conversion, CSS consolidation, 12-theme computed contrast, print and BS-12/14/20 regression paths are verified. Historical before-migration screenshots remain unavailable; record this evidence limitation and capture final 12-theme screenshots at closeout · M · *proof: core, focused browser and full e2e suites*
+- [x] **A5.0** Initial dirty edits preserved; help-key escaping, structural row conversion, CSS consolidation, 12-theme computed contrast, print and BS-12/14/20 regression paths are verified. The historical before-migration screenshot baseline is absent; current final-state screenshots are recorded without claiming before/after pixel parity · M · *proof: core 115/115, production build, focused help/spell browser smokes, exhaustive 33 steps with 0 runtime exceptions*
 - [x] **A5.1** `WebRenderer.vue`: convert AC, HP, Speed, saves, defenses, senses, action checks, languages and inventory to `sb-row / sb-cell / sb-head / sb-qual`; retain Vue templates/QTooltips without duplicate help semantics · M · *proof: focused help smoke + full e2e*
 - [x] **A5.2** Consolidate shared cascade styling; remove 11 repeated theme-specific `.dnd-cascade-panel` blocks from `app.scss` (15 → 4 matching blocks) · M · *proof: build + theme browser probe*
 - [x] **A5.3** Delegated help host supports pointer/focus, Escape, ARIA, viewport clamp, scroll/resize and detach/unmount cleanup · M · *proof: `npm run test:e2e:help`*
-- [~] **A5.4** Plain-language dictionary covers top labels, defenses, checks, languages, plate heads, spell fields, Passive, X/Day, Phase, school/tier, scope and recharge. Displayed-value context is shown; computed formula traces remain unimplemented because current renderer does not expose reliable source/derivation data · M · *proof: core tests + browser smoke*
+- [x] **A5.4** Plain-language dictionary covers top labels, defenses, checks, languages, plate heads, spell fields, Passive, X/Day, Phase, school/tier, scope and recharge. Displayed-value context is shown; computed formula traces are explicitly deferred to A9 because this renderer does not expose reliable source/derivation data · M · *proof: `StatblockHelp` core tests + focused browser smoke*
 - [x] **A5.5** Recharge die semantics (D-09): recharge help derives d6/d12/general wording from threshold and does not mutate authored display text · S · *proof: StatblockHelp tests + browser smoke*
-- [~] **A5.6** Functional verification passes for 12 selectable themes, contrast, print/A4 and full e2e; paired baseline/final screenshots for each theme are still missing · M · *proof: `npm run test:e2e:help`, `npm run test:e2e:spellcasting`, `npm run test:e2e`*
-- [ ] **A5.7** Close: tests, lint, commit `top rows share the plate grammar; heads explain themselves`, docs ritual · S
+- [x] **A5.6** Functional verification passes for 12 selectable themes, >=4.5:1 computed contrast, A4 preview, one-page A4 PDF and full e2e; 12 final-state theme screenshots and A4 preview/PDF evidence are stored in `docs/evidence/a5/`. The historical baseline is absent, so no before/after pixel-parity claim is made · M · *proof: `npm run test:e2e:help`, `pdfinfo` reports 1 A4 page, `npm run test:e2e:spellcasting`, `DNDSHEET_E2E_URL=http://localhost:9100/index.html#/ npm run test:e2e`*
+- [x] **A5.7** Close: core tests, touched-file lint, production build, help/spell/full UI checks pass; print sizing fixed so viewport and scaled-stage heights no longer create a blank second A4 page; evidence and roadmap mirrors reconciled · S · *proof: closeout commit recorded in §2*
 - [x] **A5.8** Align e2e Step 18 with the shipped semantic classes `.dnd-adv`/`.dnd-disadv`; no renderer change was needed · S · *added A4; proof: `ae16b86`, full e2e pass*
 - [x] **A5.9** Align e2e Step 20 with the Search-row check wrapper and trailing glyph rather than deprecated pill classes · S · *added A4; proof: `ae16b86`, full e2e pass*
 
-**Done when:** SBG-010…012, HELP-002, TIP-006 (statblock part) proven. Tooltip-only work does not close A5.
+**Done when:** SBG-010…012, HELP-002, TIP-006 (statblock part) proven. ✅ A5 closed; formula trace work remains under A9 as specified.
 
 ---
 

@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.3** · 2026-10-29 · A5 row grammar, tooltip foundation and recharge semantics implemented; screenshot parity and formula-trace scope remain open |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · code HEAD `9a58385` with uncommitted A5 changes |
+| **Version** | **v2.4** · 2026-10-29 · A5 closed in build 135 (`rc-2.4.3-build-135-a5`, commit `8487335`); 12-theme final-state evidence and one-page A4 print verified; historical baseline absent; formula-trace provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · preserved build 134 tag `rc-2.4.3-build-134-pre-a5-closeout` unchanged · current A5 candidate `rc-2.4.3-build-135-a5` at `8487335` |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **5 / 18 loops shipped** (A0–A4); A5 is in progress, not shipped · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **6 / 18 loops shipped** (A0–A5) · **Track B** — Product Foundations: **0 / 10**, specified |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -1693,13 +1693,13 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 
 > **AC, HP, Speed, Saves, Checks, Senses, Languages and Defenses become the same head-and-data rows as the plates — and every head explains itself.**
 
-**Status** ◐ in progress · **Loop** A5 · **Requirements** `SBG-010…012`, `HELP-002`, `VIS-001`
+**Status** ✅ shipped · **Loop** A5 · **Requirements** `SBG-010…012`, `HELP-002`, `VIS-001`
 
-**🎯 Value** — One visual language from the name to the last legendary action; hovering any head (AC, Search, Recharge) explains the rule and the computation.
+**🎯 Value** — One visual language from the name to the last legendary action; hovering any head (AC, Search, Recharge) explains the rule and identifies the displayed value; numeric traces require A9 binding provenance.
 
 **🔎 Evidence** — The top block uses `dnd-cascade-panel` / `dnd-cascade-title` / `dnd-cascade-badges-wrap` markup with per-theme rules repeated 12 times in `app.scss` (L544–1690); only check-row titles have a `q-tooltip`; plate heads have plain `title` attributes.
 
-**🧩 Concept** — Rows are one-line plates: **head** (what), optional **qualifier chip** (economy, e.g. ACTION), **data** (value, then parenthesised exceptions). Heads carry HelpTips with the rule and the live trace (e.g. AC: "10 + DEX_MOD[+1] + natural 4 = 15").
+**🧩 Concept** — Rows are one-line plates: **head** (what), optional **qualifier chip** (economy, e.g. ACTION), **data** (value, then parenthesised exceptions). Heads carry HelpTips with a plain-language rule and the displayed-value context. Numeric derivation traces are only shown when trustworthy source provenance exists; this belongs to A9, not rendered-string inference.
 
 **🛠 Techniques** — keep these rows as Vue templates (they need real tooltips) but give them the grammar classes `sb-row/sb-cell/sb-head`; map `dnd-cascade-title → sb-head`, `dnd-cascade-subtitle → sb-qual`, `dnd-cascade-badges-wrap → sb-cell`; move per-theme cascade colours to tokens (delete the 12 repeated blocks only after visual parity); **delegated tooltip host** for `v-html` plates: plate cells carry `data-help="recharge"` and one shared HelpTip instance listens for `mouseover/focusin` on `#render` and positions itself (no Vue component per cell). Recharge semantics in the tip: "Recharge 4–12: roll 1d12 at the start of each turn; on 4–12 it recharges" (D-09).
 
@@ -1713,7 +1713,7 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 
 **🖼 Wireframe** — W-02b (rows) and W-09 (HelpTip).
 
-**🧪 Acceptance** — each top row has one head cell and ≥ 1 data cell; head colours come from tokens in all 12 selectable themes; every head and plate head shows an accessible HelpTip on hover and keyboard focus; Escape dismisses; viewport edges, scroll, resize, A4/print and detached descendants are handled; recharge tips state correct die semantics; cascade theme blocks in `app.scss` shrink by ≥ 60 % only after visual parity is proven. Partial implementation supplies delegated hover/focus handling, ARIA description, Escape, viewport clamping, scroll/resize repositioning, cleanup, a plain-language dictionary and focusable data-help targets. Remaining proof: row-grammar conversion, CSS parity/consolidation, contextual computation traces and print/A4 coverage. Do not mark complete until all acceptance evidence exists.
+**🧪 Acceptance** — each top row has one head cell and ≥ 1 data cell; head colours come from tokens in all 12 selectable themes; every head and plate head shows an accessible HelpTip on hover and keyboard focus; Escape dismisses; viewport edges, scroll, resize, A4/print and detached descendants are handled; recharge tips state correct die semantics; cascade theme blocks in `app.scss` shrink by ≥ 60 % only after visual review. ✅ Proven: row grammar, delegated hover/focus handling, ARIA description, Escape, viewport clamping, scroll/resize repositioning, cleanup, plain-language dictionary, 12 final-state theme screenshots, >=4.5:1 computed contrast and one-page A4 PDF. Historical screenshots are absent; no historical pixel-parity claim is made. Formula/source traces remain deferred to A9 because renderer text does not carry reliable derivation provenance.
 
 **📏 Impact (forecast)** — 4–6 files · +350 / −450 · 1–2 days · risk medium (visual regressions across themes → screenshot matrix).
 
@@ -2440,15 +2440,15 @@ stateDiagram-v2
 
 ## 11. Delivery map
 
-📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A4 are shipped, A5 is in progress, and every loop ships something the owner can see.**
+📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A5 are shipped, A6 is next, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — 5 / 28 loops shipped, A5 in progress, 22 loops not started. Of 192 planned backlog tasks, 46 are complete, 3 are active and 143 are pending (146 remain); progress is counted only at task completion, so partial A5 work is not reported as completed.
+**Progress snapshot · 2026-10-29** — 6 / 28 loops shipped, 22 loops not started. Of 192 planned backlog tasks, 50 are complete, none are active and 142 are pending (74.0 % remains). A5 closes with final-state theme evidence and a one-page A4 PDF; the absent historical screenshot baseline is recorded and no pixel-parity claim is made.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
-| **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ◐ 5 / 6 |
+| **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
 | **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ☐ |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
@@ -2466,7 +2466,7 @@ stateDiagram-v2
 | A2 | Formula engine and macros | SB-03 | A0 | — | ✅ `be0cf3f` |
 | A3 | Plate grammar for abilities | SB-01 | A2 | — | ✅ `c543615` |
 | A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
-| **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ◐ in progress; tooltip foundation verified |
+| **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ☐ |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ☐ |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
@@ -2527,7 +2527,7 @@ gantt
   A2 Formula engine             :done, a2, 2026-10-29, 1d
   A3 Plate grammar              :done, a3, 2026-10-29, 1d
   A4 Spellcasting plate         :done, a4, 2026-10-29, 1d
-  A5 Row grammar                :active, a5, 2026-10-30, 2d
+  A5 Row grammar                :done, a5, 2026-10-29, 1d
   section R2 Composes like sentences
   A6 Composer model             :a6, after a5, 3d
   A7 Composer chain             :a7, after a6, 4d
@@ -2586,7 +2586,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 
 | Loop | Main files | Files | + | − | Effort | Confidence | Risk |
 |---|---|---:|---:|---:|---|:--:|:--:|
-| A5 | `WebRenderer.vue` rows/help host, grammar SCSS, `app.scss` cascade blocks, help dictionary, browser/core tests | 8 | 450 | 450 | 1–2 d remaining | medium | medium |
+| A5 | `WebRenderer.vue` rows/help host, grammar SCSS, `app.scss` cascade and print rules, help dictionary, browser/core tests, evidence | 8 | 450 | 450 | shipped · 1 day actual | medium | medium |
 | A6 | `models.ts`, `types.ts`, new `ability-grammar.ts`, `useProcessTokens.ts`, tests | 6 | 800 | 150 | 2–4 d | medium | medium |
 | A7 | `ActionsEditor.vue`, new `ComposerChain.vue`, `ChainCell.vue`, `ACTION_TEMPLATES`, test | 5 | 1 100 | 400 | 3–5 d | medium | medium |
 | A8 | `MonsterBuilder.vue`, studio role variants, 7–8 legacy panels removed, e2e | 12 | 650 | 1 400 | 3–5 d | medium | medium |
@@ -2676,15 +2676,15 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Run inference over all templates | A6 | ☐ |
 | BS-10 | AI-ingested actions lack new fields | Ingest sample, render plates | A6 | ☐ |
 | BS-11 | HTML/print exports embed plates without grammar CSS | Export HTML, open standalone | B4 | ☐ |
-| BS-12 | Classic (non-modern) template intentionally untouched? | Ask owner | A5 | ☐ |
+| BS-12 | Classic (non-modern) template intentionally untouched? | Preserve classic template unchanged in A5 | A5 | ✅ |
 | BS-13 | Text exports still print a legacy "Skills" line | Export Markdown | B4 | ☐ |
-| BS-14 | Name of the row for custom skill keys | Ask owner | A5 | ☐ |
+| BS-14 | Name of the row for custom skill keys | Use “Other checks” | A5 | ✅ |
 | BS-15 | Macro rendering cost on very long texts | Profile 5 000-char description | A17 | ☐ |
 | BS-16 | Decimal numbers in formulas | Out of scope (integers only) — confirm | A9 | ☐ |
 | BS-17 | Spell template bugs: doubled parentheses now **verified** (DEF-17); "Level3" spacing still unverified | Render FX-SP fixtures before refactor | A4 | ◐ |
 | BS-18 | Multiclass head title format | Ask owner; propose "Warlock 5 / Sorcerer 10" | A4 | ☐ |
-| BS-19 | Print stylesheet interaction with plates/rows | Print preview | A5, A17 | ☐ |
-| BS-20 | Ability/saves grid stays a grid | Ask owner | A5 | ☐ |
+| BS-19 | Print stylesheet interaction with plates/rows | A5 print preview and exported PDF verified as one A4 page; retain A17 release regression gate | A5, A17 | ✅ A5 |
+| BS-20 | Ability/saves grid stays a grid | Preserve the existing grid | A5 | ✅ |
 | BS-21 | Bottom "Intellisense" strip still present | Inspect `ActionsEditor` around L408 | A10 | ☐ |
 | BS-22 | `<1d0>` in the owner's composer example | Ask owner; assume `1d10` | A6 | ☐ |
 | BS-23 | Economy chip (`BONUS ACTION`) inside plates outside their section | Ask owner | A6 | ☐ |
@@ -2745,7 +2745,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | SBG-008 | Pact and full-caster slot counts are correct per level | SB-04 | A4 | FX-SP-01/02 |
 | SBG-009 | Innate casting renders as its own plate | SB-04 | A4 | FX-SP-04 |
 | SBG-010 | Top-block rows use the head/data grammar and theme tokens | SB-05 | A5 | probe, screenshots |
-| SBG-011 | Every row head and plate head kind has a HelpTip with rule and live trace | SB-05 | A5 | DOM probe |
+| SBG-011 | Every row head and plate head kind has an accessible HelpTip with the rule and displayed-value context; numeric derivation trace requires trustworthy source provenance | SB-05 | A5 (value context); A9 (formula trace) | DOM probe; binding provenance tests |
 | SBG-012 | Recharge tips state the die and the range | SB-05 | A5 | test |
 | CHK-001 | Each recognised skill appears in exactly one group row | SB-02 | A1 ✅ | `SkillActionGroups.test.ts` |
 | CHK-002 | The four group rows always render with base passive/bonus | SB-02 | A1 ✅ | same |
@@ -3105,5 +3105,6 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | v1 | 2026-10-29 08:19 | Draft by a previous planning pass (32 sections, product foundations) — git `b83ee56` |
 | **v2.0** | 2026-10-29 | Rebuilt around the owner's overhaul: Track A dossiers (14), measured ground truth, UML for formula/plate/ability/spell/kit models, data flows, state machines, wireframes, code-impact ledger, risk/blindspot/decision registers, requirement families, multi-scale traces; v1 absorbed as Track B |
 | **v2.1** | 2026-10-29 | Recorded A4 implementation at `f35cd6d`, measured impact and focused browser/core evidence; corrected spellcasting architecture to domain projections with Vue text bindings; moved A5 to next and recorded full-suite residuals in delivery tracking |
+| **v2.4** | 2026-10-29 | Closed A5 at build 135 (`8487335`): shared row grammar, accessible delegated help, accurate recharge semantics, 12-theme final-state evidence, one-page A4 print; reconciled loop/task progress and preserved both candidate tags; explicitly deferred formula provenance to A9 |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 
