@@ -145,11 +145,11 @@ async function runFuzz() {
   console.log('\n--- Step 1: Initial Render Parity Verification ---')
   const step1 = await evalInPage(`
     async () => {
-      for (let i = 0; i < 30; i++) { if (document.querySelector('.statblock .monster-name')) break; await new Promise(r => setTimeout(r, 100)); }
-      const nameEl = document.querySelector('.statblock .monster-name');
-      const typeEl = document.querySelector('.statblock .type') || document.querySelector('.statblock .monster-meta-badges');
-      const acEl = document.querySelector('.statblock .ac');
-      const statblockHtml = document.querySelector('.statblock')?.outerHTML || '';
+      for (let i = 0; i < 30; i++) { if (document.querySelector('#render .statblock .monster-name')) break; await new Promise(r => setTimeout(r, 100)); }
+      const nameEl = document.querySelector('#render .statblock .monster-name');
+      const typeEl = document.querySelector('#render .statblock .type') || document.querySelector('#render .statblock .monster-meta-badges');
+      const acEl = document.querySelector('#render .statblock .ac');
+      const statblockHtml = document.querySelector('#render .statblock')?.outerHTML || '';
 
       return {
         success: !!nameEl && !!typeEl,
@@ -185,10 +185,10 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 100));
 
-      const nameEl = document.querySelector('.statblock .monster-name');
-      const typeEl = document.querySelector('.statblock .type') || document.querySelector('.statblock .monster-meta-badges');
-      const acEl = document.querySelector('.statblock .ac');
-      const hpEl = document.querySelector('.statblock .hp');
+      const nameEl = document.querySelector('#render .statblock .monster-name');
+      const typeEl = document.querySelector('#render .statblock .type') || document.querySelector('#render .statblock .monster-meta-badges');
+      const acEl = document.querySelector('#render .statblock .ac');
+      const hpEl = document.querySelector('#render .statblock .hp');
 
       return {
         success: nameEl?.textContent?.includes('Ancient Red Wyrm'),
@@ -229,7 +229,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 100));
 
-      const nameEl = document.querySelector('.statblock .monster-name');
+      const nameEl = document.querySelector('#render .statblock .monster-name');
       return {
         success: true,
         hasRender: !!nameEl,
@@ -270,7 +270,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 100));
 
-      const sb = document.querySelector('.statblock');
+      const sb = document.querySelector('#render .statblock');
       const attacksHtml = Array.from(sb.querySelectorAll('.attack')).map(a => a.textContent);
       return {
         success: attacksHtml.length > 0,
@@ -316,7 +316,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 100));
 
-      const sb = document.querySelector('.statblock');
+      const sb = document.querySelector('#render .statblock');
       return {
         success: true,
         traitCount: monster.traits.length,
@@ -337,13 +337,13 @@ async function runFuzz() {
       // Switch to 2014
       editorStore.style = '2014';
       await new Promise(r => setTimeout(r, 100));
-      const sb2014 = document.querySelector('.statblock');
+      const sb2014 = document.querySelector('#render .statblock');
       const is2014 = !sb2014?.classList.contains('mm2024');
 
       // Switch to 2024
       editorStore.style = '2024';
       await new Promise(r => setTimeout(r, 100));
-      const sb2024 = document.querySelector('.statblock');
+      const sb2024 = document.querySelector('#render .statblock');
       const is2024 = sb2024?.classList.contains('mm2024');
 
       return {
@@ -723,7 +723,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
+      const renderedText = document.querySelector('#render .statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
       const portraitLeft = document.querySelector('.monster-portrait.portrait-left');
       const portraitCaption = document.querySelector('.portrait-caption')?.textContent || '';
 
@@ -936,11 +936,11 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
-      const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
+      const renderedText = document.querySelector('#render .statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
+      const renderedHtml = document.querySelector('#render .statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
-      const hasAdvBadge = !!document.querySelector('.statblock .dnd-adv');
-      const hasDisadvBadge = !!document.querySelector('.statblock .dnd-disadv');
+      const hasAdvBadge = !!document.querySelector('#render .statblock .dnd-adv');
+      const hasDisadvBadge = !!document.querySelector('#render .statblock .dnd-disadv');
       const hasCharmCond = renderedText.includes('against charm');
       const hasToolsLine = renderedText.includes("Thieves' Tools") && renderedText.includes('locks only');
       const hasTraversalDifficult = renderedText.includes('ignores difficult terrain');
@@ -1089,8 +1089,8 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
-      const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
+      const renderedText = document.querySelector('#render .statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
+      const renderedHtml = document.querySelector('#render .statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
       const hasVulnCond = renderedText.includes('Restrained until end of its next turn');
       const hasResAbsorb = renderedText.includes('regains HP instead') || renderedText.includes('absorbs');
@@ -1171,11 +1171,11 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
-      const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
+      const renderedText = document.querySelector('#render .statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
+      const renderedHtml = document.querySelector('#render .statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
       // Check badge placement to the right of numerical bonus (pill wrapping or badge)
-      const searchAdvantage = document.querySelector('.statblock .cascade-skill-search .dnd-check .dnd-adv');
+      const searchAdvantage = document.querySelector('#render .statblock .cascade-skill-search .dnd-check .dnd-adv');
       const hasRightAdvBadge = !!searchAdvantage && searchAdvantage.textContent.includes('▲▲');
 
       // Check passive Perception reflects Advantage (+5 bonus over base passive)
@@ -1291,8 +1291,8 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
-      const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
+      const renderedText = document.querySelector('#render .statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
+      const renderedHtml = document.querySelector('#render .statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
       // Check Flagship Dynamic Telepathy Ruling
       const hasDynamicTelepathy = renderedText.includes('sense, and communicate only with intelligent creatures') &&
@@ -1338,7 +1338,7 @@ async function runFuzz() {
       const monster = pinia._s.get('monster');
 
       // 1. Verify Top-Left/Top-Plate CR / PB / XP badge cluster in header (unified 2-row cellular top plate)
-      const statblock = document.querySelector('.statblock');
+      const statblock = document.querySelector('#render .statblock');
       const crPill = statblock?.querySelector('.cr-composite-pill') || statblock?.querySelector('.cr-badge-pill') || statblock?.querySelector('.top-plate-left');
       const subRegions = statblock?.querySelectorAll('.cr-region, .top-plate-cell');
       const subBadges = statblock?.querySelectorAll('.sub-badge-pill');
@@ -1377,7 +1377,7 @@ async function runFuzz() {
       editorStore.visualTemplate = 'modern';
       await new Promise(r => setTimeout(r, 200));
 
-      const hasModernModularClass = document.querySelector('.statblock.modern-modular') !== null;
+      const hasModernModularClass = document.querySelector('#render .statblock.modern-modular') !== null;
 
       // Switch back to classic
       editorStore.visualTemplate = 'classic';
@@ -1461,7 +1461,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 250));
 
-      const statblock = document.querySelector('.statblock');
+      const statblock = document.querySelector('#render .statblock');
       const renderedText = statblock?.textContent || '';
       const renderedHtml = statblock?.innerHTML || '';
 
@@ -1538,7 +1538,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 250));
 
-      const statblock = document.querySelector('.statblock');
+      const statblock = document.querySelector('#render .statblock');
       const renderedText = statblock?.textContent || '';
       const renderedHtml = statblock?.innerHTML || '';
 
@@ -1640,7 +1640,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 250));
 
-      const statblock = document.querySelector('.statblock');
+      const statblock = document.querySelector('#render .statblock');
       const renderedText = statblock?.textContent || '';
       const renderedHtml = statblock?.innerHTML || '';
 
@@ -1717,7 +1717,7 @@ async function runFuzz() {
       editorStore.visualTheme = 'wotc';
       await new Promise(r => setTimeout(r, 200));
 
-      const statblock = document.querySelector('.statblock');
+      const statblock = document.querySelector('#render .statblock');
       const hasModernModularWotc = statblock?.classList.contains('modern-modular') &&
         statblock?.classList.contains('theme-wotc');
 
@@ -1747,7 +1747,7 @@ async function runFuzz() {
       // 4. Reset A4 Preview Mode to verify seamless return
       editorStore.a4PreviewMode = false;
       await new Promise(r => setTimeout(r, 150));
-      const hasNormalRestored = !document.querySelector('.a4-page-sheet') && !!document.querySelector('.statblock');
+      const hasNormalRestored = !document.querySelector('.a4-page-sheet') && !!document.querySelector('#render .statblock');
 
       return {
         success: hasModernModularWotc && !!a4Viewport && !!a4PageSheet && hasA4Portrait && hasA4Header && hasA4Footer && hasA4Landscape && hasA4Compact && hasNormalRestored,
@@ -1914,7 +1914,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const statblockEl = document.querySelector('.statblock');
+      const statblockEl = document.querySelector('#render .statblock');
       const portraitEl = document.querySelector('.monster-portrait');
       const customLayerEl = document.querySelector('.a4-bg-layer');
 
@@ -2051,7 +2051,7 @@ async function runFuzz() {
 
       return new Promise(resolve => {
         setTimeout(() => {
-          const statblockText = document.querySelector('.statblock')?.textContent || '';
+          const statblockText = document.querySelector('#render .statblock')?.textContent || '';
           const hasInnateSpellcasting = statblockText.includes('Innate Spellcasting') &&
             statblockText.includes('Detect Magic');
           const hasStandardSpellcasting = statblockText.includes('Spellcasting') &&
@@ -2145,7 +2145,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const statblockEl = document.querySelector('.statblock');
+      const statblockEl = document.querySelector('#render .statblock');
       const text = statblockEl?.textContent || '';
 
       const lowerText = text.toLowerCase();
@@ -2258,7 +2258,7 @@ async function runFuzz() {
       editorStore.visualTemplate = 'modern';
       await new Promise(r => setTimeout(r, 250));
 
-      const statblockEl = document.querySelector('.statblock');
+      const statblockEl = document.querySelector('#render .statblock');
       const text = statblockEl?.textContent || '';
       const html = statblockEl?.innerHTML || '';
 
@@ -2434,7 +2434,7 @@ async function runFuzz() {
 
       await new Promise(r => setTimeout(r, 200));
 
-      const statblockEl = document.querySelector('.statblock');
+      const statblockEl = document.querySelector('#render .statblock');
       const text = statblockEl?.textContent || '';
       const html = statblockEl?.innerHTML || '';
 
@@ -2502,7 +2502,7 @@ async function runFuzz() {
       const read = async (template) => {
         editor.visualTemplate = template;
         await new Promise((resolve) => setTimeout(resolve, 250));
-        return (document.querySelector('.statblock')?.textContent || '').replace(/\\s+/g, ' ');
+        return (document.querySelector('#render .statblock')?.textContent || '').replace(/\\s+/g, ' ');
       };
       const classic = await read('classic');
       const modern = await read('modern');
@@ -2514,12 +2514,137 @@ async function runFuzz() {
         modernLegendary: modern.includes('Costs 2 Actions') && modern.includes('Constitution Save') && modern.includes('On Failure:'),
         modernMythic: modern.includes('Ranged Spell Attack +9') && modern.includes('On Hit:'),
       };
-      return { success: Object.values(checks).every(Boolean), checks };
+      const success = Object.values(checks).every(Boolean);
+      return success ? { success, checks } : {
+        success, checks, classicText: classic.slice(-1200), modernText: modern.slice(-1200),
+      };
     }
   `)
   console.log('Step 34 result:', step34)
   if (!step34 || !step34.success) {
     throw new Error('Step 34 failed: ' + JSON.stringify(step34));
+  }
+
+  console.log('\n--- Step 35: Composer chain edits plate cells by keyboard; its preview is the stat block entry ---')
+  // Trusted key events: synthetic DOM events never activate buttons or open Quasar menus.
+  const KEYS = {
+    Enter: { code: 'Enter', keyCode: 13, text: '\r' },
+    Escape: { code: 'Escape', keyCode: 27 },
+    ArrowDown: { code: 'ArrowDown', keyCode: 40 },
+  }
+  const pressKey = async (key) => {
+    const k = KEYS[key]
+    const base = { key, code: k.code, windowsVirtualKeyCode: k.keyCode, nativeVirtualKeyCode: k.keyCode }
+    await sendCdp('Input.dispatchKeyEvent', k.text ? { type: 'keyDown', ...base, text: k.text, unmodifiedText: k.text } : { type: 'rawKeyDown', ...base })
+    await sendCdp('Input.dispatchKeyEvent', { type: 'keyUp', ...base })
+  }
+  const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+  await sendCdp('Emulation.setFocusEmulationEnabled', { enabled: true })
+
+  const step35Setup = await evalInPage(`
+    async () => {
+      const chain = document.querySelector('[data-composer-chain="a6-soul-barrage"]');
+      if (!chain) return { ready: false };
+      // A keyboard user first opens the collapsed studio hosting the chain; hidden chips cannot take focus.
+      for (let guard = 0; guard < 4 && chain.closest('.q-expansion-item--collapsed'); guard++) {
+        chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click();
+        await new Promise((resolve) => setTimeout(resolve, 450));
+      }
+      const rows = [...chain.querySelectorAll('[data-chain-row]')].map((row) => row.getAttribute('data-chain-row'));
+      const chip = chain.querySelector('[data-chain-cell="attack"]');
+      chip.scrollIntoView({ block: 'center' });
+      chip.focus();
+      return { ready: document.activeElement === chip, rows, attack: chip.textContent.trim() };
+    }
+  `)
+  await pressKey('Enter')
+  await pause(600)
+  const step35Opened = await evalInPage(`() => ({
+    open: !!document.querySelector('.chain-editor-menu'),
+    onOption: !!document.activeElement?.classList?.contains('chain-option'),
+    option: document.activeElement?.textContent?.trim(),
+  })`)
+  await pressKey('ArrowDown')
+  await pressKey('Enter')
+  await pause(700)
+  const step35Picked = await evalInPage(`() => {
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const action = pinia._s.get('monster').actions.find((a) => a.id === 'a6-soul-barrage');
+    return {
+      reach: action.attackReach,
+      source: action.attackSource,
+      menus: document.querySelectorAll('.chain-editor-menu').length,
+      focusBack: document.activeElement?.getAttribute('data-chain-cell') === 'attack',
+    };
+  }`)
+  await pressKey('Enter')
+  await pause(600)
+  await pressKey('Escape')
+  await pause(600)
+  const step35Escaped = await evalInPage(`() => ({
+    menus: document.querySelectorAll('.chain-editor-menu').length,
+    focusBack: document.activeElement?.getAttribute('data-chain-cell') === 'attack',
+  })`)
+  const step35Parity = await evalInPage(`
+    async () => {
+      const chain = document.querySelector('[data-composer-chain="a6-soul-barrage"]');
+      chain.querySelector('[data-chain-cell="target-count"]').click();
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      const menu = document.querySelector('.chain-editor-menu');
+      const input = menu.querySelector('input');
+      input.value = '2';
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      [...menu.querySelectorAll('button')].find((button) => button.textContent.trim() === 'Apply').click();
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+      const editor = pinia._s.get('editor');
+      const action = pinia._s.get('monster').actions.find((a) => a.id === 'a6-soul-barrage');
+      const compare = async (template) => {
+        editor.visualTemplate = template;
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        const preview = chain.querySelector('[data-composer-preview] .action');
+        const same = [...document.querySelectorAll('#render .statblock .action')].some((entry) => entry.innerHTML === preview.innerHTML);
+        return { same, text: preview.textContent.replace(/\\s+/g, ' ').trim().slice(0, 140) };
+      };
+      const previous = editor.visualTemplate;
+      const modern = await compare('modern');
+      const classic = await compare('classic');
+      editor.visualTemplate = previous;
+      return { count: action.targeting?.count, modern, classic };
+    }
+  `)
+  await sendCdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
+  const step35Responsive = await evalInPage(`() => {
+    const chain = document.querySelector('[data-composer-chain="a6-soul-barrage"]');
+    const firstRow = chain?.querySelector('[data-chain-row]');
+    return {
+      width: chain?.clientWidth || 0,
+      scrollWidth: chain?.scrollWidth || 0,
+      rowDirection: firstRow ? getComputedStyle(firstRow).flexDirection : '',
+    };
+  }`)
+  await sendCdp('Emulation.clearDeviceMetricsOverride')
+  const step35 = {
+    setup: step35Setup,
+    opened: step35Opened,
+    picked: step35Picked,
+    escaped: step35Escaped,
+    parity: step35Parity,
+    responsive: step35Responsive,
+  }
+  step35.success = !!step35Setup?.ready &&
+    JSON.stringify(step35Setup.rows) === JSON.stringify(['head', 'mechanics', 'scope', 'outcomes']) &&
+    step35Opened?.open === true && step35Opened?.onOption === true &&
+    step35Picked?.reach === 'melee_or_ranged' && step35Picked?.source === 'spell' &&
+    step35Picked?.menus === 0 && step35Picked?.focusBack === true &&
+    step35Escaped?.menus === 0 && step35Escaped?.focusBack === true &&
+    step35Parity?.count === 2 && step35Parity?.modern?.same === true && step35Parity?.classic?.same === true &&
+    step35Responsive?.width > 0 && step35Responsive?.scrollWidth <= step35Responsive?.width + 1 &&
+    step35Responsive?.rowDirection === 'column'
+  console.log('Step 35 result:', JSON.stringify(step35, null, 2))
+  if (!step35.success) {
+    throw new Error('Step 35 failed: ' + JSON.stringify(step35));
   }
   consoleErrors.forEach((e) => console.error(e))
 

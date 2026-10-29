@@ -133,8 +133,10 @@
 
 /* ------------------------------------------------------------------ plates */
 /* #render outranks the older themed !important rules on .action-composite-* */
+/* .composer-preview: the studio's live preview renders the same plates (a plain list, so older browsers keep both). */
 
-#render .statblock {
+#render .statblock,
+.composer-preview .statblock {
   /* the plate is the frame: the entry container steps back */
   :is(.trait, .action, .attack, .multiattack):has(> .sb-plate) {
     background: none !important;
@@ -284,7 +286,7 @@
 }
 
 /* Dark themes: the qualifier chips need a darker wash on light accents */
-#render .statblock:is(
+:is(#render, .composer-preview) .statblock:is(
     .theme-lovecraft_golden,
     .theme-lovecraft_silver,
     .theme-lovecraft_toxic,

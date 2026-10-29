@@ -25,6 +25,19 @@ test('action roles share the same ordered chain while role-specific entries use 
   assert.ok(ROLE_CHAINS.lair.some((cell) => cell.id === 'role-label' && cell.editable === false))
 })
 
+test('action head and mechanics cells follow the plate head and mechanics order', () => {
+  for (const role of ['action', 'bonus_action', 'legendary', 'mythic'] as const) {
+    assert.deepStrictEqual(
+      ROLE_CHAINS[role].filter((cell) => cell.row === 'head').map((cell) => cell.id),
+      ['usage', 'discipline', 'tier', 'name', 'components', 'duration']
+    )
+    assert.deepStrictEqual(
+      ROLE_CHAINS[role].filter((cell) => cell.row === 'mechanics').map((cell) => cell.id),
+      ['attack', 'attack-bonus', 'save-ability', 'save-dc']
+    )
+  }
+})
+
 test('action descriptor groups follow statblock plate order and include legacy and structured data', () => {
   const cells = ROLE_CHAINS.action
   const rowIndex = (id: string) => {

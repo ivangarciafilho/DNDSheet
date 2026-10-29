@@ -78,7 +78,7 @@ try {
 
   let initialRenderReady = false
   for (let attempt = 0; attempt < 60; attempt++) {
-    initialRenderReady = await evaluate('() => Boolean(document.querySelector(".statblock .monster-name"))')
+    initialRenderReady = await evaluate('() => Boolean(document.querySelector("#render .statblock .monster-name"))')
     if (initialRenderReady) break
     await delay(250)
   }
@@ -139,7 +139,7 @@ try {
     for (const theme of ${JSON.stringify(themes)}) {
       editor.visualTheme = theme
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-      const statblock = document.querySelector('.statblock')
+      const statblock = document.querySelector('#render .statblock')
       const plate = document.querySelector('.class-spellcasting.sb-plate')
       const innatePlate = document.querySelector('.innate-spellcasting.sb-plate')
       const text = plate?.innerText || ''

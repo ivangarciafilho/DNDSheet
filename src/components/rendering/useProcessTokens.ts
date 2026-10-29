@@ -1208,6 +1208,8 @@ export function useProcessTokens() {
     processTokens,
     processTrait,
     processAction,
+    structuredRenderContext,
+    usageText,
     processReaction,
     processAttack,
     processMultiattack,

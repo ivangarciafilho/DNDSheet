@@ -42,14 +42,14 @@ try {
   await send('Runtime.enable')
   let ready = false
   for (let i = 0; i < 80; i++) {
-    ready = await evaluate(`() => Boolean(document.querySelector('.statblock [data-help=armor-class]'))`)
+    ready = await evaluate(`() => Boolean(document.querySelector('#render .statblock [data-help=armor-class]'))`)
     if (ready) break
     await delay(250)
   }
   assert.equal(ready, true, 'The rendered stat block help target did not appear')
 
   const rowGrammar = await evaluate(`() => {
-    const rows = [...document.querySelectorAll('.statblock .dnd-cellular-row')]
+    const rows = [...document.querySelectorAll('#render .statblock .dnd-cellular-row')]
     const migrated = rows.filter((row) => row.matches('.ac, .hp, .speed, .dnd-defense-cascade-row, .cascade-skill-search, .cascade-skill-study, .cascade-skill-influence, .cascade-skill-hide'))
     return {
       count: migrated.length,
@@ -71,8 +71,8 @@ try {
     for (const theme of themes) {
       editor.visualTheme = theme
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-      const head = document.querySelector('.statblock .ac .sb-head')
-      const cell = document.querySelector('.statblock .ac .sb-cell:not(.sb-head)')
+      const head = document.querySelector('#render .statblock .ac .sb-head')
+      const cell = document.querySelector('#render .statblock .ac .sb-cell:not(.sb-head)')
       if (!head || !cell) { results.push({ theme, valid: false }); continue }
       const headStyle = getComputedStyle(head)
       const cellStyle = getComputedStyle(cell)
@@ -141,7 +141,7 @@ try {
   }
 
   const reposition = await evaluate(`async () => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     const tip = document.querySelector('#statblock-help-tip')
@@ -161,12 +161,12 @@ try {
   assert.notEqual(reposition.afterResize, reposition.initial.left, 'Resize should reposition an open tooltip with its target')
 
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
   }`)
   const hover = await evaluate(`() => {
     const tip = document.querySelector('#statblock-help-tip')
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     const rect = tip?.getBoundingClientRect()
     return { text: tip?.textContent, described: target?.getAttribute('aria-describedby'), visible: target?.dataset.helpVisible, inside: Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight) }
   }`)
@@ -177,27 +177,27 @@ try {
   assert.equal(hover.inside, true, 'Tooltip should be clamped to viewport')
 
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.focus()
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
   }`)
-  const afterEscape = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help=armor-class]')?.hasAttribute('aria-describedby') })`)
+  const afterEscape = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('#render .statblock [data-help=armor-class]')?.hasAttribute('aria-describedby') })`)
   assert.deepEqual(afterEscape, { tip: false, described: false }, 'Escape should dismiss the tooltip and its ARIA reference')
 
   const keyboardFocus = await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.focus()
     return document.activeElement === target
   }`)
   assert.equal(keyboardFocus, true, 'The help head should be keyboard focusable')
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
   }`)
-  const focusHelp = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help=armor-class]')?.getAttribute('aria-describedby') })`)
+  const focusHelp = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('#render .statblock [data-help=armor-class]')?.getAttribute('aria-describedby') })`)
   assert.deepEqual(focusHelp, { tip: true, described: 'statblock-help-tip' }, 'Focus should expose a programmatic description')
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help=armor-class]')
+    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body }))
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
     target.remove()

@@ -115,75 +115,114 @@
               </q-select>
             </div>
 
-            <!-- Far-Left Recharge / Cost Selector -->
-            <div class="col-6 col-sm-3 col-md-2">
-              <template v-if="item.role === 'legendary' || item.role === 'mythic'">
-                <q-select
-                  :model-value="item.cost || 1"
-                  :options="[1, 2, 3]"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                  options-dense
-                  label="Cost"
-                  @update:model-value="(val: number) => updateItemCost(item, val)"
-                >
-                  <template #selected>
-                    <span class="text-caption text-weight-bold text-amber-3">
-                      Cost: {{ item.cost || 1 }}
-                    </span>
-                  </template>
-                  <q-tooltip class="text-caption">Legendary / Mythic action point cost</q-tooltip>
-                </q-select>
-              </template>
-              <template v-else>
-                <q-input
-                  :model-value="item.recharge || ''"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                  label="Recharge"
-                  placeholder="e.g. 5–6, 3/Day"
-                  @update:model-value="(val: string | number | null) => updateItemRecharge(item, String(val || ''))"
-                >
-                  <q-tooltip class="text-caption">Cadence or recharge rate (e.g. Recharge 5-6, 1/Day, Short Rest)</q-tooltip>
-                </q-input>
-              </template>
-            </div>
-
-            <!-- Name Input -->
-            <div class="col-6 col-sm-6 col-md-5">
-              <q-input
-                :model-value="item.name"
-                dense
-                outlined
-                dark
-                hide-bottom-space
-                label="Name"
-                class="full-width"
-                @update:model-value="(val: string | number | null) => updateItemName(item, String(val || ''))"
-              >
-                <template #after>
-                  <q-btn
-                    round
-                    flat
+            <template v-if="!item.rawAction">
+              <!-- Far-Left Recharge / Cost Selector -->
+              <div class="col-6 col-sm-3 col-md-2">
+                <template v-if="item.role === 'legendary' || item.role === 'mythic'">
+                  <q-select
+                    :model-value="item.cost || 1"
+                    :options="[1, 2, 3]"
                     dense
-                    icon="save"
-                    color="cyan-3"
-                    size="sm"
-                    @click="addTemplate(item.rawAction || item)"
+                    outlined
+                    dark
+                    hide-bottom-space
+                    options-dense
+                    label="Cost"
+                    @update:model-value="(val: number) => updateItemCost(item, val)"
                   >
-                    <q-tooltip>Save as Template</q-tooltip>
-                  </q-btn>
+                    <template #selected>
+                      <span class="text-caption text-weight-bold text-amber-3">
+                        Cost: {{ item.cost || 1 }}
+                      </span>
+                    </template>
+                    <q-tooltip class="text-caption">Legendary / Mythic action point cost</q-tooltip>
+                  </q-select>
                 </template>
-                <q-tooltip class="text-caption">Title of the action, attack, or trait</q-tooltip>
-              </q-input>
-            </div>
+                <template v-else>
+                  <q-input
+                    :model-value="item.recharge || ''"
+                    dense
+                    outlined
+                    dark
+                    hide-bottom-space
+                    label="Recharge"
+                    placeholder="e.g. 5–6, 3/Day"
+                    @update:model-value="(val: string | number | null) => updateItemRecharge(item, String(val || ''))"
+                  >
+                    <q-tooltip class="text-caption">Cadence or recharge rate (e.g. Recharge 5-6, 1/Day, Short Rest)</q-tooltip>
+                  </q-input>
+                </template>
+              </div>
+
+              <!-- Name Input -->
+              <div class="col-6 col-sm-6 col-md-5">
+                <q-input
+                  :model-value="item.name"
+                  dense
+                  outlined
+                  dark
+                  hide-bottom-space
+                  label="Name"
+                  class="full-width"
+                  @update:model-value="(val: string | number | null) => updateItemName(item, String(val || ''))"
+                >
+                  <template #after>
+                    <q-btn
+                      round
+                      flat
+                      dense
+                      icon="save"
+                      color="cyan-3"
+                      size="sm"
+                      @click="addTemplate(item.rawAction || item)"
+                    >
+                      <q-tooltip>Save as Template</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="text-caption">Title of the action, attack, or trait</q-tooltip>
+                </q-input>
+              </div>
+            </template>
+            <div v-else class="col text-weight-bold ellipsis" :title="item.name">{{ item.name }}</div>
 
             <!-- Swap and Delete Actions -->
-            <div class="col-12 col-md-3 row items-center justify-end q-gutter-x-xs">
+            <div class="col-12 col-md-auto row items-center justify-end q-gutter-x-xs">
+              <!-- Reusable templates use the same structured fields read by the A6 renderer. -->
+              <div v-if="item.rawAction" class="row items-center">
+                <q-btn-dropdown
+                  :data-action-editor-id="item.id"
+                  dense
+                  flat
+                  size="sm"
+                  color="teal-3"
+                  icon="auto_fix_normal"
+                  label="Apply template"
+                  no-caps
+                >
+                  <q-list dense class="bg-grey-9 text-white" style="min-width: 280px; max-width: min(92vw, 420px);">
+                    <template v-for="group in actionTemplateGroups" :key="group.name">
+                      <q-item-label header class="text-amber-3">{{ group.name }}</q-item-label>
+                      <q-item
+                        v-for="template in group.templates"
+                        :key="template.id"
+                        v-close-popup
+                        :data-action-template="template.id"
+                        clickable
+                        @click="confirmApplyActionTemplate(item, template)"
+                      >
+                        <q-item-section>
+                          <q-item-label>{{ template.name }}</q-item-label>
+                          <q-item-label caption>{{ template.summary }}</q-item-label>
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                  </q-list>
+                </q-btn-dropdown>
+                <q-tooltip>Apply a reusable structured action. Existing action content is shown for confirmation before replacement.</q-tooltip>
+              </div>
+              <q-btn v-if="item.rawAction" round flat dense icon="save" color="cyan-3" size="sm" @click="addTemplate(item.rawAction)">
+                <q-tooltip>Save as Template</q-tooltip>
+              </q-btn>
               <swap-buttons :field="getStoreCollectionField(item.role)" :idx="getItemStoreIndex(item)" />
               <q-btn
                 round
@@ -199,200 +238,29 @@
             </div>
           </div>
 
-          <!-- Non-collapsing Direct Parameters Matrix -->
-          <div class="q-my-xs q-pa-xs rounded-borders bg-grey-10" style="border: 1px solid rgba(255, 255, 255, 0.08);">
-            <!-- Reusable templates use the same structured fields read by the A6 renderer. -->
-            <div v-if="item.rawAction" class="row items-center justify-end q-mb-xs">
-              <q-btn-dropdown
-                :data-action-editor-id="item.id"
-                dense
-                flat
-                size="sm"
-                color="teal-3"
-                icon="auto_fix_normal"
-                label="Apply template"
-                no-caps
-              >
-                <q-list dense class="bg-grey-9 text-white" style="min-width: 280px; max-width: min(92vw, 420px);">
-                  <template v-for="group in actionTemplateGroups" :key="group.name">
-                    <q-item-label header class="text-amber-3">{{ group.name }}</q-item-label>
-                    <q-item
-                      v-for="template in group.templates"
-                      :key="template.id"
-                      v-close-popup
-                      :data-action-template="template.id"
-                      clickable
-                      @click="confirmApplyActionTemplate(item, template)"
-                    >
-                      <q-item-section>
-                        <q-item-label>{{ template.name }}</q-item-label>
-                        <q-item-label caption>{{ template.summary }}</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </template>
-                </q-list>
-              </q-btn-dropdown>
-              <q-tooltip>Apply a reusable structured action. Existing action content is shown for confirmation before replacement.</q-tooltip>
-            </div>
+          <!-- A7: abilities stored as MonsterAction are edited as a chain of plate cells, in plate order. -->
+          <composer-chain
+            v-if="item.rawAction"
+            :action-id="item.id"
+            :role="chainRole(item)"
+            :cost="item.cost || 1"
+            @update:cost="(cost: number) => updateItemCost(item, cost)"
+          />
 
-            <!-- Parameters Grid: Clean, 2-Row Spacious Layout with Generous Negative Space -->
-            <div class="column q-gutter-y-xs full-width q-mb-xs">
-              <!-- Row 1: Magic Discipline, Tier, Tags & Duration -->
-              <div class="row q-col-gutter-xs items-center">
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.school"
-                    :options="schoolOptions"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Discipline"
-                    class="full-width"
-                  >
-                    <q-tooltip class="text-caption">Magic school or martial discipline (e.g. Evocation, Abjuration, Psionic)</q-tooltip>
-                  </q-select>
-                </div>
-
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.spellLevel"
-                    :options="spellLevelOptions"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Tier"
-                    class="full-width"
-                  >
-                    <q-tooltip class="text-caption">Power tier or spell equivalent level (e.g. Cantrip, 1st Level)</q-tooltip>
-                  </q-select>
-                </div>
-
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.components"
-                    :options="['V', 'S', 'M', 'C', 'R']"
-                    multiple
-                    use-chips
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Tags"
-                    class="full-width"
-                  >
-                    <q-tooltip class="text-caption">Tags: Verbal (V), Somatic (S), Material (M), Concentration (C), Ritual (R)</q-tooltip>
-                  </q-select>
-                </div>
-
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.duration"
-                    :options="durationPresets"
-                    use-input
-                    fill-input
-                    hide-selected
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Duration"
-                    new-value-mode="add-unique"
-                    class="full-width"
-                    @input-value="(val) => (item.rawAction.duration = val)"
-                  >
-                    <q-tooltip class="text-caption">Effect duration (Instantaneous, 1 minute, 1 hour, Concentration)</q-tooltip>
-                  </q-select>
-                </div>
-              </div>
-
-              <!-- Row 2: Target Scope & Range, Save Stat, Save DC -->
-              <div class="row q-col-gutter-xs items-center">
-                <div class="col-12 col-sm-6 col-md-6">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.range"
-                    :options="targetScopePresets"
-                    use-input
-                    fill-input
-                    hide-selected
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Target / Range / Area Scope"
-                    new-value-mode="add-unique"
-                    class="full-width"
-                    @input-value="(val) => (item.rawAction.range = val)"
-                  >
-                    <q-tooltip class="text-caption">Reach, range, or area scope (e.g. Self (20ft of you across planes), 120 ft., 3 creatures)</q-tooltip>
-                  </q-select>
-                </div>
-
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-select
-                    v-if="item.rawAction"
-                    v-model="item.rawAction.stat"
-                    :options="statOptionsShort"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Save Stat"
-                    class="full-width"
-                    @update:model-value="(stat: any) => {
-                      item.rawAction.stat = stat
-                      autoUpdateCr(item.rawAction.description, item.rawAction.crAnnotation, item.rawAction)
-                    }"
-                  >
-                    <q-tooltip class="text-caption">Ability score required for saving throw (e.g. STR, DEX, CON, INT, WIS, CHA)</q-tooltip>
-                  </q-select>
-                </div>
-
-                <div class="col-6 col-sm-3 col-md-3">
-                  <q-input
-                    v-if="item.rawAction"
-                    :model-value="saveThrowValueForAction(item.rawAction)"
-                    label="Save DC"
-                    type="number"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    :disable="!item.rawAction.save?.override"
-                    class="full-width"
-                    @update:model-value="(v: string | number | null) => {
-                      if (!item.rawAction.save) item.rawAction.save = { override: true, overrideValue: 10 }
-                      item.rawAction.save.overrideValue = validateNumber(v, 10)
-                      autoUpdateCr(item.rawAction.description, item.rawAction.crAnnotation, item.rawAction)
-                    }"
-                  >
-                    <q-tooltip class="text-caption">Saving throw DC (automatically computed or override)</q-tooltip>
-                  </q-input>
-                </div>
-              </div>
-
-              <!-- Row 3: Reaction Trigger (if reaction) -->
-              <div v-if="item.role === 'reaction' && item.rawReaction" class="row full-width q-mt-xs">
-                <q-input
-                  v-model="item.rawReaction.trigger"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                  label="Trigger"
-                  placeholder="e.g. When a creature within 5 feet makes an attack against an ally"
-                  class="full-width"
-                >
-                  <q-tooltip class="text-caption">Condition that triggers this reaction</q-tooltip>
-                </q-input>
-              </div>
-            </div>
+          <!-- Reactions keep their trigger field until their own chain lands. -->
+          <div v-if="item.role === 'reaction' && item.rawReaction" class="row full-width q-mt-xs">
+            <q-input
+              v-model="item.rawReaction.trigger"
+              dense
+              outlined
+              dark
+              hide-bottom-space
+              label="Trigger"
+              placeholder="e.g. When a creature within 5 feet makes an attack against an ally"
+              class="full-width"
+            >
+              <q-tooltip class="text-caption">Condition that triggers this reaction</q-tooltip>
+            </q-input>
           </div>
 
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
@@ -418,12 +286,12 @@ import { MonsterAction, MonsterTrait, MonsterReaction } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
-import { validateNumber } from './numberInput'
 import SwapButtons from './widgets/SwapButtons.vue'
-import { useStats } from 'src/data/STAT'
 import { v4 as uuidv4 } from 'uuid'
 import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
+import type { ActionModelRole } from 'src/core/domain/composer-chain'
+import ComposerChain from './composer/ComposerChain.vue'
 
 export interface UnifiedEntry {
   id: string
@@ -443,10 +311,10 @@ export default defineComponent({
   components: {
     MonsterTextEditor,
     SwapButtons,
+    ComposerChain,
   },
   setup() {
     const monster = useMonsterStore()
-    const { statOptionsShort } = useStats()
     const { autoUpdateCr } = useAutoUpdateCr()
     const $q = useQuasar()
     const { t } = useI18n()
@@ -462,26 +330,6 @@ export default defineComponent({
       { label: 'Legendary Action', value: 'legendary' },
       { label: 'Mythic Action', value: 'mythic' },
       { label: 'Lair Action', value: 'lair' },
-    ]
-
-    const schoolOptions = [
-      'None', 'Abjuration', 'Conjuration', 'Divination', 'Enchantment',
-      'Evocation', 'Illusion', 'Necromancy', 'Transmutation', 'Martial', 'Psionic', 'Supernatural'
-    ]
-
-    const spellLevelOptions = [
-      'None', 'Cantrip', '1st Level', '2nd Level', '3rd Level', '4th Level',
-      '5th Level', '6th Level', '7th Level', '8th Level', '9th Level', 'Heroic', 'Legendary', 'Mythic'
-    ]
-
-    const durationPresets = [
-      'Instantaneous', '1 round', '1 minute', '10 minutes', '1 hour',
-      '8 hours', '24 hours', 'Until dispelled', 'Concentration, up to 1 minute'
-    ]
-
-    const targetScopePresets = [
-      'Self', 'Self (creatures 20ft of you)', 'creature 120ft of you, which you can see',
-      'Up to 3 creatures within 30ft of you', 'All creatures in a 30-foot cone', 'All creatures in a 20-foot-radius sphere'
     ]
 
     const actionTemplateGroups = computed(() => {
@@ -824,18 +672,8 @@ export default defineComponent({
       return monster.actions?.findIndex((a) => a.id === item.id) ?? 0
     }
 
-    const saveThrowValueForAction = (action: MonsterAction) => {
-      if (action.save?.override) {
-        return action.save.overrideValue ?? 10
-      }
-      if (action.stat && action.stat !== 'none') {
-        return monster.defaultSpellSave(action.stat)
-      }
-      if (action.saveDc != null && action.saveDc > 0) {
-        return action.saveDc
-      }
-      return 0
-    }
+    const chainRole = (item: UnifiedEntry): ActionModelRole =>
+      item.role === 'bonus_action' || item.role === 'legendary' || item.role === 'mythic' ? item.role : 'action'
 
     const confirmApplyActionTemplate = (item: UnifiedEntry, template: ActionTemplate) => {
       const action = item.rawAction
@@ -878,10 +716,6 @@ export default defineComponent({
       categoryTabs,
       filteredEntries,
       roleOptions,
-      schoolOptions,
-      spellLevelOptions,
-      durationPresets,
-      targetScopePresets,
       actionTemplateGroups,
       macroChips,
       insertMacro,
@@ -896,12 +730,9 @@ export default defineComponent({
       getRoleLabel,
       getStoreCollectionField,
       getItemStoreIndex,
-      saveThrowValueForAction,
+      chainRole,
       confirmApplyActionTemplate,
       addTemplate,
-      statOptionsShort,
-      autoUpdateCr,
-      validateNumber,
     }
   },
 })

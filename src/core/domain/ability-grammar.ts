@@ -39,7 +39,7 @@ const REACH_LABELS: Record<AttackReach, string> = {
   melee_or_ranged: 'Melee or Ranged',
 }
 
-const ABILITY_NAMES: Record<DndStat, string> = {
+export const ABILITY_NAMES: Readonly<Record<DndStat, string>> = {
   STR: 'Strength',
   DEX: 'Dexterity',
   CON: 'Constitution',
@@ -288,7 +288,7 @@ const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: A
   return `${value} ${unit === 'ft' ? 'ft.' : Number(value) === 1 ? 'mile' : 'miles'}`.trim()
 }
 
-const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: AbilityRenderContext): string => {
+export const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: AbilityRenderContext = {}): string => {
   const distance = formatDistance(range.distance, range.unit, context)
   const relation = range.relation
   const lead = relation ? `${relation} ` : ''
@@ -296,12 +296,19 @@ const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: Abi
   return `${lead}${distance}${origin}`
 }
 
-const areaPhrase = (area: AbilityArea, context: AbilityRenderContext): string => {
+export const areaPhrase = (area: AbilityArea, context: AbilityRenderContext = {}): string => {
   const distance = area.distance !== undefined
     ? `${valueText(area.distance, context)}-${area.unit === 'mi' ? 'mile' : 'foot'} `
     : ''
   const origin = area.origin?.trim() ? ` originating from ${area.origin.trim()}` : ''
   return `in a ${distance}${area.shape.trim()}${origin}`.trim()
+}
+
+export const planesPhrase = (input: readonly string[] | undefined): string => {
+  const planes = (input ?? []).map((plane) => plane.trim()).filter(Boolean)
+  if (planes.length === 1) return `across the ${planes[0]} Plane`
+  if (planes.length > 1) return `across the ${planes.slice(0, -1).join(', ')} and ${planes[planes.length - 1]} Planes`
+  return ''
 }
 
 export function scopePhrase(
@@ -326,11 +333,8 @@ export function scopePhrase(
   if (targeting.area) details.push(areaPhrase(targeting.area, context))
   let phrase = subject
   if (details.length) phrase += `${phrase ? ' ' : ''}${details.join(' ')}`
-  if (targeting.planes?.length) {
-    const planes = targeting.planes.map((plane) => plane.trim()).filter(Boolean)
-    if (planes.length === 1) phrase += `${phrase ? ' ' : ''}across the ${planes[0]} Plane`
-    if (planes.length > 1) phrase += `${phrase ? ' ' : ''}across the ${planes.slice(0, -1).join(', ')} and ${planes[planes.length - 1]} Planes`
-  }
+  const planes = planesPhrase(targeting.planes)
+  if (planes) phrase += `${phrase ? ' ' : ''}${planes}`
   if (targeting.raw?.trim()) phrase += `${phrase ? '; ' : ''}${targeting.raw.trim()}`
   return phrase
 }
