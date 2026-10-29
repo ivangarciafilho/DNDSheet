@@ -429,12 +429,6 @@ export function useProcessTokens() {
     // context tokens first
     if (contextType === 'trait') {
       input = processTraitTokens(input, context as MonsterTrait)
-    } else if (contextType === 'spell') {
-      input = processSpellTokens(
-        input,
-        context as Monster['spellcasting'],
-        monster
-      )
     } else if (contextType === 'attack') {
       input = processAttackTokens(input, context as DndAttack, monster)
     } else if (contextType === 'action') {
@@ -454,17 +448,31 @@ export function useProcessTokens() {
       input = processReactionTokens(input, context as MonsterReaction)
     }
 
-    if (context != null) {
-      // generic tokens
-      const generic = RegExp(
-        /\{(?:trait|attack|action|spellcasting|legendaryActions|mythicActions|reaction).([\w\d\[\].]+)}/gi
-      )
-      input = input.replace(generic, (match, prop) => {
-        const value = _.get(context, prop)
-
-        return value
-      })
+    // spellcasting tokens describe the creature, not the entry, so they resolve
+    // anywhere (e.g. "{spellcasting.attack} to hit" inside an action)
+    const spellSource = contextType === 'spell' && context != null ? (context as Monster['spellcasting']) : monster?.spellcasting
+    if (spellSource && /\{spellcasting\./i.test(input)) {
+      input = processSpellTokens(input, spellSource, monster)
     }
+
+    // generic tokens: {action.name}, {spellcasting.level}, ... read from their own object;
+    // unknown properties stay as written instead of printing "undefined"
+    const generic = RegExp(
+      /\{(trait|attack|action|spellcasting|legendaryActions|mythicActions|reaction)\.([\w\d\[\].]+)}/gi
+    )
+    input = input.replace(generic, (match, family: string, prop: string) => {
+      const source =
+        family.toLowerCase() === 'spellcasting'
+          ? spellSource
+          : family.toLowerCase() === 'legendaryactions'
+          ? monster?.legendaryActions
+          : family.toLowerCase() === 'mythicactions'
+          ? monster?.mythicActions
+          : context
+      if (source == null) return match
+      const value = _.get(source, prop)
+      return value == null || typeof value === 'object' ? match : String(value)
+    })
 
     return input
   }

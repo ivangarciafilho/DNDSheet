@@ -1,5 +1,7 @@
 import { CR, getCrByNumber, getCrByString } from '../domain/cr-tables.ts'
 import { avgRoll, renderBonus, statModifier } from '../domain/math-utils.ts'
+import { renderFormulaMacros } from '../domain/formula.ts'
+import { formulaContextForMonster } from '../domain/formula-context.ts'
 import type {
   DndAttack,
   DndStat,
@@ -205,6 +207,12 @@ export function processTokens(
       text = text.replace(/\{action\.limitedUse\.count\}/gi, String(ctx.limitedUse.count))
       text = text.replace(/\{action\.limitedUse\.rate\}/gi, String(ctx.limitedUse.rate))
     }
+  }
+
+  // 9. Any remaining {formula}: references and expressions from the formula engine,
+  //    e.g. {SPELL_DC}, {HIT_DIE}, {HD d HD_DIE}, {2d6 + 1d8 + STR_MOD}, {8 + PB + CHA_MOD}
+  if (text.includes('{')) {
+    text = renderFormulaMacros(text, formulaContextForMonster(monster))
   }
 
   // Normalize double DC artifacts (e.g. "DC DC 19" -> "DC 19")

@@ -1,4 +1,6 @@
 import type { DamageDefenseItem, MonsterLanguageItem, MonsterExtendedHp, MonsterTrait, MonsterAcConfig } from './types.ts'
+import { buildFormulaContext, evaluateFormula, normalizeLegacyFormula } from './formula.ts'
+import type { FormulaContext } from './formula.ts'
 
 /**
  * Formats an individual damage/condition defense item into standard D&D 5e wording.
@@ -566,69 +568,42 @@ export interface DynamicValueContext {
 }
 
 /**
- * Safely evaluates arithmetic expressions and dynamic 5e token variables (PB, CR, HD, Stats, Ability Mods).
+ * Evaluates a numeric formula ("8 + PB + CHA_MOD", "HP / 2", "max(1, CON_MOD)")
+ * with the shared formula engine (src/core/domain/formula.ts). No eval.
+ * Older spellings ("PROFICIENCY BONUS", "2X PB", "STR MOD") still work.
+ * Returns the average rounded down, or null when the text is not a formula.
  */
 export function evaluateSafeFormula(expr: string | number, ctx?: DynamicValueContext): number | null {
   if (expr == null) return null
-  if (typeof expr === 'number') return Math.floor(expr)
+  if (typeof expr === 'number') return Number.isFinite(expr) ? Math.floor(expr) : null
   const str = String(expr).trim()
   if (!str) return null
-
-  // Fast path for direct integers
   if (/^-?\d+$/.test(str)) return parseInt(str, 10)
+  const result = evaluateFormula(normalizeLegacyFormula(str), formulaContextFromDynamic(ctx))
+  return result.ok ? result.value : null
+}
 
-  const hp = ctx?.avgHp ?? ctx?.maxHp ?? 20
-  const pb = ctx?.proficiency ?? 2
-  const cr = ctx?.cr ?? 0
+/** Adapts the lightweight dynamic-value context to the formula engine's context. */
+export function formulaContextFromDynamic(ctx?: DynamicValueContext): FormulaContext {
   const hd = ctx?.hd ?? ctx?.hitDice ?? 2
-  const hdType = ctx?.hdType ?? 8
-  const stats = ctx?.stats ?? { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }
-  const mod = (stat: string) => Math.floor(((stats[stat] ?? 10) - 10) / 2)
+  return buildFormulaContext(
+    {
+      stats: ctx?.stats as FormulaContext['stats'] | undefined,
+      proficiency: ctx?.proficiency ?? 2,
+      HP: { HD: hd, type: ctx?.hdType ?? 8, modifier: 0 },
+      CR: ctx?.cr ?? 0,
+    },
+    { hp: ctx?.avgHp ?? ctx?.maxHp ?? 20 }
+  )
+}
 
-  const clean = str.toUpperCase()
-    .replace(/\bPROFICIENCY\s*BONUS\b/g, `${pb}`)
-    .replace(/\bPROFICIENCY\b/g, `${pb}`)
-    .replace(/\b2X\s*PB\b/g, `${pb * 2}`)
-    .replace(/\bPB\b/g, `${pb}`)
-    .replace(/\bCR\b/g, `${cr}`)
-    .replace(/\bHD_COUNT\b/g, `${hd}`)
-    .replace(/\bHD_TYPE\b/g, `${hdType}`)
-    .replace(/\bHIT\s*DICE\b/g, `${hd}`)
-    .replace(/\bHD\b/g, `${hd}`)
-    .replace(/\bHP\b/g, `${hp}`)
-    .replace(/\bSTR_MOD\b/g, `${mod('STR')}`)
-    .replace(/\bDEX_MOD\b/g, `${mod('DEX')}`)
-    .replace(/\bCON_MOD\b/g, `${mod('CON')}`)
-    .replace(/\bINT_MOD\b/g, `${mod('INT')}`)
-    .replace(/\bWIS_MOD\b/g, `${mod('WIS')}`)
-    .replace(/\bCHA_MOD\b/g, `${mod('CHA')}`)
-    .replace(/\bSTR\s*MOD\b/g, `${mod('STR')}`)
-    .replace(/\bDEX\s*MOD\b/g, `${mod('DEX')}`)
-    .replace(/\bCON\s*MOD\b/g, `${mod('CON')}`)
-    .replace(/\bINT\s*MOD\b/g, `${mod('INT')}`)
-    .replace(/\bWIS\s*MOD\b/g, `${mod('WIS')}`)
-    .replace(/\bCHA\s*MOD\b/g, `${mod('CHA')}`)
-    .replace(/\bSTR\s*SCORE\b/g, `${stats.STR ?? 10}`)
-    .replace(/\bDEX\s*SCORE\b/g, `${stats.DEX ?? 10}`)
-    .replace(/\bCON\s*SCORE\b/g, `${stats.CON ?? 10}`)
-    .replace(/\bINT\s*SCORE\b/g, `${stats.INT ?? 10}`)
-    .replace(/\bWIS\s*SCORE\b/g, `${stats.WIS ?? 10}`)
-    .replace(/\bCHA\s*SCORE\b/g, `${stats.CHA ?? 10}`)
-    .replace(/\bSTR\b/g, `${stats.STR ?? 10}`)
-    .replace(/\bDEX\b/g, `${stats.DEX ?? 10}`)
-    .replace(/\bCON\b/g, `${stats.CON ?? 10}`)
-    .replace(/\bINT\b/g, `${stats.INT ?? 10}`)
-    .replace(/\bWIS\b/g, `${stats.WIS ?? 10}`)
-    .replace(/\bCHA\b/g, `${stats.CHA ?? 10}`)
-
-  if (!/^[\d\s+\-*/().]+$/.test(clean)) return null
-  try {
-    // eslint-disable-next-line no-new-func
-    const result = Function(`'use strict'; return (${clean})`)()
-    return typeof result === 'number' && !isNaN(result) ? Math.floor(result) : null
-  } catch {
-    return null
-  }
+/** Display text of a formula: "15", or "9 (2d8)" when dice are involved. Null when invalid. */
+function formulaDisplayText(expr: string | number | null | undefined, ctx?: DynamicValueContext): string | null {
+  if (expr == null) return null
+  const str = String(expr).trim()
+  if (!str) return null
+  const result = evaluateFormula(normalizeLegacyFormula(str), formulaContextFromDynamic(ctx), { style: 'number' })
+  return result.ok ? result.text : null
 }
 
 export function resolveDynamicNumericSource(
@@ -645,14 +620,14 @@ export function resolveDynamicNumericSource(
 
   // Direct formula or custom evaluation
   if (flatVal != null && typeof flatVal === 'string' && /[+\-*/()]/.test(flatVal)) {
-    const evaluated = evaluateSafeFormula(flatVal, ctx)
-    if (evaluated != null) return `${evaluated}`
+    const evaluated = formulaDisplayText(flatVal, ctx)
+    if (evaluated != null) return evaluated
   }
 
   if (!source || source === 'flat') {
     if (flatVal != null && typeof flatVal === 'string' && isNaN(Number(flatVal))) {
-      const evalFlat = evaluateSafeFormula(flatVal, ctx)
-      if (evalFlat != null) return `${evalFlat}`
+      const evalFlat = formulaDisplayText(flatVal, ctx)
+      if (evalFlat != null) return evalFlat
     }
     return `${flatVal ?? 10}`
   }
@@ -672,13 +647,13 @@ export function resolveDynamicNumericSource(
   // Custom formula evaluation
   if (normSource === 'custom_formula' || normSource === 'formula') {
     if (diceFormula) {
-      const res = evaluateSafeFormula(diceFormula, ctx)
-      if (res != null) return `${res}`
+      const res = formulaDisplayText(diceFormula, ctx)
+      if (res != null) return res
       return diceFormula.trim()
     }
     if (flatVal != null) {
-      const res = evaluateSafeFormula(flatVal, ctx)
-      if (res != null) return `${res}`
+      const res = formulaDisplayText(flatVal, ctx)
+      if (res != null) return res
     }
   }
 
@@ -696,9 +671,9 @@ export function resolveDynamicNumericSource(
     }
   }
 
-  // Fallback to evaluating source as a safe expression if possible
-  const directEval = evaluateSafeFormula(source, ctx)
-  if (directEval != null) return `${directEval}`
+  // Any formula reference ("SPELL_DC", "HD d HD_DIE") or expression works as a source
+  const directEval = formulaDisplayText(source, ctx)
+  if (directEval != null) return directEval
 
   return `${flatVal ?? 10}`
 }

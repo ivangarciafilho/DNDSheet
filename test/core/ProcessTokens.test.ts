@@ -141,3 +141,14 @@ test('ProcessTokens - Advanced Macros (Cantrip Tier, Dynamic Dice with Stat Mods
   const bareMod = processTokens('Damage bonus is CHA_MOD.', monster)
   assert.strictEqual(bareMod, 'Damage bonus is +2.')
 })
+
+test('ProcessTokens - formula engine resolves references and expressions left by older handlers', () => {
+  const monster = createSampleMonster()
+  // CHA 15 (+2), STR 19 (+4), PB +2, 10d8 + 30 hit dice
+  assert.strictEqual(processTokens('DC {8 + PB + CHA_MOD}', monster), 'DC 12')
+  assert.strictEqual(processTokens('Regains {HD d HD_DIE} hit points.', monster), 'Regains 45 (10d8) hit points.')
+  assert.strictEqual(processTokens('Takes {2d6 + 1d8 + STR_MOD} damage.', monster), 'Takes 15 (2d6 + 1d8 + 4) damage.')
+  assert.strictEqual(processTokens('Bloodied at {BLOODIED}.', monster), 'Bloodied at 37.')
+  // unknown words and context tokens are left untouched
+  assert.strictEqual(processTokens('{Unknown Word} and {trait.name}', monster), '{Unknown Word} and {trait.name}')
+})

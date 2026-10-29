@@ -209,7 +209,7 @@ import { MonsterContextType } from '../rendering/useProcessTokens'
 import { useTokens } from './useTokens'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { processTokens } from 'src/core/usecases/ProcessTokens'
+import { useProcessTokens } from '../rendering/useProcessTokens'
 
 export default defineComponent({
   name: 'MonsterTextEditor',
@@ -243,6 +243,7 @@ export default defineComponent({
 
     const tokenSearch = ref('')
     const tokens = useTokens()
+    const { processTokens: renderTokens } = useProcessTokens()
 
     const displayTitle = computed(() => {
       if (props.label) return props.label
@@ -301,32 +302,11 @@ export default defineComponent({
       }
     }
 
-    // Helper to evaluate token live against the monster store
+    // Live value of a token, rendered exactly as the stat block renders it (markup stripped)
     const resolveTokenPreview = (tokenStr: string): string => {
       try {
-        const sampleMonster = {
-          name: monster.name || 'Monster',
-          stats: {
-            STR: monster.stats?.STR ?? 10,
-            DEX: monster.stats?.DEX ?? 10,
-            CON: monster.stats?.CON ?? 10,
-            INT: monster.stats?.INT ?? 10,
-            WIS: monster.stats?.WIS ?? 10,
-            CHA: monster.stats?.CHA ?? 10,
-          },
-          saveBonus: monster.saveBonus ?? { STR: 0, DEX: 0, CON: 0, INT: 0, WIS: 0, CHA: 0 },
-          proficiency: monster.proficiency ?? 2,
-          AC: { value: monster.computedAc ?? 10 },
-          HP: { HD: monster.HP?.HD ?? 4, type: monster.HP?.type ?? 8, modifier: monster.HP?.modifier ?? 0 },
-          spellcasting: {
-            level: monster.spellcasting?.level ?? 1,
-            stat: monster.spellcasting?.stat ?? 'INT',
-            save: monster.spellSave ?? 12,
-            attack: monster.spellAttackModifier ?? 4,
-          },
-        } as any
-        const res = processTokens(sampleMonster, tokenStr)
-        return res
+        const rendered = renderTokens(tokenStr, undefined, monster, 'none')
+        return String(rendered ?? '').replace(/<[^>]*>/g, '').trim() || tokenStr
       } catch {
         return tokenStr
       }
