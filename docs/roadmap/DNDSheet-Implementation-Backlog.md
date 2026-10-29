@@ -7,7 +7,7 @@
 | **Version** | v2.0 · 2026-10-29 · supersedes the v1 backlog (git `b83ee56`) |
 | **Code HEAD** | `c543615` on `statblock-overhaul` · tests 103 / 103 green |
 | **Progress** | **4 / 28 loops shipped** · **26 / 188 tasks done** (14 %) |
-| **Now** | Documentation v2 (this commit) |
+| **Now** | Documentation v2 committed (`4c6c1cb`) — ready to start A4 |
 | **Next** | **A4 · Spellcasting plate** — card ready in Handoffs §6.2 |
 
 ---
@@ -91,7 +91,7 @@ pie showData
 | 2026-10-29 12:42 | — | — | Owner: absorb the v1 plan, rewrite spec/backlog/handoffs to professional depth | message |
 | 2026-10-29 12:53 | `c543615` | A3 | Traits/actions/attacks/reactions/legendary as framed plates; 13 theme palettes | 5 tests; theme probe |
 | 2026-10-29 13:02 | `b83ee56` | docs | v1 documents versioned in `docs/roadmap/` | git |
-| 2026-10-29 | *this commit* | docs | v2 documents: spec bible, this backlog, handoffs; 32 / 32 Mermaid diagrams parse (Mermaid 11.4.1); ids and tables cross-checked | doc check + consistency script |
+| 2026-10-29 | `4c6c1cb` | docs | v2 documents: spec bible, this backlog, handoffs; 32 / 32 Mermaid diagrams parse (Mermaid 11.4.1); ids and tables cross-checked | doc check + consistency script |
 
 ---
 
@@ -99,7 +99,7 @@ pie showData
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| Docs v2 commit | **A4** Spellcasting plate → **A5** Row grammar → **A6** Composer model | A7…A17 (R2–R6), then Track B (R7–R10) |
+| A4 start ritual (Handoffs §6.2) | **A4** Spellcasting plate → **A5** Row grammar → **A6** Composer model | A7…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
