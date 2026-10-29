@@ -1850,6 +1850,11 @@
   body, #q-app {
     background: #ffffff !important;
   }
+  html, body, #q-app, .q-layout, .q-page-container, .q-page, .web-renderer-root {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
   .q-header, .q-footer, .q-drawer, .a4-preview-toolbar, #editor, #char-editor, .q-splitter__separator {
     display: none !important;
   }
@@ -1858,6 +1863,9 @@
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
+  }
+  .a4-scale-stage {
+    height: auto !important;
   }
   .a4-page-sheet {
     box-shadow: none !important;

@@ -18,7 +18,7 @@ async function runFuzz() {
     '--disable-gpu',
     '--no-sandbox',
     '--disable-extensions',
-    'http://localhost:8080/#/'
+    process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
   ])
 
   // Poll Chrome CDP endpoint up to 10s so startup timing never flakes

@@ -20,6 +20,8 @@ test('statblock help: lookup returns the authored description by stable key', ()
   assert.equal(statblockHelpText('armor-class'), STATBLOCK_HELP['armor-class'])
   assert.match(statblockHelpText('recharge-d6'), /1d6/)
   assert.match(statblockHelpText('recharge-d12'), /1d12/)
+  assert.match(statblockHelpText('recharge'), /recharge die/i)
+  assert.doesNotMatch(statblockHelpText('recharge'), /1d6/)
 })
 
 test('statblock help: usage copy selects the die from the displayed recharge range', () => {

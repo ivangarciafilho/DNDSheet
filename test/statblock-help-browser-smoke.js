@@ -9,7 +9,7 @@ const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 const port = 9226
 const appUrl = process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dn-sheet-help-'))
-const chrome = spawn(chromePath, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-extensions', appUrl])
+const chrome = spawn(chromePath, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', '--disable-extensions', '--window-size=2560,1800', appUrl])
 let ws
 
 try {
@@ -42,7 +42,7 @@ try {
   await send('Runtime.enable')
   let ready = false
   for (let i = 0; i < 80; i++) {
-    ready = await evaluate(`() => Boolean(document.querySelector('.statblock [data-help="armor-class"]'))`)
+    ready = await evaluate(`() => Boolean(document.querySelector('.statblock [data-help=armor-class]'))`)
     if (ready) break
     await delay(250)
   }
@@ -109,8 +109,39 @@ try {
   assert.equal(new Set(themeProbe.map((result) => result.headBackground)).size, 12, 'Each selectable theme should retain its own head palette')
   assert.ok(themeProbe.every((result) => result.headContrast >= 4.5 && result.cellContrast >= 4.5), `Theme text should retain 4.5:1 contrast: ${JSON.stringify(themeProbe)}`)
 
+  const evidenceDir = process.env.DNDSHEET_EVIDENCE_DIR
+  if (evidenceDir) {
+    fs.mkdirSync(evidenceDir, { recursive: true })
+    await evaluate(`() => {
+      const editor = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor')
+      editor.a4PreviewMode = false
+    }`)
+    for (const { theme } of themeProbe) {
+      await evaluate(`async () => {
+        const editor = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor')
+        editor.a4PreviewMode = false
+        editor.visualTheme = ${JSON.stringify(theme)}
+        await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      }`)
+      const screenshot = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+      fs.writeFileSync(path.join(evidenceDir, `${theme}.png`), Buffer.from(screenshot.result.data, 'base64'))
+    }
+    await evaluate(`async () => {
+      const editor = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor')
+      editor.a4PreviewMode = true
+      editor.a4Orientation = 'portrait'
+      editor.a4Layout = 'auto'
+      editor.a4Zoom = 'fit'
+      await new Promise((resolve) => setTimeout(resolve, 350))
+    }`)
+    const printScreenshot = await send('Page.captureScreenshot', { format: 'png', captureBeyondViewport: false })
+    fs.writeFileSync(path.join(evidenceDir, 'a4-portrait.png'), Buffer.from(printScreenshot.result.data, 'base64'))
+    const printDocument = await send('Page.printToPDF', { printBackground: true, preferCSSPageSize: true, paperWidth: 8.27, paperHeight: 11.69 })
+    fs.writeFileSync(path.join(evidenceDir, 'a4-portrait.pdf'), Buffer.from(printDocument.result.data, 'base64'))
+  }
+
   const reposition = await evaluate(`async () => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     const tip = document.querySelector('#statblock-help-tip')
@@ -130,12 +161,12 @@ try {
   assert.notEqual(reposition.afterResize, reposition.initial.left, 'Resize should reposition an open tooltip with its target')
 
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
   }`)
   const hover = await evaluate(`() => {
     const tip = document.querySelector('#statblock-help-tip')
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     const rect = tip?.getBoundingClientRect()
     return { text: tip?.textContent, described: target?.getAttribute('aria-describedby'), visible: target?.dataset.helpVisible, inside: Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight) }
   }`)
@@ -146,27 +177,27 @@ try {
   assert.equal(hover.inside, true, 'Tooltip should be clamped to viewport')
 
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.focus()
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
   }`)
-  const afterEscape = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help="armor-class"]')?.hasAttribute('aria-describedby') })`)
+  const afterEscape = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help=armor-class]')?.hasAttribute('aria-describedby') })`)
   assert.deepEqual(afterEscape, { tip: false, described: false }, 'Escape should dismiss the tooltip and its ARIA reference')
 
   const keyboardFocus = await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.focus()
     return document.activeElement === target
   }`)
   assert.equal(keyboardFocus, true, 'The help head should be keyboard focusable')
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
   }`)
-  const focusHelp = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help="armor-class"]')?.getAttribute('aria-describedby') })`)
+  const focusHelp = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('.statblock [data-help=armor-class]')?.getAttribute('aria-describedby') })`)
   assert.deepEqual(focusHelp, { tip: true, described: 'statblock-help-tip' }, 'Focus should expose a programmatic description')
   await evaluate(`() => {
-    const target = document.querySelector('.statblock [data-help="armor-class"]')
+    const target = document.querySelector('.statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body }))
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
     target.remove()
