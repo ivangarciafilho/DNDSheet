@@ -35,6 +35,49 @@ test('ExportStatblock - Markdown export format', () => {
   assert.ok(md.includes('Brave.'))
 })
 
+test('ExportStatblock - structured abilities use the 2024 text grammar while legacy output stays unchanged', () => {
+  const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
+  const knight = migrateMonsterSchema(raw)
+  knight.actions.push({
+    id: 'structured-soul-barrage',
+    name: 'Soul Barrage',
+    description: 'Its radiant force lingers.',
+    recharge: '',
+    actionType: 'spell_attack',
+    attackBonus: 7,
+    attackReach: 'ranged',
+    attackSource: 'spell',
+    targeting: {
+      count: 3,
+      countMode: 'up_to',
+      kind: 'creatures',
+      range: { distance: 120, unit: 'ft', relation: 'within', origin: 'you' },
+    },
+    outcomes: [{
+      trigger: 'hit',
+      effects: [{ kind: 'damage', formula: '1d10', damageType: 'radiant' }],
+    }],
+    legendaryOnly: false,
+    limitedUse: { count: 0, rate: '' },
+    stat: 'none',
+    save: { override: false, overrideValue: 0 },
+    range: '',
+    effects: [],
+    customPreamble: false,
+    bonusAction: false,
+    crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true },
+  })
+
+  const markdown2024 = exportToMarkdown(knight, '2024')
+  const markdown2014 = exportToMarkdown(knight, '2014')
+  const plainText2024 = exportToPlainText(knight, '2024')
+
+  assert.ok(markdown2024.includes('***Soul Barrage.*** Ranged Attack Roll: +7, range 120 ft. Hit: 5 (1d10) Radiant damage. Its radiant force lingers.'))
+  assert.ok(markdown2014.includes('***Soul Barrage.*** Its radiant force lingers.'), '2014 export keeps the authored legacy prose')
+  assert.ok(!markdown2014.includes('Ranged Attack Roll: +7'))
+  assert.ok(plainText2024.includes('Ranged Attack Roll: +7, range 120 ft. Hit: 5 (1d10) Radiant damage.'))
+})
+
 test('ExportStatblock - Plain Text export format', () => {
   const raw = JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8'))
   const knight = migrateMonsterSchema(raw)

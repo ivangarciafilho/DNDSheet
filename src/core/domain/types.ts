@@ -581,6 +581,51 @@ export interface ActionEffect {
   effect: string
 }
 
+export type AttackReach = 'melee' | 'ranged' | 'melee_or_ranged'
+export type AttackSource = 'weapon' | 'spell'
+export type AbilityNumber = number | string
+
+export interface RangeSpec {
+  distance: AbilityNumber
+  unit: 'ft' | 'mi'
+  relation?: 'within' | 'reach' | 'range'
+  origin?: string
+}
+
+export interface AbilityArea {
+  shape: string
+  distance?: AbilityNumber
+  unit?: 'ft' | 'mi'
+  origin?: string
+}
+
+export interface AbilityTargeting {
+  count?: AbilityNumber | 'all'
+  countMode?: 'exact' | 'up_to'
+  kind?: string
+  qualifier?: string
+  range?: RangeSpec
+  area?: AbilityArea
+  planes?: string[]
+  /** Literal legacy scope retained when safe structured inference is not possible. */
+  raw?: string
+}
+
+export interface EffectClause {
+  kind?: 'damage' | 'text'
+  text?: string
+  /** A safe expression in the existing formula grammar, such as `1d10 + PB`. */
+  formula?: string
+  damageType?: string
+}
+
+export interface AbilityOutcome {
+  /** Stable known triggers use hit/failure/success; unknown labels are preserved verbatim. */
+  trigger: string
+  effects: EffectClause[]
+  rider?: string
+}
+
 export interface MonsterAction {
   name: string
   id: string
@@ -612,6 +657,11 @@ export interface MonsterAction {
   areaShape?: string
   areaDistance?: string
   deliveryType?: 'Attack' | 'Save' | 'Aura' | 'Utility' | string
+  /** Optional structured authoring; omitted legacy records retain their current output. */
+  attackReach?: AttackReach
+  attackSource?: AttackSource
+  targeting?: AbilityTargeting
+  outcomes?: AbilityOutcome[]
 }
 
 export interface LairAction {

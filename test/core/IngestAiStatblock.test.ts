@@ -28,6 +28,35 @@ Here is the CR 5 elemental monster you requested!
       "targets": 1
     }
   ],
+  "actions": [
+    {
+      "id": "action-1",
+      "name": "Soul Barrage",
+      "description": "Its radiant force lingers.",
+      "recharge": "",
+      "limitedUse": { "count": 0, "rate": "" },
+      "stat": "none",
+      "save": { "override": false, "overrideValue": 0 },
+      "range": "",
+      "effects": [],
+      "customPreamble": false,
+      "bonusAction": false,
+      "crAnnotation": { "include": true, "ehpMultiplier": 1, "ehpModifier": 0, "acModifier": 0 },
+      "actionType": "spell_attack",
+      "attackReach": "ranged",
+      "attackSource": "spell",
+      "attackBonus": 7,
+      "targeting": {
+        "count": 3,
+        "countMode": "up_to",
+        "kind": "creatures",
+        "range": { "distance": 120, "unit": "ft", "relation": "within", "origin": "you" }
+      },
+      "outcomes": [
+        { "trigger": "hit", "effects": [{ "kind": "damage", "formula": "1d10", "damageType": "radiant" }] }
+      ]
+    }
+  ],
   "multiattacks": [
     {
       "id": "ma-1",
@@ -53,6 +82,12 @@ Hope you find this creature useful in your next encounter!
   assert.strictEqual(result.monster.saveVersion, 11) // auto-migrated
   assert.strictEqual(result.issuesFixed, 1) // pruned orphan "non-existent-attack-id"
   assert.deepStrictEqual(result.monster.multiattacks[0].attacks, ['atk-1'])
+  assert.strictEqual(result.monster.actions[0].attackReach, 'ranged')
+  assert.strictEqual(result.monster.actions[0].attackSource, 'spell')
+  assert.deepStrictEqual(result.monster.actions[0].targeting.range, { distance: 120, unit: 'ft', relation: 'within', origin: 'you' })
+  assert.deepStrictEqual(result.monster.actions[0].outcomes, [
+    { trigger: 'hit', effects: [{ kind: 'damage', formula: '1d10', damageType: 'radiant' }] },
+  ])
 })
 
 test('IngestAiStatblock - Invalid JSON input gracefully fails', () => {

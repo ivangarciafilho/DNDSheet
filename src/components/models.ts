@@ -1,3 +1,5 @@
+import type { AbilityOutcome, AbilityTargeting, AttackReach, AttackSource } from '../core/domain/types'
+
 export interface MonsterSenseItem {
   id: string
   name: string
@@ -621,6 +623,11 @@ export interface MonsterAction {
   areaShape?: string
   areaDistance?: string
   deliveryType?: 'Attack' | 'Save' | 'Aura' | 'Utility' | string
+  /** Optional structured authoring; omitted legacy records retain their current output. */
+  attackReach?: AttackReach
+  attackSource?: AttackSource
+  targeting?: AbilityTargeting
+  outcomes?: AbilityOutcome[]
 }
 
 export interface LairAction {

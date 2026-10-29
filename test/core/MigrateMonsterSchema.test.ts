@@ -30,6 +30,26 @@ test('MigrateMonsterSchema - Legacy v1 to current v11 schema migration', () => {
         save: null,
       },
     ],
+    actions: [
+      {
+        id: 'legacy-structured-action',
+        name: 'Soul Barrage',
+        description: 'A legacy prose block.',
+        recharge: '',
+        limitedUse: { count: 0, rate: '' },
+        stat: 'none',
+        save: { override: false, overrideValue: 0 },
+        range: '',
+        effects: [],
+        customPreamble: false,
+        bonusAction: false,
+        crAnnotation: { include: true, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0 },
+        attackReach: 'ranged',
+        attackSource: 'spell',
+        targeting: { count: 3, countMode: 'up_to', kind: 'creatures' },
+        outcomes: [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '1d10', damageType: 'radiant' }] }],
+      },
+    ],
   }
 
   const migrated = migrateMonsterSchema(legacyV1)
@@ -69,6 +89,8 @@ test('MigrateMonsterSchema - Legacy v1 to current v11 schema migration', () => {
 
   // v8 -> v9: 2024 monster format
   assert.strictEqual(migrated.format, '2014')
+  assert.deepStrictEqual(migrated.actions[0].targeting, { count: 3, countMode: 'up_to', kind: 'creatures' }, 'New optional authoring data survives old schema migrations')
+  assert.deepStrictEqual(migrated.actions[0].outcomes, [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '1d10', damageType: 'radiant' }] }])
 
   // v9 -> v10: lairCr & nickname
   assert.strictEqual(migrated.lairCr, -1)

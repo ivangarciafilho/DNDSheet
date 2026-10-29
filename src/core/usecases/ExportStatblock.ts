@@ -1,6 +1,8 @@
 import { CR } from '../domain/cr-tables.ts'
 import { avgHP, avgRoll, renderBonus, renderModifier, statModifier } from '../domain/math-utils.ts'
 import type { Monster, CharacterActor, DndStat } from '../domain/types.ts'
+import { hasStructuredAbility, inferAbility, text2024 } from '../domain/ability-grammar.ts'
+import { formulaContextForMonster } from '../domain/formula-context.ts'
 import { DND_SKILLS } from '../domain/types.ts'
 import {
   computeTraitTag,
@@ -10,7 +12,7 @@ import {
   formatMinimalistDeathPrevention,
 } from '../domain/defense-and-traits-utils.ts'
 
-export function exportToMarkdown(monster: Monster, _style: '2014' | '2024' = '2014'): string {
+export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '2014'): string {
   const crObj = CR[monster.CR] || { cr: '0', xp: 0 }
   const hpTotal = avgHP(monster.HP)
   const hpFormula = `${monster.HP.HD}d${monster.HP.type}${
@@ -315,6 +317,25 @@ export function exportToMarkdown(monster: Monster, _style: '2014' | '2024' = '20
     }
   }
 
+  const actionText = (action: Monster['actions'][number]): string => {
+    if (style !== '2024' || !hasStructuredAbility(action)) return action.description
+    const ability = inferAbility(action)
+    const spellStat = monster.spellcasting?.stat ?? 'INT'
+    const attackBonus = action.attackBonus ?? (ability.attackSource === 'spell'
+      ? statModifier(monster.stats[spellStat]) + monster.proficiency
+      : undefined)
+    const saveDc = action.save?.override
+      ? action.save.overrideValue
+      : ability.saveAbility
+      ? 8 + monster.proficiency + statModifier(monster.stats[ability.saveAbility])
+      : undefined
+    return text2024(action, {
+      attackBonus,
+      saveDc,
+      formulaContext: formulaContextForMonster(monster),
+    })
+  }
+
   // Actions
   if ((monster.actions && monster.actions.length > 0) || (monster.attacks && monster.attacks.length > 0)) {
     lines.push('### Actions')
@@ -344,7 +365,7 @@ export function exportToMarkdown(monster: Monster, _style: '2014' | '2024' = '20
     for (const act of monster.actions || []) {
       if (!act.bonusAction) {
         const stageStr = act.stagePool && act.stagePool !== 'all' ? ` [Stage ${act.stagePool}]` : ''
-        lines.push(`***${act.name}${stageStr}.*** ${act.description}`)
+        lines.push(`***${act.name}${stageStr}.*** ${actionText(act)}`)
         lines.push('')
       }
     }
@@ -356,7 +377,7 @@ export function exportToMarkdown(monster: Monster, _style: '2014' | '2024' = '20
     lines.push('### Bonus Actions')
     for (const ba of bonusActs) {
       const stageStr = ba.stagePool && ba.stagePool !== 'all' ? ` [Stage ${ba.stagePool}]` : ''
-      lines.push(`***${ba.name}${stageStr}.*** ${ba.description}`)
+      lines.push(`***${ba.name}${stageStr}.*** ${actionText(ba)}`)
       lines.push('')
     }
   }
@@ -438,8 +459,8 @@ export function exportToMarkdown(monster: Monster, _style: '2014' | '2024' = '20
   return lines.join('\n')
 }
 
-export function exportToPlainText(monster: Monster): string {
-  const md = exportToMarkdown(monster)
+export function exportToPlainText(monster: Monster, style: '2014' | '2024' = '2014'): string {
+  const md = exportToMarkdown(monster, style)
   return md
     .replace(/^___$/gm, '----------------------------------------')
     .replace(/^### /gm, '\n=== ')

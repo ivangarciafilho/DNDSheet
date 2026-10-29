@@ -19,6 +19,9 @@ import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTok
 import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
+import { formulaContextForMonster } from 'src/core/domain/formula-context'
+import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase } from 'src/core/domain/ability-grammar'
+import type { Monster as DomainMonster } from 'src/core/domain/types'
 
 export type MonsterContext =
   | MonsterTrait
@@ -562,8 +565,6 @@ export function useProcessTokens() {
     return ''
   }
 
-  const ATTACK_REACH_LABEL: Record<string, string> = { melee: 'Melee', ranged: 'Ranged', melee_or_ranged: 'Melee or Ranged' }
-
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,
     monster: ReturnType<typeof useMonsterStore>
@@ -607,6 +608,54 @@ export function useProcessTokens() {
     const isModern = editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble) {
+      if (hasStructuredAbility(context)) {
+        const ability = inferAbility(context)
+        const formulaContext = formulaContextForMonster(monster as unknown as DomainMonster)
+        const attackBonus = context.attackBonus != null
+          ? context.attackBonus
+          : ability.attackSource === 'spell'
+          ? monster.spellAttackModifier
+          : ability.attackSource === 'weapon'
+          ? monster.proficiency + statModifier(monster.stats?.STR ?? 10)
+          : undefined
+        const saveDc = context.stat && context.stat !== 'none'
+          ? saveForAction(monster, context.stat, context.save)
+          : undefined
+        const renderContext = { attackBonus, saveDc, formulaContext }
+        const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
+        const scopeText = scopePhrase(ability, renderContext)
+        const scope = scopeText ? [boldNumbers(scopeText)] : []
+        const outcomeHtml = outcomePhrase(ability, renderContext)
+          .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
+        const effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
+        let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
+
+        if (context.stat && context.stat !== 'none') {
+          desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
+        }
+        if (ability.attackSource) {
+          desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
+        }
+
+        const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
+        const school = context.school && context.school !== 'None' ? context.school : ''
+        const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
+        return buildPlateEntry(
+          monster,
+          {
+            stagePool: context.stagePool,
+            name: context.name,
+            usage: usageText(context),
+            discipline,
+            components: context.components,
+            duration: context.duration,
+            mechanics,
+            scope,
+          },
+          desc
+        )
+      }
+
       // Discipline: "Evocation Cantrip" for cantrips, "3rd Level Evocation" otherwise (PHB 2024 order)
       const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
       const school = context.school && context.school !== 'None' ? context.school : ''
@@ -632,13 +681,12 @@ export function useProcessTokens() {
       const mechanics: string[] = []
       if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
         const isSpell = context.actionType === 'spell_attack'
-        const reach = ATTACK_REACH_LABEL[(context as { attackReach?: string }).attackReach ?? ''] ?? ''
         const bonus = context.attackBonus != null
           ? context.attackBonus
           : isSpell
           ? monster.spellAttackModifier
           : monster.proficiency + statModifier(monster.stats?.STR ?? 10)
-        mechanics.push(`${reach ? `${reach} ` : ''}${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
+        mechanics.push(`${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
       }
       if (context.stat && context.stat !== 'none') {
         const dcVal = saveForAction(monster, context.stat, context.save)

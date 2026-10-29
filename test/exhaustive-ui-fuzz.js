@@ -2226,6 +2226,34 @@ async function runFuzz() {
         crAnnotation: { maxDamage: 0, maxSave: 15, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true }
       });
 
+      // A6: structured authoring must reach the existing modern plate without changing stored legacy fields.
+      monsterStore.actions.push({
+        id: 'a6-soul-barrage',
+        name: 'Soul Barrage',
+        description: 'The target is surrounded by a radiant flare.',
+        recharge: '',
+        actionType: 'spell_attack',
+        attackReach: 'ranged',
+        attackSource: 'spell',
+        attackBonus: 7,
+        targeting: {
+          count: 3,
+          countMode: 'up_to',
+          kind: 'creatures',
+          qualifier: 'which you can see',
+          range: { distance: 120, unit: 'ft', relation: 'within', origin: 'you' }
+        },
+        outcomes: [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '1d10', damageType: 'radiant' }] }],
+        stat: 'none',
+        save: { override: false, overrideValue: 0 },
+        legendaryOnly: false,
+        bonusAction: false,
+        limitedUse: { count: 0, rate: '' },
+        effects: [],
+        customPreamble: false,
+        crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true }
+      });
+
       // Trigger reactive UI update
       editorStore.visualTemplate = 'modern';
       await new Promise(r => setTimeout(r, 250));
@@ -2248,16 +2276,22 @@ async function runFuzz() {
         (text.includes('DC 15') || text.includes('Charisma DC 15')) &&
         text.includes('Recharge 4–6');
 
+      const hasStructuredAction = text.includes('Ranged Spell Attack +7') &&
+        text.includes('up to 3 creatures which you can see within 120 ft. of you') &&
+        text.includes('On Hit: 5 (1d10) Radiant damage.') &&
+        text.includes('The target is surrounded by a radiant flare.');
+
       // A4 Layer Studio at top check
       const studioEl = document.getElementById('a4-layer-studio-expansion');
       const isStudioAtTop = !!studioEl;
 
       return {
-        success: isAutoProficient && !hasRedundantPreamble && hasSpellTags && hasCompoundAction && isStudioAtTop,
+        success: isAutoProficient && !hasRedundantPreamble && hasSpellTags && hasCompoundAction && hasStructuredAction && isStudioAtTop,
         isAutoProficient,
         hasRedundantPreamble,
         hasSpellTags,
         hasCompoundAction,
+        hasStructuredAction,
         isStudioAtTop
       };
     }
