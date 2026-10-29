@@ -177,6 +177,16 @@ const TEMPLATE_OWNED_FIELDS: readonly (keyof MonsterAction)[] = [
   'targeting', 'outcomes',
 ]
 
+function cloneTemplateValue<T>(value: T): T {
+  if (Array.isArray(value)) return value.map((item) => cloneTemplateValue(item)) as T
+  if (value !== null && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nested]) => [key, cloneTemplateValue(nested)])
+    ) as T
+  }
+  return value
+}
+
 export function applyActionTemplate(action: MonsterAction, templateId: string): MonsterAction {
   const template = ACTION_TEMPLATES.find((item) => item.id === templateId)
   if (!template) return action
@@ -184,7 +194,7 @@ export function applyActionTemplate(action: MonsterAction, templateId: string): 
   const next = { ...action }
   const mutableNext = next as unknown as Record<string, unknown>
   for (const field of TEMPLATE_OWNED_FIELDS) {
-    mutableNext[field] = template.patch[field]
+    mutableNext[field] = cloneTemplateValue(template.patch[field])
   }
 
   // Templates replace ability content, never document identity, role, usage, cadence, or CR policy.

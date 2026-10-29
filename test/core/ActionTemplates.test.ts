@@ -84,6 +84,20 @@ test('unknown template ids do not alter the action', () => {
   assert.strictEqual(applyActionTemplate(original, 'missing-template'), original)
 })
 
+test('applied nested template data is isolated from the catalog and other actions', () => {
+  const first = applyActionTemplate(action(), 'holy-javelin')
+  const second = applyActionTemplate(action(), 'holy-javelin')
+
+  if (!first.targeting?.range || !first.outcomes?.[0]?.effects[0]) throw new Error('Template fixture missing nested values')
+  first.targeting.range.distance = 5
+  first.outcomes[0].effects[0].formula = '99d99'
+
+  assert.strictEqual(second.targeting?.range?.distance, 120)
+  assert.strictEqual(second.outcomes?.[0]?.effects[0]?.formula, '2d10')
+  assert.strictEqual(ACTION_TEMPLATES.find((template) => template.id === 'holy-javelin')?.patch.targeting?.range?.distance, 120)
+  assert.strictEqual(ACTION_TEMPLATES.find((template) => template.id === 'holy-javelin')?.patch.outcomes?.[0]?.effects?.[0]?.formula, '2d10')
+})
+
 test('the ranged-weapon template does not imply a long range unsupported by the model', () => {
   const applied = applyActionTemplate(action(), 'ranged-weapon-attack')
   assert.deepStrictEqual(applied.targeting?.range, { distance: 80, unit: 'ft', relation: 'range' })
