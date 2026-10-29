@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.2** · 2026-10-29 · A4 shipped and evidence updated through the verified closeout follow-up |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · code HEAD `ae16b86` |
+| **Version** | **v2.3** · 2026-10-29 · A5 row grammar, tooltip foundation and recharge semantics implemented; screenshot parity and formula-trace scope remain open |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · code HEAD `9a58385` with uncommitted A5 changes |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **5 / 18 loops shipped** (A0–A4) · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **5 / 18 loops shipped** (A0–A4); A5 is in progress, not shipped · **Track B** — Product Foundations: **0 / 10**, specified |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -425,7 +425,7 @@ Tokens are CSS custom properties on `.statblock` (see `src/css/statblock-grammar
 | `--sb-body-bg` / `--sb-stripe` | description body / reading stripe | parchment / frame @ 7 % | | white / black @ 6 % | panel / gold @ 8 % |
 | `--dnd-adv-ink` / `--dnd-disadv-ink` | advantage / disadvantage ink | `#1d6b29` / `#a8211a` | same | black / black | `#7ee08a` / `#ff8a80` |
 
-All 13 themes (`wotc`, `printer`, `art_nouveau`, `art_deco`, six `lovecraft_*`, two `dwarves_*`, default) are defined through one SCSS mixin `plate-palette(...)`; adding a theme means adding one line. Contrast targets: head text ≥ 4.5 : 1 against `--sb-head-bg` (verified palettes in A3: crimson/white 11.7 : 1, gold/near-black 8.4 : 1).
+The application defines **12 selectable themes** (`wotc` is the default, plus `printer`, `art_nouveau`, `art_deco`, six `lovecraft_*`, and two `dwarves_*`). The plate grammar currently defines matching palettes through one SCSS mixin `plate-palette(...)`; adding a theme means adding it to the editor's `VisualTheme` union, theme selector, and palette. Contrast target: head text ≥ 4.5 : 1 against `--sb-head-bg` (verified palettes in A3: crimson/white 11.7 : 1, gold/near-black 8.4 : 1).
 
 ### 4.2 Statblock grammar
 
@@ -1516,7 +1516,7 @@ sequenceDiagram
 | L1 | `WebRenderer.vue` keeps `v-html` containers (`.trait`, `.action`…); no template change |
 | L3 | `useProcessTokens.ts`: `buildPlateEntry`, `usageText`, `ATTACK_REACH_LABEL`; modern branches emit plates |
 | L5 | `plate.ts`: `plateHtml`, `boldNumbers`, `phaseLabel`, `shouldStripe` |
-| CSS | `statblock-grammar.scss`: tokens, 13 theme palettes, plate rules |
+| CSS | `statblock-grammar.scss`: tokens, 12 selectable theme palettes, plate rules |
 
 **🧪 Acceptance**
 
@@ -1526,7 +1526,7 @@ sequenceDiagram
 | 2 | a cell with empty HTML | rendered | the cell is omitted, no empty separator | `Plate.test.ts` ✅ |
 | 3 | a tooltip containing `"` and `<` | rendered | attribute is escaped | `Plate.test.ts` ✅ |
 | 4 | a body > 110 visible chars | rendered | `.sb-striped` present; ≤ 110 → absent | `Plate.test.ts` ✅ |
-| 5 | any of the 13 themes | rendered | head ink/background contrast ≥ 4.5 : 1; container has no own frame | browser probe ✅ (5 themes) · A17 (all 13) |
+| 5 | any of the 12 selectable themes | rendered | head ink/background contrast ≥ 4.5 : 1; container has no own frame | browser probe ✅ (5 themes) · A17 (all 12) |
 | 6 | classic (non-modern) template | rendered | legacy prose rendering unchanged | A17 regression |
 
 **📏 Impact (actual)** — 4 files, +494 / −186 (`plate.ts` +92, `useProcessTokens.ts` ±312, `statblock-grammar.scss` +211, `Plate.test.ts` +65).
@@ -1679,7 +1679,7 @@ sequenceDiagram
 | 3 | FX-SP-03 2024 Metamagic (Heightened, Seeking, Twinned) | costs 2/1/1 SP and 2024-only effects; catalog + browser assertions |
 | 4 | FX-SP-04 innate (At Will + 3/Day) | separate plate and group labels; unit + browser assertions |
 | 5 | all fixtures | no `undefined`, `Level3`, `((`, fake slot data or literal `x`; `long_rest` → "Long Rest"; translation resolves; tests |
-| 6 | WotC, Printer, Golden, Spooky, Nouveau | theme class is applied; computed plate background/border are present and backgrounds remain distinct; focused Chrome probe. Full 13-theme contrast audit remains A17. |
+| 6 | WotC, Printer, Golden, Spooky, Nouveau | theme class is applied; computed plate background/border are present and backgrounds remain distinct; focused Chrome probe. Full 12-theme contrast audit remains A17. |
 
 Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalog invariants, `npm run test:e2e:spellcasting` (isolated Chrome profile; class + innate render in five themes), and `npm run test:e2e` (23 groups, 0 runtime exceptions).
 
@@ -1693,7 +1693,7 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 
 > **AC, HP, Speed, Saves, Checks, Senses, Languages and Defenses become the same head-and-data rows as the plates — and every head explains itself.**
 
-**Status** ☐ pending · **Loop** A5 · **Requirements** `SBG-010…012`, `HELP-002`, `VIS-001`
+**Status** ◐ in progress · **Loop** A5 · **Requirements** `SBG-010…012`, `HELP-002`, `VIS-001`
 
 **🎯 Value** — One visual language from the name to the last legendary action; hovering any head (AC, Search, Recharge) explains the rule and the computation.
 
@@ -1713,7 +1713,7 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 
 **🖼 Wireframe** — W-02b (rows) and W-09 (HelpTip).
 
-**🧪 Acceptance** — each top row has one head cell and ≥ 1 data cell; head colours come from tokens in all 13 themes; every head and plate head shows a HelpTip on hover **and** focus; the cascade theme blocks in `app.scss` shrink by ≥ 60 % with no visual change on the fixture screenshots; recharge tips state the die. Proof: DOM probe (`#render .sb-head` count = rows + plates), screenshot pairs per theme, CSS line count.
+**🧪 Acceptance** — each top row has one head cell and ≥ 1 data cell; head colours come from tokens in all 12 selectable themes; every head and plate head shows an accessible HelpTip on hover and keyboard focus; Escape dismisses; viewport edges, scroll, resize, A4/print and detached descendants are handled; recharge tips state correct die semantics; cascade theme blocks in `app.scss` shrink by ≥ 60 % only after visual parity is proven. Partial implementation supplies delegated hover/focus handling, ARIA description, Escape, viewport clamping, scroll/resize repositioning, cleanup, a plain-language dictionary and focusable data-help targets. Remaining proof: row-grammar conversion, CSS parity/consolidation, contextual computation traces and print/A4 coverage. Do not mark complete until all acceptance evidence exists.
 
 **📏 Impact (forecast)** — 4–6 files · +350 / −450 · 1–2 days · risk medium (visual regressions across themes → screenshot matrix).
 
@@ -2193,7 +2193,7 @@ flowchart BT
   C["L2 kit component tests<br/>props → DOM, keyboard"]:::m
   B["Browser probes<br/>JS in the built-in pane"]:::m
   E["CDP e2e fuzz<br/>npm run test:e2e"]:::h
-  V["Visual matrix<br/>13 themes × 5 widths"]:::h
+  V["Visual matrix<br/>12 themes × 5 widths"]:::h
   O["Owner review"]:::o
   U --> P --> C --> B --> E --> V --> O
   classDef l fill:#fdf1d6,stroke:#7a200d,color:#2b1b12
@@ -2440,7 +2440,9 @@ stateDiagram-v2
 
 ## 11. Delivery map
 
-📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A4 are shipped, A5 is next, and every loop ships something the owner can see.**
+📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A4 are shipped, A5 is in progress, and every loop ships something the owner can see.**
+
+**Progress snapshot · 2026-10-29** — 5 / 28 loops shipped, A5 in progress, 22 loops not started. Of 192 planned backlog tasks, 46 are complete, 3 are active and 143 are pending (146 remain); progress is counted only at task completion, so partial A5 work is not reported as completed.
 
 ### 11.1 Releases and loops
 
@@ -2464,7 +2466,7 @@ stateDiagram-v2
 | A2 | Formula engine and macros | SB-03 | A0 | — | ✅ `be0cf3f` |
 | A3 | Plate grammar for abilities | SB-01 | A2 | — | ✅ `c543615` |
 | A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
-| **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ☐ **next** |
+| **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ◐ in progress; tooltip foundation verified |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ☐ |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ☐ |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
@@ -2584,7 +2586,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 
 | Loop | Main files | Files | + | − | Effort | Confidence | Risk |
 |---|---|---:|---:|---:|---|:--:|:--:|
-| A5 | `WebRenderer.vue` rows, grammar SCSS, `app.scss` cascade blocks, HelpTip-lite, test | 5 | 350 | 450 | 1–2 d | medium | medium |
+| A5 | `WebRenderer.vue` rows/help host, grammar SCSS, `app.scss` cascade blocks, help dictionary, browser/core tests | 8 | 450 | 450 | 1–2 d remaining | medium | medium |
 | A6 | `models.ts`, `types.ts`, new `ability-grammar.ts`, `useProcessTokens.ts`, tests | 6 | 800 | 150 | 2–4 d | medium | medium |
 | A7 | `ActionsEditor.vue`, new `ComposerChain.vue`, `ChainCell.vue`, `ACTION_TEMPLATES`, test | 5 | 1 100 | 400 | 3–5 d | medium | medium |
 | A8 | `MonsterBuilder.vue`, studio role variants, 7–8 legacy panels removed, e2e | 12 | 650 | 1 400 | 3–5 d | medium | medium |
@@ -2646,7 +2648,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 |---|---|:--:|---|---|
 | R-01 | Loop scope creep overwrites unrelated work | M · H | One outcome per loop; start from a clean tree; commit per loop; review only the intended diff | every loop |
 | R-02 | CSS specificity war with 496 legacy `!important` | H · M | New grammar scoped `#render .statblock`; tokens; delete legacy blocks only when their markup is gone | A4, A5, A16 |
-| R-03 | Visual regressions across 13 themes | M · M | Theme probe (computed styles) every render loop; screenshot matrix at A17 | A4, A5, A16, A17 |
+| R-03 | Visual regressions across 12 selectable themes | M · M | Theme probe (computed styles) every render loop; screenshot matrix at A17 | A4, A5, A16, A17 |
 | R-04 | Binding resolver loops or thrashing | M · H | Topological order, cycle detection, equality check before patch, one pass per store change | A9 |
 | R-05 | Ability inference misreads exotic free text | M · M | Inference only fills absent cells; raw text fallback; fixtures from templates and AI-ingest output | A6 |
 | R-06 | Undo history polluted by automatic patches | M · M | Resolver patches flagged and skipped by the ledger | A9 |
@@ -2737,7 +2739,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | SBG-002 | Cell precedence head → mechanics → scope → extra never changes | SB-01 | A3 ✅ | `Plate.test.ts`, probe |
 | SBG-003 | Numbers are bold (`.dnd-num`) in cells, rows and bodies | SB-01/02 | A1 ✅ A3 ✅ | probe |
 | SBG-004 | Bodies over 110 visible characters are striped, stripes aligned to lines | SB-01 | A3 ✅ | `Plate.test.ts`, computed style |
-| SBG-005 | Plate colours come from theme tokens; head contrast ≥ 4.5 : 1 in all 13 themes | SB-01 | A3 ✅ / A17 | theme probe |
+| SBG-005 | Plate colours come from theme tokens; head contrast ≥ 4.5 : 1 in all 12 selectable themes | SB-01 | A3 ✅ / A17 | theme probe |
 | SBG-006 | Spellcasting renders as plate rows: summary, metamagic, one row per level | SB-04 | A4 | `SpellPlate.test.ts` |
 | SBG-007 | Cadence labels come from one catalog (Long Rest is never "Daily") | SB-04 | A4 | test |
 | SBG-008 | Pact and full-caster slot counts are correct per level | SB-04 | A4 | FX-SP-01/02 |
@@ -2912,7 +2914,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 |---|---|---|---|
 | Plates | Soul Barrage, Veil, legacy attack, multiattack, legendary entries | `Plate.test.ts`, probe | A3 ✅ / A6 |
 | Spellcasting | FX-SP-01 pact · FX-SP-02 full · FX-SP-03 metamagic · FX-SP-04 innate | `SpellPlate.test.ts` | A4 |
-| Rows | AC, HP, Speed, checks, senses, languages, defenses in 13 themes | theme probe, screenshots | A5 |
+| Rows | AC, HP, Speed, checks, senses, languages, defenses in 12 selectable themes | theme probe, screenshots | A5 |
 | Composer | FX-AB-01…05 | `AbilityGrammar.test.ts` | A6 |
 | Studio | capability checklist; fixture diff of old saves | checklist, diff | A7, A8 |
 | Bindings | CHA change, cycle, reload, undo, unbind, dice | `Bindings.test.ts`, browser sequence | A9 |

@@ -16,6 +16,8 @@ export interface PlateCell {
   head?: boolean
   /** Plain-text tooltip. */
   tip?: string
+  /** Help dictionary key, read by the stat block tooltip host. */
+  help?: string
   /** Extra classes kept for older selectors and tests. */
   cls?: string
   /** Stretch to fill the rest of the row. */
@@ -48,12 +50,20 @@ export function shouldStripe(html: string): boolean {
   return plainTextLength(html) > STRIPE_THRESHOLD
 }
 
-const attr = (value: string) => value.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;')
+// Plates reach the page through sanitizeWebString, which escapes every tag and restores only
+// tags whose text holds no '&'. Attribute values therefore stay plain, entity-free text.
+const plainAttr = (value: string) =>
+  value.replace(/&/g, ' and ').replace(/"/g, "'").replace(/[<>]/g, '').replace(/\s+/g, ' ').trim()
+
+const helpKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '')
 
 export function plateCellHtml(cell: PlateCell): string {
   const cls = ['sb-cell', cell.head ? 'sb-head' : '', cell.grow ? 'sb-grow' : '', cell.cls ?? ''].filter(Boolean).join(' ')
-  const tip = cell.tip ? ` title="${attr(cell.tip)}"` : ''
-  return `<div class="${cls}"${tip}>${cell.html}</div>`
+  const tipText = cell.tip ? plainAttr(cell.tip) : ''
+  const helpText = cell.help ? helpKey(cell.help) : cell.head ? 'entry-name' : ''
+  const tip = tipText ? ` title="${tipText}"` : ''
+  const help = helpText ? ` data-help="${helpText}" tabindex="0"` : ''
+  return `<div class="${cls}"${tip}${help}>${cell.html}</div>`
 }
 
 export function plateRowHtml(row: PlateRow): string {

@@ -12,6 +12,7 @@
     "test:core": "node --experimental-strip-types --test test/core/*.test.ts",
     "test:e2e": "node test/exhaustive-ui-fuzz.js",
     "test:e2e:spellcasting": "node test/spell-plate-browser-smoke.js",
+    "test:e2e:help": "node test/statblock-help-browser-smoke.js",
     "dev": "npx quasar dev",
     "build": "npx quasar build",
     "build:pwa": "npx quasar build -m pwa"

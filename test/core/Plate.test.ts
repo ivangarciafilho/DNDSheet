@@ -29,11 +29,22 @@ test('plate: head cell first, data cells after, body last', () => {
   assert.ok(!html.includes('sb-striped'), 'short bodies are not striped')
 })
 
-test('plate: empty cells and empty rows are dropped, tooltips are escaped', () => {
+test('plate: empty cells and empty rows are dropped', () => {
   assert.strictEqual(plateRowHtml({ cells: [{ html: ' ' }, { html: '' }] }), '')
-  const row = plateRowHtml({ cells: [{ html: 'x', tip: 'say "hi" <b>' }, { html: '  ' }] })
-  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" title="say &quot;hi&quot; &lt;b>">x</div></div>')
   assert.strictEqual(plateHtml({ rows: [] }), '<div class="sb-plate"></div>')
+})
+
+// sanitizeWebString escapes every tag and restores only tags whose text holds no '&',
+// so attribute values must never contain characters that need HTML entities.
+test('plate: tooltips and help keys stay entity-free so the web sanitizer keeps the tag', () => {
+  const row = plateRowHtml({ cells: [{ html: 'x', tip: 'say "hi" <b> & co', help: 'Recharge Die!' }, { html: '  ' }] })
+  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" title="say \'hi\' b and co" data-help="recharge-die" tabindex="0">x</div></div>')
+  const html = plateHtml({
+    rows: [{ cells: [{ html: 'a', head: true, tip: '<script>&amp;"' }, { html: 'b', tip: 'Tom & Jerry' }] }],
+    body: 'body',
+  })
+  for (const tag of html.match(/<[^>]*>/g) ?? []) assert.ok(!tag.includes('&'), `entity inside tag: ${tag}`)
+  assert.match(plateHtml({ rows: [{ cells: [{ html: 'name', head: true }] }] }), /data-help="entry-name" tabindex="0"/)
 })
 
 test('plate: long bodies get reading stripes, measured on visible text', () => {

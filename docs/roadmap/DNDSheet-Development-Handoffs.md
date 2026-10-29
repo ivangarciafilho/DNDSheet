@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.2 · 2026-10-29 · A4 verified closeout and A5 readiness |
-| **State at hand-over** | Code HEAD `ae16b86` · `npm test` 111 / 111 · build passes · focused spell smoke and full e2e pass · A5 has pre-existing unstaged edits in `plate.ts` and `test/core/Plate.test.ts`; do not discard them |
+| **Version** | v2.3 · 2026-10-29 · A5 row grammar and help behavior implemented; screenshot and formula-trace acceptance remains open |
+| **State at hand-over** | Code HEAD `9a58385`; uncommitted A5 worktree · roadmap: 46 / 192 tasks complete, 3 active, 143 pending; 5 / 28 loops shipped, A5 active · `npm test` 115 / 115 · production build passes · focused help browser smoke passes hover, focus/ARIA, bounds, Escape and detach cleanup · preserve current A5 edits |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 (A4 closeout in §6.2) |
-| **Next loop** | **A5 · Row grammar + head tooltips** — card §6.3; include e2e Steps 18 and 20 |
+| **Next loop** | Continue **A5 · Row grammar + head tooltips** from the partial implementation in §6.3; do not begin A6 before A5 closes |
 
 ---
 
@@ -308,7 +308,7 @@ const m = document.querySelector('#q-app').__vue_app__.config.globalProperties.$
 - [ ] Every loop in the release is ✅ with a closing packet in §6.
 - [ ] `npm test` green; ESLint 0 errors on every file touched by the release.
 - [ ] Acceptance rows of every dossier in the release proven (tests, probes, screenshots listed in packets).
-- [ ] Theme probe for render-affecting releases (R1, R5, R6): 5 themes minimum, 13 at R6.
+- [ ] Theme probe for render-affecting releases (R1, R5, R6): 5 themes minimum, 12 at R6.
 - [ ] No open high-severity defect in the release's scope (spec §2.3).
 - [ ] Spec status columns, backlog dashboard and timeline, handoff cards updated.
 - [ ] Docs mirror committed (`roadmap: release Rn`).
@@ -410,7 +410,7 @@ Next loop readiness ..... A4 🟢
 **Closeout / next-loop preparation**
 
 - A4 is complete and committed. Its acceptance includes the core suite, build, focused browser smoke, and the passing full UI suite stated above.
-- A5 is next. The current tree already contains unstaged changes in `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; inspect and preserve them as A5 starting material. Do not reset the tree or assume these changes are part of `f35cd6d`.
+- A5 is the active loop. The current tree contains uncommitted implementation and verification changes, including `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; inspect and preserve all of them. Do not reset the tree or assume these changes are part of `9a58385`.
 - A5.8 and A5.9 aligned Steps 18 and 20 with current semantic markup; remaining A5 work must verify `data-help` escaping/behavior and capture five-theme parity before removing theme-specific CSS.
 - A15.7 aligned Step 25 with the no-duplicate Skills-row contract; grouped skill/tool content and row absence now pass.
 - Full e2e remains an A17 release gate; rerun after later rendering or interaction changes.
@@ -422,18 +422,18 @@ Next loop readiness ..... A4 🟢
 |---|---|
 | **Goal** | Top-block rows adopt the head/data grammar and tokens; every row head and plate head explains itself (delegated tooltip host) |
 | **Release · feature** | R1 · SB-05 |
-| **Entry criteria** | A4 ✅ · baseline colours captured · inspect and preserve the existing A5 working-tree edits |
+| **Entry criteria** | A4 ✅ · A5 row grammar, help host and recharge semantics implemented and verified · current A5 worktree edits must be preserved; final theme screenshots and formula-trace scope remain outstanding |
 | **Read in the spec** | §9 SB-05 · §4.1, §4.5 · §6.4 · §13.2 BS-12, 14, 19, 20 · D-09 |
-| **Backlog tasks** | A5.0 – A5.9 (A5.8/A5.9 done; e2e Steps 18/20 pass) |
-| **Open first** | Inspect `git diff -- src/components/rendering/plate.ts test/core/Plate.test.ts`; then `WebRenderer.vue` L280–475 (top plate, AC/HP/Speed, defenses, senses, checks, languages) · `app.scss` L544–1700 (`dnd-cascade-*` per theme) · `useTextRenderer.ts` (`actionPassivesGroups`, defenses) · `useProcessTokens.ts` (`usageText`) |
+| **Backlog tasks** | A5.0 – A5.9 (A5.1/A5.2/A5.3/A5.5/A5.8/A5.9 done; A5.0/A5.4/A5.6 active; A5.7 pending; e2e Steps 18/20 pass) |
+| **Open first** | Review `WebRenderer.vue`, `statblock-help.ts`, `useProcessTokens.ts`, and the current theme styles. Capture final screenshots across all 12 selectable themes and compare computed styles against the previous captured baseline if available; the historical baseline is currently absent. Decide whether formula traces are in scope for A5: renderer currently lacks a reliable exposed provenance model, so do not invent formula explanations. Preserve current A5 files. |
 | **Skills** | `ui-design:visual-design-foundations` · `impeccable:impeccable` · `design:ux-copy` · `modern-web-guidance:modern-web-guidance` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion` |
 | **Research** | WCAG 1.4.13 behaviour for the host; event delegation with `mouseover/focusin` on `#render` |
-| **Traps** | Do not reset the pre-existing dirty A5 files · diagnose the two badge assertions at source/projection/DOM/style layers before editing CSS · delete theme blocks only after parity (P4) · tooltip host must not trap focus · delegated events listen on the container because rendered descendants can be replaced |
-| **Plan** | A5.0 preserve/review dirty edits + capture baseline → A5.1 classes on rows → A5.2 tokens + remove duplicates → A5.3 host → A5.4 dictionary → A5.5 recharge semantics → A5.6 verify → A5.7 close; Steps 18/20 already pass via A5.8/A5.9 |
-| **Verify** | P4 parity per theme · e2e Steps 18 and 20 pass · count `#render .sb-head` against row/plate heads · keyboard focus opens tips · `app.scss` line delta |
+| **Traps** | A5 remains open until screenshot evidence and closeout are recorded · preserve current dirty files · CSS duplicates are already removed; validate computed parity · displayed row values are context, not formula derivations · retain delegated events because descendants can be replaced |
+| **Plan** | Capture final 12-theme screenshots → review visual parity and contrast → resolve/explicitly defer formula traces with honest scope evidence → run core/build/lint/help/spell/full-e2e checks → close A5; Steps 18/20 already pass via A5.8/A5.9 |
+| **Verify** | P4 parity screenshots for all 12 themes · e2e Steps 18/20 · `.sb-head` and row semantics · focus/ARIA/Escape/detach/scroll/resize · recharge wording · print/A4 · CSS delta · full e2e |
 | **Exit** | SBG-010…012, HELP-002, TIP-006 (statblock) proven |
 | **Defaults** | BS-12 classic template untouched · BS-14 row named "Other checks" · BS-20 ability grid unchanged |
-| **Next-loop prep** | Collect real action entries from templates and AI ingest for A6 inference fixtures |
+| **Next-loop prep** | After A5 closes, collect real action entries from templates and AI ingest for A6 inference fixtures. A6 must not start before then. |
 
 ---
 
@@ -627,7 +627,7 @@ Next loop readiness ..... A4 🟢
 | **Backlog tasks** | A17.1 – A17.9 |
 | **Open first** | `test/exhaustive-ui-fuzz.js` (2 416) · `README.md` · `STACK_STATE.md` · QA helpers in `%TEMP%` |
 | **Skills** | `developer-essentials:e2e-testing-patterns` · `engineering:testing-strategy` · `superpowers:verification-before-completion` · `avoid-ai-writing:avoid-ai-writing` |
-| **Exit** | QA-001…006, SBG-005 (13 themes), NFR-001 (Track A) proven; tag `v2.5.0-statblock` |
+| **Exit** | QA-001…006, SBG-005 (12 selectable themes), NFR-001 (Track A) proven; tag `v2.5.0-statblock` |
 
 ---
 
@@ -669,9 +669,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; code HEAD `ae16b86`; core 111 / 111 and build pass; focused spell smoke passes across five themes; full e2e passes 23 groups with 0 runtime exceptions. The tree also has pre-existing unstaged A5 edits in `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; preserve and inspect these first.
-2. **What exists** — A0–A4 shipped. A4 closeout removed duplicate default spellcasting prose while keeping custom preambles; prior browser expectation failures are aligned and passing.
-3. **What to do next** — continue A5 using §6.3. Capture its theme baseline and review the dirty plate changes before coding; remaining A5.0–A5.7 cover row grammar, help-host behavior, tokens and parity.
+1. **State** — branch `statblock-overhaul`; code HEAD `9a58385` with uncommitted A5 changes; core 115 / 115, build passes, help browser smoke passes hover/focus/ARIA/viewport/Escape/detach checks. Focused spell smoke and full e2e passed on the preceding A4 closeout.
+2. **What exists** — A0–A4 shipped. A5 tooltip host, dictionary and help attributes are implemented but not committed as a complete loop. Top-row grammar conversion and CSS consolidation are outstanding.
+3. **What to do next** — continue A5 using §6.3. Capture theme/print baselines, convert rows, prove parity before deleting CSS, add recharge semantics, then run the full A5 suite. Do not start A6 until the A5 exit criteria pass.
 4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 

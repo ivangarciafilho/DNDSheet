@@ -18,6 +18,7 @@ import { useEditorStore } from 'src/stores/editor-store'
 import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTokens'
 import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
+import { statblockUsageHelpKey } from './statblock-help'
 
 export type MonsterContext =
   | MonsterTrait
@@ -522,9 +523,13 @@ export function useProcessTokens() {
   ): string => {
     const quals: string[] = []
     const phase = phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
-    if (phase) quals.push(`<span class="sb-qual phase-cell">${phase}</span>`)
-    if (spec.usage?.trim()) quals.push(`<span class="sb-qual recharge-cell">${spec.usage.trim()}</span>`)
-    if (spec.discipline?.trim()) quals.push(`<span class="sb-qual school-cell">${spec.discipline.trim()}</span>`)
+    if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase" tabindex="0">${phase}</span>`)
+    if (spec.usage?.trim()) {
+      const helpKey = statblockUsageHelpKey(spec.usage)
+      const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
+      quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${spec.usage.trim()}</span>`)
+    }
+    if (spec.discipline?.trim()) quals.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${spec.discipline.trim()}</span>`)
     const comps = Array.isArray(spec.components) && spec.components.length > 0
       ? ` <span class="sb-qual sb-comp component-cell">(${spec.components.join(', ')})</span>`
       : ''
@@ -535,7 +540,7 @@ export function useProcessTokens() {
 
     const cells: PlateCell[] = [{ html: head, head: true, cls: 'action-composite-pill name-cell' }]
     for (const m of spec.mechanics ?? []) if (m?.trim()) cells.push({ html: m, cls: 'mech-cell' })
-    for (const s of spec.scope ?? []) if (s?.trim()) cells.push({ html: s, cls: 'scope-cell target-cell' })
+    for (const s of spec.scope ?? []) if (s?.trim()) cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
     for (const e of spec.extra ?? []) if (e?.trim()) cells.push({ html: e, cls: 'meta-cell' })
     return plateHtml({ rows: [{ cells, cls: 'action-composite-header' }], body })
   }

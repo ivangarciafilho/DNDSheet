@@ -222,6 +222,7 @@
           <!-- Statblock Wrapper with Portrait (Retains #render for 100% test compatibility) -->
           <div
             id="render"
+            ref="renderRoot"
             class="statblock-wrapper"
             :class="{
               'has-portrait': hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')),
@@ -258,17 +259,17 @@
           <div class="monster-cr-badge-cluster top-plate-cluster cr-cluster">
             <div class="cr-composite-pill top-plate-table">
               <div class="cr-region cr-main-region top-plate-col">
-                <span class="region-label top-plate-header">CR</span>
+                <span class="region-label top-plate-header" data-help="challenge-rating" tabindex="0">CR</span>
                 <span class="region-val top-plate-cell">{{ crDisplay }}</span>
               </div>
               <div class="region-divider"></div>
               <div class="cr-region cr-sub-region top-plate-col">
-                <span class="region-label top-plate-header">PB</span>
+                <span class="region-label top-plate-header" data-help="proficiency-bonus" tabindex="0">PB</span>
                 <span class="region-val top-plate-cell">+{{ monster.proficiency }}</span>
               </div>
               <div class="region-divider"></div>
               <div class="cr-region cr-sub-region top-plate-col">
-                <span class="region-label top-plate-header">XP</span>
+                <span class="region-label top-plate-header" data-help="experience-points" tabindex="0">XP</span>
                 <span class="region-val top-plate-cell" :title="xpFormatted + ' XP'">{{ xpCompact }}</span>
               </div>
             </div>
@@ -289,7 +290,7 @@
 
           <!-- Right Cluster: Initiative Header (Row 1) & Dynamic Initiative Cells (Row 2) -->
           <div class="top-plate-cluster init-cluster">
-            <div class="top-plate-init-header">{{ $t('skill.INITIATIVE') }}</div>
+            <div class="top-plate-init-header" data-help="initiative" tabindex="0">{{ $t('skill.INITIATIVE') }}</div>
             <div class="top-plate-init-cells">
               <div
                 v-for="(initCell, iIdx) in sanitizedInitiativeCells"
@@ -302,9 +303,9 @@
         </div>
       </div>
       <hr />
-    <div class="skill ac dnd-cascade-panel dnd-cellular-row dnd-ac-cascade-row">
-      <span class="name dnd-cascade-title">{{ blockStyle.mm2024 ? 'AC' : 'Armor Class' }}</span>
-      <div class="dnd-cascade-badges-wrap">
+    <div class="skill ac dnd-cascade-panel dnd-cellular-row dnd-ac-cascade-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="armor-class" tabindex="0">{{ blockStyle.mm2024 ? 'AC' : 'Armor Class' }}</span>
+      <div class="dnd-cascade-badges-wrap sb-cell">
         <span
           v-for="(acBadge, aIdx) in sanitizedAcBadges"
           :key="'ac-badge-' + aIdx"
@@ -313,9 +314,9 @@
         ></span>
       </div>
     </div>
-    <div class="skill hp dnd-cascade-panel dnd-cellular-row dnd-hp-cascade-row">
-      <span class="name dnd-cascade-title">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
-      <div class="dnd-cascade-badges-wrap">
+    <div class="skill hp dnd-cascade-panel dnd-cellular-row dnd-hp-cascade-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="hit-points" tabindex="0">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
+      <div class="dnd-cascade-badges-wrap sb-cell">
         <span
           v-for="(hBadge, hIdx) in sanitizedHpBadges"
           :key="'hp-badge-' + hIdx"
@@ -324,9 +325,9 @@
         ></span>
       </div>
     </div>
-    <div class="skill speed dnd-cascade-panel dnd-cellular-row">
-      <span class="name dnd-cascade-title">Speed</span>
-      <div class="dnd-cascade-badges-wrap">
+    <div class="skill speed dnd-cascade-panel dnd-cellular-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="speed" tabindex="0">Speed</span>
+      <div class="dnd-cascade-badges-wrap sb-cell">
         <span
           v-for="(spBadge, spIdx) in speedBadges"
           :key="'speed-badge-' + spIdx"
@@ -399,9 +400,9 @@
       </div>
     </div>
     <hr />
-    <div v-if="blockStyle.mm2014 && editorStore?.visualTemplate !== 'modern' && saves !== ''" class="skill dnd-cascade-panel dnd-cellular-row">
-      <span class="name dnd-cascade-title">{{ $t('monster.saves') }}</span>
-      <div class="dnd-cascade-badges-wrap" v-html="saves"></div>
+    <div v-if="blockStyle.mm2014 && editorStore?.visualTemplate !== 'modern' && saves !== ''" class="skill dnd-cascade-panel dnd-cellular-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="saves" tabindex="0">{{ $t('monster.saves') }}</span>
+      <div class="dnd-cascade-badges-wrap sb-cell" v-html="saves"></div>
     </div>
     <div
       v-if="
@@ -409,31 +410,31 @@
         monster.inventory !== '' &&
         monster.inventory !== '<br>'
       "
-      class="skill dnd-cascade-panel dnd-cellular-row"
+      class="skill dnd-cascade-panel dnd-cellular-row sb-row"
     >
-      <span class="name dnd-cascade-title">{{ $t('monster.gear') }}</span>
-      <div class="dnd-cascade-badges-wrap" v-html="inventory"></div>
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="gear" tabindex="0">{{ $t('monster.gear') }}</span>
+      <div class="dnd-cascade-badges-wrap sb-cell" v-html="inventory"></div>
     </div>
 
     <!-- Unified Defense Panel per Scope (| Vulnerabilities | [prose text / zebra stripes]) -->
     <template v-for="defSec in cascadingDefenses" :key="defSec.key">
       <div
-        class="skill dnd-cascade-panel dnd-cellular-row dnd-defense-cascade-row"
+        class="skill dnd-cascade-panel dnd-cellular-row dnd-defense-cascade-row sb-row"
         :class="['cascade-' + defSec.key, { 'zebra-stripe-text': defSec.isVerbose }]"
         :data-defense-title="defSec.title"
       >
-        <span class="name dnd-cascade-title">{{ defSec.scopeLabel }}</span>
-        <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
-        <div class="dnd-defense-unified-body q-px-sm flex items-center">
+        <span class="name dnd-cascade-title sb-cell sb-head" :data-help="defSec.key" tabindex="0">{{ defSec.scopeLabel }}</span>
+        <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle sb-cell sb-qual">{{ defSec.subTypeLabel }}</span>
+        <div class="dnd-defense-unified-body sb-cell sb-grow q-px-sm flex items-center">
           <span class="dnd-defense-prose-text" v-html="defSec.formattedProse"></span>
         </div>
       </div>
     </template>
 
     <!-- Senses (Horizontal Cellular Row -> Badges, no redundant Passive Perception) -->
-    <div v-if="sensesBadges.length > 0" class="skill dnd-cascade-panel dnd-cellular-row">
-      <span class="name dnd-cascade-title">{{ $t('monster.senses') }}</span>
-      <div class="dnd-cascade-badges-wrap">
+    <div v-if="sensesBadges.length > 0" class="skill dnd-cascade-panel dnd-cellular-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="senses" tabindex="0">{{ $t('monster.senses') }}</span>
+      <div class="dnd-cascade-badges-wrap sb-cell">
         <span
           v-for="(sBadge, sIdx) in sensesBadges"
           :key="'sense-badge-' + sIdx"
@@ -444,24 +445,24 @@
 
     <!-- Unified Passives, Skills & Tools Cellular Rows (| Study | Action | ... |, | Skills | Action | ... |, | Tools | Action | ... |) -->
     <template v-for="group in actionPassivesGroups" :key="group.name">
-      <div class="skill dnd-cascade-panel dnd-cellular-row" :class="'cascade-skill-' + group.scopeLabel.toLowerCase()">
-        <span class="name dnd-cascade-title">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
-        <span class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
-        <div class="dnd-cascade-badges-wrap" v-html="group.skills"></div>
+      <div class="skill dnd-cascade-panel dnd-cellular-row sb-row" :class="'cascade-skill-' + group.scopeLabel.toLowerCase()">
+        <span class="name dnd-cascade-title sb-cell sb-head" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()" tabindex="0">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
+        <span class="dnd-cascade-subtitle sb-cell sb-qual">{{ group.subTypeLabel }}</span>
+        <div class="dnd-cascade-badges-wrap sb-cell sb-grow" v-html="group.skills"></div>
       </div>
     </template>
 
     <!-- Languages (Horizontal Cellular Row -> Badges) -->
-    <div class="skill dnd-cascade-panel dnd-cellular-row">
-      <span class="name dnd-cascade-title">{{ $t('monster.languages') }}</span>
-      <div v-if="languagesBadges.length > 0" class="dnd-cascade-badges-wrap">
+    <div class="skill dnd-cascade-panel dnd-cellular-row sb-row">
+      <span class="name dnd-cascade-title sb-cell sb-head" data-help="languages" tabindex="0">{{ $t('monster.languages') }}</span>
+      <div v-if="languagesBadges.length > 0" class="dnd-cascade-badges-wrap sb-cell">
         <span
           v-for="(lBadge, lIdx) in languagesBadges"
           :key="'lang-badge-' + lIdx"
           class="dnd-cascade-badge"
         >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
       </div>
-      <span v-else class="dnd-cascade-badge">&mdash;</span>
+      <span v-else class="dnd-cascade-badge sb-cell">&mdash;</span>
     </div>
     <div v-if="editorStore?.visualTemplate !== 'modern'" class="skill">
       <span class="name">{{ blockStyle.mm2014 ? 'Challenge' : 'CR' }}</span>
@@ -515,41 +516,41 @@
       <!-- Innate and class casting share the plate grammar but retain separate resource semantics. -->
       <div v-if="innateSpellPlate.groups.length > 0" class="innate-spellcasting spellcasting-panel sb-plate">
         <div class="sb-row">
-          <div class="sb-cell sb-head"><strong>Innate Spellcasting</strong> <span class="sb-qual">({{ innateSpellPlate.stat }})</span></div>
-          <div class="sb-cell">Spell Save DC <strong>{{ innateSpellPlate.save }}</strong></div>
-          <div class="sb-cell">Spell Attack <strong>{{ innateSpellPlate.attack }}</strong></div>
+          <div class="sb-cell sb-head" data-help="entry-name" tabindex="0"><strong>Innate Spellcasting</strong> <span class="sb-qual">({{ innateSpellPlate.stat }})</span></div>
+          <div class="sb-cell" data-help="spell-save-dc" tabindex="0">Spell Save DC <strong>{{ innateSpellPlate.save }}</strong></div>
+          <div class="sb-cell" data-help="spell-attack" tabindex="0">Spell Attack <strong>{{ innateSpellPlate.attack }}</strong></div>
         </div>
         <div v-if="innateSpellPlate.processedNotes" class="sb-body" v-html="innateSpellPlate.processedNotes"></div>
         <div v-for="(group, groupIndex) in innateSpellPlate.groups" :key="'innate-level-' + groupIndex" class="sb-row">
-          <div class="sb-cell sb-head">{{ group.label }}</div>
+          <div class="sb-cell sb-head" data-help="spell-cadence" tabindex="0">{{ group.label }}</div>
           <div v-for="(spell, spellIndex) in group.spells" :key="'innate-spell-' + groupIndex + '-' + spellIndex" class="sb-cell sb-spell">
-            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge">({{ spell.tags }})</span>
+            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0">({{ spell.tags }})</span>
           </div>
         </div>
       </div>
 
       <div v-if="spellPlate.levels.length > 0" class="class-spellcasting spellcasting sb-plate">
         <div class="sb-row">
-          <div class="sb-cell sb-head"><strong>{{ spellPlate.title }}</strong> <span class="sb-qual">({{ spellPlate.stat }})</span></div>
-          <div class="sb-cell">Spell Save DC <strong>{{ spellPlate.save }}</strong> · Spell Attack <strong>{{ spellPlate.attack }}</strong></div>
-          <div v-if="spellPlate.resource" class="sb-cell">{{ spellPlate.resource }}</div>
-          <div v-if="spellPlate.prepared" class="sb-cell">{{ spellPlate.prepared }}</div>
+          <div class="sb-cell sb-head" data-help="entry-name" tabindex="0"><strong>{{ spellPlate.title }}</strong> <span class="sb-qual">({{ spellPlate.stat }})</span></div>
+          <div class="sb-cell" data-help="spell-save-dc" tabindex="0">Spell Save DC <strong>{{ spellPlate.save }}</strong> · Spell Attack <strong>{{ spellPlate.attack }}</strong></div>
+          <div v-if="spellPlate.resource" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.resource }}</div>
+          <div v-if="spellPlate.prepared" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.prepared }}</div>
         </div>
         <div v-if="spellPlate.metamagic" class="sb-row">
-          <div class="sb-cell sb-head">Metamagic · <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points · regained on {{ spellPlate.metamagic.refresh }}</div>
+          <div class="sb-cell sb-head" data-help="metamagic" tabindex="0">Metamagic · <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points · regained on {{ spellPlate.metamagic.refresh }}</div>
           <div v-for="(meta, index) in spellPlate.metamagic.options" :key="'metamagic-' + index" class="sb-cell">
             <strong v-if="meta.cost">{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `Cost ${meta.cost} SP` }} · </strong>{{ meta.name }}<template v-if="meta.effect">: {{ meta.effect }}</template>
           </div>
         </div>
         <div v-for="row in spellPlate.levels" :key="'spell-level-' + row.level" class="sb-row">
-          <div class="sb-cell sb-head">
+          <div class="sb-cell sb-head" :data-help="row.level === 0 ? 'cantrips' : 'spell-slots'" tabindex="0">
             <template v-if="row.level === 0">Cantrips</template>
             <template v-else><strong>{{ row.ordinal }}</strong> Level<template v-if="row.slotCount"> · <strong>{{ row.slotCount }}</strong></template><template v-if="row.cadence"> · {{ row.cadence }}</template></template>
             <template v-if="row.bonusAction"> · Bonus Action</template>
           </div>
           <div v-for="(spell, spellIndex) in row.spells" :key="'spell-' + row.level + '-' + spellIndex" class="sb-cell sb-spell">
-            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge">({{ spell.tags }})</span>
-            <span v-if="spell.cadence" class="spell-cadence-badge">{{ spell.cadence }}</span>
+            {{ spell.name }}<span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0">({{ spell.tags }})</span>
+            <span v-if="spell.cadence" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0">{{ spell.cadence }}</span>
           </div>
         </div>
         <div v-if="monster.spellcasting?.useCustomClassPreamble && sanitizedClassSpellcastingPreamble" class="sb-body" v-html="sanitizedClassSpellcastingPreamble"></div>
@@ -799,10 +800,20 @@
     </div>
 
   </div>
+  <Teleport to="body">
+    <div
+      v-if="activeHelpTip"
+      ref="helpTipElement"
+      id="statblock-help-tip"
+      class="statblock-help-tip"
+      role="tooltip"
+      :style="helpTipStyle"
+    >{{ activeHelpTip.text }}</div>
+  </Teleport>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, inject, nextTick, onMounted, ref, StyleValue, watch } from 'vue'
+import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useTextRenderer } from './useTextRenderer'
 import { useProcessTokens } from './useProcessTokens'
@@ -812,16 +823,137 @@ import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel } from 'src/core/domain/spell-plate'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { statModifier } from 'src/core/domain/math-utils'
+import { statblockHelpText } from './statblock-help'
 
 export default defineComponent({
   name: 'WebRenderer',
   setup() {
     const monster = useMonsterStore()
     const editorStore = useEditorStore()
+    const renderRoot = ref<HTMLElement | null>(null)
+    const helpTipElement = ref<HTMLElement | null>(null)
+    const activeHelpTip = ref<{ text: string } | null>(null)
+    const activeHelpTarget = ref<HTMLElement | null>(null)
+    const helpTipStyle = ref<StyleValue>({ position: 'fixed', left: '12px', top: '12px' })
+    let helpTipObserver: MutationObserver | null = null
     const { sanitizeWebString } = useProcessTokens()
     const textRenderer = inject('textRenderer') as ReturnType<
       typeof useTextRenderer
     >
+
+    const findHelpTarget = (eventTarget: EventTarget | null): HTMLElement | null => {
+      if (!(eventTarget instanceof Element)) return null
+      const target = eventTarget.closest<HTMLElement>('[data-help]')
+      return target && renderRoot.value?.contains(target) ? target : null
+    }
+
+    const positionHelpTip = () => {
+      const target = activeHelpTarget.value
+      if (!target?.isConnected) return
+      const rect = target.getBoundingClientRect()
+      const margin = 10
+      const width = helpTipElement.value?.offsetWidth || Math.min(320, window.innerWidth - margin * 2)
+      const height = helpTipElement.value?.offsetHeight || 72
+      const left = Math.max(margin, Math.min(rect.left + (rect.width - width) / 2, window.innerWidth - width - margin))
+      let top = rect.top - height - 8
+      if (top < margin) top = rect.bottom + 8
+      top = Math.max(margin, Math.min(top, window.innerHeight - height - margin))
+      helpTipStyle.value = { position: 'fixed', left: `${left}px`, top: `${top}px` }
+    }
+
+    const hideHelpTip = () => {
+      const target = activeHelpTarget.value
+      if (target?.getAttribute('aria-describedby') === 'statblock-help-tip') {
+        target.removeAttribute('aria-describedby')
+      }
+      target?.removeAttribute('data-help-visible')
+      activeHelpTarget.value = null
+      activeHelpTip.value = null
+    }
+
+    const showHelpTip = (target: HTMLElement) => {
+      const description = statblockHelpText(target.dataset.help)
+      const row = target.matches('.sb-head') ? target.closest('.sb-row') : null
+      const rowValues = row
+        ? [...row.querySelectorAll<HTMLElement>(':scope > .sb-cell:not(.sb-head)')]
+            .map((cell) => cell.textContent?.replace(/\s+/g, ' ').trim())
+            .filter((value): value is string => Boolean(value))
+            .join(' · ')
+            .slice(0, 180)
+        : ''
+      const text = [description, rowValues ? `Shown here: ${rowValues}` : ''].filter(Boolean).join(' ')
+      if (!text) {
+        if (activeHelpTarget.value !== target) hideHelpTip()
+        return
+      }
+      if (activeHelpTarget.value !== target) hideHelpTip()
+      activeHelpTarget.value = target
+      activeHelpTip.value = { text }
+      target.setAttribute('aria-describedby', 'statblock-help-tip')
+      target.setAttribute('data-help-visible', 'true')
+      nextTick(positionHelpTip)
+    }
+
+    const handleHelpPointerOver = (event: Event) => {
+      const target = findHelpTarget(event.target)
+      if (target) showHelpTip(target)
+    }
+
+    const handleHelpPointerOut = (event: Event) => {
+      const target = findHelpTarget(event.target)
+      if (!target || target !== activeHelpTarget.value) return
+      const nextTarget = findHelpTarget((event as PointerEvent).relatedTarget)
+      if (nextTarget === target || document.activeElement === target) return
+      hideHelpTip()
+    }
+
+    const handleHelpFocusIn = (event: FocusEvent) => {
+      const target = findHelpTarget(event.target)
+      if (target) showHelpTip(target)
+    }
+
+    const handleHelpFocusOut = (event: FocusEvent) => {
+      const target = findHelpTarget(event.target)
+      if (!target || target !== activeHelpTarget.value) return
+      const nextTarget = findHelpTarget(event.relatedTarget)
+      if (nextTarget === target || target.matches(':hover')) return
+      hideHelpTip()
+    }
+
+    const handleHelpKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && activeHelpTip.value) hideHelpTip()
+    }
+
+    onMounted(() => {
+      const root = renderRoot.value
+      root?.addEventListener('pointerover', handleHelpPointerOver)
+      root?.addEventListener('pointerout', handleHelpPointerOut)
+      root?.addEventListener('focusin', handleHelpFocusIn)
+      root?.addEventListener('focusout', handleHelpFocusOut)
+      root?.addEventListener('keydown', handleHelpKeydown)
+      if (root) {
+        helpTipObserver = new MutationObserver(() => {
+          if (activeHelpTarget.value && !activeHelpTarget.value.isConnected) hideHelpTip()
+        })
+        helpTipObserver.observe(root, { childList: true, subtree: true })
+      }
+      window.addEventListener('resize', positionHelpTip)
+      document.addEventListener('scroll', positionHelpTip, true)
+    })
+
+    onBeforeUnmount(() => {
+      const root = renderRoot.value
+      root?.removeEventListener('pointerover', handleHelpPointerOver)
+      root?.removeEventListener('pointerout', handleHelpPointerOut)
+      root?.removeEventListener('focusin', handleHelpFocusIn)
+      root?.removeEventListener('focusout', handleHelpFocusOut)
+      root?.removeEventListener('keydown', handleHelpKeydown)
+      helpTipObserver?.disconnect()
+      helpTipObserver = null
+      window.removeEventListener('resize', positionHelpTip)
+      document.removeEventListener('scroll', positionHelpTip, true)
+      hideHelpTip()
+    })
 
     const openLayerStudio = () => {
       const el = document.getElementById('a4-layer-studio-expansion')
@@ -1365,6 +1497,10 @@ export default defineComponent({
     const runehammerTrackData = computed(() => textRenderer.runehammerTrackData.value)
 
     return {
+      renderRoot,
+      helpTipElement,
+      activeHelpTip,
+      helpTipStyle,
       anatomyPartsList,
       villainActionsList,
       bloodiedActionsList,
