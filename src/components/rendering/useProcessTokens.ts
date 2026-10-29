@@ -16,6 +16,8 @@ import { useI18n } from 'vue-i18n'
 import { useClasses } from 'src/data/CLASS'
 import { useEditorStore } from 'src/stores/editor-store'
 import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTokens'
+import { boldNumbers, phaseLabel, plateHtml } from './plate'
+import type { PlateCell } from './plate'
 
 export type MonsterContext =
   | MonsterTrait
@@ -492,96 +494,71 @@ export function useProcessTokens() {
     return input
   }
 
-  const buildHeaderPillHtml = (
-    monster: ReturnType<typeof useMonsterStore>,
-    stagePool: string | undefined,
-    name: string,
-    extraCells: { text: string; cls?: string }[] = []
-  ): string => {
-    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
-
-    // Cluster 1: Identity & Tags (Phase, Recharge, Discipline/Tier, Name, Components, Duration)
-    const idCells: string[] = []
-    if (stagePool && stagePool !== 'all') {
-      idCells.push(`<div class="action-cell phase-cell"><span class="cell-phase-text">${pName} ${stagePool}</span></div>`)
-    }
-
-    const rechargeCell = extraCells.find((c) => c.cls?.includes('recharge-cell'))
-    if (rechargeCell && rechargeCell.text?.trim()) {
-      idCells.push(`<div class="action-cell ${rechargeCell.cls || 'recharge-cell'}"><span class="cell-sub-text">${rechargeCell.text.trim()}</span></div>`)
-    }
-
-    const schoolCell = extraCells.find((c) => c.cls?.includes('school-cell'))
-    if (schoolCell && schoolCell.text?.trim()) {
-      idCells.push(`<div class="action-cell ${schoolCell.cls}"><span class="cell-sub-text">${schoolCell.text.trim()}</span></div>`)
-    }
-
-    // Name cell in crimson red background
-    idCells.push(`<div class="action-cell name-cell"><span class="cell-main-text">${name}</span></div>`)
-
-    const componentCell = extraCells.find((c) => c.cls?.includes('component-cell'))
-    if (componentCell && componentCell.text?.trim()) {
-      idCells.push(`<div class="action-cell ${componentCell.cls}"><span class="cell-sub-text">${componentCell.text.trim()}</span></div>`)
-    }
-
-    const durationCell = extraCells.find((c) => c.cls?.includes('duration-cell'))
-    if (durationCell && durationCell.text?.trim()) {
-      idCells.push(`<div class="action-cell ${durationCell.cls}"><span class="cell-sub-text">${durationCell.text.trim()}</span></div>`)
-    }
-
-    // Cluster 2: Mechanics (Attack Roll or Save DC)
-    const mechCells: string[] = []
-    const attackCell = extraCells.find((c) => c.cls === 'type-cell' || (c.cls?.includes('type-cell') && !c.cls?.includes('school-cell')))
-    if (attackCell && attackCell.text?.trim()) {
-      mechCells.push(`<div class="action-cell type-cell mech-cell"><span class="cell-sub-text">${attackCell.text.trim()}</span></div>`)
-    }
-    const saveCell = extraCells.find((c) => c.cls?.includes('save-cell'))
-    if (saveCell && saveCell.text?.trim()) {
-      mechCells.push(`<div class="action-cell save-cell mech-cell"><span class="cell-sub-text">${saveCell.text.trim()}</span></div>`)
-    }
-
-    // Cluster 3: Scope & Range / Target
-    const scopeCells: string[] = []
-    const targetCell = extraCells.find((c) => c.cls?.includes('target-cell'))
-    if (targetCell && targetCell.text?.trim()) {
-      scopeCells.push(`<div class="action-cell target-cell scope-cell"><span class="cell-sub-text">${targetCell.text.trim()}</span></div>`)
-    }
-    const rangeCell = extraCells.find((c) => c.cls?.includes('range-cell'))
-    if (rangeCell && rangeCell.text?.trim()) {
-      scopeCells.push(`<div class="action-cell range-cell scope-cell"><span class="cell-sub-text">${rangeCell.text.trim()}</span></div>`)
-    }
-
-    // Any other remaining cells go into idCells
-    const handledIndices = new Set([
-      extraCells.indexOf(rechargeCell as any),
-      extraCells.indexOf(schoolCell as any),
-      extraCells.indexOf(componentCell as any),
-      extraCells.indexOf(durationCell as any),
-      extraCells.indexOf(attackCell as any),
-      extraCells.indexOf(saveCell as any),
-      extraCells.indexOf(targetCell as any),
-      extraCells.indexOf(rangeCell as any),
-    ])
-
-    for (let i = 0; i < extraCells.length; i++) {
-      if (!handledIndices.has(i) && extraCells[i]?.text?.trim()) {
-        idCells.push(`<div class="action-cell ${extraCells[i].cls || 'meta-cell'}"><span class="cell-sub-text">${extraCells[i].text.trim()}</span></div>`)
-      }
-    }
-
-    const pills: string[] = []
-    if (idCells.length > 0) {
-      pills.push(`<div class="action-composite-pill identity-pill">${idCells.join('<div class="cell-divider"></div>')}</div>`)
-    }
-    if (mechCells.length > 0) {
-      pills.push(`<div class="action-composite-pill mech-pill">${mechCells.join('<div class="cell-divider"></div>')}</div>`)
-    }
-    if (scopeCells.length > 0) {
-      pills.push(`<div class="action-composite-pill scope-pill">${scopeCells.join('<div class="cell-divider"></div>')}</div>`)
-    }
-
-    return `<div class="action-composite-header">${pills.join('')}</div>`
+  interface PlateEntrySpec {
+    stagePool?: string | number
+    name: string
+    /** Recharge / uses / cost, e.g. "Recharge 4–12", "3/Day", "Costs 2 Actions". */
+    usage?: string
+    /** School and tier, e.g. "Evocation Cantrip". */
+    discipline?: string
+    components?: string[]
+    /** Shown only when it is not Instantaneous. */
+    duration?: string
+    /** Attack roll or saving throw cells. */
+    mechanics?: string[]
+    /** Targets, range and area cells. */
+    scope?: string[]
+    extra?: string[]
   }
+
+  /**
+   * Header cell = | Phase · Usage · Discipline · NAME (components) duration |
+   * then | mechanics | scope | extra | data cells, then the body.
+   */
+  const buildPlateEntry = (
+    monster: ReturnType<typeof useMonsterStore>,
+    spec: PlateEntrySpec,
+    body: string
+  ): string => {
+    const quals: string[] = []
+    const phase = phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
+    if (phase) quals.push(`<span class="sb-qual phase-cell">${phase}</span>`)
+    if (spec.usage?.trim()) quals.push(`<span class="sb-qual recharge-cell">${spec.usage.trim()}</span>`)
+    if (spec.discipline?.trim()) quals.push(`<span class="sb-qual school-cell">${spec.discipline.trim()}</span>`)
+    const comps = Array.isArray(spec.components) && spec.components.length > 0
+      ? ` <span class="sb-qual sb-comp component-cell">(${spec.components.join(', ')})</span>`
+      : ''
+    const duration = spec.duration?.trim() && !/^instantaneous$/i.test(spec.duration.trim())
+      ? ` <span class="sb-qual duration-cell">${spec.duration.trim()}</span>`
+      : ''
+    const head = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}</span>${comps}${duration}`
+
+    const cells: PlateCell[] = [{ html: head, head: true, cls: 'action-composite-pill name-cell' }]
+    for (const m of spec.mechanics ?? []) if (m?.trim()) cells.push({ html: m, cls: 'mech-cell' })
+    for (const s of spec.scope ?? []) if (s?.trim()) cells.push({ html: s, cls: 'scope-cell target-cell' })
+    for (const e of spec.extra ?? []) if (e?.trim()) cells.push({ html: e, cls: 'meta-cell' })
+    return plateHtml({ rows: [{ cells, cls: 'action-composite-header' }], body })
+  }
+
+  const usageText = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
+    let recharge = (context.recharge || '').trim()
+    if (!recharge && context.rechargeMin) {
+      const max = context.rechargeMax || 6
+      recharge = context.rechargeMin < max ? `${context.rechargeMin}–${max}` : `${context.rechargeMin}`
+    }
+    if (!recharge && context.limitedUse?.recharge) recharge = context.limitedUse.recharge.trim()
+    if (!recharge && context.limitedUse?.rate === 'RECHARGE') recharge = '5–6'
+    if (recharge) return /^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`
+    if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
+      const rateLabel = t(`recharge.${context.limitedUse.rate}`)
+      const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
+      return `${context.limitedUse.count}/${cleanRate}`
+    }
+    return ''
+  }
+
+  const ATTACK_REACH_LABEL: Record<string, string> = { melee: 'Melee', ranged: 'Ranged', melee_or_ranged: 'Melee or Ranged' }
+
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,
     monster: ReturnType<typeof useMonsterStore>
@@ -593,19 +570,13 @@ export function useProcessTokens() {
 
     if (isModern && !context.customPreamble) {
       const tag = computeTraitTag(context)
-      const limitedUseCell = tag
+      const usage = tag
         ? tag
         : context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate
         ? `${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)}`
         : ''
-      const headerPill = buildHeaderPillHtml(
-        monster,
-        context?.stagePool,
-        context.name,
-        limitedUseCell ? [{ text: limitedUseCell, cls: 'recharge-cell' }] : []
-      )
       const desc = processTokens(context.description, context, monster, 'trait')
-      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+      return buildPlateEntry(monster, { stagePool: context?.stagePool, name: context.name, usage }, desc)
     }
 
     if (context.customPreamble) {
@@ -631,31 +602,12 @@ export function useProcessTokens() {
     const isModern = editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble) {
-      const extraCells: { text: string; cls?: string }[] = []
+      // Discipline: "Evocation Cantrip" for cantrips, "3rd Level Evocation" otherwise (PHB 2024 order)
+      const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
+      const school = context.school && context.school !== 'None' ? context.school : ''
+      const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
 
-      // 1. Compound School & Level (e.g. "2nd Level Abjuration" or "Abjuration")
-      const schoolLevelParts: string[] = []
-      if (context.spellLevel && context.spellLevel !== 'None') {
-        schoolLevelParts.push(context.spellLevel)
-      }
-      if (context.school && context.school !== 'None') {
-        schoolLevelParts.push(context.school)
-      }
-      if (schoolLevelParts.length > 0) {
-        extraCells.push({ text: schoolLevelParts.join(' '), cls: 'type-cell school-cell' })
-      }
-
-      // 2. Compound Components (e.g. "V, S" or "V, C")
-      if (Array.isArray(context.components) && context.components.length > 0) {
-        extraCells.push({ text: context.components.join(', '), cls: 'component-cell' })
-      }
-
-      // 3. Compound Duration (e.g. "1 minute")
-      if (context.duration && context.duration.trim()) {
-        extraCells.push({ text: context.duration.trim(), cls: 'duration-cell' })
-      }
-
-      // 4. Target / Range / Area Scope (e.g. "Self (20ft of you) across Material and Ethereal Plane")
+      // Targets / range / area, numbers in bold
       const scopeParts: string[] = []
       if (context.range && context.range.trim()) {
         scopeParts.push(context.range.trim())
@@ -669,42 +621,25 @@ export function useProcessTokens() {
       if (context.targetsText && context.targetsText.trim()) {
         scopeParts.push(context.targetsText.trim())
       }
-      if (scopeParts.length > 0) {
-        extraCells.push({ text: scopeParts.join(' '), cls: 'target-cell' })
-      }
+      const scope = scopeParts.length > 0 ? [boldNumbers(scopeParts.join(' '))] : []
 
+      // Mechanics: | Ranged Spell Attack +7 |, | Charisma Save 15 |
+      const mechanics: string[] = []
       if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
-        const label = context.actionType === 'spell_attack' ? 'Spell Attack' : 'Weapon Attack'
-        const bonus = context.attackBonus != null ? renderBonus(context.attackBonus) : renderBonus(monster.spellAttackModifier)
-        extraCells.push({ text: `${label} ${bonus}`, cls: 'type-cell' })
+        const isSpell = context.actionType === 'spell_attack'
+        const reach = ATTACK_REACH_LABEL[(context as { attackReach?: string }).attackReach ?? ''] ?? ''
+        const bonus = context.attackBonus != null
+          ? context.attackBonus
+          : isSpell
+          ? monster.spellAttackModifier
+          : monster.proficiency + statModifier(monster.stats?.STR ?? 10)
+        mechanics.push(`${reach ? `${reach} ` : ''}${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
       }
-
       if (context.stat && context.stat !== 'none') {
         const dcVal = saveForAction(monster, context.stat, context.save)
-        extraCells.push({ text: `${t(`statFull.${context.stat}`)} DC ${dcVal}`, cls: 'save-cell' })
+        mechanics.push(`${t(`statFull.${context.stat}`)} Save <strong class="dnd-num">${dcVal}</strong>`)
       }
 
-      let rechargeStr = (context.recharge || '').trim()
-      if (!rechargeStr && context.rechargeMin) {
-        const min = context.rechargeMin
-        const max = context.rechargeMax || 6
-        rechargeStr = min < max ? `${min}–${max}` : `${min}`
-      }
-      if (!rechargeStr && (context as any).limitedUse?.recharge) {
-        rechargeStr = ((context as any).limitedUse.recharge || '').trim()
-      }
-      if (!rechargeStr && context.limitedUse?.rate === 'RECHARGE') {
-        rechargeStr = '5–6'
-      }
-      if (rechargeStr) {
-        extraCells.push({ text: `Recharge ${rechargeStr}`, cls: 'recharge-cell' })
-      } else if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
-        const rateLabel = t(`recharge.${context.limitedUse.rate}`)
-        const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
-        extraCells.push({ text: `${context.limitedUse.count}/${cleanRate}`, cls: 'recharge-cell' })
-      }
-
-      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
       const effectsStr = Array.isArray(context?.effects) && context.effects.length > 0
         ? context.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
         : ''
@@ -718,7 +653,20 @@ export function useProcessTokens() {
         desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
       }
 
-      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+      return buildPlateEntry(
+        monster,
+        {
+          stagePool: context?.stagePool,
+          name: context.name,
+          usage: usageText(context),
+          discipline,
+          components: context.components,
+          duration: context.duration,
+          mechanics,
+          scope,
+        },
+        desc
+      )
     }
 
     if (context.customPreamble) {
@@ -754,18 +702,15 @@ export function useProcessTokens() {
     const isModern = editorStore.visualTemplate === 'modern'
 
     if (isModern) {
-      const extraCells: { text: string; cls?: string }[] = []
-      if (context.trigger && context.trigger.trim()) {
-        extraCells.push({ text: `Trigger: ${context.trigger.trim()}`, cls: 'range-cell' })
-      }
-      if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
-        const rateLabel = t(`recharge.${context.limitedUse.rate}`)
-        const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
-        extraCells.push({ text: `${context.limitedUse.count}/${cleanRate}`, cls: 'recharge-cell' })
-      }
-      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
+      const trigger = context.trigger?.trim()
+        ? `<i>${t('monster.reaction.trigger')}:</i> ${processTokens(context.trigger.trim(), context, monster, 'reaction')}`
+        : ''
       const desc = processTokens(context.description, context, monster, 'reaction')
-      return `${headerPill}<div class="action-body-text zebra-stripe-text">${desc}</div>`
+      return buildPlateEntry(
+        monster,
+        { stagePool: context?.stagePool, name: context.name, usage: usageText(context), extra: trigger ? [trigger] : [] },
+        desc
+      )
     }
 
     // case on the presence of a Trigger to choose old style rendering or new
@@ -801,38 +746,36 @@ export function useProcessTokens() {
     const isModern = editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.useCustomRenderer) {
-      const extraCells: { text: string; cls?: string }[] = []
-
       const kindLabel = context.kind === 'SPELL' ? 'Spell' : 'Weapon'
       const distStr =
         context.distance === 'MELEE'
           ? `Melee ${kindLabel} Attack`
           : context.distance === 'RANGED'
           ? `Ranged ${kindLabel} Attack`
-          : `Melee/Ranged ${kindLabel} Attack`
-      const statMod = statModifier(monster.stats[context.modifier.stat] ?? 10)
-      const toHit = context.modifier.override
-        ? context.modifier.overrideValue
-        : statMod + (context.modifier.proficient ? monster.proficiency : 0)
-      extraCells.push({ text: `${distStr} ${renderBonus(toHit)}`, cls: 'type-cell' })
+          : `Melee or Ranged ${kindLabel} Attack`
+      const toHit = monster.attackModifier(context.id)
 
-      if (context.distance === 'MELEE' && context.range.reach) {
-        extraCells.push({ text: `Reach ${context.range.reach} ft.`, cls: 'range-cell' })
-      } else if (context.distance === 'RANGED' && context.range.standard) {
-        extraCells.push({ text: `Range ${context.range.standard}/${context.range.long} ft.`, cls: 'range-cell' })
-      } else if (context.distance === 'BOTH') {
-        extraCells.push({ text: `Reach ${context.range.reach} ft. or Range ${context.range.standard}/${context.range.long} ft.`, cls: 'range-cell' })
-      }
+      const reach =
+        context.distance === 'MELEE'
+          ? `Reach ${context.range.reach} ft.`
+          : context.distance === 'RANGED'
+          ? `Range ${context.range.standard}/${context.range.long} ft.`
+          : `Reach ${context.range.reach} ft. or Range ${context.range.standard}/${context.range.long} ft.`
+      const targets = context.targets && context.targets > 1 ? `${context.targets} targets` : '1 target'
 
-      const targetStr = context.targets ? `${context.targets} target${context.targets > 1 ? 's' : ''}` : '1 target'
-      extraCells.push({ text: targetStr, cls: 'target-cell' })
-
-      const headerPill = buildHeaderPillHtml(monster, context?.stagePool, context.name, extraCells)
-
-      // Build ONLY the Hit & description portion without repeating the attack/to-hit/reach/targets preamble!
-      const damageOnlyTemplate = `<i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}`
+      // Build ONLY the Hit & description portion without repeating the attack/to-hit/reach/targets preamble
+      const damageOnlyTemplate = '<i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}'
       const body = processTokens(damageOnlyTemplate, context, monster, 'attack').trim()
-      return `${headerPill}<div class="action-body-text zebra-stripe-text">${body}</div>`
+      return buildPlateEntry(
+        monster,
+        {
+          stagePool: context?.stagePool,
+          name: context.name,
+          mechanics: [`${distStr} <strong class="dnd-num">${renderBonus(toHit)}</strong>`],
+          scope: [boldNumbers(`${reach}, ${targets}`)],
+        },
+        body
+      )
     }
 
     if (context.useCustomRenderer) {
@@ -905,9 +848,8 @@ export function useProcessTokens() {
       )
     }
     if (isModern) {
-      const headerPill = buildHeaderPillHtml(monster, undefined, t('editor.multiattack.label'), [])
-      const body = processTokens(`{multiattack.all}. {multiattack.postscript}`, context, monster, 'multiattack').trim()
-      return `${headerPill}<div class="action-body-text zebra-stripe-text">${body}</div>`
+      const body = processTokens('{multiattack.all}. {multiattack.postscript}', context, monster, 'multiattack').trim()
+      return buildPlateEntry(monster, { name: t('editor.multiattack.label') }, body)
     }
     return processTokens(
       `<b><i>${t(
@@ -982,13 +924,11 @@ export function useProcessTokens() {
       }
 
       if (isModern) {
-        const headerPill = buildHeaderPillHtml(
+        return buildPlateEntry(
           monster,
-          (action.action as any)?.stagePool,
-          action.action.name,
-          [{ text: costCell, cls: 'recharge-cell' }]
+          { stagePool: (action.action as { stagePool?: string }).stagePool, name: action.action.name, usage: cost > 1 ? costCell : '' },
+          description
         )
-        return `${headerPill}<div class="action-body-text zebra-stripe-text">${description}</div>`
       }
 
       return `<b><i>${action.action.name}${count}.</b></i> ${description}`

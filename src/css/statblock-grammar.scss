@@ -7,11 +7,29 @@
  *                       the whole label takes the ink color, only numbers stay bold
  *  .dnd-adv-glyph      the ▲▲ / ▼▼ marker inside it
  *  .dnd-check          one check entry ("18, +3 Religion")
+ *
+ *  .sb-plate           thick outer frame of one trait / action / attack entry
+ *  .sb-row             one line of cells, wraps on narrow columns
+ *  .sb-cell.sb-head    crimson header cell: qualifiers + NAME (components)
+ *  .sb-cell            parchment data cell: mechanics, then scope, then extras
+ *  .sb-body            description; .sb-striped adds reading stripes when long
+ *  (markup: src/components/rendering/plate.ts)
  */
+
+/* ------------------------------------------------------------------ tokens */
 
 .statblock {
   --dnd-adv-ink: #1d6b29;
   --dnd-disadv-ink: #a8211a;
+
+  --sb-frame: #7a200d;
+  --sb-head-bg: #7a200d;
+  --sb-head-ink: #fff8ec;
+  --sb-cell-bg: #fdf1d6;
+  --sb-cell-ink: #2b1b12;
+  --sb-rule: rgba(122, 31, 18, 0.35);
+  --sb-body-bg: rgba(255, 251, 242, 0.92);
+  --sb-stripe: rgba(122, 31, 18, 0.07);
 }
 
 .statblock.theme-lovecraft_golden,
@@ -31,6 +49,33 @@
   --dnd-adv-ink: #000000;
   --dnd-disadv-ink: #000000;
 }
+
+/* Plate palette per theme: frame = theme border, head = accent, cells = theme panel */
+@mixin plate-palette($frame, $head-bg, $head-ink, $cell-bg, $cell-ink, $body-bg) {
+  --sb-frame: #{$frame};
+  --sb-head-bg: #{$head-bg};
+  --sb-head-ink: #{$head-ink};
+  --sb-cell-bg: #{$cell-bg};
+  --sb-cell-ink: #{$cell-ink};
+  --sb-rule: #{rgba($frame, 0.45)};
+  --sb-body-bg: #{$body-bg};
+  --sb-stripe: #{rgba($frame, 0.08)};
+}
+
+.statblock.theme-wotc { @include plate-palette(#58180d, #58180d, #fdf1dc, #fbf2e3, #2c0e08, rgba(253, 246, 233, 0.96)); }
+.statblock.theme-printer { @include plate-palette(#000000, #000000, #ffffff, #ffffff, #000000, #ffffff); }
+.statblock.theme-art_nouveau { @include plate-palette(#c5a059, #2d5a3e, #f5f5ec, #e8ebe0, #1e3a2f, #f5f5ec); }
+.statblock.theme-lovecraft_golden { @include plate-palette(#d4af37, #d4af37, #0c0f12, #161b22, #e6edf3, rgba(22, 27, 34, 0.85)); }
+.statblock.theme-lovecraft_silver { @include plate-palette(#94a3b8, #94a3b8, #0f172a, #1e293b, #f1f5f9, rgba(30, 41, 59, 0.85)); }
+.statblock.theme-lovecraft_toxic { @include plate-palette(#10b981, #10b981, #051b11, #064e3b, #ecfdf5, rgba(6, 78, 59, 0.6)); }
+.statblock.theme-lovecraft_spooky { @include plate-palette(#9333ea, #9333ea, #faf5ff, #241235, #faf5ff, rgba(36, 18, 53, 0.85)); }
+.statblock.theme-lovecraft_galactic { @include plate-palette(#6366f1, #6366f1, #f8fafc, #0f172a, #f8fafc, rgba(15, 23, 42, 0.85)); }
+.statblock.theme-lovecraft_fathomless { @include plate-palette(#0891b2, #0891b2, #03131e, #082032, #ecfeff, rgba(8, 32, 50, 0.85)); }
+.statblock.theme-dwarves_forge { @include plate-palette(#b45309, #b45309, #fafaf9, #292524, #fafaf9, rgba(41, 37, 36, 0.85)); }
+.statblock.theme-dwarves_aetherpunk { @include plate-palette(#ca8a04, #ca8a04, #181512, #241e17, #f0fdf4, rgba(36, 30, 23, 0.85)); }
+.statblock.theme-art_deco { @include plate-palette(#eab308, #eab308, #0b0f19, #131a2b, #f8fafc, rgba(19, 26, 43, 0.85)); }
+
+/* ------------------------------------------------------------ values & ink */
 
 .statblock {
   .dnd-num {
@@ -84,6 +129,172 @@
     font-size: 0.92em;
     margin-left: 2px;
   }
+}
+
+/* ------------------------------------------------------------------ plates */
+/* #render outranks the older themed !important rules on .action-composite-* */
+
+#render .statblock {
+  /* the plate is the frame: the entry container steps back */
+  :is(.trait, .action, .attack, .multiattack):has(> .sb-plate) {
+    background: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 0 6px !important;
+    text-indent: 0 !important;
+  }
+
+  .sb-plate {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 2px solid var(--sb-frame) !important;
+    border-radius: 4px !important;
+    overflow: hidden;
+    background: var(--sb-body-bg) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    text-indent: 0 !important;
+    font-style: normal;
+  }
+
+  .sb-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    border-bottom: 1px solid var(--sb-rule);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    > .sb-cell:last-child {
+      flex: 1 1 auto;
+    }
+  }
+
+  .sb-cell {
+    display: flex !important;
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 0 0.3em;
+    min-height: 24px !important;
+    padding: 3px 8px !important;
+    margin: 0 !important;
+    background: var(--sb-cell-bg) !important;
+    color: var(--sb-cell-ink) !important;
+    border: 0 !important;
+    border-left: 1px solid var(--sb-rule) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    box-sizing: border-box;
+
+    &:first-child {
+      border-left: 0 !important;
+    }
+
+    &.sb-grow {
+      flex: 1 1 auto;
+    }
+
+    .dnd-num {
+      font-weight: 800;
+    }
+  }
+
+  .sb-cell.sb-head {
+    background: var(--sb-head-bg) !important;
+    color: var(--sb-head-ink) !important;
+    font-size: 0.86rem;
+    font-weight: 800;
+
+    * {
+      color: inherit !important;
+    }
+
+    .sb-name {
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .sb-qual {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .sb-qual.phase-cell,
+    .sb-qual.recharge-cell {
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.18);
+      opacity: 1;
+    }
+
+    .sb-qual.sb-comp {
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0;
+      text-transform: none;
+      opacity: 0.85;
+    }
+
+    .sb-qual.duration-cell {
+      font-style: italic;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+  }
+
+  .sb-body {
+    display: block !important;
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--sb-body-bg) !important;
+    line-height: 1.45 !important;
+    text-indent: 0 !important;
+  }
+
+  .sb-body.sb-striped {
+    padding: 0 8px !important;
+    line-height: 1.5rem !important;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.5rem,
+      var(--sb-stripe) 1.5rem,
+      var(--sb-stripe) 3rem
+    ) !important;
+    background-attachment: local;
+  }
+}
+
+/* Dark themes: the qualifier chips need a darker wash on light accents */
+#render .statblock:is(
+    .theme-lovecraft_golden,
+    .theme-lovecraft_silver,
+    .theme-lovecraft_toxic,
+    .theme-lovecraft_fathomless,
+    .theme-dwarves_aetherpunk,
+    .theme-art_deco
+  )
+  .sb-cell.sb-head
+  :is(.sb-qual.phase-cell, .sb-qual.recharge-cell) {
+  background: rgba(0, 0, 0, 0.16);
 }
 
 /* Rich tooltips (stat block + editor): readable width, consistent color code */
