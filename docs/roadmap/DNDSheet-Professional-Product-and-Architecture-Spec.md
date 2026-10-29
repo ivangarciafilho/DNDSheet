@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.0** · 2026-10-29 · supersedes the v1 draft (archived in git `b83ee56`, `docs/roadmap/`) |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · code HEAD `c543615` |
+| **Version** | **v2.2** · 2026-10-29 · A4 shipped and evidence updated through the verified closeout follow-up |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · code HEAD `ae16b86` |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **4 / 18 loops shipped** (A0–A3) · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **5 / 18 loops shipped** (A0–A4) · **Track B** — Product Foundations: **0 / 10**, specified |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -144,7 +144,7 @@ Full character generation; campaign/VTT/multiplayer; accounts or sync; replacing
 
 ## 2. Ground truth
 
-📍 *Spec › 2 Ground truth* — **Everything below was measured on the device at `c543615`; anything not measured is labelled as a prediction or a blindspot.**
+📍 *Spec › 2 Ground truth* — **Baseline measurements are from `c543615`; A4 implementation evidence is from `f35cd6d`. Anything else is labelled as a prediction or a blindspot.**
 
 ### 2.1 The codebase in numbers
 
@@ -203,9 +203,11 @@ pie showData
 | A1 Check rows | `574f196` | 9 | +868 / −486 | `Search · Study · Influence · Hide` rows, no duplicate Skills row, whole-label ▲▲/▼▼ colour | 10 tests; browser rows: `Search ACTION 13/+3, (15, +5 Insight)` |
 | A2 Formula engine | `be0cf3f` | 8 | +1 409 / −106 | References, custom formulas and `{…}` macros anywhere in text; no `eval` | 18 + 1 tests; browser: `{CANTRIP_DICE d10}` → `16 (3d10)` |
 | A3 Plate grammar | `c543615` | 4 | +494 / −186 | Traits, actions, attacks, reactions and legendary entries render as framed plates | 5 tests; computed styles across 5 themes |
+| A4 Spellcasting plate | `f35cd6d` | 12 | +802 / −389 | Class and innate casting use edition-aware catalogs and the shared spell-plate grammar; editor and renderer share cadence and metamagic data | 111 core tests; production build; focused Chrome smoke across 5 themes |
+| A4 closeout follow-up | `ae16b86` | 3 | +12 / −10 | Web preview omits generic spellcasting boilerplate already represented by the plate; custom preambles remain supported; regression checks match semantic UI contracts | 111 core tests; build; focused five-theme spell smoke; all 23 e2e groups pass |
 | Docs v1 import | `b83ee56` | 3 | +2 805 | v1 roadmap versioned in `docs/roadmap/` | git |
 
-Test suite: **103 / 103 passing** (`npm test`, node:test with `--experimental-strip-types`), ESLint 0 errors on touched files.
+At `ae16b86`, **111 / 111 core tests pass**, the production build succeeds, the focused `npm run test:e2e:spellcasting` passes across five themes, and `npm run test:e2e` passes all 23 grouped UI checks with zero runtime exceptions. The full browser pass confirmed the advantage/disadvantage grammar, intended absence of a redundant Skills row, custom-vs-default spellcasting preamble behavior, and A4 plate appearance. ESLint has 0 errors on the touched paths; existing warnings remain.
 
 ### 2.3 Verified defects and gaps (the defect register)
 
@@ -213,10 +215,10 @@ Each defect has a source location and the loop that closes it. *Verified* means 
 
 | ID | Defect | Where | Closes in |
 |---|---|---|---|
-| DEF-01 | Spellcasting renders in its own panel markup, not the plate grammar; inner panels nest | `WebRenderer.vue` ≈ L516–614 | A4 |
-| DEF-02 | Cadence badge maps `long_rest` → "Daily"; `1_day`/`2_day`/`3_day` render nothing | `WebRenderer.vue` `getSpellCadenceBadge` | A4 |
-| DEF-03 | Metamagic costs are 2014 values (Heightened 3, Seeking 2, Twinned "1/lvl"); 2024 PHB: Heightened 2, Seeking 1, Twinned 1 | `WebRenderer.vue` `metamagicOptionDetails` | A4 (data) · A12 (ruleset) |
-| DEF-04 | Missing i18n key `monster.spellcasting.stat` (console warning on every render) | `i18n/en-US/index.ts` | A4 |
+| DEF-01 | Spellcasting rendered in its own panel markup, not the plate grammar; inner panels nested | historical `WebRenderer.vue` ≈ L516–614 | A4 ✅ `f35cd6d` |
+| DEF-02 | Cadence mapped `long_rest` → "Daily"; `1_day`/`2_day`/`3_day` rendered nothing | historical renderer cadence map | A4 ✅ `f35cd6d` |
+| DEF-03 | Metamagic costs were 2014 values (Heightened 3, Seeking 2, Twinned "1/lvl"); 2024 PHB uses 2, 1, 1 | historical renderer map; edition-specific catalog now owns costs and effect summaries | A4 ✅ catalog data · A12 remains ruleset/editor breadth |
+| DEF-04 | Missing i18n key `monster.spellcasting.stat` (console warning on every render) | `i18n/en-US/index.ts` | A4 ✅ `f35cd6d` |
 | DEF-05 | Attack plates print `Spell Attack +7` — reach (`Melee`/`Ranged`) is not modelled | `MonsterAction` lacks `attackReach` | A6 |
 | DEF-06 | Spell metrics `catch` returns plausible defaults (3 cantrips, 4 prepared, slot level 1) | `ClassCastingEditor.vue` ≈ L762 | A12 |
 | DEF-07 | No subclass → spell data; "expanded spells" cannot be added automatically | `data/spells.json` has `class[]` only | A12 |
@@ -227,9 +229,10 @@ Each defect has a source location and the loop that closes it. *Verified* means 
 | DEF-12 | Preset names are title-cased by hand ("Veil Of Radiance") | `ActionsEditor.vue` L211 | A7 |
 | DEF-13 | CDP e2e expects pre-plate markup in places (`.action-composite-pill` first cell text) | `test/exhaustive-ui-fuzz.js` L2360 | A17 |
 | DEF-14 | `STACK_STATE.md` claims "100 % complete" for features the owner's review found broken | `STACK_STATE.md` | A17 |
-| DEF-15 | Metamagic "flexible casting" row prints a literal placeholder: "Spell slot level into **x** points, **x** points into Spell slot level" | `WebRenderer.vue` L585–590 | A4 |
-| DEF-16 | Metamagic option costs strip the word "to" (`cost.replace(/\s*to$/, '')`), contradicting the owner's "2 to cast a Cantrip as a Bonus Action" | `WebRenderer.vue` L592–595 | A4 |
-| DEF-17 | Class-casting spell components render doubled parentheses "((V, S))": the template wraps `getSpellTag()` in `( )` and `.spell-tag-badge::before/::after` adds them again | `WebRenderer.vue` L605 + `app.scss` L1094–1099 | A4 |
+| DEF-15 | Metamagic "flexible casting" row printed a literal **x** placeholder | historical `WebRenderer.vue` L585–590 | A4 ✅ removed; no unsupported conversion is invented |
+| DEF-16 | Metamagic option costs stripped the word "to" from user-facing phrasing | historical `WebRenderer.vue` L592–595 | A4 ✅ replaced with explicit catalog cost phrases |
+| DEF-17 | Class-casting components rendered doubled parentheses "((V, S))" | historical template and badge pseudo-elements | A4 ✅ one visible formatter; pseudo-parentheses neutralized |
+| DEF-18 | Generic class-spellcasting prose duplicates the summary and spell list after migration to the plate | default `presets.classSpellcasting` was rendered below the new plate | A4 closeout ✅ `ae16b86`; keep authored custom preambles |
 
 ### 2.4 Inherited facts from the v1 audit (still true)
 
@@ -614,7 +617,7 @@ The owner's rules choices (which skills belong to Study, what Quickened Spell co
 
 | Today | Target | Loop | Why |
 |---|---|---|---|
-| Spell plate computed + template in `WebRenderer.vue` | `components/rendering/spellPlate.ts` (pure builder) + plate markup | A4 | Testable, reuses `plate.ts` grammar |
+| Spell plate computed + template in `WebRenderer.vue` | `core/domain/spell-plate.ts` (pure projection) + Vue text-bound plate rows | A4 ✅ | Typed text rendering avoids introducing a second `v-html` path; shared grammar styles |
 | Top rows markup scattered in `WebRenderer.vue` | `components/rendering/rows.ts` (row builders) | A5 | One grammar for AC/HP/Speed/Saves/Checks/Senses |
 | Ability phrases built inline in `useProcessTokens.ts` | `core/domain/ability-grammar.ts` (infer + phrase) | A6 | Shared by renderer, composer preview and text export |
 | Quick Attack Composer strip in `ActionsEditor.vue` | `components/editor/composer/ComposerChain.vue` + `ChainCell.vue` | A7 | The editor speaks the plate's grammar |
@@ -1609,11 +1612,11 @@ sequenceDiagram
 
 > **Spellcasting reads like one trait plate: who casts and how hard, what it costs and when it comes back, then one row per spell level.**
 
-**Status** ☐ pending · **Loop** A4 · **Requirements** `SBG-006…009`, `SPELL-002`, `SPELL-005` · fixes DEF-01…DEF-04, DEF-15…DEF-17
+**Status** ✅ shipped `f35cd6d`, verified closeout `ae16b86` · **Loop** A4 · **Requirements** `SBG-006…009`, `SPELL-002` (render half), `SPELL-005` (2024) · fixes DEF-01…DEF-04, DEF-15…DEF-18
 
 **🎯 Value** — The GM sees DC, attack, slots, recovery, preparation and every spell level without opening nested panels; the owner's layout is reproduced cell for cell.
 
-**🔎 Evidence** — Spellcasting renders in its own `sc-plate` markup inside `WebRenderer.vue` (≈ L516–614) with the computed `spellPlate` (L1320–1397); cadence badge maps `long_rest` → "Daily" and omits `1_day/2_day/3_day` (DEF-02); metamagic costs are 2014 values (DEF-03 — PHB'24: Careful 1, Distant 1, Empowered 1, Extended 1, Heightened 2, Quickened 2, Seeking 1, Subtle 1, Transmuted 1, Twinned 1 — [dnd2024.wikidot](http://dnd2024.wikidot.com/sorcerer:metamagic "Sorcerer Metamagic options, 2024 rules")); console warns `monster.spellcasting.stat` missing (DEF-04); the flexible-casting row prints literal "x" placeholders (DEF-15); option costs drop the owner's "to" (DEF-16); components render as "((V, S))" because template and CSS both add parentheses (DEF-17). Ordinal spacing ("Level3") remains to be checked on fixtures (BS-17).
+**🔎 Evidence (historical defects)** — At `c543615`, the class block used a separate `sc-plate`; long-rest cadence displayed as "Daily", daily enums were absent, the locale label was missing, the flexible-casting line contained literal `x`, and spell-tag parentheses were added twice. Those defects closed in `f35cd6d`; a browser review then caught and closed DEF-18 in `ae16b86`. Current proof: `npm test` 111/111; `npm run build`; `npm run test:e2e:spellcasting` with class and innate fixtures across five themes; full `npm run test:e2e` passes 23 groups with 0 runtime exceptions. The focused smoke confirms `9th Level`, distinct slot totals and per-level slots, 2024 Metamagic costs/effects, Long Rest, 1/Day, no duplicate component parentheses, no default preamble duplication, and distinct computed plate backgrounds in all five themes. Custom class preambles continue to render when enabled.
 
 **🧩 Concept** — The owner's grammar, verbatim:
 
@@ -1625,20 +1628,20 @@ sequenceDiagram
 ```
 
 **🛠 Techniques**
-- Extract `buildSpellPlate(monster)` from `WebRenderer.vue` into `components/rendering/spellPlate.ts` (pure, testable) returning a `SpellPlateModel` (§6.6) and render it with `plateHtml` rows — one grammar with SB-01.
-- Catalogs: `core/domain/catalogs/metamagic.ts` (`{ name, cost2014, cost2024, phrase, source }`), `CADENCE_LABELS` (`long_rest` → "Long Rest", `short_rest` → "Short Rest", `1_day` → "1/Day", `always_available` → "Always Prepared", `downtime` → "Downtime", `ritual` → "Ritual", `at_will` → "At Will", `recharge_5_6` → "Recharge 5–6").
-- Pact casters: slots cell = count of the highest pact level; level rows ≤ pact level show "Pact" instead of per-level counts. Full casters: per-level count from `slots[level − 1]`.
-- Spells as individual data cells (D-14) so each can carry its own tooltip and cadence badge; components normalised to `(V, S, M)` by one formatter (kills doubled parentheses).
-- Innate casting becomes a second spell plate (`At Will`, `3/Day each`, `1/Day each` rows).
-- The placeholder flexible-casting row is removed (DEF-15); Font of Magic conversion rules move into the Metamagic head's HelpTip, sourced from the Sorcerer class table (research item in the A4 card).
-- Add i18n key `monster.spellcasting.stat`.
+- Extract `buildSpellPlate(input)` and `buildInnateSpellPlate(input)` into pure `core/domain/spell-plate.ts` projections. `WebRenderer.vue` renders typed model fields through Vue template nodes so names, labels, tags and costs are text bindings; only the existing processed preamble uses the sanitized HTML path. This keeps mechanics pure and avoids a second HTML-string projection for user-controlled spell names.
+- Catalogs: `core/domain/catalogs/metamagic.ts` owns unique option names, 2014/2024 costs, edition-specific effect summaries and sources; `cadence.ts` owns labels and picker options. Both the class editor and renderer consume these catalogs, and `useTextRenderer.ts` uses the same cadence formatter.
+- Pact casters use the highest populated Pact Magic slot count for leveled spell rows; full casters use `slots[level − 1]`. Missing slot data stays absent instead of becoming a plausible zero/default.
+- Spells remain individual cells with component tags and per-spell cadence. The visible tag formatter adds one pair of parentheses; CSS pseudo-parentheses are disabled inside the plate.
+- Innate casting remains a separate plate with independent At Will and X/Day groups; it does not inherit class slots or refresh semantics.
+- The unsupported flexible-casting placeholder is removed rather than replacing `x` with a guessed conversion rule. Font of Magic conversion guidance remains a future HelpTip item after the rules/source pass; the plate reports the configured Sorcery Point pool only.
+- `monster.spellcasting.stat` is now localized in `i18n/en-US/index.ts`.
 
 **⚖ Alternatives**
 
 | Option | For | Against | Decision |
 |---|---|---|---|
 | A · Keep `sc-plate` template, patch bugs | Smallest diff | Second grammar; logic stays in a 2 337-line SFC | ✗ |
-| B · Pure builder + plate rows | One grammar; unit-testable; reusable by exports | Needs fixtures for pact/full/innate | ✅ |
+| B · Pure domain projection + Vue plate rows | Unit-testable domain; safe text bindings; existing `.sb-plate` CSS grammar | Screen markup remains a Vue template, not reusable as an HTML string | ✅ shipped |
 | C · Collapse spells into one comma list cell | Compact | Loses per-spell tooltips and badges; owner grammar shows cells | fallback for print only |
 
 **🖼 Wireframe — W-04**
@@ -1654,30 +1657,33 @@ sequenceDiagram
 
 **🧬 Model** — §6.6 (`SpellPlateModel`, `SpellLevelRow`, `MetamagicOption`). **🔀 Flow** — §7.6.
 
+**🧾 Delivered example (browser fixture)** — `9th Level Wizard (INT)` · Save DC 14 · Spell Attack +6 · 14 Spell Slots through 5th level, regained on Long Rest · 2 prepared Wizard spells · rows: Cantrips, 1st Level (4 slots), 3rd Level (3 slots, Per 1/Day). The 2024 Metamagic row shows Heightened 2 SP, Seeking 1 SP and Twinned 1 SP with only the 2024 effect text. The innate fixture is a separate plate with At Will and 3/Day groups.
+
 **🧱 Layers**
 
 | Layer | Change |
 |---|---|
-| L1 | `WebRenderer.vue`: replace ≈ 100 template lines with two `v-html` plates (class, innate); drop `spellPlate`, `metamagicOptionDetails`, `getSpellCadenceBadge` |
-| L3 | `rendering/spellPlate.ts` (new): `buildSpellPlate`, `buildInnatePlate` |
-| L5/L6 | `catalogs/metamagic.ts`, `CADENCE_LABELS` (new) |
-| CSS | spell-cell chips, cadence badge style, narrow wrap rules |
-| i18n | `monster.spellcasting.stat` |
+| L1 | `WebRenderer.vue`: project class and innate data with pure builders; render names and catalog values as Vue text nodes; keep sanitized preamble rendering |
+| L3 | `core/domain/spell-plate.ts`: `buildSpellPlate`, `buildInnateSpellPlate`, ordinal, resource, prepared and metamagic projection |
+| L5/L6 | `core/domain/catalogs/metamagic.ts` and `cadence.ts`; `ClassCastingEditor.vue` and `useTextRenderer.ts` consume them |
+| CSS | `statblock-grammar.scss`: spell cells, cadence chips and wrapping; `app.scss` pseudo-parentheses removed |
+| i18n | `monster.spellcasting.stat` added in `i18n/en-US/index.ts` |
+| QA | `SpellPlate.test.ts` domain fixtures and `test:e2e:spellcasting` isolated CDP browser fixture |
 
 **🧪 Acceptance**
 
 | # | Fixture | Then |
 |---|---|---|
-| 1 | FX-SP-01 pact caster (Warlock 15, CHA 20, 3 slots of 5th, Short Rest) | head `15th Level Warlock (CHA)`; slots cell `3 Spell Slots of 5th level, Regained on Short Rest`; level rows show `PACT` |
-| 2 | FX-SP-02 full caster (Wizard 9, INT, slots 4/3/3/3/1) | `1st Level · 4 · Per Long Rest` … `5th Level · 1 · Per Long Rest`; total cell `14 Spell Slots up to 5th level` |
-| 3 | FX-SP-03 metamagic Quickened + Distant, ruleset 2024 | `2 to cast a Cantrip as a Bonus Action, 1 Increase spell's range by 30ft`; costs from catalog |
-| 4 | FX-SP-04 innate (At Will ×2, 3/Day each ×2) | separate plate; rows `At Will`, `3/Day each` |
-| 5 | any fixture | no `undefined`, no `Level3`, no `((`, no placeholder `x`; option costs keep "to" where the owner's phrase has it; cadence `long_rest` prints "Long Rest"; no i18n warning |
-| 6 | 13 themes | spell plate inherits palette tokens; contrast ≥ 4.5 : 1 |
+| 1 | FX-SP-01 Pact caster model (Warlock 15, CHA 20, three 5th-level pact slots, Short Rest) | builder reports the highest pact pool; every populated leveled row refers to that pact count; unit test |
+| 2 | FX-SP-02 browser full caster (Wizard 9, INT, slots 4/3/3/3/1) | total 14 through 5th; visible rows retain 4 first-level and 3 third-level slots; Chrome probe |
+| 3 | FX-SP-03 2024 Metamagic (Heightened, Seeking, Twinned) | costs 2/1/1 SP and 2024-only effects; catalog + browser assertions |
+| 4 | FX-SP-04 innate (At Will + 3/Day) | separate plate and group labels; unit + browser assertions |
+| 5 | all fixtures | no `undefined`, `Level3`, `((`, fake slot data or literal `x`; `long_rest` → "Long Rest"; translation resolves; tests |
+| 6 | WotC, Printer, Golden, Spooky, Nouveau | theme class is applied; computed plate background/border are present and backgrounds remain distinct; focused Chrome probe. Full 13-theme contrast audit remains A17. |
 
-Tests: `test/core/SpellPlate.test.ts` (new, ≈ 10 cases), metamagic catalog invariants, browser probe on the Seraph fixture.
+Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalog invariants, `npm run test:e2e:spellcasting` (isolated Chrome profile; class + innate render in five themes), and `npm run test:e2e` (23 groups, 0 runtime exceptions).
 
-**📏 Impact (forecast)** — 6 files · +470 / −220 · effort 1–2 days · risk low (render-only).
+**📏 Impact (actual)** — 12 files · +802 / −389 · one new domain projection, two catalogs, two test artifacts, editor and renderer integration. Build succeeds; existing project lint warnings and the unrelated exhaustive-fuzz failures remain visible. This was broader than the six-file estimate because cadence and metamagic are now single-source catalogs shared with authoring.
 
 **🔗 Dependencies** — SB-01 (plate grammar). **⚠ Risks** — R-07 owner layout vs. PHB'24 placement (Spellcasting is an *action* entry in the 2024 Monster Manual format — [How to Use a Monster](https://www.dndbeyond.com/sources/dnd/br-2024/how-to-use-a-monster "2024 rules: Spellcasting appears in the Actions section")) → D-02 keeps the owner's trait placement on screen and offers RAW placement for text exports. **🕳 Blindspots** — BS-17 template bugs to re-verify; BS-18 multiclass title format ("Warlock 5 / Sorcerer 10")?
 
@@ -2434,13 +2440,13 @@ stateDiagram-v2
 
 ## 11. Delivery map
 
-📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; four are shipped, the next one is the spellcasting plate, and every loop ships something the owner can see.**
+📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A4 are shipped, A5 is next, and every loop ships something the owner can see.**
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
-| **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · **A4** · A5 | ◐ 4 / 6 |
+| **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ◐ 5 / 6 |
 | **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ☐ |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
@@ -2457,8 +2463,8 @@ stateDiagram-v2
 | A1 | Check rows + advantage colour | SB-02 | A0 | — | ✅ `574f196` |
 | A2 | Formula engine and macros | SB-03 | A0 | — | ✅ `be0cf3f` |
 | A3 | Plate grammar for abilities | SB-01 | A2 | — | ✅ `c543615` |
-| **A4** | **Spellcasting plate** | SB-04 | A3 | 1–2 | ☐ **next** |
-| A5 | Row grammar + head tooltips | SB-05 | A3 | 1–2 | ☐ |
+| A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
+| **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ☐ **next** |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ☐ |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ☐ |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
@@ -2518,8 +2524,8 @@ gantt
   A1 Check rows                 :done, a1, 2026-10-29, 1d
   A2 Formula engine             :done, a2, 2026-10-29, 1d
   A3 Plate grammar              :done, a3, 2026-10-29, 1d
-  A4 Spellcasting plate         :active, a4, 2026-10-30, 2d
-  A5 Row grammar                :a5, after a4, 2d
+  A4 Spellcasting plate         :done, a4, 2026-10-29, 1d
+  A5 Row grammar                :active, a5, 2026-10-30, 2d
   section R2 Composes like sentences
   A6 Composer model             :a6, after a5, 3d
   A7 Composer chain             :a7, after a6, 4d
@@ -2570,13 +2576,14 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | A1 | `574f196` | 07:09 | 9 | 868 | 486 | +382 | 10 |
 | A2 | `be0cf3f` | 07:18 | 8 | 1 409 | 106 | +1 303 | 19 |
 | A3 | `c543615` | 12:53 | 4 | 494 | 186 | +308 | 5 |
+| A4 | `f35cd6d` | 2026-10-29 | 12 | 802 | 389 | +413 | 7 domain tests; focused browser smoke |
+| A4 closeout | `ae16b86` | 2026-10-29 | 3 | 12 | 10 | +2 | focused smoke; 23 e2e groups |
 | docs v1 | `b83ee56` | 13:02 | 3 | 2 805 | 0 | +2 805 | — |
 
 ### 12.2 Forecast per loop
 
 | Loop | Main files | Files | + | − | Effort | Confidence | Risk |
 |---|---|---:|---:|---:|---|:--:|:--:|
-| A4 | `WebRenderer.vue`, new `spellPlate.ts`, `catalogs/metamagic.ts`, grammar SCSS, i18n, test | 6 | 470 | 220 | 1–2 d | high | low |
 | A5 | `WebRenderer.vue` rows, grammar SCSS, `app.scss` cascade blocks, HelpTip-lite, test | 5 | 350 | 450 | 1–2 d | medium | medium |
 | A6 | `models.ts`, `types.ts`, new `ability-grammar.ts`, `useProcessTokens.ts`, tests | 6 | 800 | 150 | 2–4 d | medium | medium |
 | A7 | `ActionsEditor.vue`, new `ComposerChain.vue`, `ChainCell.vue`, `ACTION_TEMPLATES`, test | 5 | 1 100 | 400 | 3–5 d | medium | medium |
@@ -2701,7 +2708,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 |---|---|---|---|---|
 | D-01 | Skill groups: Study += Medicine (and Investigation); Hide += Acrobatics, Athletics, Sleight of Hand | PHB'24 RAW groups | Owner's table convention | 2026-10-29 · owner |
 | D-02 | Spellcasting renders as a trait above Actions; text exports offer RAW placement | Actions-only (RAW) | Owner layout; RAW kept for portability | 2026-10-29 · owner |
-| D-03 | One HTML plate builder for every multi-cell entry | Vue component per plate; restyle legacy | One projection for screen and exports | A3 |
+| D-03 | Shared visual plate grammar with rendering appropriate to each content type | One HTML builder for all plates; fully componentized plates | Existing token HTML remains for authored macro-rich entries; spellcasting uses pure data projection + Vue text nodes; shared CSS grammar | A3/A4 |
 | D-04 | Small purpose-built formula grammar, no `eval` | mathjs/expr-eval; `Function` | Dice-aware, traceable, safe | A2 |
 | D-05 | Integer fields use reference pickers + one "Custom formula…"; never flat integer lists; typing a number makes a literal | numbers + separate formula box | Owner rule; keeps typing fast | 2026-10-29 · owner |
 | D-06 | Rich tooltips on all interactive controls, accessible by hover, focus and touch | tooltips only where "needed" | Owner rule + WCAG 1.4.13 | 2026-10-29 · owner |
@@ -3095,4 +3102,6 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 |---|---|---|
 | v1 | 2026-10-29 08:19 | Draft by a previous planning pass (32 sections, product foundations) — git `b83ee56` |
 | **v2.0** | 2026-10-29 | Rebuilt around the owner's overhaul: Track A dossiers (14), measured ground truth, UML for formula/plate/ability/spell/kit models, data flows, state machines, wireframes, code-impact ledger, risk/blindspot/decision registers, requirement families, multi-scale traces; v1 absorbed as Track B |
+| **v2.1** | 2026-10-29 | Recorded A4 implementation at `f35cd6d`, measured impact and focused browser/core evidence; corrected spellcasting architecture to domain projections with Vue text bindings; moved A5 to next and recorded full-suite residuals in delivery tracking |
+| **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 

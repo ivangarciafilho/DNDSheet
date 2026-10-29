@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.0 · 2026-10-29 · supersedes the v1 handoffs (git `b83ee56`) |
-| **State at hand-over** | Code HEAD `c543615` (+ docs commit) · tree clean · 103 / 103 tests · dev server `http://localhost:9100` |
-| **Shipped** | A0 · A1 · A2 · A3 (closing packets in §6.1) |
-| **Next loop** | **A4 · Spellcasting plate** — card §6.2, status 🟢 READY |
+| **Version** | v2.2 · 2026-10-29 · A4 verified closeout and A5 readiness |
+| **State at hand-over** | Code HEAD `ae16b86` · `npm test` 111 / 111 · build passes · focused spell smoke and full e2e pass · A5 has pre-existing unstaged edits in `plate.ts` and `test/core/Plate.test.ts`; do not discard them |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 (A4 closeout in §6.2) |
+| **Next loop** | **A5 · Row grammar + head tooltips** — card §6.3; include e2e Steps 18 and 20 |
 
 ---
 
@@ -384,7 +384,7 @@ Browser proofs .......... WotC: head rgb(88,24,13) / ink rgb(253,241,220); cells
 Themes .................. wotc · printer · lovecraft_golden · lovecraft_spooky · art_nouveau — palettes applied
 Requirements proven ..... SBG-001…004; SBG-005 for 5 themes
 Blindspots resolved ..... BS-01 (plate WIP was this overhaul's own work) · BS-02 (app runs from the tree)
-Decisions ............... D-03 (one HTML plate builder)
+Decisions ............... D-03 (shared visual grammar; rendering follows content type; supersedes the initial one-builder hypothesis)
 Deviations from plan .... the plate builder started before a context reset; CSS finished and committed in this loop
 Known limits ............ spellcasting still legacy markup (A4); top rows legacy (A5); e2e expectations (A17)
 Rollback point .......... be0cf3f
@@ -393,90 +393,44 @@ Next loop readiness ..... A4 🟢
 
 ---
 
-### 6.2 A4 · Spellcasting plate — 🟢 READY (next)
+### 6.2 A4 · Spellcasting plate — ✅ CLOSED `f35cd6d` · verified follow-up `ae16b86`
 
 | | |
 |---|---|
-| **Goal** | Class and innate spellcasting render as plate rows in the owner's grammar: summary · metamagic · cantrips · one row per level; spells as cells |
-| **Release · feature** | R1 · SB-04 · fixes DEF-01…04, DEF-15…17 |
-| **Entry criteria** | A3 ✅ · tree clean · `npm test` 103 / 103 · dev server on 9100 · Seraphic Herald fixture loaded |
-| **Read in the spec** | §9 SB-04 · §6.6 Spellcasting model · §7.6 projection · §4.1–4.2 grammar · §2.3 DEF-01…04, 15…17 · §13.2 BS-04, 05, 08, 17, 18 · §13.3 D-02, D-08, D-14 |
-| **Backlog tasks** | A4.0 – A4.11 |
+| **Goal** | Class and innate spellcasting render through shared plate grammar: summary, metamagic, cantrips, level rows and spell cells |
+| **Backlog tasks** | A4.0–A4.12 · all complete |
+| **Implementation** | Pure projections in `src/core/domain/spell-plate.ts`; shared cadence and metamagic catalogs; Vue text-bound rows in `WebRenderer.vue`; shared grammar SCSS; localized label |
+| **Measured impact** | 12 files · +802 / −389 · commit `f35cd6d` |
+| **Tests** | `npm test` 111 / 111 · `npm run build` passes · targeted browser smoke passes class and innate fixtures across five themes · targeted lint 0 errors (existing warnings remain) |
+| **Closeout follow-up** | `ae16b86` hides the generic class preamble already represented by the plate while preserving enabled custom preambles; it aligns browser checks with semantic advantage wrappers and the no-duplicate Skills row contract. |
+| **Verification** | `npm test` 111 / 111 · `npm run build` succeeds · focused spell smoke passes across 5 themes · full e2e passes all 23 groups with 0 runtime exceptions · touched-path lint 0 errors (existing warnings remain). |
 
-**Open first**
+**Decisions confirmed** — retain pure domain projections as the testable boundary; render typed spellcasting rows with Vue text nodes; do not manufacture missing slot/point values; keep innate casting separate; edition-specific Metamagic effect text is distinct; cadence catalog is shared with editor and text renderer. Spellcasting does not add another `v-html` surface.
 
-| File | Where | Why |
-|---|---|---|
-| `src/components/rendering/WebRenderer.vue` | L515–615 | innate block (L517–564, legacy composite markup) and class block (L566–614, `sc-plate`) to replace |
-| same | L1320–1432 | `spellPlate`, `metamagicOptionDetails`, `getSpellCadenceBadge` to move into the builder |
-| same | grep `innateSpellcastingLists`, `renderedSpellcastingTitle`, `getSpellTag`, `sanitizedClassSpellcastingPreamble` | inputs the builder needs |
-| `src/components/rendering/plate.ts` | all (92) | reuse `plateHtml`, `boldNumbers` |
-| `src/css/app.scss` | L715, L1083–1100, L2026 | `.spell-tag-badge` pseudo parentheses (DEF-17), `.sc-spell` |
-| `src/css/statblock-grammar.scss` | tokens + plate section | add spell cells and badges |
-| `src/core/domain/spell-metadata.ts` | `getSpellTagString` | returns `"V, S, C"` without parentheses |
-| `src/stores/monster-store.ts` | `knownSpellsOfLevel`, `spellSave`, `spellAttackModifier` | data the builder reads |
-| `src/components/editor/ClassCastingEditor.vue` | `cadenceOptions` | cadence vocabulary to unify |
-| `src/core/usecases/AutoSyncSpellcasting.ts` | `calculateSpellcastingMetrics`, `SPELL_POINTS_BY_LEVEL` | prepared and point values used by the plate |
+**Closeout / next-loop preparation**
 
-**Skills** — `superpowers:writing-plans` · `superpowers:test-driven-development` · `anthropic-skills:ttrpg-gm-craft` · `ui-design:visual-design-foundations` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion`.
-
-**Research**
-- Sorcerer *Font of Magic* conversion table (2024) for the Metamagic head tip — source in §4.1; if not confirmed, tip links the class without numbers.
-- Pact Magic recovery wording (2024): Short or Long Rest — confirm before writing the default "Regained on Short Rest".
-- Multiclass head title (BS-18) — default "Warlock 5 / Sorcerer 10 (CHA)".
-
-**Traps & blindspots**
-- Two cadence vocabularies: level cadences use `long_rest/short_rest/…/always_available`; per-spell cadences use `always`, `long_rest`… → `CADENCE_LABELS` must accept both `always` and `always_available`.
-- Pact detection is `class === 'Warlock' || resourceType === 'pact'`; points/focus resource types print points, not slots.
-- `prepared` currently falls back to `metrics.preparedSpells || leveledKnown` — keep the semantics; honest metrics are A12's job (do not widen scope).
-- Custom spell names reach `v-html` → escape them in the builder.
-- The two existing `q-tooltip`s on the class plate disappear with `v-html`; emit `data-help` keys (host arrives in A5) and keep a `title` fallback.
-- Do not touch the editor in this loop.
-
-**Plan**
-1. **A4.0** baseline: `npx quasar build`, `npm run test:e2e`, P1 + console scan → packet notes.
-2. **A4.1–A4.2** fixtures as builders in `SpellPlate.test.ts`; render them through the store (P6) and record today's output.
-3. **A4.3–A4.4** catalogs `metamagic.ts`, `cadence.ts` + invariant tests (sorted, unique, every entry sourced).
-4. **A4.5–A4.7** `spellPlate.ts` (`buildSpellPlate`, `buildInnatePlate`, components formatter) — tests first.
-5. **A4.8** swap the two template blocks for `v-html` plates; delete the three computeds.
-6. **A4.9** grammar SCSS (spell cells, badges, wrap), neutralise pseudo parentheses, add `monster.spellcasting.stat`.
-7. **A4.10** browser: fixture + four FX-SP fixtures, P3 + P4, console clean.
-8. **A4.11** close ritual, commit, documentation ritual.
-
-**Verify**
-
-```js
-// no doubled parentheses, no placeholder, correct cadence label
-(() => { const t = document.querySelector('#render').innerText;
-  return { doubleParens: t.includes('(('), placeholderX: /into x points/i.test(t), daily: /\bDaily\b/.test(t),
-           rows: [...document.querySelectorAll('#render .sb-plate')].filter(p => /Spell Save/.test(p.innerText)).map(p => p.innerText.replace(/\s+/g, ' ').slice(0, 200)) } })()
-```
-
-Console: `read_console_messages` with pattern `intlify` must return nothing new after the P1 marker.
-
-**Exit** — SBG-006…009, SPELL-002 (render), SPELL-005 (2024 costs) proven; DEF-01, 02, 04, 15, 16, 17 closed; DEF-03 data fixed; tests and lint green; docs ritual done.
-
-**Next-loop prep (for A5)** — list every row head and plate head kind that needs a help entry; capture the 5-theme colour baseline (P4) before A5 starts; count `dnd-cascade` lines per theme in `app.scss`.
-
-**Closing packet** — *(fill at close, template §1.5)*
+- A4 is complete and committed. Its acceptance includes the core suite, build, focused browser smoke, and the passing full UI suite stated above.
+- A5 is next. The current tree already contains unstaged changes in `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; inspect and preserve them as A5 starting material. Do not reset the tree or assume these changes are part of `f35cd6d`.
+- A5.8 and A5.9 aligned Steps 18 and 20 with current semantic markup; remaining A5 work must verify `data-help` escaping/behavior and capture five-theme parity before removing theme-specific CSS.
+- A15.7 aligned Step 25 with the no-duplicate Skills-row contract; grouped skill/tool content and row absence now pass.
+- Full e2e remains an A17 release gate; rerun after later rendering or interaction changes.
 
 ---
-
 ### 6.3 A5 · Row grammar + head tooltips — 🟡 (open questions with defaults)
 
 | | |
 |---|---|
 | **Goal** | Top-block rows adopt the head/data grammar and tokens; every row head and plate head explains itself (delegated tooltip host) |
 | **Release · feature** | R1 · SB-05 |
-| **Entry criteria** | A4 ✅ (or A3 ✅ if run in parallel) · baseline colours captured |
+| **Entry criteria** | A4 ✅ · baseline colours captured · inspect and preserve the existing A5 working-tree edits |
 | **Read in the spec** | §9 SB-05 · §4.1, §4.5 · §6.4 · §13.2 BS-12, 14, 19, 20 · D-09 |
-| **Backlog tasks** | A5.0 – A5.7 |
-| **Open first** | `WebRenderer.vue` L280–475 (top plate, AC/HP/Speed, defenses, senses, checks, languages) · `app.scss` L544–1700 (`dnd-cascade-*` per theme) · `useTextRenderer.ts` (`actionPassivesGroups`, defenses) · `useProcessTokens.ts` (`usageText`) |
+| **Backlog tasks** | A5.0 – A5.9 (A5.8/A5.9 done; e2e Steps 18/20 pass) |
+| **Open first** | Inspect `git diff -- src/components/rendering/plate.ts test/core/Plate.test.ts`; then `WebRenderer.vue` L280–475 (top plate, AC/HP/Speed, defenses, senses, checks, languages) · `app.scss` L544–1700 (`dnd-cascade-*` per theme) · `useTextRenderer.ts` (`actionPassivesGroups`, defenses) · `useProcessTokens.ts` (`usageText`) |
 | **Skills** | `ui-design:visual-design-foundations` · `impeccable:impeccable` · `design:ux-copy` · `modern-web-guidance:modern-web-guidance` · `anthropic-skills:built-in-browser` · `superpowers:verification-before-completion` |
 | **Research** | WCAG 1.4.13 behaviour for the host; event delegation with `mouseover/focusin` on `#render` |
-| **Traps** | Deleting theme blocks before parity (diff colours with P4 first) · tooltip host must not trap focus · `v-html` content re-renders replace nodes (host listens on the container, not the cells) |
-| **Plan** | A5.0 baseline → A5.1 classes on rows → A5.2 tokens + delete duplicates → A5.3 host → A5.4 dictionary seed → A5.5 recharge die tip → A5.6 verify → A5.7 close |
-| **Verify** | P4 parity per theme · count of `#render .sb-head` equals rows + plates · focus a head with Tab → tip visible · `app.scss` line delta |
+| **Traps** | Do not reset the pre-existing dirty A5 files · diagnose the two badge assertions at source/projection/DOM/style layers before editing CSS · delete theme blocks only after parity (P4) · tooltip host must not trap focus · delegated events listen on the container because rendered descendants can be replaced |
+| **Plan** | A5.0 preserve/review dirty edits + capture baseline → A5.1 classes on rows → A5.2 tokens + remove duplicates → A5.3 host → A5.4 dictionary → A5.5 recharge semantics → A5.6 verify → A5.7 close; Steps 18/20 already pass via A5.8/A5.9 |
+| **Verify** | P4 parity per theme · e2e Steps 18 and 20 pass · count `#render .sb-head` against row/plate heads · keyboard focus opens tips · `app.scss` line delta |
 | **Exit** | SBG-010…012, HELP-002, TIP-006 (statblock) proven |
 | **Defaults** | BS-12 classic template untouched · BS-14 row named "Other checks" · BS-20 ability grid unchanged |
 | **Next-loop prep** | Collect real action entries from templates and AI ingest for A6 inference fixtures |
@@ -644,7 +598,7 @@ Console: `read_console_messages` with pattern `intlify` must return nothing new 
 | **Goal** | The rules-heavy panels adopt the kit, tips and fit |
 | **Release · feature** | R5 · UX-01…03 |
 | **Entry criteria** | A13 ✅ · A12 ✅ |
-| **Backlog tasks** | A15.1 – A15.6 |
+| **Backlog tasks** | A15.1 – A15.7 (A15.7 done; Step 25 verifies no redundant Skills row) |
 | **Open first** | `ClassCastingEditor.vue`, `SpellcastingEditor.vue`, `AtWillCastingEditor.vue`, `SkillsEditor.vue`, `SavesEditor.vue`, `SensesEditor.vue`, `SpeedsEditor.vue`, `ResistancesEditor.vue`, `InventoryEditor.vue` |
 | **Skills** | `ui-design:responsive-design` · `design:ux-copy` · `design:accessibility-review` |
 | **Exit** | SEL-001, TIP-001, FIT-001…003 proven for these panels |
@@ -715,9 +669,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; code HEAD `c543615`; documentation v2 committed on top; tree clean; `npm test` 103 / 103.
-2. **What exists** — check rows (A1), formula engine (A2), plate grammar (A3); everything else is planned in the three documents.
-3. **What to do next** — run the A4 card (§6.2) from its start ritual; its pre-flight task A4.0 records the build and e2e baselines.
+1. **State** — branch `statblock-overhaul`; code HEAD `ae16b86`; core 111 / 111 and build pass; focused spell smoke passes across five themes; full e2e passes 23 groups with 0 runtime exceptions. The tree also has pre-existing unstaged A5 edits in `src/components/rendering/plate.ts` and `test/core/Plate.test.ts`; preserve and inspect these first.
+2. **What exists** — A0–A4 shipped. A4 closeout removed duplicate default spellcasting prose while keeping custom preambles; prior browser expectation failures are aligned and passing.
+3. **What to do next** — continue A5 using §6.3. Capture its theme baseline and review the dirty plate changes before coding; remaining A5.0–A5.7 cover row grammar, help-host behavior, tokens and parity.
 4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 

@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.0 · 2026-10-29 · supersedes the v1 backlog (git `b83ee56`) |
-| **Code HEAD** | `c543615` on `statblock-overhaul` · tests 103 / 103 green |
-| **Progress** | **4 / 28 loops shipped** · **26 / 188 tasks done** (14 %) |
-| **Now** | Documentation v2 committed (`4c6c1cb`) — ready to start A4 |
-| **Next** | **A4 · Spellcasting plate** — card ready in Handoffs §6.2 |
+| **Version** | v2.2 · 2026-10-29 · A4 verified through follow-up commit `ae16b86` |
+| **Code HEAD** | `ae16b86` on `statblock-overhaul` · core 111 / 111, build passes, focused smoke passes; full e2e 23 / 23 groups · pre-existing unstaged A5 edits remain |
+| **Progress** | **5 / 28 loops shipped** · **42 / 192 tasks done** (22 %) |
+| **Now** | A4 closed with browser evidence; semantic assertion drift resolved in the owning A5/A15 tasks |
+| **Next** | **A5 · Row grammar + head tooltips** — remaining work and prep in Handoffs §6.3 |
 
 ---
 
@@ -39,23 +39,23 @@
 
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
-| R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 · A5 | 26 / 46 | ◐ |
+| R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 | 41 / 49 | ◐ |
 | R2 · Composes like sentences | A6 · A7 · A8 | 0 / 28 | ☐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
-| R5 · Explains itself | A13 · A14 · A15 · A16 | 0 / 27 | ☐ |
+| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 28 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
 | R7 · Creator confidence | B1 · B2 · B3 | 0 / 15 | ☐ |
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 143 tasks · Track B 45) | **26 / 188** | **14 %** |
+| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **42 / 192** | **22 %** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 4
-  "Next (A4)" : 1
+  "Shipped" : 5
+  "Next (A5)" : 1
   "Pending Track A" : 13
   "Pending Track B" : 10
 ```
@@ -92,6 +92,19 @@ pie showData
 | 2026-10-29 12:53 | `c543615` | A3 | Traits/actions/attacks/reactions/legendary as framed plates; 13 theme palettes | 5 tests; theme probe |
 | 2026-10-29 13:02 | `b83ee56` | docs | v1 documents versioned in `docs/roadmap/` | git |
 | 2026-10-29 | `4c6c1cb` | docs | v2 documents: spec bible, this backlog, handoffs; 32 / 32 Mermaid diagrams parse (Mermaid 11.4.1); ids and tables cross-checked | doc check + consistency script |
+| 2026-10-29 | `f35cd6d` | A4 | Class and innate spellcasting plates use shared visual grammar, edition-aware metamagic and cadence catalogs | 111 core tests; build; focused browser smoke across 5 themes |
+| 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
+
+### 2.1 A4 closing validation: tracked full-suite failures
+
+The first post-A4 full run exposed three stale browser expectations and one real duplicate-preamble behavior. They are all closed at `ae16b86`; the passing rerun supersedes the earlier failing snapshot. Keep the exact contracts as regression coverage:
+
+| E2E step | Observed failure | Owning backlog item | Exit evidence |
+|---:|---|---|---|
+| 18 | Old test searched for deprecated badge class names | A5.8 ✅ | Test queries `.dnd-adv` and `.dnd-disadv`; full UI suite passes |
+| 20 | Old test searched old pill markup; assertion now targets Search row's semantic advantage wrapper and trailing glyph | A5.9 ✅ | Browser test confirms the check value is wrapped and glyph is present |
+| 25 | Test required a separate Skills row although configured skills all belong to the four action groups | A15.7 ✅ | Test asserts grouped skills/tools and confirms no redundant Skills heading |
+| 32 | Default spellcasting preamble duplicated the class plate's summary and spell list | A4.12 ✅ | Generic prose hidden in web plate; authored custom preamble retained; full e2e passes |
 
 ---
 
@@ -99,13 +112,13 @@ pie showData
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A4 start ritual (Handoffs §6.2) | **A4** Spellcasting plate → **A5** Row grammar → **A6** Composer model | A7…A17 (R2–R6), then Track B (R7–R10) |
+| A4 shipped; review residual full-suite failures recorded in A5/A15 | **A5** Row grammar → **A6** Composer model | A7…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
 ## 4. Track A — Statblock & Authoring Overhaul
 
-📍 *Backlog › 4 Track A* — **Eighteen loops; the first four are done, the fifth is armed.**
+📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A4 are done, and A5 is armed.**
 
 ### R1 · Reads right
 
@@ -187,26 +200,27 @@ pie showData
 
 ---
 
-#### A4 · Spellcasting plate ☐ **next**
+#### A4 · Spellcasting plate ✅ `f35cd6d`
 
 > Spellcasting reads like one trait plate: who casts, DC and attack, slots and recovery, preparation, then one row per level.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R1 | SB-04 | A3 ✅ | 1–2 d | 6 files · +470 / −220 |
+| R1 | SB-04 | A3 ✅ | 1 day | 12 files · +802 / −389 |
 
-- [ ] **A4.0** Pre-flight baseline: `npx quasar build`, `npm run test:e2e`, console scan of the Seraph fixture; record results (BS-04, BS-05, BS-08) · M · *proof: closing packet*
-- [ ] **A4.1** Fixtures `FX-SP-01` pact Warlock 15 · `FX-SP-02` Wizard 9 slots 4/3/3/3/1 · `FX-SP-03` metamagic Quickened + Distant · `FX-SP-04` innate At Will + 3/Day — as builders in `test/core/SpellPlate.test.ts` · M
-- [ ] **A4.2** Render the four fixtures with the current template; confirm "((V, S))" (DEF-17), placeholder "x" row (DEF-15), stripped "to" (DEF-16), cadence and slot defects, "Level3" (BS-17) · S · *proof: probe text*
-- [ ] **A4.3** `core/domain/catalogs/metamagic.ts`: 10 options `{ name, cost2014, cost2024, phrase, source }` + invariants test · S
-- [ ] **A4.4** `core/domain/catalogs/cadence.ts`: `CADENCE_LABELS` (`long_rest` → "Long Rest", `1_day` → "1/Day", `always_available` → "Always Prepared", …) shared by renderer and editor · S
-- [ ] **A4.5** `components/rendering/spellPlate.ts`: `buildSpellPlate(monster)` → `SpellPlateModel` → plate rows (summary · metamagic · cantrips · levels; spells as cells with components and cadence badges) · L
-- [ ] **A4.6** `buildInnatePlate(monster)` (At Will, X/Day each) · M
-- [ ] **A4.7** `test/core/SpellPlate.test.ts` ≈ 10 cases (pact vs full slots, ordinals, components formatter, cadence labels, metamagic costs 2024, no `undefined`) · M
-- [ ] **A4.8** `WebRenderer.vue`: replace the `sc-plate` templates with two `v-html` plates in the trait region; remove `spellPlate`, `metamagicOptionDetails`, `getSpellCadenceBadge` · M
-- [ ] **A4.9** `statblock-grammar.scss`: spell cell chips, cadence badge, wrap rules; neutralise `.spell-tag-badge::before/::after` parentheses (one formatter owns them, DEF-17); `i18n/en-US/index.ts` adds `monster.spellcasting.stat` · S
-- [ ] **A4.10** Browser: Seraph + 4 fixtures; theme probe (WotC, Printer, Golden, Spooky, Nouveau); console clean · M
-- [ ] **A4.11** Close: `npm test`, lint touched files, commit `spellcasting renders as plate rows: summary, metamagic, one row per level`, docs ritual · S
+- [x] **A4.0** Baseline captured: build succeeds; full e2e reaches steps 1–17 then fails at 18, 20 and 25; failures tracked in A5.8/A5.9/A15.7 · M · *proof: closing packet*
+- [x] **A4.1** Spell model fixtures cover pact/full casting, metamagic and innate casting · M · *proof: `test/core/SpellPlate.test.ts`*
+- [x] **A4.2** Historical defects reproduced from baseline and closed: duplicate component parentheses, placeholder `x`, stripped connective, cadence/slot labels and ordinal spacing · S · *proof: focused browser smoke*
+- [x] **A4.3** `core/domain/catalogs/metamagic.ts`: edition-specific 2014/2024 costs and effect text/source labels · S
+- [x] **A4.4** `core/domain/catalogs/cadence.ts`: shared cadence and resource refresh options used by editor/rendering/text renderer · S
+- [x] **A4.5** `core/domain/spell-plate.ts`: pure class spellcasting projection and row models · L
+- [x] **A4.6** `buildInnateSpellPlate`: separate innate projection · M
+- [x] **A4.7** Seven domain test cases cover slot progressions, components, cadence, edition-specific effects and absent values · M
+- [x] **A4.8** `WebRenderer.vue`: typed computed model rendered with Vue text bindings; no new `v-html` spell plate path · M
+- [x] **A4.9** `statblock-grammar.scss`, `app.scss` and `i18n/en-US/index.ts`: shared plate styles, component punctuation ownership and localized label · S
+- [x] **A4.10** Focused browser smoke verifies class + innate plates in five themes; full e2e later passes 23 groups with 0 runtime exceptions · M
+- [x] **A4.11** `npm test` 111/111; build passes; targeted lint has 0 errors (existing warnings remain); commit `f35cd6d` · S
+- [x] **A4.12** Close browser-discovered duplicate generic preamble: show class preamble only when authored custom text is enabled; preserve custom text; include regression in focused smoke and full fuzz suite · M · *proof: `ae16b86`, Step 32, all 23 e2e groups pass*
 
 **Done when:** SBG-006…009, SPELL-002 (render half), SPELL-005 (2024 costs) proven; DEF-01, DEF-02, DEF-04, DEF-15, DEF-16, DEF-17 closed; DEF-03 data fixed.
 
@@ -220,7 +234,7 @@ pie showData
 |---|---|---|---|---|
 | R1 | SB-05 | A3 ✅ | 1–2 d | 5 files · +350 / −450 |
 
-- [ ] **A5.0** Pre-flight: count `dnd-cascade-*` lines per theme in `app.scss`; capture probe colours for 5 themes as the parity baseline; ask/record BS-12, BS-14, BS-20 · S
+- [ ] **A5.0** Pre-flight: inspect existing unstaged A5 edits in `plate.ts` and `test/core/Plate.test.ts`; confirm their `data-help` escaping/attribute behavior and preserve or deliberately revise them; count `dnd-cascade-*` lines per theme in `app.scss`; capture 5-theme parity baseline; settle BS-12, BS-14, BS-20 · M
 - [ ] **A5.1** `WebRenderer.vue`: top rows adopt `sb-row / sb-cell / sb-head / sb-qual` (keep Vue templates for real tooltips) · M
 - [ ] **A5.2** `statblock-grammar.scss`: cascade colours as tokens; delete the equivalent per-theme blocks in `app.scss` after parity · M
 - [ ] **A5.3** Delegated tooltip host (minimal HelpTip) for `data-help` attributes inside `#render`; plate cells emit `data-help` keys · M
@@ -228,6 +242,8 @@ pie showData
 - [ ] **A5.5** Recharge die semantics (D-09): `usageText` tip "roll 1d12 at the start of each turn; recharges on 4–12" + test · S
 - [ ] **A5.6** Verify: theme probe parity, screenshot pairs, CSS line delta, focus opens tips · M
 - [ ] **A5.7** Close: tests, lint, commit `top rows share the plate grammar; heads explain themselves`, docs ritual · S
+- [x] **A5.8** Align e2e Step 18 with the shipped semantic classes `.dnd-adv`/`.dnd-disadv`; no renderer change was needed · S · *added A4; proof: `ae16b86`, full e2e pass*
+- [x] **A5.9** Align e2e Step 20 with the Search-row check wrapper and trailing glyph rather than deprecated pill classes · S · *added A4; proof: `ae16b86`, full e2e pass*
 
 **Done when:** SBG-010…012, HELP-002, TIP-006 (statblock part) proven.
 
@@ -447,6 +463,7 @@ pie showData
 - [ ] **A15.4** Audit: help coverage and overflow for these panels · S
 - [ ] **A15.5** Keyboard pass · S
 - [ ] **A15.6** Close: commit `casting, checks, senses and defenses panels adopt the interaction kit` · S
+- [x] **A15.7** Align e2e Step 25 with intentional grouping: skills in Search/Study/Influence/Hide do not create a duplicate Skills row; assert grouped skill/tool content and no redundant Skills heading · S · *added A4; proof: `ae16b86`, full e2e pass*
 
 **Done when:** SEL-001, TIP-001, FIT-001…003 proven for these panels.
 
