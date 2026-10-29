@@ -156,6 +156,44 @@ test('unsupported legacy range text remains visible instead of being guessed int
   assert.strictEqual(scopePhrase(ability), 'Self (within the visible aura)')
 })
 
+test('2024 text marks clause labels for HTML surfaces without changing a single word', () => {
+  const input = action({
+    name: 'Rend',
+    actionType: 'weapon_attack',
+    attackReach: 'melee',
+    attackSource: 'weapon',
+    targeting: { count: 1, kind: 'creature', range: { distance: 5, unit: 'ft', relation: 'reach' } },
+    outcomes: [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '2d6', damageType: 'slashing' }] }],
+    description: 'The target is grappled.',
+  })
+  const context = { attackBonus: 5, formulaContext: formulaContext(2) }
+  const html = text2024(input, context, { markup: 'html' })
+
+  assert.strictEqual(html, '<i>Melee Attack Roll:</i> +5, reach 5 ft. <i>Hit:</i> 7 (2d6) Slashing damage. The target is grappled.')
+  assert.strictEqual(html.replace(/<\/?i>/g, ''), text2024(input, context))
+})
+
+test('HTML 2024 text marks the saving throw and every outcome label, including bare ones', () => {
+  const input = action({
+    actionType: 'save_ability',
+    stat: 'CON',
+    targeting: { count: 'all', kind: 'creatures', area: { shape: 'radius sphere', distance: 20, unit: 'ft' } },
+    outcomes: [
+      { trigger: 'failure', effects: [{ kind: 'damage', formula: '4d10', damageType: 'radiant' }] },
+      { trigger: 'success', effects: [], rider: 'The creature takes half as much damage.' },
+      { trigger: 'Bloodied', effects: [] },
+    ],
+  })
+  const context = { saveDc: 12, formulaContext: formulaContext(2) }
+  const html = text2024(input, context, { markup: 'html' })
+
+  assert.strictEqual(
+    html,
+    '<i>Constitution Saving Throw:</i> DC 12, all creatures in a 20-foot radius sphere. <i>Failure:</i> 22 (4d10) Radiant damage. <i>Success:</i> The creature takes half as much damage. <i>Bloodied:</i>'
+  )
+  assert.strictEqual(html.replace(/<\/?i>/g, ''), text2024(input, context))
+})
+
 test('malformed imported ability fields are ignored without crashing the statblock projection', () => {
   const input = action({
     targeting: { count: 'all', kind: 'creatures', planes: 'Ethereal' } as unknown as MonsterAction['targeting'],

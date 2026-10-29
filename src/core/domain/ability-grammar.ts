@@ -19,6 +19,15 @@ export interface AbilityRenderContext {
   formulaContext?: FormulaContext
 }
 
+/** `html` wraps clause labels (Attack Roll, Saving Throw, Hit, Failure…) in `<i>` for web surfaces. */
+export type AbilityMarkup = 'text' | 'html'
+
+export interface Text2024Options {
+  markup?: AbilityMarkup
+}
+
+const markLabel = (label: string, markup: AbilityMarkup): string => markup === 'html' ? `<i>${label}</i>` : label
+
 const ATTACK_SOURCES: Record<string, AttackSource> = {
   spell_attack: 'spell',
   weapon_attack: 'weapon',
@@ -375,14 +384,15 @@ const effectText = (effect: AbilityOutcome['effects'][number], context: AbilityR
 export function outcomePhrase(
   ability: AbilityProjection,
   context: AbilityRenderContext = {},
-  mode: 'screen' | 'text2024' = 'screen'
+  mode: 'screen' | 'text2024' = 'screen',
+  markup: AbilityMarkup = 'text'
 ): string[] {
   return ability.outcomes.map((outcome) => {
     const effects = outcome.effects.map((effect) => effectText(effect, context)).filter(Boolean).map(ensurePeriod)
     const parts = [...effects]
     if (outcome.rider?.trim()) parts.push(outcome.rider.trim())
-    const label = triggerLabel(outcome.trigger, mode)
-    return parts.length ? `${label}: ${ensurePeriod(parts.join(' '))}` : `${label}:`
+    const label = markLabel(`${triggerLabel(outcome.trigger, mode)}:`, markup)
+    return parts.length ? `${label} ${ensurePeriod(parts.join(' '))}` : label
   })
 }
 
@@ -393,7 +403,8 @@ const formatText2024Range = (ability: AbilityProjection, context: AbilityRenderC
   return `${label} ${formatDistance(range.distance, range.unit, context)}`
 }
 
-export function text2024(action: Partial<MonsterAction>, context: AbilityRenderContext = {}): string {
+export function text2024(action: Partial<MonsterAction>, context: AbilityRenderContext = {}, options: Text2024Options = {}): string {
+  const markup = options.markup ?? 'text'
   const ability = inferAbility(action)
   const clauses: string[] = []
   const attackBonus = context.attackBonus ?? ability.attackBonus
@@ -401,7 +412,7 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   if (ability.attackSource) {
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
     const bonus = attackBonus === undefined ? '' : ` ${valueText(attackBonus, context, 'bonus')}`
-    const attack = `${reach}Attack Roll:${bonus}`.trim()
+    const attack = `${markLabel(`${reach}Attack Roll:`, markup)}${bonus}`
     const range = formatText2024Range(ability, context)
     clauses.push(ensurePeriod([attack, range].filter(Boolean).join(', ')))
   }
@@ -409,11 +420,11 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   if (ability.saveAbility) {
     const dc = context.saveDc ?? ability.saveDc
     const scope = scopePhrase(ability, context, 'text2024')
-    const save = `${statName(ability.saveAbility)} Saving Throw:${dc === undefined ? '' : ` DC ${valueText(dc, context)}`}`
+    const save = `${markLabel(`${statName(ability.saveAbility)} Saving Throw:`, markup)}${dc === undefined ? '' : ` DC ${valueText(dc, context)}`}`
     clauses.push(ensurePeriod([save, scope].filter(Boolean).join(', ')))
   }
 
-  clauses.push(...outcomePhrase(ability, context, 'text2024'))
+  clauses.push(...outcomePhrase(ability, context, 'text2024', markup))
   if (ability.description.trim()) clauses.push(ability.description.trim())
   return clauses.join(' ')
 }

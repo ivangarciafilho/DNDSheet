@@ -20,7 +20,7 @@ import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
-import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase } from 'src/core/domain/ability-grammar'
+import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
 
 export type MonsterContext =
@@ -565,6 +565,75 @@ export function useProcessTokens() {
     return ''
   }
 
+  // Structured (A6) abilities carry their mechanics in fields, not prose, so every template and
+  // section must render them through the shared grammar or they collapse to a bare name.
+  const structuredRenderContext = (context: MonsterAction, monster: ReturnType<typeof useMonsterStore>) => {
+    const ability = inferAbility(context)
+    const formulaContext = formulaContextForMonster(monster as unknown as DomainMonster)
+    const attackBonus = context.attackBonus != null
+      ? context.attackBonus
+      : ability.attackSource === 'spell'
+      ? monster.spellAttackModifier
+      : ability.attackSource === 'weapon'
+      ? monster.proficiency + statModifier(monster.stats?.STR ?? 10)
+      : undefined
+    const saveDc = context.stat && context.stat !== 'none'
+      ? saveForAction(monster, context.stat, context.save)
+      : undefined
+    return { ability, renderContext: { attackBonus, saveDc, formulaContext } }
+  }
+
+  /** Modern Modular plate; `usage` is the recharge/uses chip, or the legendary cost. */
+  const structuredActionPlate = (
+    context: MonsterAction,
+    monster: ReturnType<typeof useMonsterStore>,
+    usage: string
+  ): string => {
+    const { ability, renderContext } = structuredRenderContext(context, monster)
+    const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
+    const scopeText = scopePhrase(ability, renderContext)
+    const scope = scopeText ? [boldNumbers(scopeText)] : []
+    const outcomeHtml = outcomePhrase(ability, renderContext)
+      .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
+    const effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
+    let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
+
+    if (context.stat && context.stat !== 'none') {
+      desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
+    }
+    if (ability.attackSource) {
+      desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
+    }
+
+    const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
+    const school = context.school && context.school !== 'None' ? context.school : ''
+    const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
+    return buildPlateEntry(
+      monster,
+      {
+        stagePool: context.stagePool,
+        name: context.name,
+        usage,
+        discipline,
+        components: context.components,
+        duration: context.duration,
+        mechanics,
+        scope,
+      },
+      desc
+    )
+  }
+
+  /** Classic WotC line: the bold-italic lead, then the 2024 rules text with italic clause labels. */
+  const structuredActionLine = (
+    context: MonsterAction,
+    monster: ReturnType<typeof useMonsterStore>,
+    lead: string
+  ): string => {
+    const { renderContext } = structuredRenderContext(context, monster)
+    return processTokens(`${lead} ${text2024(context, renderContext, { markup: 'html' })}`, context, monster, 'action')
+  }
+
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,
     monster: ReturnType<typeof useMonsterStore>
@@ -608,53 +677,7 @@ export function useProcessTokens() {
     const isModern = editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble) {
-      if (hasStructuredAbility(context)) {
-        const ability = inferAbility(context)
-        const formulaContext = formulaContextForMonster(monster as unknown as DomainMonster)
-        const attackBonus = context.attackBonus != null
-          ? context.attackBonus
-          : ability.attackSource === 'spell'
-          ? monster.spellAttackModifier
-          : ability.attackSource === 'weapon'
-          ? monster.proficiency + statModifier(monster.stats?.STR ?? 10)
-          : undefined
-        const saveDc = context.stat && context.stat !== 'none'
-          ? saveForAction(monster, context.stat, context.save)
-          : undefined
-        const renderContext = { attackBonus, saveDc, formulaContext }
-        const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
-        const scopeText = scopePhrase(ability, renderContext)
-        const scope = scopeText ? [boldNumbers(scopeText)] : []
-        const outcomeHtml = outcomePhrase(ability, renderContext)
-          .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
-        const effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
-        let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
-
-        if (context.stat && context.stat !== 'none') {
-          desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
-        }
-        if (ability.attackSource) {
-          desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
-        }
-
-        const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
-        const school = context.school && context.school !== 'None' ? context.school : ''
-        const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
-        return buildPlateEntry(
-          monster,
-          {
-            stagePool: context.stagePool,
-            name: context.name,
-            usage: usageText(context),
-            discipline,
-            components: context.components,
-            duration: context.duration,
-            mechanics,
-            scope,
-          },
-          desc
-        )
-      }
+      if (hasStructuredAbility(context)) return structuredActionPlate(context, monster, usageText(context))
 
       // Discipline: "Evocation Cantrip" for cantrips, "3rd Level Evocation" otherwise (PHB 2024 order)
       const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
@@ -724,6 +747,8 @@ export function useProcessTokens() {
 
     if (context.customPreamble) {
       return poolBadge + processTokens(context.description, context, monster, 'action')
+    } else if (hasStructuredAbility(context)) {
+      return structuredActionLine(context, monster, `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b>`)
     } else if (context.stat !== 'none') {
       return processTokens(
         `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> <i>${t(
@@ -949,6 +974,14 @@ export function useProcessTokens() {
       // process the name
       const count = cost > 1 ? t('editor.legendary.renderedCost', [cost]) : ''
       const costCell = cost > 1 ? `Costs ${cost} Actions` : '1 Action'
+
+      // Legendary-only structured abilities read the action grammar; the cost replaces the usage chip.
+      const structured = action.type === 'action' ? (action.action as MonsterAction) : undefined
+      if (structured?.legendaryOnly && !structured.customPreamble && hasStructuredAbility(structured)) {
+        return isModern
+          ? structuredActionPlate(structured, monster, cost > 1 ? costCell : '')
+          : structuredActionLine(structured, monster, `<b><i>${structured.name}${count}.</i></b>`)
+      }
 
       let description = ''
       if (action.type === 'action') {

@@ -2473,6 +2473,54 @@ async function runFuzz() {
   if (!step33 || !step33.success) {
     throw new Error('Step 33 failed: ' + JSON.stringify(step33));
   }
+
+  console.log('\n--- Step 34: Structured abilities render their mechanics in every template and section ---')
+  const step34 = await evalInPage(`
+    async () => {
+      const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+      const monster = pinia._s.get('monster');
+      const editor = pinia._s.get('editor');
+      const previousTemplate = editor.visualTemplate;
+      const base = (id, name) => ({
+        id, name, description: '', recharge: '', legendaryOnly: true, bonusAction: false,
+        limitedUse: { count: 0, rate: '' }, stat: 'none', save: { override: false, overrideValue: 0 },
+        range: '', effects: [], customPreamble: false,
+        crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true },
+      });
+      monster.actions.push({
+        ...base('a7-legendary-burst', 'Radiant Burst'), stat: 'CON', actionType: 'save_ability',
+        targeting: { count: 'all', kind: 'creatures', area: { shape: 'radius sphere', distance: 20, unit: 'ft' } },
+        outcomes: [{ trigger: 'failure', effects: [{ kind: 'damage', formula: '4d10', damageType: 'radiant' }] }],
+      });
+      monster.actions.push({
+        ...base('a7-mythic-lance', 'Mythic Lance'), actionType: 'spell_attack', attackReach: 'ranged', attackSource: 'spell', attackBonus: 9,
+        targeting: { count: 1, kind: 'creature', range: { distance: 120, unit: 'ft', relation: 'range' } },
+        outcomes: [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '2d10', damageType: 'force' }] }],
+      });
+      monster.addLegendaryAction('a7-legendary-burst', 2);
+      monster.addMythicAction('a7-mythic-lance');
+      const read = async (template) => {
+        editor.visualTemplate = template;
+        await new Promise((resolve) => setTimeout(resolve, 250));
+        return (document.querySelector('.statblock')?.textContent || '').replace(/\\s+/g, ' ');
+      };
+      const classic = await read('classic');
+      const modern = await read('modern');
+      editor.visualTemplate = previousTemplate;
+      const checks = {
+        classicLegendary: /Radiant Burst \\(Costs 2 Actions\\)\\. Constitution Saving Throw: DC \\d+, all creatures in a 20-foot radius sphere\\. Failure: \\d+ \\(4d10\\) Radiant damage\\./.test(classic),
+        classicMythic: /Mythic Lance\\. Ranged Attack Roll: \\+9, range 120 ft\\. Hit: \\d+ \\(2d10\\) Force damage\\./.test(classic),
+        classicTemplatedAction: /Holy Javelin[^.]*\\. Ranged Attack Roll: [+-]\\d+, range 120 ft\\. Hit:/.test(classic),
+        modernLegendary: modern.includes('Costs 2 Actions') && modern.includes('Constitution Save') && modern.includes('On Failure:'),
+        modernMythic: modern.includes('Ranged Spell Attack +9') && modern.includes('On Hit:'),
+      };
+      return { success: Object.values(checks).every(Boolean), checks };
+    }
+  `)
+  console.log('Step 34 result:', step34)
+  if (!step34 || !step34.success) {
+    throw new Error('Step 34 failed: ' + JSON.stringify(step34));
+  }
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
