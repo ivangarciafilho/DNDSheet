@@ -939,8 +939,8 @@ async function runFuzz() {
       const renderedText = document.querySelector('.statblock')?.textContent || document.querySelector('#renderer')?.textContent || '';
       const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
-      const hasAdvBadge = renderedHtml.includes('dnd-adv-pill') || renderedHtml.includes('dnd-badge-adv');
-      const hasDisadvBadge = renderedHtml.includes('dnd-disadv-pill') || renderedHtml.includes('dnd-badge-disadv');
+      const hasAdvBadge = !!document.querySelector('.statblock .dnd-adv');
+      const hasDisadvBadge = !!document.querySelector('.statblock .dnd-disadv');
       const hasCharmCond = renderedText.includes('against charm');
       const hasToolsLine = renderedText.includes("Thieves' Tools") && renderedText.includes('locks only');
       const hasTraversalDifficult = renderedText.includes('ignores difficult terrain');
@@ -1175,7 +1175,8 @@ async function runFuzz() {
       const renderedHtml = document.querySelector('.statblock')?.innerHTML || document.querySelector('#renderer')?.innerHTML || '';
 
       // Check badge placement to the right of numerical bonus (pill wrapping or badge)
-      const hasRightAdvBadge = renderedHtml.includes('Perception') && (renderedHtml.includes('dnd-adv-pill') || renderedHtml.includes('dnd-badge-adv'));
+      const searchAdvantage = document.querySelector('.statblock .cascade-skill-search .dnd-check .dnd-adv');
+      const hasRightAdvBadge = !!searchAdvantage && searchAdvantage.textContent.includes('▲▲');
 
       // Check passive Perception reflects Advantage (+5 bonus over base passive)
       const passivePerceptionVal = monster.computedPassivePerception;
@@ -1654,20 +1655,21 @@ async function runFuzz() {
         bloodiedBadgeText.includes('Final') &&
         bloodiedBadgeText.includes('[Bloodied]');
       const hasSingleBloodiedTag = statblock?.querySelectorAll('.dnd-hp-cascade-row .bloodied-tag').length === 1;
+      const hasNoRedundantSkillsRow = ![...statblock.querySelectorAll('.dnd-cellular-row .dnd-cascade-title')].some((node) => node.textContent.trim() === 'Skills');
       const hasConsolidatedScopes = renderedText.includes('Study') &&
         renderedText.includes('Influence') &&
         renderedText.includes('Search') &&
         renderedText.includes('Hide') &&
-        renderedText.includes('Skills') &&
+        !renderedText.includes('Skills') &&
         renderedText.includes('Tools') &&
         renderedText.includes('Sleight of Hand') &&
-        renderedText.includes("Poisoner's Kit");
+        renderedText.includes("Poisoner's Kit") && hasNoRedundantSkillsRow;
       console.log('Step 25 scope breakdown:', {
         hasStudy: renderedText.includes('Study'),
         hasInfluence: renderedText.includes('Influence'),
         hasSearch: renderedText.includes('Search'),
         hasHide: renderedText.includes('Hide'),
-        hasSkills: renderedText.includes('Skills'),
+        hasNoRedundantSkillsRow,
         hasTools: renderedText.includes('Tools'),
         hasSleight: renderedText.includes('Sleight of Hand'),
         hasPoisoner: renderedText.includes("Poisoner's Kit"),
@@ -1688,7 +1690,7 @@ async function runFuzz() {
           hasInfluence: renderedText.includes('Influence'),
           hasSearch: renderedText.includes('Search'),
           hasHide: renderedText.includes('Hide'),
-          hasSkills: renderedText.includes('Skills'),
+          hasNoRedundantSkillsRow,
           hasTools: renderedText.includes('Tools'),
           hasSleight: renderedText.includes('Sleight of Hand'),
           hasPoisoner: renderedText.includes("Poisoner's Kit"),
@@ -2251,7 +2253,7 @@ async function runFuzz() {
       const isStudioAtTop = !!studioEl;
 
       return {
-        success: isAutoProficient && !hasRedundantPreamble && hasCompoundAction && isStudioAtTop,
+        success: isAutoProficient && !hasRedundantPreamble && hasSpellTags && hasCompoundAction && isStudioAtTop,
         isAutoProficient,
         hasRedundantPreamble,
         hasSpellTags,

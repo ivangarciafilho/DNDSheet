@@ -552,7 +552,7 @@
             <span v-if="spell.cadence" class="spell-cadence-badge">{{ spell.cadence }}</span>
           </div>
         </div>
-        <div v-if="sanitizedClassSpellcastingPreamble" class="sb-body" v-html="sanitizedClassSpellcastingPreamble"></div>
+        <div v-if="monster.spellcasting?.useCustomClassPreamble && sanitizedClassSpellcastingPreamble" class="sb-body" v-html="sanitizedClassSpellcastingPreamble"></div>
       </div>
     </div>
     <div

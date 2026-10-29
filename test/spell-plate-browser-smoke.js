@@ -182,7 +182,7 @@ try {
     assert.match(check.text, /Twinned Spell: Increase the spell’s effective level by one\./)
     assert.match(check.text, /Cost 2 SP/)
     assert.match(check.text, /Cost 1 SP/)
-    assert.doesNotMatch(check.text, /Daily|\bx points\b|Level3|\(\(V, S/)
+    assert.doesNotMatch(check.text, /Daily|\bx points\b|Level3|\(\(V, S|is a 9th-level spellcaster|has the following Wizard spells prepared/i)
     assert.ok(check.spellTags.some((tag) => tag.text === '(V, S, M)'))
     assert.ok(check.spellTags.every((tag) => ['none', 'normal'].includes(tag.before) && ['none', 'normal'].includes(tag.after)))
     assert.ok(check.colors?.background && check.colors.background !== 'rgba(0, 0, 0, 0)')
