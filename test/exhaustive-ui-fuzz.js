@@ -2281,18 +2281,64 @@ async function runFuzz() {
         text.includes('On Hit: 5 (1d10) Radiant damage.') &&
         text.includes('The target is surrounded by a radiant flare.');
 
+      // A7: templates use structured A6 fields and replacing authored content is cancellable.
+      const soulAction = monsterStore.actions.find(action => action.id === 'a6-soul-barrage');
+      const originalId = soulAction?.id;
+      const originalDescription = soulAction?.description;
+      const originalRecharge = soulAction?.recharge;
+      const templateButton = document.querySelector('[data-action-editor-id="a6-soul-barrage"]');
+      templateButton?.click();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const javelinOption = document.querySelector('[data-action-template="holy-javelin"]');
+      javelinOption?.click();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const cancelButton = [...(document.querySelector('.q-dialog')?.querySelectorAll('button') || [])]
+        .find(button => button.textContent.includes('Keep current action'));
+      cancelButton?.click();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      const templateCancelPreserves = monsterStore.actions.find(action => action.id === originalId)?.description === originalDescription;
+
+      const templateButtonAfterCancel = document.querySelector('[data-action-editor-id="a6-soul-barrage"]');
+      templateButtonAfterCancel?.click();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      document.querySelector('[data-action-template="holy-javelin"]')?.click();
+      await new Promise(resolve => setTimeout(resolve, 100));
+      [...(document.querySelector('.q-dialog')?.querySelectorAll('button') || [])]
+        .find(button => button.textContent.includes('Apply template'))?.click();
+      await new Promise(resolve => setTimeout(resolve, 400));
+      const appliedAction = monsterStore.actions.find(action => action.id === originalId);
+      const templateApplied = appliedAction?.name === 'Holy Javelin' &&
+        appliedAction?.attackReach === 'ranged' &&
+        appliedAction?.targeting?.range?.distance === 120 &&
+        appliedAction?.bonusAction === false &&
+        appliedAction?.id === originalId &&
+        appliedAction?.recharge === originalRecharge &&
+        !document.querySelector('.q-dialog');
+      const templateAppliedDetails = appliedAction ? {
+        name: appliedAction.name,
+        attackReach: appliedAction.attackReach,
+        distance: appliedAction.targeting?.range?.distance,
+        bonusAction: appliedAction.bonusAction,
+        id: appliedAction.id,
+        recharge: appliedAction.recharge,
+        dialogStillOpen: !!document.querySelector('.q-dialog'),
+      } : null;
+
       // A4 Layer Studio at top check
       const studioEl = document.getElementById('a4-layer-studio-expansion');
       const isStudioAtTop = !!studioEl;
 
       return {
-        success: isAutoProficient && !hasRedundantPreamble && hasSpellTags && hasCompoundAction && hasStructuredAction && isStudioAtTop,
+        success: isAutoProficient && !hasRedundantPreamble && hasSpellTags && hasCompoundAction && hasStructuredAction && isStudioAtTop && templateCancelPreserves && templateApplied,
         isAutoProficient,
         hasRedundantPreamble,
         hasSpellTags,
         hasCompoundAction,
         hasStructuredAction,
-        isStudioAtTop
+        isStudioAtTop,
+        templateCancelPreserves,
+        templateApplied,
+        templateAppliedDetails
       };
     }
   `);

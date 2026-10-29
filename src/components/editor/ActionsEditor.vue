@@ -201,48 +201,38 @@
 
           <!-- Non-collapsing Direct Parameters Matrix -->
           <div class="q-my-xs q-pa-xs rounded-borders bg-grey-10" style="border: 1px solid rgba(255, 255, 255, 0.08);">
-            <!-- Presets & Action Composer Helper Strip -->
-            <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
-              <div class="row items-center q-gutter-x-xs">
-                <span class="text-caption text-weight-bold text-amber-3 flex items-center">
-                  <q-icon name="auto_fix_normal" class="q-mr-xs" size="14px" />
-                  Presets:
-                </span>
-                <q-btn dense flat size="xs" color="amber-4" label="Veil Of Radiance" no-caps @click="applyActionPreset(item, 'veil_of_radiance')" />
-                <q-btn dense flat size="xs" color="cyan-4" label="Angelic Halo" no-caps @click="applyActionPreset(item, 'angelic_halo')" />
-                <q-btn dense flat size="xs" color="yellow-4" label="Holy Javelin" no-caps @click="applyActionPreset(item, 'holy_javelin')" />
-              </div>
-
-              <!-- Quick Composer Dropdown -->
-              <div class="row items-center q-gutter-x-xs">
-                <q-btn-dropdown
-                  dense
-                  flat
-                  size="xs"
-                  color="teal-3"
-                  icon="mdi-lightning-bolt"
-                  label="Quick Attack Composer"
-                  no-caps
-                >
-                  <q-list dense class="bg-grey-9 text-white">
-                    <q-item clickable @click="injectComposedAttack(item, 'melee_weapon')">
-                      <q-item-section>Melee Weapon Attack (5 ft., 2d6 + STR)</q-item-section>
+            <!-- Reusable templates use the same structured fields read by the A6 renderer. -->
+            <div v-if="item.rawAction" class="row items-center justify-end q-mb-xs">
+              <q-btn-dropdown
+                :data-action-editor-id="item.id"
+                dense
+                flat
+                size="sm"
+                color="teal-3"
+                icon="auto_fix_normal"
+                label="Apply template"
+                no-caps
+              >
+                <q-list dense class="bg-grey-9 text-white" style="min-width: 280px; max-width: min(92vw, 420px);">
+                  <template v-for="group in actionTemplateGroups" :key="group.name">
+                    <q-item-label header class="text-amber-3">{{ group.name }}</q-item-label>
+                    <q-item
+                      v-for="template in group.templates"
+                      :key="template.id"
+                      v-close-popup
+                      :data-action-template="template.id"
+                      clickable
+                      @click="confirmApplyActionTemplate(item, template)"
+                    >
+                      <q-item-section>
+                        <q-item-label>{{ template.name }}</q-item-label>
+                        <q-item-label caption>{{ template.summary }}</q-item-label>
+                      </q-item-section>
                     </q-item>
-                    <q-item clickable @click="injectComposedAttack(item, 'ranged_weapon')">
-                      <q-item-section>Ranged Weapon Attack (80/320 ft., 1d8 + DEX)</q-item-section>
-                    </q-item>
-                    <q-item clickable @click="injectComposedAttack(item, 'melee_spell')">
-                      <q-item-section>Melee Spell Attack (reach 5 ft., 2d10 force)</q-item-section>
-                    </q-item>
-                    <q-item clickable @click="injectComposedAttack(item, 'ranged_spell')">
-                      <q-item-section>Ranged Spell Attack (120 ft., 1d10 + CHA fire)</q-item-section>
-                    </q-item>
-                    <q-item clickable @click="injectComposedAttack(item, 'area_save')">
-                      <q-item-section>Area Saving Throw (20-ft sphere, DC CON, half on save)</q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-              </div>
+                  </template>
+                </q-list>
+              </q-btn-dropdown>
+              <q-tooltip>Apply a reusable structured action. Existing action content is shown for confirmation before replacement.</q-tooltip>
             </div>
 
             <!-- Parameters Grid: Clean, 2-Row Spacious Layout with Generous Negative Space -->
@@ -432,6 +422,8 @@ import { validateNumber } from './numberInput'
 import SwapButtons from './widgets/SwapButtons.vue'
 import { useStats } from 'src/data/STAT'
 import { v4 as uuidv4 } from 'uuid'
+import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
+import type { ActionTemplate } from 'src/core/domain/action-templates'
 
 export interface UnifiedEntry {
   id: string
@@ -491,6 +483,16 @@ export default defineComponent({
       'Self', 'Self (creatures 20ft of you)', 'creature 120ft of you, which you can see',
       'Up to 3 creatures within 30ft of you', 'All creatures in a 30-foot cone', 'All creatures in a 20-foot-radius sphere'
     ]
+
+    const actionTemplateGroups = computed(() => {
+      const groups = new Map<string, ActionTemplate[]>()
+      for (const template of ACTION_TEMPLATES) {
+        const group = groups.get(template.category) ?? []
+        group.push(template)
+        groups.set(template.category, group)
+      }
+      return [...groups].map(([name, templates]) => ({ name, templates }))
+    })
 
     // Unified List Aggregator
     const allEntries = computed<UnifiedEntry[]>(() => {
@@ -835,62 +837,24 @@ export default defineComponent({
       return 0
     }
 
-    const applyActionPreset = (item: UnifiedEntry, presetKey: string) => {
-      if (!item.rawAction) return
+    const confirmApplyActionTemplate = (item: UnifiedEntry, template: ActionTemplate) => {
       const action = item.rawAction
-      if (presetKey === 'veil_of_radiance') {
-        action.name = 'Veil Of Radiance'
-        action.school = 'Abjuration'
-        action.spellLevel = 'None'
-        action.components = ['V', 'S']
-        action.range = 'Self (creatures 20ft of you) across Material and Ethereal Plane'
-        action.stat = 'CHA'
-        action.actionType = 'save_ability'
-        action.recharge = '4–6'
-        action.description = 'The creature radiates an ethereal protective luminescence. Hostile creatures within the area must succeed on a Charisma saving throw or take radiant damage and become phased.'
-      } else if (presetKey === 'angelic_halo') {
-        action.name = 'Angelic Halo'
-        action.school = 'Abjuration'
-        action.spellLevel = '2nd Level'
-        action.components = ['V', 'C']
-        action.duration = '1 minute'
-        action.range = 'Self (creatures 20ft of you)'
-        action.stat = 'none'
-        action.actionType = 'standard'
-        action.description = 'Sheds bright daylight in a 20-foot radius. Any magical darkness within the area created by spells of 2nd level or lower is suppressed.'
-      } else if (presetKey === 'holy_javelin') {
-        action.name = 'Holy Javelin'
-        action.school = 'Evocation'
-        action.spellLevel = '2nd Level'
-        action.components = ['V', 'S']
-        action.range = 'creature 120ft of you, which you can see'
-        action.stat = 'none'
-        action.actionType = 'spell_attack'
-        action.attackBonus = 9
-        action.description = 'On Hit: 2d10 radiant damage and the target sheds dim light until the start of its next turn.'
-      }
-      item.name = action.name
-      item.description = action.description
-      item.recharge = action.recharge
-      autoUpdateCr(action.description, action.crAnnotation, action)
-    }
-
-    const injectComposedAttack = (item: UnifiedEntry, presetType: string) => {
-      let text = ''
-      if (presetType === 'melee_weapon') {
-        text = 'Melee Weapon Attack: {A:STR} to hit, reach 5 ft., one target. Hit: {2d6 + STR_MOD} slashing damage.'
-      } else if (presetType === 'ranged_weapon') {
-        text = 'Ranged Weapon Attack: {A:DEX} to hit, range 80/320 ft., one target. Hit: {1d8 + DEX_MOD} piercing damage.'
-      } else if (presetType === 'melee_spell') {
-        text = 'Melee Spell Attack: {spellcasting.attack} to hit, reach 5 ft., one target. Hit: {2d10} force damage.'
-      } else if (presetType === 'ranged_spell') {
-        text = 'Ranged Spell Attack: {spellcasting.attack} to hit, range 120 ft., one target. Hit: {1d10 + CHA_MOD} fire damage.'
-      } else if (presetType === 'area_save') {
-        text = 'Each creature in a 20-foot-radius sphere must make a {DC:CON} saving throw, taking {4d10} radiant damage on a failed save, or half as much damage on a successful one.'
-      }
-      const currentDesc = (item.description || '').trim()
-      const updated = currentDesc ? `${currentDesc}\n${text}` : text
-      updateItemDescription(item, updated)
+      if (!action) return
+      $q.dialog({
+        title: 'Replace action contents?',
+        message: `Replace “${item.name}” with “${template.name}”? This replaces its name, mechanics, targeting, outcomes, and description. Role, uses, recharge, phase, and CR settings are kept.`,
+        ok: { label: 'Apply template', color: 'primary' },
+        cancel: { label: 'Keep current action', flat: true },
+        persistent: true,
+      }).onOk(() => {
+        const applied = applyActionTemplate(action, template.id)
+        Object.assign(action, applied)
+        item.name = applied.name
+        item.description = applied.description
+        item.recharge = applied.recharge
+        autoUpdateCr(applied.description, applied.crAnnotation, applied)
+        $q.notify({ message: `${template.name} applied`, type: 'positive' })
+      })
     }
 
     const addTemplate = (target: MonsterAction) => {
@@ -918,6 +882,7 @@ export default defineComponent({
       spellLevelOptions,
       durationPresets,
       targetScopePresets,
+      actionTemplateGroups,
       macroChips,
       insertMacro,
       addNewEntry,
@@ -932,8 +897,7 @@ export default defineComponent({
       getStoreCollectionField,
       getItemStoreIndex,
       saveThrowValueForAction,
-      applyActionPreset,
-      injectComposedAttack,
+      confirmApplyActionTemplate,
       addTemplate,
       statOptionsShort,
       autoUpdateCr,
