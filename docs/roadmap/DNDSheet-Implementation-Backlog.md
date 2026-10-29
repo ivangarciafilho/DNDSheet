@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 136 · 2026-10-29 · A6 model/render grammar shipped as `rc-2.4.3-build-136-a6` |
-| **Code HEAD** | `71a8c21` A6 · `rc-2.4.3-build-136-a6` on `statblock-overhaul` · prior `rc-2.4.3-build-135-a5` remains unchanged · core 124/124, production build, exhaustive UI 33/33 steps and zero runtime exceptions |
-| **Progress** | **7 / 28 loops shipped** · **60 / 192 tasks done** (31.25 %) · **0 active** · **132 pending** |
-| **Now** | A6 adds optional action targeting/outcome fields, a pure conservative grammar, modern plate projection and opt-in 2024-style Markdown/plain-text export. Legacy prose stays the default. No template monster data was rewritten. |
-| **Next** | Arm and begin **A7 · Composer chain and templates** per Handoffs §6.5; preserve A6’s optional model and use its field-to-plate order as the chain contract |
+| **Version** | v2.4.3 build 138 · 2026-10-29 · A7 template catalog + deep isolation · `rc-2.4.3-build-138-a7-template-isolation` |
+| **Code HEAD** | `761b41a` A7 template isolation · build 137 (`df95179`) and builds 136/135/134 remain preserved · core 130/130, production build succeeds, exhaustive UI 33 steps and zero runtime exceptions |
+| **Progress** | **7 / 28 loops shipped** · **64 / 193 tasks done** (33.16 %) · **0 active** · **129 pending** |
+| **Now** | A7 is in progress. Build 138 adds deep isolation so mutable nested template data is copied per action; replacement confirmation preserves role, uses, recharge, phase, CR policy, and ID. The chip chain and role-parity preview remain pending. |
+| **Next** | Continue A7 with role descriptors and chain cells (A7.1–A7.4); do not begin A8 consolidation until the chain and A7 close criteria are proven |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 · A8 | 10 / 28 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ◐ · A8 | 14 / 29 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 28 | ☐ |
@@ -49,14 +49,14 @@
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 146 tasks · Track B 46) | **60 / 192 complete · 0 active · 132 pending** | **31.25 % complete · 68.75 % remaining** |
+| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **64 / 193 complete · 0 active · 129 pending** | **33.16 % complete · 66.84 % remaining** |
 
 ```mermaid
 pie showData
   title Loops by state
   "Shipped" : 7
-  "In progress" : 0
-  "Pending Track A" : 12
+  "In progress" : 1
+  "Pending Track A" : 10
   "Pending Track B" : 10
 ```
 
@@ -67,7 +67,7 @@ pie showData
 | A4 | DEF-01, DEF-02, DEF-03 (data), DEF-04, DEF-15, DEF-16, DEF-17 | BS-04, BS-05, BS-08, BS-17, BS-18 |
 | A5 | — | BS-12, BS-14, BS-19, BS-20 |
 | A6 | DEF-05 | BS-06, BS-09, BS-10, BS-22, BS-23 |
-| A7 | DEF-12 | — |
+| A7 | DEF-12 | BS-39 identified; design decision remains open |
 | A8 | DEF-08 | BS-26, BS-27 |
 | A9 | DEF-09 | BS-06, BS-16, BS-24, BS-25 |
 | A10 | — | BS-21, BS-28 |
@@ -95,6 +95,8 @@ pie showData
 | 2026-10-29 | `f35cd6d` | A4 | Class and innate spellcasting plates use shared visual grammar, edition-aware metamagic and cadence catalogs | 111 core tests; build; focused browser smoke across 5 themes |
 | 2026-10-29 | `8487335` | A5 | AC/HP/Speed and related rows share the plate grammar; recharge help is accurate; A4 printing no longer emits a blank second page | 115 core tests; production build 135; focused 12-theme contrast/screenshots; 5-theme spell smoke; 33-scenario full UI; one-page A4 PDF |
 | 2026-10-29 | `71a8c21` | A6 | Optional action targeting/outcome data, conservative inference, modern plate projection and opt-in 2024-style text export; sample monster data unchanged | Core 124/124; build 136; exhaustive UI 33/33 steps; 0 runtime exceptions |
+| 2026-10-29 | `df95179` | A7 · partial build 137 | Added 9 catalog-backed action templates, grouped picker, explicit replacement confirmation, cancel/apply semantics and removed duplicate hard-coded preset/composer routes; configured sample data unchanged | Core 129/129; production build; exhaustive UI 33/33 including Step 32 cancel/apply; 0 runtime exceptions; focused lint 0 errors |
+| 2026-10-29 | `761b41a` | A7 · partial build 138 | Deep-cloned nested template values per application; edits to one action cannot mutate the shared catalog or another action | Core 130/130 including catalog isolation regression; production build; exhaustive UI 33/33; 0 runtime exceptions |
 | 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
 | 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
 
@@ -115,13 +117,13 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A6 shipped in build 136; optional structured action data now drives the modern plate and 2024-style text exports | **A7** Composer chain and templates | A8…A17 (R2–R6), then Track B (R7–R10) |
+| A7 partial candidate build 138: reusable template catalog/picker and data isolation are usable; chip chain and preview parity remain pending | **A7.1–A7.4** role-aware composer chain and preview | A8…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
 ## 4. Track A — Statblock & Authoring Overhaul
 
-📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A6 are done, and A7 is next.**
+📍 *Backlog › 4 Track A* — **Eighteen loops; A0–A6 are done and A7 is actively shipping in bounded slices.**
 
 ### R1 · Reads right
 
@@ -277,25 +279,38 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A7 · Composer chain and templates ☐
+#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-138-a7-template-isolation` (partial)
 
 > Editing an ability is clicking chips in the same order the GM reads them.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R2 | AU-03 | A6 | 3–5 d | 5 files · +1 100 / −400 |
+| R2 | AU-03 | A6 | 3–5 d | Current slice from build 136: 4 implementation/test files, +425/−100; full chain remains forecast |
 
-- [ ] **A7.0** Pre-flight: read `ActionsEditor.vue` end to end; table of every current field → future chain cell · M
+- [x] **A7.0** Pre-flight: map every current field to its future chain home and identify preservation boundaries · M · *proof: audit notes below + implementation diff*
 - [ ] **A7.1** `ROLE_CHAINS` descriptors (data) per role · S
 - [ ] **A7.2** `components/editor/composer/ChainCell.vue`: plate-like display; editors by kind (CatalogSelect-lite, number/formula input, text) · L
 - [ ] **A7.3** `components/editor/composer/ComposerChain.vue`: head · mechanics · scope · outcome rows; Tab/Enter/Esc keyboard model · L
 - [ ] **A7.4** Live preview under the chain via `plateHtml` · S
-- [ ] **A7.5** `ACTION_TEMPLATES` catalog (presets + quick composer recipes, authored casing) and a Templates picker · M
-- [ ] **A7.6** Remove the "Quick Attack Composer" strip and preset buttons (DEF-12) · S
-- [ ] **A7.7** Tests: chain order = plate order per role; template application · M
+- [x] **A7.5** `ACTION_TEMPLATES` catalog and grouped picker: 9 structured templates, authored casing, template-owned stale-field clearing, stable ID/role/use/recharge/stage/custom-preamble/CR preservation · M · *proof: `test/core/ActionTemplates.test.ts`; browser Step 32*
+- [x] **A7.6** Remove the "Quick Attack Composer" strip and hard-coded preset buttons (DEF-12); require explicit confirmation before replacing an existing action · S · *proof: browser Step 32 cancel + apply paths*
+- [x] **A7.7a** Catalog unit + browser tests: known/unknown template behavior, reset semantics, original-object immutability, nested catalog isolation, preservation boundaries, replacement cancel/apply · M · *proof: core 130/130; exhaustive UI 33/33; 0 runtime exceptions*
+- [ ] **A7.7b** Chain test matrix: role descriptor order equals plate order; edit-to-preview and preview-to-statblock parity; keyboard and narrow viewport behavior · M
 - [ ] **A7.8** Browser + close: commit `actions studio edits abilities as a chain of plate cells`, docs ritual · S
 
-**Done when:** CMP-009…011 proven; DEF-12 closed.
+**A7.0 field ownership map (observed in `ActionsEditor.vue`):**
+
+| Existing editor data | Future chain / role home | Template behavior in builds 137–138 |
+|---|---|---|
+| action identity, role arrays, bonus action, legendary/mythic membership and cost | role/header adapter; storage collections stay unchanged | preserved |
+| name, description, action type, source/reach/attack bonus, save/stat/DC, target count/kind/qualifier/range/area/planes, outcomes/riders, damage effects | head, mechanics, scope, outcomes, prose cells | replaced from catalog; fields owned by a template but unspecified are cleared |
+| school, tier, components, duration, delivery | head / metadata cells | replaced from catalog |
+| limited use, recharge, stage pool, custom preamble, CR annotation | role/header or policy controls | preserved; no template silently changes economy or CR policy |
+| existing UI-only prose/presets and calculated CR synchronization | prose and template workflow; CR recomputed after confirmed application | replaced only after confirmation; CR annotation retained |
+
+**A7.7a verification scope:** known template paths, unknown IDs, stale-field clearing, input immutability, nested template/catalog isolation, and shared data separation are unit tested. Browser evidence covers replacement cancel/apply. Template range strings and structured range data agree; the ranged weapon template is explicitly 80 ft. because the current model cannot represent a long-range pair. Do not describe it as 80/320 until the model and renderer support both values. No persisted schema or configured sample-data edits were made.
+
+**Done when:** CMP-009…011 proven; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 137 is a deliberate partial slice and does not close A7.
 
 ---
 

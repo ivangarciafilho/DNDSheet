@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 136** · 2026-10-29 · A6 shipped as `rc-2.4.3-build-136-a6`; build 135 and build 134 tags remain unchanged; formula-trace provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · A6 release commit/tag is recorded in the backlog timeline; immutable earlier candidates: `rc-2.4.3-build-135-a5` and `rc-2.4.3-build-134-pre-a5-closeout` |
+| **Version** | **v2.4.3 build 138** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-138-a7-template-isolation`; build 137/136/135/134 remain preserved; formula-trace provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 138 code commit `761b41a`; immutable earlier candidates: `rc-2.4.3-build-137-a7-templates`, `rc-2.4.3-build-136-a6`, `rc-2.4.3-build-135-a5`, `rc-2.4.3-build-134-pre-a5-closeout` |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped** (A0–A6) · **Track B** — Product Foundations: **0 / 10**, specified |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -1456,7 +1456,7 @@ sequenceDiagram
 | SB-05 | Row grammar for the top block + head tooltips | 📖 💡 | A5 | ☐ |
 | AU-01 | Ability composer model and render grammar | ✍ Composes like sentences | A6 | ✅ build 136 |
 | AU-02 | NumericBinding fields (reference pickers + custom formula) | 🔗 | A9 · A11 | ☐ |
-| AU-03 | Actions Studio: composer chain and one Actions module | ✍ | A7 · A8 | ☐ |
+| AU-03 | Actions Studio: composer chain and one Actions module | ✍ | A7 · A8 | ◐ A7 in progress |
 | AU-04 | Inline intellisense and macro menus | 💡 | A10 | ☐ |
 | AU-05 | Spellcasting authoring accuracy | ✍ 📚 | A12 | ☐ |
 | UX-01 | CatalogSelect — one dropdown anatomy | 💡 | A13 → A14–A16 | ☐ |
@@ -1896,18 +1896,22 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 > **One studio for every ability role; each entry is edited as a chain of chips that looks exactly like the plate it will become.**
 
-**Status** ☐ pending · **Loops** A7 (chain + templates) · A8 (retire duplicate panels) · **Requirements** `CMP-009…015`, `UX-006` · fixes DEF-08, DEF-12
+**Status** ◐ partial — A7 active · **Loops** A7 (chain + templates) · A8 (retire duplicate panels) · **Requirements** `CMP-009…015`, `UX-006` · fixes DEF-08, DEF-12
 
 **🎯 Value** — The editor shrinks from 21 to ≈ 13 panels; composing an ability is clicking chips in the same order the GM reads them.
 
 **🔎 Evidence** — `ActionsEditor.vue` (944 LOC) already merges traits, actions, bonus actions, reactions, legendary, mythic and lair entries into `UnifiedEntry` rows with category tabs, yet `MonsterBuilder.vue` still mounts `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor` and `VillainActionsEditor` (DEF-08). Presets are three hard-coded buttons with hand-cased names (`Veil Of Radiance`, DEF-12) next to a "Quick Attack Composer" dropdown.
 
-**🧩 Concept** — **The chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. Under the chain, a **live plate preview** rendered by the same `plateHtml`. **Roles** are variants of one entry editor: each role declares which chips it shows and its section header (legendary pool and cost, mythic trigger, lair initiative, reaction trigger).
+**🧩 Concept** — **The chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. Under the chain, a **live plate preview** rendered by the same `plateHtml`. **Roles** are variants of one entry editor: each role declares which chips it shows and its section header (legendary pool and cost, mythic trigger, lair initiative, reaction trigger). Build 137–138 implements the template catalog/application layer only; it does not implement this chain.
 
 **🛠 Techniques**
 - `components/editor/composer/ComposerChain.vue` + `ChainCell.vue`; each cell opens the right editor: `CatalogSelect` (enumerations), `FormulaField` (numbers), text with completion (prose, qualifier, rider).
 - Role descriptors (data): `ROLE_CHAINS: Record<AbilityRole, ChainCellSpec[]>` and `ROLE_HEADERS` (pool counters, preambles).
-- Templates move to a catalog `ACTION_TEMPLATES` (grouped: Weapon attacks · Spell attacks · Saves & areas · Auras · Utility), picked from a CatalogSelect; names keep authored casing (DEF-12).
+- Templates move to a catalog `ACTION_TEMPLATES` (grouped: Weapon attacks · Spell attacks · Saves & areas · Auras & utility); names keep authored casing (DEF-12). Build 137 uses a grouped Quasar dropdown; a searchable CatalogSelect remains an alternative only if catalog growth makes menu scanning costly, and should reuse the same catalog rather than create another data source.
+- Build 137 establishes the catalog contract in `core/domain/action-templates.ts`: each stable `id` and user-facing name/category/summary maps to a partial `MonsterAction` patch. The grouped picker is a bounded first slice; it does not claim the chain or per-role variants are implemented.
+- Applying a template is an explicit destructive edit: show a confirmation naming the selected template and the field groups replaced; cancel leaves the original object untouched. Confirm replaces the template-owned content fields (including clearing stale optional values omitted by that template) while preserving `id`, storage role/membership, bonus-action flag, limited uses, recharge, stage pool, custom preamble, and CR annotation. Recompute the derived CR display after apply; never mutate the configured sample data as part of setup or release verification.
+- A template patch is application-layer data, not a new persisted schema or migration. The apply function is pure, returns the original action for unknown IDs, and must not mutate its input. Unit tests own these semantics; the browser test owns the real confirmation/cancel and store-update path.
+- Range currently stores one `targeting.range.distance`. Therefore the ranged-weapon template states 80 ft. only; it must not claim the 80/320 ft. pair. A future long-range feature needs a deliberate model/projection/export decision and round-trip coverage before the pair appears in UI or output.
 - A8 capability matrix decides when a legacy panel can be removed: every field it edits must have a studio home (table below); storage arrays (`traits`, `actions`, `reactions`, `legendaryActions`, `mythicActions`, `lairActions`, `attacks`, `multiattacks`) **do not change** (adapter, no schema bump — D-10).
 - Duplicate / reorder / delete keep IDs stable; multiattack chips reference entries by ID and show a ⚠ when the target is gone.
 
@@ -1951,11 +1955,11 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 **🧬 Model** — §6.5, §6.7 (`ComposerChain`). **States** — §8.3. **Sequence** — §8.6.
 
-**🧪 Acceptance** — chain order equals plate order for every role; editing any chip updates the preview and stat block in one render; every row of the capability matrix is reachable in the studio (checklist test + e2e); builder mounts ≤ 14 panels; existing saves load and render byte-identical plates (fixture diff) before/after A8; multiattack chips survive reorder; templates insert with authored casing; keyboard: Tab moves across chips, Enter opens, Esc closes.
+**🧪 Acceptance** — chain order equals plate order for every role; editing any chip updates the preview and stat block in one render; every row of the capability matrix is reachable in the studio (checklist test + e2e); builder mounts ≤ 14 panels; existing saves load and render byte-identical plates (fixture diff) before/after A8; multiattack chips survive reorder; templates insert with authored casing; keyboard: Tab moves across chips, Enter opens, Esc closes. Template contract: cancel is a no-op; confirmation replaces only the disclosed content fields, clears stale template-owned optionals, preserves identity/role/economy/use/recharge/stage/custom-preamble/CR policy, gives each applied action independent nested data, and updates the rendered entry; unknown template IDs do not mutate. Builds 137–138 prove this template slice only. The catalog must never imply 80/320 ft. while the range model represents a single value.
 
-**📏 Impact (forecast)** — A7: 5 files · +1 100 / −400 · 3–5 days. A8: ≈ 12 files · +650 / −1 400 · 3–5 days. Risk medium (broad UI surface; mitigated by capability matrix and fixture diffs).
+**📏 Impact (forecast, reconciled after first slice)** — Builds 137–138 touched 4 implementation/test files from build 136 (+425/−100 lines; excludes docs and generated build output); they remove two competing authoring controls and add a pure template catalog, confirmation workflow, and deep data isolation. Full A7 remains estimated at ≈5 implementation files plus tests and 3–5 days because chain descriptors, cells, role matrix, preview parity, accessibility/responsive verification, and closeout are pending. A8 remains ≈12 files and 3–5 days. Confidence medium-low until the chain component is measured; avoid treating estimates as commitments.
 
-**🔗 Dependencies** — AU-01 (fields and phrases), AU-02 (numeric cells; plain inputs acceptable until A9), UX-01 (CatalogSelect minimal). **🕳 Blindspots** — BS-26 villain actions home; BS-27 CR annotation cards inside the studio (`CrAnnotationCard`) — keep or move to Checks?
+**🔗 Dependencies** — AU-01 (fields and phrases), AU-02 (numeric cells; plain inputs acceptable until A9), UX-01 (CatalogSelect minimal). **🕳 Blindspots** — BS-26 villain actions home; BS-27 CR annotation cards inside the studio (`CrAnnotationCard`) — keep or move to Checks? **BS-39** ranged attacks require both normal and long range in some rules/models; current single-distance data cannot truthfully express a pair (A7/A8 must decide before expanding the ranged template).
 
 ---
 
@@ -2440,16 +2444,16 @@ stateDiagram-v2
 
 ## 11. Delivery map
 
-📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is next, and every loop ships something the owner can see.**
+📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — 7 / 28 loops shipped, 21 loops not started. Of 192 planned backlog tasks, 60 are complete, none are active and 132 are pending (68.75 % remains). A6 adds optional structured action data and shared projections; its browser fixture is transient and no configured sample monster was rewritten. Build 135 remains preserved; build 136 is the new candidate.
+**Progress snapshot · 2026-10-29** — 7 / 28 loops shipped; A7 is in progress; 20 loops are not started. Of 193 tracked backlog tasks, 64 are complete, none are active and 129 are pending (66.84 % remains). A6 adds optional structured action data and shared projections; A7 builds 137–138 add a reusable template catalog/picker, safe replacement flow, and per-application deep isolation. Configured sample monster data remains untouched; the browser fixture is transient. Builds 137, 136, 135 and 134 remain preserved.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 10 / 28 tasks |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 14 / 29 tasks |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -2468,7 +2472,7 @@ stateDiagram-v2
 | A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
 | **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ✅ build 136 |
-| A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ☐ |
+| A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ◐ |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
 | A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ☐ |
 | A10 | Caret intellisense + macro menus | AU-04 | A9 | 3–4 | ☐ |
@@ -2703,6 +2707,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-36 | Headless Chrome available for e2e on the device | Locate binary, version | A17 | ☐ |
 | BS-37 | Screenshot storage policy | Keep out of git; small PNGs only under `docs/evidence/` | A17 | ☐ |
 | BS-38 | Stores holding monster copies (templates, combat) need ids | Inventory | B1 | ☐ |
+| BS-39 | Current range model stores only one distance and cannot represent a normal/long range pair | Decide model, migration/backward compatibility, labels, projection/export behavior; add round-trip tests before claiming paired range | A7/A8 | ☐ |
 
 ### 13.3 Decision log
 
@@ -2724,6 +2729,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | D-14 | Spells as individual cells in level rows; comma list for print fallback | single list cell | Owner grammar; per-spell tips and badges | proposed |
 | D-15 | Track A completes before Track B (pull-forward on request) | interleave | Owner's active specification first | proposed |
 | D-16 | Commits: short lowercase phrases, no AI-attribution trailers | — | Owner rule | standing |
+| D-17 | Applying a template requires confirmation for existing content, preserves identity/role/economy/policy, and deep-clones template-owned values | Silent overwrite; shared nested catalog objects | Prevent data loss and cross-action mutation without changing persisted schema | 2026-10-29 |
 
 ---
 
@@ -3107,5 +3113,7 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.1** | 2026-10-29 | Recorded A4 implementation at `f35cd6d`, measured impact and focused browser/core evidence; corrected spellcasting architecture to domain projections with Vue text bindings; moved A5 to next and recorded full-suite residuals in delivery tracking |
 | **v2.4** | 2026-10-29 | Closed A5 at build 135 (`8487335`): shared row grammar, accessible delegated help, accurate recharge semantics, 12-theme final-state evidence, one-page A4 print; reconciled loop/task progress and preserved both candidate tags; explicitly deferred formula provenance to A9 |
 | **v2.4.3 build 136** | 2026-10-29 | Closed A6: optional structured action model, pure conservative inference/phrase grammar, modern plate integration and opt-in 2024-style Markdown/plain-text export; migration/ingest compatibility retained; build 135 preserved; 124 core tests and 33-step built-app suite pass |
+| **v2.4.3 build 137** | 2026-10-29 | Partial A7 slice: nine catalog-backed action templates, grouped picker, explicit replace/cancel flow, stable identity/economy/policy preservation, old preset/composer controls removed; 129 core tests and 33-step browser suite pass; A7 chain and preview work remain open |
+| **v2.4.3 build 138** | 2026-10-29 | Deep-clone template-owned nested data per application so editing an action cannot mutate the catalog or another action; 130 core tests and 33-step browser suite pass; A7 remains in progress |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 

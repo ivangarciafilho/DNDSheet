@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 136 · 2026-10-29 · A6 closed; build 135 preserved and remains separately evaluable; formula trace belongs to A9 |
-| **State at hand-over** | New candidate `rc-2.4.3-build-136-a6` points to `71a8c21`; prior `rc-2.4.3-build-135-a5` and preserved `rc-2.4.3-build-134-pre-a5-closeout` are unchanged. Roadmap: 60 / 192 tasks complete, 0 active, 132 pending; 7 / 28 loops shipped. Core 124/124, build 136 succeeds, exhaustive UI 33/33 steps with zero runtime exceptions. The transient browser Soul Barrage verifies structured presentation; configured monster/template data remains untouched. |
+| **Version** | v2.4.3 build 138 · 2026-10-29 · A7 template slice shipped; A7 chain and closeout remain open; builds 137/136/135/134 preserved; formula trace belongs to A9 |
+| **State at hand-over** | Current candidate `rc-2.4.3-build-138-a7-template-isolation` points to code commit `761b41a`. Build 137 (`df95179`), build 136 (`71a8c21`), build 135 and build 134 remain unchanged. Roadmap: 64 / 193 tasks complete, 0 active, 129 pending; 7 / 28 loops shipped; A7 is in progress. Core 130/130, production build succeeds, exhaustive browser suite 33/33 and zero runtime exceptions. Transient Soul Barrage proves template cancel/apply and preserved identity/economy; a unit test proves nested template/catalog isolation. Configured monster/template data remains untouched. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 (A4 closeout §6.2; A5 §6.3; A6 §6.4) |
-| **Next loop** | Begin **A7 · Composer chain and templates** using §6.5; keep A8 studio consolidation and A9 formula provenance distinct |
+| **Current loop** | Continue **A7 · Composer chain and templates** from §6.5: catalog/picker and data isolation are complete; role chain descriptors, chain cells, live preview parity, keyboard/responsive proofs, and A7 closeout remain |
 
 ---
 
@@ -466,15 +466,17 @@ Next loop readiness ..... A4 🟢
 | **Release · feature** | R2 · AU-03 (part 1) · fixes DEF-12 |
 | **Entry criteria** | A6 ✅ (fields and phrases exist) |
 | **Read in the spec** | §9 AU-03 (concept, W-05) · §6.7 `ComposerChain` · §8.3 · §4.2 precedence |
-| **Backlog tasks** | A7.0 – A7.8 |
-| **Open first** | `components/editor/ActionsEditor.vue` (944 LOC: category tabs L10–30, presets L204–215, Quick Attack Composer L216–330, description editor L408, `UnifiedEntry` L≈450, `applyActionPreset` L838, `injectComposedAttack` L878) |
-| **Skills** | `superpowers:brainstorming` · `ui-design:interaction-design` · `frontend-design` · `impeccable:impeccable` · `design:ux-copy` · `superpowers:test-driven-development` |
-| **Research** | Keyboard model for chip rows (roving tabindex) — APG "toolbar"/"grid" patterns |
-| **Traps** | Do not lose fields that only the old composer edits (A7.0 table) · keep authored casing in templates · chain cells must not mutate on hover/preview |
-| **Plan** | A7.0 field table → A7.1 role descriptors → A7.2 cell → A7.3 chain → A7.4 preview → A7.5 templates → A7.6 remove strip → A7.7 tests → A7.8 close |
-| **Verify** | chain order equals the rendered plate order for each role (component test) · preview HTML equals stat block plate HTML for the same entry |
-| **Exit** | CMP-009…011 proven; DEF-12 closed |
-| **Next-loop prep** | Capability matrix draft for A8 |
+| **Backlog tasks** | A7.0 – A7.8, with A7.7 split into shipped A7.7a and pending A7.7b |
+| **Completed slice** | A7.0 field inventory; A7.5 catalog/picker; A7.6 retirement of old preset/composer strip; A7.7a template contract and nested-isolation tests. Current candidate `rc-2.4.3-build-138-a7-template-isolation`; prior build 137 remains evaluable. |
+| **Field inventory** | Template-owned: name/description/action type/attack mode/source/bonus/targets/save/stat/range/effects/spell metadata/duration/delivery/targeting/outcomes. Preserved: ID, collection membership/role, bonus-action and legendary/mythic association, uses, recharge, stage pool, custom preamble and CR annotation. Confirmed apply recomputes derived CR display. |
+| **Open first** | `core/domain/action-templates.ts`, `test/core/ActionTemplates.test.ts`, and `ActionsEditor.vue`; then map every remaining field/role into chain descriptors. New picker is grouped `QBtnDropdown`, not a reusable `CatalogSelect`; assess accessibility/keyboard behavior before promoting it as the final catalog control. |
+| **Skills** | `build-web-apps:frontend-app-builder` · `design:accessibility-review` · `design:ux-copy` · `impeccable` · `superpowers:test-driven-development` · `engineering:testing-strategy` |
+| **Research** | Keyboard model for chip rows (roving tabindex), menu/dialog focus return and Escape semantics (APG toolbar/grid/menu patterns); narrow viewport overflow; current range model cannot store a long-range pair (BS-39). |
+| **Traps** | Do not lose fields from the editor inventory; keep authored casing; never auto-replace authored actions; template-owned missing optionals must clear stale values; preview must be pure; preserve arrays/schema; do not claim 80/320 ft. with a single-distance model; no sample fixture mutations. |
+| **Plan** | A7.0 ✅ → A7.1 role descriptors → A7.2 cell → A7.3 chain → A7.4 preview → A7.5 ✅ templates → A7.6 ✅ remove old controls → A7.7a ✅ template tests → A7.7b role/preview/keyboard tests → A7.8 candidate close/docs. |
+| **Verify already passed** | Core 130/130; build 138 succeeds; built-app UI 33/33 with zero runtime exceptions; Step 32 confirms cancel no-op and confirmed apply preserving ID, role/economy/recharge; unit test proves deep clone isolation; focused lint 0 errors (changed files). Existing repository warnings outside this slice remain. |
+| **Remaining proof** | CMP-009/010 (role chain order and exact preview-to-statblock parity), keyboard and narrow viewport behavior, all A7 tests, then close DEF-12 with a loop-level candidate. Template semantics alone do not prove A7 complete. |
+| **Next-loop prep** | Draft A8 capability matrix only after chain model stabilizes; preserve schema and arrays; decide BS-26/27 separately. |
 
 ### 6.6 A8 · One Actions module — 🟡
 
@@ -669,9 +671,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; A6 candidate `rc-2.4.3-build-136-a6` points to `71a8c21`. Evaluation: build 136 at `http://localhost:9100/index.html#/`; preserved build 135 at `http://localhost:9101/index.html#/`. Prior tags `rc-2.4.3-build-135-a5` and `rc-2.4.3-build-134-pre-a5-closeout` remain untouched. Core 124/124, production build 136, exhaustive e2e 33 steps with zero runtime exceptions.
-2. **What exists** — A0–A6 shipped. A6 adds optional structured action fields and shared projection/export grammar. Configured monster data remains unchanged; browser coverage injects transient Soul Barrage because existing sample templates had no structured action fixture.
-3. **What to do next** — begin A7 from §6.5. Map existing Actions Studio fields to chain cells before UI moves; do not start A8 consolidation or A9 binding provenance early and do not claim the overall v2.5 overhaul complete.
+1. **State** — branch `statblock-overhaul`; build 138 candidate `rc-2.4.3-build-138-a7-template-isolation` points to `761b41a` and is the current evaluation build at `http://localhost:9100/index.html#/`; preserved build 137 (`df95179`) is at `http://localhost:9103/index.html#/`, build 136 is at `http://localhost:9102/index.html#/`, and build 135 is at `http://localhost:9101/index.html#/`. Build 137/136/135/134 tags and artifacts are unchanged. Core 130/130, production build succeeds, UI sweep 33/33, zero runtime exceptions. Progress is 64/193 tasks; A7 remains in progress.
+2. **What exists** — A0–A6 shipped. Build 137 adds the pure `ACTION_TEMPLATES` catalog, grouped picker, explicit replacement warning, cancel/apply flow, and template field ownership rules. The temporary Soul Barrage browser fixture is changed only in an isolated test browser; the user's configured monster/sample data is untouched.
+3. **What to do next** — continue A7.1–A7.4 and A7.7b from §6.5/backlog. A7.0 field mapping is documented. First prove the entire chain is role-aware and preview-identical to the statblock, then verify keyboard/focus and narrow widths. Keep the 80/320 ft. range gap visible (BS-39); do not start A8 consolidation or A9 provenance early and do not claim A7/the overall overhaul complete.
 4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 
