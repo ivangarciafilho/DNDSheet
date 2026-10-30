@@ -66,6 +66,7 @@ export function processTokens(
   })
 
   // 1b. Shorthand property tokens: {NAME}, {AC}, {HP}, {PROF}, {PB}, {CANTRIP_TIER}, {TIER}, {STR_MOD}, etc.
+  text = text.replace(/\{LAIR_INITIATIVE\}/gi, () => String(monster.initiativeConfig?.lairInitiative ?? 20))
   text = text.replace(/\{(STR|DEX|CON|INT|WIS|CHA)_MOD\}/gi, (_match, s) => {
     return renderBonus(getStatMod(monster, s))
   })

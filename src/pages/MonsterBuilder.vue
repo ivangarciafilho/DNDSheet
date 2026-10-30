@@ -152,3 +152,23 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+/* A fixed pixel preview must not consume the editor's entire narrow viewport. */
+@media screen and (max-width: 599px) {
+  #splitter, #char-splitter {
+    display: block;
+    overflow: auto;
+  }
+  #splitter :deep(> .q-splitter__panel),
+  #char-splitter :deep(> .q-splitter__panel) {
+    width: 100% !important;
+    height: auto;
+    overflow: visible;
+  }
+  #splitter :deep(> .q-splitter__separator),
+  #char-splitter :deep(> .q-splitter__separator) {
+    display: none;
+  }
+}
+</style>

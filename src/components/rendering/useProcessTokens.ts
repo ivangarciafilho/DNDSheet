@@ -22,6 +22,7 @@ import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
 import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
+import type { LairAction } from 'src/core/domain/types'
 
 export type MonsterContext =
   | MonsterTrait
@@ -1052,6 +1053,13 @@ export function useProcessTokens() {
     return preamble
   }
 
+  const processLairAction = (context: LairAction, monster: ReturnType<typeof useMonsterStore>, web = false): string => {
+    const description = processTokens(context.description, undefined, monster, 'none')
+    return web && editorStore.visualTemplate === 'modern'
+      ? buildPlateEntry(monster, { name: 'Lair Action' }, description)
+      : description
+  }
+
   const processLairActionPreamble = (
     monster: ReturnType<typeof useMonsterStore>
   ) => {
@@ -1220,6 +1228,7 @@ export function useProcessTokens() {
     processMythicActionTrait,
     processMythicActionPreamble,
     processLairActionPreamble,
+    processLairAction,
     sanitizeWebString,
     mdFormatter,
     latexFormatter,

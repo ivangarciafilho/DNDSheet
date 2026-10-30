@@ -2765,8 +2765,13 @@ async function runFuzz() {
     return { ready: true, invalid, unchanged: monster.traits.find(t => t.id === 'a7-trait-proof').limitedUse.count === 2,
       focusBack: document.activeElement?.dataset.chainCell === 'trait-usage' };
   }`)
+  await evalInPage(`() => {
+    const chip = document.querySelector('[data-composer-chain="a7-trait-proof"] [data-chain-cell="trait-usage"]');
+    chip.scrollIntoView({ block: 'center' }); chip.focus();
+  }`)
+  await pause(450)
   await pressKey('Enter')
-  await pause(350)
+  await pause(450)
   const step37Apply = await evalInPage(`async () => {
     const menu = document.querySelector('.chain-editor-menu');
     if (!menu) return { ready: false };
@@ -2857,6 +2862,76 @@ async function runFuzz() {
     step37Responsive?.menuWidth > 0 && step37Responsive?.menuScrollWidth <= step37Responsive.menuWidth + 1 && step37Responsive.menuWidth <= step37Responsive.viewport && step37LegacyCr === true && step37Persistence === true
   console.log('Step 37 result:', JSON.stringify(step37, null, 2))
   if (!step37.success) throw new Error('Step 37 failed: ' + JSON.stringify(step37))
+  console.log('\n--- Step 38: Lair adapter and typed legendary/mythic/lair section context ---')
+  const step38 = await evalInPage(`async () => {
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster = pinia._s.get('monster'); const editor = pinia._s.get('editor');
+    const wait = () => new Promise(resolve => setTimeout(resolve, 200));
+    monster.addLairAction(); const lair = monster.lairActions[monster.lairActions.length - 1];
+    lair.id = 'a7-lair-proof'; lair.description = 'The chamber shakes for {1d6} thunder damage.';
+    monster.initiativeConfig = { ...monster.initiativeConfig, lairInitiative: 20, advantage: true };
+    monster.useCustomLairActionPreamble = false; monster.lairActionPreamble = 'Stored custom prose';
+    monster.addAction(); let action = monster.actions[monster.actions.length - 1]; action.name = 'Header legendary proof';
+    monster.addLegendaryAction(action.id, 2);
+    monster.addAction(); action = monster.actions[monster.actions.length - 1]; action.name = 'Header mythic proof'; monster.addMythicAction(action.id);
+    const legendMembers = JSON.stringify(monster.legendaryActions.actions); const mythicMembers = JSON.stringify(monster.mythicActions.actions);
+    editor.visualTemplate = 'modern'; await wait();
+    const chain = document.querySelector('[data-composer-chain="a7-lair-proof"]');
+    for (let guard=0; guard<4 && chain.closest('.q-expansion-item--collapsed'); guard++) {
+      chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click(); await wait();
+    }
+    if (!chain) return { mounted: false };
+    const readOnly = chain.querySelector('[data-chain-cell="role-label"]')?.tagName === 'SPAN' && !('name' in lair);
+    const description = chain.parentElement.querySelector('.q-editor__content');
+    description.innerHTML = 'The chamber shakes for {2d6} thunder damage.'; description.dispatchEvent(new Event('input', { bubbles: true })); await wait();
+    const proseEdited = lair.description.includes('{2d6}') && lair.crAnnotation.maxDamage === 7;
+    const compare = async (template) => {
+      editor.visualTemplate = template; await wait();
+      const preview = chain.querySelector('[data-composer-preview] .action');
+      const rendered = [...document.querySelectorAll('#render .lair-actions .action.lair')].find(el => el.textContent.includes('The chamber shakes'));
+      return !!preview && !!rendered && preview.innerHTML === rendered.innerHTML;
+    };
+    const modern = await compare('modern'); const classic = await compare('classic'); editor.visualTemplate = 'modern'; await wait();
+    const panel = role => document.querySelector('[data-role-header="'+role+'"]');
+    const openPanel = async role => { panel(role).querySelector('.q-item').click(); await wait(); };
+    const input = async (role, field, value) => { const el=panel(role).querySelector('[data-header-field="'+field+'"] input'); el.value=value; el.dispatchEvent(new Event('input',{bubbles:true})); await wait(); };
+    const button = async (role, label) => { [...panel(role).querySelectorAll('button')].find(el=>el.textContent.trim()===label).click(); await wait(); };
+    const prose = async (role, field, value) => { const el=panel(role).querySelector('[data-header-field="'+field+'"] .q-editor__content'); el.innerHTML=value; el.dispatchEvent(new Event('input',{bubbles:true})); await wait(); };
+    await openPanel('lair'); await input('lair','initiative','-1');
+    const invalid = !!panel('lair').querySelector('[role="alert"]') && [...panel('lair').querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply section settings').disabled;
+    await button('lair','Cancel'); const canceled = monster.initiativeConfig.lairInitiative === 20;
+    await openPanel('lair'); await input('lair','initiative','15'); await button('lair','Apply section settings');
+    const defaultPreamble = document.querySelector('#render .lair-actions .preamble').textContent.includes('initiative count 15') && monster.lairActionPreamble === 'Stored custom prose';
+    await openPanel('lair'); panel('lair').querySelector('[role="checkbox"]').click(); await wait();
+    await prose('lair','preamble','Authored at initiative count 9.'); await button('lair','Apply section settings');
+    await openPanel('lair'); await input('lair','initiative','17'); await button('lair','Apply section settings');
+    const customPreamble = monster.lairActionPreamble === 'Authored at initiative count 9.' && document.querySelector('#render .lair-actions .preamble').textContent.includes('count 9');
+    await openPanel('legendary'); await input('legendary','count','5');
+    if (!monster.legendaryActions.useCustomPreamble) { panel('legendary').querySelector('[role="checkbox"]').click(); await wait(); }
+    await prose('legendary','preamble','Five legendary actions are available.'); await button('legendary','Apply section settings');
+    const legendary = monster.legendaryActions.count === 5 && monster.legendaryActions.customPreamble === 'Five legendary actions are available.' && JSON.stringify(monster.legendaryActions.actions) === legendMembers;
+    await openPanel('mythic'); await input('mythic','triggerName','Eclipse Reborn'); await input('mythic','triggerRecharge','Recharges at Dawn');
+    await prose('mythic','triggerDescription','At 0 hit points, the creature awakens.'); await prose('mythic','preamble','While awakened, it can take these mythic actions.'); await button('mythic','Apply section settings');
+    const mythic = monster.mythicActions.triggerName === 'Eclipse Reborn' && JSON.stringify(monster.mythicActions.actions) === mythicMembers && document.querySelector('#render .traits').textContent.includes('Eclipse Reborn');
+    return { mounted:true, readOnly, proseEdited, modern, classic, invalid, canceled, defaultPreamble, customPreamble, legendary, mythic,
+      tuningPreserved:monster.initiativeConfig.advantage===true };
+  }`)
+  await sendCdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
+  const step38Narrow = await evalInPage(`async () => {
+    const panel=document.querySelector('[data-role-header="lair"]'); panel.querySelector('.q-item').click(); await new Promise(resolve=>setTimeout(resolve,700));
+    const form=panel.querySelector('form'); return { width:form.clientWidth, scrollWidth:form.scrollWidth };
+  }`)
+  await sendCdp('Emulation.clearDeviceMetricsOverride')
+  await sendCdp('Page.reload'); await pause(1200)
+  const step38Persisted = await evalInPage(`() => {
+    const monster=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster');
+    return monster?.initiativeConfig.lairInitiative===17 && monster.useCustomLairActionPreamble===true && monster.lairActionPreamble==='Authored at initiative count 9.' &&
+      monster.legendaryActions.count===5 && monster.mythicActions.triggerName==='Eclipse Reborn' && monster.lairActions.some(el=>el.id==='a7-lair-proof' && el.description.includes('{2d6}'));
+  }`)
+  step38.narrow = step38Narrow; step38.persisted = step38Persisted;
+  step38.success = Object.entries(step38).filter(([key])=>key!=='narrow').every(([,value])=>value===true) && step38Narrow.width>0 && step38Narrow.scrollWidth<=step38Narrow.width+1;
+  console.log('Step 38 result:', JSON.stringify(step38,null,2))
+  if (!step38.success) throw new Error('Step 38 failed: '+JSON.stringify(step38))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -2873,7 +2948,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 37 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 38 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

@@ -836,7 +836,7 @@ export default defineComponent({
     const activeHelpTarget = ref<HTMLElement | null>(null)
     const helpTipStyle = ref<StyleValue>({ position: 'fixed', left: '12px', top: '12px' })
     let helpTipObserver: MutationObserver | null = null
-    const { sanitizeWebString } = useProcessTokens()
+    const { sanitizeWebString, processLairAction } = useProcessTokens()
     const textRenderer = inject('textRenderer') as ReturnType<
       typeof useTextRenderer
     >
@@ -1378,7 +1378,7 @@ export default defineComponent({
     )
 
     const lairActions = computed(() =>
-      textRenderer.lairActions.value.map((la) => sanitizeWebString(la))
+      monster.lairActions.map((la) => sanitizeWebString(processLairAction(la, monster, true)))
     )
 
     const regionalEffectPreamble = computed(() =>
@@ -1935,6 +1935,11 @@ export default defineComponent({
 </style>
 
 <style lang="scss" scoped>
+.statblock.modern-modular .lair-actions ul {
+  list-style: none;
+  padding-left: 0;
+}
+
 .statblock {
   background-color: #fdf1dc;
   color: #000;

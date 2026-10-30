@@ -57,6 +57,7 @@ export function useTextRenderer() {
     processClassSpellcasting,
     processInnateSpellcasting,
     processLairActionPreamble,
+    processLairAction,
     processLegendaryAction,
     processLegendaryPreamble,
     processMultiattack,
@@ -1310,9 +1311,7 @@ export function useTextRenderer() {
   const lairActionPreamble = computed(() => processLairActionPreamble(monster))
 
   const lairActions = computed(() =>
-    monster.lairActions.map((la) =>
-      processTokens(la.description, undefined, monster, 'none')
-    )
+    monster.lairActions.map((la) => processLairAction(la, monster))
   )
 
   const regionalEffectPreamble = computed(() =>

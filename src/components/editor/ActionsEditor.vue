@@ -74,6 +74,8 @@
         </div>
       </div>
 
+      <role-header-editor v-for="role in visibleHeaderRoles" :key="role" :role="role" />
+
       <!-- Empty State -->
       <div v-if="filteredEntries.length === 0" class="q-pa-md text-center text-grey-5">
         <q-icon name="info" size="32px" class="q-mb-xs" />
@@ -175,7 +177,7 @@
 
           <!-- Typed role adapters preserve each collection while using the same cell editor and renderer. -->
           <composer-chain
-            v-if="item.rawAction || item.rawReaction || item.rawTrait"
+            v-if="item.rawAction || item.rawReaction || item.rawTrait || item.role === 'lair'"
             :action-id="item.id"
             :role="chainRole(item)"
             :cost="item.cost || 1"
@@ -188,7 +190,7 @@
           <monster-text-editor
             :field="item.description"
             i18n-label-key="monster.trait.description"
-            :token-category="item.role === 'trait' ? 'trait' : 'action'"
+            :token-category="item.role === 'trait' ? 'trait' : item.role === 'lair' ? 'none' : 'action'"
             @update:model-value="(val: string) => updateItemDescription(item, val)"
           />
         </div>
@@ -214,6 +216,8 @@ import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import ComposerChain from './composer/ComposerChain.vue'
 import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
+import RoleHeaderEditor from './composer/RoleHeaderEditor.vue'
+import type { HeaderRole } from 'src/core/domain/role-headers'
 
 export interface UnifiedEntry {
   id: string
@@ -235,6 +239,7 @@ export default defineComponent({
     SwapButtons,
     ComposerChain,
     TraitDisplaySettings,
+    RoleHeaderEditor,
   },
   setup() {
     const monster = useMonsterStore()
@@ -337,6 +342,12 @@ export default defineComponent({
     const filteredEntries = computed(() => {
       if (selectedCategory.value === 'all') return allEntries.value
       return allEntries.value.filter((e) => e.role === selectedCategory.value)
+    })
+
+    const visibleHeaderRoles = computed<HeaderRole[]>(() => {
+      const roles: HeaderRole[] = ['legendary', 'mythic', 'lair']
+      return roles.filter((role) => selectedCategory.value === role ||
+        (selectedCategory.value === 'all' && allEntries.value.some((entry) => entry.role === role)))
     })
 
     const categoryTabs = computed(() => {
@@ -507,7 +518,10 @@ export default defineComponent({
 
       if (item.role === 'lair') {
         const lr = monster.lairActions?.find((l) => l.id === item.id)
-        if (lr) lr.description = val
+        if (lr) {
+          lr.description = val
+          if (lr.crAnnotation) autoUpdateCr(val, lr.crAnnotation)
+        }
       }
     }
 
@@ -632,6 +646,7 @@ export default defineComponent({
       selectedCategory,
       categoryTabs,
       filteredEntries,
+      visibleHeaderRoles,
       roleOptions,
       actionTemplateGroups,
       macroChips,
