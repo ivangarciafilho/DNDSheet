@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 152 · 2026-10-30 · A8.2 attack studio · `rc-2.4.3-build-152-a8-attack-studio` · Build 151 and earlier archives/tags preserved |
-| **State at hand-over** | Code `1b36467`, build 152; latest/configured 9100/9106, exact 152 at 9119, protected 151 at 9117. 250 core tests, production build, 44 browser steps with zero errors, 5-theme spellcasting and 12-theme help. Same-origin sample/storage retained. |
+| **Version** | v2.4.3 build 153 · 2026-10-30 · A8.3 multiattack studio · `rc-2.4.3-build-153-a8-multiattack-studio` · Build 152 and earlier archives/tags preserved |
+| **State at hand-over** | Code `1f57bab`, build 153; latest/configured 9100/9106, exact 153 at 9121, protected 152 at 9119. 257 core tests, production build, 45 browser scenarios zero errors, 5-theme spellcasting and 12-theme help. Existing browser data retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active; A8.2 delivered. Next A8.3. Seven legacy panels remain mounted until A8.5 capability parity and A8.6 fixtures are verified. |
+| **Current loop** | A8 active; A8.3 delivered. Next A8.5 missing capabilities and associations. Seven legacy panels remain until retirement parity is proven; Villain/Bloodied stays mounted. |
 
 ---
 
@@ -895,3 +895,19 @@ Skill routing: executing-plans for bounded implementation and final fresh review
 Closing evidence: 250 core tests (+6); production build; focused source lint 0 errors/16 pre-existing warnings; full 44 browser scenarios (+1) with zero console/runtime errors; four new attack markup/typography comparisons, invalid/cancel/custom/special-only/mobile/reload/reference/deletion checks; 5-theme spellcasting and 12-theme help. Review identified missing scoped styles, fixed via shared CSS and a reproduced failing layout assertion. Exported LaTeX is not compiled; B4 breadth remains pending. A8.5 must retain Villain/Bloodied, CR card homes, phase controls and association operations before retiring seven panels; A8.6 compares three fixtures within the candidate.
 
 Progress: 78/204 complete (38.24%), 126 pending; one existing task closed, zero new top-level tasks. A8 remains active and no loop is falsely marked shipped.
+
+## Build 153 closing packet → A8.5 preparation
+
+Delivered A8.3. Read specification “A8.3 implementation contract”, updated A8.0 capability matrix, and backlog “Build 153 backlog grooming” before A8.5. The three roadmap files remain the reference, execution order and handoff respectively; output copies are byte-matched evaluation mirrors.
+
+Start sources: `src/core/domain/multiattack-composer.ts`, `MultiattackComposer.vue`, `MultiattackReferencePicker.vue`, `ActionsEditor.vue`, shared `composer-chain.css`, `processMultiattackTokens`/`processMultiattack`, existing `MultiattackEditor.vue`, store reference cleanup, `MultiattackComposer.test.ts`, browser Step 45. Existing custom text/postscript are global; do not move them onto individual groups. Preserve repeated arrays and source IDs. Do not infer combined action/attack execution order from the UI: existing prose prints actions first and totals by first appearance.
+
+Skills: executing-plans for bounded delivery and one final review; functional-core for field/reference ownership; impeccable Operate and UX-copy for association/missing-target states; verification-before-completion for retirement gates; roadmap-update for evidence-based task counts. TTRPG craft guides domain terminology; research primary rules sources only if new rules claims are introduced. Keep unrelated plugin workflows out of this slice.
+
+A8.5 concrete integration notes: reuse `CrAnnotationCard.vue` with `field="actions"` / `field="lairActions"` and an index resolved from the live source ID, never a filtered studio index. Keep `useAutoUpdateCr` automatic/manual behavior. `TraitsEditor.vue` currently hides reorder under `monster.alphaTraits`; the studio must expose and honor that ordering policy. Existing legendary/mythic selectors operate on membership arrays independently of the source records; do not reuse destructive Delete Entry for unlink. An action can participate in both arrays, so the inferred single studio role must not be treated as the complete membership model.
+
+Next preparation: preserve Build 153, capture three within-candidate fixtures, enumerate every pending A8.5 field/operation, finish action/lair CR and phase/custom-heading controls, trait alpha-sort, and legendary/mythic association operations. Verify removing membership differs from source deletion. Keep Villain/Bloodied per BS-26. Retire exactly seven panels only when the source capability matrix and replacement browser checks agree, then execute A8.6/A8.7/A8.8 closeout. No release may depend on future test replacements or missing CR controls.
+
+Evidence: seven new pure cases, 257 total pass; production build; focused lint zero errors/one pre-existing warning; final read-only review no actionable findings; 45 browser scenarios zero console/runtime errors; Step 45 four markup/computed-type comparisons, three text exports, reference interactions/repair, custom text retention, narrow/reload/deletion/empty-state gates; 5-theme spellcasting and 12-theme help. Earlier focused harness failures were control-selector mismatches and were corrected in the test helper; no production behavior was bypassed. Source change also corrects the All-category empty message when multiattack is the only content.
+
+Release: code `1f57bab`, tag `rc-2.4.3-build-153-a8-multiattack-studio`; latest/configured 9100/9106, exact 153 at 9121, protected 152 at 9119. Both loopback families serve sealed archives; no user data reset. 79/204 complete (38.73%), 125 pending; one existing task closed, no new top-level scope; 8/28 loops shipped and A8 active.

@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 152 · 2026-10-30 · A8.2 attack studio · `rc-2.4.3-build-152-a8-attack-studio` · Build 151 and earlier archives/tags preserved |
-| **Code HEAD** | `1b36467` typed attack chain and shared preview styling; 250 core tests; production build; 44 browser steps and theme checks pass; focused lint 0 errors/16 pre-existing warnings |
+| **Version** | v2.4.3 build 153 · 2026-10-30 · A8.3 multiattack studio · `rc-2.4.3-build-153-a8-multiattack-studio` · Build 152 and earlier archives/tags preserved |
+| **Code HEAD** | `1f57bab` stable-ID multiattack references and shared collation; 257 core tests; production build; 45 browser scenarios and theme checks pass; focused lint 0 errors/1 existing warning |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **78 / 204 tasks complete (38.24%)** · **0 active tasks · 126 pending** · A8 remains active |
+| **Progress** | **8 / 28 loops shipped** · **79 / 204 tasks complete (38.73%)** · **0 active tasks · 125 pending** · A8 remains active |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -2508,14 +2508,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-30** — Build 152 closes A8.2. 8/28 loops shipped; A8 active; 78/204 tasks complete (38.24%), 0 active tasks, 126 pending (61.76%). Distinct-model attack studio and existing renderer; 250 core tests, 44 browser scenarios, production build and theme checks pass. Build 151 preserved at 9117; latest origins retain sample storage.
+**Progress snapshot · 2026-10-30** — Build 153 closes A8.3. 8/28 loops shipped; A8 active; 79/204 tasks complete (38.73%), 0 active tasks, 125 pending (61.27%). 257 core tests; production build; 45 browser scenarios zero errors; 5-theme spellcasting and 12-theme help. Exact Build 152 remains at 9119; latest origins retain browser storage.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 28 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 29 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3308,9 +3308,9 @@ stateDiagram-v2
 | Mythic entries | `actions[].actionId/cost`, add/remove association to existing actions/attacks | Cost chips covered; association operations remain a retirement gap under A8.5 | Shared legendary-action processor using mythic membership |
 | `LairActionsEditor` | `id`, prose, CR annotation, custom preamble flag/text, create/delete/order and reset operation | Readonly identity + prose chain, lair section header/initiative covered. Lair CR editing and reset equivalence must land before retirement; no name field invented | `processLairAction`, default initiative token, shared prose export |
 | Shared action records | Full `MonsterAction` schema: identity/prose, recharge/string/bounds, uses, bonus/legendary flags, stat/save override, effects/range, school/tier/components/duration, delivery/area, structured attack/target/outcomes and legacy text | Chain + outcomes + typed usage cover mechanics/economy; role transition owns flags/membership. Action phase (`stagePool`), custom heading (`customPreamble`) and action CR card need explicit studio homes under A8.5 | Shared action grammar, web/prose targets and CR estimator |
-| `AttacksEditor` / `widgets/AttackPanel` identity and attack | `id/name`, phase extension, `targets`, `distance`, `kind`, `modifier.{override,overrideValue,stat,proficient}`, `range.{reach,standard,long}`, `save`, `legendaryOnly`, prose | A8.2 must adapt `DndAttack` directly; existing action grammar's single distance must not replace normal/long ranges | `processAttack`, existing attack getters; exports retain their supported projections |
-| Attack damage | Primary `damage.{count,dice,type,modifier.{override,overrideValue,stat}}`; alternate `{active,condition,count,dice,type,modifier.*}`; additional damage array `{count,dice,type,note}`; custom-render flag/text | All remain in AttackPanel until A8.2 typed editors and renderer parity tests exist; no conversion to simplified action effects | Existing attack damage calculations/token processor |
-| `MultiattackEditor` | `id`, ordered/repeated `attacks[]`/`actions[]`; group create/delete; reference add/remove; expected damage; global custom-render flag/text and postscript | A8.3 must preserve references and multiplicity, show missing IDs, retain prose controls. No string-name lookup replacement | `processMultiattack`, expected-damage getter, prose exports |
+| `AttacksEditor` / `widgets/AttackPanel` identity and attack | `id/name`, phase extension, `targets`, `distance`, `kind`, `modifier.{override,overrideValue,stat,proficient}`, `range.{reach,standard,long}`, `save`, `legendaryOnly`, prose | Build 152 A8.2: `AttackComposer` edits the original `DndAttack`, retaining independent normal/long/reach ranges | `processAttack`, existing attack getters; exports retain their supported projections |
+| Attack damage | Primary `damage.{count,dice,type,modifier.{override,overrideValue,stat}}`; alternate `{active,condition,count,dice,type,modifier.*}`; additional damage array `{count,dice,type,note}`; custom-render flag/text | Build 152 A8.2 covers these fields with pure leaf patches and renderer parity; AttackPanel remains until the whole A8.5 retirement gate | Existing attack damage calculations/token processor |
+| `MultiattackEditor` | `id`, ordered/repeated `attacks[]`/`actions[]`; group create/delete; reference add/remove; expected damage; global custom-render flag/text and postscript | Build 153 A8.3: `MultiattackComposer` preserves references/multiplicity, warns and repairs missing IDs, retains global prose controls; strict IDs, no name-based rewrite | `processMultiattack`, expected-damage getter, prose exports |
 | `VillainActionsEditor` | Villain `{id,round,name,description}`; bloodied `{id,name,triggerType,trigger,resetOnHeal,description}` (triggerType is the free/reaction/bonus action-cost selector); add/remove/order | **BS-26 decision:** retain this dedicated panel. These round-indexed/bloodied workflows are distinct models, not aliases of action/legendary roles. Keeping it still permits 21 → 14 modules after seven retirements | Existing villain/bloodied projections |
 
 **BS-27 decision:** retain CR editing next to the owning entry. The trait card already has that home; action/lair cards are mandatory A8.5 work before their panels disappear. The global estimator/checks UI remains separate. This is a reversible placement decision, with no model or rules change.
@@ -3405,3 +3405,39 @@ flowchart LR
 **Alternatives evaluated:** embedding the legacy panel is low effort but retains a second interaction pattern; converting to MonsterAction loses distance/damage distinctions; duplicating derived formulas risks divergence. The chosen adapter retains the model and calculation ownership while using the established cell interaction. Normal and long ranges remain editable even for a melee attack so switching distance never discards dormant values.
 
 **Proof and boundaries:** six pure cases cover field families, immutable nested patches, extra IDs/notes, invalid edits and clear semantics. Step 44 performs actual popup edits, cancel/invalid validation, four template/style markup and computed-type comparisons, custom renderer, special-only projection, repeated reference preservation, narrow layout, reload and deletion cleanup. All 44 scenarios and theme suites pass. Source review found scoped style loss; a failing layout check reproduced it before shared CSS corrected it. No schema migration, new rules text, user-storage reset, seven-panel retirement, or exporter redesign in this delivery. A8.3/A8.5/A8.6 remain required before A8 closes.
+
+## A8.3 implementation contract — Build 153
+
+**Workflow:** select Multiattack in the studio or view it under All. Add alternative groups; add an existing action/attack repeatedly; replace or move one reference; remove one occurrence. Search accepts name or ID; the picker displays both so duplicate names remain distinguishable. Missing IDs display a warning and the saved ID, with explicit replacement/removal. Live source renames update labels without rewriting references.
+
+| Surface / field | Ownership and behavior |
+|---|---|
+| Group identity | Existing `Multiattack.id`, group array order and extension fields retained; existing store owns create/delete |
+| References | Separate ordered `actions[]` and `attacks[]`; duplicate IDs mean repeated uses. `ReferenceEdit` owns one list and checks index + expected ID against the live group. Replace/add validate against the current matching source collection |
+| Rendered order | Existing renderer prints actions before attacks; duplicates total by ID, ordered by first appearance. Editor order is retained inside each source array; no new combined sequence or schema is invented |
+| Missing sources | `multiattackReferences` resolves strict IDs. Missing sources stay visible/editable; legacy renderer fallback naming remains unchanged. No automatic resolution by a coincidentally matching name |
+| Shared text | Existing `multiattackOptions.{postscript,useCustomRenderer,customMultiattackRenderer}` apply to the whole multiattack block. Toggle on seeds the existing default only if blank; toggling off retains custom text; Reset restores the existing preset |
+| Calculations | Existing `expectedMultiattackDamage` and token processors own calculations and prose; no copied damage formulas |
+| Projection | `processMultiattack` + sanitizer render both sheet and preview. Shared scoped CSS supplies base preview layout/type, retaining theme precedence |
+
+**Pure contracts:** `multiattackReferences(group, kind, library)` returns occurrence/index/ID/name/missing descriptors; `multiattackReferencePatch(group, edit, library)` returns one immutable list patch and rejects stale/out-of-range edits and unavailable replacement/add targets; `countMultiattackReferences(ids)` uses a Map to retain first-seen order and count prototype-like/numeric IDs safely. The UI finds the current group before applying a patch. Removal returns keyboard focus to the surviving option. No migration or additional persisted field.
+
+```mermaid
+sequenceDiagram
+  actor User
+  participant Picker as Reference controls
+  participant Core as Pure reference adapter
+  participant Store as Existing multiattack store
+  participant Render as Shared token renderer
+  User->>Picker: Add / replace / move / remove occurrence
+  Picker->>Store: Read current group and source library
+  Picker->>Core: Edit with index and expected ID
+  Core-->>Picker: Valid owned-list patch or no-op
+  Picker->>Store: Apply patch; preserve other fields
+  Store->>Render: References, options and source records
+  Render-->>User: Same preview and stat block prose
+```
+
+**Alternatives:** names as persisted references become ambiguous on rename; counts-only editing loses occurrence position; a merged action/attack sequence requires a new schema and grammar. The chosen adapter preserves existing arrays and semantics. The count helper is shared with the renderer to fix ordering/prototype behavior at its source rather than special-casing individual IDs in the UI.
+
+**Validation:** seven pure cases cover strict-ID view, repeated occurrence removal, movement, missing-target repair, invalid/stale edits, repeated additions and safe collation. Browser Step 45 uses real controls for search/add/replace/move/remove, source rename, postscript/custom toggle/edit/retention, group create/delete, four template/style markup/type comparisons and three captured toolbar text downloads. Narrow layout, reload, source-deletion cleanup, zero-group and only-multiattack states are checked. All 45 browser scenarios run with zero console/runtime errors; 257 core tests and theme suites pass. Exact Build 152 stays immutable. Panel retirement and broad export-format redesign remain pending; exported LaTeX is checked as text, not compiled.
