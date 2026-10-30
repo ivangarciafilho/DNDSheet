@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 143 · 2026-10-29 · A7 reaction composer chain · `rc-2.4.3-build-143-a7-reaction-chain` |
-| **Code HEAD** | `77a18c5` A7 reaction chain · protected builds 142 and 139 (`98bb899`) and builds 138–134 remain preserved · core 152/152, production build succeeds, exhaustive browser steps 1–36 and theme/help smoke checks pass |
-| **Progress** | **7 / 28 loops shipped** · **67 / 193 tasks done** (34.72 %) · **1 active** · **125 pending** |
-| **Now** | A7 is active. Build 143 integrates typed editing and shared-renderer preview for action, bonus, legendary, mythic, and reaction entries. Reaction retains its distinct model, collection, usage semantics, and trigger field. Trait/lair adapters and complete role headers remain open; A7 is not closed. |
-| **Next** | Complete trait/lair adapters and remaining role headers/capability mapping, then prove role-wide descriptor/plate order and preserved fields in A7.7b. Keep A8 consolidation blocked until A7 closes. |
+| **Version** | v2.4.3 build 144 · 2026-10-29 · A7 trait composer chain · `rc-2.4.3-build-144-a7-trait-chain` |
+| **Code HEAD** | `7f2e572` typed trait cadence and display authoring · protected 143/142/139 archives remain preserved · core 159/159; production build, changed-file lint, 37 browser steps and theme/help checks pass |
+| **Progress** | **7 / 28 loops shipped** · **67 / 193 tasks done** (34.72 %) · **2 active** · **124 pending** |
+| **Now** | A7 remains active. Six of seven roles have typed editable chains and shared-renderer preview. Traits now have cadence, phase, grouping, conditional/custom-heading, CR and template controls. Task audit: 67 done, 2 active, 124 pending; prior summaries undercounted active tasks by one. |
+| **Next** | Finish lair adapter/preview and remaining legendary/mythic/lair headers; then complete all-role order, field-preservation, role-conversion and persistence proofs before closing A7. A8 consolidation remains blocked. |
 
 ---
 
@@ -49,7 +49,7 @@
 | R8 · Portable output | B4 | 0 / 6 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **67 / 193 complete · 1 active · 125 pending** | **34.72 % complete · 65.28 % remaining** |
+| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **67 / 193 complete · 2 active · 124 pending** | **34.72 % complete · 65.28 % remaining** |
 
 ```mermaid
 pie showData
@@ -97,6 +97,7 @@ pie showData
 | 2026-10-29 | `71a8c21` | A6 | Optional action targeting/outcome data, conservative inference, modern plate projection and opt-in 2024-style text export; sample monster data unchanged | Core 124/124; build 136; exhaustive UI 33/33 steps; 0 runtime exceptions |
 | 2026-10-29 | `df95179` | A7 · partial build 137 | Added 9 catalog-backed action templates, grouped picker, explicit replacement confirmation, cancel/apply semantics and removed duplicate hard-coded preset/composer routes; configured sample data unchanged | Core 129/129; production build; exhaustive UI 33/33 including Step 32 cancel/apply; 0 runtime exceptions; focused lint 0 errors |
 | 2026-10-29 | `761b41a` | A7 · partial build 138 | Deep-cloned nested template values per application; edits to one action cannot mutate the shared catalog or another action | Core 130/130 including catalog isolation regression; production build; exhaustive UI 33/33; 0 runtime exceptions |
+| 2026-10-29 | `7f2e572` | A7 · partial build 144 | Added typed trait cadence/display policy and renderer preview as sixth role; fixed live heading spaces and narrow popup fit; kept existing schema/data and archives. Audited checklist states: 67 done, 2 active, 124 pending. | Core 159/159; production build; changed-file lint; browser steps 1–37 with zero console errors/runtime exceptions; five-theme spellcasting and twelve-theme help/contrast |
 | 2026-10-29 | `77a18c5` | A7 · partial build 143 | Added a distinct typed reaction projection/patch adapter and editable trigger/usage cells with shared sanitized renderer preview; preserved reaction storage model/collection, configured sample data, and build 142/139 archives. Trait/lair adapters, complete headers, role-wide matrix, and A7 closeout remain open. | Core 152/152; production build; changed-file lint passes; exhaustive browser steps 1–36; spellcasting five themes; help/contrast twelve themes; 0 browser runtime exceptions |
 | 2026-10-29 | `54d933e` | A7 · partial build 142 | Added typed chain projection/patches, editable cells and outcomes, action-family editor integration, and preview via existing renderer for action, bonus, legendary, and mythic entries. Trait/reaction/lair adapters and role headers remain open. Build 139 remains preserved. | Core 149/149; production build; focused lint 0 errors/5 warnings; exhaustive browser steps 34–35; spellcasting five themes; help/contrast twelve themes; 0 browser runtime exceptions |
 | 2026-10-29 | `98bb899` | A7 · partial build 139 | Added `ROLE_CHAINS` data for action, bonus, trait, reaction, legendary, mythic, and lair roles; descriptors represent structured and legacy fields and encode head → mechanics → scope → outcomes → prose order. No editor UI or preview behavior changed. | Core 133/133 including descriptor-contract tests; build succeeds; full 33-step browser sweep passes with 0 runtime exceptions |
@@ -120,7 +121,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A7 partial candidate build 143: templates and descriptors plus integrated chain/editor preview for action, bonus, legendary, mythic, and reaction roles; trait/lair adapters, complete role headers, role-wide parity and closeout remain | **A7.3, A7.7b–A7.8** finish remaining role adapters/proofs and close the candidate | A8…A17 (R2–R6), then Track B (R7–R10) |
+| A7 partial candidate build 144: six typed roles with preview, including trait cadence/display/CR authoring; lair, remaining headers, full preservation matrix and closeout remain | **A7.3 → A7.7b → A7.8** close adapter/header gaps, prove all-role behavior, then release the loop | A8…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
@@ -282,23 +283,23 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-143-a7-reaction-chain` (partial)
+#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-144-a7-trait-chain` (partial)
 
 > Editing an ability is clicking chips in the same order the GM reads them.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R2 | AU-03 | A6 | Re-estimate after adapter matrix | Build 143 slice: 8 tracked files, +271/−42; five roles integrated including distinct reaction adapter; trait/lair adapters, complete headers, role-wide proofs and closeout remain |
+| R2 | AU-03 | A6 | Re-estimate after adapter/header matrix | Build 144 slice: 10 files, +467/−103; six roles integrated; lair, remaining headers, full matrix and closeout open |
 
 - [x] **A7.0** Pre-flight: map every current field to its future chain home and identify preservation boundaries · M · *proof: audit notes below + implementation diff*
 - [x] **A7.1** `src/core/domain/action-composer.ts`: `ROLE_CHAINS` descriptors and shared row precedence for all seven roles; preserve both structured and legacy fields; do not imply UI integration · S · *proof: `test/core/ActionComposer.test.ts` validates role coverage, unique IDs, order, and legacy/structured field coverage*
 - [x] **A7.2** `components/editor/composer/ChainCell.vue` and `ChainOutcomesEditor.vue`: typed cell display/editors and outcomes; verify per-kind validation and non-action extension boundaries · L
-- [~] **A7.3** `components/editor/composer/ComposerChain.vue`: integrated head · mechanics · scope · outcome rows and keyboard model for action/bonus/legendary/mythic plus distinct reaction chain; trait/lair adapters and remaining role headers remain · L
-- [x] **A7.4** Live preview and statblock projection use existing action/legendary/reaction render functions with sanitized markup and active theme CSS for the five integrated roles · S
+- [~] **A7.3** `ComposerChain.vue`: four `MonsterAction` roles plus distinct reaction and trait adapters integrated; trait cadence/display/phase/grouping/custom-heading/CR controls and trait template saving work. Lair adapter/preview and complete role headers remain · L
+- [x] **A7.4** Existing action/legendary/reaction/trait renderer functions, sanitizer and active theme CSS power preview for six integrated roles; extend and prove lair during remaining A7.3/A7.7b · S
 - [x] **A7.5** `ACTION_TEMPLATES` catalog and grouped picker: 9 structured templates, authored casing, template-owned stale-field clearing, stable ID/role/use/recharge/stage/custom-preamble/CR preservation · M · *proof: `test/core/ActionTemplates.test.ts`; browser Step 32*
 - [x] **A7.6** Remove the "Quick Attack Composer" strip and hard-coded preset buttons (DEF-12); require explicit confirmation before replacing an existing action · S · *proof: browser Step 32 cancel + apply paths*
 - [x] **A7.7a** Catalog unit + browser tests: known/unknown template behavior, reset semantics, original-object immutability, nested catalog isolation, preservation boundaries, replacement cancel/apply · M · *proof: core 130/130; exhaustive UI 33/33; 0 runtime exceptions*
-- [~] **A7.7b** Chain test matrix: five-role edit-to-preview/statblock parity, keyboard and 375px behavior pass; all-seven role descriptor-to-plate order and trait/lair persistence matrix remain · M
+- [~] **A7.7b** Six-role matrix partially proven: trait draft cancel/validation, keyboard/focus, exact modern/classic HTML parity, grouping/custom heading, live spaces, 375px popup fit, partial legacy CR recalculation and reload persistence pass. All-seven order, full field/role-conversion preservation and lair/header proofs remain · M
 - [ ] **A7.8** Browser + close: commit `actions studio edits abilities as a chain of plate cells`, docs ritual · S
 
 **A7.0 field ownership map (observed in `ActionsEditor.vue`):**
@@ -313,9 +314,21 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 **A7.7a verification scope:** known template paths, unknown IDs, stale-field clearing, input immutability, nested template/catalog isolation, and shared data separation are unit tested. Browser evidence covers replacement cancel/apply. Template range strings and structured range data agree; the ranged weapon template is explicitly 80 ft. because the current model cannot represent a long-range pair. Do not describe it as 80/320 until the model and renderer support both values. No persisted schema or configured sample-data edits were made.
 
-**A7.2–A7.4 integration boundary at build 143:** `composer-chain.ts` provides typed projections and pure cell patches for action, bonus-action, legendary-action, and mythic-action entries in the existing `MonsterAction` collections. `reaction-composer.ts` provides distinct typed projection, validation, and patch functions for reaction persistence and its trigger/usage cells. Preview uses existing action/legendary/reaction renderers, sanitizer, and theme CSS. Prose remains in the established description editor. The generic descriptor catalog covers seven roles; the visible editor now covers five. Trait and lair still require adapters. `ROLE_HEADERS` (pool counters, preambles, mythic trigger, and lair initiative/preamble) is incomplete. Do not generalize a passing five-role matrix into an all-role claim or add duplicate write paths.
+**A7.2–A7.4 integration boundary at build 144:** Four roles use `composer-chain.ts`/`MonsterAction`; reactions use `reaction-composer.ts`; traits use `trait-composer.ts` plus `TraitCadenceEditor.vue` and `TraitDisplaySettings.vue`. Each adapter writes its own existing collection and shares the production renderer. Trait policy preserves custom headings and conditional tag semantics; phase choices are bounded; live text is not trimmed per keystroke. Lair remains a prose-only studio entry without a chain adapter/preview. Remaining role headers and all-role proofs are not complete. Runtime deletion of required schema fields is not a supported test fixture; exercise old saves through the existing import normalizer.
 
-**Done when:** CMP-009…011 proven for every supported role and adapter; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 143 is a deliberate partial slice and does not close A7.
+**A7 adapter closure ledger (sub-capabilities, not extra roadmap tasks):**
+
+| Scope | Status / proof | Next action |
+|---|---|---|
+| Action / bonus / legendary / mythic entry models | Integrated; existing unit and browser matrix retained | Verify surviving header/context fields before A8 retirement |
+| Reaction | Integrated; typed trigger/uses and Step 36 parity/focus | Retain regression in all-role closeout |
+| Trait | Integrated; seven domain tests + Step 37 draft/policy/preview/persistence proof | Retain legacy partial-annotation inclusion and live-text regressions |
+| Lair | Pending adapter and renderer preview | Map prose-only entry versus initiative/preamble role context; do not invent an entry name |
+| Role headers | Pending complete legendary pool/preamble, mythic trigger/preamble, lair initiative/preamble homes | Inventory exact fields; prove one write path and persistence |
+| Cross-role conversion | Complete preservation not proven; trait creation now uses existing default factory | Audit all conversion factories, data-loss disclosure, references and CR fields under A7.7b/A8.0 |
+| Release serving | Archived roots verified; stable origin 9106 retained; predecessor 143 at 9108 | Verify IPv4/IPv6 serve the same archive; never bind evaluation to mutable dist |
+
+**Done when:** CMP-009…011 proven for every supported role and adapter; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 144 is a deliberate partial slice and does not close A7.
 
 ---
 

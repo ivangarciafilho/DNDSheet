@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 143 · 2026-10-29 · reaction composer chain integrated; trait/lair adapters, remaining role headers, and A7 closeout remain open; builds 142/139 and earlier candidates preserved; formula trace belongs to A9 |
-| **State at hand-over** | Current candidate `rc-2.4.3-build-143-a7-reaction-chain` points to code commit `77a18c5`; evaluation URL `http://localhost:9106/index.html#/`. Build 142 is preserved at `http://localhost:9105/index.html#/`; protected build 139 is at `98bb899` / `http://localhost:9100/index.html#/`; earlier artifacts remain unchanged. Roadmap: 67 / 193 tasks complete, 1 active, 125 pending; 7 / 28 loops shipped; A7 is in progress. Core 152/152; production build succeeds; changed-file lint passes; exhaustive browser steps 1–36, five-theme spellcasting smoke, and twelve-theme help/contrast checks pass with zero browser runtime exceptions. Build 143 integrates editable chain/preview for action, bonus, legendary, mythic, and reaction roles; reaction has a distinct typed model adapter and trigger/usage cells. Trait/lair adapters and complete role headers remain open. Configured monster/sample data is unchanged. |
+| **Version** | v2.4.3 build 144 · 2026-10-29 · six composer roles integrated; lair, remaining role headers and A7 closeout remain open; earlier archives preserved |
+| **State at hand-over** | Candidate `rc-2.4.3-build-144-a7-trait-chain` is code `7f2e572`. Latest stable origin: `http://localhost:9106/index.html#/`; isolated candidate: 9107. Archived 143 (`77a18c5`) is at 9108; 142 stays at 9105 and protected 139 at 9100. Status: 67/193 done, 2 active, 124 pending; 7/28 loops shipped; one active loop A7. Core 159/159, production build, changed-file lint, 37 browser steps with zero errors, five-theme spellcasting and twelve-theme help/contrast pass. Traits now have typed cadence/display/grouping/phase/CR/template authoring and preview. No schema/sample-data changes; the stable origin retains configured browser state. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 (A4 closeout §6.2; A5 §6.3; A6 §6.4) |
-| **Current loop** | Continue **A7 · Composer chain and templates** from §6.5: catalog/picker, data isolation, chain cells, five-role integration including reaction, preview, keyboard, responsive proof, and template isolation are complete/partially complete; trait/lair adapters, remaining role headers, all-role order/persistence matrix, and A7 closeout remain |
+| **Current loop** | Continue A7 from §6.5. Trait integration is complete for this slice; catalog/templates, four action-family roles, reaction/trait adapters and preview proofs remain green. Lair, remaining role headers, all-role preservation/conversion matrix and closeout remain open. |
 
 ---
 
@@ -49,7 +49,7 @@ git status --short                      # must be empty (or only the docs mirror
 git branch --show-current               # statblock-overhaul
 git log --oneline -3                    # note the starting commit in the packet
 npm test                                # must be green before any change
-Get-NetTCPConnection -LocalPort 9100 -State Listen   # dev server up? else start it (2.2)
+Get-NetTCPConnection -LocalPort 9106 -State Listen   # inspect every IPv4/IPv6 listener and its archive root (§2.2)
 ```
 
 Then: read the card · open the spec sections · load the skills · run the card's pre-flight task (`Ax.0`) · turn every surprise into a task or a blindspot **before** writing feature code (§1.6).
@@ -123,12 +123,12 @@ For each card: (1) open every file listed in **Open first** and confirm the line
 | What | Value |
 |---|---|
 | Repository | `F:\AI_Resources\DNDSheet` (branch `statblock-overhaul`) |
-| Canonical documents | `C:\Users\Administrador\Documents\Codex\2026-10-29\ttrpg-gm-craft-c-users-administrador\outputs\` |
-| Document mirror (versioned) | `F:\AI_Resources\DNDSheet\docs\roadmap\` |
+| Canonical documents (versioned) | `F:\AI_Resources\DNDSheet\docs\roadmap\` |
+| Evaluation mirror | `C:\Users\Administrador\Documents\Codex\2026-10-29\ttrpg-gm-craft-c-users-administrador\outputs\` · copy from canonical docs and verify SHA-256 equality |
 | v1 documents backup | `outputs\_previous-v1\*.v1-0819.md` and git `b83ee56` |
-| QA helpers (temporary) | `C:\Users\Administrador\AppData\Local\Temp\dnd-*.mjs` and `dnd-*.js` → moved to `tools/qa/` in A17 |
-| Dev server | `http://localhost:9100` (Vite via Quasar) |
-| Built-in browser tab | `seed` (the app); doc check page `/__doccheck.html` (git-excluded) |
+| QA evidence | `test/exhaustive-ui-fuzz.js`, `test/spell-plate-browser-smoke.js`, `test/statblock-help-browser-smoke.js`; current logs in `.codex-temp/build144-*.log` |
+| Evaluation / development | latest archived RC at 9106; isolated 144 at 9107; predecessor 143 at 9108; use 9110 for mutable development; protected 139 remains at 9100 |
+| Built-in browser | discover the current tab for `http://localhost:9106/index.html#/` each session; tab IDs are transient; doc check page `/__doccheck.html` is git-excluded |
 | Persisted state keys | `app.monster`, `app.editor`, `app.spells`, `app.templates`, `app.combat`, `app.character` |
 | Toolchain | Node 22.23 · Quasar ^2.16 · @quasar/app-vite ^1.9 · Pinia ^2 · TypeScript ^4.5 |
 
@@ -136,17 +136,27 @@ For each card: (1) open every file listed in **Open first** and confirm the line
 
 ```powershell
 # dev server (no auto-open)
-$env:DNDSHEET_NO_OPEN = '1'; npx quasar dev --port 9100
+$env:DNDSHEET_NO_OPEN = '1'; npx quasar dev --port 9110
 # tests (node:test, strip-types; core imports use .ts extensions and `import type`)
 npm test
 node --experimental-strip-types --test test/core/Plate.test.ts      # one suite
 # lint touched files
 npx eslint --ext .js,.ts,.vue src/components/rendering/plate.ts
-# e2e (CDP fuzz; headless Chrome on port 9223)
+# e2e against the immutable candidate (headless Chrome CDP port 9223)
+$env:DNDSHEET_E2E_URL = 'http://localhost:9107/index.html#/'
 npm run test:e2e
 # production build
 npx quasar build
 ```
+
+### 2.2.1 Candidate promotion and browser-state continuity
+
+1. Build `dist/spa`, copy into a new `.codex-temp/release-candidates/<tag>/spa`, and validate that archive on an isolated port. Never point a protected/latest evaluation server at mutable `dist/spa`.
+2. Commit/tag the code; record evidence in `release-candidate.json`; generate and verify `SHA256SUMS.txt` (excluding itself). Preserve the prior artifact/tag before promotion.
+3. Inspect every IPv4/IPv6 listener and confirm identity/root before stopping one. Both addresses must serve the same frozen archive. Build 144 corrected a stale IPv6 server serving mutable dist while IPv4 served archived 143.
+4. After proofs pass, promote the new archive to `localhost:9106`. Keep predecessor 143 at 9108 and exact 144 at 9107. Use a hidden persistent server process that outlives the tool call.
+5. Compare served index/asset hashes on `127.0.0.1`, `[::1]` and `localhost`; verify the visible footer and predecessor checksums. Retaining the origin preserves configured `app.monster` state without storage migration or fixture overwrites.
+6. Mutable development uses 9110. Browser tests use isolated temporary profiles. Inspect actual roots/processes each session; HTTP 200 and an open tab alone do not identify a release.
 
 ### 2.3 Built-in browser probes (run with the JavaScript tool on tab `seed`)
 
@@ -467,16 +477,31 @@ Next loop readiness ..... A4 🟢
 | **Entry criteria** | A6 ✅ (fields and phrases exist) |
 | **Read in the spec** | §9 AU-03 (concept, W-05) · §6.7 `ComposerChain` · §8.3 · §4.2 precedence |
 | **Backlog tasks** | A7.0 – A7.8, with A7.7 split into shipped A7.7a and pending A7.7b |
-| **Completed slice** | A7.0 field inventory; A7.1 role-chain descriptors; A7.2 typed chain cells/outcome editors; A7.4 renderer-backed preview for action, bonus, legendary, mythic, and reaction roles; A7.5 catalog/picker; A7.6 retirement of old preset/composer strip; A7.7a template contract and nested-isolation tests. Reaction's distinct projection/patch adapter and trigger/usage cells are integrated in build 143. A7.3 and A7.7b remain active for trait/lair adapters, remaining headers, and all-role proofs. Current candidate `rc-2.4.3-build-143-a7-reaction-chain`; builds 142 and 139 and earlier candidates remain evaluable. |
+| **Completed slice** | Completed A7.0/1/2/4/5/6/7a scope retained. Build 144 adds typed trait cadence/drafts/validation, phase/grouping/conditional/custom-heading/CR settings, trait templates and exact renderer preview. Step 37 proves cancel/validation/focus, modern/classic parity, live multiword headings, grouping/custom heading, 375px popup fit, legacy partial-annotation automatic CR preserving inclusion, and reload persistence. A7.3/A7.7b remain active for lair, complete headers and full all-role proofs. |
 | **Field inventory** | Template-owned: name/description/action type/attack mode/source/bonus/targets/save/stat/range/effects/spell metadata/duration/delivery/targeting/outcomes. Preserved: ID, collection membership/role, bonus-action and legendary/mythic association, uses, recharge, stage pool, custom preamble and CR annotation. Confirmed apply recomputes derived CR display. |
-| **Open first** | `src/core/domain/composer-chain.ts`, `src/core/domain/reaction-composer.ts`, `src/core/domain/action-composer.ts`, `src/components/editor/composer/{ComposerChain,ChainCell,ChainOutcomesEditor}.vue`, `ActionsEditor.vue`, `useProcessTokens.ts`, and `MonsterBuilder.vue`. Preserve the five-role route, especially reaction's separate persisted shape and trigger semantics. Add typed trait/lair adapters; model remaining legendary/mythic/lair role headers without pretending they are `MonsterAction` fields; preserve outcome body order and prose ownership. Build/refresh the per-role capability and write-path matrix before broadening the editor. The grouped template picker remains a `QBtnDropdown`; existing keyboard/focus checks pass for the chain, but audit menu behavior if changing its control. |
+| **Open first** | `composer-chain.ts`, `reaction-composer.ts`, `trait-composer.ts`, `action-composer.ts`; composer UI including `TraitCadenceEditor.vue` and `TraitDisplaySettings.vue`; `ActionsEditor.vue`, `useProcessTokens.ts`, `useTextRenderer.ts`, `MonsterBuilder.vue` and surviving legacy panels. Preserve all six routes. Map lair id/prose/CR versus initiative/preamble role context; complete legendary/mythic/lair headers. Audit conversion factories/data-loss handling before panel removal. Keep rich-text prose ownership and the existing renderer authority. |
 | **Skills** | `build-web-apps:frontend-app-builder` · `design:accessibility-review` · `design:ux-copy` · `impeccable` · `superpowers:test-driven-development` · `engineering:testing-strategy` |
 | **Research** | Keyboard model for chip rows (roving tabindex), menu/dialog focus return and Escape semantics (APG toolbar/grid/menu patterns); narrow viewport overflow; current range model cannot store a long-range pair (BS-39). |
 | **Traps** | Do not lose fields from the editor inventory; keep authored casing; never auto-replace authored actions; template-owned missing optionals must clear stale values; preview must be pure; preserve arrays/schema; do not claim 80/320 ft. with a single-distance model; no sample fixture mutations. |
-| **Plan** | A7.0 ✅ → A7.1 ✅ role descriptors → A7.2 ✅ typed cells/outcomes → A7.3 ◐ chain integrated for four `MonsterAction` roles plus distinct reaction adapter; trait/lair adapters and remaining headers open → A7.4 ✅ shared renderer preview for five roles → A7.5 ✅ templates → A7.6 ✅ remove old controls → A7.7a ✅ template tests → A7.7b ◐ five-role keyboard/responsive/parity proof; trait/lair persistence and all-role matrix remain → A7.8 candidate close/docs. |
-| **Verify already passed** | Core 152/152; production build; changed-file lint; exhaustive browser steps 1–36 pass with zero runtime exceptions; five-theme spellcasting smoke; twelve-theme help/contrast and interaction probes; `git diff --check`. Chain tests cover editing, commit, Enter/Escape/focus return, exact renderer parity and 375px behavior for the five integrated roles; Step 36 edits reaction trigger by keyboard, verifies focus return and preview/statblock HTML parity. Template cancel/apply and deep-clone isolation remain covered. These proofs do not establish trait/lair adapters, complete headers, or A7 completion. |
-| **Remaining proof** | Define typed model adapters and single write paths for trait/lair plus remaining role headers; prove all seven descriptor roles map to true plate order; prove field preservation and edit→preview→statblock parity for each adapter, including templates and old-schema fixtures; rerun keyboard/focus/responsive checks after integration; then close DEF-12 with A7.8 candidate/docs. Do not claim all-role parity from five-role evidence. |
+| **Plan** | A7.0/1/2 ✅ → A7.3 ◐ six roles integrated, lair and remaining headers open → A7.4 ✅ existing renderer previews for six roles → A7.5/6/7a ✅ → A7.7b ◐ trait/reaction matrix passing, all-role matrix open → A7.8 close only after full acceptance. |
+| **Verify already passed** | 159 core tests; production build; changed-file lint; 37 browser steps with zero console errors/runtime exceptions; five-theme spellcasting; twelve-theme help/contrast; diff check. Step 37 proves trait draft cancel/validation, focus return, exact modern/classic HTML parity, grouping/custom heading, live spaces, 375px popup fit, legacy partial-annotation automatic CR with preserved inclusion, and reload persistence. These results do not prove lair, complete headers, every field or all role transitions. |
+| **Remaining proof** | Integrate typed lair/context and remaining role headers; prove all seven descriptor-to-plate orders; complete field preservation, old-save, cross-role conversion, keyboard/narrow-view and edit→preview→sheet matrix; retain trait/reaction regressions; only then close A7 through A7.8. |
 | **Next-loop prep** | Prepare A8's capability matrix from actual surviving panel fields only after A7 role adapters stabilize; preserve schema and arrays; decide BS-26/27 separately. Do not begin panel retirement before every capability has a verified studio home. |
+
+### 6.5.1 Build 144 partial-slice closing packet
+
+| Item | Evidence / decision |
+|---|---|
+| Base → code | `dffecb9` → `7f2e572`; tag `rc-2.4.3-build-144-a7-trait-chain` |
+| Impact | 10 tracked files, +467/−103; seven source files and three test/build-support files |
+| Outcome | Trait cadence, phase/grouping/conditional/custom-heading/CR policy, templates and the sheet's own preview are usable in the studio |
+| Architecture | Pure adapter validates/patches; UI owns isolated drafts/focus; existing Pinia collections persist; `computeTraitTag` and `processTrait` remain projection authority |
+| Review / fixes | Automatic CR recalculates from description while preserving inclusion; shared popup overflow and live-space trimming reproduced/fixed; imported phase options bounded while retaining a saved legacy choice |
+| Verification | 159 core tests; production build; changed-file lint; 37 browser steps, zero errors; modern/classic parity; popup width=scroll width at 375px; reload persistence; five-theme spellcasting and twelve-theme help/contrast |
+| Fixture boundary | A live trait requires CR annotation; test legacy data through the import shape. Step 37 uses its actual partial, excluded annotation and proves recalculation fills automatic estimates while keeping exclusion. New trait role conversion uses the existing default factory |
+| Status audit | 67 done, 2 active (A7.3/A7.7b), 124 pending; task IDs unchanged; one active loop A7; six/seven role adapters integrated; loop remains open |
+| Release | Prior archive/tag retained; latest serves frozen 144 on both loopback families; stable origin preserves configured browser data |
+| Next grouped work | Lair entry/context → remaining role headers → complete preservation/conversion matrix → A7 closeout → A8 retirement after capability parity |
 
 ### 6.6 A8 · One Actions module — 🟡
 
@@ -671,9 +696,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — branch `statblock-overhaul`; current candidate `rc-2.4.3-build-143-a7-reaction-chain` points to `77a18c5` and is served at `http://localhost:9106/index.html#/`. Preserved build 142 is served at `http://localhost:9105/index.html#/`; protected build 139 `rc-2.4.3-build-139-a7-role-descriptors` (`98bb899`) remains unchanged at `http://localhost:9100/index.html#/`; builds 138–135 remain on their prior artifacts. Build 143 includes the typed action-family chain and distinct reaction adapter/trigger/usage cells; trait/lair adapters and remaining role headers remain open. Core 152/152; production build; changed-file lint; browser steps 1–36, five-theme spellcasting, twelve-theme help/contrast pass with 0 runtime exceptions. Progress is 67/193 tasks (1 active, 125 pending); A7 remains open.
+1. **State** — `statblock-overhaul`; code `7f2e572`, tag `rc-2.4.3-build-144-a7-trait-chain`; latest origin `http://localhost:9106/index.html#/`, exact candidate also at 9107. Preserved 143 is at 9108, 142 at 9105, protected 139 at 9100. Core 159/159; build, changed-file lint, 37 browser steps with zero errors, five-theme spellcasting and twelve-theme help/contrast pass. Six roles integrated; A7 remains open. Status: 67/193 done, 2 active, 124 pending.
 2. **What exists** — A0–A6 shipped. Build 137 adds the pure `ACTION_TEMPLATES` catalog, grouped picker, explicit replacement warning, cancel/apply flow, and template field ownership rules. The temporary Soul Barrage browser fixture is changed only in an isolated test browser; the user's configured monster/sample data is untouched.
-3. **What to do next** — continue A7.3, A7.7b and A7.8 from §6.5/backlog. Keep the four `MonsterAction` roles and reaction adapter stable; implement typed adapters for trait/lair and remaining role headers, then prove all-role plate order, one write path, field preservation, and preview/statblock parity. Existing keyboard, focus return, 375px and five-role parity checks are evidence to retain and rerun after adapters. Keep the 80/320 ft. range gap visible (BS-39); do not start A8 panel consolidation or A9 provenance early and do not claim A7/the overall overhaul complete.
-4. **Where truth lives** — the spec for intent and contracts, the backlog for order and status, this file for preparation and evidence; the canonical copies are in the outputs folder, the repository keeps the versioned mirror.
+3. **What to do next** — Continue A7.3/A7.7b/A7.8 using §6.5 and its closure packet. Preserve four `MonsterAction` routes plus reaction/trait adapters. Finish lair/context and remaining role headers; prove all-role order, field/conversion preservation and persistence. Retain Steps 34–37 and live-space/popup/CR-inclusion regressions. Keep BS-39 normal/long range explicit; A8 retirement and A9 provenance stay downstream.
+4. **Where truth lives** — Versioned canonical files are `docs/roadmap/`; `outputs/` is the evaluation mirror. Spec defines intent/contracts, backlog defines order/status, handoffs define preparation/evidence. Synchronize all three and verify mirrored hashes before closing a slice.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 
