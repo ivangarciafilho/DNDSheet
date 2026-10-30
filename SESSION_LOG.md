@@ -1,8 +1,8 @@
 # DNDSheet session checkpoint — 2026-10-29
 
-Code: d70cc01, tag rc-2.4.3-build-145-a7-role-context, branch statblock-overhaul.
-Latest frozen evaluation: http://localhost:9106/index.html#/; exact 145 at 9109, immutable previous 144 at 9107. Both loopback families serve archived files. No sample/schema changes.
+Code 10f7aa0, tag rc-2.4.3-build-146-a7-safe-role-transitions, branch statblock-overhaul.
+Latest frozen evaluation http://localhost:9106/index.html#/; exact 146 at 9110; immutable 145 at 9109, 144 at 9107. Both loopback families serve archived files. Existing schema/sample/browser storage retained.
 
-Delivered lair model projection/preview, typed legendary/mythic/lair section drafts and initiative-aware default preamble; mobile editor/preview stacking. 165 core tests, production build, focused lint zero errors (62 warnings), 38 browser steps zero errors, five-theme spellcasting and twelve-theme help pass. Read-only review export leakage fixed. 98 hashes verified for both archives.
+Delivered reviewed compatible action-family role moves preserving full record, order and references; explicit cross-model copies retain original and clone compatible data, start excluded from CR. Explicit deletion clears mythic links. Pure role-transition core, optional factory IDs, atomic current-state Pinia patch after dialog. 7 files +240/-97; 51 new core checks (all49pairs), 216 total; full39 browser steps zeroerrors; build, focusedlint zeroerrors/1existingwarning; 5spell/12help themes pass. Fresh read-only review no actionable findings. Both145/146 archives98hashes verified.
 
-Roadmap authority: docs/roadmap three DNDSheet documents, synchronized with evaluation mirrors. 68/193 done, 1 active A7.7b, 124 pending; 7/28 loops shipped. Next: full field/old-save/conversion/export matrix, then A7.8 closeout; A8 retirement blocked until capability parity. Preserve current RC before further work. Do not promote partial source review to full export or responsive proof.
+Three roadmap authorities synchronized with output mirrors. Totals unchanged68/193 complete,1activeA7.7b,124pending;7/28loops shipped. Conversion gate delivered within active task; remaining normalizedoldsave field/order audit and formatlevel Markdown/Homebrewery/LaTeX export proof, thenA7.8closeout. A8retirement blockeduntilparity. Preserve146beforefurtherwork. See build146handoffcard for preparation and boundaries.

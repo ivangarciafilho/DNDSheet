@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 145 · 2026-10-29 · seven roles and section headers integrated; preservation/conversion matrix and A7 closeout remain open; earlier archives preserved |
-| **State at hand-over** | Candidate `rc-2.4.3-build-145-a7-role-context`, code `d70cc01`. Latest: `http://localhost:9106/index.html#/`; exact candidate 9109; protected 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9100. 68/193 done, 1 active, 124 pending; 7/28 loops shipped. 165 core tests, production build, focused lint (warnings, zero errors), 38 browser steps, five-theme spellcasting and twelve-theme help pass. No schema/sample edits; stable origin retains browser state. |
+| **Version** | v2.4.3 build 146 · 2026-10-29 · seven roles and section headers integrated; preservation/conversion matrix and A7 closeout remain open; earlier archives preserved |
+| **State at hand-over** | Build 146 code `10f7aa0`, tag `rc-2.4.3-build-146-a7-safe-role-transitions`. Latest 9106; exact 146 at 9110; protected 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9100. 216 core tests; production build; focused lint zero errors (1 existing store warning); 39 browser steps zero errors; 5-theme spellcasting and 12-theme help pass. 68/193 done, 1 active, 124 pending. Existing schema/sample/browser state retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 (A4 closeout §6.2; A5 §6.3; A6 §6.4) |
-| **Current loop** | Continue A7 from §6.5. Trait integration is complete for this slice; catalog/templates, four action-family roles, reaction/trait adapters and preview proofs remain green. All-role preservation/conversion matrix and A7 closeout remain open. |
+| **Current loop** | A7 remains active. Seven roles and section contexts integrated. Conversion policy now prevents source loss: compatible action roles move by patch; different models create reviewed copies. Remaining A7.7b gates: complete normalized old-save field/order audit and export-format runtime proof; then A7.8. |
 
 ---
 
@@ -741,7 +741,7 @@ sequenceDiagram
   end
 ```
 
-### Prepared continuation: A7.7b, then A7.8
+### Build 145 preparation record (superseded by Build 146 gate ledger)
 
 1. Inventory every actual field in all seven source models and conversion factories; map each to editor, renderer, export and persistence ownership. Include IDs, role arrays, costs, CR inclusion/manual overrides, recharge/stage data, trait grouping and legacy values.
 2. Build table-driven conversion cases for every allowed source/destination. Explicitly preserve or disclose incompatible data; do not silently discard fields. Retain source objects and stable references where the workflow requires them.
@@ -758,4 +758,22 @@ Preparation: load executing-plans, verification-before-completion, relevant mode
 - Production build passed; core 165/165; final browser Steps 1–38 passed with zero runtime/console errors; lair header form 313px width/313px scroll width at 375px viewport; reload and memberships preserved. Theme smoke: five spellcasting, twelve help. Source review verified web-only lair markup and scoped mobile selectors. Export-format runtime proof and full character/mobile coverage remain explicit boundaries.
 - Review found modern lair HTML leaking into text projections: fixed with explicit web opt-in. Narrow check exposed fixed preview width squeezing editor: fixed with screen-only stacking below 600px. Browser fixture now opens the studio after reload and re-focuses the trait chip after viewport-induced scroll before keyboard activation.
 - Candidate archive has 98 verified hashes. Build 144 archive remains unchanged with its 98 hashes verified. Latest 9106 serves frozen 145 on IPv4/IPv6, exact 145 at 9109, previous 144 at 9107. Existing browser storage on 9106 is retained; isolated test profiles never overwrite it.
-- Next bounded packet is the field/conversion/export matrix in A7.7b. Capture incompatibilities before conversion, close them without silent data loss, and only then perform A7.8 and prepare A8 panel retirement. Do not add schema migrations or remove legacy editors opportunistically.
+- Next bounded packet was the field/conversion/export matrix in A7.7b; see Build 146 packet for the newer continuation. Capture incompatibilities before conversion, close them without silent data loss, and only then perform A7.8 and prepare A8 panel retirement. Do not add schema migrations or remove legacy editors opportunistically.
+
+### Build 146 closing packet and next prepared slice
+
+| Item | Evidence / handoff |
+|---|---|
+| Base → result | `e0130a4` → code `10f7aa0`; tag `rc-2.4.3-build-146-a7-safe-role-transitions` |
+| Delivered | Reviewed action-family moves retain full record/position/references; cross-model copy retains source, clones compatible fields, starts CR-excluded. Explicit action deletion clears mythic references |
+| Impact and pacing | 7 files, +240/−97; 51 new core tests, 1 new integrated browser step. Removed destructive conversion implementation rather than appending missing-field exceptions |
+| Verification | 216 core checks; production build; focused lint 0 errors/1 pre-existing store warning; full 39 browser steps, 0 errors; 5-theme spellcasting, 12-theme help. Fresh read-only review: no actionable findings |
+| Browser boundary | Initial full run failed on a fixture querying the lair row too early; bounded DOM readiness polling added. Isolated Steps 38–39 then full Steps 1–39 passed; only the full final run supports the 39-step claim |
+| Preservation | Build 145 tag and 98-hash archive unchanged, exact origin 9109. Build 146 has 98 verified hashes, exact origin 9110; latest 9106 serves the frozen candidate on both loopback families. Same origin retains browser state |
+| Status | 68 done, 1 active A7.7b, 124 pending; 7/28 loops shipped. No top-level completion claimed for partial acceptance work |
+
+**Next bounded group: field ownership/old-save/order audit.** Open all four source interfaces, import normalization, `role-transition.ts`, existing action/reaction/trait adapters, renderer exports and the A7 inventory. Map every field to its editing and projection owner. Add normalized old-save fixtures, unchanged save/reload and field-preserving edits, then audit all seven displayed cell orders. Report gaps as precise capability rows; do not delete old panels before parity.
+
+**Following bounded group: exports.** Read Markdown/Homebrewery/LaTeX projection paths and their sanitizers; add format-level modern lair tests, token/prose expectations and non-action-role cases. Reject raw web-card markup through the export boundary. Only after those proofs pass may A7.8 close and A8 preparation begin.
+
+Preparation skills: executing-plans, verification-before-completion, archetypes functional-core, engineering code review, UX copy, and the relevant import/export guidance. Keep cross-model creation labeled **Create copy**: unsupported fields stay on the retained original, not invisibly active on the new model. No further compatibility issue authorizes silent deletion or fabricated model fields.

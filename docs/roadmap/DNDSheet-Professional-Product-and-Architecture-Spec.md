@@ -4,8 +4,8 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 145** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-145-a7-role-context`; build 144 and earlier candidates remain preserved; formula provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 145 code commit `d70cc01`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
+| **Version** | **v2.4.3 build 146** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-146-a7-safe-role-transitions`; build 144 and earlier candidates remain preserved; formula provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 146 code commit `10f7aa0`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
 | **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **68 / 193 tasks complete; 1 active; 124 pending** |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
@@ -1925,7 +1925,7 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 **🔎 Evidence** — The initial audit found seven role collections exposed through the studio alongside duplicate legacy panels in `MonsterBuilder.vue` (DEF-08), plus hard-coded presets (DEF-12). Builds 137–144 replace the preset route and progressively integrate typed adapters; all seven roles now have model-specific projections and shared-renderer previews. Legacy panels remain until A8 capability parity is proven.
 
-**🧩 Concept** — **The target chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. The live plate preview and statblock projection must share the renderer. Roles are variants of one entry editor, but must adapt their persisted data explicitly. **Current boundary at build 145:** All seven roles have model-specific composer projections and preview. Four use `MonsterAction`, reactions and traits retain distinct adapters, and lair keeps its prose-only entry model with readonly role identity. Legendary/mythic/lair settings belong to typed section-context drafts in `role-headers.ts`. Full old-save/field/conversion/export proof remains open; A7 is not shipped.
+**🧩 Concept** — **The target chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. The live plate preview and statblock projection must share the renderer. Roles are variants of one entry editor, but must adapt their persisted data explicitly. **Current boundary at build 146:** All seven roles have model-specific composer projections and preview. Four use `MonsterAction`, reactions and traits retain distinct adapters, and lair keeps its prose-only entry model with readonly role identity. Legendary/mythic/lair settings belong to typed section-context drafts in `role-headers.ts`. The 49-pair reviewed role-transition matrix now passes; full old-save/field/order and export-format proof remains open. A7 is not shipped.
 
 **🛠 Techniques**
 - `src/components/editor/composer/ComposerChain.vue`, `ChainCell.vue`, and `ChainOutcomesEditor.vue` compose the action-family editor. The current controls are typed per-cell editors (catalog choices, numeric/formula-compatible input, text, outcome/effect editors); they do not claim that every field is a `CatalogSelect` or that A9 formula provenance is complete.
@@ -2501,7 +2501,7 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — Build 145 completes A7.3: seven model-specific role projections and legendary/mythic/lair section editors. 7/28 loops shipped; A7 remains active; 20 loops not started. Of 193 tasks, 68 are complete, 1 active (A7.7b), 124 pending; 64.77% remains. Verification: 165 core tests, production build, focused lint with warnings and no errors, 38 browser steps with zero runtime/console errors, five-theme spellcasting and twelve-theme help. Full field/old-save/conversion matrix and A7 closeout remain open. Build 144 remains immutable at 9107; latest origin 9106 retains configured browser data; test fixtures use isolated profiles.
+**Progress snapshot · 2026-10-29** — Build 146 adds reviewed non-destructive role transitions. 7/28 loops shipped; 68/193 tasks complete, 1 active (A7.7b), 124 pending; 64.77% remains. Conversion policy is proven across 49 role pairs; browser review/cancel/apply, copy independence, CR exclusion, references, reload and deletion cleanup pass. 216 core tests, production build, zero focused lint errors, all 39 browser steps with zero errors, five-theme spellcasting and twelve-theme help pass. Complete old-save field/order and export-format proof remain before A7.8; A8 remains blocked. Build 145 is preserved at 9109 and latest origin 9106 retains configured storage.
 
 ### 11.1 Releases and loops
 
@@ -3215,7 +3215,7 @@ sequenceDiagram
   end
 ```
 
-### Prepared continuation: A7.7b, then A7.8
+### Build 145 preparation record (superseded by Build 146 gate ledger)
 
 1. Inventory every actual field in all seven source models and conversion factories; map each to editor, renderer, export and persistence ownership. Include IDs, role arrays, costs, CR inclusion/manual overrides, recharge/stage data, trait grouping and legacy values.
 2. Build table-driven conversion cases for every allowed source/destination. Explicitly preserve or disclose incompatible data; do not silently discard fields. Retain source objects and stable references where the workflow requires them.
@@ -3226,3 +3226,39 @@ sequenceDiagram
 Preparation: load executing-plans, verification-before-completion, relevant model/functional-core guidance, code review and UX-copy skills; read this contract, A7 ownership map, the conversion factory call sites, and current handoff. Research external APIs only if this slice introduces one. Close with measured diff, exact code/tag/archive, test boundaries, preservation evidence and synchronized status in all three documents. Never claim infinite scalability, zero defects or future-proofing as an established property.
 
 Build 145 measured impact: `d70cc01`, 13 files, +347/−18 lines. Existing files changed: ActionsEditor, ComposerChain, WebRenderer, useProcessTokens, useTextRenderer, ProcessTokens, English locale, MonsterBuilder, browser suite and build metadata. New files: role-headers domain, RoleHeaderEditor UI and RoleHeaders core tests. No schema/sample-data migration. Lint: zero errors, 62 warnings in the full changed-source pass; new mobile layout file clean.
+
+## Build 146 decision record — retain work across role changes
+
+**Problem:** the previous studio removed the source record and rebuilt a minimal destination, losing attack/save/target/outcome/effect fields, usage and CR policy, action ordering and multiattack links. It could also leave mythic links dangling on explicit deletion. Local repairs to individual missing fields would not prevent future omissions.
+
+**Decision:** distinguish compatible role changes from cross-model creation. `roleTransition(monster, id, sourceRole, targetRole, copyId)` is a pure decision and patch generator. The UI generates the UUID, renders plain-text review, handles Cancel, recomputes from live state on confirmation and applies a single Pinia patch. Factories accept an optional supplied ID so the core does not generate IDs. No new persistence schema or sample-data migration is required.
+
+| Boundary | Retained / changed behavior | Alternative evaluated |
+|---|---|---|
+| Action ↔ Bonus ↔ Legendary ↔ Mythic | Same action ID, array position, all existing fields (including unknown legacy fields), CR, usage and multiattack references. Only role flags and this ID’s pool memberships change. Existing destination cost wins; otherwise source cost, then 1. Other pool entries and all section settings remain | Field-by-field rebuilding rejected: omissions grow whenever the action schema grows |
+| Trait / Reaction / Lair ↔ another model | Explicit **Create copy**, new ID. Original and every reference remain. Copy name where supported, description, compatible limited uses and CR estimates; defaults supply required destination fields. Other mechanics remain on source | Destructive conversion rejected; hidden schema baggage rejected because it would not render and would mislead users |
+| CR on copies | Start excluded where destination supports annotations; keep copied automatic/manual setting and estimate values. User opts in after review | Including both retained source and copy by default would double-count estimates |
+| Lair identity | Lair has no persisted name; destination named copy uses “Lair Action”; copying into lair does not invent a name field | Schema expansion deferred until a justified product requirement |
+| Prose and macros | Copy text exactly, without claiming role-specific macro semantics translate. Review dialog asks author to inspect copied mechanics/macros | Automatic prose rewriting rejected: it can change authored rules intent |
+| Missing/stale source or colliding new ID | Unavailable result; no patch; visible message. Commit recomputes using current collections, never earlier modal snapshots | Blindly applying a preview patch could overwrite intervening edits |
+| Explicit action deletion | Remove action, legendary/mythic membership and multiattack references; independent copies remain | Treat deletion cleanup separately from role movement; movement must not invoke deletion |
+
+```mermaid
+stateDiagram-v2
+  [*] --> SelectRole
+  SelectRole --> NoChange: Same role
+  SelectRole --> ReviewMove: Compatible action family
+  SelectRole --> ReviewCopy: Different persisted model
+  SelectRole --> Unavailable: Invalid role or missing source
+  ReviewMove --> Unchanged: Cancel
+  ReviewCopy --> Unchanged: Cancel
+  ReviewMove --> LiveDecision: Confirm
+  ReviewCopy --> LiveDecision: Confirm
+  LiveDecision --> Unavailable: Source unavailable or ID collision
+  LiveDecision --> PatchCurrentStore: Valid patch
+  PatchCurrentStore --> PersistAndRender
+```
+
+**Layer map:** Role selector → Quasar review dialog → `roleTransition` → current-model patch → existing Pinia persistence → studio category and shared renderer. Core owns policy, shell owns UUID/dialog/notification/persistence. The core imports no UI or I/O. Compatible move patches replace only the action wrapper and pool containers; other records retain references. Cross-model copied nested use/CR fields are cloned and proven independent.
+
+**Measured proof:** code `10f7aa0`; 7 files +240/−97. 51 new core tests cover the full 7×7 matrix plus invalid/missing/colliding inputs and existing destination pool metadata. Each pair asserts determinism and unchanged input; moves preserve record contents and references, copies preserve originals and isolate nested editable values. Browser Step 39 selects real role options and exercises dialogs, cancellation, Apply, view transition, reload and deletion. Static review reported no actionable findings. This does not establish complete old-save migration/field coverage or format-level export correctness; those remain A7.7b gates.

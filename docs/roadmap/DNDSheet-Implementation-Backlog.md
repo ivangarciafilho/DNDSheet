@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 145 · 2026-10-29 · A7 lair and section context · `rc-2.4.3-build-145-a7-role-context` |
-| **Code HEAD** | `d70cc01` lair projection, typed section context and mobile stacking · protected 144/143/142/139 archives remain preserved · 165 core tests, production build, focused lint, 38 browser steps and theme/help checks pass |
+| **Version** | v2.4.3 build 146 · 2026-10-29 · A7 safe role transitions · `rc-2.4.3-build-146-a7-safe-role-transitions` |
+| **Code HEAD** | `10f7aa0` reviewed role moves, non-destructive cross-model copies and mythic deletion cleanup · protected 145/144/143/142/139 archives retained · 216 core tests, production build, focused lint (0 errors), 39 browser steps and theme checks pass |
 | **Progress** | **7 / 28 loops shipped** · **68 / 193 tasks done** (35.23 %) · **1 active** · **124 pending** |
-| **Now** | A7 remains active. All seven role projections and section headers are integrated. A7.3 complete; A7.7b active for the full field, old-save, conversion and export matrix. 68 done, 1 active, 124 pending. |
-| **Next** | Complete all-role order, field-preservation, role-conversion and persistence proofs before closing A7. A8 consolidation remains blocked. |
+| **Now** | A7.7b active: all 49 role pairs have deterministic preservation/copy-policy tests. Browser Step 39 proves review/cancel/apply, independent copy, CR exclusion, references, reload and deletion cleanup. 68 done, 1 active, 124 pending. |
+| **Next** | Complete normalized old-save field/order audit and format-level export proofs; retain the now-passing role-transition/persistence matrix before closing A7. A8 consolidation remains blocked. |
 
 ---
 
@@ -97,6 +97,7 @@ pie showData
 | 2026-10-29 | `71a8c21` | A6 | Optional action targeting/outcome data, conservative inference, modern plate projection and opt-in 2024-style text export; sample monster data unchanged | Core 124/124; build 136; exhaustive UI 33/33 steps; 0 runtime exceptions |
 | 2026-10-29 | `df95179` | A7 · partial build 137 | Added 9 catalog-backed action templates, grouped picker, explicit replacement confirmation, cancel/apply semantics and removed duplicate hard-coded preset/composer routes; configured sample data unchanged | Core 129/129; production build; exhaustive UI 33/33 including Step 32 cancel/apply; 0 runtime exceptions; focused lint 0 errors |
 | 2026-10-29 | `761b41a` | A7 · partial build 138 | Deep-cloned nested template values per application; edits to one action cannot mutate the shared catalog or another action | Core 130/130 including catalog isolation regression; production build; exhaustive UI 33/33; 0 runtime exceptions |
+| 2026-10-29 | `10f7aa0` | A7 · partial build 146 | Replace destructive role conversion with reviewed compatible moves and explicit cross-model copies. Preserve source fields/references, isolate copy uses/CR, exclude copies from CR; clear mythic links on deletion. | 216 core tests (+51), all 49 role pairs, production build, zero lint errors, full 39-step browser suite (+1), five/twelve-theme smoke; 7 files +240/−97 |
 | 2026-10-29 | `d70cc01` | A7 · partial build 145 | Lair projection and exact preview; typed legendary/mythic/lair section drafts; initiative-aware default preamble; mobile pane stacking. A7.3 completed; matrix remains active. | 165 core tests; production build; zero lint errors; 38 browser steps, zero errors; 5-theme spellcasting; 12-theme help; 98-file sealed archive |
 | 2026-10-29 | `7f2e572` | A7 · partial build 144 | Added typed trait cadence/display policy and renderer preview as sixth role; fixed live heading spaces and narrow popup fit; kept existing schema/data and archives. Audited checklist states: 67 done, 2 active, 124 pending. | Core 159/159; production build; changed-file lint; browser steps 1–37 with zero console errors/runtime exceptions; five-theme spellcasting and twelve-theme help/contrast |
 | 2026-10-29 | `77a18c5` | A7 · partial build 143 | Added a distinct typed reaction projection/patch adapter and editable trigger/usage cells with shared sanitized renderer preview; preserved reaction storage model/collection, configured sample data, and build 142/139 archives. Trait/lair adapters, complete headers, role-wide matrix, and A7 closeout remain open. | Core 152/152; production build; changed-file lint passes; exhaustive browser steps 1–36; spellcasting five themes; help/contrast twelve themes; 0 browser runtime exceptions |
@@ -122,7 +123,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A7 partial candidate build 145: seven role projections and section headers integrated; complete preservation/conversion matrix and closeout remain | **A7.7b → A7.8** prove complete all-role behavior, then release the loop | A8…A17 (R2–R6), then Track B (R7–R10) |
+| A7 partial candidate build 146: seven projections/headers plus reviewed non-destructive role transitions | **A7.7b → A7.8** finish old-save/order/export proofs, then close the loop | A8…A17 (R2–R6), then Track B (R7–R10) |
 
 ---
 
@@ -290,7 +291,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R2 | AU-03 | A6 | Re-estimate after adapter/header matrix | Build 145 slice: 13 files, +347/−18; seven roles and section headers integrated; full matrix and closeout open |
+| R2 | AU-03 | A6 | Re-estimate after adapter/header matrix | Build 146 slice: 7 files, +240/−97; reviewed role transitions integrated; old-save/order/export matrix and closeout open |
 
 - [x] **A7.0** Pre-flight: map every current field to its future chain home and identify preservation boundaries · M · *proof: audit notes below + implementation diff*
 - [x] **A7.1** `src/core/domain/action-composer.ts`: `ROLE_CHAINS` descriptors and shared row precedence for all seven roles; preserve both structured and legacy fields; do not imply UI integration · S · *proof: `test/core/ActionComposer.test.ts` validates role coverage, unique IDs, order, and legacy/structured field coverage*
@@ -300,7 +301,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A7.5** `ACTION_TEMPLATES` catalog and grouped picker: 9 structured templates, authored casing, template-owned stale-field clearing, stable ID/role/use/recharge/stage/custom-preamble/CR preservation · M · *proof: `test/core/ActionTemplates.test.ts`; browser Step 32*
 - [x] **A7.6** Remove the "Quick Attack Composer" strip and hard-coded preset buttons (DEF-12); require explicit confirmation before replacing an existing action · S · *proof: browser Step 32 cancel + apply paths*
 - [x] **A7.7a** Catalog unit + browser tests: known/unknown template behavior, reset semantics, original-object immutability, nested catalog isolation, preservation boundaries, replacement cancel/apply · M · *proof: core 130/130; exhaustive UI 33/33; 0 runtime exceptions*
-- [~] **A7.7b** Seven-role integration now covered by Steps 35–38: lair prose/CR, section Apply/Cancel/validation, membership/config preservation, default versus custom preamble, narrow layout and persistence. Remaining: full field-by-field old-save and cross-role conversion matrix; all-seven order audit; export-format regression proof · M
+- [~] **A7.7b** Seven-role studio proofs retained. Build 146 completes the 49-pair non-destructive role-transition matrix, reviewed move/copy cancellation, independent fields and CR exclusion, multiattack/pool references, reload, and explicit deletion cleanup (Step 39). Remaining: normalized old-save field-by-field ownership/order audit and format-level Markdown/Homebrewery/LaTeX export proof · M
 - [ ] **A7.8** Browser + close: commit `actions studio edits abilities as a chain of plate cells`, docs ritual · S
 
 **A7.0 field ownership map (observed in `ActionsEditor.vue`):**
@@ -326,7 +327,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | Trait | Integrated; seven domain tests + Step 37 draft/policy/preview/persistence proof | Retain legacy partial-annotation inclusion and live-text regressions |
 | Lair | Integrated: readonly role identity, prose/CR editing, shared preview; Step 38 | Retain no-invented-name and modern/classic parity regressions |
 | Role headers | Integrated: pure drafts/validation/patches for legendary/mythic/lair; Step 38 | Retain Apply-time memberships and unrelated configuration; old panels remain until A8 parity gate |
-| Cross-role conversion | Complete preservation not proven; trait creation now uses existing default factory | Audit all conversion factories, data-loss disclosure, references and CR fields under A7.7b/A8.0 |
+| Cross-role conversion | Build 146: all 49 pairs tested. Shared action family patches in place; different models create independent reviewed copies with original retained | Keep Step 39; audit normalized old-save field coverage and format-level export semantics before A7 closeout |
 | Release serving | Archived roots verified; stable origin 9106 retained; predecessor 143 at 9108 | Verify IPv4/IPv6 serve the same archive; never bind evaluation to mutable dist |
 
 **Done when:** CMP-009…011 proven for every supported role and adapter; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 145 completes A7.3 but does not close A7; A7.7b and A7.8 remain gates.
@@ -771,7 +772,7 @@ sequenceDiagram
   end
 ```
 
-### Prepared continuation: A7.7b, then A7.8
+### Build 145 preparation record (superseded by Build 146 gate ledger)
 
 1. Inventory every actual field in all seven source models and conversion factories; map each to editor, renderer, export and persistence ownership. Include IDs, role arrays, costs, CR inclusion/manual overrides, recharge/stage data, trait grouping and legacy values.
 2. Build table-driven conversion cases for every allowed source/destination. Explicitly preserve or disclose incompatible data; do not silently discard fields. Retain source objects and stable references where the workflow requires them.
@@ -780,3 +781,14 @@ sequenceDiagram
 5. Before A7.8, reconcile evidence against CMP-009…011. If any field lacks a verified home, keep A7 open. A8 removal follows verified capability parity; A9 provenance remains downstream.
 
 Preparation: load executing-plans, verification-before-completion, relevant model/functional-core guidance, code review and UX-copy skills; read this contract, A7 ownership map, the conversion factory call sites, and current handoff. Research external APIs only if this slice introduces one. Close with measured diff, exact code/tag/archive, test boundaries, preservation evidence and synchronized status in all three documents. Never claim infinite scalability, zero defects or future-proofing as an established property.
+
+### A7.7b refined gate ledger after Build 146
+
+| Gate | Evidence / status | Fine-grained remaining work |
+|---|---|---|
+| Role-transition policy | Complete for all 49 pairs; `RoleTransition.test.ts`; browser Step 39 cancel/apply/copy/refs/reload/deletion | Retain tests; no destructive cross-model conversion may return through legacy panels |
+| Field ownership and old saves | Partially covered by existing adapter and preservation tests | Inventory each `MonsterAction`, `MonsterTrait`, `MonsterReaction`, `LairAction` field; load normalized old-save fixtures; verify no-edit and edit/save/reload; inspect unknown legacy fields; verify all seven display orders |
+| Export semantics | Web/plain separation reviewed, format-level proof still pending | Assert Markdown, Homebrewery and LaTeX lair output excludes `sb-plate` HTML in modern mode; verify expected prose/tokens and non-action role output; fix at shared projection boundary if needed |
+| Release closeout | Pending A7.8 | Close only after the two remaining gates; reconcile CMP-009…011, capability parity, artifacts and handoff. Do not retire panels early |
+
+Delivery delta: +51 deterministic core checks and +1 integrated browser scenario; 7 production/test/build files, +240/−97 lines; removed the delete/recreate conversion path. Top-level task totals remain 68/193, because A7.7b is still active rather than falsely closed. This is completed shipping behavior inside an open acceptance task, not additional roadmap scope.
