@@ -1,13 +1,26 @@
 # DNDSheet — Development Handoffs
 
+## Build156 closing packet → finish A8.5
+
+Code `af32093`,tag `rc-2.4.3-build-156-studio-capabilities`;evaluator http://localhost:9124/index.html?build=156#/. Frozen archive is retained separately. Existing9124server serves dist/spa:protect it from rebuild until a successor is ready and use a separate build output. Build155 remains9125,97hashes verified;main remains153. Automatic approval review blocked starting another preview server with generic blocked-by-policy/no detail;no retry or alternate start occurred. The existing preview served the verified release bytes.
+
+Delivered complete capability homes for action display/phase/custom-heading policies,action/lair CR,trait sorting and non-destructive memberships with cost/repair. No panels removed. Progress82/216 complete,oneactive(A8.5),133pending;zero scope growth or newly closed whole tasks. Code10files,+289/-4.
+
+Final review correction:shared CR lock toggle omitted the action context supplied by initialization. Browser reproduction changed damage28 to7 on manual→automatic;the toggle now receives action context. Green fixture also checks overriddenDC17 and correct CR target after source reorder.273core/48browser suites pass,5spell/12help themes pass;focusedlint clean;Impeccable detector[]. No reviewer minors deferred. Ruling:current synchronous membership edits retain index+ID guards and existing duplicate schema. Cost if wrong:future queued same-ID edits could target a different duplicate;add persistent occurrence identity before introducing delayed edits. No claim of concurrency-safe queued editing is made.
+
+Evaluation9124 initially had My New Monster. Normal UI applied the existing Veil of Radiance action template and opened Display and CR settings. Configured data on other origins was not copied/reset. Screenshot `.codex-temp/build156-evaluation.png` records the actual view. Served156index/entry bytes match archive across localhost/IPv4/IPv6. No LaTeX compilation. A focused startup check needed a bounded studio-mount readiness wait;final full suite passed.
+
+Next preparation:read the updated capability contract and Build150 control map;load execution/verification,functional-core,Impeccable Operate,UX-copy and TTRPG guidance as relevant. Inventory every remaining old-panel-only operation,then prepare three baseline fixtures and replacement browser paths BEFORE unmounting panels. Keep VillainActionsEditor. Do not fold A9/A11 numeric/outcome/availability expansion into retirement. Closing evidence must distinguish controls,fixture parity,actual panel removal and loop closure.
+
+
 > **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
-| **State at hand-over** | Code `46785a0`, build 155; independent evaluation http://localhost:9125/index.html#/. Protected154 remains9123; main9100/9106 remains153. 267 core tests, production build,47 browser scenarios,5 spell themes,12 help themes. Separate origin has separate storage; configured user monster not copied or reset. |
+| **Version** | v2.4.3 build156 · 2026-10-30 · studio capability homes · `rc-2.4.3-build-156-studio-capabilities` · Build155 preserved |
+| **State at hand-over** | Code `af32093`,build156 at http://localhost:9124/index.html?build=156#/. Existing server serves dist/spa;protect this directory from rebuild until a successor is ready. Build155 remains9125;main remains153.273core/48browser/5spell/12help pass;lint clean. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active; A8.13/A8.14/A8.15 delivered. Next A8.5 capability coverage and retirement gates; post-binding semantic tasks stay in A9/A11/A12. |
+| **Current loop** | A8 active;A8.5 controls delivered,retirement gate open.82/216 complete,1active,133pending;no new scope or newly closed whole task. |
 
 ---
 

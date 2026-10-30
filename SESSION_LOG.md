@@ -1,5 +1,13 @@
 # DNDSheet session checkpoint - 2026-10-30
 
+## CURRENT: Build156 studio capability homes
+
+Codeaf32093/tag rc-2.4.3-build-156-studio-capabilities;eval http://localhost:9124/index.html?build=156#/. Existing9124server serves dist/spa;DO NOT rebuild that directory until successor ready,use separate output. Frozen156 archive retained separately. Protected1559125archive97hashes verified;main153unchanged. Newserver-start command blocked by automatic review,genericpolicy/no detail,no retry. A later combined documentation/packaging command was also blocked;documentation was safely edited with the dedicated patch tool instead.
+
+10files,+289/-4:stable-ID actiondisplay/phase/customheading/action+lairCR,traitsorting,legendary/mythic add/remove/cost/missingrepair. Pure entry-display/action-associations. Shared CR locktoggle now receives actioncontext. No panels retired.273core(+6),productionbuild,48browser zero console/runtimeerrors,5spell/12helpthemes,lintclean,detector[]. Review CR finding red→green;Step48 damage28/DC17 parity/reorder safety. Synchronous duplicate membership index+ID guard retained;future queued editing requires occurrence identity.
+
+Progress82/216,1active(A8.5),133pending,8/28loops shipped;no whole-task closure/scope growth. Three docs/mirrors updated. Next exhaustive remaining panel-control/template/reset/delete audit,three saved baselines,replace legacy browserpaths,then retirement retainingVillainActionsEditor and A8.6/7/8 closeout. Evaluation origin initiallyMyNewMonster;normalUI addedVeilofRadiance actiontemplate,settingsopen. Other-origin configured user data untouched. Screenshot .codex-temp/build156-evaluation.png. Prior155 checkpoint below is historical.
+
 Build155 delivered A8.15, code46785a0, tag rc-2.4.3-build-155-heading-grammar; independent evaluation http://localhost:9125/index.html#/. Frozen155 archive and SHA256SUMS sealed. Build154 at9123 and Build153 at main9100/9106 remain unchanged; protected153/154 each97hashes verified. Do not retry/bypass prior automatic policy rejection of running-server replacement. New155 has separate localStorage; actual fresh selection My New Monster. User configured data was not copied/reset.
 
 9files +89/-27: composer head order, modern head, classic structured identity/cadence/cost and 2024 core action/bonus export lead. Pure abilityHeadOrder/abilityIdentity, componentsInLead flag keeps standalone text2024 compatibility. Components once beside name, classification/duration preserved. Cantrip school-beforeCantrip retained; numerical state untouched; custom preamble paths unchanged. Recharge range typography remains existing Recharge 4-12 with en dash, no schema migration.

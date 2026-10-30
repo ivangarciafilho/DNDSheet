@@ -1,14 +1,27 @@
 # DNDSheet — Implementation Backlog
 
+## Build156 delivery delta and next gates
+
+Code `af32093`:10files,+289/-4. A8.5 now has working action display/phase/custom-heading settings,action/lair CR controls,trait sorting and legendary/mythic membership add/remove/cost/repair. Six new core tests and browser Step48 cover these homes. No whole task newly closed or scope added:82/216 complete,A8.5 active,133pending. Historical delivery figures below remain dated records.
+
+Remaining work inside A8.5,dependency ordered:
+1. Reconcile every old-panel control with its actual studio home,including reset/template/reorder/delete semantics and ambiguous imported IDs.
+2. Capture three representative saved-monster baselines,including custom renderers,missing references,phase policies,manual CR,dual-role memberships and saved templates.
+3. Adapt browser paths that still use old panels and prove lifecycle,cancel/undo/reload behavior before deleting those targets.
+4. Retire only fully covered panels;retain VillainActionsEditor under BS-26. Prove A8.6 byte-identical fixture output and A8.7 replacement paths,then close A8.5/A8.8. Capability delivery alone does not close retirement.
+
+Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime errors,5spell themes,12help themes,focusedlint clean,Impeccable detector[]. Final review's automatic-CR context defect reproduced red and fixed green,including damage28/DC17 parity and correct target after reorder. No LaTeX compilation. Evaluate156 at http://localhost:9124/index.html?build=156#/. Existing server uses dist/spa;future builds must use a separate output until a successor is ready. Protected155 remains9125 with97verified hashes.
+
+
 > **The checklist and the living timeline.** Every loop of the [Product & Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) broken into tasks you can tick, in the order they should ship, with the commit that proves each one. Preparation and closing rituals live in the [Development Handoffs](DNDSheet-Development-Handoffs.md).
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
-| **Code HEAD** | `46785a0` shared heading order; 267 core tests, production build, 47 browser scenarios and theme suites; focused lint 0 errors/5 existing warnings |
-| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **0 active tasks · 134 pending** · A8 active; no new scope in this slice |
-| **Now** | A8.15 complete: editor head order, modern plate, classic structured prose and 2024 core action exports agree on cadence, identity/components, classification. |
-| **Next** | A8.5 capability coverage/associations before retiring duplicate panels; A8.6 fixture parity, A8.7 browser adjustment and A8.8 closeout. |
+| **Version** | v2.4.3 build156 · 2026-10-30 · studio capability homes · `rc-2.4.3-build-156-studio-capabilities` · Build155 preserved |
+| **Code HEAD** | `af32093`;273 core tests,production build,48 browser scenarios,5 spell themes,12 help themes;focused lint clean |
+| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **1 active task · 133 pending** · A8.5 controls delivered;retirement pending |
+| **Now** | Action phase/custom heading,action/lair CR,trait sorting and non-destructive legendary/mythic membership add/remove/cost/repair are available in the studio. |
+| **Next** | Finish A8.5 ownership audit,prepare three fixture baselines and replacement browser paths,then retire covered panels and close A8.6/7/8. |
 
 ---
 
@@ -361,7 +374,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC). Build 152: full distinct-model adapter, six core cases and browser Step 44; all legacy panels retained pending retirement gates · L
 - [x] **A8.3** Multiattack role: stable-ID reference controls with missing-target warning and repair; add/remove exact occurrence, move, search, repeated uses, shared custom rendering/postscript and preview. Build 153: seven core cases and browser Step 45 · M
 - [x] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirmed by A8.0 at build 150*
-- [ ] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor`; retain `VillainActionsEditor` per BS-26/A8.0; delete the components (git keeps history) · M
+- [~] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor`; retain `VillainActionsEditor` per BS-26/A8.0; delete the components (git keeps history) · M · Build156 ships missing capability homes;actual panel retirement remains open.
 - [ ] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M
 - [ ] **A8.7** e2e adjustments for removed panels · S
 - [x] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Build 150 fixes the mismatch between displayed limited uses and free recharge text; one validated editor owns competing cadence fields (*added A7*) · M

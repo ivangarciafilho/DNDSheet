@@ -1,13 +1,29 @@
 # DNDSheet — Product & Architecture Specification
 
+## Build156 capability ownership contract — A8.5
+
+This updates the Build150 gap map without authorizing premature panel retirement. No source schema or numerical-binding semantics change;legacy panels remain mounted until their independent fixture/lifecycle gates pass.
+
+| User operation | Policy and adapter | Required invariant |
+|---|---|---|
+| Action phase/custom heading | entryDisplayPatch returns only stagePool/customPreamble;EntryDisplaySettings resolves stable source ID;shared bounded phase options retain saved values | Description,mechanics,cadence and CR retained;no implicit encounter automation |
+| Action/lair CR | Existing CR card/parser;stable-ID wrapper and ID/index key;both automatic initialization and lock toggle receive action effects/save context | Reorder cannot redirect new settings;inclusion retained;damage28/DC17 calculation matches across controls |
+| Trait sorting | Studio exposes existing alphaTraits setting | Projection preference changes without reordering source records |
+| Legendary/mythic membership | Pure associationChoices/associationPatch;grouped alphabetized source picker;add/remove/cost/repair apply membership-only patches | Unlink preserves source and other-role references;repair preserves cost/extension metadata |
+
+Data path:source ID -> live computed lookup -> validated small policy patch -> Pinia -> existing sheet/CR/export projection -> persistence. New memberships reject missing/ambiguous sources and duplicates in that role. Cost accepts safe positive integers. A first legendary membership enables the existing default pool3 only when count0,explained inline. Existing duplicate membership occurrences retain their order;current synchronous operations guard index+source ID. No persistent occurrence UUID or queued-concurrency guarantee is introduced. Before future asynchronous editing,add stable occurrence identity.
+
+Acceptance:invalid/stale changes rejected;source content retained;cross-role membership survives unlink;missing repair preserves cost;automatic CR controls agree for effects/save override;settings target correct ID after reorder;reload retains state. Six added core cases and Step48 cover these paths. Exhaustive retirement corpus and export convergence remain existing roadmap gates.
+
+
 > **The roadmap bible.** One source of truth for *what* DNDSheet becomes, *why* it must, and *how* every layer changes — from the pixel on the stat block, through the composable that projects it, down to the pure function that computes it, and back up to the promise it serves.
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
-| **Code HEAD** | `46785a0` shared heading order; 267 core tests, production build, 47 browser scenarios and theme suites; focused lint 0 errors/5 existing warnings |
+| **Version** | v2.4.3 build156 · 2026-10-30 · studio capability homes · `rc-2.4.3-build-156-studio-capabilities` · Build155 preserved |
+| **Code HEAD** | `af32093`;273 core tests,production build,48 browser scenarios,5 spell themes,12 help themes;focused lint clean |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **0 active tasks · 134 pending** · A8 active; no new scope in this slice |
+| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **1 active task · 133 pending** · A8.5 controls delivered;retirement pending |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
