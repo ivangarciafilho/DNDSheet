@@ -889,7 +889,7 @@ export function evaluateFormula(src: string, ctx: FormulaContext, opts: { style?
 /* Bindings: what an editor number field stores                        */
 /* ------------------------------------------------------------------ */
 
-export type NumericBinding = { mode: 'ref'; ref: string } | { mode: 'formula'; expr: string }
+export type NumericBinding = { mode: 'literal'; value: number } | { mode: 'ref'; ref: string } | { mode: 'formula'; expr: string }
 
 /** Legacy fields hold plain numbers; new fields hold bindings. Both resolve here. */
 export type NumericInput = NumericBinding | number | string | null | undefined
@@ -897,14 +897,15 @@ export type NumericInput = NumericBinding | number | string | null | undefined
 export function isNumericBinding(x: unknown): x is NumericBinding {
   if (!x || typeof x !== 'object') return false
   const b = x as Record<string, unknown>
-  return (b.mode === 'ref' && typeof b.ref === 'string') || (b.mode === 'formula' && typeof b.expr === 'string')
+  return (b.mode === 'literal' && typeof b.value === 'number' && Number.isFinite(b.value)) || (b.mode === 'ref' && typeof b.ref === 'string') || (b.mode === 'formula' && typeof b.expr === 'string')
 }
 
 export function bindingSource(input: NumericInput): string {
   if (input == null) return ''
   if (typeof input === 'number') return Number.isFinite(input) ? String(input) : ''
   if (typeof input === 'string') return input
-  return input.mode === 'ref' ? input.ref : input.expr
+  if (!isNumericBinding(input)) return ''
+  return input.mode === 'literal' ? String(input.value) : input.mode === 'ref' ? input.ref : input.expr
 }
 
 export function describeBinding(input: NumericInput): string {
@@ -924,6 +925,11 @@ export function resolveNumeric(
     const style = opts.style ?? 'number'
     const text = formatDiceValue(flatValue(fallback), style)
     return { ok: false, error, at, suggestions, value: fallback, dice: [], flat: fallback, style, text, trace: text, refs: [] }
+  }
+  if (isNumericBinding(input) && input.mode === 'literal') {
+    const style = opts.style ?? 'number'
+    const text = formatDiceValue(flatValue(input.value), style)
+    return { ok: true, value: input.value, dice: [], flat: input.value, style, text, trace: text, refs: [] }
   }
   const src = bindingSource(input).replace(/^\s*DC\s+(?=[\d({A-Za-z])/i, '')
   if (!src.trim()) {
@@ -1055,4 +1061,109 @@ export function renderFormulaMacros(text: string, ctx: FormulaContext): string {
     const result = evaluateFormula(inner, ctx)
     return result.ok ? result.text : match
   })
+}
+
+
+/** Field paths are opaque graph identities here; the field registry owns address validation and access. */
+export type BindingMap = Readonly<Record<string, NumericBinding>>
+/** Supplies all authored source paths of a canonical reference, including derived/transitive sources. */
+export type ReferenceSources = (referenceId: string, targetPath: string) => readonly string[]
+export class BindingGraphError extends Error {
+  readonly cycles: readonly string[][]
+  constructor(message: string, cycles: readonly string[][] = []) { super(message); this.name = 'BindingGraphError'; this.cycles = cycles }
+}
+
+/** Analyze parsed references, never substring-match prose or execute formulas to discover dependencies. */
+function bindingGraph(bindings: BindingMap, sources: ReferenceSources): Map<string, string[]> {
+  const paths = Object.keys(bindings).sort()
+  if (paths.length > 512) throw new BindingGraphError('At most 512 bound fields can be analyzed at once')
+  const known = new Set(paths), graph = new Map<string, string[]>()
+  let edgeCount = 0
+  for (const path of paths) {
+    const binding = bindings[path]
+    if (!isNumericBinding(binding)) throw new BindingGraphError(`Invalid binding at ${path}`)
+    const dependencies = new Set<string>()
+    if (binding.mode !== 'literal') {
+      if (binding.mode === 'ref' && !getFormulaRef(binding.ref)) throw new BindingGraphError(`Invalid reference binding at ${path}`)
+      const parsed = parseFormula(bindingSource(binding))
+      if (!parsed.ok) throw new BindingGraphError(`Invalid formula at ${path}: ${parsed.error}`)
+      const pending = [parsed.ast]
+      while (pending.length) {
+        const node = pending.pop() as FormulaNode
+        if (node.t === 'ref') {
+          const reference = getFormulaRef(node.id)
+          if (!reference) throw new BindingGraphError(`Unknown reference ${node.id} at ${path}`)
+          const sourcePaths = sources(reference.id, path)
+          if (!Array.isArray(sourcePaths) || sourcePaths.length > 512 || sourcePaths.some(source => typeof source !== 'string')) throw new BindingGraphError(`Invalid reference sources at ${path}`)
+          for (const source of sourcePaths) if (known.has(source)) dependencies.add(source)
+        } else if (node.t === 'neg') pending.push(node.a)
+        else if (node.t === 'bin') pending.push(node.a, node.b)
+        else if (node.t === 'dice') pending.push(node.count, node.die)
+        else if (node.t === 'call') pending.push(...node.args)
+      }
+    }
+    const edges = [...dependencies].sort()
+    edgeCount += edges.length
+    if (edgeCount > 16384) throw new BindingGraphError('Binding dependency graph is too dense')
+    graph.set(path, edges)
+  }
+  return graph
+}
+
+/** Iterative Kosaraju: report cyclic components, not exponentially many individual cycle walks. */
+function cyclicGroups(graph: Map<string, string[]>): string[][] {
+  const visited = new Set<string>(), finished: string[] = []
+  for (const root of graph.keys()) {
+    const stack: { path: string; exit: boolean }[] = [{ path: root, exit: false }]
+    while (stack.length) {
+      const frame = stack.pop() as { path: string; exit: boolean }
+      if (frame.exit) { finished.push(frame.path); continue }
+      if (visited.has(frame.path)) continue
+      visited.add(frame.path)
+      stack.push({ path: frame.path, exit: true })
+      for (const path of [...(graph.get(frame.path) || [])].reverse()) if (!visited.has(path)) stack.push({ path, exit: false })
+    }
+  }
+  const reverse = new Map([...graph.keys()].map(path => [path, [] as string[]]))
+  for (const [path, dependencies] of graph) for (const dependency of dependencies) reverse.get(dependency)?.push(path)
+  visited.clear()
+  const cycles: string[][] = []
+  for (const root of finished.reverse()) {
+    if (visited.has(root)) continue
+    const stack = [root], component: string[] = []
+    while (stack.length) {
+      const path = stack.pop() as string
+      if (visited.has(path)) continue
+      visited.add(path); component.push(path)
+      stack.push(...(reverse.get(path) || []))
+    }
+    component.sort()
+    if (component.length > 1 || graph.get(root)?.includes(root)) cycles.push(component)
+  }
+  return cycles.sort((a, b) => a[0].localeCompare(b[0]))
+}
+
+/** Deterministic source-before-consumer order; invalid or cyclic input never returns a partial order. */
+export function dependencyOrder(bindings: BindingMap, sources: ReferenceSources): string[] {
+  const graph = bindingGraph(bindings, sources), cycles = cyclicGroups(graph)
+  if (cycles.length) throw new BindingGraphError('Cyclic numeric bindings', cycles)
+  const pending = new Map([...graph].map(([path, dependencies]) => [path, dependencies.length]))
+  const consumers = new Map([...graph.keys()].map(path => [path, [] as string[]]))
+  for (const [path, dependencies] of graph) for (const dependency of dependencies) consumers.get(dependency)?.push(path)
+  const ready = [...pending].filter(([, count]) => count === 0).map(([path]) => path).sort(), order: string[] = []
+  while (ready.length) {
+    const path = ready.shift() as string
+    order.push(path)
+    for (const consumer of consumers.get(path) || []) {
+      const remaining = (pending.get(consumer) || 0) - 1
+      pending.set(consumer, remaining)
+      if (remaining === 0) { ready.push(consumer); ready.sort() }
+    }
+  }
+  return order
+}
+
+/** Each result is a sorted strongly connected group, including a one-field self dependency. */
+export function detectCycles(bindings: BindingMap, sources: ReferenceSources): string[][] {
+  return cyclicGroups(bindingGraph(bindings, sources))
 }
