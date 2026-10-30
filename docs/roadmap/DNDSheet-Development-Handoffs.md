@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
-| **State at hand-over** | Code `fc21bc1`, tag `rc-2.4.3-build-150-a8-typed-usage`. Latest/configured origins 9100 and 9106; exact 150 at 9116; protected 149 at 9115, 148 at 9113. 239 core tests; production build; focused lint 0 errors/1 existing warning; 42 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. Existing Seraphic Herald storage/schema/sample data retained. |
+| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
+| **State at hand-over** | Code `d4f1e73`, tag `rc-2.4.3-build-151-a8-classic-metadata`. Configured/latest origins 9100/9106; exact 151 at 9117; protected 150 at 9116. 244 core tests; production build; focused lint 0 errors/1 existing warning; full 43 browser steps zero errors, including 16 new parity comparisons and 6 captured exports; 5-theme spellcasting and 12-theme help pass. Existing sample/model/browser storage retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active. A8.0/1/4/9 closed in this packet (A8.1/4 were delivered earlier and verified now). Next is A8.11; no panels retire until every audited field and operation has a verified studio home. |
+| **Current loop** | A8 active; A8.11 delivered. Next is A8.2, then A8.3. No legacy panels retire until every field and operation in the capability matrix has a verified studio home. |
 
 ---
 
@@ -861,3 +861,23 @@ Then implement A8.2 attack and A8.3 multiattack adapters as separate bounded pac
 Preparation: executing-plans; archetypes functional core; design UX copy/accessibility; engineering review; verification-before-completion. Use relevant existing skills already loaded; do not recreate a broad redesign or duplicate core renderers. Close each packet with code/tag/archive, measured file/line delta, test boundaries, all three documents and a current session log.
 
 Build 150 code `fc21bc1`: 8 files, +216/−23 lines. New core `action-usage.ts` and UI `ActionUsageEditor.vue`; shared cell/renderer integration, five tests and one browser scenario. Both 149 and 150 archives have 97 verified hashes. Final read-only review of the shared resolver found no regression.
+
+## Build 151 packet — classic metadata parity delivered
+
+| Item | Evidence / handoff |
+|---|---|
+| Base | `a874871` / protected build 150; new code and tag recorded on the cover and in backlog timeline |
+| Closed | A8.11, one existing task; 77/204 complete, 127 pending, no new top-level tasks; A8 remains active |
+| Delivered | Shared pure header facts, readable classic metadata after the name/usage/cost lead, complete attack-only/utility targeting, primary text-export parity. Authored values/models unchanged |
+| Verification | 244 core tests (+5), production build, focused lint 0 errors/1 existing warning, full 43 browser steps (+1), zero errors; Step 43 adds 16 parity comparisons and 6 captured exports; five-theme spellcasting/twelve-theme help pass. Read-only review: no actionable findings |
+| Test reconciliation | Old Step 34 strings asserted missing target text; updated to require the actual creature/visibility qualifier and to inspect the named template entry, keeping the regression meaningful |
+| Preservation | Immutable 150 at 9116; exact 151 at 9117. Configured/latest origins 9100/9106 promote only after verification; browser storage and the configured sample are not replaced by fixtures |
+| Boundary | No compiled-LaTeX claim; no portable-format breadth expansion, new rules, data migration or panel retirement |
+
+**Next prepared packet: A8.2 attack adapter.** Read A8.0's field/operation map, the complete `DndAttack` interface and `widgets/AttackPanel.vue`, source getters/token rendering, attack references in legendary/mythic/multiattack collections and existing range model boundaries. Inventory reach versus normal/long range, attack proficiency/stat/manual overrides, primary/alternate/additional damage, save/effects, phase/custom prose and create/delete/order/templates before editing. Preserve IDs and source ownership; reuse existing getters/renderers. Write failing cases for field patches and reference preservation first; land a complete usable adapter before A8.3 references or A8.5 retirement.
+
+Retain Steps 35–43, including typed cadence and metadata/export cases. Then A8.3 must keep repeated IDs/order, dangling-ID visibility, custom multiattack prose and postscript. A8.5 remains blocked on all audited missing controls and association workflows; A8.6 still needs three within-candidate before/after retirement fixtures. Keep Villain/Bloodied separate and CR cards with entries per BS-26/27.
+
+Preparation: existing execution/verification skills, functional core, engineering review, relevant attack-model and TTRPG terminology guidance. Treat current authored data as authority; retrieve rules sources only if proposing actual mechanics. Close with measured diff, code/tag/archive, evidence boundaries, synchronized three documents and session checkpoint.
+
+Build 151 code `d4f1e73`: 7 files, +141/−21 lines. Both protected 150 and sealed 151 archives have 97 verified hashes. Code/tag and complete validation precede promotion; final origin/index/entry-asset checks agree on IPv4 and IPv6.

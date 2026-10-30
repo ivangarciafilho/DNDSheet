@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
-| **Code HEAD** | `fc21bc1` typed action economy editor and shared recharge precedence · branch `statblock-overhaul`, repository `F:\AI_Resources\DNDSheet` · 239 core tests, production build, focused lint 0 errors/1 existing warning, 42 browser steps and theme checks pass |
+| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
+| **Code HEAD** | `d4f1e73` shared authored header facts and complete structured prose targeting · 244 core tests; production build; focused lint 0 errors/1 existing warning; 43 browser steps and theme checks pass |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **76 / 204 tasks complete (37.25%)** · **0 active tasks · 128 pending** · A8 is the active loop; A7 closed at build 148 |
+| **Progress** | **8 / 28 loops shipped** · **77 / 204 tasks complete (37.75%)** · **0 active tasks · 127 pending** · A8 remains the active loop |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -2508,14 +2508,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-30** — Build 150 completes A8.0/1/4/9. 8/28 loops shipped; A8 active; 76/204 tasks complete, 0 active tasks, 128 pending; 62.75% remains. Typed cadence aligns the chip and stored economy; capability audit identifies exactly which controls still prevent panel retirement. Core 239/239, production build, focused lint 0 errors/1 existing warning, all 42 browser steps zero errors, five-theme spellcasting and twelve-theme help pass. Build 149 remains preserved at 9115; latest origins retain existing browser storage.
+**Progress snapshot · 2026-10-30** — Build 151 closes A8.11. 8/28 loops shipped; A8 active; 77/204 tasks complete, 0 active tasks, 127 pending; 62.25% remains. Shared metadata facts now reach classic structured prose and supported text exports; attack-only and utility targeting no longer disappears. Core 244/244; production build; focused lint 0 errors/1 existing warning; full 43 browser steps zero errors; new scenario covers 16 template/style/role comparisons and 6 captured exports; 5-theme spellcasting and 12-theme help pass. Build 150 remains immutable at 9116; latest origins retain browser storage.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 26 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 27 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3338,3 +3338,35 @@ stateDiagram-v2
 ```
 
 Pure domain functions own interpretation, validation and patch data. The editor owns draft controls and focus; `ChainCell` owns commit/cancel; `ComposerChain` applies the patch to the current entry. Existing persistence/rendering remain authoritative. Five new core tests and browser Step 42 cover actual saved uses, bounds/custom values, validation, Cancel, clearing competing fields, preservation, narrow layout and reload.
+
+## A8.11 decision and contract — Build 151
+
+**Observed gap:** modern structured cards printed authored school/tier, components, duration and full scope, while `text2024` omitted metadata and dropped much of attack-only/utility targeting. Patching individual export files would leave the other projections divergent.
+
+**Chosen approach:** pure `abilityHeader(action)` returns `{discipline, components, duration}` and is reused by modern card headers and classic/export prose. `text2024` prints the metadata sentence immediately after the caller-owned entry lead and before mechanical clauses: *2nd Level Evocation (V, S); Duration: 1 minute.* Cantrips retain school-before-tier order. Values keep authored spelling; blank/None fields and Instantaneous duration add no noise, matching the modern header convention. Components retain authored order. HTML metadata uses semantic emphasis and escapes literal angle brackets; plain text retains the same facts.
+
+| Layer | Contract / implementation |
+|---|---|
+| Model | Existing `MonsterAction.school/spellLevel/components/duration/targeting` only. No migration, model mutation, change of rules provenance or conversion of authored rules |
+| Pure header | `abilityHeader` trims display whitespace, omits empty sentinel fields, arranges tier/school and returns new component data; no store or UI dependency |
+| Modern projection | Both structured and existing modern action-header paths use the shared helper; no second copy of header interpretation |
+| Classic structured projection | `structuredActionLine` keeps its existing caller-owned name/usage/cost lead, then adds metadata through `text2024` before mechanics/outcomes/authored prose |
+| Attack-only scope | Preserve count/mode, kind, qualifier, distance/relation/origin, area, planes and raw legacy qualifier. Mechanical range/reach precedes the target subject; within-ranges stay attached to it. Scope-only utilities receive a Targets label without fabricating an attack/save |
+| Combined attack/save | Existing attack range remains with attack mechanics; complete targeting stays on the saving throw. Outcomes and authored prose retain their order |
+| Export boundary | Toolbar Markdown/Homebrewery/LaTeX reuse the existing prose target and escaping. Core 2024 exports inherit shared text; their legacy 2014 path remains intentionally unchanged. Other portable formats keep their explicit B4 coverage limits |
+
+```mermaid
+flowchart LR
+  Fields[Existing authored action fields] --> Header[abilityHeader]
+  Header --> Modern[Modern card header]
+  Header --> Prose[text2024 metadata]
+  Targeting[Existing structured targeting] --> Scope[Shared scope grammar]
+  Scope --> Modern
+  Scope --> Prose
+  Prose --> Classic[Classic sheet and exact preview]
+  Prose --> Export[Existing Markdown / Homebrewery / LaTeX boundary]
+```
+
+**Alternatives rejected:** duplicating metadata formatting in each exporter would preserve drift; temporarily switching visual templates to obtain output would mutate presentation state during export; inventing missing attack/save mechanics from a utility's scope would alter rules intent.
+
+**Evidence and bounds:** five new pure tests cover metadata/order, absent values, complete attack scope without repeated distance, utility scope, and semantic HTML escaping. Existing grammar/export expectations now require previously missing target subjects and qualifiers rather than omission. Step 43 verifies action/bonus/legendary/mythic entries across 2 templates × 2 layout styles (16 exact preview/sheet comparisons), six primary text downloads, no data mutation, cantrip order and persistence. Core 244/244, full 43-step browser suite and theme checks pass. Exported LaTeX was inspected as output text, not compiled; VTT export breadth remains B4. No legacy panel is removed by this delivery.

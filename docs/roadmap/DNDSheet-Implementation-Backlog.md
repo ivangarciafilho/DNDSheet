@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
-| **Code HEAD** | `fc21bc1` typed action economy editor and shared recharge precedence · branch `statblock-overhaul`, repository `F:\AI_Resources\DNDSheet` · 239 core tests, production build, focused lint 0 errors/1 existing warning, 42 browser steps and theme checks pass |
-| **Progress** | **8 / 28 loops shipped** · **76 / 204 tasks complete (37.25%)** · **0 active tasks · 128 pending** · A8 is the active loop; A7 closed at build 148 |
-| **Now** | A8.0 capability audit complete; A8.1 section headers and A8.4 reaction/trait authoring confirmed from A7; A8.9 typed usage delivered. Four tasks closed, no new top-level tasks added. Legacy panels retained behind explicit capability gates. |
-| **Next** | A8.11 classic metadata parity → A8.2 attack adapter → A8.3 multiattack references → A8.5 remaining capabilities and retirement → A8.6/7/8 fixture/browser closeout. See audited gaps and decisions below. |
+| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
+| **Code HEAD** | `d4f1e73` shared authored header facts and complete structured prose targeting · 244 core tests; production build; focused lint 0 errors/1 existing warning; 43 browser steps and theme checks pass |
+| **Progress** | **8 / 28 loops shipped** · **77 / 204 tasks complete (37.75%)** · **0 active tasks · 127 pending** · A8 remains the active loop |
+| **Now** | A8.11 complete: structured classic prose and supported text exports retain school/tier, components, duration and full authored targeting. One task closed; no new top-level tasks. |
+| **Next** | A8.2 DndAttack adapter → A8.3 multiattack references → A8.5 missing control/association homes and retirement → A8.6/7/8 fixture/browser closeout. Preserve the A8.0 capability gates. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 26 / 33 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 27 / 33 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
@@ -49,7 +49,7 @@
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **76 / 204 complete · 0 active · 128 pending** | **37.25 % complete · 62.75 % remaining** |
+| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **77 / 204 complete · 0 active · 127 pending** | **37.75 % complete · 62.25 % remaining** |
 
 ```mermaid
 pie showData
@@ -348,7 +348,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A8 · One Actions module ◐ `fc21bc1` · `rc-2.4.3-build-150-a8-typed-usage` (partial)
+#### A8 · One Actions module ◐ `d4f1e73` · `rc-2.4.3-build-151-a8-classic-metadata` (partial)
 
 > Every ability role lives in the studio; duplicate panels retire.
 
@@ -366,7 +366,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A8.7** e2e adjustments for removed panels · S
 - [x] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Build 150 fixes the mismatch between displayed limited uses and free recharge text; one validated editor owns competing cadence fields (*added A7*) · M
 - [x] **A8.10** Head chips follow the plate's word order: a spell level leads its school ("2nd Level Evocation"), a cantrip follows it ("Evocation Cantrip") (*added A7*) · S · *proof: `ComposerChain.test.ts` head-order case (red first); build 149*
-- [ ] **A8.11** Classic prose parity: `text2024` omits school/level, components, duration and target qualifiers that the modern plate prints for structured abilities; decide placement per field and prove both templates (*added A7*) · M
+- [x] **A8.11** Classic structured prose keeps school/tier, components, duration and target qualifiers. Shared `abilityHeader` feeds modern headers and `text2024`; attack-only and utility scope is no longer dropped. Proof: five metadata tests, core export assertions, browser Step 43 (16 parity comparisons + 6 text downloads), build 151 · M
 - [x] **A8.12** List grammar: `listJoin` (now `rendering/list-join.ts`) reads "x and y" for two items and keeps the serial comma for three or more; multiattack and extra-damage prose on the sheet and in exports (*added A7*) · S · *proof: `ListJoin.test.ts` (red first); 41 browser steps; build 149*
 - [ ] **A8.8** Close: commit `one actions module: studio covers every role, duplicate panels retired`, docs ritual · S
 
@@ -824,7 +824,7 @@ The normative field map and BS-26/27 decisions are in the Specification's matchi
 
 | Remaining task | Ordered actionable work and acceptance |
 |---|---|
-| A8.11 | Decide and render classic school/tier/components/duration and target qualifier placement; prove same authored information across templates and exports without inventing rules |
+| A8.11 ✅ | Build 151: authored metadata sentence after the lead, complete attack-only/utility scope, shared header facts. Step 43 proves both templates/rule layouts and primary text exports; retain this regression suite |
 | A8.2 | Adapt the existing `DndAttack` model (not `MonsterAction`); cover normal/long/reach range separately, proficiency/stat/overrides, primary/alternate/additional damage, effect save, phase, custom renderer and references |
 | A8.3 | Add/remove/reorder repeated attack/action IDs; surface dangling references; preserve custom multiattack renderer and postscript; do not infer references from names |
 | A8.5 | Before unmounting, add every missing studio home: action phase/custom-heading policy, action/lair CR cards, trait alpha-sort control, association add/remove for existing attacks/actions in legendary/mythic lists, and existing reset/template/reorder/delete semantics. Keep Villain/Bloodied panel by decision BS-26. Recount 21 → 14 top-level modules after seven retirements |
@@ -832,3 +832,10 @@ The normative field map and BS-26/27 decisions are in the Specification's matchi
 | A8.7/8 | Update selectors only for intentionally retired panels; retain behavior assertions; full browser/theme checks and immutable candidate before closing A8 |
 
 **Closed in this packet:** A8.0 inventory/decisions; A8.1 existing section-header fields (Step 38); A8.4 existing reaction/trait cadence/trigger/grouping controls (Steps 36–37); A8.9 actual action cadence (Step 42 and `ActionUsage.test.ts`). No new top-level tasks were added; the remaining task count drops by four.
+
+## Build 151 backlog grooming — A8.11 closed
+
+- Closed one existing task without adding roadmap scope: 77/204 complete, 127 pending. Existing attack/multiattack/retirement gates retain their IDs and priority.
+- Next A8.2 should start with `DndAttack` ownership, including normal/long/reach ranges and primary/alternate/additional damage. Do not force those fields through the simpler action schema. Reuse the shared metadata and targeting grammar where the source models genuinely agree.
+- Keep Step 43 and all five metadata cases as regression gates for A8.2/A8.3 and retirement fixtures. A8.6 compares within the same candidate before/after panel retirement; it must not compare build-150 text to the intentionally enriched build-151 classic text and classify the new authored facts as a regression.
+- Portable-format breadth remains B4 work. This packet verifies toolbar Markdown, Homebrewery and LaTeX outputs plus existing core 2024 text assertions; it does not claim compilation of exported LaTeX or a redesign of every VTT/legacy-2014 exporter.
