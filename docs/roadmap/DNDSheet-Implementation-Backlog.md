@@ -1,5 +1,25 @@
 # DNDSheet — Implementation Backlog
 
+> **The checklist and the living timeline.** Every loop of the [Product & Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) broken into tasks you can tick, in the order they should ship, with the commit that proves each one. Preparation and closing rituals live in the [Development Handoffs](DNDSheet-Development-Handoffs.md).
+
+| | |
+|---|---|
+| **Version** | v2.4.3 build 157 · 2026-10-30 · one actions module · `rc-2.4.3-build-157-one-actions-module` · Build 156 preserved |
+| **Code HEAD** | `38c4738` (retirement `b4eef8e`); 274 core tests, production build, 49 browser scenarios, 24-plate two-build parity, 5 spell themes, 12 help themes; focused lint clean |
+| **Progress** | **9 / 28 loops shipped** · **86 / 216 tasks complete (39.81%)** · **0 active · 130 pending** · A8 ✅ · R2 ✅ |
+| **Now** | The studio is the only editor for every ability role: seven duplicate panels are gone, Villain & Bloodied stays (BS-26), 14 editor modules. |
+| **Next** | A9 · NumericBinding fields — A9.0 pre-flight, then A9.1 formula literals and cycle detection. |
+
+---
+
+## Build 157 delivery delta — A8 closed, R2 complete
+
+Code `b4eef8e` (16 files, +183/−1363) retires the seven duplicate panels; `38c4738` deletes the orphaned `widgets/AttackPanel.vue` (586 lines) and is byte-neutral — its rebuild matches all 96 shipped files of the release candidate. Four tasks close (A8.5, A8.6, A8.7, A8.8), so loop A8 ships and **R2 · Composes like sentences reaches 36/36**. Progress: **86/216 complete (39.81%) · 0 active · 130 pending · 9/28 loops shipped**. No scope added.
+
+Proof: 274 core tests (+1); production build; 49 browser scenarios (+1) with zero console/runtime errors; 5 spell themes; 12 help themes; focused lint clean. Two-build render parity gives 24/24 identical plates from Build 156 to 157 and fails, as it must, on the deliberate 154 → 156 heading change. LaTeX not compiled.
+
+Next: **A9 · NumericBinding fields**, starting with A9.0. `AttackPanel` is gone, so A9.0's binding inventory reads attack and other numeric leaves from the studio (Handoffs §6.7 lists the files). Existing follow-ups stay open: B4.7–B4.10, A9.11, A9.12, A13.8. Unused i18n keys left by the deleted panels belong to the A13 copy sweep; no new task.
+
 ## Build156 delivery delta and next gates
 
 Code `af32093`:10files,+289/-4. A8.5 now has working action display/phase/custom-heading settings,action/lair CR controls,trait sorting and legendary/mythic membership add/remove/cost/repair. Six new core tests and browser Step48 cover these homes. No whole task newly closed or scope added:82/216 complete,A8.5 active,133pending. Historical delivery figures below remain dated records.
@@ -11,17 +31,6 @@ Remaining work inside A8.5,dependency ordered:
 4. Retire only fully covered panels;retain VillainActionsEditor under BS-26. Prove A8.6 byte-identical fixture output and A8.7 replacement paths,then close A8.5/A8.8. Capability delivery alone does not close retirement.
 
 Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime errors,5spell themes,12help themes,focusedlint clean,Impeccable detector[]. Final review's automatic-CR context defect reproduced red and fixed green,including damage28/DC17 parity and correct target after reorder. No LaTeX compilation. Evaluate156 at http://localhost:9124/index.html?build=156#/. Existing server uses dist/spa;future builds must use a separate output until a successor is ready. Protected155 remains9125 with97verified hashes.
-
-
-> **The checklist and the living timeline.** Every loop of the [Product & Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) broken into tasks you can tick, in the order they should ship, with the commit that proves each one. Preparation and closing rituals live in the [Development Handoffs](DNDSheet-Development-Handoffs.md).
-
-| | |
-|---|---|
-| **Version** | v2.4.3 build156 · 2026-10-30 · studio capability homes · `rc-2.4.3-build-156-studio-capabilities` · Build155 preserved |
-| **Code HEAD** | `af32093`;273 core tests,production build,48 browser scenarios,5 spell themes,12 help themes;focused lint clean |
-| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **1 active task · 133 pending** · A8.5 controls delivered;retirement pending |
-| **Now** | Action phase/custom heading,action/lair CR,trait sorting and non-destructive legendary/mythic membership add/remove/cost/repair are available in the studio. |
-| **Next** | Finish A8.5 ownership audit,prepare three fixture baselines and replacement browser paths,then retire covered panels and close A8.6/7/8. |
 
 ---
 
@@ -53,7 +62,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 32 / 36 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 32 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 10 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
@@ -62,7 +71,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 165 tasks · Track B 51) | **81 / 216 complete · 0 active · 135 pending** | **37.50 % complete · 62.50 % remaining** |
+| **Total** | **28 loops** (Track A 165 tasks · Track B 51) | **86 / 216 complete · 0 active · 130 pending** | **39.81 % complete · 60.19 % remaining** |
 
 ```mermaid
 pie showData
@@ -121,6 +130,14 @@ pie showData
 | 2026-10-30 00:18 | `7f1e4ea` | A7 · build 147 | Opening a file keeps every authored field: the toolbar import runs the shared migration (alphaTraits fixed), pre-v9 upgrades keep existing stat/save/effects/range/uses/trigger, spellcasting policies and legacy language names survive; reaction chain reads usage → name like the plate | Core 222/222 (+6, red first); build; lint 0 errors; 40 browser steps incl. Step 40 (v8-labelled file through Open File, nothing lost, 14/14 seven-role parity, reload) and the Step 35 type matrix (56/56); help 12 themes; spellcasting 5 themes; 97-hash archive |
 | 2026-10-30 00:39 | `49edfdf` | A7 ✅ · build 148 | Exports print every role as prose without web markup in either template; HP pills, plates and help hooks never reach a text file; LaTeX and Improved Initiative legendary/mythic keep their mechanics; Improved Initiative mythic crash, multiattack "undefined", repeated Multiattack label, misnested mythic lead and default mythic text fixed | Core 231/231 (+9); build; lint 0 errors; 41 browser steps incl. Step 41 export proof; help 12 themes; spellcasting 5 themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage hash unchanged) and 9106 |
 | 2026-10-30 00:58 | `0dbcd23` | A8 · build 149 | Composer head chips follow the plate word order ("2nd Level Evocation", "Evocation Cantrip"); two-item lists read "a and b" in multiattack and extra-damage prose on the sheet and in every export | Core 234/234 (+3, red first); build; lint 0 errors; 41 browser steps, zero errors; help 12 themes; spellcasting 5 themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage hash unchanged) and 9106 |
+| 2026-10-30 01:23 | `fc21bc1` | A8 · build 150 | Action usage edits the real cadence as one validated policy: recharge range, uses per period, or none | Core 239/239 (+5); build; 42 browser steps (Step 42: edit, cancel, clear, reload) |
+| 2026-10-30 01:37 | `d4f1e73` | A8 · build 151 | Classic prose keeps structured metadata and target scope: school/tier, components, duration, qualifiers | Core 244/244 (+5); build; 43 browser steps (Step 43: classic matches modern facts and text exports) |
+| 2026-10-30 01:58 | `1b36467` | A8 · build 152 | The studio edits existing attacks in place, keeping ranges, damage, extra damage and references | Core 250/250 (+6); build; 44 browser steps; focused lint 0 errors |
+| 2026-10-30 02:14 | `1f57bab` | A8 · build 153 | Multiattack references composed in the studio: repeated occurrences, missing targets, shared rendering | Core 257/257 (+7); build; 45 browser steps |
+| 2026-10-30 10:54 | `0ce61c7` | A8 · build 154 | One live sheet replaces the inline previews; one recovery-cadence vocabulary serves every usage editor (A8.13, A8.14) | Core 264 (+7); build; 46 browser steps; lint 0 errors |
+| 2026-10-30 11:11 | `46785a0` | A8 · build 155 | Heading order usage → name/components → tier/school, shared by editor, sheet and prose (A8.15) | Core 267 (+3); build; 47 browser steps; lint 0 errors |
+| 2026-10-30 11:41 | `af32093` | A8 · build 156 | Studio homes for action display/phase/custom heading, action and lair CR, trait sorting and non-destructive legendary/mythic memberships | Core 273 (+6); build; 48 browser steps; 5 spell / 12 help themes; lint clean |
+| 2026-10-30 12:47 | `b4eef8e` · `38c4738` | A8 ✅ · build 157 | Seven duplicate panels retired; reaction templates and four staged section resets live in the studio; orphaned `AttackPanel` deleted (byte-neutral) | Core 274/274 (+1); build; 49 browser steps; two-build parity 24/24 plates with a failing control; 5 spell / 12 help themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage unchanged) and 9106 |
 
 ### 2.1 A4 closing validation: tracked full-suite failures
 
@@ -361,7 +378,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A8 · One Actions module ◐ `d4f1e73` · `rc-2.4.3-build-151-a8-classic-metadata` (partial)
+#### A8 · One Actions module ✅ `b4eef8e` · `rc-2.4.3-build-157-one-actions-module`
 
 > Every ability role lives in the studio; duplicate panels retire.
 
@@ -374,14 +391,14 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC). Build 152: full distinct-model adapter, six core cases and browser Step 44; all legacy panels retained pending retirement gates · L
 - [x] **A8.3** Multiattack role: stable-ID reference controls with missing-target warning and repair; add/remove exact occurrence, move, search, repeated uses, shared custom rendering/postscript and preview. Build 153: seven core cases and browser Step 45 · M
 - [x] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirmed by A8.0 at build 150*
-- [~] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor`; retain `VillainActionsEditor` per BS-26/A8.0; delete the components (git keeps history) · M · Build156 ships missing capability homes;actual panel retirement remains open.
-- [ ] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M
-- [ ] **A8.7** e2e adjustments for removed panels · S
+- [x] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor`; retain `VillainActionsEditor` per BS-26/A8.0; delete the components (git keeps history) · M · *Build 156 shipped the capability homes; build 157 (`b4eef8e`) added reaction-template saving and four staged section resets, then retired the seven panels (14 modules); `38c4738` deleted the orphaned `widgets/AttackPanel.vue`.*
+- [x] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M · *build 157: `test/retirement-render-parity.mjs` replays six saved monsters (the evaluator's Seraphic Herald byte-exact) — 24/24 plates identical from Build 156 to 157, reload round trips and dangling references unchanged; the 154 → 156 control fails as it must*
+- [x] **A8.7** e2e adjustments for removed panels · S · *build 157: Step 48 asserts the retired panel is gone; Step 49 covers the studio-only editor, reaction templates and the four resets; 49/49 steps green*
 - [x] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Build 150 fixes the mismatch between displayed limited uses and free recharge text; one validated editor owns competing cadence fields (*added A7*) · M
 - [x] **A8.10** Head chips follow the plate's word order: a spell level leads its school ("2nd Level Evocation"), a cantrip follows it ("Evocation Cantrip") (*added A7*) · S · *proof: `ComposerChain.test.ts` head-order case (red first); build 149*
 - [x] **A8.11** Classic structured prose keeps school/tier, components, duration and target qualifiers. Shared `abilityHeader` feeds modern headers and `text2024`; attack-only and utility scope is no longer dropped. Proof: five metadata tests, core export assertions, browser Step 43 (16 parity comparisons + 6 text downloads), build 151 · M
 - [x] **A8.12** List grammar: `listJoin` (now `rendering/list-join.ts`) reads "x and y" for two items and keeps the serial comma for three or more; multiattack and extra-damage prose on the sheet and in exports (*added A7*) · S · *proof: `ListJoin.test.ts` (red first); 41 browser steps; build 149*
-- [ ] **A8.8** Close: commit `one actions module: studio covers every role, duplicate panels retired`, docs ritual · S
+- [x] **A8.8** Close: commit `one actions module: studio covers every role, duplicate panels retired`, docs ritual · S · *`b4eef8e` and the build 157 docs ritual*
 
 **Done when:** CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed; builder mounts ≤ 14 panels.
 

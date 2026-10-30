@@ -1,6 +1,16 @@
 # DNDSheet session checkpoint - 2026-10-30
 
-## CURRENT: Build156 studio capability homes
+## CURRENT: Build157 one actions module (A8 ✅, R2 ✅)
+
+Code `b4eef8e` (retirement) + `38c4738` (orphaned `AttackPanel` deleted, byte-neutral); tag `rc-2.4.3-build-157-one-actions-module`; frozen RC with 97 verified hashes. Served on 9100 (Seraphic Herald origin; `app.monster` and `app.editor` bytes unchanged) and 9106. RC 156 stays frozen on 9127; `9124/candidate157/` is the pre-fix Codex preview and is superseded.
+
+Hand-over: Codex hit its usage limit at 12:13 with the retirement uncommitted. Its WIP is backed up in `%TEMP%\dndsheet-a7-backup\codex-wip-157` and was finished, not redone. Fixes: the Step 49 reset locator (QEditor toolbar buttons are `<a class="q-btn">`; a reset-disabled control fails 4/4), one attribute-order lint warning, and a portable two-build `test/retirement-render-parity.mjs` in place of the build-specific script.
+
+Proof: 274 core, production build, 49 browser steps with zero console/runtime errors, 5 spell / 12 help themes, focused lint clean. Parity 156 → 157: 6 saved monsters, 24/24 identical plates, reload round trips and dangling references stable; the 154 → 156 control fails on the deliberate heading change, as it must. LaTeX not compiled.
+
+Progress 86/216 (39.81%), 0 active, 130 pending, 9/28 loops; A8.5–A8.8 closed, no scope added. Next: A9.0 pre-flight. `AttackPanel` is gone, so the binding inventory reads studio numeric leaves (Handoffs §6.7). Build with `DNDSHEET_BUILD_DIR` outside `dist/spa`.
+
+## Build156 studio capability homes (historical)
 
 Codeaf32093/tag rc-2.4.3-build-156-studio-capabilities;eval http://localhost:9124/index.html?build=156#/. Existing9124server serves dist/spa;DO NOT rebuild that directory until successor ready,use separate output. Frozen156 archive retained separately. Protected1559125archive97hashes verified;main153unchanged. Newserver-start command blocked by automatic review,genericpolicy/no detail,no retry. A later combined documentation/packaging command was also blocked;documentation was safely edited with the dedicated patch tool instead.
 

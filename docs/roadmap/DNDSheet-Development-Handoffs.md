@@ -1,5 +1,38 @@
 # DNDSheet — Development Handoffs
 
+> **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
+
+| | |
+|---|---|
+| **Version** | v2.4.3 build 157 · 2026-10-30 · one actions module · `rc-2.4.3-build-157-one-actions-module` · Build 156 preserved |
+| **State at hand-over** | Code `38c4738` (retirement `b4eef8e`); RC 157 on 9100 (Seraphic Herald origin, storage unchanged) and 9106; RC 156 frozen on 9127. 274 core / 49 browser / 5 spell / 12 help pass; two-build parity 24/24 plates; focused lint clean. |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
+| **Current loop** | A9 next (0 / 14 tasks); A8 ✅ and R2 ✅ at build 157. 86/216 complete, 0 active, 130 pending; no scope added. |
+
+---
+
+## Build 157 closing packet → A9
+
+**Hand-over.** Codex reached its usage limit at 12:13 with the panel retirement uncommitted; it reports it can resume around 15:46. Its patch, changed files and logs are kept outside the repo in `%TEMP%\dndsheet-a7-backup\codex-wip-157`. The work was finished rather than redone: one test locator and one lint warning fixed, the build-specific parity script replaced by a portable two-build harness, and the orphaned `AttackPanel` deleted.
+
+**Shipped.** `b4eef8e` + `38c4738` · tag `rc-2.4.3-build-157-one-actions-module` (on `b4eef8e`) · frozen release candidate with 97 verified hashes; the later deletion rebuilds byte-identical. A8.5–A8.8 close; loop A8 and release R2 are complete.
+
+| Port | Serves | Note |
+|---|---|---|
+| 9100 | RC 157 | Evaluation origin holding the Seraphic Herald (D-20); `app.monster` and `app.editor` bytes unchanged |
+| 9106 | RC 157 | Mirror |
+| 9127 | RC 156 | Frozen predecessor; 97 hashes re-verified |
+| 9125 · 9123 | RC 155 · RC 154 | Older frozen candidates; 9101–9121 hold earlier ones |
+| 9122 · 9124 | `dist/spa` | Codex previews of a mutable folder; `9124/candidate157/` predates the fixes, so evaluate the RC instead |
+
+**Traps disarmed.**
+- QEditor toolbar controls render as `<a class="q-btn" role="button">`, not `<button>`; select them with `.q-btn`.
+- In `cmd /c "… & echo %ERRORLEVEL%"`, `%ERRORLEVEL%` is expanded when the line is parsed, before the command runs. Use `cmd /v:on` with `!ERRORLEVEL!` for a real exit code.
+- Build candidates with `DNDSHEET_BUILD_DIR` pointing outside `dist/spa`, so no running preview is rebuilt during an evaluation.
+- Reproduce A8.6 with `node --experimental-strip-types test/retirement-render-parity.mjs <beforeUrl> <afterUrl>`; set `DNDSHEET_PARITY_EXTRA` to a saved `app.monster` value to include an evaluator's own monster.
+
+**Next loop: A9 · NumericBinding fields (§6.7).** Start with A9.0: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24), design stable-id field paths `attacks[id=…]` (BS-25) and refresh the binding inventory, including CR154-05. Attack numbers now live in the studio, so read the files §6.7 lists instead of the deleted panel. Keep A11 outcome and availability expansion out of A9.
+
 ## Build156 closing packet → finish A8.5
 
 Code `af32093`,tag `rc-2.4.3-build-156-studio-capabilities`;evaluator http://localhost:9124/index.html?build=156#/. Frozen archive is retained separately. Existing9124server serves dist/spa:protect it from rebuild until a successor is ready and use a separate build output. Build155 remains9125,97hashes verified;main remains153. Automatic approval review blocked starting another preview server with generic blocked-by-policy/no detail;no retry or alternate start occurred. The existing preview served the verified release bytes.
@@ -11,16 +44,6 @@ Final review correction:shared CR lock toggle omitted the action context supplie
 Evaluation9124 initially had My New Monster. Normal UI applied the existing Veil of Radiance action template and opened Display and CR settings. Configured data on other origins was not copied/reset. Screenshot `.codex-temp/build156-evaluation.png` records the actual view. Served156index/entry bytes match archive across localhost/IPv4/IPv6. No LaTeX compilation. A focused startup check needed a bounded studio-mount readiness wait;final full suite passed.
 
 Next preparation:read the updated capability contract and Build150 control map;load execution/verification,functional-core,Impeccable Operate,UX-copy and TTRPG guidance as relevant. Inventory every remaining old-panel-only operation,then prepare three baseline fixtures and replacement browser paths BEFORE unmounting panels. Keep VillainActionsEditor. Do not fold A9/A11 numeric/outcome/availability expansion into retirement. Closing evidence must distinguish controls,fixture parity,actual panel removal and loop closure.
-
-
-> **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
-
-| | |
-|---|---|
-| **Version** | v2.4.3 build156 · 2026-10-30 · studio capability homes · `rc-2.4.3-build-156-studio-capabilities` · Build155 preserved |
-| **State at hand-over** | Code `af32093`,build156 at http://localhost:9124/index.html?build=156#/. Existing server serves dist/spa;protect this directory from rebuild until a successor is ready. Build155 remains9125;main remains153.273core/48browser/5spell/12help pass;lint clean. |
-| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active;A8.5 controls delivered,retirement gate open.82/216 complete,1active,133pending;no new scope or newly closed whole task. |
 
 ---
 
@@ -553,7 +576,7 @@ Next loop readiness ..... 🟢 A8 — run A8.0 first
 
 Release handling: candidates 147 and 148 are frozen with `release-candidate.json` and verified `SHA256SUMS.txt` (97 entries each, QA page excluded) and tagged. Candidate 148 replaced 139 on 9100 — the owner asked that new candidates reuse the configured sample — and also serves 9106; 139 moved to 9114 untouched. The sample's stored hash (`229a780f…`) was identical before and after the switch.
 
-### 6.6 A8 · One Actions module — ◐ build 149 (A8.10 and A8.12 shipped)
+### 6.6 A8 · One Actions module — ✅ build 157 (`b4eef8e`, `38c4738`)
 
 | | |
 |---|---|
@@ -581,7 +604,7 @@ Release handling: candidates 147 and 148 are frozen with `release-candidate.json
 | **Entry criteria** | A2 ✅ · BS-24/25 settled |
 | **Read in the spec** | §9 AU-02 (W-06) · §6.2 · §7.4 · §8.1 · §8.5 · §13.1 R-04, R-06 · D-05, D-11 |
 | **Backlog tasks** | A9.0 – A9.10 |
-| **Open first** | `widgets/DynamicReferenceSelect.vue` (619) · `BasicsEditor.vue` L204, 305, 322, 927, 973, 1281 · `widgets/AttackPanel.vue` L52, 122, 135, 148, 161, 186, 213 · `core/domain/formula.ts` (`NumericBinding`, `resolveNumeric`, `describeBinding`) · `stores/monster-store.ts` · history store / `useHistoryShortcuts` |
+| **Open first** | `widgets/DynamicReferenceSelect.vue` (619) · `BasicsEditor.vue` L204, 305, 322, 927, 973, 1281 · studio numeric leaves (`widgets/AttackPanel.vue` was deleted in build 157): `composer/ChainCell.vue` number editor L39–42, which `composer/AttackComposer.vue` + `core/domain/attack-composer.ts` use for attack leaves · `composer/ActionUsageEditor.vue` L12–16 · `composer/TraitCadenceEditor.vue` L4, 17 · `composer/ActionAssociations.vue` L15 · `composer/RoleHeaderEditor.vue` L6 · `core/domain/formula.ts` (`NumericBinding`, `resolveNumeric`, `describeBinding`) · `stores/monster-store.ts` · history store / `useHistoryShortcuts` |
 | **Skills** | `engineering:architecture` · `documentation-generation:architecture-decision-records` (D-11) · `superpowers:test-driven-development` · `developer-essentials:error-handling-patterns` · `context7:docs` (QSelect) · `ui-design:accessibility-compliance` |
 | **Research** | Pinia `$patch` + `$subscribe` ordering; how the history ledger detects changes (to flag resolver patches) |
 | **Traps** | Resolver writing on every keystroke (equality check) · cycles · array paths by index break on reorder (use ids) · persisted payload size |
