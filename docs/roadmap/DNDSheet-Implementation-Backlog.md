@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 157 · 2026-10-30 · one actions module · `rc-2.4.3-build-157-one-actions-module` · Build 156 preserved |
-| **Code HEAD** | `38c4738` (retirement `b4eef8e`); 274 core tests, production build, 49 browser scenarios, 24-plate two-build parity, 5 spell themes, 12 help themes; focused lint clean |
-| **Progress** | **9 / 28 loops shipped** · **86 / 216 tasks complete (39.81%)** · **0 active · 130 pending** · A8 ✅ · R2 ✅ |
-| **Now** | The studio is the only editor for every ability role: seven duplicate panels are gone, Villain & Bloodied stays (BS-26), 14 editor modules. |
-| **Next** | A9 · NumericBinding fields — A9.0 pre-flight, then A9.1 formula literals and cycle detection. |
+| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
+| **Code HEAD** | `f958cd4`;279core tests,production build,50browser scenarios,5spell/12help themes;focusedlint0errors/5existingwarnings |
+| **Progress** | **9 / 28 loops shipped** - **86 / 219 tasks complete (39.27%)** - **0 active / 133 pending** - CR158 adds3tasks;A8/R2 remain closed |
+| **Now** | Inherited target agreement and shared attack-bonus consistency delivered;new screenshot scope mapped in CR158. |
+| **Next** | A9.0 numeric-field/reference inventory;then binding foundations. A9.11 retains finesse/thrown provenance work;CR158 extensions follow existing dependencies. |
 
 ---
 
@@ -63,15 +63,15 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
-| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 32 | ☐ |
-| R4 · Spellcasting you can trust | A12 | 0 / 10 | ☐ |
+| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 33 | ☐ |
+| R4 · Spellcasting you can trust | A12 | 0 / 11 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
-| R7 · Creator confidence | B1 · B2 · B3 | 0 / 16 | ☐ |
+| R7 · Creator confidence | B1 · B2 · B3 | 0 / 17 | ☐ |
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 165 tasks · Track B 51) | **86 / 216 complete · 0 active · 130 pending** | **39.81 % complete · 60.19 % remaining** |
+| **Total** | **28 loops** (Track A167 tasks / Track B52) | **86 / 219 complete - 0active - 133pending** | **39.27% complete** |
 
 ```mermaid
 pie showData
@@ -963,3 +963,33 @@ Resume in this order:
 4. If independently complete, preserve157 and publish a successor with evidence and aligned docs. Then begin A9.0 numeric-field/source/constraint inventory and A9.1 bindings/cycle behavior in roadmap order.
 
 Release routing in the latest handoff records157 at9100/9106 and frozen156 at9127; the old candidate157 subpath is superseded. Those endpoint/storage claims were not revalidated during this read-only recovery audit. Do not use the older failing scratch smoke log as the final157 result; the committed handoff records its corrected portable parity and49-scenario closeout. Build future candidates outside the serving output. No code changes,tests or deployments performed in this sync.
+
+## CR-158 scope delta and groomed execution
+
+The screenshot request expands existing owners as mapped in the Specification's CR-158 table. Three independently deliverable gaps require new IDs;existing requirements are not duplicated.
+
+- [ ] **A11.9** Declarative random-outcome tables:stable row/range/clause IDs,dice-expression validation,overlap/gap diagnostics,authored fallback,explicit-roll-only behavior,accessible table/print/prose output and saved-data migration tests. Depends on A11.5 and numeric/result-reference foundations · L
+- [ ] **A12.10** Compact spell-list projection:flowing spell text rather than per-spell cells,live resource amounts,amount/cadence before level,display-only hidden cadence,components/ritual/concentration,source-owned grouping and all web/print/prose/reload proofs. Depends on A12.8–9;no fabricated counters · M
+- [ ] **B3.7** Species-derived proposals:ruleset/source packages,stable inherited grant provenance,selective score/trait/spell proposals,preview/Apply/Cancel/undo,duplicate/reapply/revoke policy and preservation of user edits. Reuse casting grant contracts;do not assume species always grants ASIs · L
+
+Existing-task acceptance expansion:
+1. A11.6 separates recovery cadence,availability state and activation trigger,including while/when bloodied and explicit HP0/HP1 predicates;reaction mechanics stay shared plus trigger and phase-set availability.
+2. A9.0 inventories every numeric leaf and field-specific constraints;A9.13 separates tier-driven roll count,target count,damage scaling,range/origin/planes and conditional advantage/disadvantage.
+3. A11.5 supports N containers with up to4regions each,vertical/horizontal/2×2/inline layouts,audience/type/attitude/plane filters,shared results and unsectorized trailing prose.
+4. A12.9 covers source-owned sorcery points,known/prepared/cantrip/per-day metrics and expanded/granted spell distinctions with provenance.
+5. A13.9 covers adjacent Senses/Languages,redundant dividers and semantic typography across the whole sheet;A13–16 select inventory enforces shared catalogs and accessible rich help.
+6. A11.7/8 own combat-group section routing and compound traversal/riders;B3.6 owns score generation independently of species proposals.
+
+Scope accounting:previous86/216 -> **86/219 (39.27%),133remaining**;three added,zero newly closed whole tasks. TrackA167,TrackB52. R3 total33,R4 total11,R7 total17;other totals unchanged. The percentage change is expanded requested scope,not lost implementation.
+
+Immediate delivered slice:inherited noun agreement and shared structured attack-bonus resolution across composer context,sheet/prose and2024coreexports. A9.11 remains pending for explicit finesse/thrown/ability provenance;this delivery earns no premature task closure. Next A9.0 pre-flight before expanding bindings. Keep A8/R2 closed.
+
+Final-review follow-ups within existing owners:custom comma-separated noun heads can be partly inflected;extend the contextual grammar cases before broader recipient-language work. Add explicit nonfinite bonus/override fallback cases when extending A9.11's resolver contract. These are deferred minor coverage/wording findings,not new counted tasks.
+
+## Build158 closing evidence
+
+Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than abandoned.279core tests(+5),productionbuild,50browser scenarios(+1) zero console/runtime errors,5spell themes,12help themes;focusedlint0errors/5existingwarnings. Step50 covers16role/style/template cases,composer parity,liveDEX changes,explicit0override and3toolbar downloads. Final import cleanup rebuild matches all97build files byte-for-byte;candidate output was not rebuilt during browser validation. LaTeX content checked,not compiled.
+
+Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
+
+Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.

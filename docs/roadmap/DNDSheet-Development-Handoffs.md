@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 157 · 2026-10-30 · one actions module · `rc-2.4.3-build-157-one-actions-module` · Build 156 preserved |
-| **State at hand-over** | Code `38c4738` (retirement `b4eef8e`); RC 157 on 9100 (Seraphic Herald origin, storage unchanged) and 9106; RC 156 frozen on 9127. 274 core / 49 browser / 5 spell / 12 help pass; two-build parity 24/24 plates; focused lint clean. |
+| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
+| **State at hand-over** | `f958cd4`,Build158 at http://localhost:9124/candidate158/index.html#/. Frozen predecessor157 preserved.279core/50browser/5spell/12help passed;candidate shares existing9124storage;main configured monster untouched. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
-| **Current loop** | A9 next (0 / 14 tasks); A8 ✅ and R2 ✅ at build 157. 86/216 complete, 0 active, 130 pending; no scope added. |
+| **Current loop** | A9 next;A8/R2 remain closed.86/219 complete,0active,133pending;three new CR158 tasks,zero new whole-task closure. |
 
 ---
 
@@ -1006,3 +1006,28 @@ Resume in this order:
 4. If independently complete, preserve157 and publish a successor with evidence and aligned docs. Then begin A9.0 numeric-field/source/constraint inventory and A9.1 bindings/cycle behavior in roadmap order.
 
 Release routing in the latest handoff records157 at9100/9106 and frozen156 at9127; the old candidate157 subpath is superseded. Those endpoint/storage claims were not revalidated during this read-only recovery audit. Do not use the older failing scratch smoke log as the final157 result; the committed handoff records its corrected portable parity and49-scenario closeout. Build future candidates outside the serving output. No code changes,tests or deployments performed in this sync.
+
+## CR-158 preparation and successor handoff
+
+Read the Specification CR-158 mapping and Backlog CR-158 scope delta together. New tasks are A11.9,A12.10,B3.7;all other requested details expand their existing owners. Progress is86/219,133remaining;A8/R2 stay closed. Do not restart panel retirement or declare the expanded mechanics implemented because their specification exists.
+
+Before each loop:
+- Load only relevant execution/verification,functional-core,TTRPG,UX-copy and catalog/design guidance. For casting/species calculations,verify the selected edition/source before adopting formulas;record provenance and unsupported/custom cases.
+- Inventory actual numeric/select/source consumers and saved extension fields. List writes,dependency IDs,validation,invalid-draft behavior,undo/reload and output adapters before editing.
+- Keep recovery events,availability predicates and reaction triggers separate. “While bloodied” is not “when bloodied”;HP0/1 are explicit thresholds. Hidden spell cadence changes presentation only.
+- For outcomes,resolve recipient/result semantics before choosing region layout;support N containers but at most4regions per container. Random tables are declarative and never roll because a preview rerendered.
+- For casting/species,use source/grant/resource identities. Separate list eligibility,granted/always-prepared spells,known/prepared limits and shared/Pact/innate pools. Species changes are proposals with selective reversible Apply,not silent replacement.
+
+Resumption:complete inherited consistency code before A9.0. The shared resolver is now integrated through structuredRenderContext (also used by ComposerChain),modern legacy mechanics and core2024action exports. Finite explicit bonuses including0 retain priority;spell overrides and current ability/proficiency are shared. Ranged-only defaults use DEX,melee/both defaults STR;finesse/thrown/homebrew exceptions require authored bonuses pending A9.11 provenance. Target noun agreement preserves quantities and qualifier prose;it does not turn targets into attack rolls or implement cantrip beam counts.
+
+Verification gates for the successor include focused comparisons across four source/override cases,two styles/two templates,three toolbar downloads,live DEX changes and explicit zero preservation. Keep production Build157 frozen and build outside served output;candidate158 is a versioned subpath of the existing preview server,sharing that origin's configured data rather than resetting it. Do not reconfigure running servers as a workaround.
+
+Fresh source review reported no blocking bonus regressions. Deferred minors:comma-separated custom noun heads only partly inflect;nonfinite authored/spell-override fallback paths need dedicated tests when the resolver contract expands. Do not claim these were fixed. No new task IDs were added for them. Review used the available Sol lane after the prior Astra reviewer hit its usage limit;independent review remains source-level evidence,not browser proof.
+
+## Build158 closing evidence
+
+Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than abandoned.279core tests(+5),productionbuild,50browser scenarios(+1) zero console/runtime errors,5spell themes,12help themes;focusedlint0errors/5existingwarnings. Step50 covers16role/style/template cases,composer parity,liveDEX changes,explicit0override and3toolbar downloads. Final import cleanup rebuild matches all97build files byte-for-byte;candidate output was not rebuilt during browser validation. LaTeX content checked,not compiled.
+
+Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
+
+Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.

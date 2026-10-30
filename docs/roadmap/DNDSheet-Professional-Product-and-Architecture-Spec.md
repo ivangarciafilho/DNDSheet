@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 157 · 2026-10-30 · one actions module · `rc-2.4.3-build-157-one-actions-module` · Build 156 preserved |
-| **Code HEAD** | `38c4738` (retirement `b4eef8e`); 274 core tests, production build, 49 browser scenarios, 24-plate two-build parity, 5 spell themes, 12 help themes; focused lint clean |
+| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
+| **Code HEAD** | `f958cd4`;279core tests,production build,50browser scenarios,5spell/12help themes;focusedlint0errors/5existingwarnings |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **9 / 28 loops shipped** · **86 / 216 tasks complete (39.81%)** · **0 active · 130 pending** · A8 ✅ · R2 ✅ |
+| **Progress** | **9 / 28 loops shipped** - **86 / 219 tasks complete (39.27%)** - **0 active / 133 pending** - CR158 adds3tasks;A8/R2 remain closed |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -3629,3 +3629,95 @@ Resume in this order:
 4. If independently complete, preserve157 and publish a successor with evidence and aligned docs. Then begin A9.0 numeric-field/source/constraint inventory and A9.1 bindings/cycle behavior in roadmap order.
 
 Release routing in the latest handoff records157 at9100/9106 and frozen156 at9127; the old candidate157 subpath is superseded. Those endpoint/storage claims were not revalidated during this read-only recovery audit. Do not use the older failing scratch smoke log as the final157 result; the committed handoff records its corrected portable parity and49-scenario closeout. Build future candidates outside the serving output. No code changes,tests or deployments performed in this sync.
+
+## CR-158 — screenshot workflow expansion and architectural ownership
+
+This revision extends CR-154 and supersedes earlier localized UI descriptions. It does not mark those future features shipped. The current consistency slice completes inherited target-noun and attack-bonus work; it does not infer roll count from targeting.
+
+| New request / screenshot evidence | Existing owner | Required extension or decision |
+|---|---|---|
+| All cadence/state/trigger choices | A8.14 foundation;A11.6;A13 catalogs | One typed registry,context-filtered projections. Recovery event,availability predicate and activation trigger are distinct kinds. Dawn/dusk/noon/midnight/rest/downtime/intervals are recovery choices;while bloodied is a state,when bloodied is an edge,HP0/HP1 are explicit thresholds. Never persist them as interchangeable cadence strings. Preserve old/unknown identities during migration. |
+| Every integer becomes a contextual reference/formula control | A9.0–9;A10;A11.0–4 | Registry descriptors own field type,unit,bounds,stable-ID path,allowed references and error policy. Custom formula is the default authoring mode;literal numbers remain valid expressions. Parser recognizes supported grammar and explicit variables,never guesses arbitrary prose as executable code. No eval;bounded parsing and cycle checks. Invalid drafts retain last committed value and show errors,not silent zero. |
+| Piercing Light modular attack/scaling/targets/conditional advantage | A9.13 | Roll count and count mode,attack bonus,roll modifier predicates,target count/distribution,range/origin,planes and damage scaling are separate fields. Explicit scaling source must distinguish HD/character/class/caster/custom. Cantrip tier may drive attack count OR damage count by chosen policy;never both implicitly. Preserve target ceilings when moving text between cells. |
+| Outcome sectors,arbitrary containers and conditional recipients | A11.5 | N stable-ID outcome containers,each with at most four layout regions. Rows/columns/inline/2×2 are presentation choices. Clauses carry hit/miss/success/failure/custom trigger and audience/type/attitude/plane predicates. Unsectorized content appends below. Shared-result references form a validated graph;layout never duplicates or drops effects. |
+| Random dice tables and chaotic effects | **A11.9 new** | Declarative roll expression,stable rows/ranges and outcome references;overlap/gap diagnostics,authored fallback and accessible table/print/prose projections. No automatic random roll on editing or rendering;rolling,if later offered,is an explicit command with recorded result. |
+| Paragon phases/pools | A11.6 | Existing one-pool display settings are delivered;new availability is an explicit set/predicate independent of role,cadence and reaction trigger. Imported phase identities remain selectable. |
+| Reaction compositor identical to action mechanics plus trigger | A11.6 | Shared ability mechanics model/adapters,trigger field and section placement;lossless migration of existing reaction prose/uses. No automatic deletion during role/model conversion. |
+| Search/Hide/etc. route to action-economy sections | A11.7 | Group stable IDs,chosen section,trigger/cost when required,manual ordering and optional compact labels. One authored group renders once;linking it to an economy does not duplicate skill data or change proficiency. |
+| Senses/Languages proximity and telepathy dependencies | A13.9;A11 predicates | Adjacent compact rows below scores;structured references may explain relationships while authored rules remain text. Species or senses must not fabricate a telepathy rule merely because telepathy exists. |
+| Remove redundant separators and inconsistent fonts | A13.9 | One semantic typography/token system for headings,metadata,values,prose and emphasis. Preserve chosen theme identity;share roles/line-height rather than force identical font weight everywhere. Remove only redundant region separators;retain section hierarchy,contrast and print readability. |
+| Point buy and creature-generation heuristics | B3.6 | Rule-labeled deterministic proposals,arrays,seeded rolling/custom heuristics;preview individual deltas,Apply/Cancel/undo and preserve bound sources. No silent score overwrite. |
+| Traversal/Dash/Dodge/Disengage riders | A11.8 | Independent traversal predicates,terrain/collision clauses and event-triggered rider list. Moving through creatures,ignoring terrain and changing plane are separate mechanics,not speed numeric modifiers. |
+| Uniform catalogs,rich tooltips and references | A13–A16;A2/A9 registry | Shared semantic catalogs and select adapter;alphabetical within semantic groups,natural numeric/chronological order where appropriate. Rich help is keyboard/focus/touch accessible,icon+text and color-independent. Catalog facts/reference values share one domain authority;UI formatting stays in adapters. |
+| Source-owned multiclass/innate casting blocks and catalog breadth | A12.8–9 | Separate source cards,list ownership,spell grants,known/prepared/cantrip counts and shared/Pact/innate resource pools. Edition/class/subclass/source provenance shown;unsupported/custom rules explicit. Catalog absence never yields fabricated counts. |
+| Sorcery points,per-day uses and expanded/granted lists | A12.9 | Resource calculators attach to the owning class/source;grants record provenance,always-prepared/counting/usage policy. Expanded eligibility is not the same as a free granted spell. Separate spell level eligibility,slots,known and prepared counts. Avoid double counting across sources. |
+| Compact spell text,live amounts,hidden cadence,amount before level | **A12.10 new** | Spell-list lines flow as text rather than one cell per spell. Example authored projection: `(3/Long Rest), Level 1: ...`. Resolve amounts from actual resource pool/binding;hidden is a display policy only and never changes recharge or availability. Maintain components/concentration/ritual flags,source distinctions and accessible print/text exports. |
+| Species inheritance and ability-score guidance | **B3.7 new** | Versioned source package -> proposal -> selective Apply. Stable grant IDs/provenance,reapply/dedup and explicit replace/revoke choices preserve edits. Species score changes depend on chosen ruleset/source;do not assume all editions grant species ASIs. Class/subclass/species/manual grant sources feed the same casting engine. |
+
+### Required model boundaries and flow
+
+```mermaid
+flowchart LR
+  Registry[Typed catalogs and numeric field registry] --> Editor[Context filtered authoring controls]
+  Editor --> Draft[Validated local drafts]
+  Draft --> Model[Stable ID authored document]
+  Model --> Resolver[Formula and predicate resolver]
+  Resolver --> Ability[Ability and casting projections]
+  Ability --> Sheet[Single live sheet]
+  Ability --> Output[Print and prose adapters]
+  Model --> Proposal[Species and score proposals]
+  Proposal --> Draft
+```
+
+The resolver consumes explicit dependencies,not CSS layout. Outcome presentation references clauses by ID;spell rows reference resource pools by ID;source grants reference species/class packages by ID. Reference cycles,missing IDs and ambiguous imported source IDs produce actionable diagnostics and preserve authored data. No view may invent spell/resource counters to make an empty cell look complete.
+
+```mermaid
+classDiagram
+  class AbilityDefinition {
+    id
+    role
+    trigger
+    availability
+    rollPolicy
+    targeting
+    outcomeIds
+  }
+  class OutcomeContainer {
+    id
+    clauseIds
+    regionLayout
+    optionalRollTableId
+  }
+  class CastingSource {
+    id
+    rulesetId
+    grantIds
+    resourcePoolIds
+  }
+  class Grant {
+    id
+    sourceId
+    effect
+    countingPolicy
+  }
+  AbilityDefinition --> OutcomeContainer
+  CastingSource --> Grant
+```
+
+These are planned contracts,not claims that the current schema already contains the fields. Migrations must preserve unknown extension properties and old free text;new authoring controls cannot depend on future code to render or reload.
+
+### Execution order and proof gates
+
+Finish the inherited consistency slice first. Then A9.0 inventories numeric leaves and existing consumers;A9/A10/A11 foundations precede roll/outcome/random-table mechanics. Source-casting A12.8/9 precedes source-aware spell-line A12.10. B3.7 uses a shared grant contract after source/grant semantics exist;A12 must still accept explicit manual grants without depending on species UI. A13.9 density/typography can ship independently with theme/print proof. B3.6 score proposals and B3.7 species proposals remain separate undoable workflows.
+
+Each slice requires before/after saved fixtures,invalid/missing/cycle cases,source preservation,real sheet interaction,reload,export evidence and an isolated frozen candidate. “All dropdowns” is measured by a control inventory,not by a few screenshots. New model/spec work does not justify marking A9.11 complete:automatic finesse/thrown provenance is still absent and requires explicit authoring until implemented.
+
+Rules provenance for the bounded attack-default fix: [2024 attack rolls](https://www.dndbeyond.com/sources/dnd/br-2024/playing-the-game) and [weapon properties](https://www.dndbeyond.com/sources/dnd/br-2024/equipment/). Default melee/ranged ability selection does not identify finesse or thrown exceptions;authored bonuses remain authoritative.
+
+## Build158 closing evidence
+
+Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than abandoned.279core tests(+5),productionbuild,50browser scenarios(+1) zero console/runtime errors,5spell themes,12help themes;focusedlint0errors/5existingwarnings. Step50 covers16role/style/template cases,composer parity,liveDEX changes,explicit0override and3toolbar downloads. Final import cleanup rebuild matches all97build files byte-for-byte;candidate output was not rebuilt during browser validation. LaTeX content checked,not compiled.
+
+Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
+
+Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.

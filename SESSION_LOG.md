@@ -1,5 +1,15 @@
 # DNDSheet session checkpoint - 2026-10-30
 
+## CURRENT: Build158 consistency and CR158 scope
+
+Codef958cd4/tag rc-2.4.3-build-158-consistency. Frozen archive97verified hashes;protected157archive97verified. Eval http://localhost:9124/candidate158/index.html#/ on existing previewserver,versionedbase/candidate158;root/predecessor files not overwritten and no serverprocess changes. Same9124origin storage retained;actualUI confirmsMyNewMonster withVeilofRadiance andbuild158. Main-origin configured monster not reset/transferred.
+
+InheritedWIPfinished:target-noun countagreement and shared structuredAttackBonus integrated into webstructuredcontext/composercontext/modernlegacymechanics/core2024exports. Explicitfinite0wins,spelloverride respected,rangeddefaultDEX/meleeorbothSTR. Finesse/thrown/homebrew requireauthoredbonus pendingA9.11 provenance;do not claimuniversalweapon inference. No rollcount,grids,cadencepredicate/casting/species UI implemented.
+
+279core(+5),productionbuild,50browser(+1) zero console/runtimeerrors,5spell/12helpthemes;lint0errors/5existingwarnings. Finalunusedimportcleanup rebuild97filesbyteidentical to testedbuild. Step50 16caseprojections,composer/liveDEX/explicit0 and3textdownloads. FreshSolreview(noavailableAstralane) no blockers;2deferredminors:comma-listcustomnouninflection anddedicatednonfinitefallbacktests. Recordthese,do notclaimfixed. NoLaTeXcompile.
+
+Newuser18-topicCR158 mapped across all3docs. Added3tasks A11.9 randomoutcometables,A12.10 compactspelllines/liveamounts/hiddencadence,B3.7 speciesproposals;expandedexistingownersforwhile/whenbloodied/HPthresholds,contextualnumericregistry,roll-vs-target-vsdamagescaling,outcome4regionlayouts,reaction/phase/activityrouting/traversal,sourcecastingmetrics,typography/selectconsistency. Progress86/219(39.27%),133pending,0active,9/28loopsclosed;zero newwhole-task closure. Next A9.0 numericinventory thenbindings;A9.11remains pendingfinesse/abilitymetadata. Canonicaldocs+mirrors synchronized;oldercheckpointsbelowhistorical.
+
 ## Recovery sync after HEAD9a37339
 
 Build157/A8 closure is committed;do not repeat retirement.86/216 complete,130remaining,9/28loops shipped. Existing uncommitted work is preserved:ability-grammar noun agreement plus AbilityGrammar/ExportStatblock tests,and new structured-attack helper/tests. The helper has no production consumers yet. Review and finish that bounded consistency slice before beginning A9.0 inventory/A9.1 bindings. Check shared web/prose render contexts,ComposerChain and core exports;preserve explicit/custom/formula semantics. No fresh tests,builds or deployments run in this recovery sync. Latest handoff's9100/9106/9127 routing and storage claims were not live-reverified. Three docs contain the same recovery packet and mirrors are synchronized. Do not mistake old failed scratch157smoke logs for the corrected committed closeout.
