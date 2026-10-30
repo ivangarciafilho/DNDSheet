@@ -8,7 +8,7 @@
         <q-input v-else-if="field.kind === 'text'" v-model="draft[field.id]" dense outlined dark :label="field.label" />
         <template v-else-if="field.kind === 'prose' && (role === 'mythic' || draft.custom)">
           <div class="text-caption q-mb-xs">{{ field.label }}</div>
-          <monster-text-editor :field="draft[field.id]" :token-category="role === 'mythic' ? 'mythic' : role === 'legendary' ? 'legendary' : 'none'" @update:model-value="(value: string) => draft[field.id] = value" />
+          <monster-text-editor :field="draft[field.id]" :show-reset="!!ROLE_HEADER_RESETS[role][field.id]" :token-category="role === 'mythic' ? 'mythic' : role === 'legendary' ? 'legendary' : 'none'" @reset="resetField(field.id)" @update:model-value="(value: string) => draft[field.id] = value" />
         </template>
       </div>
       <p v-if="role === 'lair'" class="text-caption">The default preamble follows the initiative count. Custom preamble text is kept exactly as authored.</p>
@@ -24,11 +24,13 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { ROLE_HEADERS, roleHeaderDraft, roleHeaderPatch, validateRoleHeader } from 'src/core/domain/role-headers'
-import type { HeaderRole } from 'src/core/domain/role-headers'
+import { ROLE_HEADERS, ROLE_HEADER_RESETS, roleHeaderDraft, roleHeaderPatch, validateRoleHeader } from 'src/core/domain/role-headers'
+import type { HeaderRole, RoleHeaderDraft } from 'src/core/domain/role-headers'
 import MonsterTextEditor from '../MonsterTextEditor.vue'
 
+const { t } = useI18n()
 const props = defineProps<{ role: HeaderRole }>()
 const monster = useMonsterStore()
 const open = ref(false)
@@ -37,6 +39,10 @@ const draft = ref(roleHeaderDraft(monster, props.role))
 const title = computed(() => ({ legendary: 'Legendary', mythic: 'Mythic', lair: 'Lair' }[props.role]))
 const fields = computed(() => ROLE_HEADERS[props.role])
 const error = computed(() => validateRoleHeader(props.role, draft.value))
+const resetField = (field: keyof RoleHeaderDraft) => {
+  const key = ROLE_HEADER_RESETS[props.role][field]
+  if (key && (field === 'preamble' || field === 'triggerDescription')) draft.value[field] = t(key)
+}
 const resetDraft = () => { draft.value = roleHeaderDraft(monster, props.role); status.value = '' }
 const apply = () => {
   if (error.value) return

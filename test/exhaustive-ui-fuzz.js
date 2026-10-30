@@ -3466,12 +3466,29 @@ async function runFuzz() {
     const member=()=>group.querySelector('[data-association-id="studio-link"]');const cost=member().querySelector('input');cost.value='2';cost.dispatchEvent(new Event('input',{bubbles:true}));await wait(150);const costEdited=monster.legendaryActions.actions.find(member=>member.actionId===attack.id)?.cost===2;
     const mythic=document.querySelector('[data-associations="mythic"]');await expand(mythic);await choose(mythic.querySelector('.q-select'),'Linked Claw');member().querySelector('button').click();await wait(150);const removedOnlyMembership=!monster.legendaryActions.actions.some(member=>member.actionId===attack.id)&&monster.mythicActions.actions.some(member=>member.actionId===attack.id)&&monster.attacks.some(source=>source.id===attack.id);
     monster.legendaryActions.actions.push({actionId:'missing-studio',cost:4,extension:'keep'});await wait(150);const missing=group.querySelector('[data-association-id="missing-studio"]');const warning=missing.textContent.includes('Source is missing');await choose(missing.querySelector('.q-select'),'Policy Witness');const repaired=monster.legendaryActions.actions.some(member=>member.actionId===action.id&&member.cost===4&&member.extension==='keep')&&!monster.legendaryActions.actions.some(member=>member.actionId==='missing-studio');
-    return {savedPhase,phase,ownHeading,cr,automaticParity,crAfterReorder,lairCr,sorting,added,costEdited,removedOnlyMembership,warning,repaired,legacyKept:[...document.querySelectorAll('#editor .q-expansion-item')].some(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Legendary Actions'),descriptionKept:action.description==='Deals {2d6} radiant damage.'};
+    return {savedPhase,phase,ownHeading,cr,automaticParity,crAfterReorder,lairCr,sorting,added,costEdited,removedOnlyMembership,warning,repaired,retirementComplete:![...document.querySelectorAll('#editor > .q-list > .q-expansion-item')].some(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Legendary Actions'),descriptionKept:action.description==='Deals {2d6} radiant damage.'};
   }`)
   await sendCdp('Page.reload');await pause(1500)
   step48.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');return monster.actions.some(action=>action.id==='studio-policy'&&action.stagePool===1&&!action.customPreamble)&&monster.attacks.some(attack=>attack.id==='studio-link')&&monster.mythicActions.actions.some(member=>member.actionId==='studio-link')&&monster.legendaryActions.actions.some(member=>member.actionId==='studio-policy'&&member.cost===4&&member.extension==='keep');}`)
   console.log('Step 48 result:',JSON.stringify(step48,null,2))
   if(!Object.values(step48).every(value=>value===true))throw new Error('Step 48 failed: '+JSON.stringify(step48))
+
+  console.log('\n--- Step 49: Studio-only editor, reaction templates and reversible section resets ---')
+  const step49=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),app=document.querySelector('#q-app').__vue_app__,pinia=app.config.globalProperties.$pinia,monster=pinia._s.get('monster'),templates=pinia._s.get('templates'),t=app.config.globalProperties.$t;
+    const retired=['Traits','Attacks','Multiattack','Reactions','Legendary Actions','Mythic Actions','Lair Actions'],panels=[...document.querySelectorAll('#editor > .q-list > .q-expansion-item')],labels=panels.map(el=>el.querySelector('.q-item__label')?.textContent.trim()),retirement=retired.every(label=>!labels.includes(label)),villainKept=labels.includes('Villain & Bloodied Actions'),panelCount=panels.length;
+    monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'retire-reaction',name:'Saved response',description:'Keep response.',trigger:'When threatened',limitedUse:{count:2,rate:'DAWN'}});
+    monster.addAction();monster.addLegendaryAction(monster.actions.at(-1).id,2);monster.addMythicAction(monster.actions.at(-1).id);monster.addLairAction();await wait(200);
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(150);
+    const save=document.querySelector('[data-save-reaction-template="retire-reaction"]');if(!save)throw new Error('Studio reaction template control missing');save.click();await wait(150);const input=document.querySelector('.q-dialog input');input.value='Retirement response';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);[...document.querySelectorAll('.q-dialog button')].find(el=>el.textContent.trim().toLowerCase()==='save').click();await wait(150);
+    const saved=templates.customTemplates['Retirement response'],templateSaved=saved?.type==='Reaction'&&saved.trigger===reaction.trigger&&saved.limitedUse.count===2&&saved.description===reaction.description&&!saved.id;const originalId=reaction.id;templates.applyTemplate('Retirement response');const copy=monster.reactions.at(-1),templateApplied=copy.id!==originalId&&copy.trigger===reaction.trigger&&copy.limitedUse.rate==='DAWN';
+    const cases=[['legendary','preamble','presets.legendaryActions'],['mythic','triggerDescription','presets.mythicDescription'],['mythic','preamble','presets.mythicPreamble'],['lair','preamble','presets.lair']],problems=[];
+    const read=(role,field)=>role==='legendary'?monster.legendaryActions.customPreamble:role==='lair'?monster.lairActionPreamble:monster.mythicActions[field];
+    for(const [role,field,key] of cases){if(role==='legendary'){monster.legendaryActions.useCustomPreamble=true;monster.legendaryActions.customPreamble='Authored legendary';}else if(role==='lair'){monster.useCustomLairActionPreamble=true;monster.lairActionPreamble='Authored lair';}else monster.mythicActions[field]='Authored '+field;await wait(80);const header=document.querySelector('[data-role-header="'+role+'"]'),before=read(role,field);const open=async()=>{header.querySelector('.q-item').click();await wait(120);};const reset=()=>[...header.querySelector('[data-header-field="'+field+'"]').querySelectorAll('.q-btn')].find(el=>el.querySelector('i')?.textContent.trim()==='restart_alt').click();await open();reset();await wait(80);if(read(role,field)!==before)problems.push(role+'/'+field+': reset wrote before Apply');[...header.querySelectorAll('button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(100);if(read(role,field)!==before)problems.push(role+'/'+field+': cancel changed model');await open();reset();await wait(80);[...header.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply section settings').click();await wait(100);if(read(role,field)!==t(key))problems.push(role+'/'+field+': default not applied');}
+    return {retirement,villainKept,panelCount,templateSaved,templateApplied,problems};
+  }`)
+  console.log('Step 49 result:',JSON.stringify(step49,null,2))
+  if(!step49.retirement||!step49.villainKept||step49.panelCount!==14||!step49.templateSaved||!step49.templateApplied||step49.problems.length)throw new Error('Step 49 failed: '+JSON.stringify(step49))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3488,7 +3505,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 48 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 49 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

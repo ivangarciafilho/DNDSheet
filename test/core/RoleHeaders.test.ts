@@ -1,7 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { defaultMonster } from '../../src/core/domain/types.ts'
-import { ROLE_HEADERS, lairChainView, roleHeaderDraft, roleHeaderPatch, validateRoleHeader } from '../../src/core/domain/role-headers.ts'
+import { ROLE_HEADERS, ROLE_HEADER_RESETS, lairChainView, roleHeaderDraft, roleHeaderPatch, validateRoleHeader } from '../../src/core/domain/role-headers.ts'
 import { processTokens } from '../../src/core/usecases/ProcessTokens.ts'
 
 test('section header catalog covers each persisted role context without introducing entry names', () => {
@@ -63,4 +63,8 @@ test('lair initiative macro follows the current context and defaults to twenty f
   assert.equal(processTokens('Initiative {LAIR_INITIATIVE}', monster), 'Initiative 15')
   monster.initiativeConfig.lairInitiative = 0
   assert.equal(processTokens('{LAIR_INITIATIVE}', monster), '0')
+})
+
+test('section reset catalog restores each legacy preset without resetting other fields',()=>{
+  assert.deepEqual(ROLE_HEADER_RESETS,{legendary:{preamble:'presets.legendaryActions'},mythic:{triggerDescription:'presets.mythicDescription',preamble:'presets.mythicPreamble'},lair:{preamble:'presets.lair'}})
 })

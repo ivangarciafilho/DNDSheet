@@ -165,6 +165,9 @@
               <q-btn v-if="item.rawTrait" round flat dense icon="save" color="cyan-3" size="sm" @click="addTemplate(item.rawTrait, 'trait')">
                 <q-tooltip>Save as Trait Template</q-tooltip>
               </q-btn>
+              <q-btn v-if="item.rawReaction" round flat dense icon="save" color="cyan-3" size="sm" :data-save-reaction-template="item.id" @click="addTemplate(item.rawReaction, 'reaction')">
+                <q-tooltip>Save as Reaction Template</q-tooltip>
+              </q-btn>
               <swap-buttons :field="getStoreCollectionField(item.role)" :idx="getItemStoreIndex(item)" />
               <q-btn
                 round
@@ -370,8 +373,13 @@ export default defineComponent({
 
     const visibleHeaderRoles = computed<HeaderRole[]>(() => {
       const roles: HeaderRole[] = ['legendary', 'mythic', 'lair']
+      const populated = {
+        legendary: monster.legendaryActions.actions.length > 0,
+        mythic: monster.mythicActions.actions.length > 0,
+        lair: monster.lairActions.length > 0,
+      }
       return roles.filter((role) => selectedCategory.value === role ||
-        (selectedCategory.value === 'all' && allEntries.value.some((entry) => entry.role === role)))
+        (selectedCategory.value === 'all' && populated[role]))
     })
 
     const categoryTabs = computed(() => {
@@ -598,14 +606,15 @@ export default defineComponent({
       })
     }
 
-    const addTemplate = (target: MonsterAction | MonsterTrait, role: 'action' | 'trait' = 'action') => {
+    const addTemplate = (target: MonsterAction | MonsterTrait | MonsterReaction, role: 'action' | 'trait' | 'reaction' = 'action') => {
       $q.dialog({
         component: NewTemplateDialog,
         componentProps: {
           targetName: target?.name || 'Action',
         },
       }).onOk(({ name, icon }: { name: string; icon: string }) => {
-        if (role === 'trait') templateStore.addCustomTrait(target as MonsterTrait, name, icon)
+        if (role === 'reaction') templateStore.addCustomReaction(target as MonsterReaction, name, icon)
+        else if (role === 'trait') templateStore.addCustomTrait(target as MonsterTrait, name, icon)
         else templateStore.addCustomAction(target as MonsterAction, name, icon)
         $q.notify({
           message: t('editor.template.added', [name]),

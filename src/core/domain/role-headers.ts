@@ -36,6 +36,13 @@ export const ROLE_HEADERS: Readonly<Record<HeaderRole, readonly HeaderField[]>> 
   ],
 }
 
+/** Legacy preset identities; reset edits only the local field until Apply. */
+export const ROLE_HEADER_RESETS: Readonly<Record<HeaderRole, Partial<Record<keyof RoleHeaderDraft, string>>>> = {
+  legendary: { preamble: 'presets.legendaryActions' },
+  mythic: { triggerDescription: 'presets.mythicDescription', preamble: 'presets.mythicPreamble' },
+  lair: { preamble: 'presets.lair' },
+}
+
 export function roleHeaderDraft(monster: Monster, role: HeaderRole): RoleHeaderDraft {
   return {
     count: monster.legendaryActions.count,

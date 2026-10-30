@@ -42,16 +42,9 @@
             <skills-editor />
             <senses-editor />
             <resistances-editor />
-            <traits-editor />
             <spellcasting-editor />
-            <attacks-editor />
             <actions-editor />
             <villain-actions-editor />
-            <multiattack-editor />
-            <reactions-editor />
-            <legendary-actions-editor />
-            <mythic-actions-editor />
-            <lair-actions-editor />
             <regional-effects-editor />
             <anatomy-editor />
             <encounter-dynamics-editor />
@@ -79,18 +72,11 @@ import SpeedsEditor from 'src/components/editor/SpeedsEditor.vue'
 import SkillsEditor from 'src/components/editor/SkillsEditor.vue'
 import SensesEditor from 'src/components/editor/SensesEditor.vue'
 import ResistancesEditor from 'src/components/editor/ResistancesEditor.vue'
-import TraitsEditor from 'src/components/editor/TraitsEditor.vue'
 import SpellcastingEditor from 'src/components/editor/SpellcastingEditor.vue'
-import AttacksEditor from 'src/components/editor/AttacksEditor.vue'
-import MultiattackEditor from 'src/components/editor/MultiattackEditor.vue'
 import ActionsEditor from '../components/editor/ActionsEditor.vue'
 import VillainActionsEditor from 'src/components/editor/VillainActionsEditor.vue'
 import AnatomyEditor from 'src/components/editor/AnatomyEditor.vue'
 import EncounterDynamicsEditor from 'src/components/editor/EncounterDynamicsEditor.vue'
-import LegendaryActionsEditor from 'src/components/editor/LegendaryActionsEditor.vue'
-import MythicActionsEditor from 'src/components/editor/MythicActionsEditor.vue'
-import ReactionsEditor from 'src/components/editor/ReactionsEditor.vue'
-import LairActionsEditor from 'src/components/editor/LairActionsEditor.vue'
 import RegionalEffectsEditor from 'src/components/editor/RegionalEffectsEditor.vue'
 import InventoryEditor from 'src/components/editor/InventoryEditor.vue'
 import CharacterEditor from 'src/components/character/CharacterEditor.vue'
@@ -108,18 +94,11 @@ export default defineComponent({
     SkillsEditor,
     SensesEditor,
     ResistancesEditor,
-    TraitsEditor,
     SpellcastingEditor,
-    AttacksEditor,
-    MultiattackEditor,
     ActionsEditor,
     VillainActionsEditor,
     AnatomyEditor,
     EncounterDynamicsEditor,
-    LegendaryActionsEditor,
-    MythicActionsEditor,
-    ReactionsEditor,
-    LairActionsEditor,
     RegionalEffectsEditor,
     InventoryEditor,
     CharacterEditor,
