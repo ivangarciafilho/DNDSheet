@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 153 · 2026-10-30 · A8.3 multiattack studio · `rc-2.4.3-build-153-a8-multiattack-studio` · Build 152 and earlier archives/tags preserved |
-| **Code HEAD** | `1f57bab` stable-ID multiattack references and shared collation; 257 core tests; production build; 45 browser scenarios and theme checks pass; focused lint 0 errors/1 existing warning |
-| **Progress** | **8 / 28 loops shipped** · **79 / 204 tasks complete (38.73%)** · **0 active tasks · 125 pending** · A8 remains active |
-| **Now** | A8.3 complete: ordered/repeated multiattack references, search/repair for missing targets, shared custom text/postscript and exact preview. One existing task closed; no new top-level scope. |
-| **Next** | A8.5 finish audited controls and association operations → retire seven panels only with A8.6 fixture parity and A8.7 browser updates → A8.8 closeout. Villain/Bloodied remains. |
+| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
+| **Code HEAD** | `0ce61c7` one authoritative sheet and canonical cadence vocabulary; 264 core tests, production build, 46 browser scenarios and theme suites; focused lint 0 errors/16 pre-existing warnings |
+| **Progress** | **8 / 28 loops shipped** · **81 / 216 tasks complete (37.50%)** · **0 active tasks · 135 pending** · A8 active; CR-154 adds twelve scoped tasks |
+| **Now** | A8.13/A8.14 complete: local render duplicates removed, plain Role selection, shared cadence choices and compact one-use rest labels. Nineteen new concerns mapped; twelve tasks added, two delivered. |
+| **Next** | A8.15 superseding head order → A8.5 missing controls/associations and retirement → A8.6/7/8 closeout. A9/A11 semantic expansion and A12 casting sources follow their foundations. |
 
 ---
 
@@ -40,16 +40,16 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 29 / 33 | ◐ |
-| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
-| R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
-| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 31 / 36 | ◐ |
+| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 32 | ☐ |
+| R4 · Spellcasting you can trust | A12 | 0 / 10 | ☐ |
+| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
-| R7 · Creator confidence | B1 · B2 · B3 | 0 / 15 | ☐ |
+| R7 · Creator confidence | B1 · B2 · B3 | 0 / 16 | ☐ |
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **79 / 204 complete · 0 active · 125 pending** | **38.73 % complete · 61.27 % remaining** |
+| **Total** | **28 loops** (Track A 165 tasks · Track B 51) | **81 / 216 complete · 0 active · 135 pending** | **37.50 % complete · 62.50 % remaining** |
 
 ```mermaid
 pie showData
@@ -384,7 +384,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R3 | AU-02 | A2 ✅ (A8 for studio cells) | 3–5 d | 9 files · +1 300 / −800 |
 
-- [ ] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); list the 18 current fields; decide decimals out of scope (BS-16) · M
+- [ ] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); refresh the binding inventory beyond the historical 18-field subset, including CR154-05 consumers; decide decimals out of scope (BS-16) · M
 - [ ] **A9.1** `formula.ts`: `literal` binding variant, `dependencyOrder`, `detectCycles` + tests · M
 - [ ] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M
 - [ ] **A9.3** `monster-store.ts`: `bindings` state (optional), `setBinding`, `clearBinding`, `resolveBindings` (one pass, equality check, cycle report) · L
@@ -432,7 +432,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R3 | AU-02 | A9 | 1–3 d | ≈ 10 files · ±300 |
 
-- [ ] **A11.0** Inventory script: all `type="number"` inputs (77) with file, model path and label · S
+- [ ] **A11.0** Inventory script: all `type="number"` inputs (CR-154 static snapshot: 83 markers, not a semantic field count) with file, model path and label · S
 - [ ] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M
 - [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S
 - [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M
@@ -482,7 +482,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M
 - [ ] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M
 - [ ] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M
-- [ ] **A13.8** Verify BS-40: the delegated help host, print rules and every global `.statblock` selector either ignore composer previews or include them on purpose; record the decision (*added A7*) · S
+- [ ] **A13.8** Verify BS-40 under CR-154: delegated help, print and global `.statblock` selectors target the sole rendered sheet; no inline composer preview DOM; record the decision (*added A7*) · S
 - [ ] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S
 
 **Done when:** SEL-002…008, TIP-002…005, TIP-007, QA-005 proven.
@@ -865,3 +865,40 @@ A8.5 execution groups, in dependency order (existing scope; no new top-level tas
 6. Execute A8.6 three-fixture byte parity before/after removal within that candidate, complete A8.7 browser checks and A8.8 closeout. A8 does not ship on the strength of the new adapters alone.
 
 Regression gates: retain Step 45 occurrence-sensitive removal, ID repair, rename propagation, four markup/computed-type comparisons, custom text retention, postscript, three text downloads, mobile, reload, source-deletion cleanup and zero/only-multiattack empty states. Renderer collation preserves first-seen order and safely counts numeric/prototype-like IDs; published grammar still totals repeated IDs rather than promising arbitrary attack/action interleaving.
+
+## CR-154 additions and revised execution order
+
+The 2026-10-30 request adds twelve tasks (11 Track A, 1 Track B). Prior baseline: 79/204. New baseline before delivery: 79/216, 137 pending. Do not describe the denominator increase as a regression or hide it by changing old completions. Historical A7/A8 preview proofs remain historical; CMP-010's duplicate UI is superseded by CR154-01.
+
+- [x] **A8.13** Single rendered surface: remove inline preview DOM/computations from action/reaction/trait/lair, attack and multiattack composers; plain Role select; direct authoritative-sheet regression checks across existing templates/themes, keyboard and mobile. Preserve role-transition semantics · M
+- [x] **A8.14** Canonical cadence identity/aliases/catalog and compact one-use rest label; current usage editors and action/reaction/trait projections share formatting; unknown saved rates preserved, milestone/interval distinctions documented and tested. Formula-bound counts remain A9/A11 work · M
+- [ ] **A8.15** Superseding head grammar: usage → name/components → tier/school; shared editor/web/prose projection with old metadata preserved. Scope shortening retains all mechanical quantities; roll count remains separate A9.13 work · M
+- [ ] **A9.13** Independent roll-count/scaling/conditional-roll contract and bindings; distinguish target count, beam count and damage multiplier; explicit level/HD/custom source with provenance; roll versus save advantage/disadvantage; migration and export tests · L
+- [ ] **A11.5** Outcome clauses: hit/miss/success/failure/custom, recipient predicates and stable result-reference graph; vertical/horizontal/inline presentation independent of mechanics; empty/invalid/cycle and export tests · L
+- [ ] **A11.6** Shared reaction mechanics plus trigger and typed availability sets; adapters/migration preserve reaction IDs/prose/uses and legacy stagePool. Every action-family editing capability has a reaction counterpart where meaningful · L
+- [ ] **A11.7** Combat activity section routing: Search/Study/Influence/Hide and authored groups own economy/cost/trigger; section projection removes redundant economy labels without losing facts; associations/undo/export tests · L
+- [ ] **A11.8** Compound traversal permissions/costs and Dash/Dodge/Disengage riders; phase-change effect, authored conditions and freeform fallback; safe migration and rendering tests · L
+- [ ] **A12.8** Stable-ID casting-source/resource-pool model, source ownership adapters and lossless migration from existing class/innate/multiclass fields; Pact/shared/innate pools kept distinct; one resolved casting projection · L
+- [ ] **A12.9** Source-based authoring cards, per-source spell lists and known/prepared/cantrip metrics with provenance/error states; ruleset-aware multiclass calculations, catalog/custom coverage, reload and export proofs · L
+- [ ] **A13.9** Sheet density/layout: Senses and Languages adjacent under scores; remove redundant horizontal rules; replace initiative pill with consistent minimal text/icon/color; classic/modern/12-theme/print and accessibility proofs · M
+- [ ] **B3.6** Ability-score proposals: point buy, arrays, seeded rolling/custom creature heuristics, source/ruleset labels, preview/Apply/Cancel/undo, bound-field interaction and deterministic tests · L
+
+A9.0/A11.0 inventories now include every integer consumer, including limited uses, roll counts, outcome values and nested fields; A13.0 inventories every dropdown. Alphabetical order applies within semantic groups, with explicit numeric/chronological/custom-first exceptions. A12.0–7 remain prerequisites for accurate metrics/catalogs, not substitutes for source ownership. A8.5 existing phase controls remain required before retirement; multi-pool availability expansion lands after bindings under A11.6.
+
+Next execution: A8.13 + A8.14 first. Every new slice refreshes source map, failure fixtures, preservation/migration matrix and release gates before code changes. Read Specification CR-154 and Handoffs CR-154 together.
+
+### Build 154 closing delta and backlog grooming
+
+Baseline 79/204 → scope revision 79/216 → delivery 81/216. Completed +2, scope +12, remaining 125 → 135 (twelve added minus two delivered). The percentage change reflects expanded scope, not lost work. Eight loops remain shipped; A8 stays active. Track A now 165 tasks, Track B 51. A8.15 is the next independent visible-value slice before completing A8.5 retirement and A8.6/7/8 closeout.
+
+Static source inventory on this candidate: 83 numeric-input markers and 187 native/Quasar select markers across 37 Vue files. Dynamic fields, reference-only controls and semantic duplicates require the A9/A11/A13 path inventory; these counts do not imply 83 binding-capable fields. Current formula support is not declared universal. Reaction studio retains its legacy cadence edit shape until A11.6, while its printed cadence already shares the formatter.
+
+A8.13 evidence: preview DOM/computations removed from all three composers, preview-only CSS removed, selected role badge removed; existing review/cancel semantics retained. Browser Steps 35–45 now verify expected authored facts on the real sheet and its 56 theme/style cases, not sheet-against-itself equality. Step 46 asserts no duplicate local stat blocks and checks category options and canceled transition.
+
+A8.14 evidence: pure cadence definitions/aliases/formatter; grouped current action/trait rate controls, shared metadata for existing legacy/casting rate consumers; short/long/rest one-use labels compact, multiple counts retained. Seven core cases cover catalog/order/aliases/unknowns/traits/core token projection. Step 46 checks requested cadence breadth, native groups, unknown saved option, bloodied and ten-minute labels, six action/trait/reaction sheet projections, three text exports and reload. Explicit trait timing/manual tag overrides are retained; this is a vocabulary/formatting foundation, not an encounter resource engine.
+
+Next A8.15 preparation: map head field ownership in `ROLE_CHAINS`, `composer-chain`, `abilityHeader`, modern plate construction and prose projection. Specify one head view (usage, name with components, tier/school), update current expected-order tests intentionally, preserve cadence/metadata/formulas and all supported text exports. Do not infer rolls from target count. After that, resume A8.5's exact capability matrix and the retirement proof packet.
+
+### Build 154 evaluation-address boundary
+
+Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.

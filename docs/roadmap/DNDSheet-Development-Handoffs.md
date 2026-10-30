@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 153 · 2026-10-30 · A8.3 multiattack studio · `rc-2.4.3-build-153-a8-multiattack-studio` · Build 152 and earlier archives/tags preserved |
-| **State at hand-over** | Code `1f57bab`, build 153; latest/configured 9100/9106, exact 153 at 9121, protected 152 at 9119. 257 core tests, production build, 45 browser scenarios zero errors, 5-theme spellcasting and 12-theme help. Existing browser data retained. |
+| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
+| **State at hand-over** | Code `0ce61c7`, build 154; independent evaluation 154 at 9123; main 9100/9106 and exact 9121 retain protected Build 153. 264 core tests, production build, 46 browser scenarios zero errors, 5-theme spellcasting and 12-theme help. Existing browser storage retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active; A8.3 delivered. Next A8.5 missing capabilities and associations. Seven legacy panels remain until retirement parity is proven; Villain/Bloodied stays mounted. |
+| **Current loop** | A8 active; A8.13/A8.14 delivered under CR-154. Next A8.15 head syntax, then capability/retirement gates. The new post-binding semantic tasks do not create an A8↔A9 dependency cycle. |
 
 ---
 
@@ -911,3 +911,31 @@ Next preparation: preserve Build 153, capture three within-candidate fixtures, e
 Evidence: seven new pure cases, 257 total pass; production build; focused lint zero errors/one pre-existing warning; final read-only review no actionable findings; 45 browser scenarios zero console/runtime errors; Step 45 four markup/computed-type comparisons, three text exports, reference interactions/repair, custom text retention, narrow/reload/deletion/empty-state gates; 5-theme spellcasting and 12-theme help. Earlier focused harness failures were control-selector mismatches and were corrected in the test helper; no production behavior was bypassed. Source change also corrects the All-category empty message when multiattack is the only content.
 
 Release: code `1f57bab`, tag `rc-2.4.3-build-153-a8-multiattack-studio`; latest/configured 9100/9106, exact 153 at 9121, protected 152 at 9119. Both loopback families serve sealed archives; no user data reset. 79/204 complete (38.73%), 125 pending; one existing task closed, no new top-level scope; 8/28 loops shipped and A8 active.
+
+## CR-154 preparation packet
+
+Read Specification “CR-154 — Screenshot-driven authoring and projection revision” and Backlog “CR-154 additions and revised execution order”. The request supersedes local previews and old head order; historical completed proofs must not dictate a rejected UI. Preserve Build 153/archive/tag before editing. Do not reset user storage or silently substitute a different monster sample.
+
+First slice A8.13/A8.14: remove local render computations/DOM from all three composers, keep one sheet; plain role selection with existing move/copy review; canonical cadence data with aliases, distinct event/interval/rest help and compact one-use rest formatting. Retain unknown rates and all authored fields. Numeric formula counts are explicitly deferred to the existing binding foundation, not emulated by accepting strings in numeric models.
+
+Test preparation: replace duplicated-preview equality assertions in browser Steps 35–45 with direct expected sheet content, actual control→model→sheet edits and theme/visibility checks; add an absence-of-duplicate-DOM assertion. Never replace comparisons with sheet-against-itself equality. Core tests cover cadence groups/order/aliases, unknown values, one versus multiple uses, clocks/events and preserved trait overrides. Browser tests cover select role semantics, cadence menu breadth, one-use Short Rest on both templates, reload and exports. Add failures first where practical; run full core/browser/theme/build/lint before sealing/promoting.
+
+Skill routing: executing-plans, verification-before-completion, functional-core, Impeccable Operate, UX-copy, roadmap-update; TTRPG craft for provenance and terminology. A quick debate-council audit independently identified reaction parity, scaling provenance and source-owned casting gaps. One independent pass plus inspected source and official rules pages suffices for this bounded decision; no model-provider diversity claim. Future rules presets require edition-specific evidence before implementation.
+
+Next handoff must include: code/tag/archive and preserved predecessor; tasks done versus scope added; measured file changes; regression outcomes and remaining validation boundaries; all three documents/mirrors synchronized. No implementation claims for A9.13/A11.5–8/A12.8–9 until their models, migrations, UI and supported exports are materialized.
+
+### Build 154 closing packet → A8.15
+
+Read the CR-154 requirement table first; nineteen concerns are mapped to existing and twelve new task IDs. A8.13/A8.14 are complete; everything else keeps its explicit task/dependency. Progress: 79/204 original → +12 scope → 81/216 after two deliveries, 135 pending. No legacy panel retired; A8 remains active.
+
+Current code `0ce61c7`, tag `rc-2.4.3-build-154-authoring-foundation`; independent evaluation 154 at 9123; main 9100/9106 and exact 9121 retain protected Build 153. Existing same-origin browser data was retained. Core 264/264 (+7), production build, focused lint 0 errors/16 existing warnings; full 46 browser scenarios (+1) zero console/runtime errors, five-theme spellcasting and twelve-theme help; read-only implementation review no findings. A stale hard-coded fixture name in the revised sheet test was corrected to validate the currently authored name/count; no production bypass. Earlier preview-parity assertions were intentionally replaced under the new requirement, not silently dropped.
+
+Next A8.15: inspect shared heading construction and `ROLE_CHAINS` alongside the actual sheet; derive usage → name/components → tier/school for editor and projections. Keep quantity semantics independent of typography. Add expected-order/core/web/export cases, then preserve154 before another candidate. A9.13 later owns roll count/scaling policy, so the header task must not invent that schema or reinterpret targetCount.
+
+A8.5 capability homes/association operations and three-fixture retirement checks follow; keep existing handoff details about live ID-derived CR indexes, dual legendary/mythic membership and non-destructive unlinking. Future A9/A11 work must use safe parser/bindings and stable result links; A12 source engine must separate class spell selections from shared/Pact/innate resource pools and cite edition-specific progression evidence. Do not substitute fallback counters when metrics are unavailable.
+
+All three canonical documents and output evaluation mirrors are synchronized. Re-run numeric/select semantic inventories during their owning task: the static 83/187 marker snapshot is a baseline, not proof of universal formula or catalog coverage.
+
+### Build 154 evaluation-address boundary
+
+Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.

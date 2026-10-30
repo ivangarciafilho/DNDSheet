@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 153 · 2026-10-30 · A8.3 multiattack studio · `rc-2.4.3-build-153-a8-multiattack-studio` · Build 152 and earlier archives/tags preserved |
-| **Code HEAD** | `1f57bab` stable-ID multiattack references and shared collation; 257 core tests; production build; 45 browser scenarios and theme checks pass; focused lint 0 errors/1 existing warning |
+| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
+| **Code HEAD** | `0ce61c7` one authoritative sheet and canonical cadence vocabulary; 264 core tests, production build, 46 browser scenarios and theme suites; focused lint 0 errors/16 pre-existing warnings |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **79 / 204 tasks complete (38.73%)** · **0 active tasks · 125 pending** · A8 remains active |
+| **Progress** | **8 / 28 loops shipped** · **81 / 216 tasks complete (37.50%)** · **0 active tasks · 135 pending** · A8 active; CR-154 adds twelve scoped tasks |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -2508,14 +2508,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-30** — Build 153 closes A8.3. 8/28 loops shipped; A8 active; 79/204 tasks complete (38.73%), 0 active tasks, 125 pending (61.27%). 257 core tests; production build; 45 browser scenarios zero errors; 5-theme spellcasting and 12-theme help. Exact Build 152 remains at 9119; latest origins retain browser storage.
+**Progress snapshot · 2026-10-30** — CR-154 adds twelve tasks and Build 154 delivers A8.13/A8.14. 81/216 complete (37.50%), 135 pending, 8/28 loops shipped and A8 active. 264 core tests, production build, 46 browser scenarios zero errors, theme suites. Duplicate local renders are removed; earlier preview equality evidence remains historical. Build 153 is preserved at 9121.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 29 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 31 / 36 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3441,3 +3441,122 @@ sequenceDiagram
 **Alternatives:** names as persisted references become ambiguous on rename; counts-only editing loses occurrence position; a merged action/attack sequence requires a new schema and grammar. The chosen adapter preserves existing arrays and semantics. The count helper is shared with the renderer to fix ordering/prototype behavior at its source rather than special-casing individual IDs in the UI.
 
 **Validation:** seven pure cases cover strict-ID view, repeated occurrence removal, movement, missing-target repair, invalid/stale edits, repeated additions and safe collation. Browser Step 45 uses real controls for search/add/replace/move/remove, source rename, postscript/custom toggle/edit/retention, group create/delete, four template/style markup/type comparisons and three captured toolbar text downloads. Narrow layout, reload, source-deletion cleanup, zero-group and only-multiattack states are checked. All 45 browser scenarios run with zero console/runtime errors; 257 core tests and theme suites pass. Exact Build 152 stays immutable. Panel retirement and broad export-format redesign remain pending; exported LaTeX is checked as text, not compiled.
+
+## CR-154 — Screenshot-driven authoring and projection revision (2026-10-30)
+
+Authority: the user's six screenshots and accompanying requirements supersede earlier UI decisions where stated below. Build 153 is protected. This is a requirements revision, not a claim that the entire expansion is implemented. Independent read-only audit plus source inspection produced the mapping below; one audit round, no paid/external worker lanes. High confidence in observed source gaps; future effort remains a forecast.
+
+### Requirement-to-roadmap traceability
+
+| ID / concern | Current evidence and coverage | Decision / delivery owner |
+|---|---|---|
+| CR154-01 duplicated local previews | A7/CMP-010 deliberately added secondary rendered cards in ComposerChain, AttackComposer and MultiattackComposer | Supersede CMP-010's duplicate UI requirement: the right sheet is the sole rendered surface. Remove preview DOM and duplicate rendering computations, retain editable chains and direct sheet verification. A8.13 |
+| CR154-02 Role badge inside dropdown | ActionsEditor selected slot inserts a q-badge; role conversion already has reviewed move/copy policy | Plain selected category text and plain options; retain role transitions, Cancel/confirmation and keyboard interaction. Attack identity remains a fixed label. A8.13 |
+| CR154-03 compact one-use rest label | usageText and classic token paths duplicate N/rate formatting | Canonical formatter prints Short Rest for one use, N/Short Rest for multiple. Retain numeric storage. Apply consistently to current action/reaction/trait limited-use projections and toolbar prose. A8.14 |
+| CR154-04 milestone/timeframe completeness | RECHARGE_TIME, action editor's four rates and trait timing options diverge | Canonical cadence identities, aliases, group, label, help, event/interval/rest distinction; add dawn/dusk/midday/midnight, bloodied, downtime, week/month/hour/10 minutes/1 minute. Retain imported unknown rates and existing turn/recharge options. A8.14 foundation; A12.4/A13.2 finish casting/global adapters |
+| CR154-05 references/formulas for integer fields | A2 parser exists; A9/A10/A11 pending bindings and field sweep | Expand field inventory to limited uses, roll counts, target counts, phase settings, outcomes and nested attack damage. Register constraints, stable-ID path, dependency graph, invalid/cycle behavior. No global number-to-string rewrite. A9.0–9/A10/A11.0–4 |
+| CR154-06 heading order | A8.10 currently specifies tier/school before name | Supersede that order with usage → name/components → tier/school. Editor and projections consume one head view model; no semantic deletion. A8.15 |
+| CR154-07 target prose and repeated rolls | targeting.count is target count, not number of attacks | Distinct rollCount, targetCount/distribution and damage multiplier. Compact scope may remove redundant articles, never silently drop maximum targets or move their meaning into attack count. A9.13 |
+| CR154-08 scaling and conditional modifiers | CANTRIP_DICE currently uses casterLevel; conditional roll policy absent | Explicit scaling source and provenance, beam/roll scaling versus damage scaling; conditional advantage/disadvantage with creature/condition predicate and authored fallback. Distinguish attacker roll policy from target saving throw policy. A9.13 |
+| CR154-09 outcomes depth/layout | outcomes support hit/failure/success and effects/rider; no recipient or stable cross-clause links | Hit/miss/success/failure/custom triggers, recipient predicate (allies/enemies/hostile/friendly/custom), stable clause IDs/result links, semantic amount reference, independent vertical/horizontal/inline layout. A11.5 |
+| CR154-10 role and paragon availability | stagePool already exists; A8.5 lists missing action control | Role/economy and availability are independent. A8.5 exposes existing phase field; A11.6 extends shared availability to explicit multiple pool IDs without overwriting legacy stagePool |
+| CR154-11 reaction parity | reaction-composer currently only name/usage/trigger despite A8.4 checked | Shared optional ability mechanics for reactions plus trigger, preserving IDs, prose, uses, phase and source extension fields. Legacy adapters remain compatible; no destructive role conversion. A11.6 |
+| CR154-12 combat activity relocation | Check rows currently print economy tags in place; no routing task | Model activity economy/role, optional cost/trigger and existing modifiers; section projection groups Search/Hide/etc into action/bonus/legendary/reaction regions. No moving HTML or duplicating authored activity. A11.7 |
+| CR154-13 Senses/Languages adjacency | existing sheet grammar supports rows but no explicit adjacency contract | Adjacent under scores; preserve telepathy/sense details and empty-row handling. A13.9 |
+| CR154-14 redundant dividers | horizontal rules coexist with section header borders | Remove redundant separators, preserve section heading hierarchy and meaningful card borders; theme/print tests. A13.9 |
+| CR154-15 ability score generation | no explicit generation workflow; B3 already owns proposal/apply/undo | Point buy, standard/custom arrays, seeded rolling and creature heuristics as opt-in proposals with provenance, preview/Apply/Cancel/undo and bound-field policy. Player point buy is not mandatory monster construction. B3.6 |
+| CR154-16 initiative pill | header rendering still has pill-specific presentation | Compact text/icon/color treatment consistent with sheet grammar; accessible text and print fallback, no pill outline. A13.9 |
+| CR154-17 traversal compound modifiers | A15.3 only covers control-kit adoption | Typed movement permission/cost clauses and Dash/Dodge/Disengage riders, phase change as authored effect; freeform fallback. A11.8 |
+| CR154-18 all dropdowns | A13–A16 already cover shared kit and audits | Full control inventory, alphabetical within semantic groups, rich accessible help, icon+text and color-independent meaning. Numeric levels/ranges/chronological boundaries use meaningful order exceptions; do not apply blind lexical sorting. A13.0–7/A14–16 |
+| CR154-19 source-based casting | A12 covers subclasses/counters but not independent source ownership | Stable-ID casting source array; per-source class/subclass/level/ability/list/preparation/innate cadence; separate shared-slot, Pact and innate resources; single projection retaining provenance. A12.8–9 plus A12.0–7 |
+
+### Architecture and contracts
+
+1. **Semantic source:** authored data and optional bindings, never formatted strings as mechanics. Maintain old fields during migration and preserve unknown data. An authored count of three targets must remain three targets after any typography cleanup.
+2. **Resolved view:** pure resolvers compute bound quantities and source metrics with ok/unavailable/error plus provenance; renderer consumes resolved facts. Unavailable licensed/subclass rules require a visible custom/unavailable state, not fabricated defaults.
+3. **Presentation:** shared head/scope/outcome/section projections, one production sheet, selected theme and independent ruleset. Layout preference never changes mechanics. Tooltips explain sources/decisions without being required to read the sheet.
+4. **Interaction:** plain role selection; contextual editors with live safe-parser feedback; grouped catalogs; source-aware casting cards; read-only derived totals. Invalid formula drafts preserve the last valid stored value and show an error; Apply is one undoable operation. No eval/Function or automatic parsing of arbitrary effect prose.
+
+```mermaid
+classDiagram
+ class AbilityMechanics {
+  rollCountBinding
+  targeting
+  rollConditions
+  outcomes
+  availability
+ }
+ class OutcomeClause {
+  id
+  trigger
+  recipientPredicate
+  amountBinding
+  resultReference
+ }
+ class CastingSource {
+  id
+  kind
+  ruleset
+  provenance
+  ability
+  classId
+  subclassId
+  level
+  spellSelections
+  resourcePoolIds
+ }
+ class ResourcePool {
+  id
+  kind
+  capacityBinding
+  recoveryCadence
+ }
+ AbilityMechanics "1" --> "*" OutcomeClause
+ CastingSource "*" --> "*" ResourcePool
+```
+
+These are proposed contracts, not deployed schema names. Choose final field names in each implementation task after inspecting imports/exporters. Outcome result links form a validated acyclic graph; “damage equal to healing” links to a stable result, not a prose substring. The authoring tool prints the rule; it does not claim to execute combat rolls or consume resources automatically.
+
+```mermaid
+flowchart LR
+ Draft[Editor draft / catalog / formula] --> Validate[Typed constraints and safe parser]
+ Validate --> Model[Authored records and bindings]
+ Model --> Resolve[Dependencies and rules/source policy]
+ Resolve --> View[Canonical ability / casting / section view]
+ View --> Sheet[Single live monster sheet]
+ View --> Export[Capability-aware text and portable exports]
+ Sheet --> Help[Contextual help and provenance]
+```
+
+### Rules and semantic evidence
+
+- Existing CANTRIP_DICE behavior is retained until explicit source selection is implemented. Character level, class level, caster level and monster HD are not interchangeable. Homebrew HD scaling remains selectable with authored provenance; it must not silently redefine an existing macro.
+- Multiclass slot availability and each class's known/prepared list limits are distinct calculations. Pact Magic resources remain separately identified even when rules permit cross-use. Sources: [2024 Basic Rules — Creating a Character](https://www.dndbeyond.com/sources/dnd/br-2024/creating-a-character), [Character Classes](https://www.dndbeyond.com/sources/dnd/br-2024/character-classes).
+- Beam count and damage dice are separate scaling policies. [2024 Vicious Mockery](https://www.dndbeyond.com/spells/2619216-vicious-mockery) documents damage progression; that is evidence against a universal attack-count multiplier for every cantrip. Each supported preset needs edition-specific source evidence in A9.13/A12.0.
+- Bloodied recovery event, bloodied availability and bloodied trigger are different meanings. The cadence label alone does not create encounter automation.
+
+### Branch decisions and impact forecast
+
+Chosen path: preserve existing data, establish one sheet and cadence vocabulary, then bindings, ability semantics and casting sources. Alternatives: cosmetic string replacement would lose counts/provenance; converting every numeric model field to text would break math/export compatibility; merging all spell lists and slot pools loses preparation/resource ownership. These alternatives are rejected. No unresolved decision blocks the first bounded slice; exact future migration schema and full catalog breadth remain implementation-stage decisions with explicit tests.
+
+Measured first-slice targets: ActionsEditor, three composers, composer CSS, action/trait cadence controls, RECHARGE_TIME, token usage formatting, trait tag formatting and browser regression suite. Future impact clusters: formula/context and field registry (A9–11); ability types/grammar/migration/role adapters/exporters (A9.13/A11.5–8); ClassCastingEditor/SpellcastingEditor/store/types/migrations/metrics/catalogs/exporters (A12.8–9); WebRenderer/plate/help/theme/print (A13.9). Counts are derived from inspected consumers, not a promised exhaustive future file total. Each task must refresh its file inventory and contract tests before editing.
+
+### Delivery sequence and gates
+
+A8.13/A8.14 → A8.15 head syntax → A8.5–8 capability/retirement closure → A9/A10/A11 binding foundation → A9.13/A11.5–8 ability semantics → A12.8–9 source casting → B3.6 generation and A13–16 UI sweep. A13.9 sheet layout may run as an independent verified slice; it does not depend on new mechanics. New post-binding features do not block A8 retirement of capabilities that already have a complete home, avoiding an A8↔A9 dependency cycle.
+
+Acceptance: schema-preserving edits, explicit migration proofs for new contracts, keyboard/mobile/print and supported-export checks; no duplicate preview DOM after A8.13; count/scaling/audience facts survive compact rendering; no fabricated spell metrics; same-origin sample data preserved. Release gates are measurable checks, not promises of zero future defects or unlimited scale.
+
+### CR-154 first delivery — Build 154
+
+The sole live sheet now supplies rendered feedback; no hidden test-only preview or duplicate projection tree was introduced. Composer controls and their domain adapters continue to edit the same records. Shared layout CSS retains only editor layout rules. Role selection uses ordinary category labels; model transitions still require existing review/cancel behavior.
+
+`cadence.ts` owns canonical identity, aliases, category, interval/event/rest kind, compact label and help. `cadenceOptions(saved)` keeps saved unknowns and aliases selectable without rewriting stored IDs; `formatLimitedUses` formats counts without mutating models. Action and trait native rate menus use semantic optgroups sorted within category. `RECHARGE_TIME` now reads shared metadata while retaining legacy locale keys for compatibility with existing importers and consumers. Explicit trait timing and printed-tag overrides keep their precedence. Cadence formatting is shared by current web and core token projections; 1/Day remains 1/Day, one rest prints Short Rest/Long Rest, N>1 retains its count. New rates are authoring labels, not automatic combat/clock triggers.
+
+Measured inventory: 83 numeric-input markers, 187 select markers, 37 Vue files. The binding registry and semantic control inventory remain future work, with literal-only versus binding-capable constraints explicitly required. No cantrip macro semantics, reaction storage model, spellcasting resource ownership, target quantity or authored outcome mechanics changed in this release.
+
+Independent audit decision confidence: high for observed gaps and current UI contracts; effort and final new-schema naming remain forecasts. Verification is release-specific: seven new pure cases, all 264 core tests, full 46-scenario browser run, direct authoritative-sheet theme/fact assertions, 5-theme spellcasting and 12-theme help. Existing lint warnings remain; exported LaTeX is text-checked, not compiled. Broad remaining requirements are tracked by the twelve-task CR-154 map, not declared solved by this slice.
+
+### Build 154 evaluation-address boundary
+
+Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.
