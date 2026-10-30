@@ -1,3 +1,4 @@
+import { countMultiattackReferences } from 'src/core/domain/multiattack-composer'
 import { actionRecharge } from 'src/core/domain/action-usage'
 import { exportMarkup } from 'src/core/domain/export-markup'
 import { computeTraitTag } from 'src/core/domain/defense-and-traits-utils'
@@ -326,18 +327,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
     for (const ma of context) {
       // map attacks
-      const collatedAttacks: Record<string, number> = {}
-
-      ma.attacks.forEach((aId) => {
-        if (!(aId in collatedAttacks)) {
-          collatedAttacks[aId] = 0
-        }
-
-        collatedAttacks[aId] += 1
-      })
-
       // render attacks
-      const attacks = Object.entries(collatedAttacks).map(([id, count]) => {
+      const attacks = countMultiattackReferences(ma.attacks).map(([id, count]) => {
         return t(
           'editor.multiattack.attack',
           { a: `${safeToWords(count)} ${monster.attackName(id)}` },
@@ -346,18 +337,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       })
 
       // map actions
-      const collatedActions: Record<string, number> = {}
-
-      ma.actions.forEach((aId) => {
-        if (!(aId in collatedActions)) {
-          collatedActions[aId] = 0
-        }
-
-        collatedActions[aId] += 1
-      })
-
       // render actions
-      const actions = Object.entries(collatedActions).map(([id, count]) => {
+      const actions = countMultiattackReferences(ma.actions).map(([id, count]) => {
         return t(
           'editor.multiattack.action',
           {

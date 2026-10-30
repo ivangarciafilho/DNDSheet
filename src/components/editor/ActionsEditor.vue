@@ -3,7 +3,7 @@
     expand-separator
     icon="mdi-movie-open"
     label="Actions &amp; Traits Studio"
-    caption="Unified studio for attacks, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
+    caption="Unified studio for attacks, multiattack, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
     header-class="bg-amber-10 text-white text-weight-bold"
   >
     <q-card class="bg-grey-10 text-white q-pa-sm">
@@ -41,6 +41,7 @@
             class="full-width text-weight-bold"
           >
             <q-list class="bg-grey-9 text-white">
+              <q-item v-close-popup clickable @click="addNewEntry('multiattack')"><q-item-section>Add Multiattack Option</q-item-section></q-item>
               <q-item v-close-popup clickable @click="addNewEntry('attack')"><q-item-section>Add Attack</q-item-section></q-item>
               <q-item v-close-popup clickable @click="addNewEntry('action')">
                 <q-item-section avatar><q-icon name="mdi-sword" color="amber-5" /></q-item-section>
@@ -77,15 +78,17 @@
 
       <role-header-editor v-for="role in visibleHeaderRoles" :key="role" :role="role" />
 
+      <multiattack-composer v-if="selectedCategory === 'multiattack' || (selectedCategory === 'all' && monster.multiattacks.length > 0)" />
+
       <!-- Empty State -->
-      <div v-if="filteredEntries.length === 0" class="q-pa-md text-center text-grey-5">
+      <div v-if="filteredEntries.length === 0 && selectedCategory !== 'multiattack' && (selectedCategory !== 'all' || monster.multiattacks.length === 0)" class="q-pa-md text-center text-grey-5">
         <q-icon name="info" size="32px" class="q-mb-xs" />
         <div>No entries in category: <b>{{ selectedCategory }}</b></div>
         <div class="text-caption">Click "+ Add Entry" above to create one.</div>
       </div>
 
       <!-- Unified List of Actions & Traits -->
-      <div v-else class="column q-gutter-y-xs">
+      <div v-if="filteredEntries.length > 0" class="column q-gutter-y-xs">
         <div
           v-for="item in filteredEntries"
           :key="item.id"
@@ -220,6 +223,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
+import MultiattackComposer from './composer/MultiattackComposer.vue'
 import AttackComposer from './composer/AttackComposer.vue'
 import ComposerChain from './composer/ComposerChain.vue'
 import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
@@ -248,6 +252,7 @@ export default defineComponent({
     SwapButtons,
     ComposerChain,
     AttackComposer,
+    MultiattackComposer,
     TraitDisplaySettings,
     RoleHeaderEditor,
   },
@@ -258,7 +263,7 @@ export default defineComponent({
     const { t } = useI18n()
     const templateStore = useTemplatesStore()
 
-    const selectedCategory = ref<'all' | 'attack' | 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'>('all')
+    const selectedCategory = ref<'all' | 'multiattack' | 'attack' | 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'>('all')
 
     const roleOptions = [
       { label: 'Action', value: 'action' },
@@ -365,7 +370,8 @@ export default defineComponent({
     const categoryTabs = computed(() => {
       const all = allEntries.value
       return [
-        { label: 'All', value: 'all', count: all.length, activeColor: 'amber-9' },
+        { label: 'All', value: 'all', count: all.length + monster.multiattacks.length, activeColor: 'amber-9' },
+        { label: 'Multiattack', value: 'multiattack', count: monster.multiattacks.length, activeColor: 'red-9' },
         { label: 'Attacks', value: 'attack', count: all.filter((e) => e.role === 'attack').length, activeColor: 'red-8' },
         { label: 'Actions', value: 'action', count: all.filter((e) => e.role === 'action').length, activeColor: 'amber-8' },
         { label: 'Bonus Actions', value: 'bonus_action', count: all.filter((e) => e.role === 'bonus_action').length, activeColor: 'orange-8' },
@@ -397,7 +403,10 @@ export default defineComponent({
     }
 
     const addNewEntry = (role: string) => {
-      if (role === 'attack') {
+      if (role === 'multiattack') {
+        monster.addMultiattack()
+        selectedCategory.value = 'multiattack'
+      } else if (role === 'attack') {
         monster.addNewAttack()
         selectedCategory.value = 'attack'
       } else if (role === 'trait') {

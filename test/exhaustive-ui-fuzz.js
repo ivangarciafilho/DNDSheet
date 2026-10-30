@@ -3346,6 +3346,56 @@ async function runFuzz() {
   Object.assign(step44,await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),attack=monster.attacks.find(a=>a.id==='a8-attack-proof');const persisted=attack?.range.standard===30&&attack?.additionalDamage[0].count===4;monster.deleteAttack('a8-attack-proof');return {persisted,cleaned:!monster.legendaryActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.mythicActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.multiattacks.some(ma=>ma.attacks.includes('a8-attack-proof'))};}`))
   console.log('Step 44 result:',JSON.stringify(step44,null,2))
   if(step44.problems.length||step44.comparisons!==4||!step44.canceled||!step44.invalid||!step44.custom||!step44.intact||!step44.refs||!step44.persisted||!step44.specialOnly||!step44.cleaned||!step44.narrow)throw new Error('Step 44 failed: '+JSON.stringify(step44))
+
+  console.log('\n--- Step 45: Multiattack references preserve occurrences, missing targets and shared rendering ---')
+  const step45=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    monster.addNewAttack();const claw=monster.attacks.at(-1);claw.id='ma-claw';claw.name='Reference Claw';
+    monster.addNewAttack();const bite=monster.attacks.at(-1);bite.id='ma-bite';bite.name='Reference Bite';
+    monster.addAction();const roar=monster.actions.at(-1);roar.id='ma-roar';roar.name='Reference Roar';roar.description='A ringing roar.';
+    monster.multiattacks=[{id:'ma-proof',attacks:[claw.id,bite.id,claw.id],actions:[roar.id],extension:'keep'},{id:'ma-dangling',attacks:['lost-attack'],actions:['lost-action']}];
+    monster.multiattackOptions={useCustomRenderer:false,customMultiattackRenderer:'',postscript:''};
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(300);
+    [...studio.querySelectorAll('button')].find(el=>/^Multiattack/.test(el.textContent.trim())).click();await wait(250);
+    const root=()=>document.querySelector('[data-multiattack-composer]'),option=id=>root().querySelector('[data-multiattack-option="'+id+'"]'),group=()=>monster.multiattacks.find(g=>g.id==='ma-proof'),problems=[];
+    const click=async(scope,label)=>{if(!scope)throw new Error('Missing scope: '+label);const button=[...scope.querySelectorAll('button,[role="checkbox"],[role="switch"],.q-toggle')].find(el=>el.getAttribute('aria-label')===label||el.textContent.trim()===label||el.querySelector('.block,.q-toggle__label')?.textContent.trim()===label);if(!button){problems.push('missing control '+label);return;}button.focus();button.click();await wait(160);};
+    async function choose(groupId,label,targetId,search){await click(option(groupId),label);const menu=[...document.querySelectorAll('.q-menu')].find(el=>el.querySelector('.reference-picker'));if(!menu){problems.push('missing picker '+label);return;}
+      if(search){const input=menu.querySelector('input');input.value=search;input.dispatchEvent(new Event('input',{bubbles:true}));await wait(120);}
+      const target=[...menu.querySelectorAll('[data-reference-target]')].find(el=>el.getAttribute('data-reference-target')===targetId);if(!target){problems.push('missing choice '+targetId);return;}target.click();await wait(180);
+    }
+    const missing=option('ma-dangling').textContent.includes('Missing attack: lost-attack')&&option('ma-dangling').textContent.includes('Missing action: lost-action');
+    await choose('ma-dangling','Replace attack reference 1',claw.id,'ma-claw');await choose('ma-dangling','Replace action reference 1',roar.id,'Roar');
+    const repaired=!option('ma-dangling').textContent.includes('Missing ')&&monster.multiattacks[1].attacks[0]===claw.id&&monster.multiattacks[1].actions[0]===roar.id;
+    await click(option('ma-proof'),'Remove attacks reference 3');const removed=JSON.stringify(group().attacks)===JSON.stringify([claw.id,bite.id])&&document.activeElement.getAttribute('aria-label')==='Add attack reference';
+    await choose('ma-proof','Add attack reference',claw.id);await click(option('ma-proof'),'Move attacks reference 3 earlier');const moved=JSON.stringify(group().attacks)===JSON.stringify([claw.id,claw.id,bite.id]);
+    await choose('ma-proof','Replace attack reference 2',bite.id);await choose('ma-proof','Add action reference',roar.id);
+    claw.name='Renamed Reference Claw';await wait(200);const renamed=option('ma-proof').textContent.includes('Renamed Reference Claw')&&group().attacks[0]===claw.id;
+    const post=root().querySelector('input[data-multiattack-postscript], [data-multiattack-postscript] input');post.value='Then it can move.';post.dispatchEvent(new Event('input',{bubbles:true}));await wait(180);
+    let comparisons=0;
+    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(200);const preview=root().querySelector('[data-multiattack-preview] .multiattack'),sheet=document.querySelector('#render .multiattack');if(!sheet||sheet.innerHTML!==preview.innerHTML)problems.push('markup '+template+'/'+style);else{const a=getComputedStyle(preview),b=getComputedStyle(sheet);for(const key of ['fontFamily','fontSize','lineHeight','color'])if(a[key]!==b[key])problems.push('style '+template+'/'+style+'/'+key);}comparisons++;}
+    await click(root(),'Use custom multiattack text');const seeded=monster.multiattackOptions.customMultiattackRenderer.includes('{multiattack.all}');
+    const rich=root().querySelector('[contenteditable="true"]');if(rich){rich.innerHTML='<b>Custom sequence.</b> {multiattack.all}. {multiattack.postscript}';rich.dispatchEvent(new Event('input',{bubbles:true}));await wait(200);}else problems.push('missing custom text editor');
+    const custom=root().querySelector('[data-multiattack-preview]').textContent.includes('Custom sequence.')&&document.querySelector('#render .multiattack').textContent.includes('Custom sequence.');
+    await click(root(),'Use custom multiattack text');const retained=monster.multiattackOptions.customMultiattackRenderer.includes('Custom sequence.');
+    await click(root(),'Add multiattack option');const added=monster.multiattacks.length===3;await click(root().querySelectorAll('[data-multiattack-option]')[2],'Delete option');
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:multiattack-proof';};HTMLAnchorElement.prototype.click=function(){};
+    let exports=0;try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(200);const item=[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label);const before=captured.length;item?.click();await wait(200);const text=captured.length>before?await captured.at(-1).text():'';if(!text.includes('Renamed Reference Claw')||!text.includes('Reference Roar')||!text.includes('Then it can move.'))problems.push('export '+label);exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    return {problems,missing,repaired,removed,moved,renamed,comparisons,seeded,custom,retained,added,exports,intact:group().extension==='keep'&&group().actions.length===2&&monster.multiattacks.length===2&&monster.multiattackOptions.postscript==='Then it can move.'};
+  }`)
+  await sendCdp('Emulation.setDeviceMetricsOverride',{width:375,height:812,deviceScaleFactor:1,mobile:true});await pause(250)
+  step45.narrow=await evalInPage(`()=>{const root=document.querySelector('[data-multiattack-composer]');return root.scrollWidth<=root.clientWidth+1&&getComputedStyle(root.querySelector('.composer-chain__row')).flexDirection==='column';}`)
+  await sendCdp('Emulation.clearDeviceMetricsOverride');await sendCdp('Page.reload');await pause(1500)
+  Object.assign(step45,await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),group=monster.multiattacks.find(g=>g.id==='ma-proof');const persisted=group?.attacks.join(',')==='ma-claw,ma-bite,ma-bite'&&group?.actions.length===2&&monster.multiattackOptions.postscript==='Then it can move.'&&monster.multiattackOptions.customMultiattackRenderer.includes('Custom sequence.');monster.deleteAttack('ma-bite');monster.deleteAction('ma-roar');return {persisted,cleaned:!monster.multiattacks.some(g=>g.attacks.includes('ma-bite')||g.actions.includes('ma-roar'))};}`))
+  step45.empty=await evalInPage(`async()=>{
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+    monster.$patch({multiattacks:[],attacks:[],actions:[],traits:[],reactions:[],lairActions:[]});await wait(150);
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(180);
+    [...studio.querySelectorAll('button')].find(el=>/^Multiattack/.test(el.textContent.trim())).click();await wait(180);const empty=document.querySelector('[data-multiattack-composer]').textContent.includes('No multiattack options yet.');
+    const button=[...document.querySelector('[data-multiattack-composer]').querySelectorAll('button')].find(el=>el.textContent.includes('Add multiattack option'));button.click();await wait(180);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(180);
+    return empty&&!!document.querySelector('[data-multiattack-option]')&&!studio.textContent.includes('No entries in category:');
+  }`)
+  console.log('Step 45 result:',JSON.stringify(step45,null,2))
+  if(step45.problems.length||step45.comparisons!==4||step45.exports!==3||Object.entries(step45).some(([key,value])=>!['problems','comparisons','exports'].includes(key)&&value!==true))throw new Error('Step 45 failed: '+JSON.stringify(step45))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3362,7 +3412,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 44 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 45 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

@@ -71,6 +71,7 @@
   letter-spacing: 0.3px;
 }
 
+:where(.composer-preview) .statblock .multiattack,
 :where(.composer-preview) .statblock .attack,
 :where(.composer-preview) .statblock .action {
   line-height: 1.15rem;
@@ -81,6 +82,7 @@
   text-indent: -20px;
 }
 
+:where(.composer-preview) .statblock.mm2024 .multiattack,
 :where(.composer-preview) .statblock.mm2024 .attack,
 :where(.composer-preview) .statblock.mm2024 .action {
   line-height: 1.2em;
