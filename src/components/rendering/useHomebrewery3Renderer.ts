@@ -7,11 +7,15 @@ import { avgRoll, renderBonus, renderModifier } from './mathRendering'
 import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
+import { splitEntryLead } from 'src/core/domain/export-markup'
 
 export function useMd3Renderer() {
   const monster = useMonsterStore()
-  const renderer = useTextRenderer()
-  const { mdFormatter } = useProcessTokens()
+  // Exports print prose in every visual template: plates are web markup.
+  const renderer = useTextRenderer({ web: false })
+  const { mdFormatter: formatMarkdown } = useProcessTokens({ web: false })
+  // Homebrewery v3 blocks are not blockquotes, so line breaks carry no `> ` prefix.
+  const mdFormatter = (input: string) => formatMarkdown(input, false)
 
   const { t } = useI18n()
 
@@ -145,7 +149,7 @@ ${mdFormatter(renderer.lairActionPreamble.value)}`
     if (monster.regionalEffects.length === 0) return ''
 
     const preamble = `### ${t('editor.regional.label')}
-${renderer.regionalEffectPreamble.value}`
+${mdFormatter(renderer.regionalEffectPreamble.value)}`
 
     const formattedEffects = renderer.regionalEffects.value.map((e) => {
       return `- ${mdFormatter(e)}`
@@ -234,39 +238,42 @@ ${renderer.regionalEffectPreamble.value}`
       }
     }
 
-    const saves = `**${t('monster.saves')}** :: ${renderer.saves.value}`
+    // Header values carry web chrome (number pills, advantage marks); they cross the same boundary.
+    const saves = `**${t('monster.saves')}** :: ${mdFormatter(renderer.saves.value)}`
     const skills =
       monster.skills.length === 0
         ? ''
-        : `\n**${t('monster.skills')}** :: ${renderer.skills.value}`
+        : `\n**${t('monster.skills')}** :: ${mdFormatter(renderer.skills.value)}`
     const vuln =
       monster.vulnerabilities.length === 0
         ? ''
-        : `\n**${t('monster.vulnerabilities')}** :: ${
+        : `\n**${t('monster.vulnerabilities')}** :: ${mdFormatter(
             renderer.vulnerabilities.value
-          }`
+          )}`
     const resist =
       monster.resistances.length === 0
         ? ''
-        : `\n**${t('monster.resistances')}** :: ${renderer.resistances.value}`
+        : `\n**${t('monster.resistances')}** :: ${mdFormatter(renderer.resistances.value)}`
     const immune =
       monster.immunities.length === 0
         ? ''
-        : `\n**${t('monster.immunities')}** :: ${renderer.immunities.value}`
+        : `\n**${t('monster.immunities')}** :: ${mdFormatter(renderer.immunities.value)}`
     const condition =
       monster.conditions.length === 0
         ? ''
-        : `\n**${t('monster.conditionImmunities')}** :: ${
+        : `\n**${t('monster.conditionImmunities')}** :: ${mdFormatter(
             renderer.conditions.value
-          }`
+          )}`
     const traits = getTraits()
     const mythicTrait = getMythicTrait()
     const spellcasting = getSpellcasting()
     const innate = getInnate()
+    // The rendered entry already leads with its name unless a custom renderer omits it.
+    const multiattack = renderer.multiattacks.value
     const multi =
       monster.multiattacks.length === 0
         ? ''
-        : `\n***Multiattack.*** ${mdFormatter(renderer.multiattacks.value)}\n:`
+        : `\n${splitEntryLead(multiattack).title ? '' : '***Multiattack.*** '}${mdFormatter(multiattack)}\n:`
     const attacks = getAttacks()
     const actions = getActions()
     const bonusActions = getBonusActions()
@@ -291,10 +298,10 @@ ___
 **${t('monster.armorClass')}** :: ${monster.AC} ${
       monster.ACType === '' ? '' : `(${monster.ACType})`
     }
-**${t('monster.hp.full')}** :: ${renderer.hp.value}
+**${t('monster.hp.full')}** :: ${mdFormatter(renderer.hp.value)}
 
 
-**${t('monster.movement.speed')}** :: ${renderer.speeds.value}
+**${t('monster.movement.speed')}** :: ${mdFormatter(renderer.speeds.value)}
 ___
 |  STR  |  DEX  |  CON  |  INT  |  WIS  |  CHA  |
 |:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
@@ -304,10 +311,10 @@ ___
       s.WIS.bonus
     })|${s.CHA.score} (${s.CHA.bonus})|
 ___
-${saves !== '' ? saves : ''}${skills}${renderer.tools.value ? `\n**Tools** :: ${renderer.tools.value}` : ''}${vuln}${resist}${immune}${condition}
-**${t('editor.senses.label')}** :: ${renderer.senses.value}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${renderer.actionPassives.value}` : ''}
-**${t('monster.languages')}** :: ${renderer.languages.value}
-**${t('monster.challenge')}** :: ${renderer.cr.value}
+${saves !== '' ? saves : ''}${skills}${renderer.tools.value ? `\n**Tools** :: ${mdFormatter(renderer.tools.value)}` : ''}${vuln}${resist}${immune}${condition}
+**${t('editor.senses.label')}** :: ${mdFormatter(renderer.senses.value)}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${mdFormatter(renderer.actionPassives.value)}` : ''}
+**${t('monster.languages')}** :: ${mdFormatter(renderer.languages.value)}
+**${t('monster.challenge')}** :: ${mdFormatter(renderer.cr.value)}
 ___
 ${traits}${mythicTrait}### ${t(
       'editor.action.label'

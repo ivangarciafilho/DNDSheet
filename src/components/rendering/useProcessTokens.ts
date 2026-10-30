@@ -1,3 +1,4 @@
+import { exportMarkup } from 'src/core/domain/export-markup'
 import { computeTraitTag } from 'src/core/domain/defense-and-traits-utils'
 import { MaybeRef } from '@vueuse/core'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -47,13 +48,19 @@ export type MonsterContextType =
   | 'reaction'
 
 export function listJoin(list: string[], sep: string) {
+  if (list.length === 0) return ''
   if (list.length === 1) return list[0]
 
   const part1 = list.slice(0, list.length - 1).join(sep)
   return `${part1}, and ${list[list.length - 1]}`
 }
 
-export function useProcessTokens() {
+/**
+ * `web: false` is the text projection used by exports: entries render as prose in every visual
+ * template, because Modern Modular plates are web markup that no text format can carry.
+ */
+export function useProcessTokens(options: { web?: boolean } = {}) {
+  const webProjection = options.web ?? true
   const { t } = useI18n()
   const classes = useClasses()
   const editorStore = useEditorStore()
@@ -378,7 +385,7 @@ export function useProcessTokens() {
       let multiattackAll = ''
       if (actions.length > 0) {
         multiattackAll = `uses ${listJoin(actions, ', ')}${
-          actions.length > 0 ? ` followed by ${listJoin(attacks, ', ')}` : ''
+          attacks.length > 0 ? ` followed by ${listJoin(attacks, ', ')}` : ''
         }`
       } else {
         multiattackAll = `makes ${listJoin(attacks, ', ')}`
@@ -642,7 +649,7 @@ export function useProcessTokens() {
     const context = unref(contextRef)
     const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
     const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble) {
       const tag = computeTraitTag(context)
@@ -675,7 +682,7 @@ export function useProcessTokens() {
     const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
     const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
 
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble) {
       if (hasStructuredAbility(context)) return structuredActionPlate(context, monster, usageText(context))
@@ -778,7 +785,7 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern) {
       const trigger = context.trigger?.trim()
@@ -822,7 +829,7 @@ export function useProcessTokens() {
     const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
     const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
 
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.useCustomRenderer) {
       const kindLabel = context.kind === 'SPELL' ? 'Spell' : 'Weapon'
@@ -917,7 +924,7 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
     if (monster.multiattackOptions.useCustomRenderer) {
       return processTokens(
         monster.multiattackOptions.customMultiattackRenderer,
@@ -969,7 +976,7 @@ export function useProcessTokens() {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const action = monster.legendaryAction(actionId)
-    const isModern = editorStore.visualTemplate === 'modern'
+    const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (action) {
       // process the name
@@ -1039,7 +1046,7 @@ export function useProcessTokens() {
       'mythic'
     )
 
-    return `<b><i>${context.triggerName} (${context.triggerRecharge}).</b></i> ${trait}`
+    return `<b><i>${context.triggerName} (${context.triggerRecharge}).</i></b> ${trait}`
   }
 
   const processMythicActionPreamble = (
@@ -1133,78 +1140,12 @@ export function useProcessTokens() {
     return input
   }
 
-  const mdFormatter = (input: string) => {
-    // three tiers of *s
-    // b/i and i/b
-    const bi = /<[bi]><[bi]>(.+)<\/[bi]><\/[bi]>/gi
-    input = input.replace(bi, (match, content) => {
-      return `***${content}***`
-    })
-
-    // b
-    const b = /<\s*b[^>]*>(.*?)<\s*\/\s*b>/gi
-    input = input.replace(b, (match, content) => {
-      return `**${content}**`
-    })
-
-    // i
-    const i = /<\s*i[^>]*>(.*?)<\s*\/\s*i>/gi
-    input = input.replace(i, (match, content) => {
-      return `*${content}*`
-    })
-
-    // brs
-    // linebreak time
-    const linebreak = /<div><br><\/div>/gi
-    input = input.replace(linebreak, () => {
-      return '\n'
-    })
-
-    // linebreaks
-    input = input.replace(/\n/g, '\n> ')
-
-    return input
+  const mdFormatter = (input: string, blockquote = true) => {
+    const text = exportMarkup(input, 'markdown')
+    return blockquote ? text.replace(/\n/g, '\n> ') : text
   }
 
-  const latexFormatter = (input: string) => {
-    const biStart = /^<[bi]><[bi]>(.+)<\/[bi]><\/[bi]>/gi
-    input = input.replace(biStart, (match, content) => {
-      return `\\DndMonsterAction{${content.replace(/\.$/gi, '')}}`
-    })
-
-    // three tiers of *s
-    // b/i and i/b
-    const bi = /<[bi]><[bi]>(.+)<\/[bi]><\/[bi]>/gi
-    input = input.replace(bi, (match, content) => {
-      return `\\emph{\\textbf{${content}}`
-    })
-
-    // b
-    const b = /<\s*b[^>]*>(.*?)<\s*\/\s*b>/gi
-    input = input.replace(b, (match, content) => {
-      return `\\textbf{${content}}`
-    })
-
-    // i
-    const i = /<\s*i[^>]*>(.*?)<\s*\/\s*i>/gi
-    input = input.replace(i, (match, content) => {
-      return `\\emph{${content}}`
-    })
-
-    // brs
-    // linebreak time
-    const linebreak = /<div><br><\/div>/gi
-    input = input.replace(linebreak, () => {
-      return '\n'
-    })
-
-    // nonbreaking spaces
-    const nbsp = '&nbsp;'
-    input = input.replaceAll(nbsp, ' ')
-
-    return input
-  }
-
+  const latexFormatter = (input: string) => exportMarkup(input, 'latex')
   return {
     processMonsterTokens,
     processTraitTokens,

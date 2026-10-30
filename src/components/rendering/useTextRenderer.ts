@@ -46,8 +46,8 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 
-// rendering strings for whatever needs it
-export function useTextRenderer() {
+// rendering strings for whatever needs it; exports pass `web: false` for prose in every template
+export function useTextRenderer(options: { web?: boolean } = {}) {
   const monster = useMonsterStore()
   const editorStore = useEditorStore()
   const { t } = useI18n()
@@ -66,7 +66,7 @@ export function useTextRenderer() {
     processReaction,
     processTokens,
     processTrait,
-  } = useProcessTokens()
+  } = useProcessTokens(options)
 
   const stats = computed(() => {
     return monster.statsWithModifiers.map((s) => {

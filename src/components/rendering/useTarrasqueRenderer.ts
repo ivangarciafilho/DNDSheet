@@ -22,8 +22,9 @@ const attackNoName =
 // since i like using niche things, it exists here
 export function useTarrasqueRenderer() {
   const monster = useMonsterStore()
-  const renderer = useTextRenderer()
-  const { processTokens, stripTags } = useProcessTokens()
+  // Exports print prose in every visual template: plates are web markup.
+  const renderer = useTextRenderer({ web: false })
+  const { processTokens, stripTags } = useProcessTokens({ web: false })
   const { t } = useI18n()
 
   // does not account for versatile

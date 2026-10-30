@@ -3,10 +3,10 @@ import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
-import { MonsterAction } from '../models'
 import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
+import { splitEntryLead } from 'src/core/domain/export-markup'
 
 // one change to the LaTeX renderer is that I'm dropping the \DndDice command
 // if you're exporting from here you can selectively replace that where you need it, the
@@ -15,8 +15,9 @@ import { useTextRenderer } from './useTextRenderer'
 export function useLatexRenderer() {
   const monster = useMonsterStore()
   const spellStore = useSpellsStore()
-  const renderer = useTextRenderer()
-  const { latexFormatter, processTokens } = useProcessTokens()
+  // Exports print prose in every visual template: plates are web markup.
+  const renderer = useTextRenderer({ web: false })
+  const { latexFormatter, processTokens } = useProcessTokens({ web: false })
   const { t } = useI18n()
 
   const getTraits = () => {
@@ -152,57 +153,23 @@ export function useLatexRenderer() {
     return ''
   }
 
+  // Rendered entries carry structured mechanics; the template's legendary list keeps its own layout.
+  const legendaryList = (entries: string[]) => {
+    const items = entries.map((entry) => {
+      const { title, body } = splitEntryLead(entry)
+      return `\\DndMonsterLegendaryAction{${latexFormatter(title)}}{${latexFormatter(body)}}`
+    })
+    return `\\begin{DndMonsterLegendaryActions}
+    ${items.join('\n    ')}
+  \\end{DndMonsterLegendaryActions}`
+  }
+
   const getLegendary = () => {
     const preamble = latexFormatter(renderer.legendaryPreamble.value)
 
-    const formattedActions = monster.legendaryActions.actions.map((a) => {
-      const action = monster.legendaryAction(a.actionId)
-
-      if (action) {
-        // process the name
-        const count =
-          a.cost > 1 ? t('editor.legendary.renderedCost', [a.cost]) : ''
-
-        let description = ''
-        if (action.type === 'action') {
-          // process
-          if (action.action.legendaryOnly) {
-            // need it without the name attached
-            description = processTokens(
-              action.action.description,
-              action.action as MonsterAction,
-              monster,
-              'action'
-            )
-          } else {
-            description = processTokens(
-              t('presets.legendaryAction', [action.action.name]),
-              undefined,
-              monster,
-              'none'
-            )
-          }
-        } else if (action.type === 'attack') {
-          // process
-          description = processTokens(
-            t('presets.legendaryAttack', [action.action.name]),
-            undefined,
-            monster,
-            'none'
-          )
-        }
-
-        return `\\DndMonsterLegendaryAction{${
-          action.action.name
-        }${count}}{${latexFormatter(description)}}`
-      }
-    })
-
     return `\\DndMonsterSection{Legendary Actions}
   ${preamble}
-  \\begin{DndMonsterLegendaryActions}
-    ${formattedActions.join('\n  ')}
-  \\end{DndMonsterLegendaryActions}`
+  ${legendaryList(renderer.legendaryActions.value)}`
   }
 
   const getMythicTrait = () => {
@@ -212,56 +179,10 @@ export function useLatexRenderer() {
   const getMythic = () => {
     const preamble = latexFormatter(renderer.mythicPreamble.value)
 
-    const formattedActions = monster.mythicActions.actions.map((a) => {
-      const action = monster.legendaryAction(a.actionId)
-
-      if (action) {
-        // process the name
-        const count =
-          a.cost > 1 ? t('editor.legendary.renderedCost', [a.cost]) : ''
-
-        let description = ''
-        if (action.type === 'action') {
-          // process
-          if (action.action.legendaryOnly) {
-            // need it without the name attached
-            description = processTokens(
-              action.action.description,
-              action.action as MonsterAction,
-              monster,
-              'action'
-            )
-          } else {
-            description = processTokens(
-              t('presets.legendaryAction', [action.action.name]),
-              undefined,
-              monster,
-              'none'
-            )
-          }
-        } else if (action.type === 'attack') {
-          // process
-          description = processTokens(
-            t('presets.legendaryAttack', [action.action.name]),
-            undefined,
-            monster,
-            'none'
-          )
-        }
-
-        return `\\DndMonsterLegendaryAction{${
-          action.action.name
-        }${count}}{${latexFormatter(description)}}`
-      }
-    })
-
     return `\\DndMonsterSection{Mythic Actions}
   ${preamble}
-  \\begin{DndMonsterLegendaryActions}
-    ${formattedActions.join('\n  ')}
-  \\end{DndMonsterLegendaryActions}`
+  ${legendaryList(renderer.mythicActions.value)}`
   }
-
   const getReactions = () => {
     const formattedReactions = renderer.reactions.value.map((r) =>
       latexFormatter(r)
@@ -325,7 +246,7 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
     hit-points = {\\DndDice{${monster.HP.HD}d${monster.HP.type}${renderBonus(
       monster.HP.modifier
     )}}},
-    speed = {${renderer.speeds.value}}
+    speed = {${latexFormatter(renderer.speeds.value)}}
   ]
 
   \\DndMonsterAbilityScores[
@@ -338,24 +259,24 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
   ]
 
   \\DndMonsterDetails[
-    ${saves === '' ? '%' : ''}saving-throws = {${saves}},
-    ${monster.skills.length === 0 ? '%' : ''}skills = {${
+    ${saves === '' ? '%' : ''}saving-throws = {${latexFormatter(saves)}},
+    ${monster.skills.length === 0 ? '%' : ''}skills = {${latexFormatter(
       renderer.skills.value
-    }},
+    )}},
     ${
       renderer.vulnerabilities.value === '' ? '%' : ''
-    }damage-vulnerabilities = {${renderer.vulnerabilities.value}},
-    ${renderer.resistances.value === '' ? '%' : ''}damage-resistances = {${
+    }damage-vulnerabilities = {${latexFormatter(renderer.vulnerabilities.value)}},
+    ${renderer.resistances.value === '' ? '%' : ''}damage-resistances = {${latexFormatter(
       renderer.resistances.value
-    }},
-    ${renderer.immunities.value === '' ? '%' : ''}damage-immunities = {${
+    )}},
+    ${renderer.immunities.value === '' ? '%' : ''}damage-immunities = {${latexFormatter(
       renderer.immunities.value
-    }},
-    ${renderer.conditions.value === '' ? '%' : ''}condition-immunities = {${
+    )}},
+    ${renderer.conditions.value === '' ? '%' : ''}condition-immunities = {${latexFormatter(
       renderer.conditions.value
-    }},
-    senses = {${renderer.senses.value}},
-    languages = {${renderer.languages.value}},
+    )}},
+    senses = {${latexFormatter(renderer.senses.value)}},
+    languages = {${latexFormatter(renderer.languages.value)}},
     challenge = {${CR[monster.CR].cr}},
   ]
 

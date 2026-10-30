@@ -1,10 +1,11 @@
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useI18n } from 'vue-i18n'
-import { DndStat, MonsterAction } from '../models'
+import { DndStat } from '../models'
 import { avgRoll, renderBonus, statModifier } from './mathRendering'
 import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
+import { splitEntryLead } from 'src/core/domain/export-markup'
 import slugify from 'slugify'
 
 const statMap = {
@@ -21,8 +22,9 @@ const attackNoName =
 
 export function useImprovedInitRenderer() {
   const monster = useMonsterStore()
-  const renderer = useTextRenderer()
-  const { processTokens, stripTags } = useProcessTokens()
+  // Exports print prose in every visual template: plates are web markup.
+  const renderer = useTextRenderer({ web: false })
+  const { processTokens, stripTags } = useProcessTokens({ web: false })
   const { t } = useI18n()
 
   // https://www.improved-initiative.com/
@@ -221,102 +223,17 @@ export function useImprovedInitRenderer() {
       })
     }
 
-    // legendary actions
-    // Improved init doesn't have a preamble
-    ii.LegendaryActions = []
-    if (monster.legendaryActions.actions.length > 0) {
-      for (const a of monster.legendaryActions.actions) {
-        const action = monster.legendaryAction(a.actionId)
-
-        if (action) {
-          // process the name
-          const count =
-            a.cost > 1 ? t('editor.legendary.renderedCost', [a.cost]) : ''
-
-          let description = ''
-          if (action.type === 'action') {
-            // process
-            if (action.action.legendaryOnly) {
-              // need it without the name attached
-              description = processTokens(
-                action.action.description,
-                action.action as MonsterAction,
-                monster,
-                'action'
-              )
-            } else {
-              description = processTokens(
-                t('presets.legendaryAction', [action.action.name]),
-                undefined,
-                monster,
-                'none'
-              )
-            }
-          } else if (action.type === 'attack') {
-            // process
-            description = processTokens(
-              t('presets.legendaryAttack', [action.action.name]),
-              undefined,
-              monster,
-              'none'
-            )
-          }
-
-          ii.LegendaryActions.push({
-            Name: action.action.name + count,
-            Content: stripTags(description),
-          })
-        }
-      }
-    }
-
-    // mythic actions
-    // same as legendary with the words replaced
-    if (monster.mythicActions.actions.length > 0) {
-      for (const a of monster.mythicActions.actions) {
-        const action = monster.legendaryAction(a.actionId)
-
-        if (action) {
-          // process the name
-          const count =
-            a.cost > 1 ? t('editor.legendary.renderedCost', [a.cost]) : ''
-
-          let description = ''
-          if (action.type === 'action') {
-            // process
-            if (action.action.legendaryOnly) {
-              // need it without the name attached
-              description = processTokens(
-                action.action.description,
-                action.action as MonsterAction,
-                monster,
-                'action'
-              )
-            } else {
-              description = processTokens(
-                t('presets.legendaryAction', [action.action.name]),
-                undefined,
-                monster,
-                'none'
-              )
-            }
-          } else if (action.type === 'attack') {
-            // process
-            description = processTokens(
-              t('presets.legendaryAttack', [action.action.name]),
-              undefined,
-              monster,
-              'none'
-            )
-          }
-
-          ii.MythicActions.push({
-            Name: action.action.name + count,
-            Content: stripTags(description),
-          })
-        }
-      }
-    }
+    // Legendary and mythic entries come from the shared prose projection, so structured mechanics
+    // (rolls, saves, outcomes) survive. Improved Initiative has no preamble field.
+    const poolEntries = (entries: string[]) =>
+      entries
+        .filter((entry) => entry.trim())
+        .map((entry) => {
+          const { title, body } = splitEntryLead(entry)
+          return { Name: stripTags(title), Content: stripTags(body) }
+        })
+    ii.LegendaryActions = poolEntries(renderer.legendaryActions.value)
+    ii.MythicActions = poolEntries(renderer.mythicActions.value)
 
     // spellcasting
     // this counts as a special ability

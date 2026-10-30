@@ -3119,6 +3119,80 @@ async function runFuzz() {
     step40.reactionHead === 'usage,name' && step40.persisted === true
   console.log('Step 40 result:', JSON.stringify(step40, null, 2))
   if (!step40.success) throw new Error('Step 40 failed: ' + JSON.stringify(step40))
+
+  console.log('\n--- Step 41: Markdown, Homebrewery, LaTeX and Improved Initiative exports print every role as prose, never web markup ---')
+  const step41 = await evalInPage(`async () => {
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster = pinia._s.get('monster');
+    const editor = pinia._s.get('editor');
+    for (let attempt = 0; attempt < 60 && !document.querySelector('header .mdi-folder-open'); attempt++) await wait(100);
+    const before = JSON.stringify(monster.$state);
+    const labels = {
+      markdown: 'Export Markdown (Homebrewery Legacy)',
+      homebrewery: 'Export Markdown (Homebrewery v3)',
+      latex: 'Export LaTeX (rpgtex)',
+      improvedInitiative: 'Export JSON (Improved Initiative format)',
+    };
+    // Downloads are captured as blobs; nothing leaves the page.
+    const captured = [];
+    const nativeUrl = URL.createObjectURL;
+    const nativeAnchor = HTMLAnchorElement.prototype.click;
+    URL.createObjectURL = (blob) => { captured.push(blob); return 'blob:export-proof'; };
+    HTMLAnchorElement.prototype.click = function () {};
+    const files = {};
+    try {
+      for (const template of ['modern', 'classic']) {
+        editor.visualTemplate = template;
+        await wait(300);
+        for (const [format, label] of Object.entries(labels)) {
+          const menu = [...document.querySelectorAll('header button')].find((button) => button.querySelector('i')?.textContent.trim() === 'download');
+          menu.click();
+          await wait(350);
+          const item = [...document.querySelectorAll('.q-menu .q-item')].find((entry) => entry.textContent.trim() === label);
+          const count = captured.length;
+          item?.click();
+          await wait(350);
+          files[template + ':' + format] = captured.length > count ? await captured[captured.length - 1].text() : '';
+        }
+      }
+    } finally {
+      URL.createObjectURL = nativeUrl;
+      HTMLAnchorElement.prototype.click = nativeAnchor;
+    }
+    const witnesses = ['Authored action', 'Authored bonus', 'Authored legendary', 'Authored mythic', 'Authored trait', 'Authored reaction', 'lair witness prose'];
+    const problems = [];
+    for (const [key, body] of Object.entries(files)) {
+      const [, format] = key.split(':');
+      if (!body) { problems.push(key + ': no file'); continue; }
+      const markup = body.match(/<\\/?[a-z][^>]*>/i);
+      if (markup || body.includes('sb-plate')) problems.push(key + ': web markup ' + (markup ? markup[0] : 'sb-plate'));
+      if (/undefined|followed by ,/.test(body)) problems.push(key + ': broken prose');
+      if (format === 'improvedInitiative') {
+        let creature = null;
+        try { creature = Object.values(JSON.parse(body)).find((value) => value && value.Name); } catch (error) { problems.push(key + ': invalid JSON'); continue; }
+        for (const pool of ['LegendaryActions', 'MythicActions']) {
+          if (!(creature[pool] || []).some((entry) => entry.Content.includes('Charisma Saving Throw'))) problems.push(key + ': ' + pool + ' lost mechanics');
+        }
+        continue;
+      }
+      const lost = witnesses.filter((witness) => !body.includes(witness));
+      if (lost.length) problems.push(key + ': missing ' + lost.join(', '));
+      // Structured mechanics reach the action, bonus, legendary and mythic entries alike.
+      if ((body.match(/Charisma Saving Throw/g) || []).length < 4) problems.push(key + ': structured mechanics lost');
+      if ((body.match(/Multiattack/g) || []).length !== 1) problems.push(key + ': multiattack label repeated');
+      if (format === 'latex' && ((body.match(/\\\\begin\\{DndMonsterLegendaryActions\\}/g) || []).length !== 2 || !body.includes('\\\\DndMonsterAction{Witness Awakening'))) {
+        problems.push(key + ': legendary layout or mythic trait lead lost');
+      }
+    }
+    for (const format of Object.keys(labels)) {
+      if (files['modern:' + format] !== files['classic:' + format]) problems.push(format + ': depends on the visual template');
+    }
+    return { problems, unchanged: before === JSON.stringify(monster.$state), sizes: Object.fromEntries(Object.entries(files).map(([key, body]) => [key, body.length])) };
+  }`)
+  step41.success = step41.problems.length === 0 && step41.unchanged === true
+  console.log('Step 41 result:', JSON.stringify(step41, null, 2))
+  if (!step41.success) throw new Error('Step 41 failed: ' + JSON.stringify(step41))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3135,7 +3209,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 40 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 41 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {
