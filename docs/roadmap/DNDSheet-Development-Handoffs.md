@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
-| **State at hand-over** | Code `d4f1e73`, tag `rc-2.4.3-build-151-a8-classic-metadata`. Configured/latest origins 9100/9106; exact 151 at 9117; protected 150 at 9116. 244 core tests; production build; focused lint 0 errors/1 existing warning; full 43 browser steps zero errors, including 16 new parity comparisons and 6 captured exports; 5-theme spellcasting and 12-theme help pass. Existing sample/model/browser storage retained. |
+| **Version** | v2.4.3 build 152 · 2026-10-30 · A8.2 attack studio · `rc-2.4.3-build-152-a8-attack-studio` · Build 151 and earlier archives/tags preserved |
+| **State at hand-over** | Code `1b36467`, build 152; latest/configured 9100/9106, exact 152 at 9119, protected 151 at 9117. 250 core tests, production build, 44 browser steps with zero errors, 5-theme spellcasting and 12-theme help. Same-origin sample/storage retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active; A8.11 delivered. Next is A8.2, then A8.3. No legacy panels retire until every field and operation in the capability matrix has a verified studio home. |
+| **Current loop** | A8 active; A8.2 delivered. Next A8.3. Seven legacy panels remain mounted until A8.5 capability parity and A8.6 fixtures are verified. |
 
 ---
 
@@ -881,3 +881,17 @@ Retain Steps 35–43, including typed cadence and metadata/export cases. Then A8
 Preparation: existing execution/verification skills, functional core, engineering review, relevant attack-model and TTRPG terminology guidance. Treat current authored data as authority; retrieve rules sources only if proposing actual mechanics. Close with measured diff, code/tag/archive, evidence boundaries, synchronized three documents and session checkpoint.
 
 Build 151 code `d4f1e73`: 7 files, +141/−21 lines. Both protected 150 and sealed 151 archives have 97 verified hashes. Code/tag and complete validation precede promotion; final origin/index/entry-asset checks agree on IPv4 and IPv6.
+
+## Build 152 closing packet → A8.3 preparation
+
+Delivered A8.2: distinct attack studio, full original attack-field coverage and shared preview styles. Read specification “A8.2 implementation contract” and backlog “Build 152 backlog grooming” before starting the next slice. The source of truth is the canonical roadmap directory; output copies are evaluation mirrors.
+
+Start sources: `src/core/domain/attack-composer.ts`, `src/components/editor/composer/AttackComposer.vue`, `composer-chain.css`, existing `AttackPanel.vue`, `ActionsEditor.vue`, `monster-store.ts`, `useProcessTokens.ts`, `useTextRenderer.ts`, `test/core/AttackComposer.test.ts`, browser Step 44. Keep the immutable 151 archive and exact-origin listener at 9117. New exact 152 lives at 9119; latest/configured 9100 and 9106 serve the sealed candidate and retain browser storage.
+
+A8.3 preparation groups: inspect both Multiattack arrays and renderer/custom/postscript ownership; map stable-ID chips with repeats/order and missing-target status; use existing store operations; define interaction/parity/persistence regression assertions before implementation. Reuse attack leaf ownership and shared CSS where appropriate; do not copy the entire record over a live edit or create replacement IDs during rename. Fixture factories must create valid source models, including `actions[]` as well as `attacks[]`.
+
+Skill routing: executing-plans for bounded implementation and final fresh review; verification-before-completion for release evidence; functional-core for pure reference mapping; impeccable and ux-copy for chips/empty/missing-target states; TTRPG craft only for terminology or authored domain content, with rules-source research if new rules claims are introduced. Do not load unrelated plugin workflows merely because they were tagged.
+
+Closing evidence: 250 core tests (+6); production build; focused source lint 0 errors/16 pre-existing warnings; full 44 browser scenarios (+1) with zero console/runtime errors; four new attack markup/typography comparisons, invalid/cancel/custom/special-only/mobile/reload/reference/deletion checks; 5-theme spellcasting and 12-theme help. Review identified missing scoped styles, fixed via shared CSS and a reproduced failing layout assertion. Exported LaTeX is not compiled; B4 breadth remains pending. A8.5 must retain Villain/Bloodied, CR card homes, phase controls and association operations before retiring seven panels; A8.6 compares three fixtures within the candidate.
+
+Progress: 78/204 complete (38.24%), 126 pending; one existing task closed, zero new top-level tasks. A8 remains active and no loop is falsely marked shipped.

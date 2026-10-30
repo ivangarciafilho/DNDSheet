@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
-| **Code HEAD** | `d4f1e73` shared authored header facts and complete structured prose targeting · 244 core tests; production build; focused lint 0 errors/1 existing warning; 43 browser steps and theme checks pass |
+| **Version** | v2.4.3 build 152 · 2026-10-30 · A8.2 attack studio · `rc-2.4.3-build-152-a8-attack-studio` · Build 151 and earlier archives/tags preserved |
+| **Code HEAD** | `1b36467` typed attack chain and shared preview styling; 250 core tests; production build; 44 browser steps and theme checks pass; focused lint 0 errors/16 pre-existing warnings |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **77 / 204 tasks complete (37.75%)** · **0 active tasks · 127 pending** · A8 remains the active loop |
+| **Progress** | **8 / 28 loops shipped** · **78 / 204 tasks complete (38.24%)** · **0 active tasks · 126 pending** · A8 remains active |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -2508,14 +2508,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-30** — Build 151 closes A8.11. 8/28 loops shipped; A8 active; 77/204 tasks complete, 0 active tasks, 127 pending; 62.25% remains. Shared metadata facts now reach classic structured prose and supported text exports; attack-only and utility targeting no longer disappears. Core 244/244; production build; focused lint 0 errors/1 existing warning; full 43 browser steps zero errors; new scenario covers 16 template/style/role comparisons and 6 captured exports; 5-theme spellcasting and 12-theme help pass. Build 150 remains immutable at 9116; latest origins retain browser storage.
+**Progress snapshot · 2026-10-30** — Build 152 closes A8.2. 8/28 loops shipped; A8 active; 78/204 tasks complete (38.24%), 0 active tasks, 126 pending (61.76%). Distinct-model attack studio and existing renderer; 250 core tests, 44 browser scenarios, production build and theme checks pass. Build 151 preserved at 9117; latest origins retain sample storage.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 27 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 28 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3370,3 +3370,38 @@ flowchart LR
 **Alternatives rejected:** duplicating metadata formatting in each exporter would preserve drift; temporarily switching visual templates to obtain output would mutate presentation state during export; inventing missing attack/save mechanics from a utility's scope would alter rules intent.
 
 **Evidence and bounds:** five new pure tests cover metadata/order, absent values, complete attack scope without repeated distance, utility scope, and semantic HTML escaping. Existing grammar/export expectations now require previously missing target subjects and qualifiers rather than omission. Step 43 verifies action/bonus/legendary/mythic entries across 2 templates × 2 layout styles (16 exact preview/sheet comparisons), six primary text downloads, no data mutation, cantrip order and persistence. Core 244/244, full 43-step browser suite and theme checks pass. Exported LaTeX was inspected as output text, not compiled; VTT export breadth remains B4. No legacy panel is removed by this delivery.
+
+## A8.2 implementation contract — Build 152
+
+**Concept:** one studio entry edits the original `DndAttack` by stable ID. Attacks remain a distinct model and have a fixed Attack identity badge; the seven-model role transition workflow is unchanged. New attacks, category counts, reorder, delete and save-template operations use existing stores. Legacy AttackPanel stays mounted until the complete A8 retirement gate.
+
+| Layer / ownership | Fields and behavior |
+|---|---|
+| Identity | `id` immutable; `name`, `legendaryOnly`, `stagePool`; existing collection position and cross-references preserved by edits |
+| Roll | `distance` MELEE/RANGED/BOTH, `kind` WEAPON/SPELL, `modifier.{stat,proficient,override,overrideValue}`, `save`; existing getters own resolved math |
+| Scope | Independent `targets`, `range.{reach,standard,long}`; no conversion to a single action range; inactive values retained |
+| Primary | `damage.{count,dice,type,modifier.{stat,override,overrideValue}}` |
+| Conditional | `alternateDamage.{active,condition,count,dice,type,modifier.*}`; switching off retains authored values |
+| Extra damage | Original array IDs/order, count/dice/type/note, existing add/remove store operations; encoded ID paths preserve dots and URL characters |
+| Prose | `description`, `useCustomRenderer`, `customRenderer`, existing token editor and reset preset; active custom rendering is disclosed beside the preview |
+| Rendering | `processAttack` + `sanitizeWebString`; same template/style/theme as sheet; shared scoped `composer-chain.css` owns preview layout/base type, theme rules remain authoritative |
+| References | Updates touch owned leaf paths only. Explicit deletion cleans legendary, mythic and every repeated multiattack attack reference. `legendaryOnly` excludes the attack from the normal attack projection while retaining special-list references |
+
+**Technique:** `attackFields` is the whitelist and UI specification; `attackValue` returns isolated scalar drafts; `validateAttackField` rejects missing mandatory values, unsafe/fractional numeric values, unsupported catalogs and missing IDs; `attackPatch` produces immutable owned-path copies, retaining sibling/extension fields. Numeric clears are unavailable, optional prose/type fields may clear, and domain validation runs again on commit. Chip states follow the existing closed → draft → invalid/valid → Apply or Cancel lifecycle. Single-field commits read the current record, avoiding replacement of unrelated values changed while a popup was open.
+
+```mermaid
+flowchart LR
+  User[Attack chip / prose editor] --> Draft[Isolated draft]
+  Draft --> Validate[Whitelist and field validation]
+  Validate --> Patch[Owned leaf patch]
+  Patch --> Attack[Existing DndAttack ID]
+  Attack --> Store[Existing store / persistence / derived math]
+  Store --> Renderer[processAttack + sanitizer]
+  Renderer --> Preview[Studio preview]
+  Renderer --> Sheet[Stat block and supported projections]
+  CSS[Shared scoped preview styles] --> Preview
+```
+
+**Alternatives evaluated:** embedding the legacy panel is low effort but retains a second interaction pattern; converting to MonsterAction loses distance/damage distinctions; duplicating derived formulas risks divergence. The chosen adapter retains the model and calculation ownership while using the established cell interaction. Normal and long ranges remain editable even for a melee attack so switching distance never discards dormant values.
+
+**Proof and boundaries:** six pure cases cover field families, immutable nested patches, extra IDs/notes, invalid edits and clear semantics. Step 44 performs actual popup edits, cancel/invalid validation, four template/style markup and computed-type comparisons, custom renderer, special-only projection, repeated reference preservation, narrow layout, reload and deletion cleanup. All 44 scenarios and theme suites pass. Source review found scoped style loss; a failing layout check reproduced it before shared CSS corrected it. No schema migration, new rules text, user-storage reset, seven-panel retirement, or exporter redesign in this delivery. A8.3/A8.5/A8.6 remain required before A8 closes.

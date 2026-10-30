@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 151 · 2026-10-30 · A8.11 classic metadata parity · `rc-2.4.3-build-151-a8-classic-metadata` · Build 150 and earlier archives/tags preserved |
-| **Code HEAD** | `d4f1e73` shared authored header facts and complete structured prose targeting · 244 core tests; production build; focused lint 0 errors/1 existing warning; 43 browser steps and theme checks pass |
-| **Progress** | **8 / 28 loops shipped** · **77 / 204 tasks complete (37.75%)** · **0 active tasks · 127 pending** · A8 remains the active loop |
-| **Now** | A8.11 complete: structured classic prose and supported text exports retain school/tier, components, duration and full authored targeting. One task closed; no new top-level tasks. |
-| **Next** | A8.2 DndAttack adapter → A8.3 multiattack references → A8.5 missing control/association homes and retirement → A8.6/7/8 fixture/browser closeout. Preserve the A8.0 capability gates. |
+| **Version** | v2.4.3 build 152 · 2026-10-30 · A8.2 attack studio · `rc-2.4.3-build-152-a8-attack-studio` · Build 151 and earlier archives/tags preserved |
+| **Code HEAD** | `1b36467` typed attack chain and shared preview styling; 250 core tests; production build; 44 browser steps and theme checks pass; focused lint 0 errors/16 pre-existing warnings |
+| **Progress** | **8 / 28 loops shipped** · **78 / 204 tasks complete (38.24%)** · **0 active tasks · 126 pending** · A8 remains active |
+| **Now** | A8.2 complete: attacks have a distinct typed studio adapter, all three distance fields, every damage variant, overrides, phase, templates and custom rendering. One existing task closed; no new top-level scope. |
+| **Next** | A8.3 multiattack references → A8.5 missing controls/associations and retirement → A8.6/7/8 fixture/browser closeout. Preserve A8.0 capability gates. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 27 / 33 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 28 / 33 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
@@ -49,7 +49,7 @@
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **77 / 204 complete · 0 active · 127 pending** | **37.75 % complete · 62.25 % remaining** |
+| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **78 / 204 complete · 0 active · 126 pending** | **38.24 % complete · 61.76 % remaining** |
 
 ```mermaid
 pie showData
@@ -358,7 +358,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 - [x] **A8.0** Capability matrix: for each legacy panel list every field and its studio home; decide villain actions and CR cards (BS-26, BS-27) · M
 - [x] **A8.1** Role headers: Legendary (pool, preamble), Mythic (trigger, pool), Lair (initiative, preamble) · M · *delivered early in A7 build 145 (`RoleHeaderEditor`, Step 38) — confirmed by A8.0 at build 150*
-- [ ] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC) · L
+- [x] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC). Build 152: full distinct-model adapter, six core cases and browser Step 44; all legacy panels retained pending retirement gates · L
 - [ ] **A8.3** Multiattack role: reference chips by id with ⚠ for dangling targets · M
 - [x] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirmed by A8.0 at build 150*
 - [ ] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor` (+ `VillainActionsEditor` per A8.0); delete the components (git keeps history) · M
@@ -825,7 +825,7 @@ The normative field map and BS-26/27 decisions are in the Specification's matchi
 | Remaining task | Ordered actionable work and acceptance |
 |---|---|
 | A8.11 ✅ | Build 151: authored metadata sentence after the lead, complete attack-only/utility scope, shared header facts. Step 43 proves both templates/rule layouts and primary text exports; retain this regression suite |
-| A8.2 | Adapt the existing `DndAttack` model (not `MonsterAction`); cover normal/long/reach range separately, proficiency/stat/overrides, primary/alternate/additional damage, effect save, phase, custom renderer and references |
+| A8.2 ✅ | Build 152 adapts the existing `DndAttack` model (not `MonsterAction`); cover normal/long/reach range separately, proficiency/stat/overrides, primary/alternate/additional damage, effect save, phase, custom renderer and references |
 | A8.3 | Add/remove/reorder repeated attack/action IDs; surface dangling references; preserve custom multiattack renderer and postscript; do not infer references from names |
 | A8.5 | Before unmounting, add every missing studio home: action phase/custom-heading policy, action/lair CR cards, trait alpha-sort control, association add/remove for existing attacks/actions in legendary/mythic lists, and existing reset/template/reorder/delete semantics. Keep Villain/Bloodied panel by decision BS-26. Recount 21 → 14 top-level modules after seven retirements |
 | A8.6 | Capture three real saved monsters before retirement; require byte-identical rendered plates after retirement with no-op save/reload and reference integrity |
@@ -839,3 +839,15 @@ The normative field map and BS-26/27 decisions are in the Specification's matchi
 - Next A8.2 should start with `DndAttack` ownership, including normal/long/reach ranges and primary/alternate/additional damage. Do not force those fields through the simpler action schema. Reuse the shared metadata and targeting grammar where the source models genuinely agree.
 - Keep Step 43 and all five metadata cases as regression gates for A8.2/A8.3 and retirement fixtures. A8.6 compares within the same candidate before/after panel retirement; it must not compare build-150 text to the intentionally enriched build-151 classic text and classify the new authored facts as a regression.
 - Portable-format breadth remains B4 work. This packet verifies toolbar Markdown, Homebrewery and LaTeX outputs plus existing core 2024 text assertions; it does not claim compilation of exported LaTeX or a redesign of every VTT/legacy-2014 exporter.
+
+## Build 152 backlog grooming — A8.2 closed
+
+Delta: one existing task closed; 77 → 78 complete, 127 → 126 pending, total 204 unchanged. Six new core cases and one browser scenario. Loop A8 remains active; no retirement claimed.
+
+Next A8.3 execution groups (existing scope, not new task IDs):
+1. Map `Multiattack` IDs, repeated ordered `attacks[]`/`actions[]`, list operations, custom renderer and postscript ownership. Use current source types; test fixtures must include both arrays.
+2. Build stable-ID reference chips using existing attack/action collections and renderer. Preserve repeats and authored order; show missing references explicitly. Keep deletion cleanup owned by the store.
+3. Test add/remove/reorder/rename/deletion and missing targets; exact preview/prose parity, primary exports, reload, keyboard and narrow layout. Retain all 44 browser scenarios.
+4. Complete A8.3 before A8.5 association controls, action/lair CR cards and panel retirement; use A8.0 matrix to prevent hidden capability loss. Do not introduce a second persisted attack schema.
+
+Review correction: shared styles previously lived in the scoped action component. Both adapters now import one scoped CSS source, and Step 44 checks computed typography and responsive layout as well as innerHTML. This is a regression gate for later adapters.
