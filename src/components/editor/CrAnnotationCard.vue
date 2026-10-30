@@ -29,7 +29,7 @@
                 () => {
                   crData.crAnnotation.automatic = !crData.crAnnotation.automatic
                   if (crData.crAnnotation.automatic)
-                    autoUpdateCr(crData.description, crData.crAnnotation)
+                    autoUpdateCr(crData.description, crData.crAnnotation, actionContext)
                 }
               "
             />
@@ -191,8 +191,11 @@ export default defineComponent({
 
     const crData = (monster[props.field] as CrAnnotatedField)[props.index]
 
+    const actionContext = props.field === 'actions' ? crData as MonsterAction : undefined
+
     return {
       crData,
+      actionContext,
       validateNumber: validateNumber,
       ...useAutoUpdateCr(),
     }

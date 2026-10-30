@@ -76,6 +76,10 @@
         </div>
       </div>
 
+      <q-checkbox v-if="selectedCategory === 'trait' || selectedCategory === 'all'" v-model="monster.alphaTraits" dark dense label="Sort traits alphabetically on the sheet" data-studio-trait-sort class="q-mb-sm" />
+
+      <action-associations v-for="role in visibleAssociationRoles" :key="role" :role="role" />
+
       <role-header-editor v-for="role in visibleHeaderRoles" :key="role" :role="role" />
 
       <multiattack-composer v-if="selectedCategory === 'multiattack' || (selectedCategory === 'all' && monster.multiattacks.length > 0)" />
@@ -187,6 +191,8 @@
 
           <attack-composer v-if="item.rawAttack" :attack-id="item.id" />
 
+          <entry-display-settings v-if="item.rawAction || item.role === 'lair'" :entry-id="item.id" :field="item.role === 'lair' ? 'lairActions' : 'actions'" />
+
           <trait-display-settings v-if="item.rawTrait" :trait-id="item.id" />
 
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
@@ -223,6 +229,8 @@ import AttackComposer from './composer/AttackComposer.vue'
 import ComposerChain from './composer/ComposerChain.vue'
 import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
 import RoleHeaderEditor from './composer/RoleHeaderEditor.vue'
+import EntryDisplaySettings from './composer/EntryDisplaySettings.vue'
+import ActionAssociations from './composer/ActionAssociations.vue'
 import type { HeaderRole } from 'src/core/domain/role-headers'
 import { roleTransition } from 'src/core/domain/role-transition'
 
@@ -250,6 +258,8 @@ export default defineComponent({
     MultiattackComposer,
     TraitDisplaySettings,
     RoleHeaderEditor,
+    EntryDisplaySettings,
+    ActionAssociations,
   },
   setup() {
     const monster = useMonsterStore()
@@ -355,6 +365,8 @@ export default defineComponent({
       if (selectedCategory.value === 'all') return allEntries.value
       return allEntries.value.filter((e) => e.role === selectedCategory.value)
     })
+
+    const visibleAssociationRoles = computed(() => (['legendary', 'mythic'] as const).filter(role => selectedCategory.value === 'all' || selectedCategory.value === role))
 
     const visibleHeaderRoles = computed<HeaderRole[]>(() => {
       const roles: HeaderRole[] = ['legendary', 'mythic', 'lair']
@@ -608,6 +620,7 @@ export default defineComponent({
       categoryTabs,
       filteredEntries,
       visibleHeaderRoles,
+      visibleAssociationRoles,
       roleOptions,
       actionTemplateGroups,
       macroChips,

@@ -3199,7 +3199,7 @@ async function runFuzz() {
     for(let attempt=0;!document.querySelector('#editor')&&attempt<20;attempt++)await wait();
     monster.addAction();const action=monster.actions[monster.actions.length-1];action.id='a8-usage-proof';action.name='Usage witness';
     action.description='Deals {2d6} radiant damage.';action.limitedUse={count:3,rate:'DAY',saved:'keep'};
-    action.crAnnotation.automatic=false;action.crAnnotation.include=false;
+    action.crAnnotation.automatic=false;action.crAnnotation.include=false;action.save={override:true,overrideValue:17};
     const stable=()=>JSON.stringify(Object.fromEntries(Object.entries(action).filter(([key])=>!['recharge','rechargeMin','rechargeMax','limitedUse'].includes(key))));
     const beforeStable=stable();await wait();
     let chain=document.querySelector('[data-composer-chain="a8-usage-proof"]');
@@ -3445,6 +3445,33 @@ async function runFuzz() {
   }`)
   console.log('Step 47 result:',JSON.stringify(step47,null,2))
   if(step47.problems.length||step47.comparisons!==16||step47.exports!==3||!step47.cantrip||!step47.unchanged)throw new Error('Step 47 failed: '+JSON.stringify(step47))
+
+  console.log('\n--- Step 48: Studio display, CR and non-destructive memberships ---')
+  const step48=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');editor.visualTemplate='modern';
+    monster.addAction();const action=monster.actions.at(-1);Object.assign(action,{id:'studio-policy',name:'Policy Witness',description:'Deals {2d6} radiant damage.',effects:[{effect:'{8d6} fire damage'}],stagePool:12,customPreamble:false});action.crAnnotation.automatic=false;action.crAnnotation.include=false;action.save={override:true,overrideValue:17};
+    monster.addLairAction();const lair=monster.lairActions.at(-1);lair.id='studio-lair';lair.description='Lair witness {1d8}';lair.crAnnotation.automatic=false;
+    monster.addNewAttack();const attack=monster.attacks.at(-1);attack.id='studio-link';attack.name='Linked Claw';
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await wait(100);}if(!studio)throw new Error('Studio did not mount');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(150);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
+    const expand=async el=>{if(!el.classList.contains('q-expansion-item--expanded'))el.querySelector('.q-item').click();await wait(120);};
+    const choose=async(field,label)=>{field.click();await wait(100);const option=[...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.includes(label));if(!option)throw new Error('Missing option '+label);option.click();await wait(160);};
+    const settings=document.querySelector('[data-entry-settings="studio-policy"]');await expand(settings);const savedPhase=settings.textContent.includes('12 (saved)');await choose(settings.querySelector('[data-entry-phase]'),'Phase / pool 1');const phase=action.stagePool===1;
+    settings.querySelector('[data-entry-custom-heading]').click();await wait(100);const ownHeading=action.customPreamble&&!document.querySelector('#render').textContent.includes('Policy Witness');settings.querySelector('[data-entry-custom-heading]').click();await wait(100);
+    settings.querySelector('[data-entry-auto-cr]').click();await wait(100);const cr=action.crAnnotation.automatic&&!action.crAnnotation.include&&action.crAnnotation.maxDamage===28;
+    const lock=()=>[...settings.querySelectorAll('button')].find(button=>['lock','lock_open'].includes(button.querySelector('i')?.textContent.trim()));lock().click();await wait(80);lock().click();await wait(80);const automaticParity=action.crAnnotation.automatic&&action.crAnnotation.maxDamage===28&&action.crAnnotation.maxSave===17;
+    const otherIncludes=monster.actions.filter(source=>source.id!==action.id).map(source=>[source.id,source.crAnnotation.include]);monster.actions.reverse();await wait(150);[...settings.querySelectorAll('button')].find(button=>button.querySelector('i')?.textContent.trim()==='code_off').click();await wait(100);const crAfterReorder=action.crAnnotation.include&&JSON.stringify(otherIncludes)===JSON.stringify(monster.actions.filter(source=>source.id!==action.id).map(source=>[source.id,source.crAnnotation.include]).reverse());
+    const lairSettings=document.querySelector('[data-entry-settings="studio-lair"]');await expand(lairSettings);lairSettings.querySelector('[data-entry-auto-cr]').click();await wait(100);const lairCr=lair.crAnnotation.automatic&&lair.crAnnotation.maxDamage>0;
+    const oldAlpha=monster.alphaTraits;studio.querySelector('[data-studio-trait-sort]').click();await wait(100);const sorting=monster.alphaTraits!==oldAlpha;
+    const group=document.querySelector('[data-associations="legendary"]');await expand(group);await choose(group.querySelector('.q-select'),'Linked Claw');const added=monster.legendaryActions.actions.some(member=>member.actionId===attack.id);
+    const member=()=>group.querySelector('[data-association-id="studio-link"]');const cost=member().querySelector('input');cost.value='2';cost.dispatchEvent(new Event('input',{bubbles:true}));await wait(150);const costEdited=monster.legendaryActions.actions.find(member=>member.actionId===attack.id)?.cost===2;
+    const mythic=document.querySelector('[data-associations="mythic"]');await expand(mythic);await choose(mythic.querySelector('.q-select'),'Linked Claw');member().querySelector('button').click();await wait(150);const removedOnlyMembership=!monster.legendaryActions.actions.some(member=>member.actionId===attack.id)&&monster.mythicActions.actions.some(member=>member.actionId===attack.id)&&monster.attacks.some(source=>source.id===attack.id);
+    monster.legendaryActions.actions.push({actionId:'missing-studio',cost:4,extension:'keep'});await wait(150);const missing=group.querySelector('[data-association-id="missing-studio"]');const warning=missing.textContent.includes('Source is missing');await choose(missing.querySelector('.q-select'),'Policy Witness');const repaired=monster.legendaryActions.actions.some(member=>member.actionId===action.id&&member.cost===4&&member.extension==='keep')&&!monster.legendaryActions.actions.some(member=>member.actionId==='missing-studio');
+    return {savedPhase,phase,ownHeading,cr,automaticParity,crAfterReorder,lairCr,sorting,added,costEdited,removedOnlyMembership,warning,repaired,legacyKept:[...document.querySelectorAll('#editor .q-expansion-item')].some(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Legendary Actions'),descriptionKept:action.description==='Deals {2d6} radiant damage.'};
+  }`)
+  await sendCdp('Page.reload');await pause(1500)
+  step48.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');return monster.actions.some(action=>action.id==='studio-policy'&&action.stagePool===1&&!action.customPreamble)&&monster.attacks.some(attack=>attack.id==='studio-link')&&monster.mythicActions.actions.some(member=>member.actionId==='studio-link')&&monster.legendaryActions.actions.some(member=>member.actionId==='studio-policy'&&member.cost===4&&member.extension==='keep');}`)
+  console.log('Step 48 result:',JSON.stringify(step48,null,2))
+  if(!Object.values(step48).every(value=>value===true))throw new Error('Step 48 failed: '+JSON.stringify(step48))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3461,7 +3488,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 47 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 48 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {
