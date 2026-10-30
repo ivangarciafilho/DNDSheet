@@ -1,3 +1,4 @@
+import { actionUsageDraft, actionUsagePatch, validateActionUsage } from './action-usage.ts'
 import type {
   AbilityArea,
   AbilityOutcome,
@@ -296,7 +297,7 @@ export function chainView(role: ActionModelRole, action: Partial<MonsterAction>,
 export function cellValue(action: Partial<MonsterAction>, cellId: string): unknown {
   const targeting = targetingOf(action)
   switch (cellId) {
-    case 'usage': return trimmed(action.recharge)
+    case 'usage': return actionUsageDraft(action)
     case 'discipline': return isNone(trimmed(action.school)) ? '' : trimmed(action.school)
     case 'tier': return isNone(trimmed(action.spellLevel)) ? '' : trimmed(action.spellLevel)
     case 'name': return action.name ?? ''
@@ -377,7 +378,7 @@ export function cellPatch(action: Partial<MonsterAction>, cellId: string, value:
   const text = trimmed(value)
   switch (cellId) {
     case 'usage':
-      return { recharge: text }
+      return actionUsagePatch(action, value)
     case 'discipline':
       return { school: isNone(text) ? undefined : text }
     case 'tier':
@@ -459,6 +460,7 @@ export function cellPatch(action: Partial<MonsterAction>, cellId: string, value:
 
 /** An empty string means the value can be committed; anything else is the message to show. */
 export function validateCell(cellId: string, value: unknown): string {
+  if (cellId === 'usage' && typeof value === 'object') return validateActionUsage(value)
   switch (cellId) {
     case 'name':
       return trimmed(value) ? '' : 'Name is required'

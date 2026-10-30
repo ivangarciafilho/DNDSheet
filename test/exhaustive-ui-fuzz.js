@@ -3193,6 +3193,57 @@ async function runFuzz() {
   step41.success = step41.problems.length === 0 && step41.unchanged === true
   console.log('Step 41 result:', JSON.stringify(step41, null, 2))
   if (!step41.success) throw new Error('Step 41 failed: ' + JSON.stringify(step41))
+  console.log('\n--- Step 42: Action usage edits real cadence with validation, cancel, clear and persistence ---')
+  const step42=await evalInPage(`async () => {
+    const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster=pinia._s.get('monster');const wait=()=>new Promise(resolve=>setTimeout(resolve,350));
+    for(let attempt=0;!document.querySelector('#editor')&&attempt<20;attempt++)await wait();
+    monster.addAction();const action=monster.actions[monster.actions.length-1];action.id='a8-usage-proof';action.name='Usage witness';
+    action.description='Deals {2d6} radiant damage.';action.limitedUse={count:3,rate:'DAY',saved:'keep'};
+    action.crAnnotation.automatic=false;action.crAnnotation.include=false;
+    const stable=()=>JSON.stringify(Object.fromEntries(Object.entries(action).filter(([key])=>!['recharge','rechargeMin','rechargeMax','limitedUse'].includes(key))));
+    const beforeStable=stable();await wait();
+    let chain=document.querySelector('[data-composer-chain="a8-usage-proof"]');
+    for(let attempt=0;!chain&&attempt<20;attempt++){await wait();chain=document.querySelector('[data-composer-chain="a8-usage-proof"]');}
+    if(!chain)throw new Error('Usage witness did not mount: '+JSON.stringify(monster.actions.map(entry=>entry.id)));
+    for(let guard=0;guard<4&&chain.closest('.q-expansion-item--collapsed');guard++){
+      chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click();await wait();
+    }
+    const chip=chain.querySelector('[data-chain-cell="usage"]');
+    const open=async()=>{chip.scrollIntoView({block:'center'});chip.focus();chip.click();await wait();};
+    const menu=()=>document.querySelector('.chain-editor-menu');
+    const select=async(selector,value)=>{const field=menu().querySelector(selector);field.value=value;field.dispatchEvent(new Event('change',{bubbles:true}));await wait();};
+    const input=async(selector,value)=>{const field=menu().querySelector(selector+' input, input'+selector);field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));await wait();};
+    const button=async(label)=>{[...menu().querySelectorAll('button')].find(el=>el.textContent.trim()===label).click();await wait();};
+    const initial=JSON.stringify(action);await open();
+    if(!menu()?.querySelector('[data-usage-mode]'))throw new Error('Expected typed usage editor: '+menu()?.innerHTML);
+    const correctDraft=menu().querySelector('[data-usage-mode]').value==='limited'&&menu().querySelector('[data-usage-count] input, input[data-usage-count]').value==='3'&&document.activeElement===menu().querySelector('[data-usage-mode]');
+    await input('[data-usage-count]','0');const invalid=!!menu().querySelector('[role="alert"]')&&[...menu().querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').disabled;
+    await button('Cancel');const canceled=JSON.stringify(action)===initial&&document.activeElement===chip;
+    await open();await input('[data-usage-count]','4');await select('[data-usage-rate]','LONG_REST');await button('Apply');
+    const limited=action.limitedUse.count===4&&action.limitedUse.rate==='LONG_REST'&&!action.recharge&&chip.textContent.includes('4/Long Rest');
+    await open();await select('[data-usage-mode]','recharge');await input('[data-usage-min]','6');await input('[data-usage-max]','12');await button('Apply');
+    const recharge=action.recharge==='6–12'&&action.limitedUse.count===0&&chip.textContent.includes('6–12');
+    await open();await select('[data-usage-mode]','custom');await input('[data-usage-custom]','After the eclipse');await button('Apply');
+    const custom=action.recharge==='After the eclipse'&&action.limitedUse.count===0;
+    await open();await button('Clear');
+    const cleared=!action.recharge&&!action.rechargeMin&&!action.rechargeMax&&action.limitedUse.count===0;
+    await open();await select('[data-usage-mode]','limited');await input('[data-usage-count]','2');await select('[data-usage-rate]','SHORT_REST');await button('Apply');
+    return {correctDraft,invalid,canceled,limited,recharge,custom,cleared,preserved:stable()===beforeStable&&action.limitedUse.saved==='keep'};
+  }`)
+  await sendCdp('Emulation.setDeviceMetricsOverride',{width:375,height:812,deviceScaleFactor:1,mobile:true})
+  const usageNarrow=await evalInPage(`async()=>{
+    const chip=document.querySelector('[data-composer-chain="a8-usage-proof"] [data-chain-cell="usage"]');chip.scrollIntoView({block:'center'});chip.click();await new Promise(resolve=>setTimeout(resolve,450));
+    const menu=document.querySelector('.chain-editor-menu');return !!menu&&menu.clientWidth>0&&menu.scrollWidth<=menu.clientWidth+1&&menu.clientWidth<=innerWidth;
+  }`)
+  await pressKey('Escape');await sendCdp('Emulation.clearDeviceMetricsOverride');await sendCdp('Page.reload');await pause(1500)
+  const usagePersisted=await evalInPage(`()=>{
+    const action=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').actions.find(a=>a.id==='a8-usage-proof');
+    return !!action&&action.limitedUse.count===2&&action.limitedUse.rate==='SHORT_REST'&&action.limitedUse.saved==='keep'&&!action.recharge&&action.crAnnotation.include===false;
+  }`)
+  step42.narrow=usageNarrow;step42.persisted=usagePersisted;
+  console.log('Step 42 result:',JSON.stringify(step42,null,2))
+  if(!Object.values(step42).every(value=>value===true))throw new Error('Step 42 failed: '+JSON.stringify(step42))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3209,7 +3260,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 41 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 42 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

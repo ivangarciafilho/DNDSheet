@@ -128,6 +128,7 @@
           </div>
         </div>
 
+        <action-usage-editor v-else-if="kind === 'action-usage'" ref="usageEditor" v-model="draft" />
         <trait-cadence-editor v-else-if="kind === 'trait-cadence'" v-model="draft" />
         <chain-outcomes-editor v-else-if="kind === 'outcomes' || kind === 'effects'" v-model="draft" :mode="kind" />
 
@@ -146,6 +147,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue'
 import TraitCadenceEditor from './TraitCadenceEditor.vue'
+import ActionUsageEditor from './ActionUsageEditor.vue'
 import { ABILITY_NAMES } from 'src/core/domain/ability-grammar'
 import { AREA_SHAPES, LEGENDARY_COSTS, SAVE_ABILITIES } from 'src/core/domain/action-composer'
 import type { ComposerCellSpec } from 'src/core/domain/action-composer'
@@ -154,11 +156,11 @@ import type { ChainCellView } from 'src/core/domain/composer-chain'
 import type { DndStat } from 'src/core/domain/types'
 import ChainOutcomesEditor from './ChainOutcomesEditor.vue'
 
-type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects' | 'trait-cadence'
+type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects' | 'trait-cadence' | 'action-usage'
 
 const HELP: Readonly<Record<string, string>> = {
   'trait-usage': 'Edit limited uses, specific recharge timing, count and printed tag overrides. Conditional text is managed in Trait display settings.',
-  usage: 'How often it can be used: a recharge range such as 5–6, or text such as Recharge after a Short Rest.',
+  usage: 'Choose no usage limit, a recharge roll, limited uses per interval, or custom recharge text.',
   discipline: 'Magic school or martial discipline, printed before the name.',
   tier: 'Spell level or power tier. Cantrips print after the school.',
   name: 'The name exactly as printed; casing is kept.',
@@ -192,7 +194,7 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainCell',
-  components: { ChainOutcomesEditor, TraitCadenceEditor },
+  components: { ChainOutcomesEditor, TraitCadenceEditor, ActionUsageEditor },
   props: {
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
@@ -202,6 +204,7 @@ export default defineComponent({
   },
   emits: ['commit', 'clear'],
   setup(props, { emit }) {
+    const usageEditor = ref<{ focus: () => void }>()
     const listId = `chain-cell-options-${++instances}`
     const open = ref(false)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the draft's shape depends on the cell kind
@@ -210,6 +213,7 @@ export default defineComponent({
     const optionList = ref<HTMLElement | null>(null)
 
     const kind = computed<EditorKind>(() => {
+      if (props.cell.id === 'usage' && isRecord(props.value) && 'mode' in props.value) return 'action-usage'
       switch (props.cell.id) {
         case 'trait-usage': return 'trait-cadence'
         case 'target-count': return 'count'
@@ -307,6 +311,7 @@ export default defineComponent({
 
     const options = () => [...(optionList.value?.querySelectorAll<HTMLElement>('.chain-option') ?? [])]
     const focusOption = () => {
+      if (kind.value === 'action-usage') { usageEditor.value?.focus(); return }
       if (kind.value !== 'select') return
       const list = options()
       ;(list.find((option) => option.classList.contains('chain-option--active')) ?? list[0])?.focus()
@@ -362,6 +367,7 @@ export default defineComponent({
         : props.cell.legacy ? 'Printed exactly as written' : undefined)
 
     return {
+      usageEditor,
       listId,
       open,
       draft,

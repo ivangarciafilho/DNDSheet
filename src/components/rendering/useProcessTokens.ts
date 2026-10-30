@@ -1,3 +1,4 @@
+import { actionRecharge } from 'src/core/domain/action-usage'
 import { exportMarkup } from 'src/core/domain/export-markup'
 import { computeTraitTag } from 'src/core/domain/defense-and-traits-utils'
 import { MaybeRef } from '@vueuse/core'
@@ -264,15 +265,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     input = input.replace(/\{action.effects\}/gi, effects)
 
     // limitedUse / recharge formatting (no empty Recharge leaks)
-    let rechargeVal = (context.recharge || (context as any).limitedUse?.recharge || '').trim()
-    if (!rechargeVal && context.rechargeMin) {
-      const min = context.rechargeMin
-      const max = context.rechargeMax || 6
-      rechargeVal = min < max ? `${min}–${max}` : `${min}`
-    }
-    if (!rechargeVal && context.limitedUse?.rate === 'RECHARGE') {
-      rechargeVal = '5–6'
-    }
+    const rechargeVal = actionRecharge(context).replace(/^Recharge\s+/i, '')
     const hasRecharge = rechargeVal !== ''
     const hasLimitedUse = Boolean(
       context.limitedUse &&
@@ -552,13 +545,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   }
 
   const usageText = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
-    let recharge = (context.recharge || '').trim()
-    if (!recharge && context.rechargeMin) {
-      const max = context.rechargeMax || 6
-      recharge = context.rechargeMin < max ? `${context.rechargeMin}–${max}` : `${context.rechargeMin}`
-    }
-    if (!recharge && context.limitedUse?.recharge) recharge = context.limitedUse.recharge.trim()
-    if (!recharge && context.limitedUse?.rate === 'RECHARGE') recharge = '5–6'
+    const recharge = actionRecharge(context)
     if (recharge) return /^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`
     if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
       const rateLabel = t(`recharge.${context.limitedUse.rate}`)
