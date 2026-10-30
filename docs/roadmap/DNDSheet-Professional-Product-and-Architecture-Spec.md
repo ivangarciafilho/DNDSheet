@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 148** · 2026-10-30 · A7 closed: older saves keep every authored field (build 147 `7f1e4ea`) and text exports print every role as prose without web markup (build 148 `49edfdf`); candidate `rc-2.4.3-build-148-a7-prose-exports`; every earlier candidate archive and tag preserved; A8 next; formula provenance belongs to A9 |
+| **Version** | **v2.4.3 build 149** · 2026-10-30 · A7 closed at build 148 (`49edfdf`); A8 opened with composer polish at build 149 (`0dbcd23`); candidate `rc-2.4.3-build-149-a8-plate-word-order`; every earlier candidate archive and tag preserved; formula provenance belongs to A9 |
 | **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 146 code commit `10f7aa0`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
 | **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **68 / 193 tasks complete; 1 active; 124 pending** |
@@ -2515,7 +2515,7 @@ stateDiagram-v2
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 20 / 33 tasks (A6 ✅ · A7 ✅) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 22 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -2535,7 +2535,7 @@ stateDiagram-v2
 | **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ✅ build 136 |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ✅ `49edfdf` build 148 |
-| A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
+| A8 | One Actions module | AU-03 | A7 | 3–5 | ◐ build 149 (A8.10, A8.12) |
 | A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ☐ |
 | A10 | Caret intellisense + macro menus | AU-04 | A9 | 3–4 | ☐ |
 | A11 | Binding sweep (remaining numbers) | AU-02 | A9 | 1–3 | ☐ |
@@ -3188,6 +3188,7 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.4.3 build 144** | 2026-10-29 | `7f2e572`: integrate typed trait cadence and display policy, phase/grouping/custom-heading/CR controls, trait templates, exact renderer preview, narrow popup sizing, and live heading whitespace preservation; 159 core tests and 37 browser steps pass with zero errors plus five-theme spellcasting and twelve-theme help/contrast checks. Six roles integrated; lair/remaining headers/matrix/closeout open. Correct task state to 67 done, 2 active, 124 pending; preserve archives and stable browser origin. |
 | **v2.4.3 build 147** | 2026-10-30 | `7f1e4ea`: opening a file runs the shared migration and older saves keep every authored field (v8–v11 fixtures, field-complete round trips, unknown legacy keys); the reaction chain lists usage before the name; the preview's computed styles match the sheet across 12 themes, both templates and both rule styles; 222 core tests and 40 browser steps |
 | **v2.4.3 build 148** | 2026-10-30 | `49edfdf`: closes A7. Text exports use the prose projection and one export boundary (D-18); LaTeX and Improved Initiative legendary/mythic keep their mechanics; DEF-19…DEF-25 closed; candidates promoted to the configured-sample origin (D-20); 231 core tests and 41 browser steps |
+| **v2.4.3 build 149** | 2026-10-30 | `0dbcd23`: opens A8 — composer head chips follow the plate word order (CMP-009 within the head cell) and two-item lists read "a and b" on the sheet and in every export; 234 core tests and 41 browser steps |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 
 

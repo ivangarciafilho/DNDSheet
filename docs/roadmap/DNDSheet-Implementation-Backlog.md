@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 148 · 2026-10-30 · A7 closed · `rc-2.4.3-build-148-a7-prose-exports` |
-| **Code HEAD** | `49edfdf` exports print every role as prose without web markup · `7f1e4ea` older saves keep every authored field · archives 147/146/145/144/143/142/139 retained · 231 core tests, production build, focused lint (0 errors), 41 browser steps and theme checks pass |
-| **Progress** | **8 / 28 loops shipped** · **70 / 204 tasks done** (34.31 %) · **0 active** · **134 pending** |
-| **Now** | A7 ✅ closed at build 148: old saves keep every authored field (147) and text exports print every role as prose in both templates (148). Candidate 148 is served on 9100 over the configured Seraphic Herald sample and on 9106. |
-| **Next** | A8.0 capability matrix, then A8 retires the duplicate panels; A8.9–A8.12 carry the composer polish found while closing A7. |
+| **Version** | v2.4.3 build 149 · 2026-10-30 · A8 opened with composer polish · `rc-2.4.3-build-149-a8-plate-word-order` |
+| **Code HEAD** | `0dbcd23` head chips follow the plate word order; two-item lists read "a and b" · A7 closed at `49edfdf` (build 148) · archives 148/147/146/145/144/143/142/139 retained · 234 core tests, production build, focused lint (0 errors), 41 browser steps and theme checks pass |
+| **Progress** | **8 / 28 loops shipped** · **72 / 204 tasks done** (35.29 %) · **0 active** · **132 pending** · A8 ◐ |
+| **Now** | A8 ◐ build 149: A8.10 (head chips in plate word order) and A8.12 (two-item list grammar) shipped. Candidate 149 is served on 9100 over the configured Seraphic Herald sample and on 9106. |
+| **Next** | A8.0 capability matrix (confirm and tick A8.1/A8.4), then A8.9 usage editor and A8.11 classic prose parity before any panel retirement. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 | 20 / 33 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 22 / 33 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
@@ -49,13 +49,14 @@
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **70 / 204 complete · 0 active · 134 pending** | **34.31 % complete · 65.69 % remaining** |
+| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **72 / 204 complete · 0 active · 132 pending** | **35.29 % complete · 64.71 % remaining** |
 
 ```mermaid
 pie showData
   title Loops by state
   "Shipped" : 8
-  "Pending Track A" : 10
+  "In progress" : 1
+  "Pending Track A" : 9
   "Pending Track B" : 10
 ```
 
@@ -106,6 +107,7 @@ pie showData
 | 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
 | 2026-10-30 00:18 | `7f1e4ea` | A7 · build 147 | Opening a file keeps every authored field: the toolbar import runs the shared migration (alphaTraits fixed), pre-v9 upgrades keep existing stat/save/effects/range/uses/trigger, spellcasting policies and legacy language names survive; reaction chain reads usage → name like the plate | Core 222/222 (+6, red first); build; lint 0 errors; 40 browser steps incl. Step 40 (v8-labelled file through Open File, nothing lost, 14/14 seven-role parity, reload) and the Step 35 type matrix (56/56); help 12 themes; spellcasting 5 themes; 97-hash archive |
 | 2026-10-30 00:39 | `49edfdf` | A7 ✅ · build 148 | Exports print every role as prose without web markup in either template; HP pills, plates and help hooks never reach a text file; LaTeX and Improved Initiative legendary/mythic keep their mechanics; Improved Initiative mythic crash, multiattack "undefined", repeated Multiattack label, misnested mythic lead and default mythic text fixed | Core 231/231 (+9); build; lint 0 errors; 41 browser steps incl. Step 41 export proof; help 12 themes; spellcasting 5 themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage hash unchanged) and 9106 |
+| 2026-10-30 00:58 | `0dbcd23` | A8 · build 149 | Composer head chips follow the plate word order ("2nd Level Evocation", "Evocation Cantrip"); two-item lists read "a and b" in multiattack and extra-damage prose on the sheet and in every export | Core 234/234 (+3, red first); build; lint 0 errors; 41 browser steps, zero errors; help 12 themes; spellcasting 5 themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage hash unchanged) and 9106 |
 
 ### 2.1 A4 closing validation: tracked full-suite failures
 
@@ -124,7 +126,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A7 ✅ closed at build 148: old saves keep every authored field (147), exports print every role as prose (148) | **A8.0 → A8** capability matrix, then retire the duplicate panels; A8.9–A8.12 composer polish found while closing A7 | A9…A17 (R3–R6), then Track B (R7–R10) |
+| A8 ◐ build 149: head chips in plate word order (A8.10) and two-item list grammar (A8.12) shipped on top of A7 ✅ | **A8.0** capability matrix (tick A8.1/A8.4 if covered) → A8.9 usage editor → A8.11 classic prose parity → panel retirement | A9…A17 (R3–R6), then Track B (R7–R10) |
 
 ---
 
@@ -346,7 +348,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A8 · One Actions module ☐
+#### A8 · One Actions module ◐ `0dbcd23` · `rc-2.4.3-build-149-a8-plate-word-order` (partial)
 
 > Every ability role lives in the studio; duplicate panels retire.
 
@@ -363,9 +365,9 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M
 - [ ] **A8.7** e2e adjustments for removed panels · S
 - [ ] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Today the chip shows "3/Day" from limited use while Apply writes free recharge text (*added A7*) · M
-- [ ] **A8.10** Head chips follow the plate's word order: the plate prints "2nd Level Evocation" (tier first) and "Evocation Cantrip", the chips read discipline then tier (*added A7*) · S
+- [x] **A8.10** Head chips follow the plate's word order: a spell level leads its school ("2nd Level Evocation"), a cantrip follows it ("Evocation Cantrip") (*added A7*) · S · *proof: `ComposerChain.test.ts` head-order case (red first); build 149*
 - [ ] **A8.11** Classic prose parity: `text2024` omits school/level, components, duration and target qualifiers that the modern plate prints for structured abilities; decide placement per field and prove both templates (*added A7*) · M
-- [ ] **A8.12** List grammar: `listJoin` prints "x, and y" for two items (multiattack, damage lists); use "x and y" and keep the serial comma for three or more, with sheet and export tests (*added A7*) · S
+- [x] **A8.12** List grammar: `listJoin` (now `rendering/list-join.ts`) reads "x and y" for two items and keeps the serial comma for three or more; multiattack and extra-damage prose on the sheet and in exports (*added A7*) · S · *proof: `ListJoin.test.ts` (red first); 41 browser steps; build 149*
 - [ ] **A8.8** Close: commit `one actions module: studio covers every role, duplicate panels retired`, docs ritual · S
 
 **Done when:** CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed; builder mounts ≤ 14 panels.

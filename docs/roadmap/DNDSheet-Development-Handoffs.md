@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 148 · 2026-10-30 · A7 closed: older saves keep every authored field (147) and text exports print every role as prose (148); earlier archives preserved |
-| **State at hand-over** | Code `49edfdf`, tag `rc-2.4.3-build-148-a7-prose-exports`. Candidate 148 on 9100 (origin of the configured Seraphic Herald sample) and 9106 (latest); exact 148 at 9113, 147 at 9112, 146 at 9110, 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9114. 231 core tests; production build; focused lint zero errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. 70/204 done, 0 active, 134 pending. |
+| **Version** | v2.4.3 build 149 · 2026-10-30 · A7 closed at build 148; A8 opened with composer polish (head chip word order, two-item list grammar); earlier archives preserved |
+| **State at hand-over** | Code `0dbcd23`, tag `rc-2.4.3-build-149-a8-plate-word-order`. Candidate 149 on 9100 (origin of the configured Seraphic Herald sample) and 9106 (latest); exact 149 at 9115, 148 at 9113, 147 at 9112, 146 at 9110, 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9114. 234 core tests; production build; focused lint zero errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. 72/204 done, 0 active, 132 pending. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 is next and ready: run A8.0 (capability matrix) first. A8.1 and A8.4 were delivered early inside A7 — confirm and tick them at A8.0. |
+| **Current loop** | A8 ◐: A8.10 and A8.12 shipped in build 149. Run A8.0 (capability matrix) next and confirm/tick A8.1 and A8.4, which were delivered inside A7. |
 
 ---
 
@@ -540,7 +540,7 @@ Next loop readiness ..... 🟢 A8 — run A8.0 first
 
 Release handling: candidates 147 and 148 are frozen with `release-candidate.json` and verified `SHA256SUMS.txt` (97 entries each, QA page excluded) and tagged. Candidate 148 replaced 139 on 9100 — the owner asked that new candidates reuse the configured sample — and also serves 9106; 139 moved to 9114 untouched. The sample's stored hash (`229a780f…`) was identical before and after the switch.
 
-### 6.6 A8 · One Actions module — 🟢 ready (A7 ✅)
+### 6.6 A8 · One Actions module — ◐ build 149 (A8.10 and A8.12 shipped)
 
 | | |
 |---|---|
@@ -553,7 +553,7 @@ Release handling: candidates 147 and 148 are frozen with `release-candidate.json
 | **Skills** | `code-refactoring:refactor-clean` · `superpowers:requesting-code-review` · `engineering:testing-strategy` · `ui-design:interaction-design` |
 | **Research** | none beyond the matrix |
 | **Traps** | Multiattack references by id survive reorder · legendary costs and pools live in different arrays · deleting components breaks imports elsewhere (grep before delete) · e2e steps that open removed panels |
-| **Plan** | A8.0 matrix (tick A8.1/A8.4 if covered) → A8.2 attack role → A8.3 multiattack → A8.9 usage editor → A8.10 head word order → A8.11 classic prose parity → A8.12 list grammar → A8.5 unmount + delete → A8.6 fixture diff → A8.7 e2e → A8.8 close |
+| **Plan** | A8.10 ✅ · A8.12 ✅ (build 149) → A8.0 matrix (tick A8.1/A8.4 if covered) → A8.2 attack role → A8.3 multiattack → A8.9 usage editor → A8.11 classic prose parity → A8.5 unmount + delete → A8.6 fixture diff → A8.7 e2e → A8.8 close |
 | **Verify** | builder panel count ≤ 14 (DOM probe) · three saved monsters render byte-identical plates · every matrix row ticked |
 | **Exit** | CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed |
 | **Defaults** | Villain actions stay a panel; CR annotation cards stay in the studio |
@@ -733,7 +733,7 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — `statblock-overhaul`; code `49edfdf`, tag `rc-2.4.3-build-148-a7-prose-exports`; candidate 148 on 9100 (configured Seraphic Herald) and 9106, exact 148 at 9113, 147 at 9112, 146 at 9110, 139 at 9114. Core 231/231; build; focused lint 0 errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. Status: 70/204 done, 0 active, 134 pending; 8/28 loops shipped.
+1. **State** — `statblock-overhaul`; code `0dbcd23`, tag `rc-2.4.3-build-149-a8-plate-word-order`; candidate 149 on 9100 (configured Seraphic Herald) and 9106, exact 149 at 9115, 148 at 9113, 147 at 9112, 146 at 9110, 139 at 9114. Core 234/234; build; focused lint 0 errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. Status: 72/204 done, 0 active, 132 pending; 8/28 loops shipped; A8 ◐.
 2. **What exists** — A0–A7 shipped. The studio edits all seven roles as plate-ordered chains with a live preview that is the sheet's own entry (markup and computed styles proven). Older saves keep every authored field through one migration; text exports print every role as prose through one boundary (D-18). The owner's configured sample and storage were never modified; a byte-exact snapshot sits in `%LOCALAPPDATA%\Temp\dndsheet-a7-backup\origin-9100-app.*.json`.
 3. **What to do next** — A8.0: build the capability matrix from the surviving legacy panels, tick A8.1 and A8.4 if the studio already covers them, then retire panels only where every field has a verified studio home. Keep browser Steps 32–41 as regression. A8.9–A8.12 hold the composer polish found while closing A7.
 4. **Where truth lives** — Versioned canonical files are `docs/roadmap/`; `outputs/` is the evaluation mirror. Spec defines intent/contracts, backlog defines order/status, handoffs define preparation/evidence. Synchronize all three and verify mirrored hashes before closing a slice.
@@ -829,3 +829,16 @@ Preparation skills: executing-plans, verification-before-completion, archetypes 
 **Next bounded group: A8.0 capability matrix.** Open every surviving legacy panel in `MonsterBuilder.vue` and list each field with its studio home, its renderer owner and its export owner. Mark A8.1 and A8.4 done if the studio already covers them (role headers, reaction trigger, trait cadence/display). Decide BS-26/27. Do not unmount a panel until every one of its fields has a verified home.
 
 **Following group: A8.9–A8.12 composer polish.** One typed usage editor (recharge, uses per day or rest, none); head chips in the plate's word order; classic prose parity for structured school/level/components/duration/qualifiers; two-item list grammar.
+
+## Build 149 packet — A8 opened with composer polish
+
+| Item | Evidence / handoff |
+|---|---|
+| Base → result | `6f68051` → `0dbcd23`; tag `rc-2.4.3-build-149-a8-plate-word-order` |
+| Delivered | A8.10: head chips read "2nd Level Evocation" / "Evocation Cantrip" in the plate's order. A8.12: `listJoin` moved to the pure `rendering/list-join.ts`; two items read "a and b", three or more keep the serial comma |
+| Impact | 6 files, +44/−9; 3 new core tests written red first |
+| Verification | Core 234/234; production build; focused lint 0 errors; 41 browser steps with zero errors; help 12 themes; spellcasting 5 themes; 97 verified hashes |
+| Release | 149 on 9100 (Seraphic Herald storage hash unchanged) and 9106; exact 149 at 9115; 148 kept at 9113 |
+| Status | 72/204 done, 0 active, 132 pending; A8 ◐ |
+
+**Next bounded group: A8.0 capability matrix**, as staged in the Build 147–148 packet. Then A8.9 (one typed usage editor) and A8.11 (classic prose parity) before any panel retirement.
