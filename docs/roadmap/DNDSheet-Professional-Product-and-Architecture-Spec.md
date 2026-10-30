@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 144** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-144-a7-trait-chain`; build 143 and earlier candidates remain preserved; formula provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 144 code commit `7f2e572`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
+| **Version** | **v2.4.3 build 145** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-145-a7-role-context`; build 144 and earlier candidates remain preserved; formula provenance belongs to A9 |
+| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 145 code commit `d70cc01`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **67 / 193 tasks complete; 2 active; 124 pending** |
+| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **68 / 193 tasks complete; 1 active; 124 pending** |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -1923,15 +1923,15 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 **🎯 Value** — The editor shrinks from 21 to ≈ 13 panels; composing an ability is clicking chips in the same order the GM reads them.
 
-**🔎 Evidence** — The initial audit found seven role collections exposed through the studio alongside duplicate legacy panels in `MonsterBuilder.vue` (DEF-08), plus hard-coded presets (DEF-12). Builds 137–144 replace the preset route and progressively integrate typed adapters; six roles now have editable chains and shared-renderer previews. Legacy panels remain until A8 capability parity is proven.
+**🔎 Evidence** — The initial audit found seven role collections exposed through the studio alongside duplicate legacy panels in `MonsterBuilder.vue` (DEF-08), plus hard-coded presets (DEF-12). Builds 137–144 replace the preset route and progressively integrate typed adapters; all seven roles now have model-specific projections and shared-renderer previews. Legacy panels remain until A8 capability parity is proven.
 
-**🧩 Concept** — **The target chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. The live plate preview and statblock projection must share the renderer. Roles are variants of one entry editor, but must adapt their persisted data explicitly. **Current boundary at build 144:** the editable chain is integrated for action, bonus-action, legendary-action, mythic-action, reaction, and trait entries. The first four use `MonsterAction`; reaction uses a distinct typed adapter and retains its own trigger field and persisted collection. Traits now use their own cadence and display-policy adapter. Lair remains descriptor metadata with a prose editor; its model adapter/preview, initiative/preamble, complete role headers, and the all-role proof matrix remain open. Do not describe the all-role studio as shipped.
+**🧩 Concept** — **The target chain** mirrors the plate's cell precedence (§4.2): head chips (phase, usage, discipline, name, components, duration) → mechanics chips (reach, source, bonus | save, DC) → scope chips (count, kind, qualifier, range, relation, planes) → outcome lines (On Hit / On Failure / On Success + effects + rider) → prose. The live plate preview and statblock projection must share the renderer. Roles are variants of one entry editor, but must adapt their persisted data explicitly. **Current boundary at build 145:** All seven roles have model-specific composer projections and preview. Four use `MonsterAction`, reactions and traits retain distinct adapters, and lair keeps its prose-only entry model with readonly role identity. Legendary/mythic/lair settings belong to typed section-context drafts in `role-headers.ts`. Full old-save/field/conversion/export proof remains open; A7 is not shipped.
 
 **🛠 Techniques**
 - `src/components/editor/composer/ComposerChain.vue`, `ChainCell.vue`, and `ChainOutcomesEditor.vue` compose the action-family editor. The current controls are typed per-cell editors (catalog choices, numeric/formula-compatible input, text, outcome/effect editors); they do not claim that every field is a `CatalogSelect` or that A9 formula provenance is complete.
-- `src/core/domain/composer-chain.ts` owns action-family projections/patches; `reaction-composer.ts` owns reaction trigger/usage edits; `trait-composer.ts` owns trait cadence drafts, policy patches, validation, and bounded phase choices. `action-composer.ts` owns descriptor metadata. `ActionsEditor.vue` routes six roles into existing Pinia collections; schemas and storage arrays stay unchanged. Lair and complete legendary/mythic/lair role headers remain open. Descriptor field paths do not imply a shared `MonsterAction` model.
+- `src/core/domain/composer-chain.ts` owns action-family projections/patches; `reaction-composer.ts` owns reaction trigger/usage edits; `trait-composer.ts` owns trait cadence drafts, policy patches, validation, and bounded phase choices. `action-composer.ts` owns descriptor metadata. `ActionsEditor.vue` routes all seven roles into existing Pinia collections; schemas and storage arrays stay unchanged. `role-headers.ts` owns typed section context; `RoleHeaderEditor.vue` owns isolated drafts, validation feedback and Apply/Cancel. Descriptor field paths do not imply a shared `MonsterAction` model.
 - The chain's live preview calls existing action/reaction projection paths and sanitizes the generated markup; it applies the current theme CSS. This reuses production projection semantics, but does not yet prove CMP-009 across all seven roles or complete A7 acceptance. Outcomes keep their existing plate-body ordering. Prose remains owned by the existing description editor rather than being duplicated in the chain.
-- Role-model boundary: four roles share `MonsterAction`; reaction and trait use distinct typed adapters. Trait cadence preserves tag-override precedence and conditional tag text via existing `computeTraitTag`. Trait section grouping is separate from its entry plate: conditional grouping takes precedence over recharge grouping. Lair still needs a role-context adapter; its displayed label and initiative are not an entry name. Prose remains owned by the established rich-text editor.
+- Role-model boundary: four roles share `MonsterAction`; reaction and trait use distinct typed adapters. Trait cadence preserves tag-override precedence and conditional tag text via existing `computeTraitTag`. Trait section grouping is separate from its entry plate: conditional grouping takes precedence over recharge grouping. Lair uses a readonly role projection and a separate section-context adapter; its displayed label and initiative are not an entry name. Prose remains owned by the established rich-text editor.
 - Templates move to a catalog `ACTION_TEMPLATES` (grouped: Weapon attacks · Spell attacks · Saves & areas · Auras & utility); names keep authored casing (DEF-12). Build 137 uses a grouped Quasar dropdown; a searchable CatalogSelect remains an alternative only if catalog growth makes menu scanning costly, and should reuse the same catalog rather than create another data source.
 - Build 137 establishes the catalog contract in `core/domain/action-templates.ts`: each stable `id` and user-facing name/category/summary maps to a partial `MonsterAction` patch. The grouped picker is a bounded first slice; it does not claim the chain or per-role variants are implemented.
 - Applying a template is an explicit destructive edit: show a confirmation naming the selected template and the field groups replaced; cancel leaves the original object untouched. Confirm replaces the template-owned content fields (including clearing stale optional values omitted by that template) while preserving `id`, storage role/membership, bonus-action flag, limited uses, recharge, stage pool, custom preamble, and CR annotation. Recompute the derived CR display after apply; never mutate the configured sample data as part of setup or release verification.
@@ -2501,14 +2501,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — 7/28 loops shipped; A7 remains the one active loop; 20 loops are not started. Of 193 tasks, 67 are complete, 2 are active (A7.3 and A7.7b), and 124 are pending; 65.28% remains. This corrects the previous status summary to match the actual checklist. Build 144 integrates traits as the sixth typed composer role and passes 159 core tests, production build, changed-file lint, all 37 browser steps with zero errors, five-theme spellcasting, and twelve-theme help/contrast checks. Lair, remaining role headers, the complete field/role-conversion matrix, and A7 closeout remain open. Build 143 and earlier archives remain preserved. Latest evaluation retains the localhost:9106 origin so configured browser state survives promotion; test fixtures use isolated browser profiles.
+**Progress snapshot · 2026-10-29** — Build 145 completes A7.3: seven model-specific role projections and legendary/mythic/lair section editors. 7/28 loops shipped; A7 remains active; 20 loops not started. Of 193 tasks, 68 are complete, 1 active (A7.7b), 124 pending; 64.77% remains. Verification: 165 core tests, production build, focused lint with warnings and no errors, 38 browser steps with zero runtime/console errors, five-theme spellcasting and twelve-theme help. Full field/old-save/conversion matrix and A7 closeout remain open. Build 144 remains immutable at 9107; latest origin 9106 retains configured browser data; test fixtures use isolated profiles.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 17 / 29 tasks |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 18 / 29 tasks |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -3176,3 +3176,53 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.4.3 build 144** | 2026-10-29 | `7f2e572`: integrate typed trait cadence and display policy, phase/grouping/custom-heading/CR controls, trait templates, exact renderer preview, narrow popup sizing, and live heading whitespace preservation; 159 core tests and 37 browser steps pass with zero errors plus five-theme spellcasting and twelve-theme help/contrast checks. Six roles integrated; lair/remaining headers/matrix/closeout open. Correct task state to 67 done, 2 active, 124 pending; preserve archives and stable browser origin. |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 
+
+## Build 145 — section context and lair integration contract
+
+This release completes adapter integration, not the A7 acceptance matrix. Use this section with the companion backlog task A7.7b and handoff preparation below.
+
+| User workflow | Owner / function | Contract and alternatives |
+|---|---|---|
+| Read/edit a lair entry | `ComposerChain.vue`, `lairChainView`, existing description editor | Readonly “Lair Action” identity; persisted `LairAction` keeps ID/prose/CR only. Rejected alternative: fabricate a name/action schema that would break old data. |
+| Edit legendary economy | `RoleHeaderEditor.vue` → `roleHeaderDraft/validateRoleHeader/roleHeaderPatch` | Whole pool 0–99; custom switch and preamble. Defaults remain defaults; no per-entry duplication. |
+| Edit mythic context | Same section editor, mythic descriptor | Trait name/recharge/trigger description and preamble; optional prose stays optional. Existing action IDs/costs retained. |
+| Edit lair context | Same section editor, lair descriptor | Whole initiative 0–40, default 20; preserve other initiative settings. `{LAIR_INITIATIVE}` drives default preamble, including 0. Custom text is never rewritten to match initiative. |
+| Apply or cancel | Local primitive draft → validation → current-store patch | Invalid numbers disable Apply. Cancel writes nothing. Apply spreads current collections/configuration, retaining intervening membership changes. Old panels remain during A7; A8 must retire duplicates only after capability parity. |
+| Preview/export | `processLairAction(context, monster, web=false)` | WebRenderer and composer explicitly opt into modern cards; classic and text projections retain processed prose. HTML export leakage found in review was removed before promotion; exhaustive export-format verification remains a named closeout gate. |
+| Work at narrow widths | `MonsterBuilder.vue` scoped screen styles | At ≤599px, editor and preview stack; desktop splitter remains. Browser checks use 375px; print rules unaffected. |
+
+```mermaid
+sequenceDiagram
+  actor Author
+  participant UI as RoleHeaderEditor
+  participant Core as role-headers pure functions
+  participant Store as Existing Pinia monster
+  participant View as Preview and sheet
+  Author->>UI: Expand section
+  UI->>Core: roleHeaderDraft(current monster)
+  Core-->>UI: Primitive isolated draft
+  Author->>UI: Edit fields
+  UI->>Core: validateRoleHeader(role, draft)
+  alt Invalid
+    Core-->>UI: Visible error; Apply disabled
+  else Apply
+    UI->>Core: roleHeaderPatch(current monster, role, draft)
+    Core-->>UI: Patch preserving current memberships/config
+    UI->>Store: Apply patch through existing persistence
+    Store-->>View: Recompute tokens and sanitized rendering
+  else Cancel
+    UI-->>Author: Close without store mutation
+  end
+```
+
+### Prepared continuation: A7.7b, then A7.8
+
+1. Inventory every actual field in all seven source models and conversion factories; map each to editor, renderer, export and persistence ownership. Include IDs, role arrays, costs, CR inclusion/manual overrides, recharge/stage data, trait grouping and legacy values.
+2. Build table-driven conversion cases for every allowed source/destination. Explicitly preserve or disclose incompatible data; do not silently discard fields. Retain source objects and stable references where the workflow requires them.
+3. Exercise normalized old-save fixtures, unchanged save/reload, reorder, role movement, deletion and keyboard paths. Add format-level Markdown/Homebrewery/LaTeX lair export cases; source review alone is insufficient export proof.
+4. Retain core and browser Steps 35–38; verify default/custom initiative semantics, Apply/Cancel, membership preservation and real narrow layout. Check stacking also in character mode and with maximum-width stat blocks before calling responsive coverage comprehensive.
+5. Before A7.8, reconcile evidence against CMP-009…011. If any field lacks a verified home, keep A7 open. A8 removal follows verified capability parity; A9 provenance remains downstream.
+
+Preparation: load executing-plans, verification-before-completion, relevant model/functional-core guidance, code review and UX-copy skills; read this contract, A7 ownership map, the conversion factory call sites, and current handoff. Research external APIs only if this slice introduces one. Close with measured diff, exact code/tag/archive, test boundaries, preservation evidence and synchronized status in all three documents. Never claim infinite scalability, zero defects or future-proofing as an established property.
+
+Build 145 measured impact: `d70cc01`, 13 files, +347/−18 lines. Existing files changed: ActionsEditor, ComposerChain, WebRenderer, useProcessTokens, useTextRenderer, ProcessTokens, English locale, MonsterBuilder, browser suite and build metadata. New files: role-headers domain, RoleHeaderEditor UI and RoleHeaders core tests. No schema/sample-data migration. Lint: zero errors, 62 warnings in the full changed-source pass; new mobile layout file clean.
