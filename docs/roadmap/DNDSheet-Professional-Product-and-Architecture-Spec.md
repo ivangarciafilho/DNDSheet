@@ -1,13 +1,23 @@
 # DNDSheet — Product & Architecture Specification
 
+## Build160 contract — stable numeric registry, A9.2 still active
+
+The new pure registry describes stable authored numeric families with semantic types, units, safe-integer validation, known editor bounds, die catalogs, optional/null preservation, contextual reference groups and literal-only slot tables. It does not write a monster or replace editor controls. CR fractions, annotation multiplier precision, symbolic dice, presentation/tracker values and identity-poor phase/outcome/membership records remain explicitly excluded.
+
+Stable addresses use encoded record IDs, uppercase semantic skill keys and spell levels 1–9. Readers reject malformed/noncanonical selectors, positional addresses, prototype paths, inherited properties, accessors and missing/ambiguous identities. Optional leaves require an existing parent. Reordering records does not redirect an address. Saved symbolic values such as `all` and formula text return a blocked migration state, never permission to overwrite them with a scalar.
+
+Reference-source policy matches the default stored `formulaContextForMonster`, not injected store getters. Recreate it after selector/collection/mode changes. Stored proficiency, AC, HP dice/modifier and primary caster level are authoritative at that boundary. SPELL_MOD normalization differs from the wrapper's raw ability-key lookup for SPELL_ATK/DC; the policy preserves that existing distinction. Disabled overrides do not depend on their dormant values; enabled invalid overrides retain their validity dependency.
+
+Ruling: A9.2 stays active. Complex AC and death-prevention save/burst mode ownership is marked pending and inspection blocks binding adoption. Remaining applicability/default/OR cases and coverage reconciliation must finish before A9.3 consumes the registry. Cost of premature adoption: hidden fields becoming editable or legitimate drafts being rejected. No UI, automatic casting, outcome matrix or species scope is awarded completion here.
+
 > **The roadmap bible.** One source of truth for *what* DNDSheet becomes, *why* it must, and *how* every layer changes — from the pixel on the stat block, through the composable that projects it, down to the pure function that computes it, and back up to the promise it serves.
 
 | | |
 |---|---|
-| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
-| **Code HEAD** | `2b45cff`;286core tests,productionbuild,50browser scenarios,5spell/12help themes,20plate parity;focusedlint0errors/5existingwarnings |
+| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
+| **Code HEAD** | `656c164`;314core tests (+28); stable registry/source policies; A9.2 mode coverage remains active. Build160 verification packet below. |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **0active / 131pending** - A9.0/A9.1 complete;A9 remains active |
+| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **1active / 130pending** - A9.2 active;A9.0/A9.1 complete |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -3762,3 +3772,12 @@ Graph analysis walks parsed ASTs,canonicalizes aliases,deduplicates dependencies
 Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
 
 Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.
+
+
+### Build160 verified closeout
+
+Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new core tests,314total passing. Production build succeeds;50browser scenarios pass with zero console/runtime errors;5spell themes and12help themes pass. Five saved monsters produce20byte-identical plates versus159;reload round trips and dangling references remain stable. Focused lint is clean:0errors/0warnings. Production build retains pre-existing warnings elsewhere. LaTeX not compiled.
+
+Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
+
+Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.

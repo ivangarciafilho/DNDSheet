@@ -49,3 +49,10 @@ Build155 delivered A8.15, code46785a0, tag rc-2.4.3-build-155-heading-grammar; i
 267coretests(+3), production build,47browser scenarios zero console/runtime errors,5-theme spells,12-themehelp; lint0errors/5existingwarnings. Final independent review found HTML escaping and encoding regressions; fixed and covered. One test assertion intentionally changed from old legendary name/cost order; mutable staging run invalidated by rebuild, then final regression green on frozen155. Use explicit UTF8 bytes and never rebuild test serving roots mid-run.
 
 Progress82/216(37.96%),134pending,0active tasks,8/28loops shipped,A8active,R2 32/36. No new scope; A8.13/14/15 complete. Three canonical docs and output mirrors synchronized. Next A8.5 exact capability/control/association ownership before panel retirement, thenA8.6 fixture parity against155,A8.7browser,A8.8closeout. Keep VillainActionsEditor; do not delete controls without working studio homes. New CR154 roll/outcome/traversal/phase/casting/generation/layout scope remains its existing A9/A11/A12/A13/B3 task IDs, no duplicates.
+
+
+## Build160 recovery and delivery
+
+Resumed from preserved159,not the older155 log above. Build159 source inventory/dependency foundation supersedes older counts. Build160 code656c164 adds stable numeric registry, safe collection addressing, scalar inspection and exact default-context source policies.314core(+28),50browser,5spell/12help,20plate parity;focusedlint clean. New160 and protected159 each97hashes verified. Evaluation http://localhost:9124/candidate160/index.html#/. Veil of Radiance sample retained on9124;no server replacement.
+
+A9.2 remains active:finish complex AC/death applicability and inventory/source coverage before A9.3. Pending modes fail closed;symbolic values require explicit migration. No UI adoption,store overlay or whole-task completion claimed.88/219complete,1active,130pending,9/28loops;three canonical docs and output mirrors synchronized.

@@ -1,13 +1,23 @@
 # DNDSheet — Development Handoffs
 
+## Build160 continuation packet — finish A9.2 before overlay adoption
+
+Read the Build160 Specification contract and Backlog remaining packet first. Four new pure catalog modules own descriptors, safe paths, inspection and reference sources; tests live in FieldTypes, FieldPaths, FieldInspection and ReferenceSources. No store/UI consumers have adopted them. Preserve predecessor RCs and sample storage; do not reconfigure servers.
+
+Resume with complex mode coverage rather than starting A9.3. AC descriptors and death-prevention save/burst descriptors expose pending mode policy; inspector blocks them. Read actual BasicsEditor applicability/default/OR branches and current domain consumers before declaring those gates reviewed. Keep original optional/null/symbolic authorship intact. Numeric fields with unsupported source identities remain blocked until their existing migration owners land.
+
+Use execution/verification and functional-core guidance; apply UI/TTRPG skills only when that scope begins. Ruling: no A9.2 completion credit from a broad registry without exhaustive ownership/gate reconciliation. Progress remains88/219,one active task,130pending,9/28loops shipped. This packet refines existing work;it adds no new task IDs.
+
+Independent review's concrete defects were reproduced with failing tests and fixed: array readers bypassed accessors through iteration; absent literal source modes were rejected; poolCount depended on its own derived enabled flag; mixed symbolic values appeared scalar-editable. Reference review also corrected false cycles for disabled override values and raw spell ability keys. These checks do not replace saved-overlay/history/browser propagation tests in A9.3–9.
+
 > **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
 
 | | |
 |---|---|
-| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
-| **State at hand-over** | `2b45cff`,Build159 at http://localhost:9124/candidate159/index.html#/. Build158 preserved;sample origin storage retained.286core/50browser/5spell/12help pass;20plates identical;no new dropdown UI claimed. |
+| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
+| **State at hand-over** | `656c164`,Build160 at http://localhost:9124/candidate160/index.html#/. Build159 preserved;sample origin storage retained.314core tests;no new dropdown UI claimed. See Build160 closing evidence. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
-| **Current loop** | A9 active:2/14tasks complete(A9.0/A9.1).88/219complete,0active task markers,131pending;no new scope. |
+| **Current loop** | A9 active:2/14tasks complete(A9.0/A9.1).88/219complete,A9.2 active,130pending;no new scope. |
 
 ---
 
@@ -1049,3 +1059,12 @@ Continue with field descriptors,then overlay/history,then the shared UI adapter/
 Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
 
 Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.
+
+
+### Build160 verified closeout
+
+Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new core tests,314total passing. Production build succeeds;50browser scenarios pass with zero console/runtime errors;5spell themes and12help themes pass. Five saved monsters produce20byte-identical plates versus159;reload round trips and dangling references remain stable. Focused lint is clean:0errors/0warnings. Production build retains pre-existing warnings elsewhere. LaTeX not compiled.
+
+Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
+
+Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.

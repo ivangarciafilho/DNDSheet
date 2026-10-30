@@ -1,14 +1,27 @@
 # DNDSheet — Implementation Backlog
 
+## Build160 incremental delta — A9.2 registry work
+
+Delivered pure stable-path reading, numeric descriptors/validation, inspection and stored-context reference dependency policy. No task closes: **88/219 complete, A9.2 active,130 pending;9/28 loops shipped**. Scope stays219. This is foundation work, not the smart-dropdown rollout or saved overlay.
+
+Finish A9.2 in this order before A9.3:
+1. Reconcile every A9.0 stable authored leaf against the registry; record unsupported aliases and identity migrations beside their existing owners.
+2. Complete complex AC applicability, default-source and OR gates; replace pending mode policy only with focused assertions from actual editor behavior.
+3. Complete death-prevention save/burst applicability and review the other registered families' defaults. Symbolic authored values require an explicit migration decision, not scalar replacement.
+4. Add a coverage invariant connecting the inventory, descriptor source ownership, gates and reference-source policy. Exercise mode changes, missing optional parents, reordering and ambiguous imports.
+5. Only then close A9.2 and begin A9.3 overlay/set-clear/resolve; A9.4 history and A9.5/6 controls remain downstream. Injected live getter contexts need a matching dependency provider before adoption.
+
+Review corrections include disabled-override false cycles, raw/normalized spell ability sources, accessor-backed array entries, literal fallback modes, pool-count activation and symbolic authorship. Earlier158 minor wording/attack fallback test follow-ups remain unchanged under their existing owners.
+
 > **The checklist and the living timeline.** Every loop of the [Product & Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) broken into tasks you can tick, in the order they should ship, with the commit that proves each one. Preparation and closing rituals live in the [Development Handoffs](DNDSheet-Development-Handoffs.md).
 
 | | |
 |---|---|
-| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
-| **Code HEAD** | `2b45cff`;286core tests,productionbuild,50browser scenarios,5spell/12help themes,20plate parity;focusedlint0errors/5existingwarnings |
-| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **0active / 131pending** - A9.0/A9.1 complete;A9 remains active |
-| **Now** | Numeric inventory and literal/dependency foundation complete. Saved binding overlay and replacement dropdowns remain pending. |
-| **Next** | A9.2 field descriptors/source mapping,then A9.3 overlay/history and A9.5/6 contextual UI adapter/control. |
+| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
+| **Code HEAD** | `656c164`;314core tests (+28); stable registry/source policies; A9.2 mode coverage remains active. Build160 verification packet below. |
+| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **1active / 130pending** - A9.2 active;A9.0/A9.1 complete |
+| **Now** | Stable registry/source safety delivered; finish complex mode gates and inventory coverage before saved bindings. |
+| **Next** | Finish A9.2 mode/coverage gates,then A9.3 overlay/set-clear/resolve,A9.4 history,A9.5/6 UI adapter/control. |
 
 ---
 
@@ -71,7 +84,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **88 / 219 complete - 0active - 131pending** | **40.18% complete** |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **88 / 219 complete - 1active - 130pending** | **40.18% complete** |
 
 ```mermaid
 pie showData
@@ -416,7 +429,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 - [x] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); refresh the binding inventory beyond the historical 18-field subset, including CR154-05 consumers; decide decimals out of scope (BS-16) · M
 - [x] **A9.1** `formula.ts`: `literal` binding variant, `dependencyOrder`, `detectCycles` + tests · M
-- [ ] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M
+- [ ] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M · **Active Build160: pure registry delivered; complex mode/coverage gates remain**
 - [ ] **A9.3** `monster-store.ts`: `bindings` state (optional), `setBinding`, `clearBinding`, `resolveBindings` (one pass, equality check, cycle report) · L
 - [ ] **A9.4** History ledger skips patches flagged `historySilent` · S
 - [ ] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
@@ -1012,3 +1025,12 @@ Review corrections reproduced red→green:finite literals such as1e-7/1e21 bypas
 Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
 
 Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.
+
+
+### Build160 verified closeout
+
+Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new core tests,314total passing. Production build succeeds;50browser scenarios pass with zero console/runtime errors;5spell themes and12help themes pass. Five saved monsters produce20byte-identical plates versus159;reload round trips and dangling references remain stable. Focused lint is clean:0errors/0warnings. Production build retains pre-existing warnings elsewhere. LaTeX not compiled.
+
+Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
+
+Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.
