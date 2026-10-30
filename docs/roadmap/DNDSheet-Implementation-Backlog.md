@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 146 · 2026-10-29 · A7 safe role transitions · `rc-2.4.3-build-146-a7-safe-role-transitions` |
-| **Code HEAD** | `10f7aa0` reviewed role moves, non-destructive cross-model copies and mythic deletion cleanup · protected 145/144/143/142/139 archives retained · 216 core tests, production build, focused lint (0 errors), 39 browser steps and theme checks pass |
-| **Progress** | **7 / 28 loops shipped** · **68 / 193 tasks done** (35.23 %) · **1 active** · **124 pending** |
-| **Now** | A7.7b active: all 49 role pairs have deterministic preservation/copy-policy tests. Browser Step 39 proves review/cancel/apply, independent copy, CR exclusion, references, reload and deletion cleanup. 68 done, 1 active, 124 pending. |
-| **Next** | Complete normalized old-save field/order audit and format-level export proofs; retain the now-passing role-transition/persistence matrix before closing A7. A8 consolidation remains blocked. |
+| **Version** | v2.4.3 build 148 · 2026-10-30 · A7 closed · `rc-2.4.3-build-148-a7-prose-exports` |
+| **Code HEAD** | `49edfdf` exports print every role as prose without web markup · `7f1e4ea` older saves keep every authored field · archives 147/146/145/144/143/142/139 retained · 231 core tests, production build, focused lint (0 errors), 41 browser steps and theme checks pass |
+| **Progress** | **8 / 28 loops shipped** · **70 / 204 tasks done** (34.31 %) · **0 active** · **134 pending** |
+| **Now** | A7 ✅ closed at build 148: old saves keep every authored field (147) and text exports print every role as prose in both templates (148). Candidate 148 is served on 9100 over the configured Seraphic Herald sample and on 9106. |
+| **Next** | A8.0 capability matrix, then A8 retires the duplicate panels; A8.9–A8.12 carry the composer polish found while closing A7. |
 
 ---
 
@@ -40,22 +40,21 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ◐ · A8 | 18 / 29 | ◐ |
-| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 25 | ☐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 | 20 / 33 | ◐ |
+| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
-| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 28 | ☐ |
+| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
 | R7 · Creator confidence | B1 · B2 · B3 | 0 / 15 | ☐ |
-| R8 · Portable output | B4 | 0 / 6 | ☐ |
+| R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 147 tasks · Track B 46) | **68 / 193 complete · 1 active · 124 pending** | **35.23 % complete · 64.77 % remaining** |
+| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **70 / 204 complete · 0 active · 134 pending** | **34.31 % complete · 65.69 % remaining** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 7
-  "In progress" : 1
+  "Shipped" : 8
   "Pending Track A" : 10
   "Pending Track B" : 10
 ```
@@ -67,15 +66,15 @@ pie showData
 | A4 | DEF-01, DEF-02, DEF-03 (data), DEF-04, DEF-15, DEF-16, DEF-17 | BS-04, BS-05, BS-08, BS-17, BS-18 |
 | A5 | — | BS-12, BS-14, BS-19, BS-20 |
 | A6 | DEF-05 | BS-06, BS-09, BS-10, BS-22, BS-23 |
-| A7 | DEF-12 | BS-39 identified; design decision remains open |
+| A7 ✅ | DEF-12, DEF-19…DEF-25 | BS-39 stays open for A8 (range pairs); BS-40 and BS-41 identified |
 | A8 | DEF-08 | BS-26, BS-27 |
 | A9 | DEF-09 | BS-06, BS-16, BS-24, BS-25 |
 | A10 | — | BS-21, BS-28 |
 | A12 | DEF-03 (ruleset), DEF-06, DEF-07 | BS-07, BS-29, BS-30 |
-| A13–A16 | DEF-10, DEF-11 | BS-31…BS-35 |
+| A13–A16 | DEF-10, DEF-11 | BS-31…BS-35, BS-40 |
 | A17 | DEF-13, DEF-14 | BS-03, BS-15, BS-36, BS-37 |
 | B1 | — | BS-38 |
-| B4 | — | BS-11, BS-13 |
+| B4 | — | BS-11, BS-13, BS-41 |
 
 ---
 
@@ -105,6 +104,8 @@ pie showData
 | 2026-10-29 | `98bb899` | A7 · partial build 139 | Added `ROLE_CHAINS` data for action, bonus, trait, reaction, legendary, mythic, and lair roles; descriptors represent structured and legacy fields and encode head → mechanics → scope → outcomes → prose order. No editor UI or preview behavior changed. | Core 133/133 including descriptor-contract tests; build succeeds; full 33-step browser sweep passes with 0 runtime exceptions |
 | 2026-10-29 | `ae16b86` | A4 closeout | Hide generic class preamble already represented by the plate; preserve custom preamble; align e2e assertions to semantic badges and no redundant Skills row | Core 111/111; build; focused smoke; full e2e 23/23 groups, 0 runtime exceptions |
 | 2026-10-29 | working tree at preserved checkpoint `a6c87e4` | A5 partial | Add shared top-row grammar, delegated help host and dictionary, recharge explanations, theme contrast coverage, and remove 11 repeated cascade style blocks | Core 115/115; production build; help browser smoke (12 themes); spellcasting browser smoke (5 themes); exhaustive e2e 33 scenario steps, 0 runtime exceptions (2026-10-29) |
+| 2026-10-30 00:18 | `7f1e4ea` | A7 · build 147 | Opening a file keeps every authored field: the toolbar import runs the shared migration (alphaTraits fixed), pre-v9 upgrades keep existing stat/save/effects/range/uses/trigger, spellcasting policies and legacy language names survive; reaction chain reads usage → name like the plate | Core 222/222 (+6, red first); build; lint 0 errors; 40 browser steps incl. Step 40 (v8-labelled file through Open File, nothing lost, 14/14 seven-role parity, reload) and the Step 35 type matrix (56/56); help 12 themes; spellcasting 5 themes; 97-hash archive |
+| 2026-10-30 00:39 | `49edfdf` | A7 ✅ · build 148 | Exports print every role as prose without web markup in either template; HP pills, plates and help hooks never reach a text file; LaTeX and Improved Initiative legendary/mythic keep their mechanics; Improved Initiative mythic crash, multiattack "undefined", repeated Multiattack label, misnested mythic lead and default mythic text fixed | Core 231/231 (+9); build; lint 0 errors; 41 browser steps incl. Step 41 export proof; help 12 themes; spellcasting 5 themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage hash unchanged) and 9106 |
 
 ### 2.1 A4 closing validation: tracked full-suite failures
 
@@ -123,7 +124,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A7 partial candidate build 146: seven projections/headers plus reviewed non-destructive role transitions | **A7.7b → A7.8** finish old-save/order/export proofs, then close the loop | A8…A17 (R2–R6), then Track B (R7–R10) |
+| A7 ✅ closed at build 148: old saves keep every authored field (147), exports print every role as prose (148) | **A8.0 → A8** capability matrix, then retire the duplicate panels; A8.9–A8.12 composer polish found while closing A7 | A9…A17 (R3–R6), then Track B (R7–R10) |
 
 ---
 
@@ -285,13 +286,13 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A7 · Composer chain and templates ◐ `rc-2.4.3-build-144-a7-trait-chain` (partial)
+#### A7 · Composer chain and templates ✅ `49edfdf` · `rc-2.4.3-build-148-a7-prose-exports`
 
 > Editing an ability is clicking chips in the same order the GM reads them.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R2 | AU-03 | A6 | Re-estimate after adapter/header matrix | Build 146 slice: 7 files, +240/−97; reviewed role transitions integrated; old-save/order/export matrix and closeout open |
+| R2 | AU-03 | A6 | 3–5 days | Actual: builds 137–148 (2026-10-29 → 30); closing slices 147 (8 files, +194/−236) and 148 (12 files, +372/−333) |
 
 - [x] **A7.0** Pre-flight: map every current field to its future chain home and identify preservation boundaries · M · *proof: audit notes below + implementation diff*
 - [x] **A7.1** `src/core/domain/action-composer.ts`: `ROLE_CHAINS` descriptors and shared row precedence for all seven roles; preserve both structured and legacy fields; do not imply UI integration · S · *proof: `test/core/ActionComposer.test.ts` validates role coverage, unique IDs, order, and legacy/structured field coverage*
@@ -301,8 +302,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A7.5** `ACTION_TEMPLATES` catalog and grouped picker: 9 structured templates, authored casing, template-owned stale-field clearing, stable ID/role/use/recharge/stage/custom-preamble/CR preservation · M · *proof: `test/core/ActionTemplates.test.ts`; browser Step 32*
 - [x] **A7.6** Remove the "Quick Attack Composer" strip and hard-coded preset buttons (DEF-12); require explicit confirmation before replacing an existing action · S · *proof: browser Step 32 cancel + apply paths*
 - [x] **A7.7a** Catalog unit + browser tests: known/unknown template behavior, reset semantics, original-object immutability, nested catalog isolation, preservation boundaries, replacement cancel/apply · M · *proof: core 130/130; exhaustive UI 33/33; 0 runtime exceptions*
-- [~] **A7.7b** Seven-role studio proofs retained. Build 146 completes the 49-pair non-destructive role-transition matrix, reviewed move/copy cancellation, independent fields and CR exclusion, multiattack/pool references, reload, and explicit deletion cleanup (Step 39). Remaining: normalized old-save field-by-field ownership/order audit and format-level Markdown/Homebrewery/LaTeX export proof · M
-- [ ] **A7.8** Browser + close: commit `actions studio edits abilities as a chain of plate cells`, docs ritual · S
+- [x] **A7.7b** Seven-role studio proofs. Build 146: 49-pair role-transition matrix with review/cancel, copies, CR exclusion, references, reload and deletion cleanup (Step 39). Build 147: v8–v11 field-complete preservation over default-shaped action/trait/reaction/lair records plus an unknown nested legacy key, migration idempotence, edit → save → reload without drift, seven-role row order and preview parity (`ComposerPreservation.test.ts`, Step 40). Build 148: format-level Markdown/Homebrewery/LaTeX/Improved Initiative export proof for every role in both templates (`ExportMarkup.test.ts`, Step 41) · M
+- [x] **A7.8** Browser + close: candidates 147 and 148 frozen, hashed, tagged and promoted (9100 over the configured sample, 9106 latest); CMP-009…011 reconciled below; docs ritual · S
 
 **A7.0 field ownership map (observed in `ActionsEditor.vue`):**
 
@@ -327,10 +328,21 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | Trait | Integrated; seven domain tests + Step 37 draft/policy/preview/persistence proof | Retain legacy partial-annotation inclusion and live-text regressions |
 | Lair | Integrated: readonly role identity, prose/CR editing, shared preview; Step 38 | Retain no-invented-name and modern/classic parity regressions |
 | Role headers | Integrated: pure drafts/validation/patches for legendary/mythic/lair; Step 38 | Retain Apply-time memberships and unrelated configuration; old panels remain until A8 parity gate |
-| Cross-role conversion | Build 146: all 49 pairs tested. Shared action family patches in place; different models create independent reviewed copies with original retained | Keep Step 39; audit normalized old-save field coverage and format-level export semantics before A7 closeout |
-| Release serving | Archived roots verified; stable origin 9106 retained; predecessor 143 at 9108 | Verify IPv4/IPv6 serve the same archive; never bind evaluation to mutable dist |
+| Cross-role conversion | Build 146: all 49 pairs tested. Shared action family patches in place; different models create independent reviewed copies with original retained. Builds 147–148 close the old-save and export gates | Keep Step 39 as regression |
+| Release serving | Frozen archives with SHA256SUMS: 148 at 9100 (configured Seraphic Herald origin) and 9106 (latest), exact 148 at 9113, 147 at 9112, 146 at 9110, 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 moved to 9114 | Verify IPv4/IPv6 serve the same archive; never bind evaluation to mutable dist; 9111 serves an unverified, untagged Codex staging folder for build 147 — ignore it |
 
-**Done when:** CMP-009…011 proven for every supported role and adapter; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. Build 145 completes A7.3 but does not close A7; A7.7b and A7.8 remain gates.
+**A7 closing reconciliation (builds 147–148):**
+
+| Acceptance | Evidence | Known boundary |
+|---|---|---|
+| CMP-009 chain order = plate order | Seven projections follow the shared row precedence (`ComposerPreservation.test.ts`); action and reaction head orders asserted (`ActionComposer`, `ReactionComposer` tests, Steps 36 and 40); preview = sheet markup for every role (Steps 35–40) | Inside the head cell the plate prints "2nd Level Evocation" while the chips read Evocation · 2nd Level → A8.10 |
+| CMP-010 preview uses the plate | Same per-entry renderer and sanitizer as the sheet; identical markup in both templates for all seven roles (Step 40, 14/14); identical computed styles across 12 themes × 2 templates × 2 rule styles (Step 35, 56/56) | — |
+| CMP-011 catalog templates keep authored casing | `ActionTemplates.test.ts`; Step 32 | — |
+| DEF-12 | Closed by A7.6 (hard-coded presets removed) | Existing saved names keep the author's casing (e.g. the sample's "Veil Of Radiance") |
+| Old saves | v8–v11 fixtures, unknown legacy keys, toolbar import through the shared migration (Step 40) | The browser witness is current-shaped data labelled v8; genuinely old files stay covered by `MigrateMonsterSchema.test.ts` |
+| Text exports | Prose projection + one export boundary (spec D-18); Step 41 | Plain text, HTML and Foundry use their own core projections; Improved Initiative/Tarrasque actions and reactions still come from raw descriptions (BS-41 → B4.7) |
+
+**Done when:** CMP-009…011 proven for every supported role and adapter; DEF-12 closed; all A7.1–A7.7b proofs present; build/browser candidate published; handoff close packet reconciled. ✅ Closed at build 148 (`49edfdf`); reconciliation above.
 
 ---
 
@@ -343,13 +355,17 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R2 | AU-03 | A7 | 3–5 d | 12 files · +650 / −1 400 |
 
 - [ ] **A8.0** Capability matrix: for each legacy panel list every field and its studio home; decide villain actions and CR cards (BS-26, BS-27) · M
-- [ ] **A8.1** Role headers: Legendary (pool, preamble), Mythic (trigger, pool), Lair (initiative, preamble) · M
+- [ ] **A8.1** Role headers: Legendary (pool, preamble), Mythic (trigger, pool), Lair (initiative, preamble) · M · *delivered early in A7 build 145 (`RoleHeaderEditor`, Step 38) — confirm at A8.0, then tick*
 - [ ] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC) · L
 - [ ] **A8.3** Multiattack role: reference chips by id with ⚠ for dangling targets · M
-- [ ] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M
+- [ ] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirm at A8.0, then tick*
 - [ ] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor` (+ `VillainActionsEditor` per A8.0); delete the components (git keeps history) · M
 - [ ] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M
 - [ ] **A8.7** e2e adjustments for removed panels · S
+- [ ] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Today the chip shows "3/Day" from limited use while Apply writes free recharge text (*added A7*) · M
+- [ ] **A8.10** Head chips follow the plate's word order: the plate prints "2nd Level Evocation" (tier first) and "Evocation Cantrip", the chips read discipline then tier (*added A7*) · S
+- [ ] **A8.11** Classic prose parity: `text2024` omits school/level, components, duration and target qualifiers that the modern plate prints for structured abilities; decide placement per field and prove both templates (*added A7*) · M
+- [ ] **A8.12** List grammar: `listJoin` prints "x, and y" for two items (multiattack, damage lists); use "x and y" and keep the serial comma for three or more, with sheet and export tests (*added A7*) · S
 - [ ] **A8.8** Close: commit `one actions module: studio covers every role, duplicate panels retired`, docs ritual · S
 
 **Done when:** CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed; builder mounts ≤ 14 panels.
@@ -376,6 +392,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A9.7** Replace the 6 `BasicsEditor` tags and 7 `AttackPanel` tags; delete `DynamicReferenceSelect.vue` · M
 - [ ] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
 - [ ] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
+- [ ] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S
+- [ ] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M
 - [ ] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S
 
 **Done when:** BND-001…008, REF-001 (fields), REF-002 (store revision) proven; DEF-09 closed.
@@ -462,6 +480,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M
 - [ ] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M
 - [ ] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M
+- [ ] **A13.8** Verify BS-40: the delegated help host, print rules and every global `.statblock` selector either ignore composer previews or include them on purpose; record the decision (*added A7*) · S
 - [ ] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S
 
 **Done when:** SEL-002…008, TIP-002…005, TIP-007, QA-005 proven.
@@ -612,6 +631,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **B4.3** Fixtures across targets: Soul Barrage, Veil, spell plates, check rows (TASK-023) · M
 - [ ] **B4.4** Text targets use `text2024` and check-row text; HTML/PNG embed the grammar CSS (BS-11, BS-13) (TASK-024) · L
 - [ ] **B4.5** Preview dialog with omissions; Spellcasting placement option (D-02) (TASK-025) · M
+- [ ] **B4.7** Improved Initiative and Tarrasque build actions, bonus actions, reactions (with triggers) and traits from the shared prose projection and `splitEntryLead`, as their legendary/mythic entries already do (BS-41) (*added A7*) · M
+- [ ] **B4.8** Tarrasque legendary entries and header values (senses, languages, defences) cross the export boundary (*added A7*) · S
+- [ ] **B4.9** LaTeX escapes raw monster strings — name, size/type/alignment, AC type, attack names and types — with the boundary's escaping (*added A7*) · S
+- [ ] **B4.10** Markdown and Homebrewery omit empty header lines (Saving Throws, Senses, Languages) and the dangling comma when alignment is empty (*added A7*) · S
 - [ ] **B4.6** Round-trip `.5emm.json`; close · S
 
 **Done when:** DATA-002, SEC-001, COMP-001…002 proven.

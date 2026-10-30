@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 146 · 2026-10-29 · seven roles and section headers integrated; preservation/conversion matrix and A7 closeout remain open; earlier archives preserved |
-| **State at hand-over** | Build 146 code `10f7aa0`, tag `rc-2.4.3-build-146-a7-safe-role-transitions`. Latest 9106; exact 146 at 9110; protected 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9100. 216 core tests; production build; focused lint zero errors (1 existing store warning); 39 browser steps zero errors; 5-theme spellcasting and 12-theme help pass. 68/193 done, 1 active, 124 pending. Existing schema/sample/browser state retained. |
-| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 (A4 closeout §6.2; A5 §6.3; A6 §6.4) |
-| **Current loop** | A7 remains active. Seven roles and section contexts integrated. Conversion policy now prevents source loss: compatible action roles move by patch; different models create reviewed copies. Remaining A7.7b gates: complete normalized old-save field/order audit and export-format runtime proof; then A7.8. |
+| **Version** | v2.4.3 build 148 · 2026-10-30 · A7 closed: older saves keep every authored field (147) and text exports print every role as prose (148); earlier archives preserved |
+| **State at hand-over** | Code `49edfdf`, tag `rc-2.4.3-build-148-a7-prose-exports`. Candidate 148 on 9100 (origin of the configured Seraphic Herald sample) and 9106 (latest); exact 148 at 9113, 147 at 9112, 146 at 9110, 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9114. 231 core tests; production build; focused lint zero errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. 70/204 done, 0 active, 134 pending. |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
+| **Current loop** | A8 is next and ready: run A8.0 (capability matrix) first. A8.1 and A8.4 were delivered early inside A7 — confirm and tick them at A8.0. |
 
 ---
 
@@ -126,9 +126,9 @@ For each card: (1) open every file listed in **Open first** and confirm the line
 | Canonical documents (versioned) | `F:\AI_Resources\DNDSheet\docs\roadmap\` |
 | Evaluation mirror | `C:\Users\Administrador\Documents\Codex\2026-10-29\ttrpg-gm-craft-c-users-administrador\outputs\` · copy from canonical docs and verify SHA-256 equality |
 | v1 documents backup | `outputs\_previous-v1\*.v1-0819.md` and git `b83ee56` |
-| QA evidence | `test/exhaustive-ui-fuzz.js`, `test/spell-plate-browser-smoke.js`, `test/statblock-help-browser-smoke.js`; current logs in `.codex-temp/build144-*.log` |
-| Evaluation / development | latest archived RC at 9106; isolated 144 at 9107; predecessor 143 at 9108; use 9110 for mutable development; protected 139 remains at 9100 |
-| Built-in browser | discover the current tab for `http://localhost:9106/index.html#/` each session; tab IDs are transient; doc check page `/__doccheck.html` is git-excluded |
+| QA evidence | `test/exhaustive-ui-fuzz.js` (41 steps), `test/spell-plate-browser-smoke.js`, `test/statblock-help-browser-smoke.js`; build 147–148 logs in `%LOCALAPPDATA%\Temp\dndsheet-a7-backup\` (`e2e147.log`, `e2e148.log`, `export-probe148.log`, exported files under `exports148\`) |
+| Evaluation / development | Configured sample origin 9100 and latest 9106 both serve frozen 148; exact candidates keep their own ports (148 → 9113, 147 → 9112, 146 → 9110, 145 → 9109, 144 → 9107, 143 → 9108, 142 → 9105, 139 → 9114). 9111 serves an untagged, unverified Codex staging folder for build 147 — not a candidate. Pick a free port (9115+) for mutable development |
+| Built-in browser | The owner's configured sample (Seraphic Herald) lives in origin `http://localhost:9100` storage; 9106 and 9110 hold only default or probe monsters. Discover tabs each session; tab IDs are transient; a tab opened before a promotion needs a real reload (cached index). Doc check page `/__doccheck.html` is git-excluded |
 | Persisted state keys | `app.monster`, `app.editor`, `app.spells`, `app.templates`, `app.combat`, `app.character` |
 | Toolchain | Node 22.23 · Quasar ^2.16 · @quasar/app-vite ^1.9 · Pinia ^2 · TypeScript ^4.5 |
 
@@ -154,9 +154,9 @@ npx quasar build
 1. Build `dist/spa`, copy into a new `.codex-temp/release-candidates/<tag>/spa`, and validate that archive on an isolated port. Never point a protected/latest evaluation server at mutable `dist/spa`.
 2. Commit/tag the code; record evidence in `release-candidate.json`; generate and verify `SHA256SUMS.txt` (excluding itself). Preserve the prior artifact/tag before promotion.
 3. Inspect every IPv4/IPv6 listener and confirm identity/root before stopping one. Both addresses must serve the same frozen archive. Build 144 corrected a stale IPv6 server serving mutable dist while IPv4 served archived 143.
-4. After proofs pass, promote the new archive to `localhost:9106`. Keep predecessor 143 at 9108 and exact 144 at 9107. Use a hidden persistent server process that outlives the tool call.
+4. After proofs pass, promote the new archive to `localhost:9100` (the origin holding the owner's configured sample, D-20) and to `localhost:9106`. Move the previous candidate to a free port instead of stopping it. Serve 9100 with `python -m http.server <port> --directory <archive>\spa` so the root URL keeps working; `.codex-temp/serve-build.js` only serves explicit file paths (`/index.html`). Use a hidden persistent server process that outlives the tool call.
 5. Compare served index/asset hashes on `127.0.0.1`, `[::1]` and `localhost`; verify the visible footer and predecessor checksums. Retaining the origin preserves configured `app.monster` state without storage migration or fixture overwrites.
-6. Mutable development uses 9110. Browser tests use isolated temporary profiles. Inspect actual roots/processes each session; HTTP 200 and an open tab alone do not identify a release.
+6. Mutable development uses a free port (9115+); 9110 serves exact 146. Browser tests use isolated temporary profiles. Inspect actual roots/processes each session; HTTP 200 and an open tab alone do not identify a release.
 
 ### 2.3 Built-in browser probes (run with the JavaScript tool on tab `seed`)
 
@@ -232,6 +232,12 @@ const m = document.querySelector('#q-app').__vue_app__.config.globalProperties.$
 | Legacy `!important` rules | new styles "do nothing" | scope under `#render .statblock`, use tokens (§4.1 of the spec) |
 | Device bridge drops in long sessions | lost context | commit at green; write the packet before long steps |
 | `public/__doccheck.html` is git-excluded but `quasar build` copies `public/` into `dist/` | a QA page in a release build | delete it before release builds; A17 moves it to `tools/qa/` |
+| Remote shell calls end after ~60 s | builds and the 41-step e2e outlive the call; output looks missing | start long jobs with `Start-Process` (hidden) writing a log plus an exit marker, then poll the log |
+| Finding Vue components by name in a production build | `type.name` lookups miss and `setupState` is undefined | drive the real control (toolbar Open File, download menu) and read stores through `#q-app.__vue_app__` |
+| Comparing previews with sheet entries | traits render as `.trait` on the sheet but `.action` in previews | search `#render .statblock :is(.trait, .action)` and compare `innerHTML` |
+| Toolbar after app mount | the header can render a beat after `#q-app` mounts | poll for `header .mdi-folder-open` before clicking |
+| Composer previews carry `.statblock` | bare `document.querySelector('.statblock')` hits a preview first | scope queries to `#render .statblock` (BS-40) |
+| A collapsed studio expansion | hidden chips cannot take focus; keyboard steps silently fail | expand `.q-expansion-item--collapsed` ancestors before focusing a chip |
 
 ---
 
@@ -468,7 +474,7 @@ Next loop readiness ..... A4 🟢
 
 ---
 
-### 6.5 A7 · Composer chain and templates — 🟡
+### 6.5 A7 · Composer chain and templates — ✅ `49edfdf` · `rc-2.4.3-build-148-a7-prose-exports`
 
 | | |
 |---|---|
@@ -483,10 +489,10 @@ Next loop readiness ..... A4 🟢
 | **Skills** | `build-web-apps:frontend-app-builder` · `design:accessibility-review` · `design:ux-copy` · `impeccable` · `superpowers:test-driven-development` · `engineering:testing-strategy` |
 | **Research** | Keyboard model for chip rows (roving tabindex), menu/dialog focus return and Escape semantics (APG toolbar/grid/menu patterns); narrow viewport overflow; current range model cannot store a long-range pair (BS-39). |
 | **Traps** | Do not lose fields from the editor inventory; keep authored casing; never auto-replace authored actions; template-owned missing optionals must clear stale values; preview must be pure; preserve arrays/schema; do not claim 80/320 ft. with a single-distance model; no sample fixture mutations. |
-| **Plan** | A7.0/1/2 ✅ → A7.3 ✅ seven roles and section headers integrated → A7.4 ✅ shared renderer previews for seven roles → A7.5/6/7a ✅ → A7.7b ◐ trait/reaction matrix passing, all-role matrix open → A7.8 close only after full acceptance. |
+| **Plan** | A7.0–A7.6 ✅ → A7.7a ✅ → A7.7b ✅ (146 role transitions, 147 old saves and order, 148 exports) → A7.8 ✅ closed at build 148 |
 | **Verify already passed** | 159 core tests; production build; changed-file lint; 37 browser steps with zero console errors/runtime exceptions; five-theme spellcasting; twelve-theme help/contrast; diff check. Step 37 proves trait draft cancel/validation, focus return, exact modern/classic HTML parity, grouping/custom heading, live spaces, 375px popup fit, legacy partial-annotation automatic CR with preserved inclusion, and reload persistence. Build 145 additionally proves lair/header interactions and narrow stacking in Step 38 with 165 core tests and all 38 steps passing. This still does not prove every field, every role transition, or every export format. |
-| **Remaining proof** | Retain build 145 lair/header proofs; prove all seven descriptor-to-plate orders; complete field preservation, old-save, cross-role conversion, keyboard/narrow-view and edit→preview→sheet matrix; retain trait/reaction regressions; only then close A7 through A7.8. |
-| **Next-loop prep** | Prepare A8's capability matrix from actual surviving panel fields only after A7 role adapters stabilize; preserve schema and arrays; decide BS-26/27 separately. Do not begin panel retirement before every capability has a verified studio home. |
+| **Remaining proof** | None — closed at build 148; reconciliation in the backlog's A7 section and packet §6.5.2. Keep browser Steps 32–41 as regression |
+| **Next-loop prep** | A8.0 is staged in §6.6 and the Build 147–148 packet; A8.9–A8.12 carry the composer polish found while closing A7 |
 
 ### 6.5.1 Build 144 partial-slice closing packet
 
@@ -503,7 +509,38 @@ Next loop readiness ..... A4 🟢
 | Release | Prior archive/tag retained; latest serves frozen 144 on both loopback families; stable origin preserves configured browser data |
 | Next grouped work | Lair entry/context → remaining role headers → complete preservation/conversion matrix → A7 closeout → A8 retirement after capability parity |
 
-### 6.6 A8 · One Actions module — 🟡
+### 6.5.2 A7 closing packet — builds 147–148
+
+```text
+Loop / tasks ............ A7 · A7.0–A7.8 (ticked 10 / 10)
+Outcome for the user .... Every role is edited as a chain of plate cells with a live preview that is the
+                          sheet's own entry; older saves keep every authored field; text exports print
+                          every role as prose in either template.
+Commits ................. 8d40537 → 7f1e4ea (build 147) → 49edfdf (build 148) · docs commit follows
+Diff .................... 147: 8 files +194/−236 · 148: 12 files +372/−333
+Tests ................... npm test 231/231 · new: ComposerPreservation (6), ExportMarkup (9)
+Lint .................... eslint touched files: 0 errors (existing warnings only)
+Browser proofs .......... 41 steps, zero runtime exceptions/console errors; Step 35 type matrix 56/56;
+                          Step 40 v8-labelled file via Open File: lost [], unmatched [], usage,name, persisted;
+                          Step 41 exports: problems [], unchanged state, modern = classic for all formats
+Themes .................. help 12 themes · spellcasting 5 themes · preview type parity 12 themes
+Requirements proven ..... CMP-009, CMP-010, CMP-011 (reconciliation in backlog A7)
+Defects closed .......... DEF-12, DEF-19 … DEF-25
+Blindspots resolved ..... — · new BS-40 (previews carry .statblock), BS-41 (II/Tarrasque raw projections)
+Decisions ............... D-18 export boundary · D-19 canonical docs in docs/roadmap · D-20 evaluation origin 9100
+Deviations from plan .... Adopted and split the uncommitted Codex build-147 work: kept its migration, order and
+                          export-boundary changes; rewrote browser Step 40 (real Open File control, .trait
+                          twins) and replaced plate flattening with the prose projection
+Known limits ............ Improved Initiative/Tarrasque actions and reactions still come from raw descriptions
+                          (B4.7–B4.8); LaTeX does not escape raw monster strings (B4.9); plain-text, HTML and
+                          Foundry exports untouched; the v8 witness is current-shaped data
+Rollback point .......... 8d40537 (code) · rc-2.4.3-build-146-a7-safe-role-transitions (candidate)
+Next loop readiness ..... 🟢 A8 — run A8.0 first
+```
+
+Release handling: candidates 147 and 148 are frozen with `release-candidate.json` and verified `SHA256SUMS.txt` (97 entries each, QA page excluded) and tagged. Candidate 148 replaced 139 on 9100 — the owner asked that new candidates reuse the configured sample — and also serves 9106; 139 moved to 9114 untouched. The sample's stored hash (`229a780f…`) was identical before and after the switch.
+
+### 6.6 A8 · One Actions module — 🟢 ready (A7 ✅)
 
 | | |
 |---|---|
@@ -511,12 +548,12 @@ Next loop readiness ..... A4 🟢
 | **Release · feature** | R2 · AU-03 (part 2) · fixes DEF-08 |
 | **Entry criteria** | A7 ✅ · capability matrix complete · BS-26/27 decided or defaulted |
 | **Read in the spec** | §9 AU-03 capability table · §13.3 D-10 · §14 CMP-012…015 |
-| **Backlog tasks** | A8.0 – A8.8 |
+| **Backlog tasks** | A8.0 – A8.12 (A8.9–A8.12 added by A7; A8.1 and A8.4 delivered early — confirm at A8.0) |
 | **Open first** | `pages/MonsterBuilder.vue` L37–57 · `TraitsEditor.vue` (388) · `widgets/AttackPanel.vue` (586) · `MultiattackEditor.vue` (222) · `ReactionsEditor.vue` (152) · `LegendaryActionsEditor.vue` (243) · `MythicActionsEditor.vue` (150) · `LairActionsEditor.vue` (132) · `VillainActionsEditor.vue` |
 | **Skills** | `code-refactoring:refactor-clean` · `superpowers:requesting-code-review` · `engineering:testing-strategy` · `ui-design:interaction-design` |
 | **Research** | none beyond the matrix |
 | **Traps** | Multiattack references by id survive reorder · legendary costs and pools live in different arrays · deleting components breaks imports elsewhere (grep before delete) · e2e steps that open removed panels |
-| **Plan** | A8.0 matrix → A8.1 role headers → A8.2 attack role → A8.3 multiattack → A8.4 reaction/trait chips → A8.5 unmount + delete → A8.6 fixture diff → A8.7 e2e → A8.8 close |
+| **Plan** | A8.0 matrix (tick A8.1/A8.4 if covered) → A8.2 attack role → A8.3 multiattack → A8.9 usage editor → A8.10 head word order → A8.11 classic prose parity → A8.12 list grammar → A8.5 unmount + delete → A8.6 fixture diff → A8.7 e2e → A8.8 close |
 | **Verify** | builder panel count ≤ 14 (DOM probe) · three saved monsters render byte-identical plates · every matrix row ticked |
 | **Exit** | CMP-012…015, UX-006, COMP-002 proven; DEF-08 closed |
 | **Defaults** | Villain actions stay a panel; CR annotation cards stay in the studio |
@@ -696,9 +733,9 @@ Every Track B card inherits the protocol of §1 and the v1 package notes; the ro
 
 📍 *Handoffs › 8 Hand-over* — **If you are a new session, start here.**
 
-1. **State** — `statblock-overhaul`; code `7f2e572`, tag `rc-2.4.3-build-144-a7-trait-chain`; latest origin `http://localhost:9106/index.html#/`, exact candidate also at 9107. Preserved 143 is at 9108, 142 at 9105, protected 139 at 9100. Core 159/159; build, changed-file lint, 37 browser steps with zero errors, five-theme spellcasting and twelve-theme help/contrast pass. Six roles integrated; A7 remains open. Status: 67/193 done, 2 active, 124 pending.
-2. **What exists** — A0–A6 shipped. Build 137 adds the pure `ACTION_TEMPLATES` catalog, grouped picker, explicit replacement warning, cancel/apply flow, and template field ownership rules. The temporary Soul Barrage browser fixture is changed only in an isolated test browser; the user's configured monster/sample data is untouched.
-3. **What to do next** — Continue A7.7b/A7.8 using §6.5 and its closure packet. Preserve four `MonsterAction` routes plus reaction/trait adapters. Retain lair/context and section headers; prove all-role order, field/conversion preservation and persistence. Retain Steps 34–37 and live-space/popup/CR-inclusion regressions. Keep BS-39 normal/long range explicit; A8 retirement and A9 provenance stay downstream.
+1. **State** — `statblock-overhaul`; code `49edfdf`, tag `rc-2.4.3-build-148-a7-prose-exports`; candidate 148 on 9100 (configured Seraphic Herald) and 9106, exact 148 at 9113, 147 at 9112, 146 at 9110, 139 at 9114. Core 231/231; build; focused lint 0 errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. Status: 70/204 done, 0 active, 134 pending; 8/28 loops shipped.
+2. **What exists** — A0–A7 shipped. The studio edits all seven roles as plate-ordered chains with a live preview that is the sheet's own entry (markup and computed styles proven). Older saves keep every authored field through one migration; text exports print every role as prose through one boundary (D-18). The owner's configured sample and storage were never modified; a byte-exact snapshot sits in `%LOCALAPPDATA%\Temp\dndsheet-a7-backup\origin-9100-app.*.json`.
+3. **What to do next** — A8.0: build the capability matrix from the surviving legacy panels, tick A8.1 and A8.4 if the studio already covers them, then retire panels only where every field has a verified studio home. Keep browser Steps 32–41 as regression. A8.9–A8.12 hold the composer polish found while closing A7.
 4. **Where truth lives** — Versioned canonical files are `docs/roadmap/`; `outputs/` is the evaluation mirror. Spec defines intent/contracts, backlog defines order/status, handoffs define preparation/evidence. Synchronize all three and verify mirrored hashes before closing a slice.
 5. **House rules** — local-only work; short lowercase commit messages; no AI-attribution trailers; one outcome per loop; prove before you tick.
 
@@ -777,3 +814,18 @@ Preparation: load executing-plans, verification-before-completion, relevant mode
 **Following bounded group: exports.** Read Markdown/Homebrewery/LaTeX projection paths and their sanitizers; add format-level modern lair tests, token/prose expectations and non-action-role cases. Reject raw web-card markup through the export boundary. Only after those proofs pass may A7.8 close and A8 preparation begin.
 
 Preparation skills: executing-plans, verification-before-completion, archetypes functional-core, engineering code review, UX copy, and the relevant import/export guidance. Keep cross-model creation labeled **Create copy**: unsupported fields stay on the retained original, not invisibly active on the new model. No further compatibility issue authorizes silent deletion or fabricated model fields.
+
+## Build 147–148 closing packet and next prepared slice
+
+| Item | Evidence / handoff |
+|---|---|
+| Base → result | `8d40537` → `7f1e4ea` (147, tag `rc-2.4.3-build-147-a7-old-save-preservation`) → `49edfdf` (148, tag `rc-2.4.3-build-148-a7-prose-exports`) |
+| Inherited work | An uncommitted Codex build-147 working tree (export boundary, migration fixes, preservation tests, browser Step 40) was backed up to `%LOCALAPPDATA%\Temp\dndsheet-a7-backup\codex-wip-147\`, split into the two slices and finished; its unverified staging folder `rc-2.4.3-build-147-a7-preservation-closeout` is left on disk and on 9111 untouched |
+| Delivered 147 | Shared migration on file import; existing values kept by pre-v9 upgrades; spellcasting policies and legacy language names survive; reaction chain usage → name; preview computed-style parity check |
+| Delivered 148 | Prose projection for Markdown, Homebrewery, LaTeX, Tarrasque and Improved Initiative; one export boundary; LaTeX/II legendary and mythic mechanics; II mythic crash; multiattack, mythic-lead and default-text defects |
+| Verification | Core 222 → 231; production builds; lint 0 errors; full e2e 40 → 41 steps with zero errors; help 12 themes; spellcasting 5 themes; RED runs recorded for the migration tests and the misnested mythic lead |
+| Status | 70 done, 0 active, 134 pending (204 tasks); 8/28 loops shipped; A7 closed |
+
+**Next bounded group: A8.0 capability matrix.** Open every surviving legacy panel in `MonsterBuilder.vue` and list each field with its studio home, its renderer owner and its export owner. Mark A8.1 and A8.4 done if the studio already covers them (role headers, reaction trigger, trait cadence/display). Decide BS-26/27. Do not unmount a panel until every one of its fields has a verified home.
+
+**Following group: A8.9–A8.12 composer polish.** One typed usage editor (recharge, uses per day or rest, none); head chips in the plate's word order; classic prose parity for structured school/level/components/duration/qualifiers; two-item list grammar.

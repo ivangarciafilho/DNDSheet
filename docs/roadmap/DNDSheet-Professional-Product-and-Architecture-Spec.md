@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 146** · 2026-10-29 · partial A7 candidate `rc-2.4.3-build-146-a7-safe-role-transitions`; build 144 and earlier candidates remain preserved; formula provenance belongs to A9 |
+| **Version** | **v2.4.3 build 148** · 2026-10-30 · A7 closed: older saves keep every authored field (build 147 `7f1e4ea`) and text exports print every role as prose without web markup (build 148 `49edfdf`); candidate `rc-2.4.3-build-148-a7-prose-exports`; every earlier candidate archive and tag preserved; A8 next; formula provenance belongs to A9 |
 | **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 146 code commit `10f7aa0`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
 | **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **68 / 193 tasks complete; 1 active; 124 pending** |
@@ -226,13 +226,20 @@ Each defect has a source location and the loop that closes it. *Verified* means 
 | DEF-09 | Reference picker lists flat integers 0…100 and emits numbers, losing the formula | `DynamicReferenceSelect.vue` | A9 |
 | DEF-10 | Tooltip coverage ≈ 17 % of interactive controls | 61 `.vue` files | A13–A16 |
 | DEF-11 | Specificity debt: 496 `!important` in `app.scss`; legacy `.trait > div:first-of-type {display:inline}` | `css/app.scss`, `WebRenderer.vue` L1696 | A3 (contained) · A16 (cleanup) |
-| DEF-12 | Preset names are title-cased by hand ("Veil Of Radiance") | `ActionsEditor.vue` L211 | A7 |
+| DEF-12 | Preset names are title-cased by hand ("Veil Of Radiance") | `ActionsEditor.vue` L211 | A7 ✅ closed by A7.6 (build 137 `df95179`): presets come from the catalog with authored casing |
 | DEF-13 | CDP e2e expects pre-plate markup in places (`.action-composite-pill` first cell text) | `test/exhaustive-ui-fuzz.js` L2360 | A17 |
 | DEF-14 | `STACK_STATE.md` claims "100 % complete" for features the owner's review found broken | `STACK_STATE.md` | A17 |
 | DEF-15 | Metamagic "flexible casting" row printed a literal **x** placeholder | historical `WebRenderer.vue` L585–590 | A4 ✅ removed; no unsupported conversion is invented |
 | DEF-16 | Metamagic option costs stripped the word "to" from user-facing phrasing | historical `WebRenderer.vue` L592–595 | A4 ✅ replaced with explicit catalog cost phrases |
 | DEF-17 | Class-casting components rendered doubled parentheses "((V, S))" | historical template and badge pseudo-elements | A4 ✅ one visible formatter; pseudo-parentheses neutralized |
 | DEF-18 | Generic class-spellcasting prose duplicates the summary and spell list after migration to the plate | default `presets.classSpellcasting` was rendered below the new plate | A4 closeout ✅ `ae16b86`; keep authored custom preambles |
+| DEF-19 | Opening a saved file ran a private copy of the migration: it set `alphaTrait` instead of `alphaTraits`, and pre-v9 upgrades overwrote existing stat, save, effects, range, limited-use and trigger values | `useFileLoader.ts` updateMonster; `MigrateMonsterSchema.ts` v9 step | A7 ✅ build 147 `7f1e4ea`: file import uses the shared migration; existing values are kept |
+| DEF-20 | Library, import and ingest normalisation rebuilt spellcasting from a fixed key list, dropping optional policies (pact resource, cadence maps, classes) | `MigrateMonsterSchema.ts` spellcasting block | A7 ✅ build 147: unknown and optional keys survive |
+| DEF-21 | Legacy language strings lost the letters "it" inside words ("Gith" → "Gh") and received time-based ids | `MigrateMonsterSchema.ts` languages block | A7 ✅ build 147: anchored parsing, stable `lang-legacy-N` ids |
+| DEF-22 | With the Modern Modular template, Markdown, Homebrewery and LaTeX exports contained web plate HTML; every export leaked the HP number-pill markup | text exporters shared the web projection | A7 ✅ build 148 `49edfdf`: exports use the prose projection and one export boundary (D-18) |
+| DEF-23 | LaTeX and Improved Initiative legendary/mythic entries printed only the description, dropping structured rolls, saves and outcomes; Improved Initiative crashed on any mythic action | `useLatexRenderer.ts`, `useImprovedInitRenderer.ts` | A7 ✅ build 148: entries come from the shared prose projection; the rpgtex legendary list is kept |
+| DEF-24 | A multiattack made only of actions ended "followed by , and undefined"; Markdown printed the Multiattack label twice | `useProcessTokens.ts` multiattack join; Markdown templates | A7 ✅ build 148 |
+| DEF-25 | The mythic trait lead closed its tags out of order (`</b></i>`); the default mythic trigger text contained `{}NAME}` | `useProcessTokens.ts`; `monster-store.ts` default | A7 ✅ build 148 |
 
 ### 2.4 Inherited facts from the v1 audit (still true)
 
@@ -1919,7 +1926,7 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 
 > **One studio for every ability role; each entry is edited as a chain of chips that looks exactly like the plate it will become.**
 
-**Status** ◐ partial — A7 active · **Loops** A7 (chain + templates) · A8 (retire duplicate panels) · **Requirements** `CMP-009…015`, `UX-006` · fixes DEF-08, DEF-12
+**Status** ✅ A7 shipped (build 148 `49edfdf`) · A8 next · **Loops** A7 (chain + templates) · A8 (retire duplicate panels) · **Requirements** `CMP-009…015`, `UX-006` · fixes DEF-08, DEF-12 ✅
 
 **🎯 Value** — The editor shrinks from 21 to ≈ 13 panels; composing an ability is clicking chips in the same order the GM reads them.
 
@@ -1930,7 +1937,7 @@ Tests: `Bindings.test.ts` (resolver: order, cycles, failures, no-op), field-type
 **🛠 Techniques**
 - `src/components/editor/composer/ComposerChain.vue`, `ChainCell.vue`, and `ChainOutcomesEditor.vue` compose the action-family editor. The current controls are typed per-cell editors (catalog choices, numeric/formula-compatible input, text, outcome/effect editors); they do not claim that every field is a `CatalogSelect` or that A9 formula provenance is complete.
 - `src/core/domain/composer-chain.ts` owns action-family projections/patches; `reaction-composer.ts` owns reaction trigger/usage edits; `trait-composer.ts` owns trait cadence drafts, policy patches, validation, and bounded phase choices. `action-composer.ts` owns descriptor metadata. `ActionsEditor.vue` routes all seven roles into existing Pinia collections; schemas and storage arrays stay unchanged. `role-headers.ts` owns typed section context; `RoleHeaderEditor.vue` owns isolated drafts, validation feedback and Apply/Cancel. Descriptor field paths do not imply a shared `MonsterAction` model.
-- The chain's live preview calls existing action/reaction projection paths and sanitizes the generated markup; it applies the current theme CSS. This reuses production projection semantics, but does not yet prove CMP-009 across all seven roles or complete A7 acceptance. Outcomes keep their existing plate-body ordering. Prose remains owned by the existing description editor rather than being duplicated in the chain.
+- The chain's live preview calls the stat block's own per-entry projection and sanitizer for all seven roles and applies the current theme CSS. Parity is proven twice: identical markup for every role in both templates (browser Steps 35–40) and identical computed styles across 12 themes, both templates and both rule styles (Step 35, 56/56). Outcomes keep their existing plate-body ordering. Prose remains owned by the existing description editor rather than being duplicated in the chain.
 - Role-model boundary: four roles share `MonsterAction`; reaction and trait use distinct typed adapters. Trait cadence preserves tag-override precedence and conditional tag text via existing `computeTraitTag`. Trait section grouping is separate from its entry plate: conditional grouping takes precedence over recharge grouping. Lair uses a readonly role projection and a separate section-context adapter; its displayed label and initiative are not an entry name. Prose remains owned by the established rich-text editor.
 - Templates move to a catalog `ACTION_TEMPLATES` (grouped: Weapon attacks · Spell attacks · Saves & areas · Auras & utility); names keep authored casing (DEF-12). Build 137 uses a grouped Quasar dropdown; a searchable CatalogSelect remains an alternative only if catalog growth makes menu scanning costly, and should reuse the same catalog rather than create another data source.
 - Build 137 establishes the catalog contract in `core/domain/action-templates.ts`: each stable `id` and user-facing name/category/summary maps to a partial `MonsterAction` patch. The grouped picker is a bounded first slice; it does not claim the chain or per-role variants are implemented.
@@ -2508,7 +2515,7 @@ stateDiagram-v2
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 18 / 29 tasks |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 20 / 33 tasks (A6 ✅ · A7 ✅) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -2527,7 +2534,7 @@ stateDiagram-v2
 | A4 | Spellcasting plate | SB-04 | A3 | 1–2 | ✅ `f35cd6d` |
 | **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ✅ build 136 |
-| A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ◐ |
+| A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ✅ `49edfdf` build 148 |
 | A8 | One Actions module | AU-03 | A7 | 3–5 | ☐ |
 | A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ☐ |
 | A10 | Caret intellisense + macro menus | AU-04 | A9 | 3–4 | ☐ |
@@ -2763,6 +2770,8 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-37 | Screenshot storage policy | Keep out of git; small PNGs only under `docs/evidence/` | A17 | ☐ |
 | BS-38 | Stores holding monster copies (templates, combat) need ids | Inventory | B1 | ☐ |
 | BS-39 | Current range model stores only one distance and cannot represent a normal/long range pair | Decide model, migration/backward compatibility, labels, projection/export behavior; add round-trip tests before claiming paired range | A7/A8 | ☐ |
+| BS-40 | Composer previews also carry the `.statblock` class: confirm the delegated help host, print rules and any global `.statblock` selectors ignore or deliberately include previews (browser tests were scoped to `#render .statblock` in build 142) | Probe help hover/focus inside a preview; list global selectors | A13 | ☐ |
+| BS-41 | Improved Initiative and Tarrasque exports build actions, bonus actions, reactions and traits from raw descriptions, so structured mechanics and reaction triggers are missing there; Tarrasque legendary entries and header values bypass the export boundary | Move them onto the shared prose projection and boundary; add per-target format tests | B4 | ☐ |
 
 ### 13.3 Decision log
 
@@ -2785,6 +2794,9 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | D-15 | Track A completes before Track B (pull-forward on request) | interleave | Owner's active specification first | proposed |
 | D-16 | Commits: short lowercase phrases, no AI-attribution trailers | — | Owner rule | standing |
 | D-17 | Applying a template requires confirmation for existing content, preserves identity/role/economy/policy, and deep-clones template-owned values | Silent overwrite; shared nested catalog objects | Prevent data loss and cross-action mutation without changing persisted schema | 2026-10-29 |
+| D-18 | Text exports always render the prose projection (`useTextRenderer({ web: false })`) and cross one export boundary (`exportMarkup`): authored emphasis and breaks survive, classed web chrome is dropped, Markdown and LaTeX special characters are escaped | Flatten web plates at export time; one regex formatter per exporter | Exports must not depend on the visual template; one tested boundary replaces three regex copies | 2026-10-30 · build 148 |
+| D-19 | Canonical roadmap documents live in `docs/roadmap/`; the outputs folder is a SHA-256-verified mirror (supersedes D-12) | Canonical in outputs | Git history is the source of truth; the mirror serves evaluation | 2026-10-30 |
+| D-20 | Candidates are evaluated on the origin that holds the owner's configured sample (`localhost:9100`, Seraphic Herald); `localhost:9106` mirrors the latest candidate; every candidate keeps its own exact port | Promote only to 9106 | Browser storage is per origin: promoting where the sample lives shows new work on real data with no storage migration | 2026-10-30 · owner instruction |
 
 ---
 
@@ -3174,6 +3186,8 @@ $env:DNDSHEET_NO_OPEN='1'; npx quasar dev --port 9100   # dev server without ope
 | **v2.4.3 build 142** | 2026-10-29 | Add typed chain projection/patch domain and integrated editable cells, outcomes, keyboard interaction, responsive layout, and existing-renderer preview for action/bonus/legendary/mythic entries; 149 core tests, production build, focused lint (0 errors, 5 warnings), browser steps 34–35, five-theme spellcasting smoke, and 12-theme help/contrast checks pass; no schema/sample-data changes; trait/reaction/lair adapters, headers, role-wide proofs, and A7 closeout remain open; build 139 preserved |
 | **v2.4.3 build 143** | 2026-10-29 | Add typed reaction-chain projection/patches and integrate reaction trigger/usage editing with shared sanitized renderer preview; preserve reaction model/collection and configured sample data; 152 core tests, production build, focused changed-file lint, exhaustive browser steps 1–36, five-theme spellcasting smoke, and 12-theme help/contrast checks pass; trait/lair adapters, complete role headers, role-wide proofs, and A7 closeout remain open; builds 142 and 139 preserved |
 | **v2.4.3 build 144** | 2026-10-29 | `7f2e572`: integrate typed trait cadence and display policy, phase/grouping/custom-heading/CR controls, trait templates, exact renderer preview, narrow popup sizing, and live heading whitespace preservation; 159 core tests and 37 browser steps pass with zero errors plus five-theme spellcasting and twelve-theme help/contrast checks. Six roles integrated; lair/remaining headers/matrix/closeout open. Correct task state to 67 done, 2 active, 124 pending; preserve archives and stable browser origin. |
+| **v2.4.3 build 147** | 2026-10-30 | `7f1e4ea`: opening a file runs the shared migration and older saves keep every authored field (v8–v11 fixtures, field-complete round trips, unknown legacy keys); the reaction chain lists usage before the name; the preview's computed styles match the sheet across 12 themes, both templates and both rule styles; 222 core tests and 40 browser steps |
+| **v2.4.3 build 148** | 2026-10-30 | `49edfdf`: closes A7. Text exports use the prose projection and one export boundary (D-18); LaTeX and Improved Initiative legendary/mythic keep their mechanics; DEF-19…DEF-25 closed; candidates promoted to the configured-sample origin (D-20); 231 core tests and 41 browser steps |
 | **v2.2** | 2026-10-29 | Recorded A4 closeout `ae16b86`, resolved duplicate generic preamble while preserving custom text, aligned browser assertions with semantic badges and no-duplicate skill grouping, and verified all 23 e2e groups |
 
 
@@ -3188,7 +3202,7 @@ This release completes adapter integration, not the A7 acceptance matrix. Use th
 | Edit mythic context | Same section editor, mythic descriptor | Trait name/recharge/trigger description and preamble; optional prose stays optional. Existing action IDs/costs retained. |
 | Edit lair context | Same section editor, lair descriptor | Whole initiative 0–40, default 20; preserve other initiative settings. `{LAIR_INITIATIVE}` drives default preamble, including 0. Custom text is never rewritten to match initiative. |
 | Apply or cancel | Local primitive draft → validation → current-store patch | Invalid numbers disable Apply. Cancel writes nothing. Apply spreads current collections/configuration, retaining intervening membership changes. Old panels remain during A7; A8 must retire duplicates only after capability parity. |
-| Preview/export | `processLairAction(context, monster, web=false)` | WebRenderer and composer explicitly opt into modern cards; classic and text projections retain processed prose. HTML export leakage found in review was removed before promotion; exhaustive export-format verification remains a named closeout gate. |
+| Preview/export | `processLairAction(context, monster, web=false)` | WebRenderer and composer explicitly opt into modern cards; classic and text projections retain processed prose. HTML export leakage found in review was removed before promotion; format-level export verification closed in build 148 (D-18, browser Step 41). |
 | Work at narrow widths | `MonsterBuilder.vue` scoped screen styles | At ≤599px, editor and preview stack; desktop splitter remains. Browser checks use 375px; print rules unaffected. |
 
 ```mermaid
@@ -3262,3 +3276,18 @@ stateDiagram-v2
 **Layer map:** Role selector → Quasar review dialog → `roleTransition` → current-model patch → existing Pinia persistence → studio category and shared renderer. Core owns policy, shell owns UUID/dialog/notification/persistence. The core imports no UI or I/O. Compatible move patches replace only the action wrapper and pool containers; other records retain references. Cross-model copied nested use/CR fields are cloned and proven independent.
 
 **Measured proof:** code `10f7aa0`; 7 files +240/−97. 51 new core tests cover the full 7×7 matrix plus invalid/missing/colliding inputs and existing destination pool metadata. Each pair asserts determinism and unchanged input; moves preserve record contents and references, copies preserve originals and isolate nested editable values. Browser Step 39 selects real role options and exercises dialogs, cancellation, Apply, view transition, reload and deletion. Static review reported no actionable findings. This does not establish complete old-save migration/field coverage or format-level export correctness; those remain A7.7b gates.
+
+## Build 147–148 record — old saves and text exports
+
+**Problem.** Two A7.7b gates were still open after build 146. Older saves passed through two different migrations — file import kept a private copy — and lost authored values on the way. Text exports shared the web projection, so the Modern Modular template leaked plate HTML into Markdown, Homebrewery and LaTeX, the HP pills leaked into every export, and two exporters printed legendary and mythic entries without their mechanics.
+
+**Decisions.** File import, library loading and AI ingest run one migration (`migrateMonsterSchema`), which keeps existing values instead of resetting them (DEF-19…DEF-21). Exports ask the text renderer for its prose projection and cross one boundary (D-18). One helper, `splitEntryLead`, separates an entry's printed name from its body, so formats with name/body slots — the rpgtex legendary list and Improved Initiative — keep their structure.
+
+| Gate | Evidence | Boundary |
+|---|---|---|
+| Field ownership and old saves | `ComposerPreservation.test.ts`: v8–v11 round trips over default-shaped action, trait, reaction and lair records plus an unknown nested legacy key; migration idempotence; edit → JSON save → reload without drift. Browser Step 40 opens a v8-labelled witness through the toolbar's Open File: nothing lost, 14/14 seven-role preview parity, reload persistence | The witness is current-shaped data labelled v8; genuinely old files stay covered by `MigrateMonsterSchema.test.ts` |
+| Display order (CMP-009) | The seven projections follow the shared row precedence; reaction head reads usage → name (Steps 36 and 40); preview markup equals the sheet entry for every role (Steps 35–40) | Inside the head cell the plate prints "2nd Level Evocation" while the chips read Evocation · 2nd Level (A8.10) |
+| Preview fidelity (CMP-010) | Same per-entry renderer and sanitizer as the sheet; computed-style parity 56/56 across 12 themes × 2 templates × 2 rule styles (Step 35) | — |
+| Export semantics | `ExportMarkup.test.ts` (9 cases); browser Step 41 exports the seven-role witness as Markdown, Homebrewery v3, LaTeX and Improved Initiative in both templates: no markup, nothing missing, mechanics in action/bonus/legendary/mythic, one Multiattack label, the rpgtex legendary list, identical output across templates | Plain text, HTML and Foundry keep their own core projections (B4); Improved Initiative and Tarrasque actions and reactions still come from raw descriptions (BS-41) |
+
+**Release handling.** Each candidate is frozen into `.codex-temp/release-candidates/<tag>/spa` with `release-candidate.json` and a verified `SHA256SUMS.txt`, tagged, and served from its own port. Candidate 148 is served on 9100, the origin holding the owner's configured Seraphic Herald (D-20; stored sample hash unchanged across the switch), and on 9106. Build 139 moved from 9100 to 9114 untouched.
