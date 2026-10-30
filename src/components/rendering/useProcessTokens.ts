@@ -1,3 +1,4 @@
+import { structuredAttackBonus } from 'src/core/domain/structured-attack'
 import { formatLimitedUses } from 'src/core/domain/cadence'
 import { countMultiattackReferences } from 'src/core/domain/multiattack-composer'
 import { actionRecharge } from 'src/core/domain/action-usage'
@@ -13,7 +14,7 @@ import {
   MonsterReaction,
   MonsterTrait,
 } from '../models'
-import { renderBonus, saveForAction, safeToWords, safeToOrdinal, statModifier } from './mathRendering'
+import { renderBonus, saveForAction, safeToWords, safeToOrdinal } from './mathRendering'
 import _ from 'lodash'
 import { useI18n } from 'vue-i18n'
 
@@ -538,13 +539,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   const structuredRenderContext = (context: MonsterAction, monster: ReturnType<typeof useMonsterStore>) => {
     const ability = inferAbility(context)
     const formulaContext = formulaContextForMonster(monster as unknown as DomainMonster)
-    const attackBonus = context.attackBonus != null
-      ? context.attackBonus
-      : ability.attackSource === 'spell'
-      ? monster.spellAttackModifier
-      : ability.attackSource === 'weapon'
-      ? monster.proficiency + statModifier(monster.stats?.STR ?? 10)
-      : undefined
+    const attackBonus = structuredAttackBonus(context, monster as unknown as DomainMonster)
     const saveDc = context.stat && context.stat !== 'none'
       ? saveForAction(monster, context.stat, context.save)
       : undefined
@@ -668,11 +663,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const mechanics: string[] = []
       if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
         const isSpell = context.actionType === 'spell_attack'
-        const bonus = context.attackBonus != null
-          ? context.attackBonus
-          : isSpell
-          ? monster.spellAttackModifier
-          : monster.proficiency + statModifier(monster.stats?.STR ?? 10)
+        const bonus = structuredAttackBonus(context, monster as unknown as DomainMonster) ?? 0
         mechanics.push(`${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
       }
       if (context.stat && context.stat !== 'none') {

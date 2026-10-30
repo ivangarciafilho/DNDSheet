@@ -206,3 +206,28 @@ test('malformed imported ability fields are ignored without crashing the statblo
     assert.deepStrictEqual(outcomePhrase(ability), [])
   })
 })
+
+test('target nouns agree with their count in screen and 2024 text', () => {
+  const scope = (kind: string, count: number | string, countMode?: 'up_to' | 'exact') =>
+    scopePhrase(inferAbility(action({ targeting: { count, countMode, kind } as MonsterAction['targeting'] })), { formulaContext: formulaContext(2) })
+
+  assert.strictEqual(scope('creature', 3, 'up_to'), 'up to 3 creatures')
+  assert.strictEqual(scope('creatures', 1), '1 creature')
+  assert.strictEqual(scope('creature', 1), '1 creature')
+  assert.strictEqual(scope('ally', 2), '2 allies')
+  assert.strictEqual(scope('enemy', 'all'), 'all enemies')
+  assert.strictEqual(scope('target', 'PB'), '2 targets')
+  assert.strictEqual(scope('Creature', 2), '2 Creatures')
+  assert.strictEqual(scope('willing creature', 2), '2 willing creatures')
+  assert.strictEqual(scope('target creature', 2), '2 target creatures')
+  assert.strictEqual(scope('creature of your choice', 3), '3 creatures of your choice')
+  assert.strictEqual(scope('creatures or objects', 1), '1 creature or object')
+  assert.strictEqual(scope('fiend', 2), '2 fiends')
+  assert.strictEqual(scope('Undead', 3), '3 Undead')
+  assert.strictEqual(scope('Fey', 1), '1 Fey')
+  assert.strictEqual(scope('wisps', 1), '1 wisp')
+  assert.strictEqual(
+    text2024(action({ attackSource: 'spell', attackReach: 'ranged', targeting: { count: 3, countMode: 'up_to', kind: 'creature', qualifier: 'which you can see' } }), { attackBonus: 7 }),
+    'Ranged Attack Roll: +7, up to three creatures which you can see.'
+  )
+})

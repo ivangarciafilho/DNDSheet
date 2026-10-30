@@ -3489,6 +3489,22 @@ async function runFuzz() {
   }`)
   console.log('Step 49 result:',JSON.stringify(step49,null,2))
   if(!step49.retirement||!step49.villainKept||step49.panelCount!==14||!step49.templateSaved||!step49.templateApplied||step49.problems.length)throw new Error('Step 49 failed: '+JSON.stringify(step49))
+
+  console.log('\n--- Step 50: Structured attack bonuses and target agreement share screen/export policy ---')
+  const step50=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    monster.stats.STR=18;monster.stats.DEX=14;monster.spellcasting.attack={override:true,overrideValue:9};
+    for(const [id,name,source,reach,bonus] of [['auto-bow','Automatic Bow','weapon','ranged',undefined],['auto-blade','Automatic Blade','weapon','melee',undefined],['auto-spell','Automatic Spell','spell','ranged',undefined],['zero-bonus','Zero Bonus','weapon','ranged',0]]){monster.addAction();Object.assign(monster.actions.at(-1),{id,name,attackSource:source,attackReach:reach,attackBonus:bonus,targeting:{count:3,countMode:'up_to',kind:'creature'},description:'Preserve authored prose.'});}
+    const problems=[];let projections=0;const expected=[['auto-bow',monster.proficiency+2],['auto-blade',monster.proficiency+4],['auto-spell',9],['zero-bonus',0]];
+    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(160);for(const [id,bonus] of expected){const entry=window.__sheetEntry(id),text=entry?.textContent||'',sign=bonus>0?'+':'',phrase=template==='modern'?'Attack '+sign+bonus:'Attack Roll: '+sign+bonus;if(!text.includes(phrase)||!text.includes(template==='modern'?'up to 3 creatures':'up to three creatures'))problems.push(style+'/'+template+'/'+id+': '+text);projections++;}}
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(120);const chip=document.querySelector('[data-composer-chain="auto-bow"] [data-chain-cell="attack-bonus"]');const chipMatches=chip?.textContent.includes('+'+(monster.proficiency+2));
+    monster.stats.DEX=20;editor.visualTemplate='modern';await wait(150);const live=window.__sheetEntry('auto-bow').textContent.includes('Attack +'+(monster.proficiency+5))&&window.__sheetEntry('zero-bonus').textContent.includes('Attack 0');
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:bonus-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
+    try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=(await captured.at(-1).text()).replace(/[*}]/g,'');if(!text.includes('Attack Roll: +'+(monster.proficiency+5))||!text.includes('Attack Roll: +9')||!text.includes('Attack Roll: 0')||!text.includes('up to three creatures'))problems.push(label+': shared bonus/target output');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    return {problems,projections,exports,chipMatches,live,authored:monster.actions.find(action=>action.id==='auto-bow').description==='Preserve authored prose.'};
+  }`)
+  console.log('Step 50 result:',JSON.stringify(step50,null,2))
+  if(step50.problems.length||step50.projections!==16||step50.exports!==3||!step50.chipMatches||!step50.live||!step50.authored)throw new Error('Step 50 failed: '+JSON.stringify(step50))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3505,7 +3521,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 49 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 50 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

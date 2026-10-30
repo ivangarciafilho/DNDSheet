@@ -302,9 +302,49 @@ const formatCount = (count: { text: string; number?: number }, useWords: boolean
   return NUMBER_WORDS[count.number] ?? count.text
 }
 
+// Catalog nouns and creature types that may be inflected for number; Fey and Undead are invariant in 5e.
+const NOUN_PAIRS: readonly (readonly [string, string])[] = [
+  ['creature', 'creatures'], ['target', 'targets'], ['object', 'objects'], ['ally', 'allies'], ['enemy', 'enemies'],
+  ['aberration', 'aberrations'], ['beast', 'beasts'], ['celestial', 'celestials'], ['construct', 'constructs'],
+  ['dragon', 'dragons'], ['elemental', 'elementals'], ['fiend', 'fiends'], ['giant', 'giants'], ['humanoid', 'humanoids'],
+  ['monstrosity', 'monstrosities'], ['ooze', 'oozes'], ['plant', 'plants'], ['fey', 'fey'], ['undead', 'undead'],
+]
+const NOUN_FORMS = new Map<string, readonly [string, string]>()
+for (const pair of NOUN_PAIRS) { NOUN_FORMS.set(pair[0], pair); NOUN_FORMS.set(pair[1], pair) }
+
+const matchCase = (word: string, target: string): string => {
+  if (word.length > 1 && word === word.toUpperCase() && word !== word.toLowerCase()) return target.toUpperCase()
+  return /^[A-Z]/.test(word) ? target.charAt(0).toUpperCase() + target.slice(1) : target
+}
+
+// Inflects the last word of each coordinated conjunct in the noun head ("target creature", "creatures or objects"),
+// leaving any trailing qualifier untouched ("creature of your choice"). Undefined when no catalog noun is present.
+const HEAD_BOUNDARY = /\s+(?:of|that|which|who|within|in|with|from|on|at)\s+/i
+const agreeNoun = (kind: string, plural: boolean): string | undefined => {
+  const boundary = HEAD_BOUNDARY.exec(kind)
+  const head = boundary ? kind.slice(0, boundary.index) : kind
+  const tail = boundary ? kind.slice(boundary.index) : ''
+  let changed = false
+  const agreed = head.split(/(\s+(?:or|and)\s+)/i).map((part, index) => {
+    if (index % 2) return part
+    const words = part.split(/(\s+)/)
+    const forms = NOUN_FORMS.get(words[words.length - 1].toLowerCase())
+    if (!forms) return part
+    changed = true
+    words[words.length - 1] = matchCase(words[words.length - 1], forms[plural ? 1 : 0])
+    return words.join('')
+  }).join('')
+  return changed ? agreed + tail : undefined
+}
+
+// Target nouns agree with their count. Unknown authored nouns keep the earlier contract: they are only singularized
+// for a count of one and never guessed into a plural.
 const normalizeKind = (kind: string, count: { text: string; number?: number } | undefined): string => {
   const value = kind.trim()
-  if (!value || count?.text === 'all' || count?.number !== 1) return value
+  if (!value || !count) return value
+  const plural = count.text === 'all' || count.number !== 1
+  const agreed = agreeNoun(value, plural)
+  if (agreed !== undefined || plural) return agreed ?? value
   if (/ies$/i.test(value)) return `${value.slice(0, -3)}y`
   if (/s$/i.test(value)) return value.slice(0, -1)
   return value

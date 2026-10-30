@@ -1,3 +1,4 @@
+import { structuredAttackBonus } from '../domain/structured-attack.ts'
 import { actionRecharge } from '../domain/action-usage.ts'
 import { formatLimitedUses } from '../domain/cadence.ts'
 import { CR } from '../domain/cr-tables.ts'
@@ -322,10 +323,7 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
   const actionText = (action: Monster['actions'][number]): string => {
     if (style !== '2024' || !hasStructuredAbility(action)) return action.description
     const ability = inferAbility(action)
-    const spellStat = monster.spellcasting?.stat ?? 'INT'
-    const attackBonus = action.attackBonus ?? (ability.attackSource === 'spell'
-      ? statModifier(monster.stats[spellStat]) + monster.proficiency
-      : undefined)
+    const attackBonus = structuredAttackBonus(action, monster)
     const saveDc = action.save?.override
       ? action.save.overrideValue
       : ability.saveAbility

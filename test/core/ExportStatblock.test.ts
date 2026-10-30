@@ -13,6 +13,7 @@ import {
   exportCharacterToJson,
 } from '../../src/core/usecases/ExportStatblock.ts'
 import { defaultCharacterActor } from '../../src/core/domain/types.ts'
+import type { Monster } from '../../src/core/domain/types.ts'
 import { migrateMonsterSchema } from '../../src/core/usecases/MigrateMonsterSchema.ts'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -188,4 +189,24 @@ test('2024 action export puts cadence before identity and components before clas
   const text=exportToMarkdown(monster, '2024')
   assert.ok(text.includes('Recharge 4–12 · Mantle (V, S).*** 2nd Level Abjuration.'),text)
   assert.equal((text.match(/\(V, S\)/g)||[]).length,1)
+})
+
+test('2024 structured attacks print the same automatic bonus as the sheet', () => {
+  const monster = migrateMonsterSchema(JSON.parse(fs.readFileSync(path.join(templatesDir, 'Knight.5emm.json'), 'utf8')))
+  const structured = (id: string, name: string, fields: Partial<Monster['actions'][number]>): Monster['actions'][number] => ({
+    id, name, description: '', recharge: '', legendaryOnly: false, limitedUse: { count: 0, rate: '' }, stat: 'none',
+    save: { override: false, overrideValue: 0 }, range: '', effects: [], customPreamble: false, bonusAction: false,
+    crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true },
+    ...fields,
+  })
+  monster.actions = [
+    structured('bow', 'Longbow Volley', { actionType: 'weapon_attack', attackSource: 'weapon', attackReach: 'ranged', targeting: { count: 1, kind: 'target' } }),
+    structured('blade', 'Blade', { actionType: 'weapon_attack', attackSource: 'weapon', attackReach: 'melee', targeting: { count: 1, kind: 'target' } }),
+    structured('bolt', 'Bolt', { actionType: 'spell_attack', attackSource: 'spell', attackReach: 'ranged', targeting: { count: 1, kind: 'creature' } }),
+  ]
+  monster.spellcasting = { ...monster.spellcasting, attack: { override: true, overrideValue: 9 } }
+  const text = exportToMarkdown(monster, '2024')
+  assert.ok(text.includes('***Longbow Volley.*** Ranged Attack Roll: +2, one target.'), text)
+  assert.ok(text.includes('***Blade.*** Melee Attack Roll: +5, one target.'), text)
+  assert.ok(text.includes('***Bolt.*** Ranged Attack Roll: +9, one creature.'), text)
 })
