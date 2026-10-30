@@ -1051,10 +1051,10 @@ export function defaultCrAnnotation(): MonsterCrAnnotation {
   }
 }
 
-export function defaultTrait(): MonsterTrait {
+export function defaultTrait(id = uuidv4()): MonsterTrait {
   return {
     name: 'New Trait',
-    id: uuidv4(),
+    id,
     description: '',
     limitedUse: {
       count: 0,
@@ -1065,10 +1065,10 @@ export function defaultTrait(): MonsterTrait {
   }
 }
 
-export function defaultAction(): MonsterAction {
+export function defaultAction(id = uuidv4()): MonsterAction {
   return {
     name: 'New Action',
-    id: uuidv4(),
+    id,
     description: '',
     recharge: '',
     limitedUse: {

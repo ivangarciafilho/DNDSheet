@@ -1316,6 +1316,7 @@ export const useMonsterStore = defineStore('monster', {
 
         // check if it's in a legendary action
         this.deleteLegendaryAction(actionId)
+        this.deleteMythicAction(actionId)
 
         // check if it's in a multiattack group
         this.multiattacks.forEach((ma) => {

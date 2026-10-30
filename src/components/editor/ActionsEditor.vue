@@ -113,7 +113,7 @@
                     {{ getRoleLabel(item.role) }}
                   </q-badge>
                 </template>
-                <q-tooltip class="text-caption">Switch entry between Action, Bonus Action, Trait, Reaction, Legendary, Mythic or Lair</q-tooltip>
+                <q-tooltip class="text-caption">Change compatible action roles, or create a copy for a different entry model. Review before applying.</q-tooltip>
               </q-select>
             </div>
 
@@ -205,7 +205,7 @@ import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import { useQuasar } from 'quasar'
-import { MonsterAction, MonsterTrait, MonsterReaction, defaultTrait } from '../models'
+import { MonsterAction, MonsterTrait, MonsterReaction } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
@@ -218,6 +218,7 @@ import ComposerChain from './composer/ComposerChain.vue'
 import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
 import RoleHeaderEditor from './composer/RoleHeaderEditor.vue'
 import type { HeaderRole } from 'src/core/domain/role-headers'
+import { roleTransition } from 'src/core/domain/role-transition'
 
 export interface UnifiedEntry {
   id: string
@@ -414,96 +415,32 @@ export default defineComponent({
     }
 
     const changeItemRole = (item: UnifiedEntry, newRole: string) => {
-      if (item.role === newRole) return
-
-      // Extract existing data
-      const id = item.id || uuidv4()
-      const name = item.name || 'Action'
-      const description = item.description || ''
-      const recharge = item.recharge || ''
-
-      // 1. Remove from old collection
-      if (item.role === 'trait') {
-        monster.deleteTrait(id)
-      } else if (item.role === 'reaction') {
-        monster.deleteReaction(id)
-      } else if (item.role === 'lair') {
-        monster.deleteLairAction(id)
-      } else if (item.role === 'legendary') {
-        monster.deleteLegendaryAction(id)
-        monster.deleteAction(id)
-      } else if (item.role === 'mythic') {
-        monster.deleteMythicAction(id)
-        monster.deleteAction(id)
-      } else {
-        // regular action or bonus action
-        monster.deleteAction(id)
+      const copyId = uuidv4()
+      const target = newRole as ActionComposerRole
+      const decision = roleTransition(monster, item.id, item.role, target, copyId)
+      if (decision.kind === 'noop') return
+      if (decision.kind === 'unavailable') {
+        $q.notify({ type: 'warning', message: decision.message })
+        return
       }
-
-      // 2. Add to new collection
-      if (newRole === 'trait') {
-        monster.traits.push({
-          ...defaultTrait(),
-          id,
-          name,
-          description,
-          limitedUse: { count: 0, rate: 'DAY' },
-        })
-      } else if (newRole === 'reaction') {
-        monster.reactions.push({
-          id,
-          name,
-          description,
-          trigger: 'When a creature ...',
-          limitedUse: { count: 0, rate: 'DAY' },
-        })
-      } else if (newRole === 'lair') {
-        monster.lairActions.push({
-          id,
-          description,
-        })
-      } else if (newRole === 'legendary') {
-        monster.actions.push({
-          id,
-          name,
-          description,
-          bonusAction: false,
-          legendaryOnly: true,
-          recharge,
-          limitedUse: { count: 0, rate: 'DAY' },
-          stat: 'none',
-          effects: [],
-        })
-        monster.addLegendaryAction(id, 1)
-      } else if (newRole === 'mythic') {
-        monster.actions.push({
-          id,
-          name,
-          description,
-          bonusAction: false,
-          legendaryOnly: true,
-          recharge,
-          limitedUse: { count: 0, rate: 'DAY' },
-          stat: 'none',
-          effects: [],
-        })
-        monster.addMythicAction(id)
-      } else {
-        // action or bonus_action
-        monster.actions.push({
-          id,
-          name,
-          description,
-          bonusAction: newRole === 'bonus_action',
-          legendaryOnly: false,
-          recharge,
-          limitedUse: { count: 0, rate: 'DAY' },
-          stat: 'none',
-          effects: [],
-        })
-      }
+      $q.dialog({
+        title: decision.title,
+        message: decision.message,
+        cancel: { label: 'Cancel', flat: true },
+        ok: { label: decision.kind === 'copy' ? 'Create copy' : 'Change role', color: 'amber-9' },
+        persistent: true,
+      }).onOk(() => {
+        // Recompute from live data; never commit the stale preview's collection snapshots.
+        const current = roleTransition(monster, item.id, item.role, target, copyId)
+        if (!current.patch || current.kind !== decision.kind) {
+          $q.notify({ type: 'warning', message: 'The entry changed. Review it before trying again.' })
+          return
+        }
+        monster.$patch(current.patch)
+        selectedCategory.value = target
+        $q.notify({ type: 'positive', message: current.kind === 'copy' ? 'Copy created. Original entry kept.' : 'Role changed. Entry data and references kept.' })
+      })
     }
-
     const updateItemDescription = (item: UnifiedEntry, val: string) => {
       item.description = val
       if (item.rawAction) {

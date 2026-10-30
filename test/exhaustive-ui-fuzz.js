@@ -2876,7 +2876,11 @@ async function runFuzz() {
     monster.addAction(); action = monster.actions[monster.actions.length - 1]; action.name = 'Header mythic proof'; monster.addMythicAction(action.id);
     const legendMembers = JSON.stringify(monster.legendaryActions.actions); const mythicMembers = JSON.stringify(monster.mythicActions.actions);
     editor.visualTemplate = 'modern'; await wait();
-    const chain = document.querySelector('[data-composer-chain="a7-lair-proof"]');
+    let chain = document.querySelector('[data-composer-chain="a7-lair-proof"]');
+    for (let attempt=0; !chain && attempt<20; attempt++) {
+      await wait(); chain=document.querySelector('[data-composer-chain="a7-lair-proof"]');
+    }
+    if (!chain) throw new Error('Lair fixture did not mount: '+JSON.stringify(monster.lairActions.map(entry=>entry.id)));
     for (let guard=0; guard<4 && chain.closest('.q-expansion-item--collapsed'); guard++) {
       chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click(); await wait();
     }
@@ -2932,6 +2936,69 @@ async function runFuzz() {
   step38.success = Object.entries(step38).filter(([key])=>key!=='narrow').every(([,value])=>value===true) && step38Narrow.width>0 && step38Narrow.scrollWidth<=step38Narrow.width+1;
   console.log('Step 38 result:', JSON.stringify(step38,null,2))
   if (!step38.success) throw new Error('Step 38 failed: '+JSON.stringify(step38))
+  console.log('\n--- Step 39: Reviewed role changes preserve data and references ---')
+  const step39Setup = await evalInPage(`async () => {
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    monster.addAction();const action=monster.actions[monster.actions.length-1];
+    action.id='a7-transition-proof';action.name='Preserved Solar Strike';action.description='Deals {2d6} radiant damage.';
+    action.recharge='5-6';action.limitedUse={count:3,rate:'DAY'};action.legendaryOnly=true;
+    action.save={override:true,overrideValue:19};action.range='60 ft.';action.components=['V','S'];action.stagePool='all';
+    action.crAnnotation={...action.crAnnotation,include:true,automatic:false,maxDamage:42};monster.addLegendaryAction(action.id,2);
+    monster.addMultiattack();const combo=monster.multiattacks[monster.multiattacks.length-1];combo.actions=[action.id];combo.id='a7-transition-combo';
+    await new Promise(resolve=>setTimeout(resolve,250));
+    const chain=document.querySelector('[data-composer-chain="a7-transition-proof"]');
+    for(let guard=0;guard<4&&chain.closest('.q-expansion-item--collapsed');guard++) {
+      chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click();
+      await new Promise(resolve=>setTimeout(resolve,450));
+    }
+    return {original:JSON.stringify(action),count:monster.actions.length};
+  }`)
+  const chooseRole = async (id, label) => evalInPage(`async () => {
+    const chain=document.querySelector('[data-composer-chain="${id}"]');
+    const select=chain.parentElement.querySelector('.q-select');select.scrollIntoView({block:'center'});
+    select.querySelector('.q-field__control').click();await new Promise(resolve=>setTimeout(resolve,300));
+    const option=[...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.trim()===${JSON.stringify(label)});
+    if(!option) throw new Error('Missing role option: '+${JSON.stringify(label)});
+    option.click();await new Promise(resolve=>setTimeout(resolve,300));
+    return document.querySelector('.q-dialog')?.textContent||'';
+  }`)
+  const dialogButton = async label => {
+    await evalInPage(`() => [...document.querySelectorAll('.q-dialog button')].find(el=>el.textContent.trim().toLowerCase()===${JSON.stringify(label.toLowerCase())}).click()`)
+    await pause(500)
+  }
+  const movePrompt=await chooseRole('a7-transition-proof','Mythic Action');await dialogButton('Cancel')
+  const canceledMove=await evalInPage(`() => JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').actions.find(a=>a.id==='a7-transition-proof'))`)
+  await chooseRole('a7-transition-proof','Mythic Action');await dialogButton('Change role')
+  const moved=await evalInPage(`() => {
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    return {action:JSON.stringify(monster.actions.find(a=>a.id==='a7-transition-proof')),cost:monster.mythicActions.actions.find(a=>a.actionId==='a7-transition-proof')?.cost,
+      unlinked:!monster.legendaryActions.actions.some(a=>a.actionId==='a7-transition-proof'),count:monster.actions.length,
+      reference:monster.multiattacks.find(a=>a.id==='a7-transition-combo').actions.includes('a7-transition-proof')};
+  }`)
+  const copyPrompt=await chooseRole('a7-transition-proof','Trait');await dialogButton('Cancel')
+  const canceledCopy=await evalInPage(`() => !document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').traits.some(t=>t.name==='Preserved Solar Strike')`)
+  await chooseRole('a7-transition-proof','Trait');await dialogButton('Create copy')
+  const copied=await evalInPage(`() => {
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const original=monster.actions.find(a=>a.id==='a7-transition-proof');const copy=monster.traits.find(t=>t.name==='Preserved Solar Strike');
+    return {id:copy.id,independent:copy.id!==original.id&&copy.limitedUse!==original.limitedUse&&copy.crAnnotation!==original.crAnnotation,
+      uses:copy.limitedUse.count===3,excluded:copy.crAnnotation.include===false,description:copy.description===original.description,
+      original:JSON.stringify(original),reference:monster.multiattacks.find(a=>a.id==='a7-transition-combo').actions.includes(original.id)};
+  }`)
+  await sendCdp('Page.reload');await pause(1200)
+  const transitionPersistence=await evalInPage(`() => {
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const copy=monster.traits.find(t=>t.id===${JSON.stringify(copied.id)});
+    const retained=!!copy&&copy.crAnnotation.include===false&&monster.actions.some(a=>a.id==='a7-transition-proof')&&monster.mythicActions.actions.some(a=>a.actionId==='a7-transition-proof'&&a.cost===2);
+    monster.deleteAction('a7-transition-proof');
+    return {retained,cleanup:!monster.mythicActions.actions.some(a=>a.actionId==='a7-transition-proof')&&!monster.multiattacks.find(a=>a.id==='a7-transition-combo').actions.includes('a7-transition-proof'),copyKept:monster.traits.some(t=>t.id===${JSON.stringify(copied.id)})};
+  }`)
+  const step39={moveReviewed:movePrompt.includes('multiattack references'),canceledMove:canceledMove===step39Setup.original,
+    moveIntact:moved.action===step39Setup.original&&moved.cost===2&&moved.unlinked&&moved.reference&&moved.count===step39Setup.count,
+    copyReviewed:copyPrompt.includes('original entry')&&copyPrompt.includes('excluded'),canceledCopy,
+    copyIntact:copied.independent&&copied.uses&&copied.excluded&&copied.description&&copied.reference&&copied.original===moved.action,...transitionPersistence};
+  console.log('Step 39 result:',JSON.stringify(step39,null,2))
+  if(!Object.values(step39).every(value=>value===true)) throw new Error('Step 39 failed: '+JSON.stringify(step39))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -2948,7 +3015,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 38 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 39 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {
