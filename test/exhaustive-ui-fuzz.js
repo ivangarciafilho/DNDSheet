@@ -3299,6 +3299,53 @@ async function runFuzz() {
   }`)
   console.log('Step 43 result:',JSON.stringify(step43,null,2))
   if(step43.problems.length||step43.comparisons!==16||step43.exports!==6||!step43.unchanged||!step43.cantrip||!step43.persisted)throw new Error('Step 43 failed: '+JSON.stringify(step43))
+
+  console.log('\n--- Step 44: Attack studio edits existing models without losing ranges, damage or references ---')
+  const step44 = await evalInPage(`async () => {
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+    const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    monster.addNewAttack();const attack=monster.attacks[monster.attacks.length-1];attack.id='a8-attack-proof';attack.name='Studio Spear';attack.distance='BOTH';attack.range={reach:5,standard:20,long:60};attack.extension='preserved';
+    monster.addAdditionalDamage(attack.id);attack.additionalDamage[0].id='extra-proof';attack.additionalDamage[0].note='while burning';
+    monster.addLegendaryAction(attack.id,2);monster.addMythicAction(attack.id);monster.multiattacks.push({id:'attack-ref-proof',name:'Attack references',attacks:[attack.id,attack.id],actions:[],description:''});
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');
+    if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(350);
+    const tabs=[...studio.querySelectorAll('button')],tab=tabs.find(el=>/^Attacks/.test(el.textContent.trim()));tab.click();await wait(300);
+    const problems=[];const chain=()=>document.querySelector('[data-attack-composer="a8-attack-proof"]');
+    async function edit(id,text,cancel=false){
+      const chip=chain()?.querySelector('[data-chain-cell="'+id+'"]');if(!chip){problems.push('missing '+id);return;}
+      chip.focus();chip.click();await wait(180);
+      const menu=document.querySelector('.chain-editor-menu');const option=[...menu.querySelectorAll('[role="option"]')].find(el=>el.textContent.trim()===text);
+      if(option&&!cancel){option.click();await wait(150);return;}
+      const input=menu.querySelector('input');if(input){input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);}
+      [...menu.querySelectorAll('button')].find(el=>el.textContent.trim()===(cancel?'Cancel':'Apply')).click();await wait(180);
+    }
+    await edit('range.standard','30');await edit('range.reach','10');await edit('range.long','90');
+    await edit('targets','3',true);const canceled=attack.targets===1;
+    await edit('targets','2');await edit('modifier.override','Yes');await edit('modifier.overrideValue','9');await edit('modifier.proficient','No');
+    await edit('damage.count','2');await edit('damage.dice','8');await edit('damage.type','radiant');await edit('damage.modifier.override','Yes');await edit('damage.modifier.overrideValue','4');
+    await edit('alternateDamage.active','Yes');await edit('alternateDamage.condition','with two hands');await edit('alternateDamage.count','3');
+    await edit('additional.extra-proof.count','4');await edit('save','16');
+    const chip=chain().querySelector('[data-chain-cell="targets"]');chip.click();await wait(150);const menu=document.querySelector('.chain-editor-menu'),input=menu.querySelector('input');input.value='0';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);
+    const invalid=!!menu.querySelector('[role="alert"]')&&[...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').disabled;
+    [...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(150);
+    let comparisons=0;
+    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(220);const preview=chain().querySelector('[data-attack-preview] .attack');if(![...document.querySelectorAll('#render .attack')].some(el=>el.innerHTML===preview.innerHTML))problems.push('preview mismatch '+template+'/'+style);const sheet=[...document.querySelectorAll('#render .attack')].find(el=>el.innerHTML===preview.innerHTML);if(sheet){const a=getComputedStyle(preview),b=getComputedStyle(sheet);for(const key of ['fontFamily','fontSize','lineHeight','color'])if(a[key]!==b[key])problems.push('style '+template+'/'+style+'/'+key+': '+a[key]+' != '+b[key]);}comparisons++;}
+    if(getComputedStyle(chain().querySelector('.composer-chain__row')).display!=='flex')problems.push('missing shared row layout');
+    await edit('legendaryOnly','Yes');await wait(200);const specialOnly=![...document.querySelectorAll('#render .attack')].some(el=>el.textContent.includes('Studio Spear'));await edit('legendaryOnly','No');
+    await edit('useCustomRenderer','Yes');attack.customRenderer='<b>Custom spear</b>: {attack.damage}';await wait(250);
+    const custom=chain().querySelector('[data-attack-preview]').textContent.includes('Custom spear');await edit('useCustomRenderer','No');
+    const intact=attack.extension==='preserved'&&attack.range.reach===10&&attack.range.standard===30&&attack.range.long===90&&attack.damage.count===2&&attack.damage.dice===8&&attack.damage.type==='radiant'&&attack.damage.modifier.overrideValue===4&&attack.modifier.overrideValue===9&&!attack.modifier.proficient&&attack.alternateDamage.count===3&&attack.alternateDamage.condition==='with two hands'&&attack.additionalDamage[0].count===4&&attack.additionalDamage[0].note==='while burning'&&attack.save===16;
+    const refs=monster.multiattacks.find(ma=>ma.id==='attack-ref-proof').attacks.filter(id=>id===attack.id).length===2&&monster.legendaryActions.actions.some(a=>a.actionId===attack.id)&&monster.mythicActions.actions.some(a=>a.actionId===attack.id);
+    return {problems,canceled,invalid,comparisons,custom,intact,refs,specialOnly};
+  }`)
+  await sendCdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
+  await pause(300)
+  step44.narrow = await evalInPage(`()=>{const chain=document.querySelector('[data-attack-composer="a8-attack-proof"]');return chain.scrollWidth<=chain.clientWidth+1&&getComputedStyle(chain.querySelector('.composer-chain__row')).flexDirection==='column';}`)
+  await sendCdp('Emulation.clearDeviceMetricsOverride')
+  await sendCdp('Page.reload');await pause(1500)
+  Object.assign(step44,await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),attack=monster.attacks.find(a=>a.id==='a8-attack-proof');const persisted=attack?.range.standard===30&&attack?.additionalDamage[0].count===4;monster.deleteAttack('a8-attack-proof');return {persisted,cleaned:!monster.legendaryActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.mythicActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.multiattacks.some(ma=>ma.attacks.includes('a8-attack-proof'))};}`))
+  console.log('Step 44 result:',JSON.stringify(step44,null,2))
+  if(step44.problems.length||step44.comparisons!==4||!step44.canceled||!step44.invalid||!step44.custom||!step44.intact||!step44.refs||!step44.persisted||!step44.specialOnly||!step44.cleaned||!step44.narrow)throw new Error('Step 44 failed: '+JSON.stringify(step44))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3315,7 +3362,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 43 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 44 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

@@ -1260,7 +1260,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const attacks = computed(() => {
-    return filterByStagePool(monster.attacks).map((a) => processAttack(a, monster))
+    return filterByStagePool(monster.attacks.filter((a) => !a.legendaryOnly)).map((a) => processAttack(a, monster))
   })
 
   // non-legendary only actions

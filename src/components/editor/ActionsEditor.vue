@@ -3,7 +3,7 @@
     expand-separator
     icon="mdi-movie-open"
     label="Actions &amp; Traits Studio"
-    caption="Unified studio for traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
+    caption="Unified studio for attacks, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
     header-class="bg-amber-10 text-white text-weight-bold"
   >
     <q-card class="bg-grey-10 text-white q-pa-sm">
@@ -41,6 +41,7 @@
             class="full-width text-weight-bold"
           >
             <q-list class="bg-grey-9 text-white">
+              <q-item v-close-popup clickable @click="addNewEntry('attack')"><q-item-section>Add Attack</q-item-section></q-item>
               <q-item v-close-popup clickable @click="addNewEntry('action')">
                 <q-item-section avatar><q-icon name="mdi-sword" color="amber-5" /></q-item-section>
                 <q-item-section>Add Action</q-item-section>
@@ -95,7 +96,9 @@
           <div class="row q-col-gutter-xs items-center">
             <!-- Far-Left Role Selector -->
             <div class="col-12 col-sm-3 col-md-2">
+              <q-badge v-if="item.rawAttack" color="red-8" class="q-pa-sm">Attack</q-badge>
               <q-select
+                v-else
                 :model-value="item.role"
                 :options="roleOptions"
                 emit-value
@@ -184,10 +187,13 @@
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           />
 
+          <attack-composer v-if="item.rawAttack" :attack-id="item.id" />
+
           <trait-display-settings v-if="item.rawTrait" :trait-id="item.id" />
 
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
           <monster-text-editor
+            v-if="!item.rawAttack"
             :field="item.description"
             i18n-label-key="monster.trait.description"
             :token-category="item.role === 'trait' ? 'trait' : item.role === 'lair' ? 'none' : 'action'"
@@ -205,7 +211,7 @@ import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import { useQuasar } from 'quasar'
-import { MonsterAction, MonsterTrait, MonsterReaction } from '../models'
+import { MonsterAction, MonsterTrait, MonsterReaction, DndAttack } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
@@ -214,6 +220,7 @@ import { v4 as uuidv4 } from 'uuid'
 import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
+import AttackComposer from './composer/AttackComposer.vue'
 import ComposerChain from './composer/ComposerChain.vue'
 import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
 import RoleHeaderEditor from './composer/RoleHeaderEditor.vue'
@@ -222,12 +229,13 @@ import { roleTransition } from 'src/core/domain/role-transition'
 
 export interface UnifiedEntry {
   id: string
-  role: 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'
+  role: 'attack' | 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'
   name: string
   description: string
   recharge?: string
   cost?: number
   showAdvanced?: boolean
+  rawAttack?: DndAttack
   rawAction?: MonsterAction
   rawTrait?: MonsterTrait
   rawReaction?: MonsterReaction
@@ -239,6 +247,7 @@ export default defineComponent({
     MonsterTextEditor,
     SwapButtons,
     ComposerChain,
+    AttackComposer,
     TraitDisplaySettings,
     RoleHeaderEditor,
   },
@@ -249,7 +258,7 @@ export default defineComponent({
     const { t } = useI18n()
     const templateStore = useTemplatesStore()
 
-    const selectedCategory = ref<'all' | 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'>('all')
+    const selectedCategory = ref<'all' | 'attack' | 'trait' | 'action' | 'bonus_action' | 'reaction' | 'legendary' | 'mythic' | 'lair'>('all')
 
     const roleOptions = [
       { label: 'Action', value: 'action' },
@@ -274,6 +283,8 @@ export default defineComponent({
     // Unified List Aggregator
     const allEntries = computed<UnifiedEntry[]>(() => {
       const list: UnifiedEntry[] = []
+
+      for (const attack of monster.attacks) list.push({ id: attack.id, role: 'attack', name: attack.name, description: attack.description, rawAttack: attack })
 
       // 1. Traits
       for (const tr of monster.traits || []) {
@@ -355,6 +366,7 @@ export default defineComponent({
       const all = allEntries.value
       return [
         { label: 'All', value: 'all', count: all.length, activeColor: 'amber-9' },
+        { label: 'Attacks', value: 'attack', count: all.filter((e) => e.role === 'attack').length, activeColor: 'red-8' },
         { label: 'Actions', value: 'action', count: all.filter((e) => e.role === 'action').length, activeColor: 'amber-8' },
         { label: 'Bonus Actions', value: 'bonus_action', count: all.filter((e) => e.role === 'bonus_action').length, activeColor: 'orange-8' },
         { label: 'Traits', value: 'trait', count: all.filter((e) => e.role === 'trait').length, activeColor: 'cyan-8' },
@@ -385,7 +397,10 @@ export default defineComponent({
     }
 
     const addNewEntry = (role: string) => {
-      if (role === 'trait') {
+      if (role === 'attack') {
+        monster.addNewAttack()
+        selectedCategory.value = 'attack'
+      } else if (role === 'trait') {
         monster.addTrait()
       } else if (role === 'reaction') {
         monster.addReaction()
@@ -415,9 +430,10 @@ export default defineComponent({
     }
 
     const changeItemRole = (item: UnifiedEntry, newRole: string) => {
+      if (item.rawAttack) return
       const copyId = uuidv4()
       const target = newRole as ActionComposerRole
-      const decision = roleTransition(monster, item.id, item.role, target, copyId)
+      const decision = roleTransition(monster, item.id, item.role as ActionComposerRole, target, copyId)
       if (decision.kind === 'noop') return
       if (decision.kind === 'unavailable') {
         $q.notify({ type: 'warning', message: decision.message })
@@ -431,7 +447,7 @@ export default defineComponent({
         persistent: true,
       }).onOk(() => {
         // Recompute from live data; never commit the stale preview's collection snapshots.
-        const current = roleTransition(monster, item.id, item.role, target, copyId)
+        const current = roleTransition(monster, item.id, item.role as ActionComposerRole, target, copyId)
         if (!current.patch || current.kind !== decision.kind) {
           $q.notify({ type: 'warning', message: 'The entry changed. Review it before trying again.' })
           return
@@ -475,7 +491,9 @@ export default defineComponent({
     }
 
     const deleteUnifiedItem = (item: UnifiedEntry) => {
-      if (item.role === 'trait') {
+      if (item.rawAttack) {
+        monster.deleteAttack(item.id)
+      } else if (item.role === 'trait') {
         monster.deleteTrait(item.id)
       } else if (item.role === 'reaction') {
         monster.deleteReaction(item.id)
@@ -519,6 +537,7 @@ export default defineComponent({
     }
 
     const getStoreCollectionField = (role: string): string => {
+      if (role === 'attack') return 'attacks'
       if (role === 'trait') return 'traits'
       if (role === 'reaction') return 'reactions'
       if (role === 'lair') return 'lairActions'
@@ -526,6 +545,7 @@ export default defineComponent({
     }
 
     const getItemStoreIndex = (item: UnifiedEntry): number => {
+      if (item.rawAttack) return monster.attacks.findIndex(a => a.id === item.id)
       if (item.role === 'trait') {
         return monster.traits?.findIndex((t) => t.id === item.id) ?? 0
       }
@@ -539,7 +559,7 @@ export default defineComponent({
     }
 
     const chainRole = (item: UnifiedEntry): ActionComposerRole => {
-      return item.role
+      return item.role as ActionComposerRole
     }
 
     const confirmApplyActionTemplate = (item: UnifiedEntry, template: ActionTemplate) => {

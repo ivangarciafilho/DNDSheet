@@ -45,7 +45,7 @@
           dark
           autofocus
           :label="cell.label"
-          hint="Leave blank to use the creature's own value"
+          :hint="numberHint"
         />
 
         <div v-else-if="kind === 'select'" ref="optionList" class="chain-options" role="listbox" :aria-label="cell.label" @keydown="moveOptionFocus">
@@ -200,6 +200,8 @@ export default defineComponent({
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
     value: { type: null as unknown as PropType<unknown>, default: undefined },
+    allowClear: { type: Boolean, default: true },
+    numberHint: { type: String, default: "Leave blank to use the creature's own value" },
     validate: { type: Function as PropType<(value: unknown) => string>, default: undefined },
   },
   emits: ['commit', 'clear'],
@@ -272,7 +274,7 @@ export default defineComponent({
     }
 
     const error = computed(() => (open.value ? (props.validate?.(draft.value) ?? validateCell(props.cell.id, draft.value)) : ''))
-    const clearable = computed(() => props.cell.state === 'set' && props.cell.id !== 'name' && props.spec.field !== 'cost')
+    const clearable = computed(() => props.allowClear && props.cell.state === 'set' && props.cell.id !== 'name' && props.spec.field !== 'cost')
 
     const apply = () => {
       if (error.value) return
