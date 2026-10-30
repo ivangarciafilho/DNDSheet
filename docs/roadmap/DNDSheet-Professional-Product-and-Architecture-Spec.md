@@ -3612,3 +3612,20 @@ This supersedes earlier heading-position descriptions, including A8.10's old fie
 Data flow: authored action -> pure header facts/order -> editor cells / modern head / escaped classic lead + metadata grammar -> authoritative sheet or prose adapter. Adapters own emphasis; the identity helper owns text escaping only when HTML is requested. No hidden preview, migration, roll policy or state mutation is introduced.
 
 Failure gates: literal `M <pearl>`/`S & V` must remain text in classic headings; components appear once; UTF-8 punctuation must not contain replacement characters; cadence/cost cannot disappear; targets retain their quantities; template/style changes do not edit the monster. Existing custom preambles remain an authored override. Verified by267 core tests,47 browser scenarios and existing theme suites. Review corrections and release boundaries are recorded in the handoff.
+
+## Recovery sync — working tree after Build 157
+
+Build157/A8 closure supersedes the interrupted retirement checkpoint. Repository HEAD is `9a37339` (documentation), with implementation `b4eef8e` and byte-neutral cleanup `38c4738`. The release tag exists. Current roadmap remains **86/216 complete (39.81%),9/28 loops shipped,130 remaining**; this sync awards no additional completion.
+
+Uncommitted work is preserved separately from the release:
+- `ability-grammar.ts`: target-count noun agreement, including coordinated target nouns and qualifiers.
+- `AbilityGrammar.test.ts` and `ExportStatblock.test.ts`: added wording/export assertions.
+- New `structured-attack.ts` and `StructuredAttack.test.ts`: proposed shared attack-bonus policy and cases. The helper is **not consumed by production rendering or exports yet**; current callers still compute bonuses separately.
+
+Resume in this order:
+1. Review the existing uncommitted diff and settle its intended scope; retain authored/custom wording and explicit values. Do not restart completed panel retirement or overwrite these files.
+2. Complete the attack-bonus consumer map: shared web/prose rendering, ComposerChain context and core exports. Review reach/ability defaults, explicit overrides, formula compatibility and custom/homebrew exceptions before adopting the proposed helper.
+3. Validate wording and attack-bonus work together with focused regressions, full core suite, production build and actual sheet/export/browser checks. No fresh pass or release claim is made for these edits by this recovery sync.
+4. If independently complete, preserve157 and publish a successor with evidence and aligned docs. Then begin A9.0 numeric-field/source/constraint inventory and A9.1 bindings/cycle behavior in roadmap order.
+
+Release routing in the latest handoff records157 at9100/9106 and frozen156 at9127; the old candidate157 subpath is superseded. Those endpoint/storage claims were not revalidated during this read-only recovery audit. Do not use the older failing scratch smoke log as the final157 result; the committed handoff records its corrected portable parity and49-scenario closeout. Build future candidates outside the serving output. No code changes,tests or deployments performed in this sync.

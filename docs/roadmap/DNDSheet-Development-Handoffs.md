@@ -989,3 +989,20 @@ Evidence: production build;267core tests(+3);47browser scenarios zero console/ru
 Next packet A8.5: load execution/verification, functional-core, Impeccable/UX copy and TTRPG guidance as relevant. Read Spec CR154 dependencies, Backlog A8.0 capability matrix and A8.5-8; inspect MonsterBuilder and every retiring panel against current ActionsEditor adapters. First list exact controls/associations not yet owned by the studio, then implement complete homes with preservation fixtures. Do not delete or unmount a panel on feature-count assumptions. Phase controls already present must survive; multi-pool expansion remains A11.6. Use Build155 as pre-retirement rendering baseline for A8.6. Retain VillainActionsEditor. Final closure requires fixture equality, actual browser lifecycle, docs and a preserved successor RC.
 
 Process adjustment: run candidate regression on a frozen build root after builds finish; never rebuild its serving directory mid-run. Use explicit UTF-8 byte writes for source/document edits and inspect diff size before build. These prevent validation noise and encoding churn from consuming another delivery loop.
+
+## Recovery sync — working tree after Build 157
+
+Build157/A8 closure supersedes the interrupted retirement checkpoint. Repository HEAD is `9a37339` (documentation), with implementation `b4eef8e` and byte-neutral cleanup `38c4738`. The release tag exists. Current roadmap remains **86/216 complete (39.81%),9/28 loops shipped,130 remaining**; this sync awards no additional completion.
+
+Uncommitted work is preserved separately from the release:
+- `ability-grammar.ts`: target-count noun agreement, including coordinated target nouns and qualifiers.
+- `AbilityGrammar.test.ts` and `ExportStatblock.test.ts`: added wording/export assertions.
+- New `structured-attack.ts` and `StructuredAttack.test.ts`: proposed shared attack-bonus policy and cases. The helper is **not consumed by production rendering or exports yet**; current callers still compute bonuses separately.
+
+Resume in this order:
+1. Review the existing uncommitted diff and settle its intended scope; retain authored/custom wording and explicit values. Do not restart completed panel retirement or overwrite these files.
+2. Complete the attack-bonus consumer map: shared web/prose rendering, ComposerChain context and core exports. Review reach/ability defaults, explicit overrides, formula compatibility and custom/homebrew exceptions before adopting the proposed helper.
+3. Validate wording and attack-bonus work together with focused regressions, full core suite, production build and actual sheet/export/browser checks. No fresh pass or release claim is made for these edits by this recovery sync.
+4. If independently complete, preserve157 and publish a successor with evidence and aligned docs. Then begin A9.0 numeric-field/source/constraint inventory and A9.1 bindings/cycle behavior in roadmap order.
+
+Release routing in the latest handoff records157 at9100/9106 and frozen156 at9127; the old candidate157 subpath is superseded. Those endpoint/storage claims were not revalidated during this read-only recovery audit. Do not use the older failing scratch smoke log as the final157 result; the committed handoff records its corrected portable parity and49-scenario closeout. Build future candidates outside the serving output. No code changes,tests or deployments performed in this sync.

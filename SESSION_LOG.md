@@ -1,5 +1,9 @@
 # DNDSheet session checkpoint - 2026-10-30
 
+## Recovery sync after HEAD9a37339
+
+Build157/A8 closure is committed;do not repeat retirement.86/216 complete,130remaining,9/28loops shipped. Existing uncommitted work is preserved:ability-grammar noun agreement plus AbilityGrammar/ExportStatblock tests,and new structured-attack helper/tests. The helper has no production consumers yet. Review and finish that bounded consistency slice before beginning A9.0 inventory/A9.1 bindings. Check shared web/prose render contexts,ComposerChain and core exports;preserve explicit/custom/formula semantics. No fresh tests,builds or deployments run in this recovery sync. Latest handoff's9100/9106/9127 routing and storage claims were not live-reverified. Three docs contain the same recovery packet and mirrors are synchronized. Do not mistake old failed scratch157smoke logs for the corrected committed closeout.
+
 ## CURRENT: Build157 one actions module (A8 ✅, R2 ✅)
 
 Code `b4eef8e` (retirement) + `38c4738` (orphaned `AttackPanel` deleted, byte-neutral); tag `rc-2.4.3-build-157-one-actions-module`; frozen RC with 97 verified hashes. Served on 9100 (Seraphic Herald origin; `app.monster` and `app.editor` bytes unchanged) and 9106. RC 156 stays frozen on 9127; `9124/candidate157/` is the pre-fix Codex preview and is superseded.
