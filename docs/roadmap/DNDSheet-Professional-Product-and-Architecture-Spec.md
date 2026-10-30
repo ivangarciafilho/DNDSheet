@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | **v2.4.3 build 149** · 2026-10-30 · A7 closed at build 148 (`49edfdf`); A8 opened with composer polish at build 149 (`0dbcd23`); candidate `rc-2.4.3-build-149-a8-plate-word-order`; every earlier candidate archive and tag preserved; formula provenance belongs to A9 |
-| **Repository** | `F:\AI_Resources\DNDSheet` · branch `statblock-overhaul` · build 146 code commit `10f7aa0`; protected build 143 is `77a18c5`; earlier candidates remain immutable |
+| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
+| **Code HEAD** | `fc21bc1` typed action economy editor and shared recharge precedence · branch `statblock-overhaul`, repository `F:\AI_Resources\DNDSheet` · 239 core tests, production build, focused lint 0 errors/1 existing warning, 42 browser steps and theme checks pass |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Delivery state** | **Track A** — Statblock & Authoring Overhaul: **7 / 18 loops shipped; A7 in progress** (A0–A6 shipped) · **Track B** — Product Foundations: **0 / 10**, specified · overall **68 / 193 tasks complete; 1 active; 124 pending** |
+| **Progress** | **8 / 28 loops shipped** · **76 / 204 tasks complete (37.25%)** · **0 active tasks · 128 pending** · A8 is the active loop; A7 closed at build 148 |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -2508,14 +2508,14 @@ stateDiagram-v2
 
 📍 *Spec › 11 Delivery* — **Twenty-eight loops in ten releases; A0–A6 are shipped, A7 is in progress, and every loop ships something the owner can see.**
 
-**Progress snapshot · 2026-10-29** — Build 146 adds reviewed non-destructive role transitions. 7/28 loops shipped; 68/193 tasks complete, 1 active (A7.7b), 124 pending; 64.77% remains. Conversion policy is proven across 49 role pairs; browser review/cancel/apply, copy independence, CR exclusion, references, reload and deletion cleanup pass. 216 core tests, production build, zero focused lint errors, all 39 browser steps with zero errors, five-theme spellcasting and twelve-theme help pass. Complete old-save field/order and export-format proof remain before A7.8; A8 remains blocked. Build 145 is preserved at 9109 and latest origin 9106 retains configured storage.
+**Progress snapshot · 2026-10-30** — Build 150 completes A8.0/1/4/9. 8/28 loops shipped; A8 active; 76/204 tasks complete, 0 active tasks, 128 pending; 62.75% remains. Typed cadence aligns the chip and stored economy; capability audit identifies exactly which controls still prevent panel retirement. Core 239/239, production build, focused lint 0 errors/1 existing warning, all 42 browser steps zero errors, five-theme spellcasting and twelve-theme help pass. Build 149 remains preserved at 9115; latest origins retain existing browser storage.
 
 ### 11.1 Releases and loops
 
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 22 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 26 / 33 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
 | **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
 | **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
 | **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
@@ -2756,8 +2756,8 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-23 | Economy chip (`BONUS ACTION`) inside plates outside their section | Recorded default: economy stays in its section header | A6 | ✅ |
 | BS-24 | Font Awesome 6 loaded via Quasar extras | Check `quasar.config.js` `extras` | A9 | ☐ |
 | BS-25 | Field paths into arrays need stable ids | Design `attacks[id=…]` paths | A9 | ☐ |
-| BS-26 | Home for villain actions | Ask owner | A8 | ☐ |
-| BS-27 | CR annotation cards inside the studio | Ask owner | A8 | ☐ |
+| BS-26 | Home for villain actions | Retain dedicated Villain/Bloodied panel; distinct round/bloodied models, no fabricated seven-role conversion | A8.0 | ✅ decision |
+| BS-27 | CR annotation cards inside the studio | Keep per-entry cards in studio; trait card shipped, action/lair cards required before retirement; global estimator stays separate | A8.0/A8.5 | ✅ decision |
 | BS-28 | `QEditor.getContentEl()` available on Quasar ^2.16 | Quasar API docs | A10 | ☐ |
 | BS-29 | PHB'24 prepared-spells table per class | Research (SRD 5.2.1 class tables) | A12 | ☐ |
 | BS-30 | Multiclass slot table 2014 vs 2024 | Research | A12 | ☐ |
@@ -3292,3 +3292,49 @@ stateDiagram-v2
 | Export semantics | `ExportMarkup.test.ts` (9 cases); browser Step 41 exports the seven-role witness as Markdown, Homebrewery v3, LaTeX and Improved Initiative in both templates: no markup, nothing missing, mechanics in action/bonus/legendary/mythic, one Multiattack label, the rpgtex legendary list, identical output across templates | Plain text, HTML and Foundry keep their own core projections (B4); Improved Initiative and Tarrasque actions and reactions still come from raw descriptions (BS-41) |
 
 **Release handling.** Each candidate is frozen into `.codex-temp/release-candidates/<tag>/spa` with `release-candidate.json` and a verified `SHA256SUMS.txt`, tagged, and served from its own port. Candidate 148 is served on 9100, the origin holding the owner's configured Seraphic Herald (D-20; stored sample hash unchanged across the switch), and on 9106. Build 139 moved from 9100 to 9114 untouched.
+
+## A8 capability audit — Build 150
+
+**Audit boundary:** source inventory of every legacy ability panel still mounted by `MonsterBuilder.vue`, the domain interfaces, current studio adapters, renderers and text exporters. All persisted fields retain their existing model ownership. A field's preserved value is not evidence that its editing workflow has moved. Existing panels remain mounted until the gaps below are implemented and tested.
+
+| Legacy owner | Fields and operations | Studio home / gap and retirement gate | Projection authority |
+|---|---|---|---|
+| `TraitsEditor` | `id`, `name`, `description`; `limitedUse.count/rate`; `rechargeTiming/count/tagOverride`; `stagePool`; `customPreamble`; recharge-section flag/name; conditional flag/trigger | Name/cadence chain and `TraitDisplaySettings` cover entry fields; existing ordering/template/create/delete paths retained. `alphaTraits` global sort still needs an explicit studio home before retirement | `processTrait`, grouped-trait projection, shared prose exports |
+| Trait CR | `include`, `automatic`, `maxDamage`, `maxSave`, `maxModifier`, `multitarget`, `ehpMultiplier`, `ehpModifier`, `acModifier` | `TraitDisplaySettings` keeps `CrAnnotationCard` and explicit automatic recalculation; no global CR redesign required | Existing CR estimator and `autoUpdateCr` |
+| `ReactionsEditor` | `id`, `name`, `description`, `trigger`, `limitedUse.count/rate`; create/delete/order/templates | Distinct reaction model, trigger/uses chips, prose and template workflows covered; Steps 36/40/41 retained | `processReaction`; shared exports |
+| `LegendaryActionsEditor` header | Pool `count`, default/custom toggle, custom preamble | `RoleHeaderEditor` in Legendary category covers all header fields, including zero-entry sections; confirmed A8.1 | Existing legendary preamble/token projection |
+| Legendary entries | `actions[].actionId/cost`, standalone create, associate existing action/attack, remove association, rename/edit source description | Cost chips and action records covered. Association picker/removal for existing attack/action references is not equivalent to destructive source deletion and must receive a studio home under A8.5 | `processLegendaryAction` and shared prose projections |
+| `MythicActionsEditor` header | `triggerName`, `triggerRecharge`, `triggerDescription`, `preamble` | `RoleHeaderEditor` covers all. There is no independent persisted mythic pool count; per-entry costs remain in mythic membership and no new count field is invented | Mythic trait/preamble and existing projection |
+| Mythic entries | `actions[].actionId/cost`, add/remove association to existing actions/attacks | Cost chips covered; association operations remain a retirement gap under A8.5 | Shared legendary-action processor using mythic membership |
+| `LairActionsEditor` | `id`, prose, CR annotation, custom preamble flag/text, create/delete/order and reset operation | Readonly identity + prose chain, lair section header/initiative covered. Lair CR editing and reset equivalence must land before retirement; no name field invented | `processLairAction`, default initiative token, shared prose export |
+| Shared action records | Full `MonsterAction` schema: identity/prose, recharge/string/bounds, uses, bonus/legendary flags, stat/save override, effects/range, school/tier/components/duration, delivery/area, structured attack/target/outcomes and legacy text | Chain + outcomes + typed usage cover mechanics/economy; role transition owns flags/membership. Action phase (`stagePool`), custom heading (`customPreamble`) and action CR card need explicit studio homes under A8.5 | Shared action grammar, web/prose targets and CR estimator |
+| `AttacksEditor` / `widgets/AttackPanel` identity and attack | `id/name`, phase extension, `targets`, `distance`, `kind`, `modifier.{override,overrideValue,stat,proficient}`, `range.{reach,standard,long}`, `save`, `legendaryOnly`, prose | A8.2 must adapt `DndAttack` directly; existing action grammar's single distance must not replace normal/long ranges | `processAttack`, existing attack getters; exports retain their supported projections |
+| Attack damage | Primary `damage.{count,dice,type,modifier.{override,overrideValue,stat}}`; alternate `{active,condition,count,dice,type,modifier.*}`; additional damage array `{count,dice,type,note}`; custom-render flag/text | All remain in AttackPanel until A8.2 typed editors and renderer parity tests exist; no conversion to simplified action effects | Existing attack damage calculations/token processor |
+| `MultiattackEditor` | `id`, ordered/repeated `attacks[]`/`actions[]`; group create/delete; reference add/remove; expected damage; global custom-render flag/text and postscript | A8.3 must preserve references and multiplicity, show missing IDs, retain prose controls. No string-name lookup replacement | `processMultiattack`, expected-damage getter, prose exports |
+| `VillainActionsEditor` | Villain `{id,round,name,description}`; bloodied `{id,name,triggerType,trigger,resetOnHeal,description}` (triggerType is the free/reaction/bonus action-cost selector); add/remove/order | **BS-26 decision:** retain this dedicated panel. These round-indexed/bloodied workflows are distinct models, not aliases of action/legendary roles. Keeping it still permits 21 → 14 modules after seven retirements | Existing villain/bloodied projections |
+
+**BS-27 decision:** retain CR editing next to the owning entry. The trait card already has that home; action/lair cards are mandatory A8.5 work before their panels disappear. The global estimator/checks UI remains separate. This is a reversible placement decision, with no model or rules change.
+
+### Typed usage contract — A8.9
+
+- `actionUsageDraft` reads current cadence without writing; a saved count/rate opens as limited uses. Top-level recharge, explicit bounds, nested legacy recharge and RECHARGE-rate fallback share one resolver (`actionRecharge`) across chip, classic token rendering and the editor.
+- Choices: no limit; whole recharge endpoints 1–100 with min≤max (supports the configured 6–12 sample); 1–999 limited uses with day/rest rates; custom recharge text. Unknown saved rate labels stay selectable; custom text is not reinterpreted as a rules conversion.
+- Local draft, error text, disabled Apply, focus return, Cancel, and Clear use the existing `ChainCell` lifecycle. Apply deliberately replaces competing cadence fields, clears hidden legacy recharge/bounds, retains unrelated nested metadata and all non-cadence fields. Clear means no cadence, not merely an empty top-level recharge string.
+- Legendary/mythic chips keep editing membership costs. Reaction uses and trait cadence retain their own model adapters. No schema/sample-data migration, attack conversion or panel retirement occurs in this slice.
+
+```mermaid
+stateDiagram-v2
+  [*] --> ReadCurrentCadence
+  ReadCurrentCadence --> LocalDraft
+  LocalDraft --> Invalid: Out-of-range or missing input
+  Invalid --> LocalDraft: Correct input
+  LocalDraft --> Unchanged: Cancel
+  LocalDraft --> ReplaceCadence: Apply valid draft
+  LocalDraft --> ClearCadence: Clear
+  ReplaceCadence --> ExistingPiniaPersistence
+  ClearCadence --> ExistingPiniaPersistence
+  ExistingPiniaPersistence --> SharedRechargeResolver
+  SharedRechargeResolver --> ChipAndSheet
+```
+
+Pure domain functions own interpretation, validation and patch data. The editor owns draft controls and focus; `ChainCell` owns commit/cancel; `ComposerChain` applies the patch to the current entry. Existing persistence/rendering remain authoritative. Five new core tests and browser Step 42 cover actual saved uses, bounds/custom values, validation, Cancel, clearing competing fields, preservation, narrow layout and reload.

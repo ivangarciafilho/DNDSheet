@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 149 · 2026-10-30 · A8 opened with composer polish · `rc-2.4.3-build-149-a8-plate-word-order` |
-| **Code HEAD** | `0dbcd23` head chips follow the plate word order; two-item lists read "a and b" · A7 closed at `49edfdf` (build 148) · archives 148/147/146/145/144/143/142/139 retained · 234 core tests, production build, focused lint (0 errors), 41 browser steps and theme checks pass |
-| **Progress** | **8 / 28 loops shipped** · **72 / 204 tasks done** (35.29 %) · **0 active** · **132 pending** · A8 ◐ |
-| **Now** | A8 ◐ build 149: A8.10 (head chips in plate word order) and A8.12 (two-item list grammar) shipped. Candidate 149 is served on 9100 over the configured Seraphic Herald sample and on 9106. |
-| **Next** | A8.0 capability matrix (confirm and tick A8.1/A8.4), then A8.9 usage editor and A8.11 classic prose parity before any panel retirement. |
+| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
+| **Code HEAD** | `fc21bc1` typed action economy editor and shared recharge precedence · branch `statblock-overhaul`, repository `F:\AI_Resources\DNDSheet` · 239 core tests, production build, focused lint 0 errors/1 existing warning, 42 browser steps and theme checks pass |
+| **Progress** | **8 / 28 loops shipped** · **76 / 204 tasks complete (37.25%)** · **0 active tasks · 128 pending** · A8 is the active loop; A7 closed at build 148 |
+| **Now** | A8.0 capability audit complete; A8.1 section headers and A8.4 reaction/trait authoring confirmed from A7; A8.9 typed usage delivered. Four tasks closed, no new top-level tasks added. Legacy panels retained behind explicit capability gates. |
+| **Next** | A8.11 classic metadata parity → A8.2 attack adapter → A8.3 multiattack references → A8.5 remaining capabilities and retirement → A8.6/7/8 fixture/browser closeout. See audited gaps and decisions below. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 22 / 33 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 26 / 33 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 27 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 8 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 29 | ☐ |
@@ -49,7 +49,7 @@
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **72 / 204 complete · 0 active · 132 pending** | **35.29 % complete · 64.71 % remaining** |
+| **Total** | **28 loops** (Track A 154 tasks · Track B 50) | **76 / 204 complete · 0 active · 128 pending** | **37.25 % complete · 62.75 % remaining** |
 
 ```mermaid
 pie showData
@@ -348,7 +348,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A8 · One Actions module ◐ `0dbcd23` · `rc-2.4.3-build-149-a8-plate-word-order` (partial)
+#### A8 · One Actions module ◐ `fc21bc1` · `rc-2.4.3-build-150-a8-typed-usage` (partial)
 
 > Every ability role lives in the studio; duplicate panels retire.
 
@@ -356,15 +356,15 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R2 | AU-03 | A7 | 3–5 d | 12 files · +650 / −1 400 |
 
-- [ ] **A8.0** Capability matrix: for each legacy panel list every field and its studio home; decide villain actions and CR cards (BS-26, BS-27) · M
-- [ ] **A8.1** Role headers: Legendary (pool, preamble), Mythic (trigger, pool), Lair (initiative, preamble) · M · *delivered early in A7 build 145 (`RoleHeaderEditor`, Step 38) — confirm at A8.0, then tick*
+- [x] **A8.0** Capability matrix: for each legacy panel list every field and its studio home; decide villain actions and CR cards (BS-26, BS-27) · M
+- [x] **A8.1** Role headers: Legendary (pool, preamble), Mythic (trigger, pool), Lair (initiative, preamble) · M · *delivered early in A7 build 145 (`RoleHeaderEditor`, Step 38) — confirmed by A8.0 at build 150*
 - [ ] **A8.2** Attack role: `AttackPanel` structured fields as chain cells (reach/range, targets, damage dice/type/bonus, extra damage, effect DC) · L
 - [ ] **A8.3** Multiattack role: reference chips by id with ⚠ for dangling targets · M
-- [ ] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirm at A8.0, then tick*
+- [x] **A8.4** Reaction trigger chip; trait limited-use, recharge-section and conditional-trigger chips · M · *delivered early in A7 builds 143–144 (Steps 36–37) — confirmed by A8.0 at build 150*
 - [ ] **A8.5** `MonsterBuilder.vue`: unmount `TraitsEditor`, `AttacksEditor`, `MultiattackEditor`, `ReactionsEditor`, `LegendaryActionsEditor`, `MythicActionsEditor`, `LairActionsEditor` (+ `VillainActionsEditor` per A8.0); delete the components (git keeps history) · M
 - [ ] **A8.6** Fixture diff: three saved monsters render byte-identical plates before/after · M
 - [ ] **A8.7** e2e adjustments for removed panels · S
-- [ ] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Today the chip shows "3/Day" from limited use while Apply writes free recharge text (*added A7*) · M
+- [x] **A8.9** Usage cell edits the real economy as one typed editor — Recharge X–Y · N/Day · N per rest · none. Build 150 fixes the mismatch between displayed limited uses and free recharge text; one validated editor owns competing cadence fields (*added A7*) · M
 - [x] **A8.10** Head chips follow the plate's word order: a spell level leads its school ("2nd Level Evocation"), a cantrip follows it ("Evocation Cantrip") (*added A7*) · S · *proof: `ComposerChain.test.ts` head-order case (red first); build 149*
 - [ ] **A8.11** Classic prose parity: `text2024` omits school/level, components, duration and target qualifiers that the modern plate prints for structured abilities; decide placement per field and prove both templates (*added A7*) · M
 - [x] **A8.12** List grammar: `listJoin` (now `rendering/list-join.ts`) reads "x and y" for two items and keeps the serial comma for three or more; multiattack and extra-damage prose on the sheet and in exports (*added A7*) · S · *proof: `ListJoin.test.ts` (red first); 41 browser steps; build 149*
@@ -817,3 +817,18 @@ Preparation: load executing-plans, verification-before-completion, relevant mode
 | Release closeout | Pending A7.8 | Close only after the two remaining gates; reconcile CMP-009…011, capability parity, artifacts and handoff. Do not retire panels early |
 
 Delivery delta: +51 deterministic core checks and +1 integrated browser scenario; 7 production/test/build files, +240/−97 lines; removed the delete/recreate conversion path. Top-level task totals remain 68/193, because A7.7b is still active rather than falsely closed. This is completed shipping behavior inside an open acceptance task, not additional roadmap scope.
+
+## A8 capability audit and execution gates — Build 150
+
+The normative field map and BS-26/27 decisions are in the Specification's matching Build 150 audit. Completing A8.0 means inventory and decisions are complete, not that every replacement has shipped.
+
+| Remaining task | Ordered actionable work and acceptance |
+|---|---|
+| A8.11 | Decide and render classic school/tier/components/duration and target qualifier placement; prove same authored information across templates and exports without inventing rules |
+| A8.2 | Adapt the existing `DndAttack` model (not `MonsterAction`); cover normal/long/reach range separately, proficiency/stat/overrides, primary/alternate/additional damage, effect save, phase, custom renderer and references |
+| A8.3 | Add/remove/reorder repeated attack/action IDs; surface dangling references; preserve custom multiattack renderer and postscript; do not infer references from names |
+| A8.5 | Before unmounting, add every missing studio home: action phase/custom-heading policy, action/lair CR cards, trait alpha-sort control, association add/remove for existing attacks/actions in legendary/mythic lists, and existing reset/template/reorder/delete semantics. Keep Villain/Bloodied panel by decision BS-26. Recount 21 → 14 top-level modules after seven retirements |
+| A8.6 | Capture three real saved monsters before retirement; require byte-identical rendered plates after retirement with no-op save/reload and reference integrity |
+| A8.7/8 | Update selectors only for intentionally retired panels; retain behavior assertions; full browser/theme checks and immutable candidate before closing A8 |
+
+**Closed in this packet:** A8.0 inventory/decisions; A8.1 existing section-header fields (Step 38); A8.4 existing reaction/trait cadence/trigger/grouping controls (Steps 36–37); A8.9 actual action cadence (Step 42 and `ActionUsage.test.ts`). No new top-level tasks were added; the remaining task count drops by four.

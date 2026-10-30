@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 149 · 2026-10-30 · A7 closed at build 148; A8 opened with composer polish (head chip word order, two-item list grammar); earlier archives preserved |
-| **State at hand-over** | Code `0dbcd23`, tag `rc-2.4.3-build-149-a8-plate-word-order`. Candidate 149 on 9100 (origin of the configured Seraphic Herald sample) and 9106 (latest); exact 149 at 9115, 148 at 9113, 147 at 9112, 146 at 9110, 145 at 9109, 144 at 9107, 143 at 9108, 142 at 9105, 139 at 9114. 234 core tests; production build; focused lint zero errors; 41 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. 72/204 done, 0 active, 132 pending. |
+| **Version** | v2.4.3 build 150 · 2026-10-30 · A8 capability audit and typed usage · `rc-2.4.3-build-150-a8-typed-usage` · Build 149 and earlier archives/tags preserved |
+| **State at hand-over** | Code `fc21bc1`, tag `rc-2.4.3-build-150-a8-typed-usage`. Latest/configured origins 9100 and 9106; exact 150 at 9116; protected 149 at 9115, 148 at 9113. 239 core tests; production build; focused lint 0 errors/1 existing warning; 42 browser steps with zero errors; 5-theme spellcasting and 12-theme help pass. Existing Seraphic Herald storage/schema/sample data retained. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 ◐: A8.10 and A8.12 shipped in build 149. Run A8.0 (capability matrix) next and confirm/tick A8.1 and A8.4, which were delivered inside A7. |
+| **Current loop** | A8 active. A8.0/1/4/9 closed in this packet (A8.1/4 were delivered earlier and verified now). Next is A8.11; no panels retire until every audited field and operation has a verified studio home. |
 
 ---
 
@@ -842,3 +842,22 @@ Preparation skills: executing-plans, verification-before-completion, archetypes 
 | Status | 72/204 done, 0 active, 132 pending; A8 ◐ |
 
 **Next bounded group: A8.0 capability matrix**, as staged in the Build 147–148 packet. Then A8.9 (one typed usage editor) and A8.11 (classic prose parity) before any panel retirement.
+
+## Build 150 packet — restored continuity, audited A8, delivered typed usage
+
+| Item | Evidence / handoff |
+|---|---|
+| Restored base | Actual HEAD `2eea8ae`, code `0dbcd23`, build 149; stale SESSION_LOG still said 146 and was corrected before continuing. A7 was already closed; no 147 work was replayed |
+| Closed | A8.0 capability inventory/BS-26/27 decisions; A8.1 role headers and A8.4 reaction/trait controls verified from prior A7 evidence; A8.9 typed action usage delivered |
+| Verification | Core 239/239 (+5); production build; focused lint 0 errors/1 existing warning; full 42 browser steps (+1) with zero errors; five-theme spellcasting and twelve-theme help; read-only usage review no blockers |
+| Browser evidence | Step 42 reads 3/Day, rejects zero, verifies Cancel/focus, applies per-rest use, 6–12 recharge and custom text, clears hidden cadence, preserves metadata/CR, fits 375px and persists after reload. Test selectors handle Quasar's native input attribute forwarding |
+| Preservation | New immutable 150 on 9116; 149 remains on 9115 with its sealed hashes unchanged. Configured/latest origins 9100/9106 promoted only after checks. Browser storage and sample records never overwritten by isolated fixtures |
+| Status | 76/204 complete (37.25%), 0 active tasks, 128 pending; 8/28 loops shipped, A8 active. Four task closures and no new top-level scope |
+
+**Next prepared packet: A8.11 classic metadata parity.** Read the specification's current A8 capability map, action grammar and both web/prose render targets. Write failing tests for school/tier, components, duration and target qualifiers in classic structured abilities; choose readable placement consistent with the existing workflow. Verify the same authored facts across modern/classic and exports. Keep the typed usage and prior export/old-save regression suites.
+
+Then implement A8.2 attack and A8.3 multiattack adapters as separate bounded packets. Treat A8.5 as a capability completion gate: action phase/custom-heading/CR, lair CR/reset, trait global sort, and existing-reference association operations must have studio homes before unmounting. Keep the dedicated Villain/Bloodied panel (BS-26), keep per-entry CR cards (BS-27), and re-count 21 → 14 modules. A8.6 requires three unchanged saved-monster fixtures and byte-identical plate output before/after retirement; A8.7/8 close only after behavior checks pass.
+
+Preparation: executing-plans; archetypes functional core; design UX copy/accessibility; engineering review; verification-before-completion. Use relevant existing skills already loaded; do not recreate a broad redesign or duplicate core renderers. Close each packet with code/tag/archive, measured file/line delta, test boundaries, all three documents and a current session log.
+
+Build 150 code `fc21bc1`: 8 files, +216/−23 lines. New core `action-usage.ts` and UI `ActionUsageEditor.vue`; shared cell/renderer integration, five tests and one browser scenario. Both 149 and 150 archives have 97 verified hashes. Final read-only review of the shared resolver found no regression.
