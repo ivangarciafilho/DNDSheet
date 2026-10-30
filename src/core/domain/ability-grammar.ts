@@ -24,6 +24,8 @@ export type AbilityMarkup = 'text' | 'html'
 
 export interface Text2024Options {
   markup?: AbilityMarkup
+  /** Full entry projections put components beside their caller-owned name. Standalone rules text retains them. */
+  componentsInLead?: boolean
 }
 
 const markLabel = (label: string, markup: AbilityMarkup): string => markup === 'html' ? `<i>${label}</i>` : label
@@ -72,6 +74,20 @@ export function abilityHeader(action: Partial<MonsterAction>): { discipline: str
     components: Array.isArray(action.components) ? action.components.map(nonEmptyText).filter(Boolean) : [],
     duration: /^instantaneous$/i.test(field(action.duration)) ? '' : field(action.duration),
   }
+}
+
+/** A shared head contract: cadence, identity, classification, duration. Unknown extension cells stay last. */
+export function abilityHeadOrder(action: Partial<MonsterAction>): readonly string[] {
+  const tier = nonEmptyText(action.spellLevel)
+  const classification = tier && !/^cantrip$|^none$/i.test(tier) ? ['tier', 'discipline'] : ['discipline', 'tier']
+  return ['usage', 'name', 'components', ...classification, 'duration']
+}
+
+/** Authored identity; HTML adapters request escaped text before adding their own emphasis. */
+export function abilityIdentity(action: Partial<MonsterAction>, markup: AbilityMarkup = 'text'): string {
+  const components = abilityHeader(action).components
+  const identity = [action.name || '', components.length ? `(${components.join(', ')})` : ''].filter(Boolean).join(' ')
+  return markup === 'html' ? identity.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : identity
 }
 
 const validAbilityNumber = (value: unknown): value is number | string =>
@@ -423,7 +439,7 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   const ability = inferAbility(action)
   const clauses: string[] = []
   const header = abilityHeader(action)
-  const identity = [header.discipline, header.components.length ? `(${header.components.join(', ')})` : ''].filter(Boolean).join(' ')
+  const identity = [header.discipline, !options.componentsInLead && header.components.length ? `(${header.components.join(', ')})` : ''].filter(Boolean).join(' ')
   const metadata = [identity, header.duration ? `Duration: ${header.duration}` : ''].filter(Boolean).join('; ')
   if (metadata) {
     const text = ensurePeriod(metadata)

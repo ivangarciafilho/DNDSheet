@@ -2523,7 +2523,7 @@ async function runFuzz() {
       const modern = await read('modern');
       editor.visualTemplate = previousTemplate;
       const checks = {
-        classicLegendary: /Radiant Burst \\(Costs 2 Actions\\)\\. Constitution Saving Throw: DC \\d+, all creatures in a 20-foot radius sphere\\. Failure: \\d+ \\(4d10\\) Radiant damage\\./.test(classic),
+        classicLegendary: /Costs 2 Actions \u00b7 Radiant Burst\\. Constitution Saving Throw: DC \\d+, all creatures in a 20-foot radius sphere\\. Failure: \\d+ \\(4d10\\) Radiant damage\\./.test(classic),
         classicMythic: /Mythic Lance\\. Ranged Attack Roll: \\+9, range 120 ft\\., one creature\\. Hit: \\d+ \\(2d10\\) Force damage\\./.test(classic),
         classicTemplatedAction: /Holy Javelin[\\s\\S]*Ranged Attack Roll: [+-]\\d+, range 120 ft\\., one creature which you can see\\. Hit:/.test(classicTemplated),
         modernLegendary: modern.includes('Costs 2 Actions') && modern.includes('Constitution Save') && modern.includes('On Failure:'),
@@ -3427,6 +3427,24 @@ async function runFuzz() {
   step46.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),action=monster.actions.find(a=>a.id==='cadence-witness');return action?.limitedUse.count===1&&action?.limitedUse.rate==='SHORT_REST'&&action?.limitedUse.extension==='keep'&&!document.querySelector('[data-composer-preview],[data-attack-preview],[data-multiattack-preview]');}`)
   console.log('Step 46 result:',JSON.stringify(step46,null,2))
   if(step46.problems.length||step46.projections!==6||step46.exports!==3||Object.entries(step46).some(([key,value])=>!['problems','projections','exports'].includes(key)&&value!==true))throw new Error('Step 46 failed: '+JSON.stringify(step46))
+
+  console.log('\n--- Step 47: Shared cadence, identity/components and classification heading order ---')
+  const step47=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    const roles=['action','bonus','legendary','mythic'];
+    for(const role of roles){monster.addAction();const action=monster.actions.at(-1);Object.assign(action,{id:'heading-'+role,name:'Heading '+role,description:'Keep witness prose.',bonusAction:role==='bonus',legendaryOnly:role==='legendary'||role==='mythic',recharge:'4–12',school:'Abjuration',spellLevel:'2nd Level',components:['V','S'],duration:'1 minute',targeting:{count:3,kind:'allies'}});if(role==='legendary')monster.addLegendaryAction(action.id,2);if(role==='mythic')monster.addMythicAction(action.id);}
+    const before=JSON.stringify(monster.$state),problems=[];let comparisons=0;
+    const ordered=(text,usage,name,classification)=>{const positions=[usage,name,'V, S',classification].filter(Boolean).map(part=>text.indexOf(part));return positions.every((position,index)=>position>=0&&(!index||position>positions[index-1]));};
+    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(250);for(const role of roles){const entry=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading '+role)),text=entry?.textContent||'',usage=role==='legendary'?'Costs 2 Actions':role==='mythic'?'':'Recharge 4–12';if(!ordered(text,usage,'Heading '+role,'2nd Level Abjuration')||(text.match(/V, S/g)||[]).length!==1||!text.includes('three allies')&&!text.includes('3 allies'))problems.push(style+'/'+template+'/'+role+': '+text);comparisons++;}}
+    const chain=document.querySelector('[data-composer-chain="heading-action"]');const order=[...chain.querySelectorAll('[data-chain-cell]')].map(el=>el.getAttribute('data-chain-cell')).slice(0,6);if(JSON.stringify(order)!==JSON.stringify(['usage','name','components','tier','discipline','duration']))problems.push('editor head order '+order);
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:heading-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
+    try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=await captured.at(-1).text();if(!ordered(text,'Recharge 4–12','Heading action','2nd Level Abjuration'))problems.push(label+': heading order');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    monster.actions.find(action=>action.id==='heading-action').spellLevel='Cantrip';await wait(150);const cantrip=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading action'))?.textContent.includes('Abjuration Cantrip');monster.actions.find(action=>action.id==='heading-action').spellLevel='2nd Level';await wait(100);
+    const unchanged=before===JSON.stringify(monster.$state);editor.visualTemplate='classic';for(const role of roles)monster.actions.find(action=>action.id==='heading-'+role).components=['M <pearl>','S & V'];await wait(150);for(const role of roles){const entry=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading '+role));if(!entry?.textContent.includes('M <pearl>, S & V')||entry.querySelector('pearl'))problems.push(role+': escaped custom components');}
+    return {problems,comparisons,exports,cantrip,unchanged};
+  }`)
+  console.log('Step 47 result:',JSON.stringify(step47,null,2))
+  if(step47.problems.length||step47.comparisons!==16||step47.exports!==3||!step47.cantrip||!step47.unchanged)throw new Error('Step 47 failed: '+JSON.stringify(step47))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3443,7 +3461,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 46 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 47 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

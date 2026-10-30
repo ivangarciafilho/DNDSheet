@@ -181,3 +181,11 @@ test('ExportStatblock - CharacterActor Markdown, Plain Text, and JSON exports', 
   assert.strictEqual(parsed.spells.length, 2)
   assert.strictEqual(parsed.skills.Persuasion.expertise, true)
 })
+
+test('2024 action export puts cadence before identity and components before classification',()=>{
+  const monster=migrateMonsterSchema(JSON.parse(fs.readFileSync(path.join(templatesDir,'Knight.5emm.json'),'utf8')))
+  monster.actions=[{...monster.actions[0],name:'Mantle',recharge:'4–12',school:'Abjuration',spellLevel:'2nd Level',components:['V','S'],targeting:{kind:'allies'},description:'Keep authored effect.'}]
+  const text=exportToMarkdown(monster, '2024')
+  assert.ok(text.includes('Recharge 4–12 · Mantle (V, S).*** 2nd Level Abjuration.'),text)
+  assert.equal((text.match(/\(V, S\)/g)||[]).length,1)
+})

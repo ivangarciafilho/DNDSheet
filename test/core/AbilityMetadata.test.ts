@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { abilityHeader, text2024 } from '../../src/core/domain/ability-grammar.ts'
+import { abilityHeader, abilityIdentity, text2024 } from '../../src/core/domain/ability-grammar.ts'
 import { defaultAction } from '../../src/core/domain/types.ts'
 
 test('metadata preserves authored values and matches the plate word order',()=>{
@@ -33,4 +33,17 @@ test('metadata HTML uses semantic emphasis, while literal angle brackets remain 
   const text=text2024(action,{}, {markup:'html'})
   assert.ok(text.includes('<i>Arcane &lt;custom&gt; (V); Duration: 1 minute.</i>'))
   assert.ok(text2024(action).includes('Arcane <custom>'))
+})
+
+// Components belong beside the caller-owned entry name when a full heading is rendered.
+test('heading-aware prose leaves components in the lead exactly once',()=>{
+  const action={...defaultAction('a'),name:'Mantle',school:'Abjuration',spellLevel:'2nd Level',components:['V','S'],duration:'1 minute',targeting:{}}
+  assert.equal(text2024(action,{}, {componentsInLead:true}), '2nd Level Abjuration; Duration: 1 minute.')
+  assert.ok(text2024(action).includes('(V, S)'))
+})
+
+test('HTML heading identity escapes authored component markup while text preserves it',()=>{
+  const action={...defaultAction('a'),name:'Mantle <custom>',components:['M <pearl>','S & V']}
+  assert.equal(abilityIdentity(action,'html'),'Mantle &lt;custom&gt; (M &lt;pearl&gt;, S &amp; V)')
+  assert.equal(abilityIdentity(action),'Mantle <custom> (M <pearl>, S & V)')
 })

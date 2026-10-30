@@ -1,7 +1,9 @@
+import { actionRecharge } from '../domain/action-usage.ts'
+import { formatLimitedUses } from '../domain/cadence.ts'
 import { CR } from '../domain/cr-tables.ts'
 import { avgHP, avgRoll, renderBonus, renderModifier, statModifier } from '../domain/math-utils.ts'
 import type { Monster, CharacterActor, DndStat } from '../domain/types.ts'
-import { hasStructuredAbility, inferAbility, text2024 } from '../domain/ability-grammar.ts'
+import { abilityIdentity, hasStructuredAbility, inferAbility, text2024 } from '../domain/ability-grammar.ts'
 import { formulaContextForMonster } from '../domain/formula-context.ts'
 import { DND_SKILLS } from '../domain/types.ts'
 import {
@@ -333,7 +335,15 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
       attackBonus,
       saveDc,
       formulaContext: formulaContextForMonster(monster),
-    })
+    }, { componentsInLead: true })
+  }
+
+  const actionLead = (action: Monster['actions'][number]): string => {
+    if (style !== '2024' || !hasStructuredAbility(action)) return action.name
+    const recharge = actionRecharge(action)
+    const usage = recharge ? (/^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`)
+      : action.limitedUse?.count > 0 ? formatLimitedUses(action.limitedUse.count, action.limitedUse.rate) : ''
+    return [usage, abilityIdentity(action)].filter(Boolean).join(' · ')
   }
 
   // Actions
@@ -365,7 +375,7 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
     for (const act of monster.actions || []) {
       if (!act.bonusAction) {
         const stageStr = act.stagePool && act.stagePool !== 'all' ? ` [Stage ${act.stagePool}]` : ''
-        lines.push(`***${act.name}${stageStr}.*** ${actionText(act)}`)
+        lines.push(`***${actionLead(act)}${stageStr}.*** ${actionText(act)}`)
         lines.push('')
       }
     }
@@ -377,7 +387,7 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
     lines.push('### Bonus Actions')
     for (const ba of bonusActs) {
       const stageStr = ba.stagePool && ba.stagePool !== 'all' ? ` [Stage ${ba.stagePool}]` : ''
-      lines.push(`***${ba.name}${stageStr}.*** ${actionText(ba)}`)
+      lines.push(`***${actionLead(ba)}${stageStr}.*** ${actionText(ba)}`)
       lines.push('')
     }
   }

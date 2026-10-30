@@ -49,7 +49,7 @@ const flat = (rows: ChainRowView[]): Record<string, ChainCellView> =>
 test('chain rows follow the plate: head, mechanics, scope, outcomes, prose', () => {
   const rows = chainView('action', soulBarrage(), { usage: 'Recharge 5–6', attackBonus: 7 })
   assert.deepStrictEqual(rows.map((row) => row.row), ['head', 'mechanics', 'scope', 'outcomes', 'prose'])
-  assert.deepStrictEqual(rows[0].cells.map((cell) => cell.id), ['usage', 'discipline', 'tier', 'name', 'components', 'duration'])
+  assert.deepStrictEqual(rows[0].cells.map((cell) => cell.id), ['usage', 'name', 'components', 'discipline', 'tier', 'duration'])
   assert.deepStrictEqual(rows[1].cells.map((cell) => cell.id), ['attack', 'attack-bonus', 'save-ability'])
   assert.deepStrictEqual(rows[2].cells.map((cell) => cell.id), ['target-count', 'target-kind', 'target-qualifier', 'target-range', 'target-area', 'target-planes'])
   assert.deepStrictEqual(rows[3].cells.map((cell) => cell.id), ['outcomes'])
@@ -57,9 +57,9 @@ test('chain rows follow the plate: head, mechanics, scope, outcomes, prose', () 
 
 test('head chips keep the plate word order: a spell level leads its school, a cantrip follows it', () => {
   const head = (spellLevel: string) => chainView('action', action({ school: 'Evocation', spellLevel }))[0].cells.map((cell) => cell.id)
-  assert.deepStrictEqual(head('2nd Level'), ['usage', 'tier', 'discipline', 'name', 'components', 'duration'])
-  assert.deepStrictEqual(head('Cantrip'), ['usage', 'discipline', 'tier', 'name', 'components', 'duration'])
-  assert.deepStrictEqual(head(''), ['usage', 'discipline', 'tier', 'name', 'components', 'duration'])
+  assert.deepStrictEqual(head('2nd Level'), ['usage', 'name', 'components', 'tier', 'discipline', 'duration'])
+  assert.deepStrictEqual(head('Cantrip'), ['usage', 'name', 'components', 'discipline', 'tier', 'duration'])
+  assert.deepStrictEqual(head(''), ['usage', 'name', 'components', 'discipline', 'tier', 'duration'])
 })
 
 test('set chips read like the plate they become', () => {

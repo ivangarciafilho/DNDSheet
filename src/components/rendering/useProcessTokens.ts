@@ -24,7 +24,7 @@ import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
-import { abilityHeader, hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
+import { abilityHeader, abilityIdentity, hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
 import type { LairAction } from 'src/core/domain/types'
 import { listJoin } from './list-join'
@@ -508,14 +508,14 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
       quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${spec.usage.trim()}</span>`)
     }
-    if (spec.discipline?.trim()) quals.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${spec.discipline.trim()}</span>`)
+    const classification = spec.discipline?.trim() ? ` <span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${spec.discipline.trim()}</span>` : ''
     const comps = Array.isArray(spec.components) && spec.components.length > 0
       ? ` <span class="sb-qual sb-comp component-cell">(${spec.components.join(', ')})</span>`
       : ''
     const duration = spec.duration?.trim() && !/^instantaneous$/i.test(spec.duration.trim())
       ? ` <span class="sb-qual duration-cell">${spec.duration.trim()}</span>`
       : ''
-    const head = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}</span>${comps}${duration}`
+    const head = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}</span>${comps}${classification}${duration}`
 
     const cells: PlateCell[] = [{ html: head, head: true, cls: 'action-composite-pill name-cell' }]
     for (const m of spec.mechanics ?? []) if (m?.trim()) cells.push({ html: m, cls: 'mech-cell' })
@@ -597,7 +597,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     lead: string
   ): string => {
     const { renderContext } = structuredRenderContext(context, monster)
-    return processTokens(`${lead} ${text2024(context, renderContext, { markup: 'html' })}`, context, monster, 'action')
+    return processTokens(`${lead} ${text2024(context, renderContext, { markup: 'html', componentsInLead: true })}`, context, monster, 'action')
   }
 
   const processTrait = (
@@ -712,7 +712,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     if (context.customPreamble) {
       return poolBadge + processTokens(context.description, context, monster, 'action')
     } else if (hasStructuredAbility(context)) {
-      return structuredActionLine(context, monster, `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b>`)
+      return structuredActionLine(context, monster, `${poolBadge}<b><i>${[usageText(context), abilityIdentity(context, 'html')].filter(Boolean).join(' · ')}.</i></b>`)
     } else if (context.stat !== 'none') {
       return processTokens(
         `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> <i>${t(
@@ -944,7 +944,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       if (structured?.legendaryOnly && !structured.customPreamble && hasStructuredAbility(structured)) {
         return isModern
           ? structuredActionPlate(structured, monster, cost > 1 ? costCell : '')
-          : structuredActionLine(structured, monster, `<b><i>${structured.name}${count}.</i></b>`)
+          : structuredActionLine(structured, monster, `<b><i>${[cost > 1 ? costCell : '', abilityIdentity(structured, 'html')].filter(Boolean).join(' · ')}.</i></b>`)
       }
 
       let description = ''

@@ -13,6 +13,7 @@ import type {
 } from './types.ts'
 import {
   ABILITY_NAMES,
+  abilityHeadOrder,
   areaPhrase,
   hasStructuredAbility,
   inferAbility,
@@ -249,15 +250,11 @@ const isVisible = (cellId: string, action: Partial<MonsterAction>, reading: Cell
   return true
 }
 
-/** The plate's discipline cell reads "2nd Level Evocation" but "Evocation Cantrip": a spell level leads its school. */
+/** Editor cells consume the same identity/classification order as rendered entry heads. */
 function inPlateWordOrder(cells: ChainCellView[], action: Partial<MonsterAction>): ChainCellView[] {
-  const tier = isNone(trimmed(action.spellLevel)) ? '' : trimmed(action.spellLevel)
-  const discipline = cells.findIndex((cell) => cell.id === 'discipline')
-  const level = cells.findIndex((cell) => cell.id === 'tier')
-  if (!tier || /^cantrip$/i.test(tier) || discipline < 0 || level < discipline) return cells
-  const ordered = cells.filter((cell) => cell.id !== 'tier')
-  ordered.splice(discipline, 0, cells[level])
-  return ordered
+  const order = abilityHeadOrder(action)
+  const rank = (id: string) => { const index = order.indexOf(id); return index < 0 ? order.length : index }
+  return [...cells].sort((a, b) => rank(a.id) - rank(b.id))
 }
 
 /** The chain mirrors the plate: same rows, same order, the same phrases the renderer prints. */
