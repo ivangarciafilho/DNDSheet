@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
-| **Code HEAD** | `f958cd4`;279core tests,production build,50browser scenarios,5spell/12help themes;focusedlint0errors/5existingwarnings |
+| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
+| **Code HEAD** | `2b45cff`;286core tests,productionbuild,50browser scenarios,5spell/12help themes,20plate parity;focusedlint0errors/5existingwarnings |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **9 / 28 loops shipped** - **86 / 219 tasks complete (39.27%)** - **0 active / 133 pending** - CR158 adds3tasks;A8/R2 remain closed |
+| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **0active / 131pending** - A9.0/A9.1 complete;A9 remains active |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -813,8 +813,8 @@ classDiagram
   class BindingResolver {
     «new A9 · L4»
     +resolveAll(monster) ResolutionReport
-    +dependencyOrder(bindings) FieldPath[]
-    +detectCycles(bindings) FieldPath[][]
+    +dependencyOrder(bindings,referenceSources) FieldPath[]
+    +detectCycles(bindings,referenceSources) FieldPath[][]
   }
   FormulaGroup "1" o-- "*" FormulaRef
   FormulaRef ..> FormulaContext : resolve
@@ -825,7 +825,7 @@ classDiagram
   BindingResolver ..> FormulaFailure
 ```
 
-**Shipped API (`core/domain/formula.ts`):** `parseFormula`, `evaluateFormula(src, ctx, {style})`, `resolveNumeric(input, ctx, {fallback, style})`, `renderFormulaMacros(html, ctx)`, `suggestFormulaRefs(query)`, `normalizeLegacyFormula`, `buildFormulaContext(monsterLike, derived)`, `formatDiceValue`, `describeBinding`, `bindingSource`, `isNumericBinding`; catalogs `FORMULA_GROUPS` (11 groups) and `FORMULA_REFS` (49 references, 84 aliases: 6 ability scores, 6 modifiers, 6 attack bonuses, 6 save DCs, 6 saving throws, 7 hit-point/hit-dice values, 5 spellcasting, 2 armor/initiative, 2 movement/senses, 2 challenge/legendary, 1 proficiency). A9 adds the `literal` variant to `NumericBinding` (today `ref | formula`).
+**Shipped API (`core/domain/formula.ts`):** `parseFormula`, `evaluateFormula(src, ctx, {style})`, `resolveNumeric(input, ctx, {fallback, style})`, `renderFormulaMacros(html, ctx)`, `suggestFormulaRefs(query)`, `normalizeLegacyFormula`, `buildFormulaContext(monsterLike, derived)`, `formatDiceValue`, `describeBinding`, `bindingSource`, `isNumericBinding`; catalogs `FORMULA_GROUPS` (11 groups) and `FORMULA_REFS` (49 references, 84 aliases: 6 ability scores, 6 modifiers, 6 attack bonuses, 6 save DCs, 6 saving throws, 7 hit-point/hit-dice values, 5 spellcasting, 2 armor/initiative, 2 movement/senses, 2 challenge/legendary, 1 proficiency). Build159 adds `literal`;the required referenceSources callback and dependency APIs are defined in its implementation contract below.
 
 **Grammar (EBNF, shipped):**
 
@@ -3721,3 +3721,44 @@ Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than aba
 Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
 
 Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.
+
+## Build159 — A9.0 pre-flight and A9.1 dependency contract
+
+A9.0 refresh supersedes the historical18-field/13-tag snapshots. Font Awesome6 is confirmed in `quasar.config.js`. Addresses use semantic keys or stable record IDs,never persisted collection offsets. Planned examples:`attacks[id=<encoded>].additionalDamage[id=<encoded>].count`,`actions[id=<encoded>].targeting.count`,`traits[id=<encoded>].limitedUse.count`,`spellcasting.classes[id=<encoded>].level`. ID encoding must distinguish delimiters and literal percent signs. Missing/duplicate IDs are errors,not first-match guesses. Positional import aliases may resolve once against the imported snapshot,not after reorder.
+
+| Inventory family | Authored leaves / constraints / source |
+|---|---|
+| Core | stats six scores,proficiency,AC,HP.HD/type/modifier,CR/lairCr;BasicsEditor/types. Ability scores currently1–30;HD>=1;signed HP modifier;die catalog. CR fractions retain their catalog representation. |
+| AC mechanics | acConfig custom item/temporary/conditional bonuses,count,secondary AC,save DCs,on-save damage,parry count,movement/miss distances and hit/miss damage;BasicsEditor/types. Bonuses signed;count,DC,damage and feet are distinct types. No invented global maximum. |
+| Extended HP | Bloodied override,threshold/reduction,tempHP,regeneration,invulnerability counts/DC and death-prevention counts/returnHP/burst amounts/range;BasicsEditor/types. Mode-gated overrides;legacy alias pairs need one canonical authority. |
+| Phases | Pool counts/HP,actionsPerTurn,bloodiedPerPhase,phaseConfigs overrides/initiative bonus;BasicsEditor. Pool count currently1–10. Phase arrays lack IDs;identity migration must precede individual bindings. stagePool is an identity/policy selector,not an arithmetic quantity. |
+| Saves/skills/tools/passives | Semantic ability/skill keys and tool stable IDs;overrideValue only when enabled. Derived totals are read-only. Passive score is distinct from signed modifier. |
+| Movement/senses | Stable-ID speeds and traversal values;sense ranges with ft/mi and observation minutes. Modern sense records and legacy sense fields cannot both be authorities. |
+| Languages | Telepathy ranges,probe/sensory DCs,animal handling DC,undead telepathy,dead-question count;BasicsEditor/types. Preserve legacy save compatibility and distinct modern saves. |
+| Attack studio | Override bonus,targets,ranges,save,primary/alternate damage count/die/bonus,extra damage by ID;attack-composer. Preserve inactive fields;safe integer validator owns bounds and die catalog. Save0 is none. |
+| Actions/outcomes | Explicit attack/save bonus,limited uses,recharge bounds,structured target count/range/area,effect formula. Targets may be all;dice formulas remain symbolic. Outcomes/effects lack stable occurrence IDs and need migration before bindings. |
+| Traits/sections | Uses/recharge counts,legendary pool,lair initiative;trait-composer/role-headers. Current counts0–999,pool0–99,lair initiative0–40. Blank overrides remain meaningful. |
+| Memberships | Legendary/mythic cost is a positive safe integer. Duplicate source IDs can identify multiple occurrences;source ID alone is not a stable membership address. |
+| Casting | Save/modifier/attack overrides,levels,class IDs,innate counts,prepared/cantrip-switch/resource counts and metamagic points. Inventory actual ClassCastingEditor/SpellcastingEditor consumers even when legacy inline types lag them. Derived known/prepared/slots are separate from authored overrides. |
+| Slots | Address spell levels semantically,not array positions. Existing slot tables remain an explicit literal-table exception pending their source-casting owner. |
+| CR annotations | Manual source-owned maxDamage/maxSave/maxModifier/ehpModifier/ehpMultiplier/acModifier. Automatic mode is derived. Multiplier precision is retained;do not globally truncate it to integer. |
+| Anatomy/authored encounter rules | Parts HP/AC/threshold,reactive usesPerRound,villain/event round and authored timing expressions. Runehammer currentCount is edited by current UI but is tracker state,not a hidden creature binding source. |
+| Exclusions | Portrait/A4 dimensions,opacity,scales,crop/font sizes,schema versions/catalog metadata,combatants/currentHP/player/death-save/session counters are outside authored creature numeric bindings. Preserve their precision and independent ownership. |
+
+Registry descriptors must own value type,unit,allowed references,bounds,sentinel/null policy,editable-mode gate and transitive authored sources. Dice terms are forbidden in scalar count/DC fields even when their average happens to be an integer. Arithmetic fractions must produce a field validation error,not silent rounding. Existing CR fractions,manual multipliers and presentation precision are explicit exceptions;A9 does not add a universal decimal/locale-entry UI.
+
+### Implemented A9.1 API
+
+`NumericBinding` now supports `{mode:'literal',value:number}` alongside ref/formula. Finite literals resolve directly through `resolveNumeric` using existing formatting;they never round-trip scientific notation through the expression lexer. Malformed imported literal shapes return an error/fallback. Existing numbers,strings,aliases and symbolic dice behavior remain supported.
+
+`dependencyOrder(bindings,referenceSources)` returns deterministic source-before-consumer field paths. `detectCycles(bindings,referenceSources)` returns sorted strongly connected cyclic groups,including self-dependencies,not every exponentially many cycle walk. Both validate inputs before producing results;invalid/cyclic order throws `BindingGraphError` with cycle groups,never a partial order.
+
+The required pure `referenceSources(canonicalRefId,targetPath)` callback supplies all authored/transitive source paths of that reference under the current descriptor/mode policy. Sources outside the overlay remain external roots. This supersedes the forecast one-argument signatures:the core cannot infer field ownership from formula token spelling or view state. A9.2/A9.3 must provide complete reference-source mappings;returning an empty map is not a safe cycle check for derived references.
+
+Graph analysis walks parsed ASTs,canonicalizes aliases,deduplicates dependencies,uses Map/Set rather than property assignment and caps input at512bindings/16384edges. Iterative SCC/order analysis avoids graph recursion. Reference mode accepts one registered identity;formula mode owns expressions. No object-path setter,evaluation of arbitrary code,store overlay,history behavior or dropdown replacement is introduced by this foundation slice.
+
+### Build159 verified closeout
+
+Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
+
+Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.

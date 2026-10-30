@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
-| **State at hand-over** | `f958cd4`,Build158 at http://localhost:9124/candidate158/index.html#/. Frozen predecessor157 preserved.279core/50browser/5spell/12help passed;candidate shares existing9124storage;main configured monster untouched. |
+| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
+| **State at hand-over** | `2b45cff`,Build159 at http://localhost:9124/candidate159/index.html#/. Build158 preserved;sample origin storage retained.286core/50browser/5spell/12help pass;20plates identical;no new dropdown UI claimed. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
-| **Current loop** | A9 next;A8/R2 remain closed.86/219 complete,0active,133pending;three new CR158 tasks,zero new whole-task closure. |
+| **Current loop** | A9 active:2/14tasks complete(A9.0/A9.1).88/219complete,0active task markers,131pending;no new scope. |
 
 ---
 
@@ -1031,3 +1031,21 @@ Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than aba
 Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
 
 Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.
+
+## Build159 closing packet → A9.2
+
+A9.0 source inventory and stable-identity decisions are recorded in the Specification's Build159 section. A9.1 adds literal binding support and bounded deterministic dependency diagnostics. No store binding overlay or replacement smart-dropdown UI ships yet. A9.0/A9.1 are the only new completed tasks;88/219 complete,131remaining,9/28loops shipped,A9active.
+
+Prepare A9.2 from actual studio consumers,not deleted panels or historical18-field counts. Load execution/verification,functional-core and UX-copy/catalog guidance as relevant. Keep numeric domain types distinct:count,bonus,DC,distance,die catalog,score,resource and symbolic dice. Preserve CR fractions/manual multipliers/presentation exceptions. Do not use array indices as persistent addresses. Phase/outcome/membership records without stable occurrence IDs require their planned migration;tool/class/attack IDs and semantic ability/skill/slot-level keys are available.
+
+API ruling:dependencyOrder/detectCycles require a pure referenceSources callback supplying complete canonical-reference source paths,including derived/transitive dependencies under the current mode. The earlier one-argument forecast could not safely infer those sources. Cost if incomplete:missed cycles/incorrect source order;A9.2 source-map invariants and A9.3 live resolver tests must prove completeness. External unbound paths are roots,not missing-bound-node errors. Cycles are SCC groups,not all simple cycle paths.
+
+Fresh review found two important boundary cases,now covered:literal scientific notation must bypass expression lexing,and ref mode must reject expressions/numeric text. Tests failed first then passed with both fixes. No deferred new review minors. Earlier158 custom comma-noun and nonfinite attack-bonus coverage minors remain recorded;they were not silently fixed in this slice.
+
+Continue with field descriptors,then overlay/history,then the shared UI adapter/control. Invalid/cyclic/nonfinite/out-of-bounds drafts retain committed values and show actionable errors;derived outputs do not become a second editable authority. Preserve159 and sample storage while building successors outside served output;new candidate paths use the existing server without replacing processes.
+
+### Build159 verified closeout
+
+Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
+
+Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.

@@ -1,5 +1,15 @@
 # DNDSheet session checkpoint - 2026-10-30
 
+## CURRENT: Build159 binding foundation
+
+Code2b45cff/tag rc-2.4.3-build-159-binding-foundation;eval http://localhost:9124/candidate159/index.html#/. Frozen15997hashes;protected15897verified. Existingserver/versionedassetpath;no process changes. Same9124storage,actualUI MyNewMonster+VeilofRadiance+build159;main-origin data untouched. Buildsuccessors outside servedoutput.
+
+A9.0 fullnumeric inventory refreshed (notold18fieldsubset):ID/keyaddressing,modegates,units/bounds/sentinels,derivedvseditable,decimal/catalog exceptions,identity-poor nested phase/outcome/membership prerequisites,tracker/presentation exclusions. FontAwesome6confirmed. A9.1literalNumericBinding +dependencyOrder/detectCycles implemented in formula.ts. Requiredpure referenceSources(canonicalRef,targetPath) callback supplies authored/transitive sources;futureA9.2mustprovecompletepolicy. SCCgroups,512node/16384edgecaps,Map/Set,iterativegraphanalysis,invalid/cyclicinputneverpartialorder. Literal finitevalues bypassparser;malformedimportsfailwithfallback. No storeoverlay/undo/replace-dropdown UI shipped.
+
+286core(+7),productionbuild,50browser zero console/runtimeerrors,5spell/12helpthemes,5savedfixtures20byteidenticalplates versus158,reload/danglingrefs stable;lint0errors/5existingwarnings. FreshSolreview2importantfindingsred→green:scientificnotationliteral andrefmodeexpressions. No newdeferredminors;158'sprevious2minorsremainrecorded. NoLaTeXcompile.
+
+Progress88/219(40.18%),131pending,0activetaskmarkers,9/28loopsshipped,A9active2/14. A9.0/A9.1closed,noaddedscope;all3docs+outputmirrorssynced. NextA9.2fieldregistry/complete source mapping,thenA9.3/4overlay/history,A9.5/6adapter/FormulaField,A9.7rollout;AttackPaneldeleted157neverresurrect. Don'tclaimbindingspersist/reacttoUIfromfoundationtests alone. CR158allrequirementsalreadyowned;don'tduplicatebacklog.
+
 ## CURRENT: Build158 consistency and CR158 scope
 
 Codef958cd4/tag rc-2.4.3-build-158-consistency. Frozen archive97verified hashes;protected157archive97verified. Eval http://localhost:9124/candidate158/index.html#/ on existing previewserver,versionedbase/candidate158;root/predecessor files not overwritten and no serverprocess changes. Same9124origin storage retained;actualUI confirmsMyNewMonster withVeilofRadiance andbuild158. Main-origin configured monster not reset/transferred.

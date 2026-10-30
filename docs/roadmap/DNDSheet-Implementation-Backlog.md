@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build158 - CR158 scope and consistency - `rc-2.4.3-build-158-consistency` - Build157 preserved |
-| **Code HEAD** | `f958cd4`;279core tests,production build,50browser scenarios,5spell/12help themes;focusedlint0errors/5existingwarnings |
-| **Progress** | **9 / 28 loops shipped** - **86 / 219 tasks complete (39.27%)** - **0 active / 133 pending** - CR158 adds3tasks;A8/R2 remain closed |
-| **Now** | Inherited target agreement and shared attack-bonus consistency delivered;new screenshot scope mapped in CR158. |
-| **Next** | A9.0 numeric-field/reference inventory;then binding foundations. A9.11 retains finesse/thrown provenance work;CR158 extensions follow existing dependencies. |
+| **Version** | Build159 - binding foundation - `rc-2.4.3-build-159-binding-foundation` - Build158 preserved |
+| **Code HEAD** | `2b45cff`;286core tests,productionbuild,50browser scenarios,5spell/12help themes,20plate parity;focusedlint0errors/5existingwarnings |
+| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **0active / 131pending** - A9.0/A9.1 complete;A9 remains active |
+| **Now** | Numeric inventory and literal/dependency foundation complete. Saved binding overlay and replacement dropdowns remain pending. |
+| **Next** | A9.2 field descriptors/source mapping,then A9.3 overlay/history and A9.5/6 contextual UI adapter/control. |
 
 ---
 
@@ -63,7 +63,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
-| R3 · Numbers know their source | A9 · A10 · A11 | 0 / 33 | ☐ |
+| R3 · Numbers know their source | A9 ◐ · A10 · A11 | 2 / 33 | ◐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 11 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
@@ -71,7 +71,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (Track A167 tasks / Track B52) | **86 / 219 complete - 0active - 133pending** | **39.27% complete** |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **88 / 219 complete - 0active - 131pending** | **40.18% complete** |
 
 ```mermaid
 pie showData
@@ -406,7 +406,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R3 · Numbers know their source
 
-#### A9 · NumericBinding fields ☐
+#### A9 · NumericBinding fields ◐
 
 > Pick `PB`, `CHA_MOD`, `HIT_DICE`… from grouped lists or write one formula — the value stays right.
 
@@ -414,14 +414,14 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R3 | AU-02 | A2 ✅ (A8 for studio cells) | 3–5 d | 9 files · +1 300 / −800 |
 
-- [ ] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); refresh the binding inventory beyond the historical 18-field subset, including CR154-05 consumers; decide decimals out of scope (BS-16) · M
-- [ ] **A9.1** `formula.ts`: `literal` binding variant, `dependencyOrder`, `detectCycles` + tests · M
+- [x] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); refresh the binding inventory beyond the historical 18-field subset, including CR154-05 consumers; decide decimals out of scope (BS-16) · M
+- [x] **A9.1** `formula.ts`: `literal` binding variant, `dependencyOrder`, `detectCycles` + tests · M
 - [ ] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M
 - [ ] **A9.3** `monster-store.ts`: `bindings` state (optional), `setBinding`, `clearBinding`, `resolveBindings` (one pass, equality check, cycle report) · L
 - [ ] **A9.4** History ledger skips patches flagged `historySilent` · S
 - [ ] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
 - [ ] **A9.6** `components/kit/FormulaField.vue`: states §8.1, grouped options with icons/colours/values, "ƒ Custom formula…" first, trace HelpTip, broken state · L
-- [ ] **A9.7** Replace the 6 `BasicsEditor` tags and 7 `AttackPanel` tags; delete `DynamicReferenceSelect.vue` · M
+- [ ] **A9.7** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M
 - [ ] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
 - [ ] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
 - [ ] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S
@@ -993,3 +993,22 @@ Delivered `f958cd4`,9files +174/-20. Inherited WIP is integrated rather than aba
 Release158 uses http://localhost:9124/candidate158/index.html#/ on the existing preview server with a versioned asset base;root/predecessor files are preserved. It shares9124browser storage,so the configured evaluation copy remains available;no main-origin monster data reset or transfer occurred. Source defaults are not a universal finesse/thrown inference;explicit overrides retain priority. A9.11 remains pending. No beam-count/outcome-grid/casting-source/species UI is claimed delivered.
 
 Final independent source review found no blocking regressions. Deferred minors remain the comma-separated custom-noun edge and dedicated nonfinite fallback test cases,recorded in CR158. Next execute A9.0 inventory and its pre-flight contract;retain the new outcome/casting/species tasks under their specified dependencies. Progress86/219,133remaining;three added scope items and zero prematurely closed tasks.
+
+## Build159 delivery and next dependency gates
+
+A9.0 inventory and policy decisions are complete;A9.1 literal variant,dependency order and cycle diagnostics are implemented. Close only these two tasks after recorded validation. Scope stays219;progress becomes88/219(40.18%),131remaining,9/28loops shipped. A9 remains open;this is not completion of the numeric-binding UI.
+
+Next actionable groups:
+1. **A9.2 field registry:**translate the full inventory into descriptors with semantic units,bounds,editable-mode gates,sentinel rules,allowed references and transitive authored-source paths. Define safe stable-ID parsing without eval/prototype traversal. Missing/ambiguous IDs must fail;identity-poor outcome/phase/membership fields stay explicitly unsupported until their existing migration owners land.
+2. **A9.3/4 overlay and history:**optional lossless bindings map,set/clear/apply equality checks,last-good values,explicit cycle/error reports and source-first one-pass resolution. Preserve extension fields and avoid reactive loops. Silent derived patches must not flood undo history.
+3. **A9.5/6 UI:**one reactive adapter and accessible contextual FormulaField,custom formula first,literals/references/live values/trace/invalid drafts. No arbitrary prose guessing.
+4. **A9.7–9 rollout/proof:**replace current BasicsEditor controls and AttackComposer/extra-damage consumers;AttackPanel was deleted in157 and is not an implementation target. Preserve sample data,undo,reorder,missing-source behavior,reload and export equality.
+5. A9.11 explicit finesse/thrown ability provenance and A9.12 structured CR remain open. No roll-count/outcome/casting/species scope is duplicated.
+
+Review corrections reproduced red→green:finite literals such as1e-7/1e21 bypass parser notation;ref bindings reject numeric strings/formula expressions. A9.1 has seven dedicated tests;A9.8 still owns complete store/no-op/unbind/failure integration tests later.
+
+### Build159 verified closeout
+
+Code2b45cff:3files,+164/-4. A9.0 andA9.1 close;88/219(40.18%),131remaining,9/28loops shipped,no scope growth.286coretests(+7),productionbuild,50browser scenarios zero console/runtime errors,5spell/12help themes;5saved fixtures/20byte-identical plates versus158,reloads/dangling references stable. Focusedlint0errors/5existingwarnings. No LaTeX compilation. Two fresh-review findings fixed red-to-green;no new deferred minors.
+
+Frozen159 and protected158 each have verified hash manifests. Evaluator http://localhost:9124/candidate159/index.html#/ uses existingserver/versioned assets and retains its configured VeilofRadiance sample storage;main-origin data untouched. No serverprocess replacement. A9.2 next;do not mark store bindings,live source propagation,history or smart-dropdown rollout complete from these pure foundation tests. The required source-map callback is an explicit dependency,not a hidden default that silently ignores cycles.
