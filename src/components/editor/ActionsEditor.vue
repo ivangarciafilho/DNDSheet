@@ -115,75 +115,7 @@
               </q-select>
             </div>
 
-            <template v-if="!item.rawAction && !item.rawReaction">
-              <!-- Far-Left Recharge / Cost Selector -->
-              <div class="col-6 col-sm-3 col-md-2">
-                <template v-if="item.role === 'legendary' || item.role === 'mythic'">
-                  <q-select
-                    :model-value="item.cost || 1"
-                    :options="[1, 2, 3]"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    options-dense
-                    label="Cost"
-                    @update:model-value="(val: number) => updateItemCost(item, val)"
-                  >
-                    <template #selected>
-                      <span class="text-caption text-weight-bold text-amber-3">
-                        Cost: {{ item.cost || 1 }}
-                      </span>
-                    </template>
-                    <q-tooltip class="text-caption">Legendary / Mythic action point cost</q-tooltip>
-                  </q-select>
-                </template>
-                <template v-else>
-                  <q-input
-                    :model-value="item.recharge || ''"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                    label="Recharge"
-                    placeholder="e.g. 5–6, 3/Day"
-                    @update:model-value="(val: string | number | null) => updateItemRecharge(item, String(val || ''))"
-                  >
-                    <q-tooltip class="text-caption">Cadence or recharge rate (e.g. Recharge 5-6, 1/Day, Short Rest)</q-tooltip>
-                  </q-input>
-                </template>
-              </div>
-
-              <!-- Name Input -->
-              <div class="col-6 col-sm-6 col-md-5">
-                <q-input
-                  :model-value="item.name"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                  label="Name"
-                  class="full-width"
-                  @update:model-value="(val: string | number | null) => updateItemName(item, String(val || ''))"
-                >
-                  <template #after>
-                    <q-btn
-                      round
-                      flat
-                      dense
-                      icon="save"
-                      color="cyan-3"
-                      size="sm"
-                      @click="addTemplate(item.rawAction || item)"
-                    >
-                      <q-tooltip>Save as Template</q-tooltip>
-                    </q-btn>
-                  </template>
-                  <q-tooltip class="text-caption">Title of the action, attack, or trait</q-tooltip>
-                </q-input>
-              </div>
-            </template>
-            <div v-else class="col text-weight-bold ellipsis" :title="item.name">{{ item.name }}</div>
+            <div class="col text-weight-bold ellipsis" :title="item.name">{{ item.name }}</div>
 
             <!-- Swap and Delete Actions -->
             <div class="col-12 col-md-auto row items-center justify-end q-gutter-x-xs">
@@ -223,6 +155,9 @@
               <q-btn v-if="item.rawAction" round flat dense icon="save" color="cyan-3" size="sm" @click="addTemplate(item.rawAction)">
                 <q-tooltip>Save as Template</q-tooltip>
               </q-btn>
+              <q-btn v-if="item.rawTrait" round flat dense icon="save" color="cyan-3" size="sm" @click="addTemplate(item.rawTrait, 'trait')">
+                <q-tooltip>Save as Trait Template</q-tooltip>
+              </q-btn>
               <swap-buttons :field="getStoreCollectionField(item.role)" :idx="getItemStoreIndex(item)" />
               <q-btn
                 round
@@ -238,20 +173,22 @@
             </div>
           </div>
 
-          <!-- A7: abilities stored as MonsterAction are edited as a chain of plate cells, in plate order. -->
+          <!-- Typed role adapters preserve each collection while using the same cell editor and renderer. -->
           <composer-chain
-            v-if="item.rawAction || item.rawReaction"
+            v-if="item.rawAction || item.rawReaction || item.rawTrait"
             :action-id="item.id"
             :role="chainRole(item)"
             :cost="item.cost || 1"
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           />
 
+          <trait-display-settings v-if="item.rawTrait" :trait-id="item.id" />
+
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
           <monster-text-editor
             :field="item.description"
             i18n-label-key="monster.trait.description"
-            token-category="action"
+            :token-category="item.role === 'trait' ? 'trait' : 'action'"
             @update:model-value="(val: string) => updateItemDescription(item, val)"
           />
         </div>
@@ -266,7 +203,7 @@ import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import { useQuasar } from 'quasar'
-import { MonsterAction, MonsterTrait, MonsterReaction } from '../models'
+import { MonsterAction, MonsterTrait, MonsterReaction, defaultTrait } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
@@ -274,9 +211,9 @@ import SwapButtons from './widgets/SwapButtons.vue'
 import { v4 as uuidv4 } from 'uuid'
 import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
-import type { ActionModelRole } from 'src/core/domain/composer-chain'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import ComposerChain from './composer/ComposerChain.vue'
+import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
 
 export interface UnifiedEntry {
   id: string
@@ -297,6 +234,7 @@ export default defineComponent({
     MonsterTextEditor,
     SwapButtons,
     ComposerChain,
+    TraitDisplaySettings,
   },
   setup() {
     const monster = useMonsterStore()
@@ -494,6 +432,7 @@ export default defineComponent({
       // 2. Add to new collection
       if (newRole === 'trait') {
         monster.traits.push({
+          ...defaultTrait(),
           id,
           name,
           description,
@@ -554,31 +493,22 @@ export default defineComponent({
       }
     }
 
-    const updateItemName = (item: UnifiedEntry, val: string) => {
-      item.name = val
-      if (item.rawAction) item.rawAction.name = val
-      if (item.rawTrait) item.rawTrait.name = val
-      if (item.rawReaction) item.rawReaction.name = val
-    }
-
     const updateItemDescription = (item: UnifiedEntry, val: string) => {
       item.description = val
       if (item.rawAction) {
         item.rawAction.description = val
         autoUpdateCr(val, item.rawAction.crAnnotation, item.rawAction)
       }
-      if (item.rawTrait) item.rawTrait.description = val
+      if (item.rawTrait) {
+        item.rawTrait.description = val
+        if (item.rawTrait.crAnnotation) autoUpdateCr(val, item.rawTrait.crAnnotation)
+      }
       if (item.rawReaction) item.rawReaction.description = val
 
       if (item.role === 'lair') {
         const lr = monster.lairActions?.find((l) => l.id === item.id)
         if (lr) lr.description = val
       }
-    }
-
-    const updateItemRecharge = (item: UnifiedEntry, val: string) => {
-      item.recharge = val
-      if (item.rawAction) item.rawAction.recharge = val
     }
 
     const updateItemCost = (item: UnifiedEntry, val: number) => {
@@ -658,8 +588,7 @@ export default defineComponent({
     }
 
     const chainRole = (item: UnifiedEntry): ActionComposerRole => {
-      if (item.role === 'reaction') return 'reaction'
-      return (item.role === 'bonus_action' || item.role === 'legendary' || item.role === 'mythic' ? item.role : 'action') as ActionModelRole
+      return item.role
     }
 
     const confirmApplyActionTemplate = (item: UnifiedEntry, template: ActionTemplate) => {
@@ -682,14 +611,15 @@ export default defineComponent({
       })
     }
 
-    const addTemplate = (target: MonsterAction) => {
+    const addTemplate = (target: MonsterAction | MonsterTrait, role: 'action' | 'trait' = 'action') => {
       $q.dialog({
         component: NewTemplateDialog,
         componentProps: {
           targetName: target?.name || 'Action',
         },
       }).onOk(({ name, icon }: { name: string; icon: string }) => {
-        templateStore.addCustomAction(target, name, icon)
+        if (role === 'trait') templateStore.addCustomTrait(target as MonsterTrait, name, icon)
+        else templateStore.addCustomAction(target as MonsterAction, name, icon)
         $q.notify({
           message: t('editor.template.added', [name]),
           type: 'positive',
@@ -708,9 +638,7 @@ export default defineComponent({
       insertMacro,
       addNewEntry,
       changeItemRole,
-      updateItemName,
       updateItemDescription,
-      updateItemRecharge,
       updateItemCost,
       deleteUnifiedItem,
       getRoleBadgeColor,

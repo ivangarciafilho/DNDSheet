@@ -128,6 +128,7 @@
           </div>
         </div>
 
+        <trait-cadence-editor v-else-if="kind === 'trait-cadence'" v-model="draft" />
         <chain-outcomes-editor v-else-if="kind === 'outcomes' || kind === 'effects'" v-model="draft" :mode="kind" />
 
         <div v-if="error" class="chain-editor__error" role="alert">{{ error }}</div>
@@ -144,6 +145,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue'
+import TraitCadenceEditor from './TraitCadenceEditor.vue'
 import { ABILITY_NAMES } from 'src/core/domain/ability-grammar'
 import { AREA_SHAPES, LEGENDARY_COSTS, SAVE_ABILITIES } from 'src/core/domain/action-composer'
 import type { ComposerCellSpec } from 'src/core/domain/action-composer'
@@ -152,9 +154,10 @@ import type { ChainCellView } from 'src/core/domain/composer-chain'
 import type { DndStat } from 'src/core/domain/types'
 import ChainOutcomesEditor from './ChainOutcomesEditor.vue'
 
-type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects'
+type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects' | 'trait-cadence'
 
 const HELP: Readonly<Record<string, string>> = {
+  'trait-usage': 'Edit limited uses, specific recharge timing, count and printed tag overrides. Conditional text is managed in Trait display settings.',
   usage: 'How often it can be used: a recharge range such as 5–6, or text such as Recharge after a Short Rest.',
   discipline: 'Magic school or martial discipline, printed before the name.',
   tier: 'Spell level or power tier. Cantrips print after the school.',
@@ -189,7 +192,7 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainCell',
-  components: { ChainOutcomesEditor },
+  components: { ChainOutcomesEditor, TraitCadenceEditor },
   props: {
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
@@ -208,6 +211,7 @@ export default defineComponent({
 
     const kind = computed<EditorKind>(() => {
       switch (props.cell.id) {
+        case 'trait-usage': return 'trait-cadence'
         case 'target-count': return 'count'
         case 'target-range': return 'range'
         case 'target-area': return 'area'
@@ -489,6 +493,8 @@ export default defineComponent({
 
 .chain-editor {
   width: min(92vw, 440px);
+  max-width: 100%;
+  box-sizing: border-box;
   padding: 10px 12px 12px;
 }
 

@@ -38,6 +38,7 @@ import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import { cellPatch, cellValue, chainView } from 'src/core/domain/composer-chain'
 import type { ActionModelRole, ChainContext } from 'src/core/domain/composer-chain'
 import { reactionCellPatch, reactionCellValue, reactionChainView, validateReactionCell } from 'src/core/domain/reaction-composer'
+import { traitCellPatch, traitCellValue, traitChainView, validateTraitCell } from 'src/core/domain/trait-composer'
 import ChainCell from './ChainCell.vue'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
@@ -61,7 +62,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const monster = useMonsterStore()
     const editor = useEditorStore()
-    const { processAction, processLegendaryAction, processReaction, sanitizeWebString, usageText, structuredRenderContext } = useProcessTokens()
+    const { processAction, processLegendaryAction, processReaction, processTrait, sanitizeWebString, usageText, structuredRenderContext } = useProcessTokens()
     const { autoUpdateCr } = useAutoUpdateCr()
 
     // The live store object: chips write to it exactly as the studio's other controls do.
@@ -73,7 +74,10 @@ export default defineComponent({
     const reaction = computed(() => props.role === 'reaction'
       ? monster.reactions.find((candidate) => candidate.id === props.actionId)
       : undefined)
-    const activeEntry = computed(() => action.value ?? reaction.value)
+    const trait = computed(() => props.role === 'trait'
+      ? monster.traits.find((candidate) => candidate.id === props.actionId)
+      : undefined)
+    const activeEntry = computed(() => action.value ?? reaction.value ?? trait.value)
     const pooled = computed(() => props.role === 'legendary' || props.role === 'mythic')
 
     const context = computed<ChainContext>(() => {
@@ -93,6 +97,7 @@ export default defineComponent({
         return chainView(props.role as ActionModelRole, action.value, context.value).filter((row) => row.row !== 'prose')
       }
       if (reaction.value) return reactionChainView(reaction.value, usageText(reaction.value))
+      if (trait.value) return traitChainView(trait.value)
       return []
     })
 
@@ -103,11 +108,13 @@ export default defineComponent({
       if (pooled.value && cellId === 'usage') return String(props.cost)
       if (action.value) return cellValue(action.value, cellId)
       if (reaction.value) return reactionCellValue(reaction.value, cellId)
+      if (trait.value) return traitCellValue(trait.value, cellId)
       return undefined
     }
 
     const validatorFor = (cellId: string) =>
-      props.role === 'reaction' ? (value: unknown) => validateReactionCell(cellId, value) : undefined
+      props.role === 'reaction' ? (value: unknown) => validateReactionCell(cellId, value)
+        : props.role === 'trait' ? (value: unknown) => validateTraitCell(cellId, value) : undefined
 
     const commit = (cellId: string, value: unknown) => {
       const current = action.value
@@ -126,6 +133,7 @@ export default defineComponent({
         const target = currentReaction as unknown as Record<string, unknown>
         for (const [key, next] of Object.entries(reactionCellPatch(currentReaction, cellId, value))) target[key] = next
       }
+      if (trait.value) Object.assign(trait.value, traitCellPatch(trait.value, cellId, value))
     }
 
     // Parity by construction: the same per-entry renderer and sanitizer the stat block uses.
@@ -133,7 +141,8 @@ export default defineComponent({
       const current = action.value
       if (current) return sanitizeWebString(pooled.value ? processLegendaryAction(current.id, props.cost, monster) : processAction(current, monster))
       const currentReaction = reaction.value
-      return currentReaction ? sanitizeWebString(processReaction(currentReaction, monster)) : ''
+      if (currentReaction) return sanitizeWebString(processReaction(currentReaction, monster))
+      return trait.value ? sanitizeWebString(processTrait(trait.value, monster)) : ''
     })
 
     const previewClasses = computed(() => [

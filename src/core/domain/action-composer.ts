@@ -79,8 +79,8 @@ const pooledActionChain: readonly ComposerCellSpec[] = actionChain.map((cell) =>
 )
 
 const traitChain: readonly ComposerCellSpec[] = [
-  { id: 'name', label: 'Name', row: 'head', editor: 'text' },
-  { id: 'usage', label: 'Usage', row: 'head', editor: 'text' },
+  { id: 'trait-usage', label: 'Cadence', row: 'head', editor: 'structured', field: 'limitedUse' },
+  { id: 'name', label: 'Name', row: 'head', editor: 'text', field: 'name' },
   { id: 'description', label: 'Description', row: 'prose', editor: 'text' },
 ]
 

@@ -2733,6 +2733,130 @@ async function runFuzz() {
   if (!step36.success) {
     throw new Error('Step 36 failed: ' + JSON.stringify(step36));
   }
+  console.log('\n--- Step 37: Trait cadence drafts, display settings, renderer parity and persistence ---')
+  const step37Setup = await evalInPage(`async () => {
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster = pinia._s.get('monster');
+    monster.addTrait();
+    const trait = monster.traits[monster.traits.length - 1];
+    Object.assign(trait, { id: 'a7-trait-proof', name: 'Moonlit Regeneration', description: 'Regains 5 hit points.',
+      limitedUse: { count: 2, rate: 'DAY' }, rechargeTiming: 'DAWN', rechargeCount: 2,
+      rechargeTagOverride: '', conditionalTrigger: '', stagePool: 'all', customPreamble: false });
+    await new Promise(resolve => setTimeout(resolve, 350));
+    const chain = document.querySelector('[data-composer-chain="a7-trait-proof"]');
+    const chip = chain?.querySelector('[data-chain-cell="trait-usage"]');
+    chip?.focus();
+    return { mounted: !!chip, cells: [...(chain?.querySelectorAll('[data-chain-cell]') || [])].map(el => el.dataset.chainCell) };
+  }`)
+  await pressKey('Enter')
+  await pause(350)
+  const step37Cancel = await evalInPage(`async () => {
+    const menu = document.querySelector('.chain-editor-menu');
+    const input = menu?.querySelector('input');
+    if (!input) return { ready: false };
+    input.value = '-1'; input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 150));
+    const invalid = !!menu.querySelector('[role="alert"]') && [...menu.querySelectorAll('button')].find(b => b.textContent.trim() === 'Apply')?.disabled;
+    input.value = '6'; input.dispatchEvent(new Event('input', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 100));
+    [...menu.querySelectorAll('button')].find(b => b.textContent.trim() === 'Cancel')?.click();
+    await new Promise(resolve => setTimeout(resolve, 300));
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    return { ready: true, invalid, unchanged: monster.traits.find(t => t.id === 'a7-trait-proof').limitedUse.count === 2,
+      focusBack: document.activeElement?.dataset.chainCell === 'trait-usage' };
+  }`)
+  await pressKey('Enter')
+  await pause(350)
+  const step37Apply = await evalInPage(`async () => {
+    const menu = document.querySelector('.chain-editor-menu');
+    if (!menu) return { ready: false };
+    const inputs = menu.querySelectorAll('input');
+    for (const input of [inputs[0], inputs[1]]) {
+      input.value = '3'; input.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    const select = menu.querySelectorAll('select')[1]; select.value = 'DAY'; select.dispatchEvent(new Event('change', { bubbles: true }));
+    await new Promise(resolve => setTimeout(resolve, 100));
+    [...menu.querySelectorAll('button')].find(b => b.textContent.trim() === 'Apply')?.click();
+    await new Promise(resolve => setTimeout(resolve, 350));
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const trait = monster.traits.find(t => t.id === 'a7-trait-proof');
+    return { ready: true, count: trait.limitedUse.count, timing: trait.rechargeTiming, rechargeCount: trait.rechargeCount,
+      description: trait.description, crIntact: !!trait.crAnnotation, focusBack: document.activeElement?.dataset.chainCell === 'trait-usage' };
+  }`)
+  const step37Parity = await evalInPage(`async () => {
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster = pinia._s.get('monster'); const editor = pinia._s.get('editor');
+    const trait = monster.traits.find(t => t.id === 'a7-trait-proof'); const previous = editor.visualTemplate;
+    const compare = async (template) => {
+      editor.visualTemplate = template; await new Promise(resolve => setTimeout(resolve, 250));
+      const preview = document.querySelector('[data-composer-preview="a7-trait-proof"] .action');
+      const renderer = [...document.querySelectorAll('#render .traits .trait')].find(el => el.textContent.includes('Moonlit Regeneration'));
+      return !!preview && !!renderer && preview.innerHTML === renderer.innerHTML;
+    };
+    const modern = await compare('modern'); const classic = await compare('classic');
+    editor.visualTemplate = 'modern';
+    const settings = document.querySelector('[data-trait-settings="a7-trait-proof"]');
+    settings.querySelector('.q-item').click(); await new Promise(resolve => setTimeout(resolve, 300));
+    const checkbox = [...settings.querySelectorAll('[role="checkbox"]')].find(el => el.textContent.includes('Group under a recharge heading'));
+    checkbox?.click(); await new Promise(resolve => setTimeout(resolve, 200));
+    const grouped = trait.renderInRechargeSection === true && trait.rechargeSection === 'Daily';
+    const heading = [...document.querySelectorAll('#render .sub-section-header')].some(el => el.textContent === 'Daily');
+    const headingInput = [...settings.querySelectorAll('.q-field')].find(el => el.querySelector('.q-field__label')?.textContent === 'Recharge heading')?.querySelector('input');
+    if (headingInput) {
+      headingInput.value = 'Daily '; headingInput.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 100));
+      headingInput.value += 'recovery'; headingInput.dispatchEvent(new Event('input', { bubbles: true }));
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+    const liveText = trait.rechargeSection === 'Daily recovery';
+    const custom = [...settings.querySelectorAll('[role="checkbox"]')].find(el => el.textContent.includes('Description supplies its own heading'));
+    custom?.click(); await new Promise(resolve => setTimeout(resolve, 200));
+    const previewText = document.querySelector('[data-composer-preview="a7-trait-proof"] .action')?.textContent;
+    const customPreview = trait.customPreamble && previewText?.includes('Regains 5 hit points.') && !previewText?.includes('Moonlit Regeneration');
+    custom?.click(); editor.visualTemplate = previous;
+    return { modern, classic, grouped, heading, liveText, customPreview };
+  }`)
+  await sendCdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
+  const step37Responsive = await evalInPage(`async () => {
+    const chain = document.querySelector('[data-composer-chain="a7-trait-proof"]');
+    const chip = chain.querySelector('[data-chain-cell="trait-usage"]'); chip.click();
+    await new Promise(resolve => setTimeout(resolve, 350));
+    const menu = document.querySelector('.chain-editor-menu');
+    return { width: chain.clientWidth, scrollWidth: chain.scrollWidth, menuWidth: menu?.clientWidth,
+      menuScrollWidth: menu?.scrollWidth, viewport: innerWidth };
+  }`)
+  await pressKey('Escape')
+  await sendCdp('Emulation.clearDeviceMetricsOverride')
+  const step37LegacyCr = await evalInPage(`async () => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const trait = monster.traits.find(t => t.id === 'a7-trait-proof');
+    trait.description = 'The creature deals {4d6} fire damage.';
+    // This is the partial, excluded annotation produced by the existing legacy import normalizer.
+    trait.crAnnotation = { include: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0 };
+    await new Promise(resolve => setTimeout(resolve, 200));
+    const settings = document.querySelector('[data-trait-settings="a7-trait-proof"]');
+    [...settings.querySelectorAll('button')].find(button => button.textContent.trim() === 'Calculate automatic CR')?.click();
+    await new Promise(resolve => setTimeout(resolve, 200));
+    return trait.crAnnotation?.automatic === true && trait.crAnnotation?.maxDamage === 14 && trait.crAnnotation?.include === false;
+  }`)
+  await sendCdp('Page.reload')
+  await pause(1200)
+  const step37Persistence = await evalInPage(`() => {
+    const monster = document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster');
+    const trait = monster?.traits.find(t => t.id === 'a7-trait-proof');
+    return !!trait && trait.limitedUse.count === 3 && trait.rechargeTiming === 'DAY' && trait.rechargeCount === 3 &&
+      trait.rechargeSection === 'Daily recovery' && trait.renderInRechargeSection === true && trait.customPreamble === false && !!trait.crAnnotation;
+  }`)
+  const step37 = { setup: step37Setup, cancel: step37Cancel, apply: step37Apply, parity: step37Parity, responsive: step37Responsive, legacyCr: step37LegacyCr, persisted: step37Persistence }
+  step37.success = step37Setup?.mounted && JSON.stringify(step37Setup.cells) === JSON.stringify(['trait-usage', 'name']) &&
+    step37Cancel?.invalid && step37Cancel?.unchanged && step37Cancel?.focusBack &&
+    step37Apply?.count === 3 && step37Apply?.timing === 'DAY' && step37Apply?.rechargeCount === 3 && step37Apply?.crIntact && step37Apply?.focusBack &&
+    step37Parity?.modern && step37Parity?.classic && step37Parity?.grouped && step37Parity?.heading && step37Parity?.liveText && step37Parity?.customPreview &&
+    step37Responsive?.width > 0 && step37Responsive?.scrollWidth <= step37Responsive.width + 1 &&
+    step37Responsive?.menuWidth > 0 && step37Responsive?.menuScrollWidth <= step37Responsive.menuWidth + 1 && step37Responsive.menuWidth <= step37Responsive.viewport && step37LegacyCr === true && step37Persistence === true
+  console.log('Step 37 result:', JSON.stringify(step37, null, 2))
+  if (!step37.success) throw new Error('Step 37 failed: ' + JSON.stringify(step37))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -2749,7 +2873,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 23 EXHAUSTIVE UI FUZZ TESTS PASSED WITH 0 ERRORS!')
+  console.log('ALL 37 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {
