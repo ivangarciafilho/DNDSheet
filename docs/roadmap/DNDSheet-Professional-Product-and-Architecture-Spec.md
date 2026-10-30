@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
-| **Code HEAD** | `0ce61c7` one authoritative sheet and canonical cadence vocabulary; 264 core tests, production build, 46 browser scenarios and theme suites; focused lint 0 errors/16 pre-existing warnings |
+| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
+| **Code HEAD** | `46785a0` shared heading order; 267 core tests, production build, 47 browser scenarios and theme suites; focused lint 0 errors/5 existing warnings |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **8 / 28 loops shipped** · **81 / 216 tasks complete (37.50%)** · **0 active tasks · 135 pending** · A8 active; CR-154 adds twelve scoped tasks |
+| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **0 active tasks · 134 pending** · A8 active; no new scope in this slice |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -3560,3 +3560,20 @@ Independent audit decision confidence: high for observed gaps and current UI con
 ### Build 154 evaluation-address boundary
 
 Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.
+
+## Build 155 implementation contract: identity before classification (A8.15)
+
+This supersedes earlier heading-position descriptions, including A8.10's old field placement and the Build151 caller-owned name/usage order. Entry head order is phase decoration where present, cadence/cost, **name with components**, level/school, non-instantaneous duration; mechanics, targets and outcomes follow. Within classification, level precedes school, while the existing school-before-Cantrip wording remains supported. A plain recharge range keeps its existing `Recharge 4–12` typography in this slice; typography does not change the recharge domain.
+
+| Layer | Contract and ownership |
+|---|---|
+| Human workflow | The editor chip order mirrors the sheet, reducing scanning between differently ordered representations. Cadence is independent of roll count, targeting and damage. |
+| Pure model | `abilityHeadOrder(action)` supplies head cell order; `abilityHeader` retains authored classification/components/duration; `abilityIdentity(action, markup)` joins name/components and escapes literal text for HTML. No persisted-field changes. |
+| Editor | `chainView` sorts known head cells by the shared order. Unknown extension cells remain stable at the end. Other rows retain their existing order. |
+| Modern web | `buildPlateEntry` places identity/components before the classification cell, retaining cadence/phase help and semantic cell classes. |
+| Classic and toolbar prose | Structured ordinary/bonus/legendary/mythic leads put cadence or supplied legendary cost before escaped identity. `text2024(...,{componentsInLead:true})` emits classification/duration once, then all mechanics/outcomes/authored prose. |
+| Core exports | 2024 structured action/bonus headings use identity/cadence; standalone `text2024` remains backward compatible with components in metadata. 2014 core legacy output and existing custom-preamble branches retain their current contract. Full export-system convergence remains B4. |
+
+Data flow: authored action -> pure header facts/order -> editor cells / modern head / escaped classic lead + metadata grammar -> authoritative sheet or prose adapter. Adapters own emphasis; the identity helper owns text escaping only when HTML is requested. No hidden preview, migration, roll policy or state mutation is introduced.
+
+Failure gates: literal `M <pearl>`/`S & V` must remain text in classic headings; components appear once; UTF-8 punctuation must not contain replacement characters; cadence/cost cannot disappear; targets retain their quantities; template/style changes do not edit the monster. Existing custom preambles remain an authored override. Verified by267 core tests,47 browser scenarios and existing theme suites. Review corrections and release boundaries are recorded in the handoff.

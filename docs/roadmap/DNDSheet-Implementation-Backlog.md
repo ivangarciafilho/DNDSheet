@@ -4,11 +4,11 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
-| **Code HEAD** | `0ce61c7` one authoritative sheet and canonical cadence vocabulary; 264 core tests, production build, 46 browser scenarios and theme suites; focused lint 0 errors/16 pre-existing warnings |
-| **Progress** | **8 / 28 loops shipped** · **81 / 216 tasks complete (37.50%)** · **0 active tasks · 135 pending** · A8 active; CR-154 adds twelve scoped tasks |
-| **Now** | A8.13/A8.14 complete: local render duplicates removed, plain Role selection, shared cadence choices and compact one-use rest labels. Nineteen new concerns mapped; twelve tasks added, two delivered. |
-| **Next** | A8.15 superseding head order → A8.5 missing controls/associations and retirement → A8.6/7/8 closeout. A9/A11 semantic expansion and A12 casting sources follow their foundations. |
+| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
+| **Code HEAD** | `46785a0` shared heading order; 267 core tests, production build, 47 browser scenarios and theme suites; focused lint 0 errors/5 existing warnings |
+| **Progress** | **8 / 28 loops shipped** · **82 / 216 tasks complete (37.96%)** · **0 active tasks · 134 pending** · A8 active; no new scope in this slice |
+| **Now** | A8.15 complete: editor head order, modern plate, classic structured prose and 2024 core action exports agree on cadence, identity/components, classification. |
+| **Next** | A8.5 capability coverage/associations before retiring duplicate panels; A8.6 fixture parity, A8.7 browser adjustment and A8.8 closeout. |
 
 ---
 
@@ -40,7 +40,7 @@
 | Release | Loops | Tasks done / total | Status |
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
-| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 31 / 36 | ◐ |
+| R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ◐ | 32 / 36 | ◐ |
 | R3 · Numbers know their source | A9 · A10 · A11 | 0 / 32 | ☐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 10 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
@@ -872,7 +872,7 @@ The 2026-10-30 request adds twelve tasks (11 Track A, 1 Track B). Prior baseline
 
 - [x] **A8.13** Single rendered surface: remove inline preview DOM/computations from action/reaction/trait/lair, attack and multiattack composers; plain Role select; direct authoritative-sheet regression checks across existing templates/themes, keyboard and mobile. Preserve role-transition semantics · M
 - [x] **A8.14** Canonical cadence identity/aliases/catalog and compact one-use rest label; current usage editors and action/reaction/trait projections share formatting; unknown saved rates preserved, milestone/interval distinctions documented and tested. Formula-bound counts remain A9/A11 work · M
-- [ ] **A8.15** Superseding head grammar: usage → name/components → tier/school; shared editor/web/prose projection with old metadata preserved. Scope shortening retains all mechanical quantities; roll count remains separate A9.13 work · M
+- [x] **A8.15** Superseding head grammar: usage → name/components → tier/school; shared editor/web/prose projection with old metadata preserved. Scope shortening retains all mechanical quantities; roll count remains separate A9.13 work · M
 - [ ] **A9.13** Independent roll-count/scaling/conditional-roll contract and bindings; distinguish target count, beam count and damage multiplier; explicit level/HD/custom source with provenance; roll versus save advantage/disadvantage; migration and export tests · L
 - [ ] **A11.5** Outcome clauses: hit/miss/success/failure/custom, recipient predicates and stable result-reference graph; vertical/horizontal/inline presentation independent of mechanics; empty/invalid/cycle and export tests · L
 - [ ] **A11.6** Shared reaction mechanics plus trigger and typed availability sets; adapters/migration preserve reaction IDs/prose/uses and legacy stagePool. Every action-family editing capability has a reaction counterpart where meaningful · L
@@ -885,7 +885,7 @@ The 2026-10-30 request adds twelve tasks (11 Track A, 1 Track B). Prior baseline
 
 A9.0/A11.0 inventories now include every integer consumer, including limited uses, roll counts, outcome values and nested fields; A13.0 inventories every dropdown. Alphabetical order applies within semantic groups, with explicit numeric/chronological/custom-first exceptions. A12.0–7 remain prerequisites for accurate metrics/catalogs, not substitutes for source ownership. A8.5 existing phase controls remain required before retirement; multi-pool availability expansion lands after bindings under A11.6.
 
-Next execution: A8.13 + A8.14 first. Every new slice refreshes source map, failure fixtures, preservation/migration matrix and release gates before code changes. Read Specification CR-154 and Handoffs CR-154 together.
+Current next execution: A8.5; A8.13/A8.14 shipped in154 and A8.15 in155. Every new slice refreshes source map, failure fixtures, preservation/migration matrix and release gates before code changes. Read Specification CR-154 and Handoffs CR-154 together.
 
 ### Build 154 closing delta and backlog grooming
 
@@ -902,3 +902,17 @@ Next A8.15 preparation: map head field ownership in `ROLE_CHAINS`, `composer-cha
 ### Build 154 evaluation-address boundary
 
 Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.
+
+## Build 155 delivery delta and groomed next work
+
+A8.15 delivered at `46785a0`: 9 code/test/build files, +89/-27 lines. No schema or numerical-policy change. 81/216 -> **82/216 (37.96%)**, remaining135 -> **134**; one task delivered, zero added. R2 advances31/36 ->32/36; eight loops remain shipped. Historic Build154 figures above are retained as dated evidence.
+
+Proof:267 core tests (+3); production build;47 browser scenarios (new Step47:16 role/style/template combinations,3 toolbar downloads, cantrip wording, custom-component escaping and unchanged-model assertion);5-theme spellcasting and12-theme help. Final fresh review found escaping and encoding regressions; both corrected with tests before release. Focused lint0errors/5existingwarnings. LaTeX content checked, not compiled.
+
+Next A8.5 work packages, in dependency order (acceptance details, not additional counted tasks):
+- Inventory every control and association owned by each proposed retired panel, including paragon phase, legendary/mythic/lair cost, trigger and section controls.
+- Provide a functional studio home for each existing capability. Keep the source panel mounted until that capability and saved-data round trip are proven; no destructive trimming to satisfy a panel count.
+- Verify reference selection, removal, reorder, missing-reference recovery, undo/cancel and reload with three representative saved monsters. Compare against **Build155**, the new deliberate heading baseline.
+- Retire only covered panels; retain Villain Actions under BS-26. Capture A8.6 fixture parity and A8.7 real browser paths before A8.8 closes the loop.
+
+Broader roll counts, formulas, outcome policies, phase availability expansion, traversal riders, casting sources, score generation and sheet density remain under their CR154 task IDs; no duplicate new scope was added.

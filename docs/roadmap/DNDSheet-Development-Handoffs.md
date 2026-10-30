@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Version** | v2.4.3 build 154 · 2026-10-30 · CR-154 authoring foundation · `rc-2.4.3-build-154-authoring-foundation` · Build 153 and earlier archives/tags preserved |
-| **State at hand-over** | Code `0ce61c7`, build 154; independent evaluation 154 at 9123; main 9100/9106 and exact 9121 retain protected Build 153. 264 core tests, production build, 46 browser scenarios zero errors, 5-theme spellcasting and 12-theme help. Existing browser storage retained. |
+| **Version** | v2.4.3 build 155 · 2026-10-30 · shared heading grammar · `rc-2.4.3-build-155-heading-grammar` · Build 154 and earlier archives/tags preserved |
+| **State at hand-over** | Code `46785a0`, build 155; independent evaluation http://localhost:9125/index.html#/. Protected154 remains9123; main9100/9106 remains153. 267 core tests, production build,47 browser scenarios,5 spell themes,12 help themes. Separate origin has separate storage; configured user monster not copied or reset. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2) |
-| **Current loop** | A8 active; A8.13/A8.14 delivered under CR-154. Next A8.15 head syntax, then capability/retirement gates. The new post-binding semantic tasks do not create an A8↔A9 dependency cycle. |
+| **Current loop** | A8 active; A8.13/A8.14/A8.15 delivered. Next A8.5 capability coverage and retirement gates; post-binding semantic tasks stay in A9/A11/A12. |
 
 ---
 
@@ -939,3 +939,17 @@ All three canonical documents and output evaluation mirrors are synchronized. Re
 ### Build 154 evaluation-address boundary
 
 Build 154 is sealed/tagged and available at **http://localhost:9123/index.html#/**. The main evaluation addresses 9100/9106 remain on protected Build 153, as does its exact address 9121. Automatic approval review rejected the attempted running-server replacement with a generic “blocked by policy” response and no detailed reason; no replacement was performed. The safe delivery is the separately served candidate. Its browser origin has separate local storage; existing main-origin monster data was not reset or overwritten. Do not claim the candidate automatically shares that browser storage or that the main address already serves 154.
+
+### Build 155 closing packet -> A8.5
+
+Delivered A8.15, code `46785a0`, tag `rc-2.4.3-build-155-heading-grammar`, independent evaluator http://localhost:9125/index.html#/. Build154 at9123 and configured Build153 at9100/9106 remain preserved. Prior automatic approval review rejected replacement of running evaluation servers with generic blocked-by-policy; no detailed reason returned. Do not retry/bypass that operation. This independent origin has separate storage; no configured monster data was copied, reset or overwritten. Actual initial in-app selection is My New Monster, not a claimed preloaded Herald.
+
+Pre-flight interface ruling: A8.15 supersedes A8.10's head placement, while retaining `abilityHeader` factual metadata and standalone `text2024` compatibility. Components move into full-entry identity exactly once; numeric semantics and A9.13 remain separate. Cost if wrong: misread metadata or lost output; direct expected-order/quantity tests cover the change. Core2014 legacy exports and authored custom-preamble paths retain existing behavior; broad export convergence stays B4.
+
+Final review corrections: custom components moved out of escaped metadata into an unescaped lead; added a failing core test, HTML identity escaping, then browser cases for all four roles. Encoding introduced invalid punctuation; restored UTF-8 and exercised real browser/download strings. Both findings fixed,267/267 core suite green. No deferred reviewer minors. One interim full run failed the old cost-order assertion, intentionally updated; another mutable-staging run was invalidated during rebuild. Final regression ran against the frozen candidate, not mutable dist.
+
+Evidence: production build;267core tests(+3);47browser scenarios zero console/runtime errors;5-theme spellcasting and12-theme help; focusedlint0errors/5existingwarnings. New Step47 checks16 role/style/template projections,3downloads,Cantrip phrasing,once-only components,literal component escaping and no authored model mutations. Existing Step34 intentionally expects cost before name. Served index/entry bytes verified across localhost/IPv4/IPv6; protected153/154 each97hashes verified. LaTeX was not compiled.
+
+Next packet A8.5: load execution/verification, functional-core, Impeccable/UX copy and TTRPG guidance as relevant. Read Spec CR154 dependencies, Backlog A8.0 capability matrix and A8.5-8; inspect MonsterBuilder and every retiring panel against current ActionsEditor adapters. First list exact controls/associations not yet owned by the studio, then implement complete homes with preservation fixtures. Do not delete or unmount a panel on feature-count assumptions. Phase controls already present must survive; multi-pool expansion remains A11.6. Use Build155 as pre-retirement rendering baseline for A8.6. Retain VillainActionsEditor. Final closure requires fixture equality, actual browser lifecycle, docs and a preserved successor RC.
+
+Process adjustment: run candidate regression on a frozen build root after builds finish; never rebuild its serving directory mid-run. Use explicit UTF-8 byte writes for source/document edits and inspect diff size before build. These prevent validation noise and encoding churn from consuming another delivery loop.
