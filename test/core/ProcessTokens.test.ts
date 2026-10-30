@@ -114,7 +114,7 @@ test('ProcessTokens - Generic monster properties and trait context', () => {
     monster,
     { context: trait }
   )
-  assert.strictEqual(contextText, 'The Red Dragon Wyrmling uses Fire Breath (1/DAY).')
+  assert.strictEqual(contextText, 'The Red Dragon Wyrmling uses Fire Breath (1/Day).')
 })
 
 test('ProcessTokens - Advanced Macros (Cantrip Tier, Dynamic Dice with Stat Mods, Shorthands)', () => {

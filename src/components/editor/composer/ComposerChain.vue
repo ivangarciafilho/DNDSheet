@@ -18,20 +18,13 @@
       </div>
     </div>
 
-    <div class="composer-chain__row composer-preview" :data-composer-preview="activeEntry.id">
-      <span class="composer-chain__label" aria-hidden="true">Preview</span>
-      <div :class="previewClasses" aria-label="Live stat block preview">
-        <!-- eslint-disable-next-line vue/no-v-html -- the stat block's own renderer and sanitizer produce this markup -->
-        <div :class="['action', { legendary: pooled, lair: role === 'lair' }]" v-html="previewHtml"></div>
-      </div>
-    </div>
+
   </section>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { useEditorStore } from 'src/stores/editor-store'
 import { useProcessTokens } from 'src/components/rendering/useProcessTokens'
 import { useAutoUpdateCr } from '../useAutoUpdateCr'
 import { ROLE_CHAINS } from 'src/core/domain/action-composer'
@@ -64,8 +57,7 @@ export default defineComponent({
   emits: ['update:cost'],
   setup(props, { emit }) {
     const monster = useMonsterStore()
-    const editor = useEditorStore()
-    const { processAction, processLegendaryAction, processReaction, processTrait, processLairAction, sanitizeWebString, usageText, structuredRenderContext } = useProcessTokens()
+    const { usageText, structuredRenderContext } = useProcessTokens()
     const { autoUpdateCr } = useAutoUpdateCr()
 
     // The live store object: chips write to it exactly as the studio's other controls do.
@@ -143,27 +135,7 @@ export default defineComponent({
       if (trait.value) Object.assign(trait.value, traitCellPatch(trait.value, cellId, value))
     }
 
-    // Parity by construction: the same per-entry renderer and sanitizer the stat block uses.
-    const previewHtml = computed(() => {
-      const current = action.value
-      if (current) return sanitizeWebString(pooled.value ? processLegendaryAction(current.id, props.cost, monster) : processAction(current, monster))
-      const currentReaction = reaction.value
-      if (currentReaction) return sanitizeWebString(processReaction(currentReaction, monster))
-      if (trait.value) return sanitizeWebString(processTrait(trait.value, monster))
-      return lair.value ? sanitizeWebString(processLairAction(lair.value, monster, true)) : ''
-    })
-
-    const previewClasses = computed(() => [
-      'statblock',
-      {
-        mm2014: editor.style === '2014',
-        mm2024: editor.style === '2024',
-        'modern-modular': editor.visualTemplate === 'modern',
-      },
-      `theme-${editor.visualTheme || 'wotc'}`,
-    ])
-
-    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, previewHtml, previewClasses, rowLabels: ROW_LABELS }
+    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS }
   },
 })
 </script>

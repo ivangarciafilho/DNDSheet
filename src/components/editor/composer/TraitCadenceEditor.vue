@@ -4,7 +4,7 @@
       <q-input :model-value="modelValue.limitedUse.count" type="number" min="0" max="999" dense outlined dark autofocus label="Limited uses" class="col-5" @update:model-value="(value) => updateUses('count', value ?? '')" />
       <label class="col-7 trait-cadence__label">Recovery rate
         <select :value="modelValue.limitedUse.rate" class="trait-cadence__select" @change="updateUses('rate', ($event.target as HTMLSelectElement).value)">
-          <option v-for="option in rateOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+          <optgroup v-for="group in rateGroups" :key="group.label" :label="group.label"><option v-for="option in group.options" :key="option.value" :value="option.value" :title="option.help">{{ option.label }}</option></optgroup>
         </select>
       </label>
     </div>
@@ -22,19 +22,14 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
+import { cadenceOptions } from 'src/core/domain/cadence'
 import { TRAIT_RECHARGE_OPTIONS } from 'src/core/domain/defense-and-traits-utils'
 import type { TraitCadenceDraft } from 'src/core/domain/trait-composer'
 
 const props = defineProps<{ modelValue: TraitCadenceDraft }>()
 const emit = defineEmits<{ (event: 'update:modelValue', value: TraitCadenceDraft): void }>()
-const { rechargeTimeOptions } = useRechargeTimes()
-// Retain imported/custom values as visible choices rather than silently normalizing saved content.
-const rateOptions = computed(() => {
-  const options = rechargeTimeOptions.value
-  const current = props.modelValue.limitedUse.rate
-  return current && !options.some((option) => option.value === current) ? [...options, { label: current, value: current }] : options
-})
+const rateOptions = computed(() => cadenceOptions(props.modelValue.limitedUse.rate))
+const rateGroups = computed(() => [...new Set(rateOptions.value.map(option => option.category))].map(label => ({ label, options: rateOptions.value.filter(option => option.category === label) })))
 const timingOptions = computed(() => {
   const options = TRAIT_RECHARGE_OPTIONS.filter((option) => option.value)
   const current = props.modelValue.rechargeTiming

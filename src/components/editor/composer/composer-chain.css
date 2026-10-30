@@ -37,62 +37,6 @@
   font-weight: 700;
 }
 
-.composer-preview {
-  margin-top: 6px;
-  padding-top: 8px;
-  border-top: 1px dashed rgba(255, 255, 255, 0.18);
-}
-
-/* Layout only: the stat block's own rules paint the plate inside. */
-.composer-preview .statblock {
-  flex: 1 1 auto;
-  min-width: 0;
-  width: auto;
-  max-width: 100%;
-  margin: 0;
-  padding: 6px 8px;
-  border-radius: 4px;
-  box-shadow: none;
-}
-
-/*
- * The sheet's base type and entry spacing live in WebRenderer's scoped styles, which cannot reach this preview.
- * They are restated at the sheet's own specificity (`:where` adds none) so theme rules win or lose alike.
- */
-:where(.composer-preview) .statblock {
-  color: #000;
-  font-family: ff-scala-sans-pro;
-  font-size: 1rem;
-  letter-spacing: 0.01em;
-}
-
-:where(.composer-preview) .statblock.mm2024 {
-  font-weight: 400;
-  letter-spacing: 0.3px;
-}
-
-:where(.composer-preview) .statblock .multiattack,
-:where(.composer-preview) .statblock .attack,
-:where(.composer-preview) .statblock .action {
-  line-height: 1.15rem;
-}
-
-:where(.composer-preview) .statblock .legendary.action {
-  margin-left: 20px;
-  text-indent: -20px;
-}
-
-:where(.composer-preview) .statblock.mm2024 .multiattack,
-:where(.composer-preview) .statblock.mm2024 .attack,
-:where(.composer-preview) .statblock.mm2024 .action {
-  line-height: 1.2em;
-}
-
-:where(.composer-preview) .statblock.mm2024 .legendary.action {
-  margin-left: 0;
-  text-indent: 0;
-}
-
 @media (max-width: 599px) {
   .composer-chain__row {
     flex-direction: column;

@@ -24,18 +24,12 @@ v-for="spec in extraFields(extra.id)" :key="spec.id" :cell="cell(spec)" :spec="s
       <q-btn flat dense no-caps icon="save" label="Save attack template" @click="saveTemplate" />
       <q-select v-if="phaseOptions.length > 1" v-model="attack.stagePool" :options="phaseOptions" emit-value map-options dense dark outlined label="Phase / pool" style="min-width: 160px" />
     </div>
-    <div v-if="attack.useCustomRenderer" class="text-caption text-amber-3 q-mb-sm">Custom rendering is active. The preview uses your custom text; structured fields remain saved.</div>
+    <div v-if="attack.useCustomRenderer" class="text-caption text-amber-3 q-mb-sm">Custom rendering is active. The stat block uses your custom text; structured fields remain saved.</div>
     <monster-text-editor :field="attack.description" i18n-label-key="editor.attack.description" token-category="attack" @update:model-value="(text: string) => attack && (attack.description = text)" />
     <monster-text-editor
 v-if="attack.useCustomRenderer" :field="attack.customRenderer" i18n-label-key="editor.attack.customRenderer" token-category="attack" :show-reset="true"
       @update:model-value="(text: string) => attack && (attack.customRenderer = text)" @reset="attack.customRenderer = t('presets.attack')" />
-    <div class="composer-chain__row composer-preview" :data-attack-preview="attack.id">
-      <span class="composer-chain__label">Preview</span>
-      <div :class="previewClasses" aria-label="Live attack stat block preview">
-        <!-- eslint-disable-next-line vue/no-v-html -- shared stat block renderer and sanitizer -->
-        <div class="attack" v-html="previewHtml"></div>
-      </div>
-    </div>
+
   </section>
 </template>
 <script lang="ts">
@@ -43,9 +37,7 @@ import { computed, defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { useEditorStore } from 'src/stores/editor-store'
 import { useTemplatesStore } from 'src/stores/templates-store'
-import { useProcessTokens } from 'src/components/rendering/useProcessTokens'
 import { attackExtraPrefix, attackFields, attackPatch, attackValue, validateAttackField } from 'src/core/domain/attack-composer'
 import type { AttackField } from 'src/core/domain/attack-composer'
 import type { ChainCellView } from 'src/core/domain/composer-chain'
@@ -57,9 +49,8 @@ export default defineComponent({
   name: 'AttackComposer', components: { ChainCell, MonsterTextEditor },
   props: { attackId: { type: String, required: true } },
   setup(props) {
-    const monster = useMonsterStore(), editor = useEditorStore(), templates = useTemplatesStore(), $q = useQuasar()
+    const monster = useMonsterStore(), templates = useTemplatesStore(), $q = useQuasar()
     const { t } = useI18n()
-    const { processAttack, sanitizeWebString } = useProcessTokens()
     const attack = computed(() => monster.attacks.find(a => a.id === props.attackId))
     const fields = computed(() => attack.value ? attackFields(attack.value) : [])
     const value = (id: string) => attack.value ? attackValue(attack.value, id) : ''
@@ -75,8 +66,6 @@ export default defineComponent({
     const rows = computed(() => [ ['head', 'Identity'], ['mechanics', 'Roll'], ['scope', 'Targets'], ['outcomes', 'Damage'] ].map(([id, label]) => ({ id, label, fields: fields.value.filter(spec => spec.row === id && visible(spec)) })))
     const extraFields = (id: string) => fields.value.filter(spec => spec.id.startsWith(`${attackExtraPrefix(id)}.`))
     const phaseOptions = computed(() => [{ label: 'All phases', value: 'all' }, ...Array.from({ length: monster.paragonConfig?.enabled || monster.paragonConfig?.poolCount > 1 ? monster.paragonConfig.poolCount || 2 : 0 }, (_, index) => ({ label: `Phase / pool ${index + 1}`, value: String(index + 1) }))])
-    const previewHtml = computed(() => attack.value ? sanitizeWebString(processAttack(attack.value, monster)) : '')
-    const previewClasses = computed(() => ['statblock', editor.style === '2014' ? 'mm2014' : 'mm2024', { 'modern-modular': editor.visualTemplate === 'modern' }, `theme-${editor.visualTheme || 'wotc'}`])
     const saveTemplate = () => {
       const current = attack.value
       if (!current) return
@@ -85,7 +74,7 @@ export default defineComponent({
         if (latest) { templates.addCustomAttack(latest, name, icon); $q.notify({ message: t('editor.template.added', [name]), type: 'positive' }) }
       })
     }
-    return { monster, attack, rows, cell, value, validate, commit, extraFields, phaseOptions, previewHtml, previewClasses, saveTemplate, t }
+    return { monster, attack, rows, cell, value, validate, commit, extraFields, phaseOptions, saveTemplate, t }
   },
 })
 </script>

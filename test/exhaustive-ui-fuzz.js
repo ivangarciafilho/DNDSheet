@@ -142,6 +142,20 @@ async function runFuzz() {
     return res.result?.result?.value
   }
 
+  // One production surface: locate a source's live sheet entry, never mount a second renderer for tests.
+  const sheetEntryHelper = `window.__sheetEntry=id=>{
+    const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    let record,selector;
+    for(const [collection,css] of [['actions','.action'],['traits','.trait'],['reactions','.reaction'],['attacks','.attack'],['lairActions','.lair']]){
+      record=monster[collection].find(entry=>entry.id===id);if(record){selector=css;break;}
+    }
+    if(!record)return null;
+    const name=record.customPreamble?'':record.name;
+    const prefix=(record.description||'').replace(/<[^>]*>/g,'').split('{')[0].trim().slice(0,30);
+    return [...document.querySelectorAll('#render '+selector)].find(el=>name?el.textContent.includes(name):prefix&&el.textContent.includes(prefix))||null;
+  };`
+  await sendCdp('Page.addScriptToEvaluateOnNewDocument', { source: sheetEntryHelper })
+  await evalInPage(`()=>{${sheetEntryHelper}}`)
   console.log('\n--- Step 1: Initial Render Parity Verification ---')
   const step1 = await evalInPage(`
     async () => {
@@ -2526,7 +2540,7 @@ async function runFuzz() {
     throw new Error('Step 34 failed: ' + JSON.stringify(step34));
   }
 
-  console.log('\n--- Step 35: Composer chain edits plate cells by keyboard; its preview is the stat block entry ---')
+  console.log('\n--- Step 35: Composer chain edits plate cells by keyboard; edits the authoritative stat block ---')
   // Trusted key events: synthetic DOM events never activate buttons or open Quasar menus.
   const KEYS = {
     Enter: { code: 'Enter', keyCode: 13, text: '\r' },
@@ -2604,9 +2618,9 @@ async function runFuzz() {
       const compare = async (template) => {
         editor.visualTemplate = template;
         await new Promise((resolve) => setTimeout(resolve, 300));
-        const preview = chain.querySelector('[data-composer-preview] .action');
-        const same = [...document.querySelectorAll('#render .statblock .action')].some((entry) => entry.innerHTML === preview.innerHTML);
-        return { same, text: preview.textContent.replace(/\\s+/g, ' ').trim().slice(0, 140) };
+        const sheet = window.__sheetEntry('a6-soul-barrage');
+        const same = !!sheet && sheet.textContent.includes(action.name) && /2|two/i.test(sheet.textContent) && !chain.querySelector('.statblock');
+        return { same, text: sheet?.textContent.replace(/\\s+/g, ' ').trim().slice(0, 140) };
       };
       const previous = editor.visualTemplate;
       const modern = await compare('modern');
@@ -2626,31 +2640,12 @@ async function runFuzz() {
     };
   }`)
   await sendCdp('Emulation.clearDeviceMetricsOverride')
-  // The preview must look like the sheet entry, not only share its markup: compare computed styles.
+  // Verify the sole production sheet across themes/styles; duplicate preview equality is intentionally retired.
   const typeMatrix = await evalInPage(`
     async () => {
       const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
       const editor = pinia._s.get('editor');
       const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-      const rootProps = ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'background-color'];
-      const props = ['display', 'flex-direction', 'flex-wrap', 'align-items', 'justify-content', 'font-family', 'font-size', 'font-weight',
-        'font-style', 'line-height', 'letter-spacing', 'color', 'background-color', 'background-image', 'border-top-width', 'border-top-color',
-        'border-left-width', 'border-left-color', 'padding-top', 'padding-left', 'text-transform', 'text-indent', 'column-gap', 'opacity',
-        'white-space', 'margin-left'];
-      const differences = (preview, twin) => {
-        const found = [];
-        const pr = getComputedStyle(preview.closest('.statblock'));
-        const sr = getComputedStyle(twin.closest('.statblock'));
-        for (const p of rootProps) if (pr.getPropertyValue(p) !== sr.getPropertyValue(p)) found.push('root ' + p);
-        const walk = (a, b, at) => {
-          const ca = getComputedStyle(a);
-          const cb = getComputedStyle(b);
-          for (const p of props) if (ca.getPropertyValue(p) !== cb.getPropertyValue(p)) found.push(at + ' ' + p);
-          [...a.children].forEach((child, i) => b.children[i] && walk(child, b.children[i], at + '>' + child.tagName.toLowerCase()));
-        };
-        walk(preview, twin, 'entry');
-        return found;
-      };
       const saved = { template: editor.visualTemplate, style: editor.style, theme: editor.visualTheme };
       const themes = ['wotc', 'printer', 'lovecraft_golden', 'lovecraft_silver', 'lovecraft_toxic', 'lovecraft_spooky', 'lovecraft_galactic',
         'lovecraft_fathomless', 'dwarves_forge', 'dwarves_aetherpunk', 'art_nouveau', 'art_deco'];
@@ -2665,9 +2660,15 @@ async function runFuzz() {
           editor.visualTemplate = template;
           editor.visualTheme = theme;
           await wait(260);
-          const preview = chain?.querySelector('[data-composer-preview] .action');
-          const twin = preview && [...document.querySelectorAll('#render .statblock :is(.trait, .action)')].find((entry) => entry.innerHTML === preview.innerHTML);
-          const found = twin ? differences(preview, twin) : ['no sheet twin'];
+          const sheet = window.__sheetEntry(id);
+          const found = [];
+          if (!sheet) found.push('missing sheet entry');
+          else {
+            const style = getComputedStyle(sheet);
+            if (style.display === 'none' || Number.parseFloat(style.fontSize) <= 0 || style.color === 'rgba(0, 0, 0, 0)') found.push('unreadable sheet entry');
+            if (!sheet.closest('.statblock')?.classList.contains('theme-' + theme)) found.push('wrong theme');
+          }
+          if (chain?.querySelector('.statblock')) found.push('duplicate local rendering');
           if (found.length) failures.push({ id, style, template, theme, found: found.slice(0, 6) });
         }
       }
@@ -2702,7 +2703,7 @@ async function runFuzz() {
     throw new Error('Step 35 failed: ' + JSON.stringify(step35));
   }
 
-  console.log('\n--- Step 36: Reaction chain edits its typed trigger and previews the rendered reaction ---')
+  console.log('\n--- Step 36: Reaction chain edits its typed trigger and updates the rendered reaction ---')
   const step36Setup = await evalInPage(`
     async () => {
       const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
@@ -2764,11 +2765,10 @@ async function runFuzz() {
   const step36Parity = await evalInPage(`
     async () => {
       const chain = document.querySelector('[data-composer-chain] [data-chain-cell="trigger"]')?.closest('[data-composer-chain]');
-      const preview = chain?.querySelector('[data-composer-preview] .action');
       const renderer = document.querySelector('#render .statblock .action.reaction');
       return {
-        hasTrigger: (preview?.textContent || '').includes('When a creature moves within 15 ft.'),
-        sameHtml: !!preview && !!renderer && preview.innerHTML === renderer.innerHTML,
+        hasTrigger: (renderer?.textContent || '').includes('When a creature moves within 15 ft.'),
+        sheetRendered: !!renderer && !chain?.querySelector('.statblock'),
         rendererText: renderer?.textContent?.replace(/\\s+/g, ' ').trim(),
       };
     }
@@ -2783,7 +2783,7 @@ async function runFuzz() {
     JSON.stringify(step36Setup.cells) === JSON.stringify(['usage', 'name', 'trigger']) &&
     step36Setup?.focusReady === true &&
     step36Edited?.applied === true && step36Edited?.menuClosed === true && step36Edited?.focusReturned === true &&
-    step36Parity?.hasTrigger === true && step36Parity?.sameHtml === true
+    step36Parity?.hasTrigger === true && step36Parity?.sheetRendered === true
   console.log('Step 36 result:', JSON.stringify(step36, null, 2))
   if (!step36.success) {
     throw new Error('Step 36 failed: ' + JSON.stringify(step36));
@@ -2850,9 +2850,8 @@ async function runFuzz() {
     const trait = monster.traits.find(t => t.id === 'a7-trait-proof'); const previous = editor.visualTemplate;
     const compare = async (template) => {
       editor.visualTemplate = template; await new Promise(resolve => setTimeout(resolve, 250));
-      const preview = document.querySelector('[data-composer-preview="a7-trait-proof"] .action');
       const renderer = [...document.querySelectorAll('#render .traits .trait')].find(el => el.textContent.includes('Moonlit Regeneration'));
-      return !!preview && !!renderer && preview.innerHTML === renderer.innerHTML;
+      return !!renderer && renderer.textContent.includes('Regains 5 hit points.');
     };
     const modern = await compare('modern'); const classic = await compare('classic');
     editor.visualTemplate = 'modern';
@@ -2872,7 +2871,7 @@ async function runFuzz() {
     const liveText = trait.rechargeSection === 'Daily recovery';
     const custom = [...settings.querySelectorAll('[role="checkbox"]')].find(el => el.textContent.includes('Description supplies its own heading'));
     custom?.click(); await new Promise(resolve => setTimeout(resolve, 200));
-    const previewText = document.querySelector('[data-composer-preview="a7-trait-proof"] .action')?.textContent;
+    const previewText = window.__sheetEntry('a7-trait-proof')?.textContent;
     const customPreview = trait.customPreamble && previewText?.includes('Regains 5 hit points.') && !previewText?.includes('Moonlit Regeneration');
     custom?.click(); editor.visualTemplate = previous;
     return { modern, classic, grouped, heading, liveText, customPreview };
@@ -2946,9 +2945,8 @@ async function runFuzz() {
     const proseEdited = lair.description.includes('{2d6}') && lair.crAnnotation.maxDamage === 7;
     const compare = async (template) => {
       editor.visualTemplate = template; await wait();
-      const preview = chain.querySelector('[data-composer-preview] .action');
       const rendered = [...document.querySelectorAll('#render .lair-actions .action.lair')].find(el => el.textContent.includes('The chamber shakes'));
-      return !!preview && !!rendered && preview.innerHTML === rendered.innerHTML;
+      return !!rendered && rendered.textContent.includes('thunder') && !chain.querySelector('.statblock');
     };
     const modern = await compare('modern'); const classic = await compare('classic'); editor.visualTemplate = 'modern'; await wait();
     const panel = role => document.querySelector('[data-role-header="'+role+'"]');
@@ -3054,7 +3052,7 @@ async function runFuzz() {
     copyIntact:copied.independent&&copied.uses&&copied.excluded&&copied.description&&copied.reference&&copied.original===moved.action,...transitionPersistence};
   console.log('Step 39 result:',JSON.stringify(step39,null,2))
   if(!Object.values(step39).every(value=>value===true)) throw new Error('Step 39 failed: '+JSON.stringify(step39))
-  console.log('\n--- Step 40: A v8-labelled save opened from disk keeps every authored field, plate order and seven-role preview parity ---')
+  console.log('\n--- Step 40: A v8-labelled save opened from disk keeps every authored field, plate order and seven-role sheet facts ---')
   const legacyFixture = JSON.parse(fs.readFileSync(path.resolve('test/fixtures/a7-preservation-v8.json'), 'utf8'))
   const step40 = await evalInPage(`async () => {
     const raw = ${JSON.stringify(legacyFixture)};
@@ -3100,8 +3098,8 @@ async function runFuzz() {
       await wait(350);
       const entries = [...document.querySelectorAll('#render .statblock :is(.trait, .action)')];
       for (const id of ids) {
-        const preview = document.querySelector('[data-composer-preview="' + id + '"] .action');
-        if (!preview || !entries.some((entry) => entry.innerHTML === preview.innerHTML)) unmatched.push(template + ':' + id);
+        const sheet = window.__sheetEntry(id);
+        if (!sheet || !sheet.textContent.trim()) unmatched.push(template + ':' + id);
       }
     }
     const reactionHead = [...document.querySelectorAll('[data-composer-chain="reaction"] [data-chain-row="head"] [data-chain-cell]')]
@@ -3264,9 +3262,8 @@ async function runFuzz() {
     for(const style of ['2014','2024'])for(const template of ['modern','classic']){
       editor.style=style;editor.visualTemplate=template;await wait(350);
       for(const role of roles){
-        const preview=document.querySelector('[data-composer-preview="a8-meta-'+role+'"] .action');
         const sheet=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Metadata '+role));
-        if(!preview||!sheet||preview.innerHTML!==sheet.innerHTML)problems.push(style+'/'+template+'/'+role+': preview mismatch');
+        if(!sheet)problems.push(style+'/'+template+'/'+role+': missing sheet entry');
         const text=sheet?.textContent||'';for(const fact of facts)if(!text.includes(fact))problems.push(style+'/'+template+'/'+role+': missing '+fact);
         comparisons++;
       }
@@ -3329,11 +3326,11 @@ async function runFuzz() {
     const invalid=!!menu.querySelector('[role="alert"]')&&[...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').disabled;
     [...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(150);
     let comparisons=0;
-    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(220);const preview=chain().querySelector('[data-attack-preview] .attack');if(![...document.querySelectorAll('#render .attack')].some(el=>el.innerHTML===preview.innerHTML))problems.push('preview mismatch '+template+'/'+style);const sheet=[...document.querySelectorAll('#render .attack')].find(el=>el.innerHTML===preview.innerHTML);if(sheet){const a=getComputedStyle(preview),b=getComputedStyle(sheet);for(const key of ['fontFamily','fontSize','lineHeight','color'])if(a[key]!==b[key])problems.push('style '+template+'/'+style+'/'+key+': '+a[key]+' != '+b[key]);}comparisons++;}
+    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(220);const sheet=window.__sheetEntry('a8-attack-proof');if(!sheet||!['Studio Spear','30','90'].every(fact=>sheet.textContent.includes(fact)))problems.push('missing attack facts '+template+'/'+style);comparisons++;}
     if(getComputedStyle(chain().querySelector('.composer-chain__row')).display!=='flex')problems.push('missing shared row layout');
     await edit('legendaryOnly','Yes');await wait(200);const specialOnly=![...document.querySelectorAll('#render .attack')].some(el=>el.textContent.includes('Studio Spear'));await edit('legendaryOnly','No');
     await edit('useCustomRenderer','Yes');attack.customRenderer='<b>Custom spear</b>: {attack.damage}';await wait(250);
-    const custom=chain().querySelector('[data-attack-preview]').textContent.includes('Custom spear');await edit('useCustomRenderer','No');
+    const custom=[...document.querySelectorAll('#render .attack')].some(el=>el.textContent.includes('Custom spear'));await edit('useCustomRenderer','No');
     const intact=attack.extension==='preserved'&&attack.range.reach===10&&attack.range.standard===30&&attack.range.long===90&&attack.damage.count===2&&attack.damage.dice===8&&attack.damage.type==='radiant'&&attack.damage.modifier.overrideValue===4&&attack.modifier.overrideValue===9&&!attack.modifier.proficient&&attack.alternateDamage.count===3&&attack.alternateDamage.condition==='with two hands'&&attack.additionalDamage[0].count===4&&attack.additionalDamage[0].note==='while burning'&&attack.save===16;
     const refs=monster.multiattacks.find(ma=>ma.id==='attack-ref-proof').attacks.filter(id=>id===attack.id).length===2&&monster.legendaryActions.actions.some(a=>a.actionId===attack.id)&&monster.mythicActions.actions.some(a=>a.actionId===attack.id);
     return {problems,canceled,invalid,comparisons,custom,intact,refs,specialOnly};
@@ -3372,10 +3369,10 @@ async function runFuzz() {
     claw.name='Renamed Reference Claw';await wait(200);const renamed=option('ma-proof').textContent.includes('Renamed Reference Claw')&&group().attacks[0]===claw.id;
     const post=root().querySelector('input[data-multiattack-postscript], [data-multiattack-postscript] input');post.value='Then it can move.';post.dispatchEvent(new Event('input',{bubbles:true}));await wait(180);
     let comparisons=0;
-    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(200);const preview=root().querySelector('[data-multiattack-preview] .multiattack'),sheet=document.querySelector('#render .multiattack');if(!sheet||sheet.innerHTML!==preview.innerHTML)problems.push('markup '+template+'/'+style);else{const a=getComputedStyle(preview),b=getComputedStyle(sheet);for(const key of ['fontFamily','fontSize','lineHeight','color'])if(a[key]!==b[key])problems.push('style '+template+'/'+style+'/'+key);}comparisons++;}
+    for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(200);const sheet=document.querySelector('#render .multiattack');if(!sheet||!['Renamed Reference Claw','Reference Bite','Reference Roar','Then it can move.'].every(fact=>sheet.textContent.includes(fact)))problems.push('missing multiattack facts '+template+'/'+style);comparisons++;}
     await click(root(),'Use custom multiattack text');const seeded=monster.multiattackOptions.customMultiattackRenderer.includes('{multiattack.all}');
     const rich=root().querySelector('[contenteditable="true"]');if(rich){rich.innerHTML='<b>Custom sequence.</b> {multiattack.all}. {multiattack.postscript}';rich.dispatchEvent(new Event('input',{bubbles:true}));await wait(200);}else problems.push('missing custom text editor');
-    const custom=root().querySelector('[data-multiattack-preview]').textContent.includes('Custom sequence.')&&document.querySelector('#render .multiattack').textContent.includes('Custom sequence.');
+    const custom=document.querySelector('#render .multiattack').textContent.includes('Custom sequence.');
     await click(root(),'Use custom multiattack text');const retained=monster.multiattackOptions.customMultiattackRenderer.includes('Custom sequence.');
     await click(root(),'Add multiattack option');const added=monster.multiattacks.length===3;await click(root().querySelectorAll('[data-multiattack-option]')[2],'Delete option');
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:multiattack-proof';};HTMLAnchorElement.prototype.click=function(){};
@@ -3396,6 +3393,40 @@ async function runFuzz() {
   }`)
   console.log('Step 45 result:',JSON.stringify(step45,null,2))
   if(step45.problems.length||step45.comparisons!==4||step45.exports!==3||Object.entries(step45).some(([key,value])=>!['problems','comparisons','exports'].includes(key)&&value!==true))throw new Error('Step 45 failed: '+JSON.stringify(step45))
+
+  console.log('\n--- Step 46: One rendered sheet, plain role selection and shared cadence vocabulary ---')
+  const step46=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    monster.addAction();const action=monster.actions.at(-1);action.id='cadence-witness';action.name='Cadence Witness';action.description='Authored witness effect.';action.limitedUse={count:2,rate:'SOLAR_ECLIPSE',extension:'keep'};action.recharge='';
+    monster.addTrait();const trait=monster.traits.at(-1);Object.assign(trait,{id:'cadence-trait',name:'Cadence Trait',description:'Regains power.',limitedUse:{count:1,rate:'SHORT_REST'},rechargeTiming:'',rechargeTagOverride:'',rechargeCount:undefined});
+    monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'cadence-reaction',name:'Cadence Reaction',description:'Responds to danger.',trigger:'When threatened',limitedUse:{count:1,rate:'SHORT_REST'}});
+    monster.addNewAttack();monster.attacks.at(-1).name='Single Surface Attack';await wait(180);
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(200);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
+    const chain=()=>document.querySelector('[data-composer-chain="cadence-witness"]'),role=chain().parentElement.querySelector('.q-select');
+    const plainRole=!role.querySelector('.q-badge')&&!role.querySelector('.q-field__native button')&&role.textContent.includes('Action');
+    role.click();await wait(150);const categories=[...document.querySelectorAll('.q-menu [role="option"]')].map(el=>el.textContent.trim());const categoryOptions=categories.includes('Action')&&categories.includes('Bonus Action')&&categories.includes('Reaction');
+    [...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.trim()==='Bonus Action').click();await wait(150);[...document.querySelectorAll('.q-dialog button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(150);const canceledRole=!action.bonusAction&&action.id==='cadence-witness';
+    const open=async()=>{const chip=chain().querySelector('[data-chain-cell="usage"]');chip.focus();chip.click();await wait(160);};
+    const select=async(selector,value)=>{const field=document.querySelector(selector);field.value=value;field.dispatchEvent(new Event('change',{bubbles:true}));await wait(100);};
+    const input=async(value)=>{const field=document.querySelector('[data-usage-count] input,input[data-usage-count]');field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);};
+    const button=async(label)=>{[...document.querySelectorAll('.chain-editor-menu button')].find(el=>el.textContent.trim()===label).click();await wait(150);};
+    await open();const rate=document.querySelector('[data-usage-rate]');const retainedUnknown=[...rate.options].some(option=>option.value==='SOLAR_ECLIPSE'&&option.textContent.includes('(saved)'));
+    const requested=['DAWN','DUSK','MIDDAY','MIDNIGHT','BLOODIED','DOWNTIME','WEEKLY','MONTHLY','HOUR','TEN_MINUTES','MINUTE'];const vocabulary=requested.every(id=>[...rate.options].some(option=>option.value===id));
+    const groups=[...rate.querySelectorAll('optgroup')];const grouped=groups.length>=5&&groups.every(group=>{const labels=[...group.querySelectorAll('option')].map(option=>option.textContent);return JSON.stringify(labels)===JSON.stringify([...labels].sort((a,b)=>a.localeCompare(b,'en')));});
+    await select('[data-usage-rate]','BLOODIED');await input('2');await button('Apply');const bloodied=document.querySelector('#render').textContent.includes('2/Bloodied');
+    await open();await select('[data-usage-rate]','TEN_MINUTES');await button('Apply');const interval=document.querySelector('#render').textContent.includes('2/10 Minutes');
+    await open();await select('[data-usage-rate]','SHORT_REST');await input('1');await button('Apply');
+    const problems=[];let projections=0;
+    for(const template of ['modern','classic']){editor.visualTemplate=template;await wait(200);for(const [selector,name] of [['.action','Cadence Witness'],['.trait','Cadence Trait'],['.reaction','Cadence Reaction']]){const entry=[...document.querySelectorAll('#render '+selector)].find(el=>el.textContent.includes(name));if(!entry||!entry.textContent.includes('Short Rest')||entry.textContent.includes('1/Short Rest'))problems.push(template+'/'+name+': rest label');projections++;}}
+    const singleSurface=!studio.querySelector('.statblock')&&!document.querySelector('[data-composer-preview],[data-attack-preview],[data-multiattack-preview]')&&!!document.querySelector('#render .statblock');
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:cadence-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
+    try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(150);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(150);const text=await captured.at(-1).text();if(!text.includes('Short Rest')||text.includes('1/Short Rest'))problems.push('export '+label);exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    return {plainRole,categoryOptions,canceledRole,retainedUnknown,vocabulary,grouped,bloodied,interval,singleSurface,problems,projections,exports,kept:action.limitedUse.extension==='keep'&&action.limitedUse.count===1&&action.description==='Authored witness effect.'};
+  }`)
+  await sendCdp('Page.reload');await pause(1500)
+  step46.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),action=monster.actions.find(a=>a.id==='cadence-witness');return action?.limitedUse.count===1&&action?.limitedUse.rate==='SHORT_REST'&&action?.limitedUse.extension==='keep'&&!document.querySelector('[data-composer-preview],[data-attack-preview],[data-multiattack-preview]');}`)
+  console.log('Step 46 result:',JSON.stringify(step46,null,2))
+  if(step46.problems.length||step46.projections!==6||step46.exports!==3||Object.entries(step46).some(([key,value])=>!['problems','projections','exports'].includes(key)&&value!==true))throw new Error('Step 46 failed: '+JSON.stringify(step46))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3412,7 +3443,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 45 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 46 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

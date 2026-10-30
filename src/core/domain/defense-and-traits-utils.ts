@@ -1,3 +1,4 @@
+import { CADENCES, cadenceDefinition, formatLimitedUses } from './cadence.ts'
 import type { DamageDefenseItem, MonsterLanguageItem, MonsterExtendedHp, MonsterTrait, MonsterAcConfig } from './types.ts'
 import { buildFormulaContext, evaluateFormula, normalizeLegacyFormula } from './formula.ts'
 import type { FormulaContext } from './formula.ts'
@@ -464,6 +465,10 @@ export const TRAIT_RECHARGE_OPTIONS: Array<{ label: string; value: string; secti
   { label: 'On Downtime', value: 'DOWNTIME', sectionName: 'On Downtime', category: 'Rest & Downtime', icon: 'hotel', color: 'purple-4' },
 ]
 
+for (const cadence of CADENCES) {
+  if (['TEN_MINUTES', 'MONTHLY', 'BLOODIED'].includes(cadence.id)) TRAIT_RECHARGE_OPTIONS.push({ label: cadence.label, value: cadence.id, sectionName: cadence.label, category: cadence.category, icon: 'schedule', color: 'blue-4' })
+}
+
 export const TRAIT_CONDITIONAL_OPTIONS = [
   { label: 'None (Unconditional)', value: '' },
   { label: 'Bloodied only (Bloodied Hit Points)', value: 'Bloodied only' },
@@ -492,7 +497,9 @@ export function computeTraitTag(trait: MonsterTrait): string {
   const tagParts: string[] = []
 
   // Check timing
-  if (timing === 'RECHARGE_5_6') {
+  if (!explicitTiming && count > 0 && timing && !timing.startsWith('RECHARGE') && cadenceDefinition(timing)?.kind !== 'special') {
+    tagParts.push(formatLimitedUses(count, trait.limitedUse?.rate || timing))
+  } else if (timing === 'RECHARGE_5_6') {
     tagParts.push('Recharge 5–6')
   } else if (timing === 'RECHARGE_6') {
     tagParts.push('Recharge 6')
@@ -527,11 +534,11 @@ export function computeTraitTag(trait: MonsterTrait): string {
   } else if (timing === 'WEEKLY') {
     tagParts.push(count > 0 ? `${count}/Week` : 'Weekly')
   } else if (timing === 'SHORT_REST' || timing === 'SHORT') {
-    tagParts.push(count > 0 ? `${count}/Short Rest` : 'On a Short Rest')
+    tagParts.push(count > 0 ? formatLimitedUses(count, 'SHORT_REST') : 'On a Short Rest')
   } else if (timing === 'LONG_REST' || timing === 'LONG') {
-    tagParts.push(count > 0 ? `${count}/Long Rest` : 'On a Long Rest')
+    tagParts.push(count > 0 ? formatLimitedUses(count, 'LONG_REST') : 'On a Long Rest')
   } else if (timing === 'SHORT_OR_LONG_REST' || timing === 'REST' || timing === 'LONG_OR_SHORT') {
-    tagParts.push(count > 0 ? `${count}/Rest` : 'On a Short or Long Rest')
+    tagParts.push(count > 0 ? formatLimitedUses(count, 'LONG_OR_SHORT') : 'On a Short or Long Rest')
   } else if (timing === 'DAY') {
     tagParts.push(count > 0 ? `${count}/Day` : 'Every Day')
   } else if (timing === 'DAY_EACH') {
@@ -540,6 +547,8 @@ export function computeTraitTag(trait: MonsterTrait): string {
     tagParts.push(count > 0 ? `${count}/Turn` : 'Per Turn')
   } else if (timing === 'ROUND') {
     tagParts.push(count > 0 ? `${count}/Round` : 'Per Round')
+  } else if (cadenceDefinition(timing)) {
+    tagParts.push(count > 0 ? formatLimitedUses(count, timing) : cadenceDefinition(timing)?.label || timing)
   } else if (count > 0) {
     tagParts.push(`${count} Uses`)
   }

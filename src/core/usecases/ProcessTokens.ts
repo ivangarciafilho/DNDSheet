@@ -1,3 +1,4 @@
+import { formatLimitedUses } from '../domain/cadence.ts'
 import { CR, getCrByNumber, getCrByString } from '../domain/cr-tables.ts'
 import { avgRoll, renderBonus, statModifier } from '../domain/math-utils.ts'
 import { renderFormulaMacros } from '../domain/formula.ts'
@@ -192,7 +193,7 @@ export function processTokens(
     if (ctx.limitedUse) {
       text = text.replace(/\{trait\.limitedUse\}/gi, () => {
         if (ctx.limitedUse.count > 0) {
-          return ` (${ctx.limitedUse.count}/${ctx.limitedUse.rate})`
+          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
         }
         return ''
       })
@@ -201,7 +202,7 @@ export function processTokens(
 
       text = text.replace(/\{action\.limitedUse\}/gi, () => {
         if (ctx.limitedUse.count > 0) {
-          return ` (${ctx.limitedUse.count}/${ctx.limitedUse.rate})`
+          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
         }
         return ''
       })

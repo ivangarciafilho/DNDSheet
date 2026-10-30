@@ -16,9 +16,10 @@
       <q-input :model-value="modelValue.count" type="number" min="1" max="999" dark outlined dense label="Uses" data-usage-count @update:model-value="value => update('count', value ?? '')" />
       <label>Refresh rate
         <select :value="modelValue.rate" data-usage-rate @change="update('rate', ($event.target as HTMLSelectElement).value)">
-          <option v-for="rate in rates" :key="rate.value" :value="rate.value">{{ rate.label }}</option>
+          <optgroup v-for="group in rateGroups" :key="group.label" :label="group.label"><option v-for="rate in group.options" :key="rate.value" :value="rate.value" :title="rate.help">{{ rate.label }}</option></optgroup>
         </select>
       </label>
+      <p class="text-caption q-mb-none">{{ selectedHelp }}</p>
     </template>
     <q-input v-else-if="modelValue.mode === 'custom'" :model-value="modelValue.custom" dark outlined dense label="Custom recharge text" data-usage-custom @update:model-value="value => update('custom', value ?? '')" />
     <p class="text-caption q-mb-none">Apply replaces recharge and limited-use settings. Other entry data is kept.</p>
@@ -27,15 +28,15 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { cadenceOptions } from 'src/core/domain/cadence'
 import type { ActionUsageDraft } from 'src/core/domain/action-usage'
 const props = defineProps<{ modelValue: ActionUsageDraft }>()
 const emit = defineEmits<{ (event: 'update:modelValue', value: ActionUsageDraft): void }>()
 const modeField = ref<HTMLSelectElement>()
 defineExpose({ focus: () => modeField.value?.focus() })
-const rates = computed(() => {
-  const options = [{ value: 'DAY', label: 'Per day' }, { value: 'SHORT_REST', label: 'Per short rest' }, { value: 'LONG_REST', label: 'Per long rest' }, { value: 'LONG_OR_SHORT', label: 'Per short or long rest' }]
-  return options.some(option => option.value === props.modelValue.rate) ? options : [...options, { value: props.modelValue.rate, label: `${props.modelValue.rate} (saved)` }]
-})
+const rates = computed(() => cadenceOptions(props.modelValue.rate))
+const rateGroups = computed(() => [...new Set(rates.value.map(rate => rate.category))].map(label => ({ label, options: rates.value.filter(rate => rate.category === label) })))
+const selectedHelp = computed(() => rates.value.find(rate => rate.value === props.modelValue.rate)?.help || '')
 const update = (field: keyof ActionUsageDraft, value: string | number) => emit('update:modelValue', { ...props.modelValue, [field]: value })
 </script>
 

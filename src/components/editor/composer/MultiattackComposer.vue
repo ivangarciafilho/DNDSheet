@@ -28,23 +28,15 @@
     <q-btn flat dense no-caps icon="add" label="Add multiattack option" data-multiattack-add @click="monster.addMultiattack()" />
     <q-input v-model="monster.multiattackOptions.postscript" dark outlined dense class="q-my-sm" label="Multiattack postscript" hint="Printed after the options. Shared by every option." data-multiattack-postscript />
     <q-toggle :model-value="monster.multiattackOptions.useCustomRenderer" dark label="Use custom multiattack text" @update:model-value="toggleCustom" />
-    <div v-if="monster.multiattackOptions.useCustomRenderer" class="text-caption text-amber-3">Custom text controls the preview. Your option references remain saved.</div>
+    <div v-if="monster.multiattackOptions.useCustomRenderer" class="text-caption text-amber-3">Custom text controls the stat block. Your option references remain saved.</div>
     <monster-text-editor v-if="monster.multiattackOptions.useCustomRenderer" :field="monster.multiattackOptions.customMultiattackRenderer" i18n-label-key="editor.multiattack.label" :show-reset="true" @update:model-value="(value: string) => monster.multiattackOptions.customMultiattackRenderer = value" @reset="monster.multiattackOptions.customMultiattackRenderer = defaultCustomText" />
-    <div v-if="monster.multiattacks.length" class="composer-chain__row composer-preview" data-multiattack-preview>
-      <span class="composer-chain__label">Preview</span>
-      <div :class="previewClasses" aria-label="Live multiattack stat block preview">
-        <!-- eslint-disable-next-line vue/no-v-html -- shared renderer and sanitizer -->
-        <div class="multiattack" v-html="previewHtml"></div>
-      </div>
-    </div>
+
   </section>
 </template>
 <script lang="ts">
 import { computed, defineComponent, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { useEditorStore } from 'src/stores/editor-store'
-import { useProcessTokens } from 'src/components/rendering/useProcessTokens'
 import { multiattackReferences, multiattackReferencePatch } from 'src/core/domain/multiattack-composer'
 import type { ReferenceEdit, ReferenceKind } from 'src/core/domain/multiattack-composer'
 import type { Multiattack } from 'src/core/domain/types'
@@ -53,9 +45,8 @@ import MonsterTextEditor from '../MonsterTextEditor.vue'
 export default defineComponent({
   name: 'MultiattackComposer', components: { MultiattackReferencePicker, MonsterTextEditor },
   setup() {
-    const monster = useMonsterStore(), editor = useEditorStore(), root = ref<HTMLElement>()
+    const monster = useMonsterStore(), root = ref<HTMLElement>()
     const { t } = useI18n()
-    const { processMultiattack, sanitizeWebString } = useProcessTokens()
     const kinds: ReferenceKind[] = ['actions', 'attacks']
     const library = (kind: ReferenceKind) => kind === 'attacks' ? monster.attacks : monster.actions
     const references = (group: Multiattack, kind: ReferenceKind) => multiattackReferences(group, kind, library(kind))
@@ -77,9 +68,7 @@ export default defineComponent({
       monster.multiattackOptions.useCustomRenderer = value
       if (value && !monster.multiattackOptions.customMultiattackRenderer) monster.multiattackOptions.customMultiattackRenderer = defaultCustomText.value
     }
-    const previewHtml = computed(() => sanitizeWebString(processMultiattack(monster.multiattacks, monster)))
-    const previewClasses = computed(() => ['statblock', editor.style === '2014' ? 'mm2014' : 'mm2024', { 'modern-modular': editor.visualTemplate === 'modern' }, `theme-${editor.visualTheme || 'wotc'}`])
-    return { monster, root, kinds, library, references, edit, remove, defaultCustomText, toggleCustom, previewHtml, previewClasses }
+    return { monster, root, kinds, library, references, edit, remove, defaultCustomText, toggleCustom }
   },
 })
 </script>

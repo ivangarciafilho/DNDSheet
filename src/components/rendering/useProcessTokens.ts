@@ -1,3 +1,4 @@
+import { formatLimitedUses } from 'src/core/domain/cadence'
 import { countMultiattackReferences } from 'src/core/domain/multiattack-composer'
 import { actionRecharge } from 'src/core/domain/action-usage'
 import { exportMarkup } from 'src/core/domain/export-markup'
@@ -79,7 +80,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const limitedUse = tag
       ? ` (${tag})`
       : context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate
-      ? ` (${context.limitedUse.count}/${context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''})`
+      ? ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
       : ''
     input = input.replace(
       /{trait.limitedUse}/gi,
@@ -279,9 +280,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     if (hasRecharge) {
       limitedUseStr = ` ${t('editor.action.recharge', [rechargeVal])}`
     } else if (hasLimitedUse) {
-      const rateLabel = t(`recharge.${context.limitedUse.rate}`)
-      const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
-      limitedUseStr = ` (${context.limitedUse.count}/${cleanRate})`
+      limitedUseStr = ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
     }
 
     input = input.replace(/\{action.limitedUse\}/gi, limitedUseStr)
@@ -298,7 +297,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   const processReactionTokens = (input: string, context: MonsterReaction) => {
     if (!context) return input;
     // limitedUse is a special case
-    const limitedUse = context.limitedUse && context.limitedUse.rate ? ` (${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)})` : ''
+    const limitedUse = context.limitedUse && context.limitedUse.rate ? ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})` : ''
 
     input = input.replace(
       /\{reaction.limitedUse\}/gi,
@@ -529,9 +528,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const recharge = actionRecharge(context)
     if (recharge) return /^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`
     if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
-      const rateLabel = t(`recharge.${context.limitedUse.rate}`)
-      const cleanRate = rateLabel.startsWith('recharge.') ? context.limitedUse.rate : rateLabel
-      return `${context.limitedUse.count}/${cleanRate}`
+      return formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)
     }
     return ''
   }

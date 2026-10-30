@@ -99,7 +99,7 @@
           <div class="row q-col-gutter-xs items-center">
             <!-- Far-Left Role Selector -->
             <div class="col-12 col-sm-3 col-md-2">
-              <q-badge v-if="item.rawAttack" color="red-8" class="q-pa-sm">Attack</q-badge>
+              <span v-if="item.rawAttack" class="q-pa-sm">Attack</span>
               <q-select
                 v-else
                 :model-value="item.role"
@@ -114,11 +114,6 @@
                 label="Role"
                 @update:model-value="(newRole: string) => changeItemRole(item, newRole)"
               >
-                <template #selected>
-                  <q-badge :color="getRoleBadgeColor(item.role)" class="text-caption text-weight-bold">
-                    {{ getRoleLabel(item.role) }}
-                  </q-badge>
-                </template>
                 <q-tooltip class="text-caption">Change compatible action roles, or create a copy for a different entry model. Review before applying.</q-tooltip>
               </q-select>
             </div>
