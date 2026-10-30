@@ -2625,6 +2625,58 @@ async function runFuzz() {
     };
   }`)
   await sendCdp('Emulation.clearDeviceMetricsOverride')
+  // The preview must look like the sheet entry, not only share its markup: compare computed styles.
+  const typeMatrix = await evalInPage(`
+    async () => {
+      const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+      const editor = pinia._s.get('editor');
+      const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+      const rootProps = ['font-family', 'font-size', 'font-weight', 'letter-spacing', 'color', 'background-color'];
+      const props = ['display', 'flex-direction', 'flex-wrap', 'align-items', 'justify-content', 'font-family', 'font-size', 'font-weight',
+        'font-style', 'line-height', 'letter-spacing', 'color', 'background-color', 'background-image', 'border-top-width', 'border-top-color',
+        'border-left-width', 'border-left-color', 'padding-top', 'padding-left', 'text-transform', 'text-indent', 'column-gap', 'opacity',
+        'white-space', 'margin-left'];
+      const differences = (preview, twin) => {
+        const found = [];
+        const pr = getComputedStyle(preview.closest('.statblock'));
+        const sr = getComputedStyle(twin.closest('.statblock'));
+        for (const p of rootProps) if (pr.getPropertyValue(p) !== sr.getPropertyValue(p)) found.push('root ' + p);
+        const walk = (a, b, at) => {
+          const ca = getComputedStyle(a);
+          const cb = getComputedStyle(b);
+          for (const p of props) if (ca.getPropertyValue(p) !== cb.getPropertyValue(p)) found.push(at + ' ' + p);
+          [...a.children].forEach((child, i) => b.children[i] && walk(child, b.children[i], at + '>' + child.tagName.toLowerCase()));
+        };
+        walk(preview, twin, 'entry');
+        return found;
+      };
+      const saved = { template: editor.visualTemplate, style: editor.style, theme: editor.visualTheme };
+      const themes = ['wotc', 'printer', 'lovecraft_golden', 'lovecraft_silver', 'lovecraft_toxic', 'lovecraft_spooky', 'lovecraft_galactic',
+        'lovecraft_fathomless', 'dwarves_forge', 'dwarves_aetherpunk', 'art_nouveau', 'art_deco'];
+      const cases = [['a6-soul-barrage', themes], ['a7-legendary-burst', ['wotc', 'lovecraft_golden']]];
+      const failures = [];
+      let total = 0;
+      for (const [id, caseThemes] of cases) {
+        const chain = document.querySelector('[data-composer-chain="' + id + '"]');
+        for (const style of ['2014', '2024']) for (const template of ['modern', 'classic']) for (const theme of caseThemes) {
+          total++;
+          editor.style = style;
+          editor.visualTemplate = template;
+          editor.visualTheme = theme;
+          await wait(260);
+          const preview = chain?.querySelector('[data-composer-preview] .action');
+          const twin = preview && [...document.querySelectorAll('#render .statblock :is(.trait, .action)')].find((entry) => entry.innerHTML === preview.innerHTML);
+          const found = twin ? differences(preview, twin) : ['no sheet twin'];
+          if (found.length) failures.push({ id, style, template, theme, found: found.slice(0, 6) });
+        }
+      }
+      editor.visualTemplate = saved.template;
+      editor.style = saved.style;
+      editor.visualTheme = saved.theme;
+      await wait(260);
+      return { total, failing: failures.length, failures: failures.slice(0, 6) };
+    }
+  `)
   const step35 = {
     setup: step35Setup,
     opened: step35Opened,
@@ -2642,6 +2694,8 @@ async function runFuzz() {
     step35Parity?.count === 2 && step35Parity?.modern?.same === true && step35Parity?.classic?.same === true &&
     step35Responsive?.width > 0 && step35Responsive?.scrollWidth <= step35Responsive?.width + 1 &&
     step35Responsive?.rowDirection === 'column'
+  step35.typeParity = typeMatrix
+  step35.success = step35.success && typeMatrix.total === 56 && typeMatrix.failing === 0
   console.log('Step 35 result:', JSON.stringify(step35, null, 2))
   if (!step35.success) {
     throw new Error('Step 35 failed: ' + JSON.stringify(step35));
@@ -2725,7 +2779,7 @@ async function runFuzz() {
   }
   step36.success = step36Setup?.ready === true &&
     JSON.stringify(step36Setup.rows) === JSON.stringify(['head', 'mechanics']) &&
-    JSON.stringify(step36Setup.cells) === JSON.stringify(['name', 'usage', 'trigger']) &&
+    JSON.stringify(step36Setup.cells) === JSON.stringify(['usage', 'name', 'trigger']) &&
     step36Setup?.focusReady === true &&
     step36Edited?.applied === true && step36Edited?.menuClosed === true && step36Edited?.focusReturned === true &&
     step36Parity?.hasTrigger === true && step36Parity?.sameHtml === true
@@ -2999,6 +3053,72 @@ async function runFuzz() {
     copyIntact:copied.independent&&copied.uses&&copied.excluded&&copied.description&&copied.reference&&copied.original===moved.action,...transitionPersistence};
   console.log('Step 39 result:',JSON.stringify(step39,null,2))
   if(!Object.values(step39).every(value=>value===true)) throw new Error('Step 39 failed: '+JSON.stringify(step39))
+  console.log('\n--- Step 40: A v8-labelled save opened from disk keeps every authored field, plate order and seven-role preview parity ---')
+  const legacyFixture = JSON.parse(fs.readFileSync(path.resolve('test/fixtures/a7-preservation-v8.json'), 'utf8'))
+  const step40 = await evalInPage(`async () => {
+    const raw = ${JSON.stringify(legacyFixture)};
+    const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+    const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster = pinia._s.get('monster');
+    const editor = pinia._s.get('editor');
+    const openFile = [...document.querySelectorAll('header button')].find((button) => button.querySelector('.mdi-folder-open'));
+    if (!openFile) return { loaded: false, reason: 'no Open File button' };
+    // The toolbar's own Open File flow; only the native file picker is answered with the fixture.
+    const nativeClick = HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click = function () {
+      if (this.type !== 'file') return nativeClick.call(this);
+      const transfer = new DataTransfer();
+      transfer.items.add(new File([JSON.stringify(raw)], 'legacy-v8.json', { type: 'application/json' }));
+      this.files = transfer.files;
+      this.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+    try {
+      openFile.click();
+      for (let attempt = 0; monster.name !== raw.name && attempt < 40; attempt++) await wait(100);
+    } finally {
+      HTMLInputElement.prototype.click = nativeClick;
+    }
+    const loaded = monster.name === raw.name && monster.saveVersion === 11;
+    // Migration may add defaults; every authored value and array position must survive.
+    const retained = (actual, expected) => Array.isArray(expected)
+      ? Array.isArray(actual) && actual.length === expected.length && expected.every((item, index) => retained(actual[index], item))
+      : expected && typeof expected === 'object'
+        ? !!actual && Object.entries(expected).every(([key, value]) => retained(actual[key], value))
+        : actual === expected;
+    const lost = ['actions', 'traits', 'reactions', 'lairActions', 'legendaryActions', 'mythicActions', 'multiattacks']
+      .filter((key) => !retained(monster[key], raw[key]));
+    const studio = document.querySelector('[data-composer-chain="action"]');
+    for (let guard = 0; guard < 4 && studio && studio.closest('.q-expansion-item--collapsed'); guard++) {
+      studio.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click();
+      await wait(450);
+    }
+    const ids = ['action', 'bonus', 'legendary', 'mythic', 'trait', 'reaction', 'lair'];
+    const unmatched = [];
+    for (const template of ['modern', 'classic']) {
+      editor.visualTemplate = template;
+      await wait(350);
+      const entries = [...document.querySelectorAll('#render .statblock :is(.trait, .action)')];
+      for (const id of ids) {
+        const preview = document.querySelector('[data-composer-preview="' + id + '"] .action');
+        if (!preview || !entries.some((entry) => entry.innerHTML === preview.innerHTML)) unmatched.push(template + ':' + id);
+      }
+    }
+    const reactionHead = [...document.querySelectorAll('[data-composer-chain="reaction"] [data-chain-row="head"] [data-chain-cell]')]
+      .map((cell) => cell.dataset.chainCell).join(',');
+    return { loaded, saveVersion: monster.saveVersion, lost, unmatched, reactionHead };
+  }`)
+  await sendCdp('Page.reload')
+  await pause(1500)
+  step40.persisted = await evalInPage(`() => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const action = monster.actions.find((entry) => entry.id === 'action');
+    return monster.name === 'A7 Preservation Witness' && action?.save?.overrideValue === 19 && action?.outcomes?.[0]?.rider === 'Witness rider' &&
+      monster.reactions[0]?.limitedUse?.count === 4 && monster.legendaryActions.actions[0]?.cost === 2 && monster.mythicActions.actions[0]?.cost === 3;
+  }`)
+  step40.success = step40.loaded === true && step40.lost?.length === 0 && step40.unmatched?.length === 0 &&
+    step40.reactionHead === 'usage,name' && step40.persisted === true
+  console.log('Step 40 result:', JSON.stringify(step40, null, 2))
+  if (!step40.success) throw new Error('Step 40 failed: ' + JSON.stringify(step40))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3015,7 +3135,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 39 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 40 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

@@ -160,22 +160,22 @@ export function migrateMonsterSchema(raw: any): Monster {
   if (monster.saveVersion < 9) {
     monster.actions = (monster.actions || []).map((a: MonsterAction) => ({
       ...a,
-      stat: 'none',
-      save: {
+      stat: a.stat ?? 'none',
+      save: a.save ?? {
         override: false,
         overrideValue: 0,
       },
-      effects: [],
-      range: '',
+      effects: a.effects ?? [],
+      range: a.range ?? '',
     }))
 
     monster.reactions = (monster.reactions || []).map((r: MonsterReaction) => ({
       ...r,
-      limitedUse: {
+      limitedUse: r.limitedUse ?? {
         count: 1,
         rate: 'DAY',
       },
-      trigger: '',
+      trigger: r.trigger ?? '',
     }))
 
     monster.format = '2014'
@@ -198,6 +198,7 @@ export function migrateMonsterSchema(raw: any): Monster {
   // Normalize spellcasting structure
   const sc = monster.spellcasting || {}
   monster.spellcasting = {
+    ...sc,
     stat: sc.stat || 'INT',
     save: {
       override: sc.save?.override ?? false,
@@ -454,8 +455,8 @@ export function migrateMonsterSchema(raw: any): Monster {
         const understandsOnly = lang.toLowerCase().includes('understands') && lang.toLowerCase().includes("can't speak")
 
         monster.languagesList.push({
-          id: 'lang-' + idx + '-' + Date.now(),
-          name: isTelepathy ? 'Telepathy' : lang.replace(/understands|but can't speak|it/gi, '').trim(),
+          id: 'lang-legacy-' + idx,
+          name: isTelepathy ? 'Telepathy' : lang.replace(/^understands\s+/i, '').replace(/\s+but\s+can't\s+speak(?:\s+it)?[.!]?$/i, '').trim(),
           understandsOnly,
           telepathy: isTelepathy,
           telepathyRange: range,
