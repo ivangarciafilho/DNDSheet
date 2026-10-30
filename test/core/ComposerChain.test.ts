@@ -55,6 +55,13 @@ test('chain rows follow the plate: head, mechanics, scope, outcomes, prose', () 
   assert.deepStrictEqual(rows[3].cells.map((cell) => cell.id), ['outcomes'])
 })
 
+test('head chips keep the plate word order: a spell level leads its school, a cantrip follows it', () => {
+  const head = (spellLevel: string) => chainView('action', action({ school: 'Evocation', spellLevel }))[0].cells.map((cell) => cell.id)
+  assert.deepStrictEqual(head('2nd Level'), ['usage', 'tier', 'discipline', 'name', 'components', 'duration'])
+  assert.deepStrictEqual(head('Cantrip'), ['usage', 'discipline', 'tier', 'name', 'components', 'duration'])
+  assert.deepStrictEqual(head(''), ['usage', 'discipline', 'tier', 'name', 'components', 'duration'])
+})
+
 test('set chips read like the plate they become', () => {
   const view = flat(chainView('action', soulBarrage(), { usage: 'Recharge 5–6', attackBonus: 7 }))
   assert.strictEqual(view.usage.text, 'Recharge 5–6')

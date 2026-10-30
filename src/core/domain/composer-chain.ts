@@ -248,6 +248,17 @@ const isVisible = (cellId: string, action: Partial<MonsterAction>, reading: Cell
   return true
 }
 
+/** The plate's discipline cell reads "2nd Level Evocation" but "Evocation Cantrip": a spell level leads its school. */
+function inPlateWordOrder(cells: ChainCellView[], action: Partial<MonsterAction>): ChainCellView[] {
+  const tier = isNone(trimmed(action.spellLevel)) ? '' : trimmed(action.spellLevel)
+  const discipline = cells.findIndex((cell) => cell.id === 'discipline')
+  const level = cells.findIndex((cell) => cell.id === 'tier')
+  if (!tier || /^cantrip$/i.test(tier) || discipline < 0 || level < discipline) return cells
+  const ordered = cells.filter((cell) => cell.id !== 'tier')
+  ordered.splice(discipline, 0, cells[level])
+  return ordered
+}
+
 /** The chain mirrors the plate: same rows, same order, the same phrases the renderer prints. */
 export function chainView(role: ActionModelRole, action: Partial<MonsterAction>, context: ChainContext = {}): ChainRowView[] {
   const specs = ROLE_CHAINS[role]
@@ -276,7 +287,9 @@ export function chainView(role: ActionModelRole, action: Partial<MonsterAction>,
         if (spec.id === 'name' && !reading) view.invalid = 'Name is required'
         return [view]
       }),
-  })).filter((row) => row.cells.length > 0)
+  }))
+    .map((row) => (row.row === 'head' ? { ...row, cells: inPlateWordOrder(row.cells, action) } : row))
+    .filter((row) => row.cells.length > 0)
 }
 
 /** The value an editor starts from; nested data is copied so drafts never write through. */

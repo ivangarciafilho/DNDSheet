@@ -24,6 +24,7 @@ import { formulaContextForMonster } from 'src/core/domain/formula-context'
 import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
 import type { LairAction } from 'src/core/domain/types'
+import { listJoin } from './list-join'
 
 export type MonsterContext =
   | MonsterTrait
@@ -47,13 +48,7 @@ export type MonsterContextType =
   | 'mythic'
   | 'reaction'
 
-export function listJoin(list: string[], sep: string) {
-  if (list.length === 0) return ''
-  if (list.length === 1) return list[0]
-
-  const part1 = list.slice(0, list.length - 1).join(sep)
-  return `${part1}, and ${list[list.length - 1]}`
-}
+export { listJoin }
 
 /**
  * `web: false` is the text projection used by exports: entries render as prose in every visual
