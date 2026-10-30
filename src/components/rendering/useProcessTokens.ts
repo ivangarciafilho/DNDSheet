@@ -22,7 +22,7 @@ import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
-import { hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
+import { abilityHeader, hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
 import type { LairAction } from 'src/core/domain/types'
 import { listJoin } from './list-join'
@@ -595,9 +595,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
     }
 
-    const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
-    const school = context.school && context.school !== 'None' ? context.school : ''
-    const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
+    const { discipline, components, duration } = abilityHeader(context)
     return buildPlateEntry(
       monster,
       {
@@ -605,8 +603,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         name: context.name,
         usage,
         discipline,
-        components: context.components,
-        duration: context.duration,
+        components,
+        duration,
         mechanics,
         scope,
       },
@@ -670,9 +668,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       if (hasStructuredAbility(context)) return structuredActionPlate(context, monster, usageText(context))
 
       // Discipline: "Evocation Cantrip" for cantrips, "3rd Level Evocation" otherwise (PHB 2024 order)
-      const tier = context.spellLevel && context.spellLevel !== 'None' ? context.spellLevel : ''
-      const school = context.school && context.school !== 'None' ? context.school : ''
-      const discipline = /^cantrip$/i.test(tier) ? [school, tier].filter(Boolean).join(' ') : [tier, school].filter(Boolean).join(' ')
+      const { discipline, components, duration } = abilityHeader(context)
 
       // Targets / range / area, numbers in bold
       const scopeParts: string[] = []
@@ -726,8 +722,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           name: context.name,
           usage: usageText(context),
           discipline,
-          components: context.components,
-          duration: context.duration,
+          components,
+          duration,
           mechanics,
           scope,
         },

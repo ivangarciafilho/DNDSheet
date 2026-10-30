@@ -72,10 +72,10 @@ test('ExportStatblock - structured abilities use the 2024 text grammar while leg
   const markdown2014 = exportToMarkdown(knight, '2014')
   const plainText2024 = exportToPlainText(knight, '2024')
 
-  assert.ok(markdown2024.includes('***Soul Barrage.*** Ranged Attack Roll: +7, range 120 ft. Hit: 5 (1d10) Radiant damage. Its radiant force lingers.'))
+  assert.ok(markdown2024.includes('***Soul Barrage.*** Ranged Attack Roll: +7, up to three creatures within 120 ft. of you. Hit: 5 (1d10) Radiant damage. Its radiant force lingers.'))
   assert.ok(markdown2014.includes('***Soul Barrage.*** Its radiant force lingers.'), '2014 export keeps the authored legacy prose')
   assert.ok(!markdown2014.includes('Ranged Attack Roll: +7'))
-  assert.ok(plainText2024.includes('Ranged Attack Roll: +7, range 120 ft. Hit: 5 (1d10) Radiant damage.'))
+  assert.ok(plainText2024.includes('Ranged Attack Roll: +7, up to three creatures within 120 ft. of you. Hit: 5 (1d10) Radiant damage.'))
 })
 
 test('ExportStatblock - Plain Text export format', () => {

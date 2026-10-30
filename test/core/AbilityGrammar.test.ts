@@ -62,7 +62,7 @@ test('explicit ability fields produce the same mechanics, scope, and outcome phr
   ])
   assert.strictEqual(
     text2024(input, { attackBonus: 7, formulaContext: formulaContext(2) }),
-    'Ranged Attack Roll: +7, range 120 ft. Hit: 5 (1d10) Radiant damage. If all attacks hit the same creature, it is knocked Prone 20 feet away from you.'
+    'Ranged Attack Roll: +7, up to three creatures which you can see within 120 ft. of you. Hit: 5 (1d10) Radiant damage. If all attacks hit the same creature, it is knocked Prone 20 feet away from you.'
   )
   assert.deepStrictEqual(input, before)
 })
@@ -169,7 +169,7 @@ test('2024 text marks clause labels for HTML surfaces without changing a single 
   const context = { attackBonus: 5, formulaContext: formulaContext(2) }
   const html = text2024(input, context, { markup: 'html' })
 
-  assert.strictEqual(html, '<i>Melee Attack Roll:</i> +5, reach 5 ft. <i>Hit:</i> 7 (2d6) Slashing damage. The target is grappled.')
+  assert.strictEqual(html, '<i>Melee Attack Roll:</i> +5, reach 5 ft., one creature. <i>Hit:</i> 7 (2d6) Slashing damage. The target is grappled.')
   assert.strictEqual(html.replace(/<\/?i>/g, ''), text2024(input, context))
 })
 

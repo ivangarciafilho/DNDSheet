@@ -63,6 +63,17 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 const nonEmptyText = (value: unknown): string => typeof value === 'string' ? value.trim() : ''
 
+/** Authored presentation facts shared by modern headers and classic/export prose. */
+export function abilityHeader(action: Partial<MonsterAction>): { discipline: string; components: string[]; duration: string } {
+  const field = (value: unknown) => /^none$/i.test(nonEmptyText(value)) ? '' : nonEmptyText(value)
+  const tier = field(action.spellLevel), school = field(action.school)
+  return {
+    discipline: (/^cantrip$/i.test(tier) ? [school, tier] : [tier, school]).filter(Boolean).join(' '),
+    components: Array.isArray(action.components) ? action.components.map(nonEmptyText).filter(Boolean) : [],
+    duration: /^instantaneous$/i.test(field(action.duration)) ? '' : field(action.duration),
+  }
+}
+
 const validAbilityNumber = (value: unknown): value is number | string =>
   (typeof value === 'number' && Number.isFinite(value)) || (typeof value === 'string' && !!value.trim())
 
@@ -411,14 +422,31 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   const markup = options.markup ?? 'text'
   const ability = inferAbility(action)
   const clauses: string[] = []
+  const header = abilityHeader(action)
+  const identity = [header.discipline, header.components.length ? `(${header.components.join(', ')})` : ''].filter(Boolean).join(' ')
+  const metadata = [identity, header.duration ? `Duration: ${header.duration}` : ''].filter(Boolean).join('; ')
+  if (metadata) {
+    const text = ensurePeriod(metadata)
+    clauses.push(markup === 'html' ? `<i>${text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</i>` : text)
+  }
   const attackBonus = context.attackBonus ?? ability.attackBonus
 
   if (ability.attackSource) {
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
     const bonus = attackBonus === undefined ? '' : ` ${valueText(attackBonus, context, 'bonus')}`
     const attack = `${markLabel(`${reach}Attack Roll:`, markup)}${bonus}`
-    const range = formatText2024Range(ability, context)
-    clauses.push(ensurePeriod([attack, range].filter(Boolean).join(', ')))
+    const range = ability.targeting?.range
+    const attackScope = scopePhrase({ ...ability, targeting: ability.targeting ? {
+      ...ability.targeting,
+      range: range ? { ...range, relation: range.relation || (ability.attackReach === 'melee' ? 'reach' : 'range') } : undefined,
+    } : undefined }, context, 'text2024')
+    const mechanicalRange = range && range.relation !== 'within'
+      ? [rangePhrase({ ...range, relation: range.relation || (ability.attackReach === 'melee' ? 'reach' : 'range') }, context),
+        scopePhrase({ ...ability, targeting: { ...ability.targeting, range: undefined } }, context, 'text2024')].filter(Boolean).join(', ')
+      : attackScope
+    // A combined attack/save prints targeting with the saving throw, once.
+    const scope = ability.saveAbility ? formatText2024Range(ability, context) : mechanicalRange
+    clauses.push(ensurePeriod([attack, scope].filter(Boolean).join(', ')))
   }
 
   if (ability.saveAbility) {
@@ -426,6 +454,11 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
     const scope = scopePhrase(ability, context, 'text2024')
     const save = `${markLabel(`${statName(ability.saveAbility)} Saving Throw:`, markup)}${dc === undefined ? '' : ` DC ${valueText(dc, context)}`}`
     clauses.push(ensurePeriod([save, scope].filter(Boolean).join(', ')))
+  }
+
+  if (!ability.attackSource && !ability.saveAbility) {
+    const scope = scopePhrase(ability, context, 'text2024')
+    if (scope) clauses.push(ensurePeriod(`${markLabel('Targets:', markup)} ${scope}`))
   }
 
   clauses.push(...outcomePhrase(ability, context, 'text2024', markup))
