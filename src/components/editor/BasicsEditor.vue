@@ -201,16 +201,14 @@
           </template>
         </q-input>
 
-        <dynamic-reference-select
-          :model-value="monster.proficiency"
+        <formula-field
+          path="proficiency"
           :label="$t('monster.proficiencyBonus')"
           class="col-12 col-sm-6"
           :disable="!monster.proficiencyOverride"
-          context-type="bonus"
-          :min="0"
           outlined
           dense
-          @update:model-value="(value: number | string) => (monster.proficiency = Number(value) || 0)"
+          @applied="(value: number | string) => (monster.proficiency = Number(value) || 0)"
         >
           <template #append>
             <lock-toggle-button
@@ -220,7 +218,7 @@
               @click="monster.toggleProficiencyOverride"
             />
           </template>
-        </dynamic-reference-select>
+        </formula-field>
 
         <q-select
           v-if="!monster.useCrDisplayOverride"
@@ -302,32 +300,27 @@
         </div>
       </div>
       <div class="row q-col-gutter-sm q-mb-md">
-        <dynamic-reference-select
+        <formula-field
           v-for="stat in statKeys"
           :key="stat"
-          :model-value="monster.stats[stat]"
+          :path="`stats.${stat}`"
           :label="stat"
           class="col-4 col-sm-2"
-          context-type="stat"
-          :min="1"
-          :max="30"
           outlined
           dense
-          @update:model-value="(value: number | string) => updateStat(stat, value)"
+          @applied="(value: number | string) => updateStat(stat, value)"
         />
       </div>
 
       <!-- 6. Armor Class & AC Compositor -->
       <div class="row q-col-gutter-sm items-center q-mt-md">
-        <dynamic-reference-select
-          :model-value="monster.AC"
+        <formula-field
+          path="AC"
           :label="$t('monster.ac')"
-          :min="0"
-          context-type="ac"
           class="col-12 col-sm-3"
           outlined
           dense
-          @update:model-value="(value: number | string) => (monster.AC = Number(value) || 0)"
+          @applied="(value: number | string) => (monster.AC = Number(value) || 0)"
         >
           <template #append>
             <q-btn
@@ -342,7 +335,7 @@
               <q-tooltip class="text-body2">{{ $t('monster.setAcByCr') }}</q-tooltip>
             </q-btn>
           </template>
-        </dynamic-reference-select>
+        </formula-field>
         <q-input
           v-model="monster.ACType"
           :label="$t('monster.acType')"
@@ -924,15 +917,13 @@
 
       <!-- 7. Hit Points & Hit Dice -->
       <div class="row q-col-gutter-xs items-center q-mt-xs">
-        <dynamic-reference-select
-          :model-value="monster.HP.HD"
+        <formula-field
+          path="HP.HD"
           :label="$t('monster.hp.hd')"
-          :min="1"
-          context-type="dice_count"
           class="col-12 col-sm-4"
           outlined
           dense
-          @update:model-value="(value: number | string) => monster.setHpModifier(value, monster.stats.CON)"
+          @applied="(value: number | string) => monster.setHpModifier(value, monster.stats.CON)"
         >
           <template #append>
             <q-btn
@@ -947,13 +938,10 @@
               <q-tooltip class="text-body2">{{ $t('monster.setHdByCr') }}</q-tooltip>
             </q-btn>
           </template>
-        </dynamic-reference-select>
+        </formula-field>
 
-        <q-select
-          v-model="monster.HP.type"
-          :options="diceOptions"
-          emit-value
-          :display-value="diceLookup[monster.HP.type] ?? ''"
+        <formula-field
+          path="HP.type"
           :label="$t('monster.hp.type')"
           class="col-12 col-sm-4"
           :disable="!monster.hpDieTypeOverride"
@@ -968,17 +956,16 @@
               @click="monster.toggleDieTypeOverride"
             />
           </template>
-        </q-select>
+        </formula-field>
 
-        <dynamic-reference-select
-          :model-value="monster.HP.modifier"
+        <formula-field
+          path="HP.modifier"
           :disable="!monster.hpModifierOverride"
           :label="$t('monster.hp.modifier')"
           class="col-12 col-sm-4"
-          context-type="bonus"
           outlined
           dense
-          @update:model-value="(value: number | string) => (monster.HP.modifier = Number(value) || 0)"
+          @applied="(value: number | string) => (monster.HP.modifier = Number(value) || 0)"
         >
           <template #append>
             <lock-toggle-button
@@ -988,7 +975,7 @@
               @click="monster.toggleHpModifierOverride"
             />
           </template>
-        </dynamic-reference-select>
+        </formula-field>
       </div>
 
       <!-- 8. Initiative Tuning & Paragon Multi-Phase Gate (Feeds Paragon HP Stages below) -->
@@ -1278,14 +1265,12 @@
                 />
               </div>
               <div v-else-if="extendedHp.bloodiedSource === 'flat'" class="col-12 col-sm-6">
-                <dynamic-reference-select
-                  :model-value="extendedHp.bloodiedOverride"
+                <formula-field
+                  path="extendedHp.bloodiedOverride"
                   label="Bloodied HP Value"
-                  context-type="general"
-                  :min="1"
                   dense
                   outlined
-                  @update:model-value="(val: number | string) => { extendedHp.bloodiedOverride = Number(val) || 0; if (extendedHp.bloodiedOverride > 0) extendedHp.showBloodied = true; }"
+                  @applied="(val: number | string) => { extendedHp.bloodiedOverride = Number(val) || 0; if (extendedHp.bloodiedOverride > 0) extendedHp.showBloodied = true; }"
                 />
               </div>
               <div v-else-if="extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none'" class="col-12 col-sm-6">
@@ -2917,7 +2902,7 @@ import { computed, defineComponent, ref, watch } from 'vue'
 import { basicArrayFilter } from '../filters'
 import LockToggleButton from '../LockToggleButton.vue'
 import SwapButtons from './widgets/SwapButtons.vue'
-import DynamicReferenceSelect from './widgets/DynamicReferenceSelect.vue'
+import FormulaField from '../kit/FormulaField.vue'
 import { validateNumber } from './numberInput'
 import { avgHP } from 'src/core/domain/math-utils'
 import { v4 as uuidv4 } from 'uuid'
@@ -2993,7 +2978,7 @@ const DEATH_EXCEPTIONS = [
 
 export default defineComponent({
   name: 'BasicsEditor',
-  components: { LockToggleButton, SwapButtons, DynamicReferenceSelect },
+  components: { LockToggleButton, SwapButtons, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const editorStore = useEditorStore()

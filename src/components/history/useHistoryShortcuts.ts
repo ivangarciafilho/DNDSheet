@@ -1,6 +1,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useHistoryStore } from 'src/stores/history-store'
+import { bindingRuntimeFor } from 'src/stores/binding-runtime'
 
 export function useHistoryShortcuts() {
   const monsterStore = useMonsterStore()
@@ -41,8 +42,9 @@ export function useHistoryShortcuts() {
 
     // Subscribe to store mutations
     unsubscribe = monsterStore.$subscribe(() => {
+      if (bindingRuntimeFor(monsterStore).historySilent) return
       historyStore.scheduleDebouncedSnapshot('Statblock Edit')
-    })
+    }, { flush: 'sync' })
 
     window.addEventListener('keydown', handleKeydown)
   })

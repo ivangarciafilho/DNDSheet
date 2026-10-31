@@ -1,8 +1,24 @@
 import type { DndAttack } from './types.ts'
 import type { ComposerCellSpec } from './action-composer.ts'
 import { DAMAGE_TYPES, SAVE_ABILITIES } from './action-composer.ts'
+import { lookupNumericField } from './catalogs/field-types.ts'
 
 export const attackExtraPrefix = (id: string): string => `additional.${encodeURIComponent(id).replace(/\./g, '%2E')}`
+
+/** Adapt compositor IDs to stable numeric addresses without changing identity. */
+export function attackNumericFieldPath(attack: DndAttack, fieldId: string): string | undefined {
+  if (!attackFields(attack).some(field => field.id === fieldId)) return undefined
+  let suffix = fieldId
+  if (fieldId.startsWith('additional.')) {
+    const parts = fieldId.split('.')
+    let id: string
+    try { id = decodeURIComponent(parts[1]) } catch { return undefined }
+    if (attack.additionalDamage.filter(item => item.id === id).length !== 1) return undefined
+    suffix = `additionalDamage[id=${encodeURIComponent(id)}].${parts.slice(2).join('.')}`
+  }
+  const path = `attacks[id=${encodeURIComponent(attack.id)}].${suffix}`
+  return lookupNumericField(path) ? path : undefined
+}
 
 /** Whitelisted leaf edits into the existing attack model. No role conversion or derived math. */
 export interface AttackField extends ComposerCellSpec { boolean?: boolean; min?: number; optional?: boolean }

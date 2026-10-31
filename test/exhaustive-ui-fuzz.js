@@ -6,6 +6,7 @@ import os from 'node:os'
 
 const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
 const PORT = 9223
+let activeBrowser
 
 async function runFuzz() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-fuzz-'))
@@ -20,6 +21,7 @@ async function runFuzz() {
     '--disable-extensions',
     process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
   ])
+  activeBrowser = chromeProc
 
   // Poll Chrome CDP endpoint up to 10s so startup timing never flakes
   let targets = null
@@ -2999,7 +3001,12 @@ async function runFuzz() {
     action.crAnnotation={...action.crAnnotation,include:true,automatic:false,maxDamage:42};monster.addLegendaryAction(action.id,2);
     monster.addMultiattack();const combo=monster.multiattacks[monster.multiattacks.length-1];combo.actions=[action.id];combo.id='a7-transition-combo';
     await new Promise(resolve=>setTimeout(resolve,250));
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');
+    if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await new Promise(resolve=>setTimeout(resolve,120));
+    [...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim()))?.click();
+    for(let attempt=0;attempt<40&&!document.querySelector('[data-composer-chain="a7-transition-proof"]');attempt++)await new Promise(resolve=>setTimeout(resolve,50));
     const chain=document.querySelector('[data-composer-chain="a7-transition-proof"]');
+    if(!chain)throw new Error('Transition witness was not rendered in the All tab');
     for(let guard=0;guard<4&&chain.closest('.q-expansion-item--collapsed');guard++) {
       chain.closest('.q-expansion-item--collapsed').querySelector(':scope > .q-expansion-item__container > .q-item').click();
       await new Promise(resolve=>setTimeout(resolve,450));
@@ -3309,10 +3316,13 @@ async function runFuzz() {
     const tabs=[...studio.querySelectorAll('button')],tab=tabs.find(el=>/^Attacks/.test(el.textContent.trim()));tab.click();await wait(300);
     const problems=[];const chain=()=>document.querySelector('[data-attack-composer="a8-attack-proof"]');
     async function edit(id,text,cancel=false){
+      const suffix=id.startsWith('additional.')?'additionalDamage[id='+id.split('.')[1]+'].'+id.split('.').slice(2).join('.'):id;
+      const formula=chain()?.querySelector('[data-formula-field="attacks[id=a8-attack-proof].'+suffix+'"]');
+      if(formula){for(let attempt=0;attempt<40&&document.querySelector('.chain-editor-menu');attempt++)await wait(25);formula.querySelector('.q-field__control').click();await wait(200);const custom=[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula'));if(!custom)throw new Error('Missing formula option for '+id+': '+formula.textContent);custom.click();await wait(150);const input=formula.querySelector('input');input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);const button=[...formula.querySelectorAll('button')].find(el=>el.textContent.trim()===(cancel?'Cancel':'Apply'));if(!button)throw new Error('Missing formula apply for '+id);button.click();await wait(150);return;}
       const chip=chain()?.querySelector('[data-chain-cell="'+id+'"]');if(!chip){problems.push('missing '+id);return;}
       chip.focus();chip.click();await wait(180);
       const menu=document.querySelector('.chain-editor-menu');const option=[...menu.querySelectorAll('[role="option"]')].find(el=>el.textContent.trim()===text);
-      if(option&&!cancel){option.click();await wait(150);return;}
+      if(option&&!cancel){option.click();await wait(350);return;}
       const input=menu.querySelector('input');if(input){input.value=text;input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);}
       [...menu.querySelectorAll('button')].find(el=>el.textContent.trim()===(cancel?'Cancel':'Apply')).click();await wait(180);
     }
@@ -3322,8 +3332,8 @@ async function runFuzz() {
     await edit('damage.count','2');await edit('damage.dice','8');await edit('damage.type','radiant');await edit('damage.modifier.override','Yes');await edit('damage.modifier.overrideValue','4');
     await edit('alternateDamage.active','Yes');await edit('alternateDamage.condition','with two hands');await edit('alternateDamage.count','3');
     await edit('additional.extra-proof.count','4');await edit('save','16');
-    const chip=chain().querySelector('[data-chain-cell="targets"]');chip.click();await wait(150);const menu=document.querySelector('.chain-editor-menu'),input=menu.querySelector('input');input.value='0';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);
-    const invalid=!!menu.querySelector('[role="alert"]')&&[...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').disabled;
+    const menu=chain().querySelector('[data-formula-field="attacks[id=a8-attack-proof].targets"]');menu.querySelector('.q-field__control').click();await wait(150);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')).click();await wait(100);const input=menu.querySelector('input');input.value='0';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);
+    const invalid=menu.textContent.includes('minimum')&&[...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').disabled;
     [...menu.querySelectorAll('button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(150);
     let comparisons=0;
     for(const template of ['modern','classic'])for(const style of ['2014','2024']){editor.visualTemplate=template;editor.style=style;await wait(220);const sheet=window.__sheetEntry('a8-attack-proof');if(!sheet||!['Studio Spear','30','90'].every(fact=>sheet.textContent.includes(fact)))problems.push('missing attack facts '+template+'/'+style);comparisons++;}
@@ -3525,6 +3535,7 @@ async function runFuzz() {
 }
 
 runFuzz().catch((e) => {
+  activeBrowser?.kill()
   console.error('Fatal fuzz test failure:', e)
   process.exit(1)
 })

@@ -36,6 +36,7 @@ import { SKILL } from 'src/data/SKILL'
 import { v4 as uuidv4 } from 'uuid'
 import { useI18n } from 'vue-i18n'
 import { useSpellsStore } from './spells-store'
+import { monsterBindingActions } from './binding-runtime'
 
 export const MONSTER_VERSION = 11
 
@@ -43,6 +44,7 @@ export const useMonsterStore = defineStore('monster', {
   state: (): Monster => {
     return {
       name: 'My New Monster',
+      bindings: {},
       nickname: '',
       saveVersion: MONSTER_VERSION,
       useArticleInToken: false,
@@ -1074,6 +1076,7 @@ export const useMonsterStore = defineStore('monster', {
     },
   },
   actions: {
+    ...monsterBindingActions,
     setCR(value: number) {
       this.CR = value
 

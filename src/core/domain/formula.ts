@@ -858,11 +858,14 @@ export interface FormulaFailure {
 
 export type FormulaResult = FormulaSuccess | FormulaFailure
 
-export function evaluateFormula(src: string, ctx: FormulaContext, opts: { style?: FormulaStyle } = {}): FormulaResult {
+export function evaluateFormula(src: string, ctx: FormulaContext, opts: { style?: FormulaStyle; integerScalar?: boolean } = {}): FormulaResult {
   const parsed = parseFormula(src)
   if (!parsed.ok) return parsed
   try {
     const v = evaluateNode(parsed.ast, ctx)
+    if (opts.integerScalar && (hasDice(v) || !Number.isSafeInteger(v.flat))) {
+      return { ok: false, error: hasDice(v) ? 'Dice terms cannot be assigned to an integer field' : 'Formula must resolve to a safe integer; use floor or ceil explicitly', at: 0, suggestions: [] }
+    }
     const single = parsed.ast.t === 'ref' ? getFormulaRef(parsed.ast.id)! : undefined
     const style: FormulaStyle =
       opts.style ?? (/^\s*\+/.test(src) ? 'bonus' : single ? single.style : hasDice(v) ? 'dice' : 'number')
@@ -918,7 +921,7 @@ export type NumericResult = (FormulaSuccess & { error?: undefined }) | (Omit<For
 export function resolveNumeric(
   input: NumericInput,
   ctx: FormulaContext,
-  opts: { style?: FormulaStyle; fallback?: number } = {}
+  opts: { style?: FormulaStyle; fallback?: number; integerScalar?: boolean } = {}
 ): NumericResult {
   const fallback = opts.fallback ?? 0
   const fallbackResult = (error: string, at = 0, suggestions: string[] = []): NumericResult => {
@@ -940,7 +943,7 @@ export function resolveNumeric(
     }
     return fallbackResult('Empty formula')
   }
-  const result = evaluateFormula(src, ctx, { style: opts.style })
+  const result = evaluateFormula(src, ctx, { style: opts.style, integerScalar: opts.integerScalar })
   return result.ok ? result : fallbackResult(result.error, result.at, result.suggestions)
 }
 

@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { attackFields, attackValue, attackPatch, validateAttackField } from '../../src/core/domain/attack-composer.ts'
+import { attackFields, attackValue, attackPatch, validateAttackField, attackNumericFieldPath } from '../../src/core/domain/attack-composer.ts'
 import type { DndAttack } from '../../src/core/domain/types.ts'
 const fixture = () => ({ id: 'spear', name: 'Spear', distance: 'BOTH', kind: 'WEAPON', targets: 1,
  modifier: { override: false, overrideValue: 8, stat: 'STR', proficient: true, note: 'retain' },
@@ -9,6 +9,16 @@ const fixture = () => ({ id: 'spear', name: 'Spear', distance: 'BOTH', kind: 'WE
  additionalDamage: [{ id: 'fire', count: 2, dice: 6, type: 'fire', note: 'while burning' }],
  save: 0, description: 'Authored', legendaryOnly: false, useCustomRenderer: false, customRenderer: '{attack.name}', stagePool: '2', extension: 'keep'
 } as unknown as DndAttack)
+
+test('numeric attack cells address stable records rather than positions', () => {
+ const attack = fixture()
+ attack.id = 'spear / ]'
+ attack.additionalDamage[0].id = 'fire.dot / ]'
+ assert.equal(attackNumericFieldPath(attack, 'range.standard'), 'attacks[id=spear%20%2F%20%5D].range.standard')
+ assert.equal(attackNumericFieldPath(attack, 'additional.fire%2Edot%20%2F%20%5D.count'), 'attacks[id=spear%20%2F%20%5D].additionalDamage[id=fire.dot%20%2F%20%5D].count')
+ assert.equal(attackNumericFieldPath(attack, 'name'), undefined)
+ assert.equal(attackNumericFieldPath(attack, 'additional.missing.count'), undefined)
+})
 test('attack adapter covers distinct ranges, modifiers and all damage models', () => {
  const ids = attackFields(fixture()).map(f => f.id)
  for (const id of ['range.reach','range.standard','range.long','modifier.proficient','modifier.override','alternateDamage.condition','additional.fire.count','save']) assert.ok(ids.includes(id), id)

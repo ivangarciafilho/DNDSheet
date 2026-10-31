@@ -2,6 +2,16 @@ import test from 'node:test'
 import assert from 'node:assert'
 import { HistoryLedger } from '../../src/core/usecases/HistoryLedger.ts'
 
+test('silent materialization and identical current snapshots do not consume undo steps', () => {
+  const ledger = new HistoryLedger<{ value: number }>()
+  ledger.pushSnapshot({ value: 1 }, 'Initial')
+  ledger.pushSnapshot({ value: 2 }, 'Derived', { historySilent: true })
+  assert.equal(ledger.getUndoCount(), 1)
+  ledger.pushSnapshot({ value: 3 }, 'Authored change')
+  assert.equal(ledger.undo({ value: 3 })?.snapshot.value, 1)
+  assert.equal(ledger.redo({ value: 1 })?.snapshot.value, 3)
+})
+
 test('HistoryLedger - Undo and Redo lifecycle with branch invalidation', () => {
   const ledger = new HistoryLedger<{ count: number }>(5)
 

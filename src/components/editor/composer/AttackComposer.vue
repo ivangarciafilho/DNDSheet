@@ -3,19 +3,25 @@
     <div v-for="row in rows" :key="row.id" class="composer-chain__row">
       <span class="composer-chain__label">{{ row.label }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="row.label">
+        <template v-for="spec in row.fields" :key="spec.id">
+        <formula-field v-if="numericPath(spec.id)" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
         <chain-cell
-v-for="spec in row.fields" :key="spec.id" :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
+v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
           :allow-clear="!!spec.optional" number-hint="Enter a whole number. Apply saves this field; Cancel keeps its current value."
           :validate="(next: unknown) => validate(spec.id, next)" @commit="(next: unknown) => commit(spec.id, next)" @clear="commit(spec.id, '')" />
+        </template>
       </div>
     </div>
     <div v-for="(extra, index) in attack.additionalDamage" :key="extra.id" class="composer-chain__row">
       <span class="composer-chain__label">Extra {{ index + 1 }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="`Extra damage ${index + 1}`">
+        <template v-for="spec in extraFields(extra.id)" :key="spec.id">
+        <formula-field v-if="numericPath(spec.id)" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
         <chain-cell
-v-for="spec in extraFields(extra.id)" :key="spec.id" :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
+v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
           :allow-clear="!!spec.optional" number-hint="Enter a whole number; this field cannot be cleared." :validate="(next: unknown) => validate(spec.id, next)"
           @commit="(next: unknown) => commit(spec.id, next)" @clear="commit(spec.id, '')" />
+        </template>
         <q-btn flat dense no-caps color="red-3" label="Remove extra damage" :aria-label="`Remove extra damage ${index + 1}`" @click="monster.deleteAdditionalDamage(attack.id, extra.id)" />
       </div>
     </div>
@@ -38,15 +44,16 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useTemplatesStore } from 'src/stores/templates-store'
-import { attackExtraPrefix, attackFields, attackPatch, attackValue, validateAttackField } from 'src/core/domain/attack-composer'
+import { attackExtraPrefix, attackFields, attackPatch, attackValue, validateAttackField, attackNumericFieldPath } from 'src/core/domain/attack-composer'
 import type { AttackField } from 'src/core/domain/attack-composer'
 import type { ChainCellView } from 'src/core/domain/composer-chain'
 import ChainCell from './ChainCell.vue'
 import MonsterTextEditor from '../MonsterTextEditor.vue'
+import FormulaField from '../../kit/FormulaField.vue'
 import NewTemplateDialog from '../widgets/NewTemplateDialog.vue'
 
 export default defineComponent({
-  name: 'AttackComposer', components: { ChainCell, MonsterTextEditor },
+  name: 'AttackComposer', components: { ChainCell, MonsterTextEditor, FormulaField },
   props: { attackId: { type: String, required: true } },
   setup(props) {
     const monster = useMonsterStore(), templates = useTemplatesStore(), $q = useQuasar()
@@ -54,6 +61,7 @@ export default defineComponent({
     const attack = computed(() => monster.attacks.find(a => a.id === props.attackId))
     const fields = computed(() => attack.value ? attackFields(attack.value) : [])
     const value = (id: string) => attack.value ? attackValue(attack.value, id) : ''
+    const numericPath = (id: string) => attack.value ? attackNumericFieldPath(attack.value, id) : undefined
     const validate = (id: string, next: unknown) => attack.value ? validateAttackField(attack.value, id, next) : 'Attack no longer exists.'
     const commit = (id: string, next: unknown) => { if (attack.value) Object.assign(attack.value, attackPatch(attack.value, id, next)) }
     const cell = (spec: AttackField): ChainCellView => ({ ...spec, state: value(spec.id) ? 'set' : 'empty', text: `${spec.label}: ${value(spec.id) || 'add'}`, legacy: false })
@@ -74,7 +82,7 @@ export default defineComponent({
         if (latest) { templates.addCustomAttack(latest, name, icon); $q.notify({ message: t('editor.template.added', [name]), type: 'positive' }) }
       })
     }
-    return { monster, attack, rows, cell, value, validate, commit, extraFields, phaseOptions, saveTemplate, t }
+    return { monster, attack, rows, cell, value, validate, commit, extraFields, phaseOptions, saveTemplate, t, numericPath }
   },
 })
 </script>

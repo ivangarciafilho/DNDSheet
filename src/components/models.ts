@@ -810,6 +810,7 @@ export type SwappableField =
 
 // the big one is the monster definition
 export interface Monster {
+  bindings?: Record<string, import('../core/domain/formula').NumericBinding>
   name: string
   nickname: string
   saveVersion: number

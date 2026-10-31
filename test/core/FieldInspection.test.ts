@@ -44,8 +44,30 @@ test('symbolic authorship requires explicit migration rather than scalar overwri
   assert.equal(inspectNumericField({ acConfig: { saveDc: 'SPELL_DC' } }, 'acConfig.saveDc').editable, false)
 })
 
-test('complex unreviewed modes fail closed until the ownership audit finishes', () => {
-  const result = inspectNumericField({ acConfig: { conditionalBonus: 2 } }, 'acConfig.conditionalBonus')
-  assert.equal(result.editable, false)
-  assert.match(result.inactiveGates.join(' '), /review required/i)
+test('AC modes admit only the currently authored scalar owner', () => {
+  const check = (config: Record<string, unknown>, leaf: string) => inspectNumericField({ acConfig: config }, `acConfig.${leaf}`).editable
+  assert.equal(check({ conditionMode: 'attacker_save', saveDcSource: 'custom', saveDc: 15 }, 'saveDc'), true)
+  assert.equal(check({ conditionMode: 'attacker_save', saveDcSource: 'spell_save_dc', saveDc: 15 }, 'saveDc'), false)
+  assert.equal(check({ conditionMode: 'attacker_save', saveDcSource: 'custom', saveDcCustom: 18, saveDc: 15 }, 'saveDc'), false)
+  assert.equal(check({ conditional: 'first_y_attacks', conditionalCount: 2 }, 'conditionalCount'), true)
+  assert.equal(check({ conditional: 'none', conditionalCount: 2 }, 'conditionalCount'), false)
+  assert.equal(check({ conditionMode: 'while_bloodied', secondaryAc: 12 }, 'secondaryAc'), true)
+  assert.equal(check({ conditionMode: 'none', secondaryAc: 12 }, 'secondaryAc'), false)
+  assert.equal(check({ conditionMode: 'attacker_save', onSaveSuccess: 'takes_damage', onSaveSuccessDamageAmount: 5 }, 'onSaveSuccessDamageAmount'), true)
+  assert.equal(check({ conditionMode: 'none', onSaveSuccess: 'takes_damage', onSaveSuccessDamageAmount: 5 }, 'onSaveSuccessDamageAmount'), false)
+})
+
+test('death prevention preserves OR branches and parent visibility defaults', () => {
+  const check = (config: Record<string, unknown>, leaf: string) => inspectNumericField({ extendedHp: { deathPrevention: config } }, `extendedHp.deathPrevention.${leaf}`).editable
+  const base = { enabled: true, name: 'Immortal', saveDc: 15, deathBurstRange: 30, returnHpValue: 1, returnHpSource: 'flat' }
+  assert.equal(check({ ...base, dcRule: 'custom_save' }, 'saveDc'), true)
+  assert.equal(check({ ...base, requiresSave: true }, 'saveDc'), true)
+  assert.equal(check({ ...base, requiresSave: false }, 'saveDc'), false)
+  assert.equal(check({ ...base, requiresSave: true, hideHp: true }, 'saveDc'), false)
+  assert.equal(check({ ...base, requiresSave: true, dcRule: 'until_x_crits' }, 'saveDc'), false)
+  assert.equal(check({ ...base, dcRule: 'upon_death_burst' }, 'deathBurstRange'), true)
+  assert.equal(check({ ...base, uponDeathDealsDamage: true }, 'deathBurstRange'), true)
+  assert.equal(check({ ...base, name: 'Mortal', uponDeathDealsDamage: true }, 'deathBurstRange'), false)
+  assert.equal(check(base, 'returnHpValue'), true)
+  assert.equal(check({ ...base, hideHp: true }, 'returnHpValue'), false)
 })

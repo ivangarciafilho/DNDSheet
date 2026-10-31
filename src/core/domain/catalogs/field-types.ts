@@ -6,6 +6,7 @@ export interface NumericFieldGate {
   readonly path: string
   readonly equals?: string | number | boolean | null
   readonly notEquals?: string | number | boolean | null
+  readonly anyOf?: readonly NumericFieldGate[]
   readonly present?: boolean
   readonly oneOf?: readonly (string | number | boolean | null | undefined)[]
 }
@@ -43,10 +44,14 @@ for (const list of Object.values(groups)) Object.freeze(list)
 const fields = new Map<string, NumericFieldDescriptor>()
 const eq = (path: string, equals: string | number | boolean): NumericFieldGate => ({ path, equals })
 const neq = (path: string, notEquals: string | number | boolean): NumericFieldGate => ({ path, notEquals })
+function freezeGate(gate: NumericFieldGate): NumericFieldGate {
+  return Object.freeze({ ...gate, ...(gate.oneOf ? { oneOf: Object.freeze([...gate.oneOf]) } : {}), ...(gate.anyOf ? { anyOf: Object.freeze(gate.anyOf.map(freezeGate)) } : {}) })
+}
 function register(path: string, semanticType: NumericFieldSemantic, group: FormulaGroupId, options: Options = {}): void {
+  if (fields.has(path)) throw new Error(`Duplicate numeric field descriptor: ${path}`)
   fields.set(path, Object.freeze({ path, type: 'integer', semanticType, style: semanticType === 'bonus' ? 'bonus' : 'number', group,
     allowedReferenceGroups: groups[semanticType], unit: semanticType === 'distance' ? 'ft' : semanticType === 'duration' ? 'minutes' : semanticType === 'hp' ? 'hp' : semanticType === 'round' ? 'rounds' : 'scalar',
-    optional: false, nullable: false, bindingPolicy: 'binding', modePolicy: path.startsWith('acConfig.') || /^extendedHp\.deathPrevention\.(saveDc|deathBurst)/.test(path) ? 'pending' : 'reviewed', ...options, editableWhen: Object.freeze((options.editableWhen ?? []).map(g => Object.freeze(g))) }))
+    optional: false, nullable: false, bindingPolicy: 'binding', modePolicy: 'reviewed', ...options, editableWhen: Object.freeze((options.editableWhen ?? []).map(freezeGate)) }))
 }
 const optional = { optional: true } as const
 const ov = (prefix: string): Options => ({ editableWhen: [eq(`${prefix}.override`, true)] })
@@ -55,8 +60,8 @@ const ov = (prefix: string): Options => ({ editableWhen: [eq(`${prefix}.override
  * Identity-poor phases, outcome/effect occurrences, memberships and stagePool
  * need identity migration. Symbolic formulas, CR fractions, annotation multiplier
  * precision, presentation values and tracker state remain excluded. Slots remain
- * literal-table exceptions. This registry alone is not ready for overlay adoption:
- * source ownership and gate evaluation must be integrated with the stored model.
+ * literal-table exceptions. Gate inspection uses stored model ownership; adapters
+ * must resolve against the same context as their dependency source provider.
  * Optional permits a missing final leaf, never a missing parent or record.
  */
 for (const stat of ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']) {
@@ -84,9 +89,28 @@ register(`${lang}.animalHandling.dc`, 'dc', 'save_dc', { ...optional, editableWh
 register(`${lang}.undeadConfig.telepathicRange`, 'distance', 'movement', optional)
 register(`${lang}.deadConfig.maxQuestions`, 'count', 'spellcasting', optional)
 // Legacy language saveDc is compatibility state, not a parallel authored authority.
-for (const name of ['defenseItemCustomBonus', 'temporaryCustomBonus', 'conditionalBonus', 'conditionSecondaryBonus']) register(`acConfig.${name}`, 'bonus', 'combat', { ...optional,
-  editableWhen: name === 'defenseItemCustomBonus' ? [eq('acConfig.defenseItem', 'custom')] : name === 'temporaryCustomBonus' ? [eq('acConfig.temporary', 'parry_custom')] : [] })
-for (const [name, semantic] of Object.entries({ conditionalCount: 'count', secondaryAc: 'ac', saveDc: 'dc', onSaveFailureDamageAmount: 'damage', onSaveSuccessDamageAmount: 'damage', parryCount: 'count', movedDistance: 'distance', onMissDistance: 'distance', onMissDamageAmount: 'damage', onHitDamageAmount: 'damage' }) as [string, NumericFieldSemantic][]) register(`acConfig.${name}`, semantic, 'combat', optional)
+// Mode ownership matches BasicsEditor and composeArmorClass. Type-only, unused
+// fields conditionSecondaryBonus/parryCount/movedDistance are deliberately excluded.
+const acMode = (values: readonly string[]): NumericFieldGate => ({ path: 'acConfig.conditionMode', oneOf: values })
+const secondaryAcModes = Object.freeze([
+  'parry', 'without_advantage', 'versus_damage_types', 'damage_type', 'while_cursed', 'near_ally',
+  'while_moving', 'while_bloodied', 'bloodied', 'while_within_ally', 'while_within_shield_bearer',
+  'while_prone', 'shield_spell', 'shield_of_faith', 'ranged_attacks', 'melee_attacks',
+  'distance_away', 'first_attack_each_round', 'attacks_beyond_first', 'spell_attacks',
+  'behind_flanking', 'while_flying', 'while_underwater', 'in_bright_light', 'in_daylight', 'in_darkness', 'in_light',
+  'versus_bps', 'versus_creature_types', 'creature_type', 'attack_type', 'has_temp_hp', 'took_damage_since',
+  'while_concentrating', 'asleep_unconscious',
+])
+register('acConfig.defenseItemCustomBonus', 'bonus', 'combat', { ...optional, editableWhen: [eq('acConfig.defenseItem', 'custom')] })
+register('acConfig.temporaryCustomBonus', 'bonus', 'combat', { ...optional, editableWhen: [eq('acConfig.temporary', 'parry_custom')] })
+register('acConfig.conditionalBonus', 'bonus', 'combat', { ...optional, editableWhen: [{ path: 'acConfig.conditional', oneOf: ['all_attacks_beyond_first', 'first_y_attacks'] }] })
+register('acConfig.conditionalCount', 'count', 'combat', { ...optional, editableWhen: [eq('acConfig.conditional', 'first_y_attacks')] })
+register('acConfig.secondaryAc', 'ac', 'combat', { ...optional, editableWhen: [acMode(secondaryAcModes)] })
+register('acConfig.saveDc', 'dc', 'combat', { ...optional, editableWhen: [acMode(['attacker_save']), { path: 'acConfig.saveDcSource', oneOf: [undefined, 'custom'] }, { path: 'acConfig.saveDcCustom', present: false }] })
+for (const outcome of ['Failure', 'Success']) register(`acConfig.onSave${outcome}DamageAmount`, 'damage', 'combat', { ...optional, editableWhen: [acMode(['attacker_save']), { path: `acConfig.onSave${outcome}`, oneOf: ['takes_damage', 'damage_attacker'] }] })
+register('acConfig.onMissDistance', 'distance', 'combat', { ...optional, editableWhen: [eq('acConfig.onMiss', 'hits_target_feet')] })
+register('acConfig.onMissDamageAmount', 'damage', 'combat', { ...optional, editableWhen: [eq('acConfig.onMiss', 'damage_attacker')] })
+register('acConfig.onHitDamageAmount', 'damage', 'combat', { ...optional, editableWhen: [eq('acConfig.onHit', 'damage_attacker')] })
 // saveDcCustom is a legacy alias; the current editor writes saveDc.
 register('initiativeConfig.lairInitiative', 'count', 'combat', { ...optional, min: 0, max: 40, editableWhen: [eq('initiativeConfig.useLairInitiative', true)] })
 register('legendaryActions.count', 'count', 'challenge', { min: 0, max: 99 })
@@ -98,11 +122,14 @@ register('extendedHp.regeneration.amount', 'hp', 'hit_points', { min: 0, editabl
 const inv = 'extendedHp.invulnerability'
 for (const [name, semantic] of [['nthAttack', 'count'], ['firstXCount', 'count'], ['saveDc', 'dc']] as const) register(`${inv}.${name}`, semantic, 'combat', { ...optional, editableWhen: [eq(`${inv}.enabled`, true)] })
 const death = 'extendedHp.deathPrevention'
-register(`${death}.critHitsToKill`, 'count', 'hit_points', { ...optional, editableWhen: [eq(`${death}.enabled`, true), eq(`${death}.dcRule`, 'until_x_crits')] })
-register(`${death}.returnHpValue`, 'hp', 'hit_points', { ...optional, min: 1, editableWhen: [eq(`${death}.enabled`, true), eq(`${death}.returnHpSource`, 'flat')] })
-register(`${death}.saveDc`, 'dc', 'save_dc', { ...optional, editableWhen: [eq(`${death}.enabled`, true)] })
-register(`${death}.deathBurstDamageAmount`, 'damage', 'hit_points', { ...optional, min: 1, editableWhen: [eq(`${death}.enabled`, true)] })
-register(`${death}.deathBurstRange`, 'distance', 'movement', { ...optional, min: 5, editableWhen: [eq(`${death}.enabled`, true)] })
+const deathActive = [eq(`${death}.enabled`, true), { path: `${death}.name`, present: true, notEquals: 'Mortal' }, neq(`${death}.name`, '')] as const
+const visibleReturn = [...deathActive, neq(`${death}.hideHp`, true), neq(`${death}.dcRule`, 'until_x_crits')]
+register(`${death}.critHitsToKill`, 'count', 'hit_points', { ...optional, editableWhen: [...deathActive, eq(`${death}.dcRule`, 'until_x_crits')] })
+register(`${death}.returnHpValue`, 'hp', 'hit_points', { ...optional, min: 1, editableWhen: [...visibleReturn, eq(`${death}.returnHpSource`, 'flat')] })
+register(`${death}.saveDc`, 'dc', 'save_dc', { ...optional, editableWhen: [...visibleReturn, { path: `${death}.enabled`, anyOf: [eq(`${death}.requiresSave`, true), eq(`${death}.dcRule`, 'custom_save')] }] })
+const burstActive = [...deathActive, { path: `${death}.enabled`, anyOf: [eq(`${death}.dcRule`, 'upon_death_burst'), eq(`${death}.uponDeathDealsDamage`, true)] }]
+register(`${death}.deathBurstDamageAmount`, 'damage', 'hit_points', { ...optional, min: 1, editableWhen: burstActive })
+register(`${death}.deathBurstRange`, 'distance', 'movement', { ...optional, min: 5, editableWhen: burstActive })
 // returnHpAmount/critCount and extendedHp paragon aliases remain compatibility state.
 const attack = 'attacks[id=*]'
 register(`${attack}.modifier.overrideValue`, 'bonus', 'attack', ov(`${attack}.modifier`))
@@ -156,7 +183,8 @@ export function lookupNumericField(path: string): NumericFieldDescriptor | undef
   if (!field) return undefined
   const selectors = segments.flatMap(s => s.selector ? [`[${s.selector.kind}=${encodeURIComponent(s.selector.value)}]`] : [])
   const instantiate = (value: string): string => { let index = 0; return value.replace(/\[(?:id|key|level)=\*\]/g, () => selectors[index++]) }
-  return Object.freeze({ ...field, path, editableWhen: Object.freeze(field.editableWhen.map(gate => Object.freeze({ ...gate, path: instantiate(gate.path) }))) })
+  const instantiateGate = (gate: NumericFieldGate): NumericFieldGate => freezeGate({ ...gate, path: instantiate(gate.path), ...(gate.anyOf ? { anyOf: gate.anyOf.map(instantiateGate) } : {}) })
+  return Object.freeze({ ...field, path, editableWhen: Object.freeze(field.editableWhen.map(instantiateGate)) })
 }
 /** No coercion, rounding, averaging, clamping or model mutation. */
 export function validateNumericFieldValue(path: string, value: unknown): void {
@@ -178,3 +206,6 @@ export function isReferenceAllowedForField(path: string, referenceId: string): b
   const ref = FORMULA_REFS.find(item => item.id === token || item.aliases?.includes(token))
   return !!ref && ref.style !== 'dice' && field.allowedReferenceGroups.includes(ref.group)
 }
+
+/** Immutable inventory for adoption coverage and invariant checks. */
+export const NUMERIC_FIELD_CATALOG: readonly NumericFieldDescriptor[] = Object.freeze([...fields.values()])

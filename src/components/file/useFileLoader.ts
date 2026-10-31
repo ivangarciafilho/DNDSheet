@@ -129,7 +129,7 @@ export function useFileLoader() {
 
       // update the store
       const monsterStore = useMonsterStore()
-      monsterStore.$state = monster
+      monsterStore.$state = { ...monster, bindings: monster.bindings ?? {} }
 
       $q.notify({
         type: 'positive',

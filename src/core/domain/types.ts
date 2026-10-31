@@ -840,6 +840,7 @@ export type SwappableField =
   | 'anatomyParts'
 
 export interface Monster {
+  bindings?: Record<string, import('./formula').NumericBinding>
   name: string
   nickname: string
   saveVersion: number

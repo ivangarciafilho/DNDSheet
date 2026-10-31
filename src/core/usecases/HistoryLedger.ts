@@ -13,7 +13,8 @@ export class HistoryLedger<T> {
     this.maxDepth = maxDepth
   }
 
-  public pushSnapshot(state: T, description: string): void {
+  public pushSnapshot(state: T, description: string, options: { historySilent?: boolean } = {}): void {
+    if (options.historySilent) return
     const clone: T = JSON.parse(JSON.stringify(state))
     this.undoStack.push({
       snapshot: clone,
@@ -30,6 +31,10 @@ export class HistoryLedger<T> {
   }
 
   public undo(currentState: T): HistoryEntry<T> | null {
+    // Debounced UI snapshots may already contain the current state. Skip those
+    // without creating a redundant redo step.
+    const currentJson = JSON.stringify(currentState)
+    while (this.undoStack.length && JSON.stringify(this.undoStack[this.undoStack.length - 1].snapshot) === currentJson) this.undoStack.pop()
     if (this.undoStack.length === 0) {
       return null
     }

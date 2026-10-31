@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
-import { lookupNumericField, validateNumericFieldValue, validateNumericFieldDiceValue, isReferenceAllowedForField } from '../../src/core/domain/catalogs/field-types.ts'
+import { NUMERIC_FIELD_CATALOG, lookupNumericField, validateNumericFieldValue, validateNumericFieldDiceValue, isReferenceAllowedForField } from '../../src/core/domain/catalogs/field-types.ts'
 
 test('registry exposes only canonical checkpoint paths', () => {
   for (const ability of ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']) {
@@ -52,4 +52,34 @@ test('reference eligibility uses known scalar references and field groups', () =
   assert.equal(isReferenceAllowedForField('AC', 'HIT_DIE'), false)
   assert.equal(isReferenceAllowedForField('AC', 'UNKNOWN'), false)
   assert.equal(isReferenceAllowedForField('CR', 'PB'), false)
+})
+
+
+test('complete scalar inventory has unique immutable reviewed descriptors and explicit exclusions', () => {
+  assert.ok(NUMERIC_FIELD_CATALOG.length > 100)
+  assert.equal(new Set(NUMERIC_FIELD_CATALOG.map(field => field.path)).size, NUMERIC_FIELD_CATALOG.length)
+  assert.ok(Object.isFrozen(NUMERIC_FIELD_CATALOG))
+  for (const field of NUMERIC_FIELD_CATALOG) {
+    const path = field.path.replaceAll('[id=*]', '[id=record]').replaceAll('[key=*]', '[key=PERCEPTION]').replaceAll('[level=*]', '[level=1]')
+    assert.ok(lookupNumericField(path), field.path)
+    assert.equal(field.modePolicy, 'reviewed', field.path)
+    assert.equal(field.type, 'integer')
+    assert.ok(Object.isFrozen(field))
+    assert.ok(Object.isFrozen(field.editableWhen))
+    assert.ok(Object.isFrozen(field.allowedReferenceGroups))
+    assert.ok(field.min === undefined || field.max === undefined || field.min <= field.max)
+    for (const value of [NaN, Infinity, -Infinity, 1.25, '2', null, undefined]) assert.throws(() => validateNumericFieldValue(path, value), path)
+  }
+  // Identity-poor, symbolic, derived, precision-sensitive and tracker leaves have
+  // an explicit owner elsewhere; type declarations alone do not grant adoption.
+  for (const path of ['acConfig.conditionSecondaryBonus', 'acConfig.parryCount', 'acConfig.movedDistance', 'extendedHp.deathPrevention.returnHpAmount', 'extendedHp.deathPrevention.critCount', 'acConfig.saveDcCustom', 'languagesList[id=l].saveDc', 'senses.blindsight', 'CR', 'runehammerTrack.currentCount']) assert.equal(lookupNumericField(path), undefined, path)
+})
+
+test('compound gates and their selector instantiations are immutable', () => {
+  const field = lookupNumericField('extendedHp.deathPrevention.saveDc')!
+  const alternatives = field.editableWhen.find(g => g.anyOf)?.anyOf
+  assert.ok(alternatives)
+  assert.ok(Object.isFrozen(alternatives))
+  assert.ok(alternatives.every(Object.isFrozen))
+  assert.equal(lookupNumericField('attacks[id=x%2Fy].modifier.overrideValue')?.editableWhen[0].path, 'attacks[id=x%2Fy].modifier.override')
 })

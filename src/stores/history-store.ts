@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { HistoryLedger } from 'src/core/usecases/HistoryLedger'
 import type { Monster } from 'src/core/domain/types'
 import { useMonsterStore } from './monster-store'
+import { bindingRuntimeFor } from './binding-runtime'
 
 export const useHistoryStore = defineStore('history', () => {
   const ledger = new HistoryLedger<Monster>(50)
@@ -17,7 +18,7 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   const pushSnapshot = (description = 'Edit') => {
-    if (isExecutingHistory.value) return
+    if (isExecutingHistory.value || bindingRuntimeFor(useMonsterStore()).historySilent) return
     const monsterStore = useMonsterStore()
     // Unrwap raw object
     const rawState = JSON.parse(JSON.stringify(monsterStore.$state))
@@ -26,7 +27,7 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   const scheduleDebouncedSnapshot = (description = 'Typing') => {
-    if (isExecutingHistory.value) return
+    if (isExecutingHistory.value || bindingRuntimeFor(useMonsterStore()).historySilent) return
     if (debounceTimer) clearTimeout(debounceTimer)
     debounceTimer = setTimeout(() => {
       pushSnapshot(description)
@@ -34,6 +35,7 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   const undo = (): boolean => {
+    if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null }
     if (!ledger.canUndo()) return false
     const monsterStore = useMonsterStore()
     isExecutingHistory.value = true
@@ -41,7 +43,7 @@ export const useHistoryStore = defineStore('history', () => {
       const currentState = JSON.parse(JSON.stringify(monsterStore.$state))
       const entry = ledger.undo(currentState)
       if (entry) {
-        monsterStore.$patch(entry.snapshot as any)
+        monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
         updateFlags()
         return true
       }
@@ -54,6 +56,7 @@ export const useHistoryStore = defineStore('history', () => {
   }
 
   const redo = (): boolean => {
+    if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null }
     if (!ledger.canRedo()) return false
     const monsterStore = useMonsterStore()
     isExecutingHistory.value = true
@@ -61,7 +64,7 @@ export const useHistoryStore = defineStore('history', () => {
       const currentState = JSON.parse(JSON.stringify(monsterStore.$state))
       const entry = ledger.redo(currentState)
       if (entry) {
-        monsterStore.$patch(entry.snapshot as any)
+        monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
         updateFlags()
         return true
       }

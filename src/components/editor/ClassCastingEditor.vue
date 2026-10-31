@@ -62,17 +62,13 @@
             <q-tooltip class="text-caption">Spellcasting ability score</q-tooltip>
           </q-select>
 
-          <q-input
-            :model-value="monster.spellSave"
+          <formula-field
+            v-if="monster.spellcasting.save.override"
+            path="spellcasting.save.overrideValue"
             label="Save DC"
-            type="number"
             class="col-6 col-sm-2 q-pa-xs"
-            @update:model-value="(v: string | number | null) => {
-              monster.spellcasting.save.override = true
-              monster.spellcasting.save.overrideValue = validateNumber(v, 10)
-            }"
           >
-            <template #after>
+            <template #append>
               <q-btn
                 round
                 flat
@@ -86,6 +82,9 @@
               </q-btn>
             </template>
             <q-tooltip class="text-caption">Spell save DC (auto-computed from stat + proficiency, or manual)</q-tooltip>
+          </formula-field>
+          <q-input v-else :model-value="monster.spellSave" label="Save DC" readonly class="col-6 col-sm-2 q-pa-xs">
+            <template #append><q-btn flat dense icon="lock_open" aria-label="Enable manual spell save DC" @click="monster.spellcasting.save.override = true"><q-tooltip>Enable a typed value or live formula.</q-tooltip></q-btn></template>
           </q-input>
 
           <q-input
@@ -682,6 +681,7 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
 import { ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
+import FormulaField from '../kit/FormulaField.vue'
 import { useSpellLevels } from '../spell/useSpellLevels'
 import { validateNumber } from './numberInput'
 import {
@@ -700,7 +700,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 export default defineComponent({
   name: 'ClassCastingEditor',
-  components: { MonsterTextEditor },
+  components: { MonsterTextEditor, FormulaField },
   setup() {
     const classFilter = ref(false)
 
