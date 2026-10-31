@@ -1,5 +1,13 @@
 # DNDSheet — Development Handoffs
 
+## Build161 continuation — visible bindings before remaining sweep
+
+Read the new Specification contract and Backlog A9.7 packet, then the verified closing evidence. The completed pipeline uses core/domain/monster-bindings.ts, stores/binding-runtime.ts, kit/useBindings.ts and kit/FormulaField.vue. Main store actions delegate to the tested production action object. Runtime revision/errors/historySilent are nonpersisted; only authored bindings live in monster state.
+
+Two workers reached usage limits during implementation. Their partial files were preserved and completed in this session, not counted as finished handoffs. The final independent source reviewer found no blocking defects and two minor follow-ups, recorded under A9 closeout. Subsequent target-facing checks reproduced/fixed raw-descriptor reactivity gaps with a failing computed-value test and visible sheet assertion. Do not regress safe own-property reading to arbitrary property traversal to gain Vue tracking; keep the explicit reactive adapter.
+
+Resume A9.7 with a consumer/owner checklist and a bounded batch; no extra framework or duplicate preview. Preserve Build160 and configured origin data. Complete remaining numeric consumers and lifecycle ownership before A9.10; keep casting/outcomes/species expansion on their existing tasks. Use fresh frozen build output during browser jobs. The earlier provisional runs that failed are not final evidence; only the closing packet's successful runs count.
+
 ## Build160 continuation packet — finish A9.2 before overlay adoption
 
 Read the Build160 Specification contract and Backlog remaining packet first. Four new pure catalog modules own descriptors, safe paths, inspection and reference sources; tests live in FieldTypes, FieldPaths, FieldInspection and ReferenceSources. No store/UI consumers have adopted them. Preserve predecessor RCs and sample storage; do not reconfigure servers.
@@ -14,10 +22,10 @@ Independent review's concrete defects were reproduced with failing tests and fix
 
 | | |
 |---|---|
-| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
-| **State at hand-over** | `656c164`,Build160 at http://localhost:9124/candidate160/index.html#/. Build159 preserved;sample origin storage retained.314core tests;no new dropdown UI claimed. See Build160 closing evidence. |
+| **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
+| **State at hand-over** | `6049127`,Build161 at http://localhost:9124/candidate161/index.html#/. Build160 frozen,sample retained;327core/50browser plus focused binding lifecycle pass. |
 | **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
-| **Current loop** | A9 active:2/14tasks complete(A9.0/A9.1).88/219complete,A9.2 active,130pending;no new scope. |
+| **Current loop** | A9 active:9/14complete.95/219complete,A9.7active,123pending;no new scope. |
 
 ---
 
@@ -1068,3 +1076,14 @@ Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new
 Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
 
 Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.
+
+
+### Build161 verified closeout
+
+Implementation `6049127`:30files,+814/-714,including removal of the619-line flattening selector. Seven tasks close:A9.2,A9.3,A9.4,A9.5,A9.6,A9.8,A9.9. Progress **95/219(43.38%),A9.7active,123pending,124remaining;9/28loops shipped**. Delta **+7completed,-7remaining,zero new scope**. A9 is9/14;R3 is9/33. A9.7 and the mechanics/closeout tasks keep the loop open.
+
+Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with zero runtime/console errors;5spell themes;12help themes;five saved monsters/20byte-identical plates versus160,reload and dangling-reference parity. Focused browser flow passes actual Apply/Cancel,live DC propagation,rejected fractional/dice/cyclic drafts,detach,keyboard undo/redo,reload,attack edit matrix,narrow input layout and visible HP synchronization. It holds the remote-font request stalled throughout. Changed binding-code lint is clean;existing warnings elsewhere remain. No LaTeX compilation.
+
+The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
+
+Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.

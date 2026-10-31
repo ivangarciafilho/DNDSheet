@@ -56,3 +56,10 @@ Progress82/216(37.96%),134pending,0active tasks,8/28loops shipped,A8active,R2 32
 Resumed from preserved159,not the older155 log above. Build159 source inventory/dependency foundation supersedes older counts. Build160 code656c164 adds stable numeric registry, safe collection addressing, scalar inspection and exact default-context source policies.314core(+28),50browser,5spell/12help,20plate parity;focusedlint clean. New160 and protected159 each97hashes verified. Evaluation http://localhost:9124/candidate160/index.html#/. Veil of Radiance sample retained on9124;no server replacement.
 
 A9.2 remains active:finish complex AC/death applicability and inventory/source coverage before A9.3. Pending modes fail closed;symbolic values require explicit migration. No UI adoption,store overlay or whole-task completion claimed.88/219complete,1active,130pending,9/28loops;three canonical docs and output mirrors synchronized.
+
+
+## Build161 live bindings
+
+Code6049127,tagrc-2.4.3-build-161-live-bindings.327core(+13),50browser,focused UI/store/history/reload/attack matrix/narrow/sheet/stalled-font probe,5spell/12help,20plate parity;binding-code lintclean.95/219complete(+7),A9.7active,123pending;9/28loops. Build160 preserved;161/160 each97verified hashes. Configured Veil sample retained at http://localhost:9124/candidate161/index.html#/. Canonical docs and mirrors synchronized.
+
+Next finish A9.7 remaining numeric ownership/lifecycle consumers;then A9.11/12/13,closeout,A10. Two review minors retained under closeout:disabled-selector detach and empty-undo flag refresh. No new scope, no unverified broad mechanics closure.

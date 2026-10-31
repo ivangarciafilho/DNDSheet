@@ -1,5 +1,18 @@
 # DNDSheet — Implementation Backlog
 
+## Build161 delivery grouping and next packet
+
+This iteration connects registry → resolver → persisted store → silent materialization/history → shared control → actual editor consumers. Task completion is credited only with the closing evidence below. No requested mechanics are silently dropped or duplicated.
+
+Remaining A9.7 migration, grouped by ownership:
+1. Basics: reconcile stable scalar controls beyond the replaced core fields, especially AC/HP submodes, passive/save overrides and phase/initiative controls. Preserve automatic ownership and symbolic/precision exceptions.
+2. Studio: route remaining eligible action/trait/reaction scalar controls through stable paths; identity-poor outcome/phase/membership occurrences keep their existing migration owners. Do not treat a target count as attack rolls.
+3. Lifecycle: changing mode suspends a binding without deleting it; removing/copying/template-applying an entry must have an explicit overlay ownership policy. Validate reorder/delete/import/undo and extension preservation before marking A9.7 complete.
+4. Existing review minors under A9 closeout: allow detach while a field's selector is disabled; refresh history canUndo after discarding current-equal snapshots that yield no older entry. These are recorded follow-ups, not new counted tasks. Earlier158 wording/nonfinite attack test minors remain under their prior owners.
+5. Then A9.11 explicit finesse/thrown ability provenance, A9.12 structured-outcome CR, A9.13 roll-count/scaling/conditional-roll contract, and A9.10 closeout. A10 caret completion follows the binding loop. Keep A11/A12/B3 requested systems in dependency order.
+
+Process delta: production Pinia action tests now exercise the same exported actions as the app, including computed-value invalidation and collection identity. The focused browser probe checks actual Apply/Cancel, detach, keyboard undo/redo, reload, narrow layout, attack controls and visible HP projection. Do not substitute core counters for this end-to-end evidence.
+
 ## Build160 incremental delta — A9.2 registry work
 
 Delivered pure stable-path reading, numeric descriptors/validation, inspection and stored-context reference dependency policy. No task closes: **88/219 complete, A9.2 active,130 pending;9/28 loops shipped**. Scope stays219. This is foundation work, not the smart-dropdown rollout or saved overlay.
@@ -17,11 +30,11 @@ Review corrections include disabled-override false cycles, raw/normalized spell 
 
 | | |
 |---|---|
-| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
-| **Code HEAD** | `656c164`;314core tests (+28); stable registry/source policies; A9.2 mode coverage remains active. Build160 verification packet below. |
-| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **1active / 130pending** - A9.2 active;A9.0/A9.1 complete |
-| **Now** | Stable registry/source safety delivered; finish complex mode gates and inventory coverage before saved bindings. |
-| **Next** | Finish A9.2 mode/coverage gates,then A9.3 overlay/set-clear/resolve,A9.4 history,A9.5/6 UI adapter/control. |
+| **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
+| **Code HEAD** | `6049127`;327core tests,50browser scenarios,focused binding lifecycle,5spell/12help themes,20plate parity;changed binding-code lint clean |
+| **Progress** | **9/28 loops shipped - 95/219 tasks complete (43.38%) - 1active/123pending** - seven tasks closed;A9.7 active |
+| **Now** | Live persisted bindings,history and shared controls delivered on migrated fields;A9.7 remaining inventory/lifecycle sweep active. |
+| **Next** | Finish A9.7 numeric consumer/lifecycle migration,then A9.11/A9.12/A9.13 and A9.10 closeout;A10 caret completion follows. |
 
 ---
 
@@ -76,7 +89,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
-| R3 · Numbers know their source | A9 ◐ · A10 · A11 | 2 / 33 | ◐ |
+| R3 · Numbers know their source | A9 ◐ · A10 · A11 | 9 / 33 | ◐ |
 | R4 · Spellcasting you can trust | A12 | 0 / 11 | ☐ |
 | R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
@@ -84,7 +97,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **88 / 219 complete - 1active - 130pending** | **40.18% complete** |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **95 / 219 complete - 1active - 123pending** | **43.38% complete** |
 
 ```mermaid
 pie showData
@@ -429,14 +442,14 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 - [x] **A9.0** Pre-flight: confirm Font Awesome 6 in `quasar.config.js` extras (BS-24); design stable-id field paths `attacks[id=…]` (BS-25); refresh the binding inventory beyond the historical 18-field subset, including CR154-05 consumers; decide decimals out of scope (BS-16) · M
 - [x] **A9.1** `formula.ts`: `literal` binding variant, `dependencyOrder`, `detectCycles` + tests · M
-- [ ] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M · **Active Build160: pure registry delivered; complex mode/coverage gates remain**
-- [ ] **A9.3** `monster-store.ts`: `bindings` state (optional), `setBinding`, `clearBinding`, `resolveBindings` (one pass, equality check, cycle report) · L
-- [ ] **A9.4** History ledger skips patches flagged `historySilent` · S
-- [ ] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
-- [ ] **A9.6** `components/kit/FormulaField.vue`: states §8.1, grouped options with icons/colours/values, "ƒ Custom formula…" first, trace HelpTip, broken state · L
-- [ ] **A9.7** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M
-- [ ] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
-- [ ] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
+- [x] **A9.2** `core/domain/catalogs/field-types.ts`: path → `{ type, style, groups, min, max }` + invariants test · M · **Build161 verified**
+- [x] **A9.3** `monster-store.ts`: `bindings` state (optional), `setBinding`, `clearBinding`, `resolveBindings` (one pass, equality check, cycle report) · L
+- [x] **A9.4** History ledger skips patches flagged `historySilent` · S
+- [x] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
+- [x] **A9.6** `components/kit/FormulaField.vue`: states §8.1, grouped options with icons/colours/values, "ƒ Custom formula…" first, trace HelpTip, broken state · L
+- [ ] **A9.7** **Active Build161: remaining inventory/lifecycle sweep** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M
+- [x] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
+- [x] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
 - [ ] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S
 - [ ] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M
 - [ ] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S
@@ -1034,3 +1047,14 @@ Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new
 Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
 
 Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.
+
+
+### Build161 verified closeout
+
+Implementation `6049127`:30files,+814/-714,including removal of the619-line flattening selector. Seven tasks close:A9.2,A9.3,A9.4,A9.5,A9.6,A9.8,A9.9. Progress **95/219(43.38%),A9.7active,123pending,124remaining;9/28loops shipped**. Delta **+7completed,-7remaining,zero new scope**. A9 is9/14;R3 is9/33. A9.7 and the mechanics/closeout tasks keep the loop open.
+
+Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with zero runtime/console errors;5spell themes;12help themes;five saved monsters/20byte-identical plates versus160,reload and dangling-reference parity. Focused browser flow passes actual Apply/Cancel,live DC propagation,rejected fractional/dice/cyclic drafts,detach,keyboard undo/redo,reload,attack edit matrix,narrow input layout and visible HP synchronization. It holds the remote-font request stalled throughout. Changed binding-code lint is clean;existing warnings elsewhere remain. No LaTeX compilation.
+
+The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
+
+Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.

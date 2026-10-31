@@ -1,5 +1,19 @@
 # DNDSheet — Product & Architecture Specification
 
+## Build161 binding contract and CR158 reaffirmation
+
+The registry's remaining AC and death-prevention mode gates now include actual default/OR cases; unused type-only leaves remain excluded. The immutable catalog is covered by uniqueness, bounds, ownership, deep-freeze and exclusion invariants. Optional scalar authorship does not grant permission to replace symbolic `all`/formula values.
+
+Saved numeric bindings live in one optional `bindings` overlay. Typed numbers materialize as ordinary scalar values and detach previous expressions; references/formulas retain their source. A validated candidate resolves in source order before publication. Cycles, dice, fractional/nonfinite/unsafe or out-of-range results preserve committed values. Integer formulas must use explicit floor/ceil when rounding is intended. Context groups curate direct-reference choices; custom formulas may combine registered references while respecting scalar validation.
+
+The live adapter publishes changed scalar leaves through reactive parents without replacing collection records. Automatic CON×HD HP bonus is synchronized before HP-dependent bindings; its dependency policy includes CON and HD. Other default stored-context ownership remains as documented. Derived publication is history-silent; authored changes, expressions and materialized values undo/redo together. Hydration re-evaluates bindings; importing an unbound creature clears the previous overlay.
+
+FormulaField/useBindings now serve core Basics fields, manual spell DC and numeric attack-composer cells. Pickers use the shared formula catalog, grouped alphabetical choices, live values, one first Custom Formula option, trace/help, invalid draft feedback and detach. Custom drafts support Apply/Cancel; bare numbers remain valid. The old flattening DynamicReferenceSelect is removed. A9.7 remains the owner of the remaining inventory migration; this delivery is not every integer field in the entire editor.
+
+The repeated specification requests remain CR158 scope: A9/A10 bindings and completion; A9.13 independent rolls/scaling/conditions; A11 mechanics/outcomes/reactions/phases/activity routing/traversal and random tables; A12 source-owned casting and compact spell lines; A13 typography/layout/selects; B3 ability proposals/species grants. No duplicate task IDs or scope inflation. Preserve recovery events versus states/triggers, targets versus rolls versus damage scaling, and spell eligibility/grants versus slot pools.
+
+Startup ruling: optional remote font CSS is preloaded asynchronously so a stalled provider cannot block application mount. Local fonts and existing theme rules remain available. A browser probe deliberately holds the external request while exercising bindings, undo and reload.
+
 ## Build160 contract — stable numeric registry, A9.2 still active
 
 The new pure registry describes stable authored numeric families with semantic types, units, safe-integer validation, known editor bounds, die catalogs, optional/null preservation, contextual reference groups and literal-only slot tables. It does not write a monster or replace editor controls. CR fractions, annotation multiplier precision, symbolic dice, presentation/tracker values and identity-poor phase/outcome/membership records remain explicitly excluded.
@@ -14,10 +28,10 @@ Ruling: A9.2 stays active. Complex AC and death-prevention save/burst mode owner
 
 | | |
 |---|---|
-| **Version** | Build160 - numeric registry foundation - `rc-2.4.3-build-160-field-registry` - Build159 preserved |
-| **Code HEAD** | `656c164`;314core tests (+28); stable registry/source policies; A9.2 mode coverage remains active. Build160 verification packet below. |
+| **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
+| **Code HEAD** | `6049127`;327core tests,50browser scenarios,focused binding lifecycle,5spell/12help themes,20plate parity;changed binding-code lint clean |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **9 / 28 loops shipped** - **88 / 219 tasks complete (40.18%)** - **1active / 130pending** - A9.2 active;A9.0/A9.1 complete |
+| **Progress** | **9/28 loops shipped - 95/219 tasks complete (43.38%) - 1active/123pending** - seven tasks closed;A9.7 active |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
 
@@ -3781,3 +3795,14 @@ Code `656c164`:9files,+663/-1. Pure registry/path/inspection/source safety;28new
 Six concrete source-review findings corrected with failing-then-passing regressions;no new minor review findings deferred. Complex mode applicability remains an explicit blocked gate under A9.2,not completed functionality. Earlier158 minor follow-ups remain in their existing owners. No whole task closes,no scope added:88/219(40.18%),A9.2active,130pending,131remaining,9/28loops shipped.
 
 Evaluate http://localhost:9124/candidate160/index.html#/. Frozen tag `rc-2.4.3-build-160-field-registry`;new160 and protected159 each97verified hashes. Served index and entry assets match localhost/IPv4/IPv6 bytes. Existing server preserved;no process replacement. In-app browser confirms Build160,My New Monster and its Veil of Radiance sample. Origin storage retained,not reset or transferred. This successor has no new visible dropdown controls;finish A9.2 complex mode/coverage reconciliation before A9.3 overlay adoption.
+
+
+### Build161 verified closeout
+
+Implementation `6049127`:30files,+814/-714,including removal of the619-line flattening selector. Seven tasks close:A9.2,A9.3,A9.4,A9.5,A9.6,A9.8,A9.9. Progress **95/219(43.38%),A9.7active,123pending,124remaining;9/28loops shipped**. Delta **+7completed,-7remaining,zero new scope**. A9 is9/14;R3 is9/33. A9.7 and the mechanics/closeout tasks keep the loop open.
+
+Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with zero runtime/console errors;5spell themes;12help themes;five saved monsters/20byte-identical plates versus160,reload and dangling-reference parity. Focused browser flow passes actual Apply/Cancel,live DC propagation,rejected fractional/dice/cyclic drafts,detach,keyboard undo/redo,reload,attack edit matrix,narrow input layout and visible HP synchronization. It holds the remote-font request stalled throughout. Changed binding-code lint is clean;existing warnings elsewhere remain. No LaTeX compilation.
+
+The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
+
+Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
