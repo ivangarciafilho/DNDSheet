@@ -44,7 +44,7 @@
   % Spellcasting
   
 
-  \DndMonsterAction{Spellcasting} Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
+  \DndMonsterAction{Spellcasting} Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
   \begin{DndMonsterSpells}
     \DndMonsterSpellLevel{Fire Bolt}
     \DndMonsterSpellLevel[1][4]{Magic Missile}

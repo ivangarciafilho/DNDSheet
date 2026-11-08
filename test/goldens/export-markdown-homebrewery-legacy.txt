@@ -16,10 +16,10 @@ ___
 > - **Senses** 
 > - **Passive Checks** Search: 10/+0; Study: 14/+4; Influence: 10/+0; Hide (Bonus Action): 10/+0
 > - **Languages** 
-> - **Challenge** 9 (5,000 XP, PB +2)
+> - **Challenge** 9 (5,000 XP, PB +4)
 >___
 > ### Actions
-> ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
+> ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
 >
 > Cantrips (at will): *Fire Bolt*  
 > (4/Long Rest), Level 1: *Magic Missile*  

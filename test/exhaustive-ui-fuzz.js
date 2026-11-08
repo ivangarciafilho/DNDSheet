@@ -3512,7 +3512,7 @@ async function runFuzz() {
     monster.addNewAttack();const attack=monster.attacks.at(-1);attack.id='studio-link';attack.name='Linked Claw';
     let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await wait(100);}if(!studio)throw new Error('Studio did not mount');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(150);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
     const expand=async el=>{if(!el.classList.contains('q-expansion-item--expanded'))el.querySelector('.q-item').click();await wait(120);};
-    const choose=async(field,label)=>{field.click();await wait(100);const option=[...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.includes(label));if(!option)throw new Error('Missing option '+label);option.click();await wait(160);};
+    const choose=async(field,label)=>{field.click();let option;for(let i=0;i<20&&!option;i++){await wait(100);option=[...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.includes(label))}if(!option)throw new Error('Missing option '+label);option.click();await wait(160);};
     const settings=document.querySelector('[data-entry-settings="studio-policy"]');await expand(settings);const savedPhase=settings.textContent.includes('12 (saved)');await choose(settings.querySelector('[data-entry-phase]'),'Phase / pool 1');const phase=action.stagePool===1;
     settings.querySelector('[data-entry-custom-heading]').click();await wait(100);const ownHeading=action.customPreamble&&!document.querySelector('#render').textContent.includes('Policy Witness');settings.querySelector('[data-entry-custom-heading]').click();await wait(100);
     settings.querySelector('[data-entry-auto-cr]').click();await wait(100);const cr=action.crAnnotation.automatic&&!action.crAnnotation.include&&action.crAnnotation.maxDamage===28;
@@ -3569,7 +3569,7 @@ async function runFuzz() {
   const step51=await evalInPage(`async()=>{
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
     monster.$reset();editor.style='2024';editor.visualTemplate='modern';editor.visualTheme='wotc';
-    Object.assign(monster,{name:'Golden Export Fixture',CR:12});monster.stats.INT=18;
+    monster.name='Golden Export Fixture';monster.setCR(12);monster.stats.INT=18;
     Object.assign(monster.spellcasting,{class:'Wizard',level:9,slots:[4,3,3,3,1,0,0,0,0],standard:['Fire Bolt','Magic Missile','Fireball'],resourceType:'slots',refreshRate:'long_rest',levelCadenceMap:{3:'1_day'}});
     await wait(400);
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click,texts={};
