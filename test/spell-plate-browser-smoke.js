@@ -205,6 +205,7 @@ try {
   await evaluate(`async () => {
     const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster')
     monster.spellcasting.levelCadenceMap = { 1: 'hidden', 3: '1_day' }
+    monster.spellcasting.subclass = 'Evocation'
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
   }`)
   assert.match(await plateText(), /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden keeps only the slot count')
@@ -223,6 +224,8 @@ try {
   assert.match(reloaded, /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden cadence should survive reload')
   assert.match(reloaded, /\(1\/Day\), Level 3:\s*Fireball/, 'a counted cadence should survive reload')
   assert.doesNotMatch(reloaded, /\(2\/1\/Day\)|\(3\/1\/Day\)/, 'reload must not re-prefix the counted cadence')
+  const subclassAfterReload = await evaluate('() => document.querySelector("#q-app").__vue_app__.config.globalProperties.$pinia._s.get("monster").spellcasting.subclass')
+  assert.equal(subclassAfterReload, 'Evocation', 'A12.3: the primary subclass should persist across reload')
   console.log('Spell plate live edit and reload: pass')
 
   console.log(`Spell plate browser smoke passed across ${result.length} themes: ${themes.join(', ')}`)

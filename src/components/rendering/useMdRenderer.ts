@@ -8,6 +8,7 @@ import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import { spellLevelHeading } from 'src/core/domain/spell-plate'
 
 export function useMdRenderer() {
   const monster = useMonsterStore()
@@ -52,11 +53,7 @@ ${lists.join('\n')}`
     const cantrips = monster.knownSpellsOfLevel(0)
 
     if (cantrips.length > 0)
-      renderedRows.push(
-        `> ${t('editor.spellcasting.slot.cantripLabel')} *${cantrips.join(
-          ', '
-        )}*  `
-      )
+      renderedRows.push(`> ${spellLevelHeading({ level: 0 })} *${cantrips.join(', ')}*  `)
 
     renderer.classSpellcastingSlots.value.forEach((slot) => {
       renderedRows.push(`> ${slot.renderedLabel} *${slot.renderedSpells}*  `)

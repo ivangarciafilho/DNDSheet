@@ -524,6 +524,8 @@
                     v-model="monster.spellcasting.metamagic.options"
                     :options="metamagicOptionsList"
                     multiple
+                    emit-value
+                    map-options
                     use-chips
                     label="Active Metamagic Techniques"
                     dense
@@ -767,6 +769,7 @@ import { defineComponent } from '@vue/runtime-core'
 import { useClasses } from 'src/data/CLASS'
 import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useEditorStore } from 'src/stores/editor-store'
 import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
 import { ref, computed, watch } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
@@ -786,7 +789,7 @@ import {
 import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
 import { statModifier } from 'src/core/domain/math-utils'
 import { CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS } from 'src/core/domain/catalogs/cadence'
-import { METAMAGIC_OPTIONS } from 'src/core/domain/catalogs/metamagic'
+import { METAMAGIC_OPTIONS, metamagicCost } from 'src/core/domain/catalogs/metamagic'
 import { v4 as uuidv4 } from 'uuid'
 
 export default defineComponent({
@@ -1076,7 +1079,15 @@ export default defineComponent({
       }
     }
 
-    const metamagicOptionsList = METAMAGIC_OPTIONS.map(({ name }) => name)
+    // Option labels carry the cost for the selected rules edition; the stored value stays the plain name.
+    const editorStore = useEditorStore()
+    const metamagicOptionsList = computed(() => {
+      const edition = editorStore.style === '2014' ? '2014' : '2024'
+      return METAMAGIC_OPTIONS.map(({ name }) => {
+        const cost = metamagicCost(name, edition)
+        return { label: /^\d+$/.test(cost) ? `${name} (${cost} SP)` : `${name} (${cost})`, value: name }
+      })
+    })
 
     const metamagicEnabled = computed({
       get: () => !!monster.spellcasting.metamagic?.enabled,
