@@ -28,7 +28,7 @@ The live checkout (statblock-overhaul, 84 uncommitted paths) is byte-identical t
 
 ### Next slice
 
-Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Build187 deleted the retired pill CSS (item d) behind a regression test. Build188 extended fuzz Step 25 with a number-role audit on the paragon fixture. Next: rest of A13.9 e (theme × template loop, "Pools of" fixture), then f–g (print and 12-theme proofs), then A12.10 item a, then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
+Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Build187 deleted the retired pill CSS (item d) behind a regression test. Build188 extended fuzz Step 25 with a number-role audit on the paragon fixture. Build189 closed item e (theme × template matrix) and fixed the unreachable "Pools of" wording (`describePools`). Next: A13.9 h (make `paragonPhaseRows` side-effect free; it writes the store on render), then f–g (print and 12-theme proofs), then A12.10 item a. Trap: a Vue computed that calls an "ensure" helper mutates state; fuzz fixtures that set `phaseConfigs: []` are refilled while BasicsEditor is mounted, then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
 
 ---
 ## Build 184 closing packet — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Ability Score Grid, Composer-Aligned Plate Rows (`Exorcise` & `Astral Binding`), Enriched Durations/Catalogs & Contextual Split Rider Toggles

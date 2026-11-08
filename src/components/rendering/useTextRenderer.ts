@@ -46,6 +46,7 @@ import type {
   SkillGroupRow,
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
+import { describePools } from 'src/core/domain/paragon-pools'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
@@ -269,8 +270,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           }
         })
       } else {
-        if (typeof monster.paragonConfig?.poolHp === 'number') {
-          normalPhases.push(`${numHtml(poolCount)} Pools of ${numHtml(monster.paragonConfig.poolHp)} HP`)
+        const pools = describePools(poolCount, monster.paragonConfig?.poolHp)
+        if (pools?.kind === 'uniform') {
+          normalPhases.push(`${numHtml(pools.count)} Pools of ${numHtml(pools.hp)} HP`)
+        } else if (pools?.kind === 'list') {
+          pools.pools.forEach((pool) => normalPhases.push(`${numHtml(pool.hp)} (${pool.label})`))
         } else {
           for (let i = 0; i < poolCount; i++) {
             const label = (i === poolCount - 1 ? 'Final' : `${pName} ${i + 2}`).trim()

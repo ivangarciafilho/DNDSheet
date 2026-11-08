@@ -1702,9 +1702,23 @@ async function runFuzz() {
       const fontDrift = roleNums.filter((n) => { const a = getComputedStyle(n), b = getComputedStyle(n.parentElement); return a.fontFamily !== b.fontFamily || a.fontSize !== b.fontSize; }).map((n) => n.textContent.trim());
       const numberRole = { cellsWithoutNumber: initCells.filter((cell) => !cell.querySelector('.dnd-num')).length, initNums, hpNumCount: hpNums.length, fontDrift, retired: statblock.querySelectorAll('.pill-number,.dnd-adv-pill,.dnd-disadv-pill').length };
       const hasNumberRole = numberRole.cellsWithoutNumber === 0 && ['+12', '+15', '+18', '+22', '20'].every((v) => initNums.includes(v)) && hpNums.length >= 4 && fontDrift.length === 0 && numberRole.retired === 0;
+      // Same audit across 4 themes x 2 templates; state is restored afterwards. The poolHp branch is covered by
+      // ParagonPools.test.ts: BasicsEditor's paragonPhaseRows refills phaseConfigs while mounted (Backlog A13.9 h).
+      const editor = pinia._s.get('editor');
+      const saved = { theme: editor.visualTheme, template: editor.visualTemplate, paragon: JSON.parse(JSON.stringify(monster.paragonConfig)) };
+      const audit = () => { const sb = document.querySelector('#render .statblock'); const cells = [...sb.querySelectorAll('.init-cell')]; const nums = [...cells.flatMap((c) => [...c.querySelectorAll('.dnd-num')]), ...sb.querySelectorAll('.dnd-hp-cascade-row .dnd-num')];
+        return { bare: cells.filter((c) => !c.querySelector('.dnd-num')).length, count: nums.length, drift: nums.filter((n) => { const x = getComputedStyle(n), y = getComputedStyle(n.parentElement); return x.fontFamily !== y.fontFamily || x.fontSize !== y.fontSize; }).length, retired: sb.querySelectorAll('.pill-number,.dnd-adv-pill,.dnd-disadv-pill').length }; };
+      const matrix = [];
+      for (const theme of ['wotc', 'printer', 'lovecraft_golden', 'art_nouveau']) for (const template of ['modern', 'classic']) {
+        editor.visualTheme = theme; editor.visualTemplate = template; await new Promise((r) => setTimeout(r, 120));
+        matrix.push({ theme, template, ...audit() });
+      }
+      editor.visualTheme = saved.theme; editor.visualTemplate = saved.template;
+      const hasMatrix = matrix.length === 8 && matrix.every((m) => m.bare === 0 && m.count >= 9 && m.drift === 0 && m.retired === 0);
+      Object.assign(numberRole, { matrix, hasMatrix });
 
       return {
-        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption && hasNumberRole,
+        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption && hasNumberRole && hasMatrix,
         numberRole,
         initCellsCount,
         initHasWrappedAdvPill,
