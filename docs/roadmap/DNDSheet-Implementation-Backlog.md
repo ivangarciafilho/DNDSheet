@@ -38,7 +38,7 @@
 - [x] g. Help smoke measures initiative advantage and disadvantage ink against the painted background on all 12 themes, ≥ 4.5:1 (191). It found a real defect: on 9 dark themes the top plate is painted white while the inks followed the dark body (1.63:1 and 2.28:1). Fix: `.statblock:not(.theme-printer) .unified-top-plate` uses the light inks. Follow-up **A13.9 g2**: decide whether a white top plate on dark themes is intended (design call), then derive its inks from `--sb-*` tokens
 
 **A12.10 compact spell list** — files: `spell-plate.ts`, text/markdown/LaTeX/Homebrewery exporters
-- [ ] a. Export headings in the web order ("(N/Cadence), Level N:") for Text, Markdown, LaTeX, Homebrewery; one golden per format
+- [x] a. One pure `spellLevelHeading` (`spell-plate.ts`) shared by the web plate rules and `classSpellcastingSlots`, which feeds the Markdown, Homebrewery, improved-initiative and Tarrasque exports. Fixed: exports printed "1st level (3 slots): (1/Day)" with the cadence after the colon and ignored the default refresh; they now read "(3/Long Rest), Level 1:", Hidden and pact rules included. `buildSpellPlate` and the helper share `resourceContext`/`levelResource`; `SpellLevelHeading.test.ts` (4 tests) pins them equal (192). Exception: LaTeX passes level and slots to the template's `\DndMonsterSpellLevel` macro, which typesets its own heading (by design). Still open: **a2** one golden export per format, **a3** the export heading is English-only now (the old label used `editor.spellcasting.slot.slotLabel`); move the helper's words into i18n when exports are localised
 - [ ] b. Live slot edit updates the plate without reload (smoke)
 - [ ] c. Reload proof: Hidden cadence and counted cadences survive save/load
 - [ ] d. Print proof

@@ -152,22 +152,59 @@ function resourceSummary(input: SpellPlateInput, slots: number[]): string {
 }
 
 /** Builds a display-only spellcasting model; it does not mutate the monster or infer missing slots. */
-export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
+interface LevelResourceInput {
+  slots?: number[]
+  resourceType?: string
+  className?: string
+  refreshRate?: string
+  customRefreshRate?: string
+}
+
+/** Pact detection, default refresh and pact level: one rule for the web plate and every text export. */
+function resourceContext(input: LevelResourceInput) {
   const slots = normalizedSlots(input.slots)
   const isPact = input.resourceType === 'pact' || input.className?.toLowerCase() === 'warlock'
   const defaultCadence = cadenceLabel(input.customRefreshRate || input.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
   const maxPactLevel = slots.reduce((last, count, index) => count > 0 ? index + 1 : last, 0)
+  return { slots, isPact, defaultCadence, maxPactLevel }
+}
+
+/** Slot count and "Per <cadence>" text a spell level row shows. */
+function levelResource(level: number, levelCadence: string | undefined, ctx: ReturnType<typeof resourceContext>) {
+  const isExplicitlyHidden = levelCadence === 'hidden'
+  const customCadence = cadenceLabel(levelCadence)
+  const rawCadence = isExplicitlyHidden ? '' : (customCadence || ctx.defaultCadence)
+  const slotCount = level === 0 ? undefined : (ctx.isPact ? ctx.slots[ctx.maxPactLevel - 1] : ctx.slots[level - 1])
+  const cadence = level === 0 || isExplicitlyHidden || !rawCadence
+    ? ''
+    : (rawCadence === 'At Will' ? rawCadence : `Per ${rawCadence}`)
+  return { slotCount: slotCount && slotCount > 0 ? slotCount : undefined, cadence }
+}
+
+export interface SpellLevelHeadingInput extends LevelResourceInput {
+  level: number
+  levelCadence?: string
+  bonusAction?: boolean
+}
+
+/** Plain-text spell level heading in the web plate's order: "(4/Long Rest), Level 1 (Bonus Action):". */
+export function spellLevelHeading(input: SpellLevelHeadingInput): string {
+  if (input.level === 0) return 'Cantrips (at will):'
+  const ctx = resourceContext(input)
+  const { slotCount, cadence } = levelResource(input.level, input.levelCadence, ctx)
+  // Pact slots are shared, so their count is stated once, on the pact level.
+  const lead = !ctx.isPact || input.level === ctx.maxPactLevel ? spellLevelLead(slotCount, cadence) : ''
+  return `${lead}Level ${input.level}${input.bonusAction ? ' (Bonus Action)' : ''}:`
+}
+
+export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
+  const ctx = resourceContext(input)
+  const { slots, isPact, maxPactLevel } = ctx
   const levels = input.spellLevels
     .filter((row) => Number.isInteger(row.level) && row.level >= 0 && row.level <= 9 && row.spells.length > 0)
     .sort((a, b) => a.level - b.level)
     .map((row): SpellPlateLevel => {
-      const isExplicitlyHidden = input.levelCadenceMap?.[row.level] === 'hidden'
-      const customCadence = cadenceLabel(input.levelCadenceMap?.[row.level])
-      const rawCadence = isExplicitlyHidden ? '' : (customCadence || defaultCadence)
-      const slotCount = row.level === 0 ? undefined : (isPact ? slots[maxPactLevel - 1] : slots[row.level - 1])
-      const cadenceText = row.level === 0 || isExplicitlyHidden || !rawCadence
-        ? ''
-        : (rawCadence === 'At Will' ? rawCadence : `Per ${rawCadence}`)
+      const { slotCount, cadence: cadenceText } = levelResource(row.level, input.levelCadenceMap?.[row.level], ctx)
       const isRestrictedCadence = (cadence?: string): boolean => {
         if (!cadence) return false
         const c = cadence.trim().toLowerCase()
@@ -183,7 +220,7 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
       return {
         level: row.level,
         ordinal: ordinalLabel(row.level),
-        slotCount: slotCount && slotCount > 0 ? slotCount : undefined,
+        slotCount,
         cadence: cadenceText,
         bonusAction: Boolean(row.bonusAction),
         spells: sortedSpells.map(spellView),

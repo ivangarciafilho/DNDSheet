@@ -29,7 +29,6 @@ import _, { capitalize } from 'lodash'
 import { useEditorStore } from 'src/stores/editor-store'
 import { DndStat } from '../models'
 import { SKILL } from 'src/data/SKILL'
-import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
   SKILL_ACTION_GROUPS,
   computeSkillGroupLayout,
@@ -47,6 +46,7 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 import { describePools } from 'src/core/domain/paragon-pools'
+import { spellLevelHeading } from 'src/core/domain/spell-plate'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
@@ -1553,25 +1553,21 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const classSpellcastingSlots = computed(() => {
     const spellsBySlot = monster.spellsBySlot
 
+    const sc = monster.spellcasting
+    // Same heading as the web plate (spellLevelHeading); the old label put the cadence after the colon.
     return spellsBySlot.map((s) => {
-      let baseLabel = t('editor.spellcasting.slot.slotLabel', {
-        ordinal: safeToOrdinal(s.level),
-        slots: t('editor.spellcasting.slot.slotQuantity', s.slots),
-      })
-      const levelCadence = monster.spellcasting?.levelCadenceMap?.[s.level]
-      const isBonusAction = monster.spellcasting?.bonusActionLevelMap?.[s.level]
-
-      if (levelCadence) {
-        const cadText = cadenceLabel(levelCadence)
-        baseLabel = `${baseLabel} (${cadText})`
-      }
-      if (isBonusAction) {
-        baseLabel += ' (Bonus Action)'
-      }
-
       return {
         ...s,
-        renderedLabel: baseLabel,
+        renderedLabel: spellLevelHeading({
+          level: s.level,
+          slots: sc?.slots,
+          resourceType: sc?.resourceType,
+          className: sc?.class,
+          refreshRate: sc?.refreshRate,
+          customRefreshRate: sc?.customRefreshRate,
+          levelCadence: sc?.levelCadenceMap?.[s.level],
+          bonusAction: Boolean(sc?.bonusActionLevelMap?.[s.level]),
+        }),
         renderedSpells: s.spells.join(', '),
       }
     })
