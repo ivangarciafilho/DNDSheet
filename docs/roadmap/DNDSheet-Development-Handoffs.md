@@ -1,5 +1,32 @@
 # DNDSheet — Development Handoffs
 
+## Build185 handoff — one committed baseline, one gate, one writer
+
+📍 *Handoffs › Build185* — **Start every session from the committed branch, not from a working tree; run the whole gate; tick tasks, don't prepend summaries.**
+
+**State.** `build185-repairs` = `a7cc729` (Builds 162–184 baseline) → `68e18bd` (Build185 repairs) → docs commit. Release candidate `rc-2.4.3-build-185-baseline-and-repairs` (runnable app inside) served on 9100/9106. `statblock-overhaul` (`1869921`) is another agent's live checkout. `a13-9-sheet-density` is superseded. Backlog §Build185 lists what is partial and in what order to converge.
+
+### Rules adopted from the Build162–184 divergence
+
+1. **Commit every build** on a branch before freezing its release candidate; the candidate folder must contain the runnable `spa`, never only `release-candidate.json`.
+2. **The gate is four runs**, all on the final source after the last edit: `npm test`, `node test/exhaustive-ui-fuzz.js`, `node test/statblock-help-browser-smoke.js`, `node test/spell-plate-browser-smoke.js` (plus `test/bindings-browser-smoke.mjs` when bindings change). A redesign updates the smoke it breaks in the same commit, with the reason in a comment.
+3. **One writer per checkout.** A second agent works in an exported copy or its own clone and lands through commits; it never edits another agent's working tree or index.
+4. **Docs ritual:** tick the task ids a build proves, update the Backlog dashboard and timeline, record partial work in the reconciliation table. Do not prepend per-build marketing summaries to Spec, Backlog and Handoffs.
+5. **Contrast and print are proofs, not opinions:** any theme or vitals CSS change re-runs the 12-theme help smoke.
+
+### Traps found in Build185
+
+- Inline `span.name.dnd-cascade-title` ignores `transform`; tests that move a vitals title must move its row.
+- `app.scss` has an `#render .statblock … .dnd-cascade-title` rule; theme overrides need `:is(#render, .composer-preview, html)` scope to win. A16.5 should delete the conflicting blocks instead.
+- The help tip clamps inside the viewport; centre a target before asserting it moves.
+- A fuzz step placed after `ws.close()` never runs yet exits 0; check the log for the final "ALL NN STEPS" line.
+- PowerShell variables are case-insensitive (`$t` overwrites `$T`).
+
+### Next slice
+
+A13.9 remainder: initiative ▲▲/▼▼ text grammar and one number role for AC/HP/phase values on the Build185 base, guarded by a new fuzz step and the 12-theme smoke. Then A12.10's export headings (one shared heading helper for web and text exports).
+
+---
 ## Build 184 closing packet — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Ability Score Grid, Composer-Aligned Plate Rows (`Exorcise` & `Astral Binding`), Enriched Durations/Catalogs & Contextual Split Rider Toggles
 
 - **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`

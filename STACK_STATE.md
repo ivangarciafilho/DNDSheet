@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build185 (2026-11-08), branch `build185-repairs`**: Builds 162–184 committed as baseline `a7cc729`; repairs `68e18bd` (counted spell cadences, metamagic punctuation, dark-theme vitals contrast, vitals help values). Gate on the final source: 362/362 core, build, 50/50 fuzz, spell-plate smoke (5 themes), help smoke (12 themes, 4.5:1 contrast). Release candidate `rc-2.4.3-build-185-baseline-and-repairs`. The roadmap state is in `docs/roadmap/DNDSheet-Implementation-Backlog.md` §Build185; entries below are historical.
+
 - **DNDSheet - Master Release Candidate v2.4.3-RC (Build 181): A4 Layer Occlusion, Transparent CR, Top-Aligned Traits, Streamlined Actions & Unified Spellcasting (100% COMPLETE & GREEN - 357/357 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-02)**:
   * **What changed**:
     * **A4 Composition Layer Stack Precedence & Normal Blend Occlusion (`WebRenderer.vue`, `app.scss`)**:

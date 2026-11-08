@@ -1,5 +1,53 @@
 # DNDSheet — Implementation Backlog
 
+## Build185 reconciliation — code state versus roadmap (2026-11-08)
+
+📍 *Backlog › Build185* — **Builds 162–184 shipped real features without ticking tasks. This section maps them to task ids so the roadmap describes the code again.**
+
+**Where the code is.** Branch `build185-repairs`: `a7cc729` commits the Builds 162–184 working tree (Codex, then Gemini) as the baseline, unchanged; `68e18bd` is Build185's repairs; the docs commit follows. `statblock-overhaul` still points at `1869921` (Build161) and is the live checkout of another agent; nothing was rewritten there. `a13-9-sheet-density` (Builds 163–166) is **superseded**: its ideas are re-filed below as remaining acceptance for A13.9 and A12.10, its code will not be merged. Backup ref: `refs/backup/build184-wip`.
+
+**Counting rule kept.** A box is ticked only with Done-when proof. Builds 162–184 recorded unit-test and fuzz runs, not the acceptance each task names (migration, undo, export, reload, print, 12-theme proofs). So no task closes here: **95 / 219 complete (43.38%)**, and **12 tasks are partially delivered** (code present, acceptance unproven). The percentage is unchanged on purpose.
+
+### Partial deliveries by task
+
+| Task | Delivered in code (build) | Remaining for Done-when |
+|---|---|---|
+| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Initiative still a pill: one ▲▲/▼▼ text grammar; one number role for AC/HP/phase values; print and classic/modern proofs |
+| **A12.10** compact spell list | One unified spell cell, "(N/Cadence), Level N:", Hidden cadence (176–181); counted cadences no longer doubled (185) | Text, Markdown, LaTeX, Homebrewery headings in the same order; live slot-edit and reload proofs; print |
+| **A12.8 / A12.9** casting sources | Master spellcasting engine with stacked class cards, combined caster level, per-level cadence and action economy (171–176) | Stable-id source/pool model and lossless migration; per-source known/prepared/cantrip metrics with provenance; multiclass slot tests against SRD tables |
+| **A12.1 / A12.4** subclass catalogs and picker | Case-insensitive subclass resolver, picker filters for every casting class (175–176) | Persisted `subclass`; expanded-spell plans; invariants tests |
+| **A11.7** combat activity routing | Search/Study/Influence/Hide/Tools relocate to Actions, Bonus or Legendary as 2-row plates; Tools action type (169–176) | Undo, export and association tests; redundant economy labels removed without losing facts |
+| **A11.8** traversal riders | Speeds rider composer, nine compoundable archetypes, `speeds-traversal.ts` + tests (176) | Migration of existing speeds; phase-change effects; export |
+| **A11.5 / A11.9** outcomes and random tables | Multiple description containers per action/trait/reaction with outcome targets and dice tables (171–176) | Up to 4 regions per container, audience/plane filters, overlap/gap diagnostics, print/prose |
+| **B3.6** ability-score proposals | Heuristics in `species-and-heuristics.ts` + tests (169–174) | Preview/Apply/Cancel/undo; bound-field interaction |
+| **B3.7** species proposals | 73 species and lineages catalog applying size, speed, senses, defenses and traits (169–174) | Preview before apply, provenance, revoke/reapply, user-edit preservation |
+
+### Delivered outside any task id (record, then own)
+
+Initiative composer and roll-mode toggles (179–180); HP riders split into regeneration vs temporary HP (179–181); defenses ordering and per-category row splitting (182); custom variables/macros and `DatabaseStudio` (171–173, feeds A10.1); compact nameplate and XP toggles (171–176); A4 layer studio: occlusion order, radial crop knobs, curved gradient bar, per-slider resets (181–184); expanded duration/target/plane catalogs with grouped tooltipped options (184, feeds A13.2). These need owners: A4 layers → **A16.2**, catalogs → **A13.2**, macros → **A10.1**, initiative/HP riders → **A9.13**.
+
+### Defects found while verifying the baseline (fixed in Build185)
+
+1. "(3/1/Day), Level 3": slot count prefixed to a cadence that already carries a count → pure `spellLevelLead`, test first.
+2. Metamagic options ended ".,".
+3. Dark themes: vitals ink `#58180d` on near-black, about 1.3:1 → theme `--sb-cell-ink`, 16–18:1, guarded by the 12-theme help smoke.
+4. Help tooltips lost their "Values:" detail on the Build170 vitals panels.
+
+### Process gaps that caused divergence (now rules in Handoffs §Build185)
+
+- 23 builds lived only as uncommitted files; RC167–182 froze a JSON without a runnable app.
+- Only unit tests and the fuzz ran; the spell-plate and help smokes drifted and hid defects 1–4.
+- Two agents wrote to one checkout; one agent's side-branch work was absorbed in name only.
+- Delivery summaries were prepended to three docs instead of ticking tasks.
+
+### Convergent execution order (replaces §3 "Next")
+
+1. **Prove or finish the partial deliveries before new features**, smallest first: A13.9 (initiative grammar, number role) → A12.10 (export headings, live-edit/reload) → A11.7 → A11.8 → B3.7 → B3.6 → A11.5/A11.9 → A12.8/A12.9.
+2. **A16.5 early**: `app.scss` cascade rules fight the grammar (an `#render`-scoped title rule forced defect 3); remove dead blocks before more theme work.
+3. **A17.3 now, not last**: fuzz plus both smokes are the per-build gate; add a binding smoke run.
+4. Then resume A9.7 → A9.11–A9.13 → A10 in their original order.
+
+---
 ## Build 184 Delivery Summary (2026-11-06)
 
 - **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`
@@ -129,7 +177,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **95 / 219 complete - 1active - 123pending** | **43.38% complete** |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **95 / 219 complete - 1active - 123pending** | **43.38% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
 
 ```mermaid
 pie showData
@@ -196,6 +244,8 @@ pie showData
 | 2026-10-30 11:11 | `46785a0` | A8 · build 155 | Heading order usage → name/components → tier/school, shared by editor, sheet and prose (A8.15) | Core 267 (+3); build; 47 browser steps; lint 0 errors |
 | 2026-10-30 11:41 | `af32093` | A8 · build 156 | Studio homes for action display/phase/custom heading, action and lair CR, trait sorting and non-destructive legendary/mythic memberships | Core 273 (+6); build; 48 browser steps; 5 spell / 12 help themes; lint clean |
 | 2026-10-30 12:47 | `b4eef8e` · `38c4738` | A8 ✅ · build 157 | Seven duplicate panels retired; reaction templates and four staged section resets live in the studio; orphaned `AttackPanel` deleted (byte-neutral) | Core 274/274 (+1); build; 49 browser steps; two-build parity 24/24 plates with a failing control; 5 spell / 12 help themes; 97-hash archive; promoted to 9100 (Seraphic Herald, storage unchanged) and 9106 |
+| 2026-11-07 | `a7cc729` | baseline | Builds 162–184 (Codex, Gemini) committed as one baseline: composers, vitals flow, combat-action routing, spellcasting engine, species catalog, A4 layer studio | 361 core; build; 50 fuzz |
+| 2026-11-07 | `68e18bd` | build 185 | Counted spell cadences, metamagic punctuation, dark-theme vitals contrast, vitals help values; smokes realigned to the Build170+ markup | 362 core; build; 50 fuzz; spell 5 themes; help 12 themes |
 
 ### 2.1 A4 closing validation: tracked full-suite failures
 
@@ -214,7 +264,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 | Now | Next (in order) | Later |
 |---|---|---|
-| A8 ◐ build 149: head chips in plate word order (A8.10) and two-item list grammar (A8.12) shipped on top of A7 ✅ | **A8.0** capability matrix (tick A8.1/A8.4 if covered) → A8.9 usage editor → A8.11 classic prose parity → panel retirement | A9…A17 (R3–R6), then Track B (R7–R10) |
+| Build185 baseline on `build185-repairs`; 12 tasks partially delivered by Builds 162–184 | Prove or finish partials: A13.9 → A12.10 → A11.7 → A11.8 → B3.7 → B3.6 → A11.5/A11.9 → A12.8/A12.9; A16.5 and A17.3 pulled forward (§Build185) | A9.7 → A9.11–A9.13 → A10; R5 sweeps; Track B |
 
 ---
 
