@@ -22,6 +22,10 @@
 - A fuzz step placed after `ws.close()` never runs yet exits 0; check the log for the final "ALL NN STEPS" line.
 - PowerShell variables are case-insensitive (`$t` overwrites `$T`).
 
+### Absorption audit (2026-11-08, after Build186)
+
+The live checkout (statblock-overhaul, 84 uncommitted paths) is byte-identical to baseline `a7cc729`: no agent has written to it since Build184 (last edit 2026-11-06 15:09). Nothing is pending there. `stash@{0}` (Codex A7 composer draft, 2026-10-29, 2 files) is superseded: `ComposerChain` is mounted in `ActionsEditor.vue` since the baseline, and its preview-equality fuzz step contradicts Step 46, which requires a single rendered sheet with no composer preview. The stash is kept, not applied. The `build138` worktree is clean.
+
 ### Next slice
 
 Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Next: A13.9 items d–g (dead `.dnd-adv-pill`/`.pill-bold` CSS once saves and skills stop emitting it, paragon fuzz fixture, print and 12-theme proofs), then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
