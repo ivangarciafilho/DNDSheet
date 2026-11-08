@@ -591,7 +591,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
 - [x] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
 - [x] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S — weaponAttackAbility (structured-attack.ts) with ranged, finesse, thrown and explicit-ability tests in StructuredAttack.test.ts; ticked on audit (197)
-- [ ] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M
+- [x] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M — structuredOutcomeDamage (strongest hit/failure outcome, damage clauses averaged via the formula grammar) feeds multiattack rounds and lists unannotated actions; an explicit CR annotation still wins; 4 tests incl. a prose-free 6d6 breath = 21 (198)
 - [ ] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S
 
 **Done when:** BND-001…008, REF-001 (fields), REF-002 (store revision) proven; DEF-09 closed.

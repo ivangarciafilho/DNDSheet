@@ -2939,14 +2939,19 @@ async function runFuzz() {
     await new Promise(resolve => setTimeout(resolve, 200));
     return trait.crAnnotation?.automatic === true && trait.crAnnotation?.maxDamage === 14 && trait.crAnnotation?.include === false;
   }`)
+  // Wait for the debounced save to reach storage, then poll after reload: fixed sleeps raced on slow runs.
+  for (let i = 0; i < 50; i++) { if (await evalInPage('() => (localStorage.getItem("app.monster") || "").includes("a7-trait-proof")')) break; await pause(200) }
   await sendCdp('Page.reload')
-  await pause(1200)
-  const step37Persistence = await evalInPage(`() => {
+  let step37Persistence = false
+  for (let i = 0; i < 40 && !step37Persistence; i++) {
+    await pause(200)
+    step37Persistence = await evalInPage(`() => {
     const monster = document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster');
     const trait = monster?.traits.find(t => t.id === 'a7-trait-proof');
     return !!trait && trait.limitedUse.count === 3 && trait.rechargeTiming === 'DAY' && trait.rechargeCount === 3 &&
       trait.rechargeSection === 'Daily recovery' && trait.renderInRechargeSection === true && trait.customPreamble === false && !!trait.crAnnotation;
-  }`)
+  }`).catch(() => false)
+  }
   const step37 = { setup: step37Setup, cancel: step37Cancel, apply: step37Apply, parity: step37Parity, responsive: step37Responsive, legacyCr: step37LegacyCr, persisted: step37Persistence }
   step37.success = step37Setup?.mounted && JSON.stringify(step37Setup.cells) === JSON.stringify(['trait-usage', 'name']) &&
     step37Cancel?.invalid && step37Cancel?.unchanged && step37Cancel?.focusBack &&

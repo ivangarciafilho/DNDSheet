@@ -26,6 +26,15 @@ import type {
   Monster,
   MonsterAction,
 } from '../domain/types.ts'
+import { structuredOutcomeDamage } from '../domain/cr-structured-damage.ts'
+import { formulaContextForMonster } from '../domain/formula-context.ts'
+import { structuredAttackBonus } from '../domain/structured-attack.ts'
+
+/** Damage an action contributes to a CR round: an explicit CR annotation wins, else its structured outcomes (A9.12). */
+function actionCrDamage(monster: Monster, action: MonsterAction): number {
+  if (action.crAnnotation?.include) return action.crAnnotation.maxDamage || 0
+  return structuredOutcomeDamage(action, formulaContextForMonster(monster as never))
+}
 
 export type CrInfo =
   | CrAttackInfo
@@ -221,7 +230,7 @@ export function buildAttackInfo(
         const a = allActions.find((act) => act.id === id)
         return (
           acc +
-          (a && a.crAnnotation?.include ? a.crAnnotation.maxDamage || 0 : 0)
+          (a ? actionCrDamage(monster, a) : 0)
         )
       }, 0)
 
@@ -244,7 +253,7 @@ export function buildAttackInfo(
         .filter((a): a is MonsterAction => a != null && (a.limitedUse?.count === 0 || !a.limitedUse) && a.recharge === '')
 
       const unlimitedDmg = unlimitedActions.reduce(
-        (acc, a) => acc + (a.crAnnotation?.include ? a.crAnnotation.maxDamage || 0 : 0),
+        (acc, a) => acc + actionCrDamage(monster, a),
         0
       )
       const unlimitedNames = unlimitedActions.map((a) => a.name)
@@ -257,7 +266,7 @@ export function buildAttackInfo(
       for (let i = 0; i < 3; i++) {
         const currentLimDmg = limList.reduce(
           (acc, la) =>
-            acc + (la.action.crAnnotation?.include ? la.action.crAnnotation.maxDamage || 0 : 0),
+            acc + actionCrDamage(monster, la.action),
           0
         )
         const name = `Multiattack: ${[
@@ -298,6 +307,20 @@ export function buildAttackInfo(
         toHit: action.crAnnotation.maxModifier || 0,
         type: 'Action',
       })
+    } else if (!action.crAnnotation?.include && !action.legendaryOnly) {
+      // A9.12: unannotated actions still count when their structured outcomes carry damage.
+      const damage = structuredOutcomeDamage(action, formulaContextForMonster(monster as never))
+      if (damage > 0) {
+        data.actions.push({
+          name: action.name,
+          damage,
+          limited: (action.limitedUse?.count || 0) > 0 || action.recharge !== '',
+          uses: action.recharge !== '' ? 1 : (action.limitedUse?.count || 0),
+          save: 0,
+          toHit: structuredAttackBonus(action, monster as never) ?? 0,
+          type: 'Action',
+        })
+      }
     }
   }
   data.actions.sort((a, b) => b.damage - a.damage)
