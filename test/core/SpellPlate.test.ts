@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { CADENCE_LABELS, CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS, cadenceLabel } from '../../src/core/domain/catalogs/cadence.ts'
 import { METAMAGIC_OPTIONS, metamagicCost } from '../../src/core/domain/catalogs/metamagic.ts'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel } from '../../src/core/domain/spell-plate.ts'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from '../../src/core/domain/spell-plate.ts'
 
 const base = {
   title: 'Warlock',
@@ -134,4 +134,15 @@ test('innate spell plate: keeps each recharge group separate and preserves proce
     ['3/Day', ['Misty Step']],
   ])
   assert.equal(plate.processedNotes, 'A processed rule note.')
+})
+
+test('spell level lead: a cadence that carries its own count is not prefixed with the slot count', () => {
+  assert.equal(spellLevelLead(4, 'Per Long Rest'), '(4/Long Rest), ')
+  assert.equal(spellLevelLead(3, 'Per 1/Day'), '(1/Day), ')
+  assert.equal(spellLevelLead(3, '2/Day'), '(2/Day), ')
+  assert.equal(spellLevelLead(2, 'At Will'), '(At Will), ')
+  assert.equal(spellLevelLead(3, 'Hidden'), '(3 slots), ')
+  assert.equal(spellLevelLead(undefined, 'Per Short Rest'), '(Short Rest), ')
+  assert.equal(spellLevelLead(undefined, 'Hidden'), '')
+  assert.equal(spellLevelLead(undefined, ''), '')
 })

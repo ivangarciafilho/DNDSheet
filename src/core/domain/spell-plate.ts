@@ -101,6 +101,21 @@ export interface InnateSpellPlateModel {
   processedNotes: string
 }
 
+/**
+ * Lead printed before "Level N": "(4/Long Rest), ". A cadence that already carries a count
+ * ("1/Day") or is At Will stands alone; Hidden keeps only the slot count.
+ */
+export function spellLevelLead(slotCount: number | undefined, cadence: string | undefined): string {
+  const text = (cadence ?? '').replace(/^Per\s+/i, '').trim()
+  const hidden = text.toLowerCase() === 'hidden'
+  const count = slotCount && slotCount > 0 ? slotCount : undefined
+  if (text && !hidden && (/^\d+\s*\//.test(text) || text.toLowerCase() === 'at will')) return `(${text}), `
+  if (count && text && !hidden) return `(${count}/${text}), `
+  if (count) return `(${count} slots), `
+  if (text && !hidden) return `(${text}), `
+  return ''
+}
+
 export const ordinalLabel = (value: number): string => {
   const n = Math.abs(Math.trunc(value))
   const lastTwo = n % 100

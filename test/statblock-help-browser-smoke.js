@@ -53,15 +53,20 @@ try {
     const migrated = rows.filter((row) => row.matches('.ac, .hp, .speed, .dnd-defense-cascade-row, .cascade-skill-search, .cascade-skill-study, .cascade-skill-influence, .cascade-skill-hide'))
     return {
       count: migrated.length,
-      allRows: migrated.every((row) => row.classList.contains('sb-row')),
-      allHeads: migrated.every((row) => row.querySelectorAll(':scope > .sb-cell.sb-head').length === 1),
-      allHaveData: migrated.every((row) => row.querySelector(':scope > .sb-cell:not(.sb-head)')),
+      // Build170+ vitals are cascade panels, not plate rows: each keeps one title and content after it. Titles explain
+      // themselves through a data-help hook or, for skill-action groups with a tip, through their own tooltip.
+      allRows: migrated.every((row) => row.classList.contains('dnd-cascade-panel')),
+      allHeads: migrated.every((row) => row.querySelectorAll(':scope > .dnd-cascade-title').length === 1),
+      allHaveData: migrated.every((row) => {
+        const title = row.querySelector(':scope > .dnd-cascade-title')
+        return Boolean(title) && row.textContent.replace(title.textContent, '').trim().length > 0
+      }),
     }
   }`)
   assert.ok(rowGrammar.count >= 3, 'Expected AC, HP, and Speed shared grammar rows')
-  assert.equal(rowGrammar.allRows, true, 'Migrated cascade rows should use the shared row class')
-  assert.equal(rowGrammar.allHeads, true, 'Each migrated row should have exactly one semantic head cell')
-  assert.equal(rowGrammar.allHaveData, true, 'Each migrated row should expose a data cell')
+  assert.equal(rowGrammar.allRows, true, 'Vitals rows should be cascade panels')
+  assert.equal(rowGrammar.allHeads, true, 'Each vitals row should have exactly one title')
+  assert.equal(rowGrammar.allHaveData, true, 'Each vitals row should show content after its title')
 
   const themeProbe = await evaluate(`async () => {
     const root = document.querySelector('#q-app')
@@ -71,21 +76,24 @@ try {
     for (const theme of themes) {
       editor.visualTheme = theme
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-      const head = document.querySelector('#render .statblock .ac .sb-head')
-      const cell = document.querySelector('#render .statblock .ac .sb-cell:not(.sb-head)')
+      // Build170+ vitals are cascade panels: probe the AC title and its value as the reader sees them.
+      const head = document.querySelector('#render .statblock .ac > .dnd-cascade-title')
+      const cell = document.querySelector('#render .statblock .ac > .dnd-cascade-badges-wrap')
       if (!head || !cell) { results.push({ theme, valid: false }); continue }
+      // Transparent panels show the first painted ancestor, so contrast is measured against that.
+      const painted = (node) => { for (let n = node; n; n = n.parentElement) { const bg = getComputedStyle(n).backgroundColor; if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return bg } return 'rgb(255, 255, 255)' }
       const headStyle = getComputedStyle(head)
       const cellStyle = getComputedStyle(cell)
       const visibleText = cell.querySelector('.dnd-cascade-badge') || cell
       results.push({
         theme,
-        valid: headStyle.backgroundColor !== 'rgba(0, 0, 0, 0)' && cellStyle.backgroundColor !== 'rgba(0, 0, 0, 0)',
-        headBackground: headStyle.backgroundColor,
+        valid: Boolean(head && cell),
+        headBackground: painted(head),
         headInk: headStyle.color,
-        headContrast: contrast(headStyle.color, headStyle.backgroundColor),
-        cellBackground: cellStyle.backgroundColor,
+        headContrast: contrast(headStyle.color, painted(head)),
+        cellBackground: painted(cell),
         cellInk: getComputedStyle(visibleText).color,
-        cellContrast: contrast(getComputedStyle(visibleText).color, cellStyle.backgroundColor),
+        cellContrast: contrast(getComputedStyle(visibleText).color, painted(cell)),
       })
     }
     return results
@@ -105,8 +113,8 @@ try {
     }
   }`)
   assert.equal(themeProbe.length, 12, 'The application currently defines twelve selectable visual themes')
-  assert.ok(themeProbe.every((result) => result.valid), `Every theme should render themed head and data cells: ${JSON.stringify(themeProbe)}`)
-  assert.equal(new Set(themeProbe.map((result) => result.headBackground)).size, 12, 'Each selectable theme should retain its own head palette')
+  assert.ok(themeProbe.every((result) => result.valid), `Every theme should render the AC title and value: ${JSON.stringify(themeProbe)}`)
+  assert.equal(new Set(themeProbe.map((result) => result.headBackground)).size, 12, 'Each selectable theme should retain its own panel background')
   assert.ok(themeProbe.every((result) => result.headContrast >= 4.5 && result.cellContrast >= 4.5), `Theme text should retain 4.5:1 contrast: ${JSON.stringify(themeProbe)}`)
 
   const evidenceDir = process.env.DNDSHEET_EVIDENCE_DIR
@@ -146,15 +154,17 @@ try {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     const tip = document.querySelector('#statblock-help-tip')
     const initial = { top: tip.style.top, left: tip.style.left }
-    target.style.transform = 'translateY(32px)'
+    // Build170+ titles are inline spans (forced inline), and inline boxes ignore transforms: move the row that carries the title.
+    const mover = target.closest('.dnd-cellular-row, .sb-row') || target
+    mover.style.transform = 'translateY(32px)'
     document.dispatchEvent(new Event('scroll', { bubbles: true }))
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     const afterScroll = tip.style.top
-    target.style.transform = 'translateX(24px)'
+    mover.style.transform = 'translateX(24px)'
     window.dispatchEvent(new Event('resize'))
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
     const afterResize = tip.style.left
-    target.style.removeProperty('transform')
+    mover.style.removeProperty('transform')
     return { initial, afterScroll, afterResize }
   }`)
   assert.notEqual(reposition.afterScroll, reposition.initial.top, 'Scroll should reposition an open tooltip with its target')
@@ -171,7 +181,7 @@ try {
     return { text: tip?.textContent, described: target?.getAttribute('aria-describedby'), visible: target?.dataset.helpVisible, inside: Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight) }
   }`)
   assert.match(hover.text || '', /Armor Class/)
-  assert.match(hover.text || '', /Shown here:/)
+  assert.match(hover.text || '', /Values:\s*\S/)
   assert.equal(hover.described, 'statblock-help-tip')
   assert.equal(hover.visible, 'true')
   assert.equal(hover.inside, true, 'Tooltip should be clamped to viewport')

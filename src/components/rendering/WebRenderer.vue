@@ -744,7 +744,7 @@
             <strong>{{ spellPlate.metamagic.refresh }}:</strong> <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points.
             <template v-if="spellPlate.metamagic.options.length">
               <span v-for="(meta, index) in spellPlate.metamagic.options" :key="'meta-' + index" class="q-ml-xs">
-                <strong>{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `${meta.cost} SP` }}</strong> to {{ meta.name }}<template v-if="meta.effect">: {{ meta.effect }}</template><span v-if="index < spellPlate.metamagic.options.length - 1">, </span>
+                <strong>{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `${meta.cost} SP` }}</strong> to {{ meta.name }}<template v-if="meta.effect">: {{ meta.effect.replace(/[.\s]+$/, '') }}</template><span>{{ index === spellPlate.metamagic.options.length - 1 ? '.' : '; ' }}</span>
               </span>
             </template>
           </div>
@@ -763,9 +763,7 @@
                   Cantrips (at will):
                 </template>
                 <template v-else>
-                  <template v-if="row.slotCount && row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.slotCount }}/{{ row.cadence.replace(/^Per\s+/i, '') }}), </template>
-                  <template v-else-if="row.slotCount && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.slotCount }} slots), </template>
-                  <template v-else-if="row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.cadence.replace(/^Per\s+/i, '') }}), </template>
+                  <template v-if="!spellPlate.isPact || row.level === spellPlate.maxPactLevel">{{ spellLevelLead(row.slotCount, row.cadence) }}</template>
                   Level {{ row.level }}<template v-if="row.bonusAction"> (Bonus Action)</template>:
                 </template>
               </strong>
@@ -1080,7 +1078,7 @@ import { useProcessTokens } from './useProcessTokens'
 import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel } from 'src/core/domain/spell-plate'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
@@ -1140,14 +1138,19 @@ export default defineComponent({
         if (activeHelpTarget.value !== target) hideHelpTip()
         return
       }
+      // Plate rows keep values in sibling cells; Build170+ vitals panels keep them in one badges wrap.
       const row = target.matches('.sb-head') ? target.closest('.sb-row') : null
-      const rowValues = row
+      const panel = !row && target.matches('.dnd-cascade-title') ? target.closest('.dnd-cellular-row') : null
+      const valueCells = row
         ? [...row.querySelectorAll<HTMLElement>(':scope > .sb-cell:not(.sb-head)')]
-            .map((cell) => cell.textContent?.replace(/\s+/g, ' ').trim())
-            .filter((value): value is string => Boolean(value))
-            .join(' · ')
-            .slice(0, 180)
-        : ''
+        : panel
+          ? [...panel.querySelectorAll<HTMLElement>(':scope > .dnd-cascade-badges-wrap')]
+          : []
+      const rowValues = valueCells
+        .map((cell) => cell.textContent?.replace(/\s+/g, ' ').trim())
+        .filter((value): value is string => Boolean(value))
+        .join(' · ')
+        .slice(0, 180)
       const title = key ? key.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : ''
       if (activeHelpTarget.value !== target) hideHelpTip()
       activeHelpTarget.value = target
@@ -2204,6 +2207,7 @@ export default defineComponent({
       cr,
       spellPlate,
       shouldShowSpellCadence,
+      spellLevelLead,
       hasAnySecondarySpells,
       shouldStripeVital,
       innateSpellPlate,
