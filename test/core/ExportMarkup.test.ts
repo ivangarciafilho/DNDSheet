@@ -17,7 +17,7 @@ test('export markup: Markdown keeps card text and paragraph boundaries without w
 })
 
 test('export markup: classed emphasis is web chrome, authored emphasis stays', () => {
-  const hp = '<strong class="pill-number">52</strong> <span class="dnd-hp-hd">(7d10 + 14)</span>'
+  const hp = '<strong class="dnd-num">52</strong> <span class="dnd-hp-hd">(7d10 + 14)</span>'
   assert.equal(exportMarkup(hp, 'markdown'), '52 (7d10 + 14)')
   assert.equal(exportMarkup(hp, 'latex'), '52 (7d10 + 14)')
   assert.equal(exportMarkup('<strong>Bold</strong> and <b>bolder</b>', 'markdown'), '**Bold** and **bolder**')

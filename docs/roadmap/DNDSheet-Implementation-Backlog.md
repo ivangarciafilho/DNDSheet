@@ -12,7 +12,7 @@
 
 | Task | Delivered in code (build) | Remaining for Done-when |
 |---|---|---|
-| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Initiative still a pill: one ▲▲/▼▼ text grammar; one number role for AC/HP/phase values; print and classic/modern proofs |
+| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Number role and initiative grammar landed (186). Left: dead pill CSS, paragon fuzz fixture, print and 12-theme proofs (items d–g below) |
 | **A12.10** compact spell list | One unified spell cell, "(N/Cadence), Level N:", Hidden cadence (176–181); counted cadences no longer doubled (185) | Text, Markdown, LaTeX, Homebrewery headings in the same order; live slot-edit and reload proofs; print |
 | **A12.8 / A12.9** casting sources | Master spellcasting engine with stacked class cards, combined caster level, per-level cadence and action economy (171–176) | Stable-id source/pool model and lossless migration; per-source known/prepared/cantrip metrics with provenance; multiclass slot tests against SRD tables |
 | **A12.1 / A12.4** subclass catalogs and picker | Case-insensitive subclass resolver, picker filters for every casting class (175–176) | Persisted `subclass`; expanded-spell plans; invariants tests |
@@ -22,6 +22,56 @@
 | **B3.6** ability-score proposals | Heuristics in `species-and-heuristics.ts` + tests (169–174) | Preview/Apply/Cancel/undo; bound-field interaction |
 | **B3.7** species proposals | 73 species and lineages catalog applying size, speed, senses, defenses and traits (169–174) | Preview before apply, provenance, revoke/reapply, user-edit preservation |
 
+### Build186 grooming — fine-grained acceptance per partial task
+
+📍 *Backlog › Build185 › Grooming* — **Each partial task is split into checkable items. A parent task ticks only when all of its items tick. Items are packed by shared files so one build can close several.**
+
+**A13.9 sheet density** — files: `useTextRenderer.ts`, `defense-and-traits-utils.ts`, `app.scss`, `statblock-grammar.scss`
+- [x] a. One number role: AC, HP, bloodied, phase HP, pool counts, initiative and lair counts render through `.dnd-num` (`numHtml`); `pill-number` is gone from source and CSS (186)
+- [x] b. Initiative ▲▲/▼▼ uses the shared `advHtml` grammar (colour covers value and glyph, tooltip kept); the bespoke `dnd-adv-pill` markup is gone from the initiative renderer (186)
+- [x] c. Pool counts read as numbers plus plain words, "3 Pools of 120 HP" (186)
+- [ ] d. Delete the now-unused `.dnd-adv-pill`/`.dnd-disadv-pill`/`.pill-bold` rules once saves and skills stop emitting them (grep proof: zero emitters)
+- [ ] e. Fuzz step: computed font-family and size of AC/HP/initiative numbers equal their host's, 4 themes × 2 templates; a paragon fixture asserts phase and pool numbers
+- [ ] f. Print proof: PDF of classic and modern templates, numbers keep weight and red bloodied ink
+- [ ] g. 12-theme contrast of `.dnd-adv`/`.dnd-disadv` ink on initiative (help-smoke extension)
+
+**A12.10 compact spell list** — files: `spell-plate.ts`, text/markdown/LaTeX/Homebrewery exporters
+- [ ] a. Export headings in the web order ("(N/Cadence), Level N:") for Text, Markdown, LaTeX, Homebrewery; one golden per format
+- [ ] b. Live slot edit updates the plate without reload (smoke)
+- [ ] c. Reload proof: Hidden cadence and counted cadences survive save/load
+- [ ] d. Print proof
+
+**A11.7 combat routing** — files: `skill-action-groups.ts`, section projection
+- [ ] a. Undo/redo of a relocation restores the source section
+- [ ] b. Export lists relocated activities once, in their target section
+- [ ] c. Economy label removed only where the section already states it (fact-preservation test)
+
+**A11.8 traversal riders** — files: `speeds-traversal.ts`, migration
+- [ ] a. Migration of legacy speed strings into riders, round-trip test
+- [ ] b. Phase-change rider effect renders and exports
+- [ ] c. Freeform fallback preserved verbatim
+
+**B3.7 / B3.6 proposals** — files: `species-and-heuristics.ts`, proposal UI
+- [ ] a. Preview diff before apply; Cancel leaves the monster untouched
+- [ ] b. Apply is one undo step; revoke/reapply keeps user edits made after apply
+- [ ] c. Provenance label on every proposed field
+- [ ] d. Bound fields: a proposal never overwrites a live binding (test)
+
+**A11.5 / A11.9 outcomes and tables**
+- [ ] a. Cap of 4 regions per container enforced in UI and model
+- [ ] b. Audience/plane filters; overlap and gap diagnostics for dice tables
+- [ ] c. Print and prose export
+
+**A12.8 / A12.9 casting sources**
+- [ ] a. Stable-id source/pool schema plus lossless migration from class/innate/multiclass fields
+- [ ] b. Pact, shared and innate pools stay distinct in the resolved projection
+- [ ] c. Per-source known/prepared/cantrip metrics with provenance; multiclass slot tests against SRD tables
+
+**A12.1 / A12.4 subclass**
+- [ ] a. `subclass` persisted and migrated
+- [ ] b. Expanded-spell plans per subclass; invariant tests
+
+**Gate for every item:** core tests, lint 0 errors, build, fuzz, help smoke and spell smoke, all on the committed tree (A17.3).
 ### Delivered outside any task id (record, then own)
 
 Initiative composer and roll-mode toggles (179–180); HP riders split into regeneration vs temporary HP (179–181); defenses ordering and per-category row splitting (182); custom variables/macros and `DatabaseStudio` (171–173, feeds A10.1); compact nameplate and XP toggles (171–176); A4 layer studio: occlusion order, radial crop knobs, curved gradient bar, per-slider resets (181–184); expanded duration/target/plane catalogs with grouped tooltipped options (184, feeds A13.2). These need owners: A4 layers → **A16.2**, catalogs → **A13.2**, macros → **A10.1**, initiative/HP riders → **A9.13**.

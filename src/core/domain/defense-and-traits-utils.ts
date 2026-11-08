@@ -1690,7 +1690,7 @@ export function composeAcAndDefenses(
       }
     }
     const baseArmorDesc = baseArmorParts.join(', ')
-    const primaryBadge = `<strong class="pill-number">${base}</strong>${baseArmorDesc ? ` (${baseArmorDesc})` : ''}`
+    const primaryBadge = `<strong class="dnd-num">${base}</strong>${baseArmorDesc ? ` (${baseArmorDesc})` : ''}`
     badges.push(primaryBadge)
 
     if (isAbsoluteRule && absoluteRuleText) {
@@ -1729,7 +1729,7 @@ export function composeAcAndDefenses(
     }
   }
 
-  const primaryBadge = `<strong class="pill-number">${base}</strong>`
+  const primaryBadge = `<strong class="dnd-num">${base}</strong>`
   badges.push(primaryBadge)
   if (armorTypeDesc) {
     badges.push(`(${armorTypeDesc})`)

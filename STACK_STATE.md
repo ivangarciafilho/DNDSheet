@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build186 (2026-11-08), branch `build185-repairs`**: A13.9 items a–c. One `.dnd-num` number role for AC, HP, bloodied, phase, pool, initiative and lair values (`pill-number` removed from renderers and nine `app.scss` blocks); initiative Advantage/Disadvantage on the shared `advHtml` grammar; pool counts as numbers plus words. Gate on the final source: 362/362 core, lint 0 errors (2,044 warnings, unchanged), build, 50/50 fuzz, help smoke (12 themes), spell smoke (5 themes). Release candidate `rc-2.4.3-build-186-number-role-and-initiative-grammar`.
+
 - **Build185 (2026-11-08), branch `build185-repairs`**: Builds 162–184 committed as baseline `a7cc729`; repairs `68e18bd` (counted spell cadences, metamagic punctuation, dark-theme vitals contrast, vitals help values). Gate on the final source: 362/362 core, build, 50/50 fuzz, spell-plate smoke (5 themes), help smoke (12 themes, 4.5:1 contrast). Release candidate `rc-2.4.3-build-185-baseline-and-repairs`. The roadmap state is in `docs/roadmap/DNDSheet-Implementation-Backlog.md` §Build185; entries below are historical.
 
 - **DNDSheet - Master Release Candidate v2.4.3-RC (Build 181): A4 Layer Occlusion, Transparent CR, Top-Aligned Traits, Streamlined Actions & Unified Spellcasting (100% COMPLETE & GREEN - 357/357 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-02)**:

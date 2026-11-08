@@ -1664,8 +1664,8 @@ async function runFuzz() {
       const renderedHtml = statblock?.innerHTML || '';
 
       const initCellsCount = statblock?.querySelectorAll('.init-cell').length || 0;
-      const initHasWrappedAdvPill = !!statblock?.querySelector('.init-cell .dnd-adv-pill .pill-number') &&
-        !!statblock?.querySelector('.init-cell .dnd-adv-pill .dnd-adv-arrow') &&
+      const initHasWrappedAdvPill = !!statblock?.querySelector('.init-cell .dnd-adv .dnd-num') &&
+        !!statblock?.querySelector('.init-cell .dnd-adv .dnd-adv-glyph') &&
         !renderedText.includes('(Advantage,');
       const bloodiedBadge = statblock?.querySelector('.dnd-hp-cascade-row .dnd-bloodied-badge');
       const bloodiedBadgeText = bloodiedBadge?.textContent || '';

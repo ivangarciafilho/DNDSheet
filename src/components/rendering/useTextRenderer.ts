@@ -155,7 +155,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const splitAc = Boolean((monster as any).splitAcRiderRows)
     const rawAcType = monster.ACType ? monster.ACType.trim() : ''
     if (splitAc && rawAcType) {
-      const badges: string[] = [`<strong class="pill-number">${monster.AC}</strong>`]
+      const badges: string[] = [numHtml(monster.AC)]
       const parts = rawAcType.split(/\s*[;,]\s*/).filter(Boolean)
       for (const p of parts) badges.push(p)
       const inv = monster.extendedHp?.invulnerability
@@ -166,7 +166,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return badges
     }
 
-    const baseAc = `<strong class="pill-number">${monster.AC}</strong>${rawAcType !== '' ? ` (${rawAcType})` : ''}`
+    const baseAc = `${numHtml(monster.AC)}${rawAcType !== '' ? ` (${rawAcType})` : ''}`
     const badges: string[] = [baseAc]
 
     const inv = monster.extendedHp?.invulnerability
@@ -228,13 +228,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const dicePart = `<span class="dnd-hp-hd">(${monster.HP.HD}d${monster.HP.type}${hpModifier.value})</span>`
     if (!isParagon && bloodiedValue.value != null) {
       if ((monster as any).splitHpRiderRows) {
-        badges.push(`<strong class="pill-number">${monster.avgHp}</strong> ${dicePart}`)
-        badges.push(`<strong class="pill-number text-red-7">${bloodiedValue.value}</strong> Bloodied`)
+        badges.push(`${numHtml(monster.avgHp)} ${dicePart}`)
+        badges.push(`<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied`)
       } else {
-        badges.push(`<strong class="pill-number">${monster.avgHp}</strong>/<strong class="pill-number text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
+        badges.push(`${numHtml(monster.avgHp)}/<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
       }
     } else {
-      badges.push(`<strong class="pill-number">${monster.avgHp}</strong> ${dicePart}`)
+      badges.push(`${numHtml(monster.avgHp)} ${dicePart}`)
     }
 
     // 2. Multi-phase pools & Grouped Bloodied limiter
@@ -265,17 +265,17 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           if (isBloodiedPhase) {
             bloodiedPhases.push({ label, val })
           } else {
-            normalPhases.push(`<strong class="pill-number">${val}</strong> (${label})`)
+            normalPhases.push(`${numHtml(val)} (${label})`)
           }
         })
       } else {
         if (typeof monster.paragonConfig?.poolHp === 'number') {
-          normalPhases.push(`<strong class="pill-number">${poolCount} Pools of ${monster.paragonConfig.poolHp} HP</strong>`)
+          normalPhases.push(`${numHtml(poolCount)} Pools of ${numHtml(monster.paragonConfig.poolHp)} HP`)
         } else {
           for (let i = 0; i < poolCount; i++) {
             const label = (i === poolCount - 1 ? 'Final' : `${pName} ${i + 2}`).trim()
             const val = `${Math.max(1, Math.floor(monster.avgHp / Math.pow(2, i + 1)))}`.trim()
-            normalPhases.push(`<strong class="pill-number">${val}</strong> (${label})`)
+            normalPhases.push(`${numHtml(val)} (${label})`)
           }
         }
       }
@@ -284,10 +284,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         badges.push(normalPhases.join(' | '))
       }
       if (bloodiedPhases.length > 0) {
-        const bloodiedInner = bloodiedPhases.map(b => `<strong class="pill-number">${b.val}</strong> (${b.label})`).join(' | ')
+        const bloodiedInner = bloodiedPhases.map(b => `${numHtml(b.val)} (${b.label})`).join(' | ')
         badges.push(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${bloodiedInner} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`)
       } else if (bloodiedValue.value != null && (!bloodiedAt || bloodiedAt === 'half_total')) {
-        badges.push(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ <strong class="pill-number">${bloodiedValue.value}</strong> | <span class="bloodied-tag">[Bloodied]</span> ]</span>`)
+        badges.push(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${numHtml(bloodiedValue.value)} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`)
       }
     }
 
@@ -1746,11 +1746,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const init = monster.initiative
     const cfg = monster.initiativeConfig
     const modStr = `${init.mod >= 0 ? '+' : ''}${init.mod}`
-    let primaryModPill = `<strong class="pill-number pill-bold">${modStr}</strong>`
+    let primaryModPill = numHtml(modStr)
     if (init.advantage) {
-      primaryModPill = `<span class="dnd-adv-pill dnd-badge-adv" title="Advantage"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>`
+      primaryModPill = advHtml(numHtml(modStr), true, false)
     } else if (init.disadvantage) {
-      primaryModPill = `<span class="dnd-disadv-pill dnd-badge-disadv" title="Disadvantage"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>`
+      primaryModPill = advHtml(numHtml(modStr), false, true)
     }
 
     const qualifiers: string[] = []
@@ -1815,13 +1815,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           const bonusStr = rawBonus
             ? (rawBonus.startsWith('+') || rawBonus.startsWith('-') ? rawBonus : `+${rawBonus}`)
             : defaultBonus
-          cells.push(`<strong class="pill-number">${bonusStr}</strong> (${label})`)
+          cells.push(`${numHtml(bonusStr)} (${label})`)
         })
       } else {
         for (let i = 0; i < extraCount; i++) {
           const label = i === extraCount - 1 ? 'Final' : `${pName} ${i + 2}`
           const bonusStr = `+${(i + 1) * 10}`
-          cells.push(`<strong class="pill-number">${bonusStr}</strong> (${label})`)
+          cells.push(`${numHtml(bonusStr)} (${label})`)
         }
       }
     }
@@ -1829,7 +1829,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (cfg?.specialTrigger !== 'at_end_and_start_lair' && (cfg?.useLairInitiative || monster.lairActions?.length > 0)) {
       if (cfg?.useLairInitiative !== false) {
         const lairVal = cfg?.lairInitiative ?? 20
-        cells.push(`<strong class="pill-number">${lairVal}</strong> (Lair)`)
+        cells.push(`${numHtml(lairVal)} (Lair)`)
       }
     }
 
@@ -1839,11 +1839,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const initiative = computed(() => {
     const init = monster.initiative
     const modStr = `${init.mod >= 0 ? '+' : ''}${init.mod}`
-    let modPill = `<strong class="pill-number pill-bold">${modStr}</strong>`
+    let modPill = numHtml(modStr)
     if (init.advantage) {
-      modPill = `<span class="dnd-adv-pill dnd-badge-adv" title="Advantage"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-adv-arrow">▲▲</span></span>`
+      modPill = advHtml(numHtml(modStr), true, false)
     } else if (init.disadvantage) {
-      modPill = `<span class="dnd-disadv-pill dnd-badge-disadv" title="Disadvantage"><strong class="pill-number pill-bold">${modStr}</strong> <span class="dnd-disadv-arrow">▼▼</span></span>`
+      modPill = advHtml(numHtml(modStr), false, true)
     }
     const badges: string[] = []
     if (init.cantBeSurprised) badges.push("can't be surprised")
@@ -1858,7 +1858,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
 
     const badgeStr = badges.length > 0 ? `; ${badges.join(', ')}` : ''
-    return `${modPill} (<strong class="pill-number">${init.passive}</strong>${badgeStr})`
+    return `${modPill} (${numHtml(init.passive)}${badgeStr})`
   })
 
   // Advanced Battle Dynamics Computed Getters
