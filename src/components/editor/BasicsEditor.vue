@@ -1377,7 +1377,9 @@
                 <div
                   v-for="(phaseCfg, pIdx) in paragonPhaseRows"
                   :key="'init-phase-bonus-' + pIdx"
+                  data-paragon-phase-row
                   class="col-6 col-sm-3"
+                  @focusin="materializeParagonRows"
                 >
                   <q-input
                     v-model.number="phaseCfg.initiativeBonus"
@@ -1509,8 +1511,10 @@
               <div
                 v-for="(phaseCfg, pIdx) in paragonPhaseRows"
                 :key="'paragon-phase-row-' + pIdx"
+                data-paragon-phase-row
                 class="row q-col-gutter-sm items-center q-pa-xs rounded-borders"
                 :style="phaseCfg.isBloodied ? 'background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.45);' : 'background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08);'"
+                @focusin="materializeParagonRows"
               >
                 <div class="col-12 col-sm-2">
                   <q-checkbox
@@ -4370,9 +4374,43 @@ export default defineComponent({
       return true
     }
 
-    const paragonPhaseRows = computed<ParagonPhaseConfig[]>(() => {
-      return ensureParagonPhaseConfigs()
-    })
+    // Display rows must not write the store: rendering the panel used to rewrite imported pool-only data.
+    // Matching stored rows are returned as-is so v-model edits land in the store; otherwise detached rows
+    // are shown and materializeParagonRows() persists them on the first focus inside the panel.
+    const planParagonPhaseRows = (): ParagonPhaseConfig[] => {
+      const p = monster.paragonConfig
+      if (!p) return []
+      const count = Math.max(1, p.poolCount || 1)
+      if (count <= 1) return []
+      const stored = Array.isArray(p.phaseConfigs) ? p.phaseConfigs : []
+      if (stored.length === count) return stored
+      const pName = p.phaseName?.trim() || 'Phase'
+      const rows = stored.slice(0, count).map((cfg) => ({ ...cfg }))
+      while (rows.length < count) {
+        const idx = rows.length
+        rows.push({
+          name: '',
+          source: (defaultSourcesByIdx[idx] || 'flat') as ParagonPhaseConfig['source'],
+          hpOverride: p.bloodiedPerPhase?.[idx] ?? null,
+          diceFormula: '4d10',
+          initiativeBonus: (idx + 1) * 10,
+        })
+      }
+      rows.forEach((cfg, idx) => {
+        const isAuto = !cfg.name || cfg.name === 'Final' || /^(Phase|Stage|Pool) \d+$/i.test(cfg.name)
+        if (isAuto) cfg.name = idx === count - 1 ? 'Final' : `${pName} ${idx + 2}`
+      })
+      return rows
+    }
+
+    const paragonPhaseRows = computed<ParagonPhaseConfig[]>(planParagonPhaseRows)
+
+    const materializeParagonRows = () => {
+      const p = monster.paragonConfig
+      if (!p || Math.max(1, p.poolCount || 1) <= 1) return
+      if (Array.isArray(p.phaseConfigs) && p.phaseConfigs.length === p.poolCount) return
+      ensureParagonPhaseConfigs()
+    }
 
     const bloodiedAtPhaseOptions = computed(() => {
       const opts = [
@@ -4400,6 +4438,7 @@ export default defineComponent({
     }
 
     const onTogglePhaseBloodied = (pIdx: number, val: boolean) => {
+      materializeParagonRows()
       const p = monster.paragonConfig
       if (!p || !Array.isArray(p.phaseConfigs)) return
       if (val) {
@@ -4417,6 +4456,7 @@ export default defineComponent({
     }
 
     const syncParagonPhaseRows = () => {
+      materializeParagonRows()
       const p = monster.paragonConfig
       if (!p || !Array.isArray(p.phaseConfigs)) return
       p.bloodiedPerPhase = p.phaseConfigs.map((cfg) => Number(resolvePhaseRowPreview(cfg)) || 10)
@@ -4835,6 +4875,7 @@ export default defineComponent({
       regenPreview,
       deathPreventionPreview,
       updateParagonPoolHp,
+      materializeParagonRows,
       computedParagonPoolSummary,
       languageOptions,
       filterLanguages,

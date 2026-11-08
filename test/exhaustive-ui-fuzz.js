@@ -1702,8 +1702,8 @@ async function runFuzz() {
       const fontDrift = roleNums.filter((n) => { const a = getComputedStyle(n), b = getComputedStyle(n.parentElement); return a.fontFamily !== b.fontFamily || a.fontSize !== b.fontSize; }).map((n) => n.textContent.trim());
       const numberRole = { cellsWithoutNumber: initCells.filter((cell) => !cell.querySelector('.dnd-num')).length, initNums, hpNumCount: hpNums.length, fontDrift, retired: statblock.querySelectorAll('.pill-number,.dnd-adv-pill,.dnd-disadv-pill').length };
       const hasNumberRole = numberRole.cellsWithoutNumber === 0 && ['+12', '+15', '+18', '+22', '20'].every((v) => initNums.includes(v)) && hpNums.length >= 4 && fontDrift.length === 0 && numberRole.retired === 0;
-      // Same audit across 4 themes x 2 templates; state is restored afterwards. The poolHp branch is covered by
-      // ParagonPools.test.ts: BasicsEditor's paragonPhaseRows refills phaseConfigs while mounted (Backlog A13.9 h).
+      // Same audit across 4 themes x 2 templates, then pool-only data: the mounted editor must not rewrite it,
+      // and the first focus inside the stage rows materialises them. State is restored afterwards.
       const editor = pinia._s.get('editor');
       const saved = { theme: editor.visualTheme, template: editor.visualTemplate, paragon: JSON.parse(JSON.stringify(monster.paragonConfig)) };
       const audit = () => { const sb = document.querySelector('#render .statblock'); const cells = [...sb.querySelectorAll('.init-cell')]; const nums = [...cells.flatMap((c) => [...c.querySelectorAll('.dnd-num')]), ...sb.querySelectorAll('.dnd-hp-cascade-row .dnd-num')];
@@ -1715,10 +1715,20 @@ async function runFuzz() {
       }
       editor.visualTheme = saved.theme; editor.visualTemplate = saved.template;
       const hasMatrix = matrix.length === 8 && matrix.every((m) => m.bare === 0 && m.count >= 9 && m.drift === 0 && m.retired === 0);
-      Object.assign(numberRole, { matrix, hasMatrix });
+      monster.paragonConfig = { ...saved.paragon, poolCount: 3, poolHp: [120, 120, 120], phaseConfigs: [] };
+      await new Promise((r) => setTimeout(r, 200));
+      const poolRow = document.querySelector('#render .statblock .dnd-hp-cascade-row');
+      const poolNums = [...(poolRow?.querySelectorAll('.dnd-num') || [])].map((n) => n.textContent.trim());
+      const stageInput = document.querySelector('[data-paragon-phase-row] input');
+      const pools = { text: (poolRow?.textContent || '').replace(/ +/g, ' ').trim().slice(0, 80), hasPhrase: /3 Pools of 120 HP/.test(poolRow?.textContent || ''), numbered: poolNums.includes('3') && poolNums.includes('120'), untouched: monster.paragonConfig.phaseConfigs.length === 0, stageInputFound: !!stageInput };
+      stageInput?.dispatchEvent(new FocusEvent('focusin', { bubbles: true })); await new Promise((r) => setTimeout(r, 150));
+      pools.materialised = monster.paragonConfig.phaseConfigs.length === 3; stageInput?.blur();
+      monster.paragonConfig = saved.paragon; await new Promise((r) => setTimeout(r, 150));
+      const hasPools = pools.hasPhrase && pools.numbered && pools.untouched && pools.stageInputFound && pools.materialised;
+      Object.assign(numberRole, { matrix, hasMatrix, pools });
 
       return {
-        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption && hasNumberRole && hasMatrix,
+        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption && hasNumberRole && hasMatrix && hasPools,
         numberRole,
         initCellsCount,
         initHasWrappedAdvPill,
