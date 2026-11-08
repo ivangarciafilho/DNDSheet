@@ -39,8 +39,8 @@
 
 **A12.10 compact spell list** — files: `spell-plate.ts`, text/markdown/LaTeX/Homebrewery exporters
 - [x] a. One pure `spellLevelHeading` (`spell-plate.ts`) shared by the web plate rules and `classSpellcastingSlots`, which feeds the Markdown, Homebrewery, improved-initiative and Tarrasque exports. Fixed: exports printed "1st level (3 slots): (1/Day)" with the cadence after the colon and ignored the default refresh; they now read "(3/Long Rest), Level 1:", Hidden and pact rules included. `buildSpellPlate` and the helper share `resourceContext`/`levelResource`; `SpellLevelHeading.test.ts` (4 tests) pins them equal (192). Exception: LaTeX passes level and slots to the template's `\DndMonsterSpellLevel` macro, which typesets its own heading (by design). Still open: **a2** one golden export per format, **a3** the export heading is English-only now (the old label used `editor.spellcasting.slot.slotLabel`); move the helper's words into i18n when exports are localised
-- [ ] b. Live slot edit updates the plate without reload (smoke)
-- [ ] c. Reload proof: Hidden cadence and counted cadences survive save/load
+- [x] b. Spell-plate smoke edits slot 1 from 4 to 2 and reads "(2/Long Rest), Level 1:" without reload (194)
+- [x] c. Spell-plate smoke sets level 1 Hidden, waits until `app.monster` storage holds the edit, reloads via CDP and reads "(2 slots), Level 1:" and "(1/Day), Level 3:", with no re-prefixed "(N/1/Day)" (194)
 - [ ] d. Print proof
 
 **A11.7 combat routing** — files: `skill-action-groups.ts`, section projection
@@ -76,7 +76,7 @@
 **Deployment (GitHub Pages)** — files: `quasar.config.js`, `asset-url.ts`, `WebRenderer.vue`, `A4LayerStudio.vue`
 - [x] d1. Pages build from the committed source with `PUBLIC_PATH=/DNDSheet/` and `DNDSHEET_BUILD_DIR=dist-pages`; published to `gh-pages` with `.nojekyll` (193)
 - [x] d2. Defect fixed: A4 layer presets and saved layers use root-relative `/homebrew/...` URLs that 404 under a sub-path. `resolveAppAsset`/`appAsset` (3 tests) resolve them against the served base at render time; saved data is not rewritten (193)
-- [ ] d3. Add the Pages build and a fetch of one `/homebrew/` mask to the per-build gate
+- [ ] d3. Partly: the local gate script builds `dist-pages` after the smokes (193); still open: fuzz the sub-path build and fetch one `/homebrew/` mask in every gate
 - [ ] d4. Pages origin has its own browser storage: sample data saved on 9100/9106 does not appear there; add an import/export hint on first run
 
 **Gate for every item:** core tests, lint 0 errors, build, fuzz, help smoke and spell smoke, all on the committed tree (A17.3).

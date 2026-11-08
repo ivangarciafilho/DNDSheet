@@ -193,6 +193,38 @@ try {
 
   assert.equal(new Set(result.map((check) => check.colors?.background)).size, themes.length, 'Theme backgrounds should remain distinct across the spell plate')
 
+  // A12.10 b: a slot edit updates the plate live; c: Hidden and counted cadences survive a reload.
+  const plateText = () => evaluate('() => document.querySelector(".class-spellcasting.sb-plate")?.innerText || ""')
+  await evaluate(`async () => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster')
+    monster.spellcasting.slots = [2, 3, 3, 3, 1, 0, 0, 0, 0]
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  }`)
+  const liveText = await plateText()
+  assert.match(liveText, /\(2\/Long Rest\), Level 1:\s*Magic Missile/, 'a slot edit should update the plate without reload')
+  await evaluate(`async () => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster')
+    monster.spellcasting.levelCadenceMap = { 1: 'hidden', 3: '1_day' }
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+  }`)
+  assert.match(await plateText(), /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden keeps only the slot count')
+  let persisted = false
+  for (let attempt = 0; attempt < 50 && !persisted; attempt++) {
+    persisted = await evaluate('() => { const raw = localStorage.getItem("app.monster") || ""; return raw.includes("hidden") && raw.includes("1_day") && raw.includes("[2,3,3,3,1") }')
+    if (!persisted) await delay(200)
+  }
+  assert.equal(persisted, true, 'the edited spellcasting should reach storage before reload')
+  await send('Page.reload', { ignoreCache: true })
+  let reloaded = ''
+  for (let attempt = 0; attempt < 80 && !/Level 3:/.test(reloaded); attempt++) {
+    await delay(250)
+    reloaded = await plateText().catch(() => '')
+  }
+  assert.match(reloaded, /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden cadence should survive reload')
+  assert.match(reloaded, /\(1\/Day\), Level 3:\s*Fireball/, 'a counted cadence should survive reload')
+  assert.doesNotMatch(reloaded, /\(2\/1\/Day\)|\(3\/1\/Day\)/, 'reload must not re-prefix the counted cadence')
+  console.log('Spell plate live edit and reload: pass')
+
   console.log(`Spell plate browser smoke passed across ${result.length} themes: ${themes.join(', ')}`)
 } finally {
   ws?.close()
