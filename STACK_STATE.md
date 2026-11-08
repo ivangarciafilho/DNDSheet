@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build191 (2026-11-08), branch `build185-repairs`**: A13.9 f and g. Help smoke adds a 12-theme initiative advantage/disadvantage contrast probe and a print-media probe (numbers bold, bloodied red). Fixed: on 9 dark themes the white top plate carried dark-theme inks (1.63:1 / 2.28:1); `.unified-top-plate` now uses the light inks. Release candidate `rc-2.4.3-build-191-initiative-ink-and-print-proofs`.
+
 - **Build190 (2026-11-08), branch `build185-repairs`**: A13.9 item h. `BasicsEditor` paragon stage rows no longer write the store on render: pure `planParagonPhaseRows` plus `materializeParagonRows` on first focus. Fuzz Step 25 proves pool-only data survives the mounted editor and that focus materialises the rows. Release candidate `rc-2.4.3-build-190-side-effect-free-paragon-rows`.
 
 - **Build189 (2026-11-08), branch `build185-repairs`**: A13.9 item e closed. Step 25 runs the number-role audit on 4 themes × 2 templates (state restored). Fixed: "N Pools of M HP" was unreachable (renderer expected a number, model stores `number[]`); new `describePools` with 5 tests. Found: `paragonPhaseRows` computed writes the store on render (Backlog A13.9 h). Release candidate `rc-2.4.3-build-189-number-role-matrix`.

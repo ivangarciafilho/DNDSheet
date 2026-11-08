@@ -53,6 +53,13 @@
   --dnd-disadv-ink: #000000;
 }
 
+/* The top plate (initiative, nameplate) is painted white on every theme, so its advantage/disadvantage
+   ink follows that panel, not the dark theme body: the dark-theme inks measured 1.6:1 / 2.3:1 there. */
+.statblock:not(.theme-printer) .unified-top-plate {
+  --dnd-adv-ink: #1d6b29;
+  --dnd-disadv-ink: #a8211a;
+}
+
 /* Plate palette per theme: frame = theme border, head = accent, cells = theme panel */
 @mixin plate-palette($frame, $head-bg, $head-ink, $cell-bg, $cell-ink, $body-bg) {
   --sb-frame: #{$frame};

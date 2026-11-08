@@ -73,9 +73,24 @@ try {
     const editor = root.__vue_app__.config.globalProperties.$pinia._s.get('editor')
     const themes = ['wotc', 'printer', 'lovecraft_golden', 'lovecraft_silver', 'lovecraft_toxic', 'lovecraft_spooky', 'lovecraft_galactic', 'lovecraft_fathomless', 'dwarves_forge', 'dwarves_aetherpunk', 'art_nouveau', 'art_deco']
     const results = []
+    const monster = root.__vue_app__.config.globalProperties.$pinia._s.get('monster')
+    const savedInit = JSON.parse(JSON.stringify(monster.initiativeConfig || {}))
+    const frame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    // A13.9 g: the initiative advantage/disadvantage ink must read on every theme's painted background.
+    const initInk = async (mode) => {
+      monster.initiativeConfig = { ...savedInit, advantage: mode === 'adv', disadvantage: mode === 'disadv' }
+      await frame()
+      const node = document.querySelector('#render .statblock .init-cell .dnd-' + mode)
+      return node ? contrast(getComputedStyle(node).color, paintedOf(node)) : 0
+    }
+    const paintedOf = (node) => { for (let n = node; n; n = n.parentElement) { const bg = getComputedStyle(n).backgroundColor; if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') return bg } return 'rgb(255, 255, 255)' }
     for (const theme of themes) {
       editor.visualTheme = theme
       await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+      const advContrast = await initInk('adv')
+      const disadvContrast = await initInk('disadv')
+      monster.initiativeConfig = savedInit
+      await frame()
       // Build170+ vitals are cascade panels: probe the AC title and its value as the reader sees them.
       const head = document.querySelector('#render .statblock .ac > .dnd-cascade-title')
       const cell = document.querySelector('#render .statblock .ac > .dnd-cascade-badges-wrap')
@@ -94,6 +109,8 @@ try {
         cellBackground: painted(cell),
         cellInk: getComputedStyle(visibleText).color,
         cellContrast: contrast(getComputedStyle(visibleText).color, painted(cell)),
+        advContrast,
+        disadvContrast,
       })
     }
     return results
@@ -116,6 +133,23 @@ try {
   assert.ok(themeProbe.every((result) => result.valid), `Every theme should render the AC title and value: ${JSON.stringify(themeProbe)}`)
   assert.equal(new Set(themeProbe.map((result) => result.headBackground)).size, 12, 'Each selectable theme should retain its own panel background')
   assert.ok(themeProbe.every((result) => result.headContrast >= 4.5 && result.cellContrast >= 4.5), `Theme text should retain 4.5:1 contrast: ${JSON.stringify(themeProbe)}`)
+  assert.ok(themeProbe.every((result) => result.advContrast >= 4.5 && result.disadvContrast >= 4.5), `Initiative advantage/disadvantage ink should retain 4.5:1 contrast: ${JSON.stringify(themeProbe.map(({ theme, advContrast, disadvContrast }) => ({ theme, advContrast, disadvContrast })))}`)
+
+  // A13.9 f: in print media numbers keep their weight and bloodied numbers keep their red ink.
+  await send('Emulation.setEmulatedMedia', { media: 'print' })
+  const printProbe = await evaluate(`async () => {
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    const nums = [...document.querySelectorAll('#render .statblock .dnd-num')]
+    const light = nums.filter((n) => Number(getComputedStyle(n).fontWeight) < 600).map((n) => n.textContent.trim())
+    const reds = [...document.querySelectorAll('#render .statblock .dnd-bloodied-badge .dnd-num, #render .statblock .dnd-num.text-red-7')]
+    const notRed = reds.filter((n) => { const [r, g, b] = (getComputedStyle(n).color.match(/[0-9.]+/g) || []).map(Number); return !(r > g + 40 && r > b + 40) }).map((n) => n.textContent.trim())
+    return { media: matchMedia('print').matches, count: nums.length, light, reds: reds.length, notRed }
+  }`)
+  await send('Emulation.setEmulatedMedia', { media: '' })
+  assert.ok(printProbe.media && printProbe.count > 0, `Print emulation should apply to a rendered sheet: ${JSON.stringify(printProbe)}`)
+  assert.deepEqual(printProbe.light, [], 'Numbers should stay bold in print')
+  assert.deepEqual(printProbe.notRed, [], 'Bloodied numbers should stay red in print')
+  console.log('Print probe:', JSON.stringify(printProbe))
 
   const evidenceDir = process.env.DNDSHEET_EVIDENCE_DIR
   if (evidenceDir) {
