@@ -2414,49 +2414,8 @@ export default defineComponent({
   font-weight: 600;
 }
 
-.dnd-badge-adv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #2e7d32;
-  background: rgba(46, 125, 50, 0.15);
-  border: 1px solid rgba(46, 125, 50, 0.45);
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  line-height: 1;
-  padding: 1px 3px;
-  margin-left: 3px;
-  vertical-align: baseline;
-  cursor: help;
-  user-select: none;
-}
 
-.dnd-badge-disadv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #c62828;
-  background: rgba(198, 40, 40, 0.15);
-  border: 1px solid rgba(198, 40, 40, 0.45);
-  border-radius: 3px;
-  font-size: 0.65rem;
-  font-weight: 800;
-  line-height: 1;
-  padding: 1px 3px;
-  margin-left: 3px;
-  vertical-align: baseline;
-  cursor: help;
-  user-select: none;
-}
 
-.dnd-adv-arrow, .dnd-disadv-arrow {
-  font-size: 0.6rem;
-  font-weight: 900;
-  letter-spacing: -1px;
-  display: inline-block;
-  line-height: 1;
-}
 
 /* Modern Modular (Giffyglyph-Inspired) Visual Theme */
 .statblock.modern-modular {

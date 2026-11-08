@@ -17,41 +17,7 @@
 }
 
 /* D&D Statblock & Editor Badges */
-.dnd-badge-adv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #2e7d32;
-  background: rgba(46, 125, 50, 0.12);
-  border: 1px solid rgba(46, 125, 50, 0.35);
-  border-radius: 3px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1;
-  padding: 1px 3px;
-  margin-left: 3px;
-  vertical-align: baseline;
-  cursor: help;
-  user-select: none;
-}
 
-.dnd-badge-disadv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: #c62828;
-  background: rgba(198, 40, 40, 0.12);
-  border: 1px solid rgba(198, 40, 40, 0.35);
-  border-radius: 3px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1;
-  padding: 1px 3px;
-  margin-left: 3px;
-  vertical-align: baseline;
-  cursor: help;
-  user-select: none;
-}
 
 .dnd-badge-cond {
   display: inline-block;
@@ -63,78 +29,8 @@
 }
 
 /* Advantage & Disadvantage Pills Wrapping Numbers */
-.dnd-adv-pill, .dnd-bonus-badge.adv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: #1b5e20;
-  background: rgba(46, 125, 50, 0.14);
-  border: 1.5px solid rgba(46, 125, 50, 0.55);
-  border-radius: 5px;
-  padding: 2px 8px;
-  min-height: 22px;
-  font-size: 0.92em;
-  line-height: 1.15;
-  vertical-align: middle;
-  font-weight: 700;
-  box-sizing: border-box;
-  text-indent: 0 !important;
 
 
-  .dnd-adv-arrow {
-    font-size: 0.72em;
-    letter-spacing: -1px;
-    line-height: 1;
-    color: #1b5e20;
-    font-weight: 900;
-  }
-}
-
-.dnd-disadv-pill, .dnd-bonus-badge.disadv {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  color: #b71c1c;
-  background: rgba(198, 40, 40, 0.14);
-  border: 1.5px solid rgba(198, 40, 40, 0.55);
-  border-radius: 5px;
-  padding: 2px 8px;
-  min-height: 22px;
-  font-size: 0.92em;
-  line-height: 1.15;
-  vertical-align: middle;
-  font-weight: 700;
-  box-sizing: border-box;
-  text-indent: 0 !important;
-
-
-  .dnd-disadv-arrow {
-    font-size: 0.72em;
-    letter-spacing: -1px;
-    line-height: 1;
-    color: #b71c1c;
-    font-weight: 900;
-  }
-}
-
-.dnd-bonus-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding: 2px 7px;
-  min-height: 21px;
-  border-radius: 5px;
-  background: #edf2f7;
-  border: 1px solid #cbd5e0;
-  vertical-align: middle;
-  line-height: 1.15;
-  box-sizing: border-box;
-  text-indent: 0 !important;
-
-}
 
 .dnd-bloodied-badge {
   display: inline-flex;
@@ -767,9 +663,6 @@
   }
 }
 
-.pill-bold {
-  font-weight: 900 !important;
-}
 
 /* Action & Attack Composite Header with Execution Cells */
 .action-composite-header {
@@ -1346,10 +1239,6 @@
     font-weight: 500;
 
 
-    .dnd-adv-arrow {
-      color: #1b5e20 !important;
-      font-weight: 700;
-    }
   }
 
   .dnd-disadv-highlight {
@@ -1360,10 +1249,6 @@
     font-weight: 500;
 
 
-    .dnd-disadv-arrow {
-      color: #b71c1c !important;
-      font-weight: 700;
-    }
   }
 
   /* Stat Table */

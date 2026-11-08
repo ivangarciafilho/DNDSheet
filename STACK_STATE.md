@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build187 (2026-11-08), branch `build185-repairs`**: A13.9 item d. Twelve orphaned pill rules (170 CSS lines) removed after a zero-emitter grep, by a brace-aware pruner; new `RetiredPillClasses.test.ts` guards the nine retired classes. Release candidate `rc-2.4.3-build-187-retired-pill-css`.
+
 - **Build186 (2026-11-08), branch `build185-repairs`**: A13.9 items a–c. One `.dnd-num` number role for AC, HP, bloodied, phase, pool, initiative and lair values (`pill-number` removed from renderers and nine `app.scss` blocks); initiative Advantage/Disadvantage on the shared `advHtml` grammar; pool counts as numbers plus words. Gate on the final source: 362/362 core, lint 0 errors (2,044 warnings, unchanged), build, 50/50 fuzz, help smoke (12 themes), spell smoke (5 themes). Release candidate `rc-2.4.3-build-186-number-role-and-initiative-grammar`.
 
 - **Build185 (2026-11-08), branch `build185-repairs`**: Builds 162–184 committed as baseline `a7cc729`; repairs `68e18bd` (counted spell cadences, metamagic punctuation, dark-theme vitals contrast, vitals help values). Gate on the final source: 362/362 core, build, 50/50 fuzz, spell-plate smoke (5 themes), help smoke (12 themes, 4.5:1 contrast). Release candidate `rc-2.4.3-build-185-baseline-and-repairs`. The roadmap state is in `docs/roadmap/DNDSheet-Implementation-Backlog.md` §Build185; entries below are historical.

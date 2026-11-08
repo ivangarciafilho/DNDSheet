@@ -28,7 +28,7 @@ The live checkout (statblock-overhaul, 84 uncommitted paths) is byte-identical t
 
 ### Next slice
 
-Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Next: A13.9 items d–g (dead `.dnd-adv-pill`/`.pill-bold` CSS once saves and skills stop emitting it, paragon fuzz fixture, print and 12-theme proofs), then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
+Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Build187 deleted the retired pill CSS (item d) behind a regression test. Next: A13.9 items e–g (paragon fuzz fixture for phase and pool numbers, print and 12-theme proofs), then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
 
 ---
 ## Build 184 closing packet — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Ability Score Grid, Composer-Aligned Plate Rows (`Exorcise` & `Astral Binding`), Enriched Durations/Catalogs & Contextual Split Rider Toggles
