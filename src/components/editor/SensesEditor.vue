@@ -227,13 +227,11 @@
                 />
               </div>
               <div v-if="sense.observationRequirement && sense.observationRequirement !== 'none'" class="col-6 col-sm-2">
-                <q-input
-                  v-model.number="sense.observationMinutes"
-                  type="number"
-                  min="1"
+                <formula-field
+                  :path="`sensesList[id=${encodeURIComponent(sense.id)}].observationMinutes`"
+                  label="Minutes"
                   dense
                   outlined
-                  label="Minutes"
                 />
               </div>
               <div class="col-auto">
@@ -281,6 +279,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { validateNumber } from './numberInput'
+import FormulaField from '../kit/FormulaField.vue'
 import { MonsterSenseItem } from 'src/components/models'
 import { DndStat } from 'src/core/domain/types'
 
@@ -397,6 +396,7 @@ const SENSES_PRESETS: {
 
 export default defineComponent({
   name: 'SensesEditor',
+  components: { FormulaField },
   setup() {
     const monster = useMonsterStore()
     const selectedSenseToAdd = ref<string | null>(null)

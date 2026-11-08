@@ -32,22 +32,14 @@
             <q-tooltip class="text-caption">Subclass (e.g. Evocation, Fiend, Draconic)</q-tooltip>
           </q-select>
 
-          <q-input
-            :model-value="monster.spellcasting.level"
+          <formula-field
+            path="spellcasting.level"
             :label="$t('monster.spellcasting.level')"
-            type="number"
-            min="1"
-            max="20"
             class="col-6 col-sm-2 q-pa-xs"
-            @update:model-value="
-              (value: string | number | null) => {
-                monster.spellcasting.level = validateNumber(value, 1)
-                updateSpellcastingSlots(monster.spellcasting.level)
-              }
-            "
+            @applied="updateSpellcastingSlots(monster.spellcasting.level)"
           >
-            <q-tooltip class="text-caption">Caster level in primary class</q-tooltip>
-          </q-input>
+            <template #after><q-tooltip class="text-caption">Caster level in primary class</q-tooltip></template>
+          </formula-field>
 
           <q-select
             v-model="monster.spellcasting.stat"
@@ -275,17 +267,13 @@
                     class="col-12 col-sm-3"
                     @update:model-value="onExtraClassChanged"
                   />
-                  <q-input
-                    v-model.number="clsEntry.level"
-                    type="number"
-                    min="1"
-                    max="20"
+                  <formula-field
+                    :path="`spellcasting.classes[id=${encodeURIComponent(clsEntry.id)}].level`"
                     label="Level"
                     dense
                     outlined
-                    dark
                     class="col-6 col-sm-2"
-                    @update:model-value="onExtraClassChanged"
+                    @applied="onExtraClassChanged"
                   />
                   <q-select
                     v-model="clsEntry.stat"

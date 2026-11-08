@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build199 on `build185-repairs` (`96403c0`), live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build200 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build200 (2026-11-08)**: A11.1 closed (53 number inputs classified in the inventory); caster level, class levels and sense observation minutes migrated to `FormulaField`; inventory labels read from the input's own element. Release candidate `rc-2.4.3-build-200-number-input-classification`.
 
 - **Build199 (2026-11-08)**: closed A11.0, A13.0, A13.8; control inventory committed; golden fixture uses `setCR`; fuzz Step 48 menu wait polls. Release candidate `rc-2.4.3-build-199-inventories-and-flake-fixes`.
 

@@ -5,7 +5,7 @@
 📍 *Handoffs › Start here* — **Everything below this section is history. Read this, run the gate, take the first open slice.**
 
 **Where the code is.**
-- Branch `build185-repairs` at `96403c0` on https://github.com/ivangarciafilho/DNDSheet (default branch). Tag `rc-2.4.3-build-199-inventories-and-flake-fixes`.
+- Branch `build185-repairs` at Build200 (see `STACK_STATE.md` for the commit) on https://github.com/ivangarciafilho/DNDSheet (default branch). Tag `rc-2.4.3-build-199-inventories-and-flake-fixes`.
 - Live app: https://ivangarciafilho.github.io/DNDSheet/ (branch `gh-pages`, same commit built with `PUBLIC_PATH=/DNDSheet/`).
 - Release candidates: `.codex-temp/release-candidates/rc-2.4.3-build-NNN-*` (runnable `spa`, `release-candidate.json` with the gate summary, `SHA256SUMS.txt`). Local servers: 9106 → Build199, 9100 → Build185.
 - `statblock-overhaul` (`F:\AI_Resources\DNDSheet`, `1869921` + 84 uncommitted paths) equals the Build184 baseline `a7cc729`; it is another agent's checkout. Do not write there.
@@ -24,7 +24,7 @@
 
 | # | Slice | Input / note |
 |---|---|---|
-| 1 | **A11.1–A11.4** classify the 56 number inputs (literal · binding-capable · derived), register paths in `field-types.ts`, migrate to `FormulaField` | `DNDSheet-Control-Inventory.md` (regenerate with `node test/inventory.mjs docs/roadmap/DNDSheet-Control-Inventory.md`) |
+| 1 | **A11.2–A11.4** (A11.1 done in Build200: 53 inputs classified, 3 migrated) — add stable-id paths for `anatomy`, `paragonConfig.phaseConfigs` and language rows, register and migrate the 6 blocked inputs, then audit option arrays | `DNDSheet-Control-Inventory.md` (regenerate with `node test/inventory.mjs docs/roadmap/DNDSheet-Control-Inventory.md`) |
 | 2 | **A13.3–A13.5** HelpTip kit, `help.ts` keys, `audit:help` with a floor | baseline 70 / 559 controls = 12.5 % |
 | 3 | **A12.10 a3, d** heading words into i18n; print proof | `spellLevelHeading` is English-only |
 | 4 | **A13.9 f2** PDF/pixel print proof with a bloodied fixture | print probe currently checks 0 bloodied numbers |

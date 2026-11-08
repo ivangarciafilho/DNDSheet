@@ -4,7 +4,7 @@
 
 📍 *Backlog › Now* — **102 / 219 complete (46.58 %) by this file's rule; raw checkbox count 111 done / 117 open. Start from Handoffs §Start here.**
 
-Closed in Builds 186–199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Partial tasks keep their item lists in §Build186 grooming. Next order: A11.1–A11.4 → A13.3–A13.5 → A12.10 a3/d → A13.9 f2 → Pages d4 → partial tasks (A11.7, A11.8, B3.7, B3.6, A11.5/A11.9, A12.8/A12.9). A13.9 g2 needs a design decision first.
+Closed in Builds 186–199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Partial tasks keep their item lists in §Build186 grooming. Next order: identity paths for anatomy/phases/languages then A11.2–A11.4 → A13.3–A13.5 → A12.10 a3/d → A13.9 f2 → Pages d4 → partial tasks (A11.7, A11.8, B3.7, B3.6, A11.5/A11.9, A12.8/A12.9). A13.9 g2 needs a design decision first.
 
 ---
 ## Build185 reconciliation — code state versus roadmap (2026-11-08)
@@ -636,9 +636,9 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R3 | AU-02 | A9 | 1–3 d | ≈ 10 files · ±300 |
 
 - [x] **A11.0** Inventory script: all `type="number"` inputs (CR-154 static snapshot: 83 markers, not a semantic field count) with file, model path and label · S — `test/inventory.mjs` writes `DNDSheet-Control-Inventory.md`: 56 number inputs today (83 markers in the CR-154 snapshot) (199)
-- [ ] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M
-- [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S
-- [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M
+- [x] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M — `test/inventory.mjs` classifies all 53 remaining number inputs in `DNDSheet-Control-Inventory.md`: 41 literal (presentation 23, character sheet 11, tracker 2, spell data 2, CR annotation 1, slot table 1), 7 composer drafts owned by composer apply, 6 blocked on identity migration (anatomy parts, paragon phases, language rows); none derived (200)
+- [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S — progress (200): the three migrated paths were already registered; the 6 blocked inputs need stable-id paths for `anatomy`, `paragonConfig.phaseConfigs` and legacy language rows first (field-types A9.2 note)
+- [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M — progress (200): `spellcasting.level`, `spellcasting.classes[id=*].level` and `sensesList[id=*].observationMinutes` now use `FormulaField` (side effects kept via `@applied`); remaining binding-capable inputs are blocked (see A11.2)
 - [ ] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S
 
 **Done when:** BND-009, BND-002 (global) proven.
