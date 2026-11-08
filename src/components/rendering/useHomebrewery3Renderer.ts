@@ -7,7 +7,7 @@ import { avgRoll, renderBonus, renderModifier } from './mathRendering'
 import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
-import { splitEntryLead } from 'src/core/domain/export-markup'
+import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
 
 export function useMd3Renderer() {
   const monster = useMonsterStore()
@@ -293,7 +293,7 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
 
     return `{{monster,frame${twoCol ? ',wide' : ''}
 ## ${monster.name}
-*${monster.size} ${monster.type}, ${monster.alignment}*
+*${creatureTypeLine(monster.size, monster.type, monster.alignment)}*
 ___
 **${t('monster.armorClass')}** :: ${monster.AC} ${
       monster.ACType === '' ? '' : `(${monster.ACType})`

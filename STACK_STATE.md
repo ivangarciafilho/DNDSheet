@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build196 (2026-11-08), branch `build185-repairs`**: A12.10 a2. Fuzz Step 51 pins five export formats to `test/goldens`. Fixed: Improved Initiative Markdown leakage in spell lines; dangling comma in the creature type line of every format (`creatureTypeLine`). Release candidate `rc-2.4.3-build-196-golden-exports`.
+
 - **Build195 (2026-11-08), branch `build185-repairs`**: `npm run gate` (`test/gate.mjs`) makes the nine-step gate reproducible for every agent, including the GitHub Pages sub-path build and fuzz. Release candidate `rc-2.4.3-build-195-committed-gate`.
 
 - **Build194 (2026-11-08), branch `build185-repairs`**: A12.10 b and c. Spell-plate smoke proves a live slot edit and that Hidden and counted cadences survive storage and a real reload. Test-only build. Release candidate `rc-2.4.3-build-194-spell-live-edit-and-reload`.

@@ -7,7 +7,7 @@ import { avgRoll, renderBonus, renderModifier } from './mathRendering'
 import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
-import { splitEntryLead } from 'src/core/domain/export-markup'
+import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
 
 export function useMdRenderer() {
   const monster = useMonsterStore()
@@ -306,7 +306,7 @@ ${formattedActions.join('\n>\n')}\n>`
 
     return `___${twoCol ? '\n___' : ''}
 > ## ${monster.name}
->*${monster.size} ${monster.type}, ${monster.alignment}*
+>*${creatureTypeLine(monster.size, monster.type, monster.alignment)}*
 > ___
 > - **${t('monster.armorClass')}** ${monster.AC} ${
       monster.ACType === '' ? '' : `(${monster.ACType})`

@@ -5,7 +5,8 @@ import { DndStat } from '../models'
 import { avgRoll, renderBonus, statModifier } from './mathRendering'
 import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
-import { splitEntryLead } from 'src/core/domain/export-markup'
+import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import { spellLevelHeading } from 'src/core/domain/spell-plate'
 import slugify from 'slugify'
 
 const statMap = {
@@ -50,12 +51,12 @@ export function useImprovedInitRenderer() {
     ii.FilterDimensions = {
       Level: CR[monster.CR].cr,
       Source: "Homebrew (Falindrith's Monster Maker)",
-      Type: `${monster.size} ${monster.type}, ${monster.alignment}`,
+      Type: `${creatureTypeLine(monster.size, monster.type, monster.alignment)}`,
     }
     ii.LastUpdateMs = 0
     ii.Version = '1.0.0'
     ii.Source = "Homebrew (Falindrith's Monster Maker)"
-    ii.Type = `${monster.size} ${monster.type}, ${monster.alignment}`
+    ii.Type = `${creatureTypeLine(monster.size, monster.type, monster.alignment)}`
     ii.HP = {
       Value: avgRoll(monster.HP.HD, monster.HP.type) + monster.HP.modifier,
       Notes: `(${monster.HP.HD}d${monster.HP.type}${renderBonus(
@@ -244,11 +245,7 @@ export function useImprovedInitRenderer() {
       const cantrips = monster.knownSpellsOfLevel(0)
 
       if (cantrips.length > 0)
-        renderedRows.push(
-          `> ${t('editor.spellcasting.slot.cantripLabel')} *${cantrips.join(
-            ', '
-          )}*  `
-        )
+        renderedRows.push(`${spellLevelHeading({ level: 0 })} ${cantrips.join(', ')}`)
 
       renderer.classSpellcastingSlots.value.forEach((slot) => {
         renderedRows.push(`${slot.renderedLabel} ${slot.renderedSpells}`)
@@ -259,7 +256,8 @@ export function useImprovedInitRenderer() {
 
       ii.Actions.push({
         Name: t('editor.spellcasting.class.label'),
-        Content: stripTags(renderedSpellcasting),
+        // Plain-text target: tags removed above leave runs of spaces behind.
+        Content: stripTags(renderedSpellcasting).replace(/[ \t]{2,}/g, ' '),
       })
     }
 
@@ -267,7 +265,7 @@ export function useImprovedInitRenderer() {
     // more pasta
     if (spellcasting.atWill.length > 0) {
       const atWillRendered = renderer.innateSpellcastingLists.value
-        .map((list) => `${list.renderedLabel} ${list.renderedSpells}`)
+        .map((list) => `${list.renderedLabel}: ${list.renderedSpells}`)
         .join('\n• ')
 
       ii.Actions.push({

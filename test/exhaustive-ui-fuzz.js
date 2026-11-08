@@ -3558,6 +3558,40 @@ async function runFuzz() {
   }`)
   console.log('Step 50 result:',JSON.stringify(step50,null,2))
   if(step50.problems.length||step50.projections!==16||step50.exports!==3||!step50.chipMatches||!step50.live||!step50.authored)throw new Error('Step 50 failed: '+JSON.stringify(step50))
+
+  console.log('\n--- Step 51: Golden exports for the five text and JSON formats ---')
+  const EXPORT_LABELS=['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)','Export JSON (Tarrasque.io format)','Export JSON (Improved Initiative format)']
+  const step51=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    monster.$reset();editor.style='2024';editor.visualTemplate='modern';editor.visualTheme='wotc';
+    Object.assign(monster,{name:'Golden Export Fixture',CR:12});monster.stats.INT=18;
+    Object.assign(monster.spellcasting,{class:'Wizard',level:9,slots:[4,3,3,3,1,0,0,0,0],standard:['Fire Bolt','Magic Missile','Fireball'],resourceType:'slots',refreshRate:'long_rest',levelCadenceMap:{3:'1_day'}});
+    await wait(400);
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click,texts={};
+    URL.createObjectURL=blob=>{captured.push(blob);return 'blob:golden';};HTMLAnchorElement.prototype.click=function(){};
+    try{for(const label of ${JSON.stringify(EXPORT_LABELS)}){
+      const button=[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download');button.click();await wait(300);
+      const item=[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label);const count=captured.length;item?.click();await wait(300);
+      texts[label]=captured.length>count?await captured[captured.length-1].text():null;
+    }}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    return texts;
+  }`)
+  const goldenDir=path.resolve('test/goldens'),update=process.env.DNDSHEET_UPDATE_GOLDENS==='1',mismatches=[]
+  // Ids and clock values change per run; everything else in an export is part of its contract.
+  const normalise=text=>String(text).replace(/\r\n/g,'\n').replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi,'<uuid>').replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/g,'<time>').trimEnd()+'\n'
+  fs.mkdirSync(goldenDir,{recursive:true})
+  for(const label of EXPORT_LABELS){
+    const text=step51[label]
+    if(text==null){mismatches.push(label+': no export captured');continue}
+    const file=path.join(goldenDir,'export-'+label.replace(/^Export /,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')+'.txt'),actual=normalise(text)
+    if(update){fs.writeFileSync(file,actual);continue}
+    if(!fs.existsSync(file)){mismatches.push(label+': golden missing, run with DNDSHEET_UPDATE_GOLDENS=1 and review');continue}
+    const expected=fs.readFileSync(file,'utf8').replace(/\r\n/g,'\n')
+    if(expected!==actual){const a=expected.split('\n'),b=actual.split('\n'),n=a.findIndex((line,k)=>line!==b[k]);fs.writeFileSync(file+'.actual',actual);mismatches.push(label+' differs at line '+(n+1)+': expected '+JSON.stringify(a[n])+' got '+JSON.stringify(b[n]))}
+  }
+  for(const label of EXPORT_LABELS.slice(0,2))if(!String(step51[label]).includes('(4/Long Rest), Level 1:'))mismatches.push(label+': spell heading not in the web order')
+  console.log('Step 51 result:',update?'goldens written':JSON.stringify(mismatches))
+  if(mismatches.length)throw new Error('Step 51 failed: '+mismatches.join(' | '))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3574,7 +3608,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 50 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 51 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

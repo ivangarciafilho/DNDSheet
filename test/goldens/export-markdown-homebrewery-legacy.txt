@@ -1,0 +1,27 @@
+___
+> ## Golden Export Fixture
+>*Medium humanoid*
+> ___
+> - **Armor Class** 10 
+> - **Hit Points** 4 (1d8)
+
+
+> - **Speed** 30 ft.
+>___
+>|STR|DEX|CON|INT|WIS|CHA|
+>|:---:|:---:|:---:|:---:|:---:|:---:|
+>|10 (+0)|10 (+0)|10 (+0)|18 (+4)|10 (+0)|10 (+0)|
+>___
+> - **Saving Throws** 
+> - **Senses** 
+> - **Passive Checks** Search: 10/+0; Study: 14/+4; Influence: 10/+0; Hide (Bonus Action): 10/+0
+> - **Languages** 
+> - **Challenge** 9 (5,000 XP, PB +2)
+>___
+> ### Actions
+> ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
+>
+> Cantrips (at will) *Fire Bolt*  
+> (4/Long Rest), Level 1: *Magic Missile*  
+> (1/Day), Level 3: *Fireball*  
+>

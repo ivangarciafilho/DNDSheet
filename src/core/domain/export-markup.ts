@@ -105,3 +105,10 @@ export function exportMarkup(input: string, format: TextExportFormat): string {
     .replace(/\n{3,}/g, '\n\n')
     .trim()
 }
+
+/** "Large dragon, chaotic evil"; no dangling comma when alignment (or size/type) is empty. */
+export function creatureTypeLine(size?: string, type?: string, alignment?: string): string {
+  const head = [size, type].map((part) => (part ?? '').trim()).filter(Boolean).join(' ')
+  const tail = (alignment ?? '').trim()
+  return tail ? (head ? `${head}, ${tail}` : tail) : head
+}

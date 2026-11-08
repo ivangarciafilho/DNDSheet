@@ -1,0 +1,70 @@
+\begin{DndMonster}[]{Golden Export Fixture}
+  
+  \DndMonsterType{Medium humanoid}
+  \DndMonsterBasics[
+    armor-class = {10},
+    hit-points = {\DndDice{1d8+0}},
+    speed = {30 ft.}
+  ]
+
+  \DndMonsterAbilityScores[
+    str = 10,
+    dex = 10,
+    con = 10,
+    int = 18,
+    wis = 10,
+    cha = 10,
+  ]
+
+  \DndMonsterDetails[
+    %saving-throws = {},
+    %skills = {},
+    %damage-vulnerabilities = {},
+    %damage-resistances = {},
+    %damage-immunities = {},
+    %condition-immunities = {},
+    senses = {},
+    languages = {},
+    challenge = {9},
+  ]
+
+  % Traits
+  
+
+  
+
+  % Actions
+  \DndMonsterSection{Actions}
+  
+
+  
+
+  
+
+  % Spellcasting
+  
+
+  \DndMonsterAction{Spellcasting} Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 14, +6 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
+  \begin{DndMonsterSpells}
+    \DndMonsterSpellLevel{Fire Bolt}
+    \DndMonsterSpellLevel[1][4]{Magic Missile}
+    \DndMonsterSpellLevel[3][3]{Fireball}
+  \end{DndMonsterSpells}
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+\end{DndMonster}

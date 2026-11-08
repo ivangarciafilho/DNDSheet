@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
-import { splitEntryLead } from 'src/core/domain/export-markup'
+import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
 
 // one change to the LaTeX renderer is that I'm dropping the \DndDice command
 // if you're exporting from here you can selectively replace that where you need it, the
@@ -238,7 +238,7 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
       monster.name
     }}
   ${twoCol ? '\\begin{multicols}{2}' : ''}
-  \\DndMonsterType{${monster.size} ${monster.type}, ${monster.alignment}}
+  \\DndMonsterType{${creatureTypeLine(monster.size, monster.type, monster.alignment)}}
   \\DndMonsterBasics[
     armor-class = {${monster.AC}${
       monster.ACType === '' ? '' : ` (${monster.ACType})`
