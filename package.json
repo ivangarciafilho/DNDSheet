@@ -13,6 +13,7 @@
     "test:e2e": "node test/exhaustive-ui-fuzz.js",
     "test:e2e:spellcasting": "node test/spell-plate-browser-smoke.js",
     "test:e2e:help": "node test/statblock-help-browser-smoke.js",
+    "gate": "node test/gate.mjs",
     "dev": "npx quasar dev",
     "build": "npx quasar build",
     "build:pwa": "npx quasar build -m pwa"

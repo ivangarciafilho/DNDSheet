@@ -35,3 +35,6 @@ yarn-error.log*
 deployed-site-reference/
 .chrome-tmp/
 .chrome-fuzz-tmp/
+
+/.gate
+/dist-pages

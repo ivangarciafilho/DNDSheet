@@ -76,10 +76,10 @@
 **Deployment (GitHub Pages)** — files: `quasar.config.js`, `asset-url.ts`, `WebRenderer.vue`, `A4LayerStudio.vue`
 - [x] d1. Pages build from the committed source with `PUBLIC_PATH=/DNDSheet/` and `DNDSHEET_BUILD_DIR=dist-pages`; published to `gh-pages` with `.nojekyll` (193)
 - [x] d2. Defect fixed: A4 layer presets and saved layers use root-relative `/homebrew/...` URLs that 404 under a sub-path. `resolveAppAsset`/`appAsset` (3 tests) resolve them against the served base at render time; saved data is not rewritten (193)
-- [ ] d3. Partly: the local gate script builds `dist-pages` after the smokes (193); still open: fuzz the sub-path build and fetch one `/homebrew/` mask in every gate
+- [x] d3. `npm run gate` (`test/gate.mjs`, committed) runs core, lint, build, fuzz, help and spell smokes, the `/DNDSheet/` Pages build, an asset check (base-prefixed index and one `/homebrew/` mask) and the fuzz under the sub-path, with its own static server; logs and `summary.json` in `.gate/` (195)
 - [ ] d4. Pages origin has its own browser storage: sample data saved on 9100/9106 does not appear there; add an import/export hint on first run
 
-**Gate for every item:** core tests, lint 0 errors, build, fuzz, help smoke and spell smoke, all on the committed tree (A17.3).
+**Gate for every item:** `npm run gate` on the committed tree (A17.3): core, lint 0 errors, build, fuzz, help smoke, spell smoke, Pages build, Pages assets, Pages fuzz.
 ### Delivered outside any task id (record, then own)
 
 Initiative composer and roll-mode toggles (179–180); HP riders split into regeneration vs temporary HP (179–181); defenses ordering and per-category row splitting (182); custom variables/macros and `DatabaseStudio` (171–173, feeds A10.1); compact nameplate and XP toggles (171–176); A4 layer studio: occlusion order, radial crop knobs, curved gradient bar, per-slider resets (181–184); expanded duration/target/plane catalogs with grouped tooltipped options (184, feeds A13.2). These need owners: A4 layers → **A16.2**, catalogs → **A13.2**, macros → **A10.1**, initiative/HP riders → **A9.13**.

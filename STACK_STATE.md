@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build195 (2026-11-08), branch `build185-repairs`**: `npm run gate` (`test/gate.mjs`) makes the nine-step gate reproducible for every agent, including the GitHub Pages sub-path build and fuzz. Release candidate `rc-2.4.3-build-195-committed-gate`.
+
 - **Build194 (2026-11-08), branch `build185-repairs`**: A12.10 b and c. Spell-plate smoke proves a live slot edit and that Hidden and counted cadences survive storage and a real reload. Test-only build. Release candidate `rc-2.4.3-build-194-spell-live-edit-and-reload`.
 
 - **Build193 (2026-11-08), branch `build185-repairs`**: GitHub Pages deployment at https://ivangarciafilho.github.io/DNDSheet/ (`PUBLIC_PATH=/DNDSheet/`). Fixed: root-relative `/homebrew/` layer and mask URLs 404 under a sub-path; `appAsset` resolves them at render time. Release candidate `rc-2.4.3-build-193-pages-and-asset-base`.
