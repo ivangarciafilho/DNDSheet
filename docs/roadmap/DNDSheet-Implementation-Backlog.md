@@ -73,6 +73,12 @@
 - [ ] a. `subclass` persisted and migrated
 - [ ] b. Expanded-spell plans per subclass; invariant tests
 
+**Deployment (GitHub Pages)** — files: `quasar.config.js`, `asset-url.ts`, `WebRenderer.vue`, `A4LayerStudio.vue`
+- [x] d1. Pages build from the committed source with `PUBLIC_PATH=/DNDSheet/` and `DNDSHEET_BUILD_DIR=dist-pages`; published to `gh-pages` with `.nojekyll` (193)
+- [x] d2. Defect fixed: A4 layer presets and saved layers use root-relative `/homebrew/...` URLs that 404 under a sub-path. `resolveAppAsset`/`appAsset` (3 tests) resolve them against the served base at render time; saved data is not rewritten (193)
+- [ ] d3. Add the Pages build and a fetch of one `/homebrew/` mask to the per-build gate
+- [ ] d4. Pages origin has its own browser storage: sample data saved on 9100/9106 does not appear there; add an import/export hint on first run
+
 **Gate for every item:** core tests, lint 0 errors, build, fuzz, help smoke and spell smoke, all on the committed tree (A17.3).
 ### Delivered outside any task id (record, then own)
 

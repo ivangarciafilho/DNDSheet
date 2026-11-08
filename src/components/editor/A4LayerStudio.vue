@@ -264,7 +264,7 @@
               >
                 <img
                   v-if="layer.url"
-                  :src="layer.url"
+                  :src="appAsset(layer.url)"
                   style="width: 100%; height: 100%; object-fit: cover;"
                 />
                 <q-icon
@@ -1012,6 +1012,7 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useEditorStore, A4CompositionLayer } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { appAsset } from 'src/core/domain/asset-url'
 import RadialOffsetController from './widgets/RadialOffsetController.vue'
 import GradientOverlayController from './widgets/GradientOverlayController.vue'
 
@@ -1428,6 +1429,7 @@ export default defineComponent({
     }
 
     return {
+      appAsset,
       editorStore,
       monsterStore,
       displayLayers,

@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build193 (2026-11-08), branch `build185-repairs`**: GitHub Pages deployment at https://ivangarciafilho.github.io/DNDSheet/ (`PUBLIC_PATH=/DNDSheet/`). Fixed: root-relative `/homebrew/` layer and mask URLs 404 under a sub-path; `appAsset` resolves them at render time. Release candidate `rc-2.4.3-build-193-pages-and-asset-base`.
+
 - **Build192 (2026-11-08), branch `build185-repairs`**: A12.10 item a. `spellLevelHeading` gives Markdown, Homebrewery, improved-initiative and Tarrasque exports the web heading order; fixes "1st level (3 slots): (1/Day)". `buildSpellPlate` shares the per-level rules. LaTeX keeps its template macro. Release candidate `rc-2.4.3-build-192-shared-spell-level-headings`.
 
 - **Build191 (2026-11-08), branch `build185-repairs`**: A13.9 f and g. Help smoke adds a 12-theme initiative advantage/disadvantage contrast probe and a print-media probe (numbers bold, bloodied red). Fixed: on 9 dark themes the white top plate carried dark-theme inks (1.63:1 / 2.28:1); `.unified-top-plate` now uses the light inks. Release candidate `rc-2.4.3-build-191-initiative-ink-and-print-proofs`.

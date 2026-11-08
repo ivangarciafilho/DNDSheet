@@ -1079,6 +1079,7 @@ import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
+import { appAsset } from 'src/core/domain/asset-url'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
@@ -1471,7 +1472,7 @@ export default defineComponent({
       const layerOpacity = ((pLayer?.opacity ?? 100) / 100)
       const layerBlend = (pLayer?.blendMode || 'normal') as any
       const layerDisplay = pLayer && pLayer.visible === false ? 'none' : undefined
-      const maskImg = pLayer?.maskUrl ? `url("${pLayer.maskUrl}")` : undefined
+      const maskImg = pLayer?.maskUrl ? `url("${appAsset(pLayer.maskUrl)}")` : undefined
 
       const pOffX = editorStore.a4PortraitOffsetX || 0
       const pOffY = editorStore.a4PortraitOffsetY || 0
@@ -1592,7 +1593,7 @@ export default defineComponent({
 
       const calculatedZIndex = getLayerZIndex(layer)
 
-      const maskImage = layer.maskUrl ? `url("${layer.maskUrl}")` : undefined
+      const maskImage = layer.maskUrl ? `url("${appAsset(layer.maskUrl)}")` : undefined
 
       // Convert RGB grayscale luminance directly into alpha channel via SVG feColorMatrix filter
       // so even opaque 24-bit JPG/PNG textures without an alpha channel blend via luminance
@@ -1601,7 +1602,7 @@ export default defineComponent({
         : undefined
 
       return {
-        backgroundImage: layer.url ? `url("${layer.url}")` : undefined,
+        backgroundImage: layer.url ? `url("${appAsset(layer.url)}")` : undefined,
         opacity: (layer.opacity ?? 100) / 100,
         mixBlendMode: layer.blendMode || 'normal',
         display: layer.visible ? 'block' : 'none',

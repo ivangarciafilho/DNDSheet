@@ -26,6 +26,23 @@
 
 The live checkout (statblock-overhaul, 84 uncommitted paths) is byte-identical to baseline `a7cc729`: no agent has written to it since Build184 (last edit 2026-11-06 15:09). Nothing is pending there. `stash@{0}` (Codex A7 composer draft, 2026-10-29, 2 files) is superseded: `ComposerChain` is mounted in `ActionsEditor.vue` since the baseline, and its preview-equality fuzz step contradicts Step 46, which requires a single rendered sheet with no composer preview. The stash is kept, not applied. The `build138` worktree is clean.
 
+### Workload measure (2026-11-08, Builds 186–193)
+
+Counted with `^- \[x\]` / `^- \[ \]` on the Backlog. The headline 95/219 uses its own rule; raw top-level task ids read 104 done / 124 open.
+
+| | Build185 docs `48fbbb4` | Build193 | Delta |
+|---|---|---|---|
+| Task ids done | 104 | 104 | 0 |
+| Task ids open | 124 | 124 | 0 |
+| Acceptance items done | 0 | 12 | +12 |
+| Acceptance items open | 0 | 21 | +21 |
+
+No parent task closed: A13.9 has all items a–h ticked but keeps f2/g2 open; A12.10 has a ticked with a2/a3/b/c/d open. Defects fixed in this run: 6 (unreachable pool wording, store-writing paragon rows, white-top-plate ink on 9 themes, export cadence after colon, retired pill CSS, `/homebrew/` 404 on Pages).
+
+Trap: lint and the Quasar build do not flag an identifier returned from `setup()` that was never imported; only the browser fuzz did (`appAsset is not defined`). Count every anchor before editing.
+
+**Pages:** https://ivangarciafilho.github.io/DNDSheet/ serves `gh-pages`; rebuild with `PUBLIC_PATH=/DNDSheet/` and push the `dist-pages` tree there.
+
 ### Next slice
 
 Build186 landed A13.9 items a–c (one `.dnd-num` number role, initiative on the shared `advHtml` grammar, pool counts in plain words). Build187 deleted the retired pill CSS (item d) behind a regression test. Build188 extended fuzz Step 25 with a number-role audit on the paragon fixture. Build189 closed item e (theme × template matrix) and fixed the unreachable "Pools of" wording (`describePools`). Build190 made `paragonPhaseRows` side-effect free (item h; rows materialise on first focus). Build191 added print and 12-theme initiative-ink proofs (f, g) and fixed white-top-plate ink on 9 dark themes. Build192 landed A12.10 item a (`spellLevelHeading` for exports; fixed cadence-after-colon export labels). Next: A12.10 a2 (golden exports) and b–c (live slot edit, reload); A13.9 f2/g2 are small follow-ups. Trap: code passed to `evalInPage` sits inside a template literal, so `\s` reaches the page as `s` (a Build189 diagnostic regex ate every "s"); avoid backslash escapes there entirely (`\n` likewise becomes a raw newline and breaks a regex literal) (print and 12-theme proofs), then A12.10 item a. Trap: a Vue computed that calls an "ensure" helper mutates state; fuzz fixtures that set `phaseConfigs: []` are refilled while BasicsEditor is mounted, then A12.10 item a (one shared heading helper for web and text exports). Track items in Backlog §Build186 grooming.
