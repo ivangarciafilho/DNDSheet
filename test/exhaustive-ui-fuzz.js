@@ -1694,9 +1694,18 @@ async function runFuzz() {
         hasPoisoner: renderedText.includes("Poisoner's Kit"),
       });
       const hasRegenDisruption = renderedText.includes('+15/end of a turn (acid or fire)');
+      // A13.9: every initiative and phase-HP value uses the one number role and keeps its host's font family and size.
+      const initCells = [...statblock.querySelectorAll('.init-cell')];
+      const initNums = initCells.flatMap((cell) => [...cell.querySelectorAll('.dnd-num')].map((n) => n.textContent.trim()));
+      const hpNums = [...statblock.querySelectorAll('.dnd-hp-cascade-row .dnd-num')];
+      const roleNums = [...initCells.flatMap((cell) => [...cell.querySelectorAll('.dnd-num')]), ...hpNums];
+      const fontDrift = roleNums.filter((n) => { const a = getComputedStyle(n), b = getComputedStyle(n.parentElement); return a.fontFamily !== b.fontFamily || a.fontSize !== b.fontSize; }).map((n) => n.textContent.trim());
+      const numberRole = { cellsWithoutNumber: initCells.filter((cell) => !cell.querySelector('.dnd-num')).length, initNums, hpNumCount: hpNums.length, fontDrift, retired: statblock.querySelectorAll('.pill-number,.dnd-adv-pill,.dnd-disadv-pill').length };
+      const hasNumberRole = numberRole.cellsWithoutNumber === 0 && ['+12', '+15', '+18', '+22', '20'].every((v) => initNums.includes(v)) && hpNums.length >= 4 && fontDrift.length === 0 && numberRole.retired === 0;
 
       return {
-        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption,
+        success: initCellsCount >= 5 && initHasWrappedAdvPill && hasBloodiedStageBadges && hasSingleBloodiedTag && hasConsolidatedScopes && hasRegenDisruption && hasNumberRole,
+        numberRole,
         initCellsCount,
         initHasWrappedAdvPill,
         hasBloodiedStageBadges,

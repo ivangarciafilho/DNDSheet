@@ -12,7 +12,7 @@
 
 | Task | Delivered in code (build) | Remaining for Done-when |
 |---|---|---|
-| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Number role and initiative grammar (186) and retired pill CSS (187) landed. Left: paragon fuzz fixture, print and 12-theme proofs (items e–g below) |
+| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Number role and initiative grammar (186) and retired pill CSS (187) landed. Left: theme × template audit and pool-branch fixture (rest of e), print and 12-theme proofs (f–g) |
 | **A12.10** compact spell list | One unified spell cell, "(N/Cadence), Level N:", Hidden cadence (176–181); counted cadences no longer doubled (185) | Text, Markdown, LaTeX, Homebrewery headings in the same order; live slot-edit and reload proofs; print |
 | **A12.8 / A12.9** casting sources | Master spellcasting engine with stacked class cards, combined caster level, per-level cadence and action economy (171–176) | Stable-id source/pool model and lossless migration; per-source known/prepared/cantrip metrics with provenance; multiclass slot tests against SRD tables |
 | **A12.1 / A12.4** subclass catalogs and picker | Case-insensitive subclass resolver, picker filters for every casting class (175–176) | Persisted `subclass`; expanded-spell plans; invariants tests |
@@ -31,7 +31,7 @@
 - [x] b. Initiative ▲▲/▼▼ uses the shared `advHtml` grammar (colour covers value and glyph, tooltip kept); the bespoke `dnd-adv-pill` markup is gone from the initiative renderer (186)
 - [x] c. Pool counts read as numbers plus plain words, "3 Pools of 120 HP" (186)
 - [x] d. Retired pill CSS deleted (12 rules, 170 lines across `app.scss`, `statblock-grammar.scss`, `WebRenderer.vue`) after a zero-emitter grep; `RetiredPillClasses.test.ts` fails if any of the nine retired classes returns to `src` (187)
-- [ ] e. Fuzz step: computed font-family and size of AC/HP/initiative numbers equal their host's, 4 themes × 2 templates; a paragon fixture asserts phase and pool numbers
+- [x] e. Fuzz Step 25 (4-stage paragon + lair) asserts every initiative cell carries a `.dnd-num`, stage and lair values +12/+15/+18/+22/20, five phase-HP numbers, no retired pill classes, and zero font-family/size drift from the host (188). Still open inside e: the same audit across 4 themes × 2 templates, and the "N Pools of M HP" branch (no fixture yet)
 - [ ] f. Print proof: PDF of classic and modern templates, numbers keep weight and red bloodied ink
 - [ ] g. 12-theme contrast of `.dnd-adv`/`.dnd-disadv` ink on initiative (help-smoke extension)
 

@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+- **Build188 (2026-11-08), branch `build185-repairs`**: A13.9 item e (paragon part). Fuzz Step 25 audits the number role on a 4-stage paragon with lair: every initiative cell has a `.dnd-num`, stage/lair values present, 5 phase-HP numbers, no retired classes, no font drift. Proved red against Build185 on 9100. Release candidate `rc-2.4.3-build-188-paragon-number-audit`.
+
 - **Build187 (2026-11-08), branch `build185-repairs`**: A13.9 item d. Twelve orphaned pill rules (170 CSS lines) removed after a zero-emitter grep, by a brace-aware pruner; new `RetiredPillClasses.test.ts` guards the nine retired classes. Release candidate `rc-2.4.3-build-187-retired-pill-css`.
 
 - **Build186 (2026-11-08), branch `build185-repairs`**: A13.9 items a–c. One `.dnd-num` number role for AC, HP, bloodied, phase, pool, initiative and lair values (`pill-number` removed from renderers and nine `app.scss` blocks); initiative Advantage/Disadvantage on the shared `advHtml` grammar; pool counts as numbers plus words. Gate on the final source: 362/362 core, lint 0 errors (2,044 warnings, unchanged), build, 50/50 fuzz, help smoke (12 themes), spell smoke (5 themes). Release candidate `rc-2.4.3-build-186-number-role-and-initiative-grammar`.
