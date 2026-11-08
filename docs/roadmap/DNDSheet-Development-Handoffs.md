@@ -47,10 +47,10 @@
 | | Build185 `48fbbb4` | Build195 `7ffa77d` | Build199 `96403c0` |
 |---|---|---|---|
 | Task ids done / open (raw count) | 104 / 124 | 104 / 124 | 111 / 117 |
-| Headline (Backlog rule) | 95 / 219 | 95 / 219 | 102 / 219 (46.58 %) |
+| Headline (Backlog rule) | 95 / 219 | 95 / 219 | 102 / 219 (46.58 %); Build200: 103 / 219 (47.03 %) |
 | Acceptance sub-items done / open | 0 / 0 | 15 / 20 | 15 / 20 |
 
-Closed since Build185: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Product defects fixed: 9. Test flakes fixed: 4.
+Closed since Build185: A9.11, A9.12, A11.0, A11.1 (Build200), A12.3, A12.6, A13.0, A13.8. Product defects fixed: 9. Test flakes fixed: 4.
 
 ---
 

@@ -2,9 +2,9 @@
 
 ## Current state — Build199 (2026-11-08)
 
-📍 *Backlog › Now* — **102 / 219 complete (46.58 %) by this file's rule; raw checkbox count 111 done / 117 open. Start from Handoffs §Start here.**
+📍 *Backlog › Now* — **103 / 219 complete (47.03 %) by this file's rule; raw checkbox count 112 done / 116 open. Start from Handoffs §Start here.**
 
-Closed in Builds 186–199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Partial tasks keep their item lists in §Build186 grooming. Next order: identity paths for anatomy/phases/languages then A11.2–A11.4 → A13.3–A13.5 → A12.10 a3/d → A13.9 f2 → Pages d4 → partial tasks (A11.7, A11.8, B3.7, B3.6, A11.5/A11.9, A12.8/A12.9). A13.9 g2 needs a design decision first.
+Closed in Builds 186–200: A9.11, A9.12, A11.0, A11.1, A12.3, A12.6, A13.0, A13.8. Partial tasks keep their item lists in §Build186 grooming. Next order: identity paths for anatomy/phases/languages then A11.2–A11.4 → A13.3–A13.5 → A12.10 a3/d → A13.9 f2 → Pages d4 → partial tasks (A11.7, A11.8, B3.7, B3.6, A11.5/A11.9, A12.8/A12.9). A13.9 g2 needs a design decision first.
 
 ---
 ## Build185 reconciliation — code state versus roadmap (2026-11-08)
@@ -177,7 +177,7 @@ Review corrections include disabled-override false cycles, raw/normalized spell 
 |---|---|
 | **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
 | **Code HEAD** | `6049127`;327core tests,50browser scenarios,focused binding lifecycle,5spell/12help themes,20plate parity;changed binding-code lint clean |
-| **Progress** | **9/28 loops shipped - 102/219 tasks complete (46.58%) - 1active/116pending** - Build199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8 closed since Build185; A9.7 active |
+| **Progress** | **9/28 loops shipped - 103/219 tasks complete (47.03%) - 1active/115pending** - Build199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8 closed since Build185; A9.7 active |
 | **Now** | Live persisted bindings,history and shared controls delivered on migrated fields;A9.7 remaining inventory/lifecycle sweep active. |
 | **Next** | Finish A9.7 numeric consumer/lifecycle migration,then A9.11/A9.12/A9.13 and A9.10 closeout;A10 caret completion follows. |
 
@@ -242,7 +242,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **102 / 219 complete - 1active - 116pending** | **46.58% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **103 / 219 complete - 1active - 115pending** | **47.03% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
 
 ```mermaid
 pie showData
