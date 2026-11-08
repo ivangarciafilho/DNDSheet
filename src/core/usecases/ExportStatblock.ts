@@ -14,6 +14,7 @@ import {
   formatMinimalistRegen,
   formatMinimalistDeathPrevention,
 } from '../domain/defense-and-traits-utils.ts'
+import { formatSpeedActionRider } from '../domain/speeds-traversal.ts'
 
 export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '2014'): string {
   const crObj = CR[monster.CR] || { cr: '0', xp: 0 }
@@ -95,6 +96,12 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
     if (trav.bonusActionDodge) cunning.push('Dodge')
     if (trav.bonusActionDisengage) cunning.push('Disengage')
     if (cunning.length > 0) speedStrings.push(`bonus action ${cunning.join('/')}`)
+    if (Array.isArray(trav.actionRiders) && trav.actionRiders.length > 0) {
+      for (const rider of trav.actionRiders) {
+        const formatted = formatSpeedActionRider(rider)
+        if (formatted) speedStrings.push(formatted)
+      }
+    }
     if (trav.bonusActionSpeed) speedStrings.push(`bonus action speed ${trav.bonusActionSpeed} ft.`)
     if (trav.trackingSpeed) speedStrings.push(`tracking ${trav.trackingSpeed} ft.`)
     if (trav.stealthSpeed) speedStrings.push(`stealth ${trav.stealthSpeed} ft.`)

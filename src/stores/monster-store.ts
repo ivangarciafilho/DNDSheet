@@ -1,3 +1,4 @@
+import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { validate } from 'jsonschema'
 import { sortBy, union } from 'lodash'
 import { defineStore } from 'pinia'
@@ -158,6 +159,7 @@ export const useMonsterStore = defineStore('monster', {
           overrideValue: 0,
         },
         class: undefined,
+        subclass: '',
         level: 1,
         slots: [0, 0, 0, 0, 0, 0, 0, 0, 0],
         atWill: [],
@@ -172,6 +174,20 @@ export const useMonsterStore = defineStore('monster', {
         refreshRate: 'long_rest' as 'long_rest' | 'short_rest' | 'downtime',
         displayTitleMode: 'class_names' as 'class_names' | 'caster_source' | 'split_levels',
         bypassSlotLevelFilter: false,
+        splitHighCadence: false,
+        restrictedCadences: [
+          'short rest',
+          'long rest',
+          'midnight',
+          'midday',
+          'dusk',
+          'dawn',
+          'downtime',
+          'ritual',
+          'weekly',
+          'monthly',
+          'yearly'
+        ] as string[],
         spellCadenceMap: {} as Record<string, string>,
         levelCadenceMap: {} as Record<number, string>,
         bonusActionLevelMap: {} as Record<number, boolean>,
@@ -190,11 +206,17 @@ export const useMonsterStore = defineStore('monster', {
         classes: [] as Array<{
           id: string
           className: string
+          subclass?: string
           level: number
           stat: DndStat
           slots?: number[]
           bypassSlotFilter?: boolean
           spells?: string[]
+          levelCadences?: Record<number, string>
+          levelBonusAction?: Record<number, boolean>
+          spellCadenceMap?: Record<string, string>
+          actionType?: 'Action' | 'Bonus Action'
+          resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
         }>,
       },
       attacks: [],
@@ -306,6 +328,15 @@ export const useMonsterStore = defineStore('monster', {
       vulnerabilitiesList: [],
       conditionsList: [],
       languagesList: [],
+      splitVulnRows: false,
+      splitResRows: false,
+      splitImmRows: false,
+      autoSplitDefenses: false,
+      autoSortDefenses: false,
+      defenseCategoryOrder: ['vulnerabilities', 'resistances', 'immunities'] as string[],
+      splitSpeedRiderRows: false,
+      splitHpRiderRows: false,
+      splitAcRiderRows: false,
       tools: [],
       initiativeConfig: {
         proficient: false,
@@ -323,6 +354,13 @@ export const useMonsterStore = defineStore('monster', {
         trackingSpeed: 0,
         stealthSpeed: 0,
         note: '',
+        actionRiders: [] as Array<{
+          id: string
+          action: string
+          actionType?: 'Action' | 'Bonus Action' | 'Reaction' | 'Free'
+          rider: string
+          trigger?: string
+        }>,
       },
       villainActions: [],
       bloodiedActions: [],
@@ -349,6 +387,11 @@ export const useMonsterStore = defineStore('monster', {
         bloodiedPerPhase: [],
         phaseConfigs: [],
       },
+      toolsPlacement: 'header' as 'header' | 'action' | 'bonus_action' | 'legendary',
+      showXp: true,
+      compactNameplate: false,
+      customVariables: {} as Record<string, string | number>,
+      customMacros: {} as Record<string, string>,
     }
   },
   getters: {
@@ -483,8 +526,15 @@ export const useMonsterStore = defineStore('monster', {
 
       return (level: number) => {
         const allSpells = spells.allSpells
+        const extraSpells = (
+          this.spellcasting?.classes ||
+          this.spellcasting?.multiclass?.classes ||
+          this.spellcasting?.multiclass?.extraClasses ||
+          []
+        ).flatMap((c: any) => c.spells || [])
+        const allStandard = Array.from(new Set([...(this.spellcasting?.standard || []), ...extraSpells]))
 
-        return this.spellcasting.standard.filter(
+        return allStandard.filter(
           (id) => id in allSpells && allSpells[id].level === level
         )
       }
@@ -556,8 +606,8 @@ export const useMonsterStore = defineStore('monster', {
             const action = this.actions.find((a) => a.id === actionId)
 
             if (action) {
-              return action.crAnnotation.include
-                ? action.crAnnotation.maxDamage
+              return action.crAnnotation?.include
+                ? (action.crAnnotation.maxDamage || 0)
                 : 0
             }
             return 0
@@ -618,12 +668,12 @@ export const useMonsterStore = defineStore('monster', {
 
           actions.forEach((a) => {
             if (a != null) {
-              if (a.limitedUse.count === 0 && a.recharge === '') {
+              if ((a.limitedUse?.count ?? 0) === 0 && (a.recharge ?? '') === '') {
                 unlimitedActionNames.push(this.actionName(a.id))
-                unlimitedActionDamage += a.crAnnotation.include
-                  ? a.crAnnotation.maxDamage
+                unlimitedActionDamage += a.crAnnotation?.include
+                  ? (a.crAnnotation.maxDamage || 0)
                   : 0
-              } else if (a.recharge !== '') {
+              } else if ((a.recharge ?? '') !== '') {
                 // treat recharge as single use
                 limitedActions.push({
                   action: a,
@@ -888,17 +938,17 @@ export const useMonsterStore = defineStore('monster', {
       for (const action of this.actions) {
         // check if we should even include this action
         // skip legendary only for now
-        if (action.crAnnotation.include && !action.legendaryOnly) {
+        if (action.crAnnotation?.include && !action.legendaryOnly) {
           // now, actions might be limited use, which we'll need to track
           data.actions.push({
             name: action.name,
             damage:
-              action.crAnnotation.maxDamage *
+              (action.crAnnotation.maxDamage || 0) *
               (action.crAnnotation.multitarget ? 2 : 1),
-            limited: action.limitedUse.count > 0 || action.recharge !== '',
-            uses: action.recharge !== '' ? 1 : action.limitedUse.count,
-            save: action.crAnnotation.maxSave,
-            toHit: action.crAnnotation.maxModifier,
+            limited: (action.limitedUse?.count || 0) > 0 || (action.recharge || '') !== '',
+            uses: (action.recharge || '') !== '' ? 1 : (action.limitedUse?.count || 0),
+            save: action.crAnnotation.maxSave || 0,
+            toHit: action.crAnnotation.maxModifier || 0,
             type: 'Action',
           })
         }
@@ -912,16 +962,16 @@ export const useMonsterStore = defineStore('monster', {
       // traits
       for (const trait of this.traits) {
         // really similar to actions
-        if (trait.crAnnotation.include) {
+        if (trait.crAnnotation?.include) {
           data.traits.push({
             name: trait.name,
             damage:
-              trait.crAnnotation.maxDamage *
+              (trait.crAnnotation.maxDamage || 0) *
               (trait.crAnnotation.multitarget ? 2 : 1),
-            limited: trait.limitedUse.count > 0,
-            uses: trait.limitedUse.count,
-            save: trait.crAnnotation.maxSave,
-            toHit: trait.crAnnotation.maxModifier,
+            limited: (trait.limitedUse?.count || 0) > 0,
+            uses: trait.limitedUse?.count || 0,
+            save: trait.crAnnotation.maxSave || 0,
+            toHit: trait.crAnnotation.maxModifier || 0,
             remove: false,
             type: 'Trait',
           })
@@ -937,14 +987,14 @@ export const useMonsterStore = defineStore('monster', {
       for (const idx in this.lairActions) {
         const lairAction = this.lairActions[idx]
 
-        if (lairAction.crAnnotation.include) {
+        if (lairAction.crAnnotation?.include) {
           data.lairActions.push({
             name: `Lair Action ${parseInt(idx) + 1}`,
             damage:
-              lairAction.crAnnotation.maxDamage *
+              (lairAction.crAnnotation.maxDamage || 0) *
               (lairAction.crAnnotation.multitarget ? 2 : 1),
-            save: lairAction.crAnnotation.maxSave,
-            toHit: lairAction.crAnnotation.maxModifier,
+            save: lairAction.crAnnotation.maxSave || 0,
+            toHit: lairAction.crAnnotation.maxModifier || 0,
             type: 'Lair Action',
           })
         }
@@ -963,16 +1013,16 @@ export const useMonsterStore = defineStore('monster', {
           // that's an actions
           const action = actionOrAttack
           // do the action processing
-          if (action.crAnnotation.include) {
+          if (action.crAnnotation?.include) {
             data.legendary.push({
               name: action.name,
               damage:
-                action.crAnnotation.maxDamage *
+                (action.crAnnotation.maxDamage || 0) *
                 (action.crAnnotation.multitarget ? 2 : 1),
-              limited: action.limitedUse.count > 0 || action.recharge !== '',
-              uses: action.limitedUse.count,
-              save: action.crAnnotation.maxSave,
-              toHit: action.crAnnotation.maxModifier,
+              limited: (action.limitedUse?.count || 0) > 0 || (action.recharge || '') !== '',
+              uses: action.limitedUse?.count || 0,
+              save: action.crAnnotation.maxSave || 0,
+              toHit: action.crAnnotation.maxModifier || 0,
               cost: la.cost,
               type: 'Legendary',
             })
@@ -1006,15 +1056,22 @@ export const useMonsterStore = defineStore('monster', {
       // and that spells won't be upcasted (yeah yeah I know about upcasted fireball but you'll just have to
       // figure that out yourself)
       // there's a few spellcasting lists... let's combine them
+      const standardList = Array.isArray(this.spellcasting.standard)
+        ? (Array.isArray(this.spellcasting.standard[0])
+            ? (this.spellcasting.standard as any).flat().map((s: any) => typeof s === 'string' ? s : s?.name).filter(Boolean)
+            : this.spellcasting.standard)
+        : []
+      const atWillLists = (this.spellcasting.atWill || []).map((a) => a.spells || [])
       const spells = union(
-        this.spellcasting.standard,
-        ...this.spellcasting.atWill.map((a) => a.spells)
+        standardList,
+        ...atWillLists
       )
 
       // got all the ids, get the dataaaaa
       const spellStore = useSpellsStore()
       for (const id of spells) {
         const spell = spellStore.allSpells[id]
+        if (!spell) continue
 
         // cantrip scaling based on caster level
         const damage =
@@ -1148,7 +1205,10 @@ export const useMonsterStore = defineStore('monster', {
       const index = this.speeds.findIndex((s) => s.id === id)
 
       if (index !== -1) {
-        this.speeds.splice(index, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('speeds', id))
+          this.speeds.splice(index, 1)
+        })
       }
     },
     addSkill(skillName: keyof typeof SKILL, proficient = true) {
@@ -1165,7 +1225,10 @@ export const useMonsterStore = defineStore('monster', {
       const index = this.skills.findIndex((s) => s.key === skillName)
 
       if (index !== -1) {
-        this.skills.splice(index, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, `skills[key=${encodeURIComponent(String(skillName).toUpperCase())}]`)
+          this.skills.splice(index, 1)
+        })
       }
     },
     addTrait() {
@@ -1175,7 +1238,10 @@ export const useMonsterStore = defineStore('monster', {
       const index = this.traits.findIndex((t) => t.id === id)
 
       if (index !== -1) {
-        this.traits.splice(index, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('traits', id))
+          this.traits.splice(index, 1)
+        })
       }
     },
     updateSpellsAtLevel(level: number, spells: string[]) {
@@ -1212,7 +1278,10 @@ export const useMonsterStore = defineStore('monster', {
     deleteInnateSpellList(id: string) {
       const index = this.spellcasting.atWill.findIndex((aw) => aw.id === id)
 
-      if (index !== -1) this.spellcasting.atWill.splice(index, 1)
+      if (index !== -1) this.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('spellcasting.atWill', id))
+        state.spellcasting.atWill.splice(index, 1)
+      })
     },
     addNewAttack() {
       this.attacks.push(defaultAttack())
@@ -1221,7 +1290,10 @@ export const useMonsterStore = defineStore('monster', {
       const index = this.attacks.findIndex((a) => a.id === id)
 
       if (index !== -1) {
-        this.attacks.splice(index, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('attacks', id))
+          this.attacks.splice(index, 1)
+        })
 
         // filter out legendary actions
         this.deleteLegendaryAction(id)
@@ -1253,7 +1325,10 @@ export const useMonsterStore = defineStore('monster', {
         const index = attack.additionalDamage.findIndex((a) => a.id === addId)
 
         if (index !== -1) {
-          attack.additionalDamage.splice(index, 1)
+          this.$patch(state => {
+            state.bindings = withoutEntryBindings(state.bindings, `${entryBindingPrefix('attacks', id)}.${entryBindingPrefix('additionalDamage', addId)}`)
+            attack.additionalDamage.splice(index, 1)
+          })
         }
       }
     },
@@ -1316,7 +1391,10 @@ export const useMonsterStore = defineStore('monster', {
       const index = this.actions.findIndex((a) => a.id === actionId)
 
       if (index !== -1) {
-        this.actions.splice(index, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('actions', actionId))
+          this.actions.splice(index, 1)
+        })
 
         // check if it's in a legendary action
         this.deleteLegendaryAction(actionId)
@@ -1403,7 +1481,10 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.reactions.findIndex((r) => r.id === reactionId)
 
       if (idx !== -1) {
-        this.reactions.splice(idx, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('reactions', reactionId))
+          this.reactions.splice(idx, 1)
+        })
       }
     },
     addLairAction() {
@@ -1417,7 +1498,10 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.lairActions.findIndex((la) => la.id === actionId)
 
       if (idx !== -1) {
-        this.lairActions.splice(idx, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('lairActions', actionId))
+          this.lairActions.splice(idx, 1)
+        })
       }
     },
     addRegionalEffect() {
@@ -1478,7 +1562,10 @@ export const useMonsterStore = defineStore('monster', {
       if (!Array.isArray(this.tools)) return
       const idx = this.tools.findIndex((t) => t.id === id)
       if (idx !== -1) {
-        this.tools.splice(idx, 1)
+        this.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('tools', id))
+          this.tools.splice(idx, 1)
+        })
       }
     },
     addVillainAction(round: 1 | 2 | 3 = 1) {
@@ -1494,7 +1581,10 @@ export const useMonsterStore = defineStore('monster', {
     deleteVillainAction(id: string) {
       if (!Array.isArray(this.villainActions)) return
       const idx = this.villainActions.findIndex((a) => a.id === id)
-      if (idx !== -1) this.villainActions.splice(idx, 1)
+      if (idx !== -1) this.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('villainActions', id))
+        this.villainActions.splice(idx, 1)
+      })
     },
     addBloodiedAction() {
       if (!Array.isArray(this.bloodiedActions)) this.bloodiedActions = []
@@ -1523,7 +1613,10 @@ export const useMonsterStore = defineStore('monster', {
     deleteReactiveAction(id: string) {
       if (!Array.isArray(this.reactiveActions)) return
       const idx = this.reactiveActions.findIndex((a) => a.id === id)
-      if (idx !== -1) this.reactiveActions.splice(idx, 1)
+      if (idx !== -1) this.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('reactiveActions', id))
+        this.reactiveActions.splice(idx, 1)
+      })
     },
     addComboAction() {
       if (!Array.isArray(this.comboActions)) this.comboActions = []
@@ -1555,7 +1648,10 @@ export const useMonsterStore = defineStore('monster', {
     deleteAnatomyPart(id: string) {
       if (!Array.isArray(this.anatomyParts)) return
       const idx = this.anatomyParts.findIndex((p) => p.id === id)
-      if (idx !== -1) this.anatomyParts.splice(idx, 1)
+      if (idx !== -1) this.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('anatomyParts', id))
+        this.anatomyParts.splice(idx, 1)
+      })
     },
     addTrackEvent(round = 1) {
       if (!this.runehammerTrack) {
@@ -1571,7 +1667,10 @@ export const useMonsterStore = defineStore('monster', {
     deleteTrackEvent(id: string) {
       if (!this.runehammerTrack?.events) return
       const idx = this.runehammerTrack.events.findIndex((e) => e.id === id)
-      if (idx !== -1) this.runehammerTrack.events.splice(idx, 1)
+      if (idx !== -1) this.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('runehammerTrack.events', id))
+        this.runehammerTrack.events.splice(idx, 1)
+      })
     },
     swapItems(target: SwappableField, source: number, dest: number) {
       const targetArray = this[target] as unknown[] | undefined

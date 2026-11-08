@@ -202,6 +202,8 @@ test('2024 structured attacks print the same automatic bonus as the sheet', () =
   monster.actions = [
     structured('bow', 'Longbow Volley', { actionType: 'weapon_attack', attackSource: 'weapon', attackReach: 'ranged', targeting: { count: 1, kind: 'target' } }),
     structured('blade', 'Blade', { actionType: 'weapon_attack', attackSource: 'weapon', attackReach: 'melee', targeting: { count: 1, kind: 'target' } }),
+    structured('rapier', 'Rapier', { attackSource: 'weapon', attackReach: 'melee', weaponAttackAbility: 'finesse', targeting: { count: 1, kind: 'target' } }),
+    structured('javelin', 'Javelin', { attackSource: 'weapon', attackReach: 'ranged', weaponAttackAbility: 'thrown', targeting: { count: 1, kind: 'target' } }),
     structured('bolt', 'Bolt', { actionType: 'spell_attack', attackSource: 'spell', attackReach: 'ranged', targeting: { count: 1, kind: 'creature' } }),
   ]
   monster.spellcasting = { ...monster.spellcasting, attack: { override: true, overrideValue: 9 } }
@@ -209,4 +211,6 @@ test('2024 structured attacks print the same automatic bonus as the sheet', () =
   assert.ok(text.includes('***Longbow Volley.*** Ranged Attack Roll: +2, one target.'), text)
   assert.ok(text.includes('***Blade.*** Melee Attack Roll: +5, one target.'), text)
   assert.ok(text.includes('***Bolt.*** Ranged Attack Roll: +9, one creature.'), text)
+  assert.ok(text.includes('***Rapier.*** Melee Attack Roll: +5, one target.'), text)
+  assert.ok(text.includes('***Javelin.*** Ranged Attack Roll: +5, one target.'), text)
 })

@@ -230,4 +230,35 @@ test('target nouns agree with their count in screen and 2024 text', () => {
     text2024(action({ attackSource: 'spell', attackReach: 'ranged', targeting: { count: 3, countMode: 'up_to', kind: 'creature', qualifier: 'which you can see' } }), { attackBonus: 7 }),
     'Ranged Attack Roll: +7, up to three creatures which you can see.'
   )
+  assert.strictEqual(
+    scopePhrase(inferAbility(action({ targeting: { count: 1, qualifier: 'which you can see' } as MonsterAction['targeting'] }))),
+    '1 target which you can see'
+  )
+  assert.strictEqual(
+    scopePhrase(inferAbility(action({ targeting: { count: 3, qualifier: 'which you can see' } as MonsterAction['targeting'] }))),
+    '3 targets which you can see'
+  )
+})
+test('attack granularity: attackCount, roll modifiers and exceptions format accurately in mechanicsPhrase', () => {
+  const granAction = action({
+    attackSource: 'spell',
+    attackReach: 'ranged',
+    attackBonus: 7,
+    attackCount: 3,
+    attackRollModifier: 'advantage',
+    attackException: 'Versus Undead',
+  })
+  const ability = inferAbility(granAction)
+  const phrases = mechanicsPhrase(ability, { attackBonus: 7 })
+  assert.deepStrictEqual(phrases, ['3 Ranged Spell Attacks of +7 (▲▲ Versus Undead)'])
+
+  const disAction = action({
+    attackSource: 'weapon',
+    attackReach: 'melee',
+    attackBonus: 5,
+    attackCount: 2,
+    attackRollModifier: 'disadvantage',
+    attackException: 'in Dim Light',
+  })
+  assert.deepStrictEqual(mechanicsPhrase(inferAbility(disAction)), ['2 Melee Weapon Attacks of +5 (▼▼ in Dim Light)'])
 })

@@ -1,11 +1,6 @@
 <template>
-  <q-expansion-item
-    expand-separator
-    :label="$t('editor.spellcasting.innate.label')"
-    :caption="$t('editor.spellcasting.innate.caption')"
-    header-class="bg-purple-10"
-  >
-    <q-card>
+  <div class="innate-casting-editor-panel q-mt-sm">
+    <q-card class="bg-grey-10 text-white rounded-borders" style="border: 1px solid rgba(255, 255, 255, 0.12);">
       <q-card-section>
         <div class="row">
           <q-input
@@ -69,14 +64,10 @@
             v-for="innateList in monster.spellcasting.atWill"
             :key="innateList.id"
           >
-            <q-input
-              :model-value="innateList.count"
+            <formula-field
+              :path="`spellcasting.atWill[id=${encodeURIComponent(innateList.id)}].count`"
               :label="$t('editor.spellcasting.innate.casts')"
-              type="number"
               class="col-2 q-pa-sm"
-              @update:model-value="
-                (value: string | number | null) => (innateList.count = validateNumber(value, 0))
-              "
             />
             <q-select
               v-model="innateList.rate"
@@ -119,7 +110,7 @@
         </div>
       </q-card-section>
     </q-card>
-  </q-expansion-item>
+  </div>
 </template>
 
 <script lang="ts">
@@ -131,12 +122,12 @@ import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
 import { ref, computed } from 'vue'
 import { spellArrayFilter } from '../filters'
 import MonsterTextEditor from './MonsterTextEditor.vue'
-import { validateNumber } from './numberInput'
+import FormulaField from '../kit/FormulaField.vue'
 import SearchableSpellSelect from './widgets/SearchableSpellSelect.vue'
 
 export default defineComponent({
   name: 'AtWillCastingEditor',
-  components: { MonsterTextEditor, SearchableSpellSelect },
+  components: { MonsterTextEditor, SearchableSpellSelect, FormulaField },
   setup() {
     const showSlots = ref(false)
     const classFilter = ref(false)
@@ -166,7 +157,6 @@ export default defineComponent({
       showSlots,
       classFilter,
       spellOptionsByLevel: spells.spellOptionsByLevel,
-      validateNumber: validateNumber,
       ...classes,
     }
   },

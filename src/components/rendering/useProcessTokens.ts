@@ -460,6 +460,19 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     return input
   }
 
+  const formatDescriptionContainers = (containers?: any[]): string => {
+    if (!Array.isArray(containers) || containers.length === 0) return '';
+    return containers.map((c) => {
+      if (c.kind === 'table' && c.table) {
+        const headerHtml = (c.table.headers || []).map((h: string) => `<th>${h}</th>`).join('');
+        const rowsHtml = (c.table.rows || []).map((r: string[]) => `<tr>${r.map((cell: string) => `<td>${cell}</td>`).join('')}</tr>`).join('');
+        return `<table class="outcome-dice-table"><thead><tr>${headerHtml}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
+      }
+      const outcomePrefix = c.outcomeTarget?.trim() ? `<i>${c.outcomeTarget.trim()}:</i> ` : '';
+      return `${outcomePrefix}${c.text || ''}`;
+    }).join(' ');
+  };
+
   const processTokens = (
     input: string,
     context: MonsterContext,
@@ -472,12 +485,27 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     // general parsing
     input = processMonsterTokens(input, monster)
 
+    // Custom user variables and macros
+    if ((monster as any).customVariables) {
+      for (const [varKey, varVal] of Object.entries((monster as any).customVariables)) {
+        if (!varKey) continue;
+        input = input.replace(new RegExp(`\\{${varKey}\\}`, 'gi'), String(varVal));
+      }
+    }
+    if ((monster as any).customMacros) {
+      for (const [macroKey, macroVal] of Object.entries((monster as any).customMacros)) {
+        if (!macroKey) continue;
+        input = input.replace(new RegExp(`\\{${macroKey}\\}`, 'gi'), String(macroVal));
+      }
+    }
+
     return input
   }
 
   interface PlateEntrySpec {
     stagePool?: string | number
     name: string
+    scores?: string
     /** Recharge / uses / cost, e.g. "Recharge 4–12", "3/Day", "Costs 2 Actions". */
     usage?: string
     /** School and tier, e.g. "Evocation Cantrip". */
@@ -490,6 +518,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     /** Targets, range and area cells. */
     scope?: string[]
     extra?: string[]
+    streamline?: boolean
   }
 
   /**
@@ -509,20 +538,97 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
       quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${spec.usage.trim()}</span>`)
     }
-    const classification = spec.discipline?.trim() ? ` <span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${spec.discipline.trim()}</span>` : ''
+    const classification = spec.discipline?.trim()
     const comps = Array.isArray(spec.components) && spec.components.length > 0
-      ? ` <span class="sb-qual sb-comp component-cell">(${spec.components.join(', ')})</span>`
+      ? spec.components.join(', ')
       : ''
-    const duration = spec.duration?.trim() && !/^instantaneous$/i.test(spec.duration.trim())
-      ? ` <span class="sb-qual duration-cell">${spec.duration.trim()}</span>`
-      : ''
-    const head = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}</span>${comps}${classification}${duration}`
+    const spellMetaParts: string[] = []
+    if (classification) {
+      spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`)
+    }
+    if (comps) {
+      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell">(${comps})</span>`)
+    }
+    const spellMetaSuffix = spellMetaParts.length > 0 ? `, ${spellMetaParts.join(' ')}` : ''
+    const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}${spellMetaSuffix}</span>`
+    const headerCells: PlateCell[] = [
+      { html: nameHtml, head: true, cls: 'action-composite-pill name-cell' }
+    ]
 
-    const cells: PlateCell[] = [{ html: head, head: true, cls: 'action-composite-pill name-cell' }]
-    for (const m of spec.mechanics ?? []) if (m?.trim()) cells.push({ html: m, cls: 'mech-cell' })
-    for (const s of spec.scope ?? []) if (s?.trim()) cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
-    for (const e of spec.extra ?? []) if (e?.trim()) cells.push({ html: e, cls: 'meta-cell' })
-    return plateHtml({ rows: [{ cells, cls: 'action-composite-header' }], body })
+    if (spec.scores?.trim()) {
+      headerCells.push({
+        html: `<span class="sb-scores scores-cell">${spec.scores.trim()}</span>`,
+        cls: 'scores-cell'
+      })
+    }
+
+    const duration = spec.duration?.trim() && !/^instantaneous$/i.test(spec.duration.trim())
+      ? spec.duration.trim()
+      : ''
+    if (duration) {
+      headerCells.push({
+        html: `<span class="sb-qual duration-cell">${duration}</span>`,
+        cls: 'duration-cell'
+      })
+    }
+
+    const mechItems = (spec.mechanics ?? [])
+      .filter((m) => m?.trim())
+      .map((m) => m.replace(/\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma|STR|DEX|CON|INT|WIS|CHA)\s+Save\s+(?!(?:DC\b))(<span[^>]*>\d+<\/span>|\d+)/i, '$1 Save DC $2'))
+    const scopeItems = (spec.scope ?? []).filter((s) => s?.trim())
+    const rows: PlateRow[] = [
+      { cells: headerCells, cls: 'action-composite-header' }
+    ]
+
+    const isSpellLike = Boolean(classification || comps || duration)
+
+    if (isSpellLike) {
+      for (const m of mechItems) {
+        headerCells.push({ html: m, cls: 'mech-cell' })
+      }
+      const row2Cells: PlateCell[] = []
+      for (const s of scopeItems) {
+        row2Cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
+      }
+      for (const e of spec.extra ?? []) {
+        if (e?.trim()) row2Cells.push({ html: e, cls: 'meta-cell' })
+      }
+      if (row2Cells.length > 0) {
+        rows.push({ cells: row2Cells, cls: 'action-composite-details' })
+      }
+    } else {
+      const row2Cells: PlateCell[] = []
+      for (const s of scopeItems) {
+        row2Cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
+      }
+      for (const m of mechItems) {
+        row2Cells.push({ html: m, cls: 'mech-cell' })
+      }
+      for (const e of spec.extra ?? []) {
+        if (e?.trim()) row2Cells.push({ html: e, cls: 'meta-cell' })
+      }
+
+      if (row2Cells.length > 0) {
+        if (!spec.scores && headerCells.length === 1) {
+          // Simple/physical attacks like Slam: combine name and reach/targeting on Row 1
+          rows[0].cells = [...headerCells, ...row2Cells]
+        } else {
+          rows.push({ cells: row2Cells, cls: 'action-composite-details' })
+        }
+      }
+    }
+
+    if (spec.streamline && rows.length === 1 && rows[0].cells.length === 1 && !classification && !comps && !duration && !spec.scores && body.trim()) {
+      const plainBody = body.replace(/<[^>]+>/g, '').trim()
+      const singleLineCls = plainBody.length <= 55 ? ' sb-single-line' : ''
+      headerCells.push({
+        html: boldNumbers(body),
+        cls: 'sb-body sb-grow action-body-text'
+      })
+      return plateHtml({ rows, body: '', cls: `sb-trait-streamlined${singleLineCls}` })
+    }
+
+    return plateHtml({ rows, body })
   }
 
   const usageText = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
@@ -556,10 +662,27 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
     const scopeText = scopePhrase(ability, renderContext)
     const scope = scopeText ? [boldNumbers(scopeText)] : []
-    const outcomeHtml = outcomePhrase(ability, renderContext)
-      .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
-    const effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
-    let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
+    const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length))
+    let effectsStr = ''
+    if (hasSectors) {
+      const sectorsHtml = ability.outcomes.map(o => {
+        const filterBadge = o.targetFilter?.trim() ? `<span class="outcome-target-badge">[${o.targetFilter.trim()}]</span> ` : ''
+        const effectsText = (o.effects || []).map(e => e.text || (e.formula ? `${e.formula}${e.damageType ? ' ' + e.damageType + ' damage' : ''}` : '')).filter(Boolean).join('. ')
+        const riderText = o.rider ? ` ${o.rider}` : ''
+        let tableHtml = ''
+        if (o.diceTable && o.diceTable.length) {
+          tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
+        }
+        return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}:</i> ${effectsText}${riderText}${tableHtml}</div>`
+      }).join('')
+      effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
+    } else {
+      const outcomeHtml = outcomePhrase(ability, renderContext)
+        .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
+      effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
+    }
+    const containersStr = formatDescriptionContainers(context.descriptionContainers)
+    let desc = processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim()
 
     if (context.stat && context.stat !== 'none') {
       desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
@@ -569,6 +692,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     }
 
     const { discipline, components, duration } = abilityHeader(context)
+    const canStreamline = !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0 && !hasSectors
     return buildPlateEntry(
       monster,
       {
@@ -580,6 +704,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         duration,
         mechanics,
         scope,
+        streamline: canStreamline,
       },
       desc
     )
@@ -612,14 +737,27 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         ? `${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)}`
         : ''
       const desc = processTokens(context.description, context, monster, 'trait')
-      return buildPlateEntry(monster, { stagePool: context?.stagePool, name: context.name, usage }, desc)
+      const containersStr = formatDescriptionContainers(context.descriptionContainers)
+      const fullDesc = containersStr ? (desc ? `${desc} ${containersStr}` : containersStr) : desc
+      return buildPlateEntry(
+        monster,
+        {
+          stagePool: context?.stagePool,
+          name: context.name,
+          usage,
+          streamline: !containersStr
+        },
+        fullDesc
+      )
     }
 
+    const containersStr = formatDescriptionContainers(context.descriptionContainers)
     if (context.customPreamble) {
-      return poolBadge + processTokens(context.description, context, monster, 'trait')
+      const desc = processTokens(context.description, context, monster, 'trait')
+      return poolBadge + (containersStr ? `${desc} ${containersStr}` : desc)
     } else {
       return processTokens(
-        `${poolBadge}<b><i>{trait.name}{trait.limitedUse}.</i></b> ${context.description}`,
+        `${poolBadge}<b><i>{trait.name}{trait.limitedUse}.</i></b> ${context.description}${containersStr ? ` ${containersStr}` : ''}`,
         context,
         monster,
         'trait'
@@ -643,32 +781,43 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       // Discipline: "Evocation Cantrip" for cantrips, "3rd Level Evocation" otherwise (PHB 2024 order)
       const { discipline, components, duration } = abilityHeader(context)
 
-      // Targets / range / area, numbers in bold
+      // Targets / range / area, numbers in bold (via shared ability grammar so counts & nouns always agree)
+      const { ability: inferredAbility, renderContext: legacyRenderCtx } = structuredRenderContext(context, monster)
+      const inferredScope = scopePhrase(inferredAbility, legacyRenderCtx)
       const scopeParts: string[] = []
-      if (context.range && context.range.trim()) {
-        scopeParts.push(context.range.trim())
-      }
-      if (context.areaDistance && context.areaDistance.trim()) {
-        scopeParts.push(context.areaDistance.trim())
-      }
-      if (context.areaShape && context.areaShape.trim()) {
-        scopeParts.push(context.areaShape.trim())
-      }
-      if (context.targetsText && context.targetsText.trim()) {
-        scopeParts.push(context.targetsText.trim())
+      if (inferredScope) {
+        scopeParts.push(inferredScope)
+      } else {
+        if (context.range && context.range.trim()) {
+          scopeParts.push(context.range.trim())
+        }
+        if (context.areaDistance && context.areaDistance.trim()) {
+          scopeParts.push(context.areaDistance.trim())
+        }
+        if (context.areaShape && context.areaShape.trim()) {
+          scopeParts.push(context.areaShape.trim())
+        }
+        if (context.targetsText && context.targetsText.trim()) {
+          scopeParts.push(context.targetsText.trim())
+        }
       }
       const scope = scopeParts.length > 0 ? [boldNumbers(scopeParts.join(' '))] : []
 
       // Mechanics: | Ranged Spell Attack +7 |, | Charisma Save 15 |
       const mechanics: string[] = []
-      if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
-        const isSpell = context.actionType === 'spell_attack'
-        const bonus = structuredAttackBonus(context, monster as unknown as DomainMonster) ?? 0
-        mechanics.push(`${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
-      }
-      if (context.stat && context.stat !== 'none') {
-        const dcVal = saveForAction(monster, context.stat, context.save)
-        mechanics.push(`${t(`statFull.${context.stat}`)} Save <strong class="dnd-num">${dcVal}</strong>`)
+      const inferredMechanics = mechanicsPhrase(inferredAbility, legacyRenderCtx).map(boldNumbers)
+      if (inferredMechanics.length > 0) {
+        mechanics.push(...inferredMechanics)
+      } else {
+        if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
+          const isSpell = context.actionType === 'spell_attack'
+          const bonus = structuredAttackBonus(context, monster as unknown as DomainMonster) ?? 0
+          mechanics.push(`${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
+        }
+        if (context.stat && context.stat !== 'none') {
+          const dcVal = saveForAction(monster, context.stat, context.save)
+          mechanics.push(`${t(`statFull.${context.stat}`)} Save <strong class="dnd-num">${dcVal}</strong>`)
+        }
       }
 
       const effectsStr = Array.isArray(context?.effects) && context.effects.length > 0
@@ -684,6 +833,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
       }
 
+      const canStreamline = !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0
       return buildPlateEntry(
         monster,
         {
@@ -695,6 +845,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           duration,
           mechanics,
           scope,
+          streamline: canStreamline,
         },
         desc
       )
@@ -735,9 +886,60 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern) {
+      const isStructured = hasStructuredAbility(context as any) || !!context.school || !!context.spellLevel || (!!context.stat && context.stat !== 'none') || !!context.attackSource
       const trigger = context.trigger?.trim()
         ? `<i>${t('monster.reaction.trigger')}:</i> ${processTokens(context.trigger.trim(), context, monster, 'reaction')}`
         : ''
+
+      if (isStructured) {
+        const { ability, renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
+        const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
+        const scopeText = scopePhrase(ability, renderContext)
+        const scope = scopeText ? [boldNumbers(scopeText)] : []
+        const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length))
+        let effectsStr = ''
+        if (hasSectors) {
+          const sectorsHtml = ability.outcomes.map(o => {
+            const filterBadge = o.targetFilter?.trim() ? `<span class="outcome-target-badge">[${o.targetFilter.trim()}]</span> ` : ''
+            const effectsText = (o.effects || []).map(e => e.text || (e.formula ? `${e.formula}${e.damageType ? ' ' + e.damageType + ' damage' : ''}` : '')).filter(Boolean).join('. ')
+            const riderText = o.rider ? ` ${o.rider}` : ''
+            let tableHtml = ''
+            if (o.diceTable && o.diceTable.length) {
+              tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
+            }
+            return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}:</i> ${effectsText}${riderText}${tableHtml}</div>`
+          }).join('')
+          effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
+        } else {
+          const outcomeHtml = outcomePhrase(ability, renderContext)
+            .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
+          effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
+        }
+        let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'reaction').trim()
+        if (context.stat && context.stat !== 'none') {
+          desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
+        }
+        if (ability.attackSource) {
+          desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
+        }
+        const { discipline, components, duration } = abilityHeader(context as unknown as MonsterAction)
+        return buildPlateEntry(
+          monster,
+          {
+            stagePool: context?.stagePool,
+            name: context.name,
+            usage: usageText(context),
+            discipline,
+            components,
+            duration,
+            mechanics,
+            scope,
+            extra: trigger ? [trigger] : [],
+          },
+          desc
+        )
+      }
+
       const desc = processTokens(context.description, context, monster, 'reaction')
       return buildPlateEntry(
         monster,
@@ -882,7 +1084,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     }
     if (isModern) {
       const body = processTokens('{multiattack.all}. {multiattack.postscript}', context, monster, 'multiattack').trim()
-      return buildPlateEntry(monster, { name: t('editor.multiattack.label') }, body)
+      return buildPlateEntry(monster, { name: t('editor.multiattack.label'), streamline: true }, body)
     }
     return processTokens(
       `<b><i>${t(
@@ -1117,6 +1319,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     processMythicActionPreamble,
     processLairActionPreamble,
     processLairAction,
+    buildPlateEntry,
     sanitizeWebString,
     mdFormatter,
     latexFormatter,

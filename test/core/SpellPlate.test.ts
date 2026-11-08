@@ -95,10 +95,16 @@ test('cadence catalog prevents long-rest resources from being labelled Daily', (
   assert.equal(cadenceLabel('1_day'), '1/Day')
   assert.equal(cadenceLabel('Always Available'), 'Always Prepared')
   assert.equal(cadenceLabel('A custom cadence'), 'A custom cadence')
+  assert.equal(cadenceLabel('hidden'), '')
+  assert.equal(cadenceLabel('while_bloodied'), 'While Bloodied')
+  assert.equal(cadenceLabel('dawn'), 'At Dawn')
   assert.equal(CADENCE_LABELS.recharge_5_6, 'Recharge 5–6')
   assert.deepEqual(CADENCE_OPTIONS.map(({ value }) => value), [
     'long_rest', 'short_rest', 'at_will', '1_day', '2_day', '3_day',
     'recharge_5_6', 'downtime', 'ritual', 'always_available',
+    'at_dawn', 'at_dusk', 'at_midday', 'at_midnight',
+    'while_bloodied', 'when_bloodied', 'at_0_hp', 'at_1_hp',
+    'hourly', '10_minutes', '1_minute', 'weekly', 'monthly', 'hidden',
   ])
   assert.equal(RESOURCE_REFRESH_OPTIONS[0].label, 'Long Rest')
   assert.equal(RESOURCE_REFRESH_OPTIONS[0].label.includes('Daily'), false)

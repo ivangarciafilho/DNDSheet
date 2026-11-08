@@ -9,6 +9,19 @@
       <!-- Standard Speeds List -->
       <q-card-section class="q-pa-xs">
         <!-- Speeds Auto-Add Dropdown (No add button required) -->
+        <div class="row items-center justify-between q-px-xs q-mb-xs">
+          <q-toggle
+            v-model="monster.splitSpeedRiderRows"
+            dark
+            dense
+            size="xs"
+            color="cyan-4"
+            label="Disclose movement riders on indented sub-rows (1 row per rider)"
+            class="text-caption text-weight-medium text-cyan-2"
+          >
+            <q-tooltip>Renders each movement rider (Dodge, Disengage, Dash, Hide, etc.) on its own dedicated indented sub-row (↳) beneath base speed.</q-tooltip>
+          </q-toggle>
+        </div>
         <div class="row items-center q-col-gutter-xs q-mb-sm">
           <div class="col-12">
             <q-select
@@ -289,6 +302,83 @@
                 color="primary"
               />
             </div>
+            <div class="col-12 col-sm-6 col-md-3">
+              <q-checkbox
+                v-model="(speedTraversal as any).bonusActionHide"
+                dense
+                label="Bonus Action Hide"
+                color="primary"
+              />
+            </div>
+
+            <!-- Cunning Action Riders -->
+            <div v-if="speedTraversal.bonusActionDash" class="col-12 col-sm-6 col-md-4 q-mt-xs">
+              <q-select
+                v-model="speedTraversal.dashRider"
+                :options="dashRiderPresets"
+                use-input
+                fill-input
+                hide-selected
+                new-value-mode="add-unique"
+                dense
+                outlined
+                label="Dash Rider"
+                placeholder="e.g. Ignores Difficult Terrain"
+              >
+                <q-tooltip class="text-caption">Rider applied when taking the Dash action</q-tooltip>
+              </q-select>
+            </div>
+
+            <div v-if="speedTraversal.bonusActionDodge" class="col-12 col-sm-6 col-md-4 q-mt-xs">
+              <q-select
+                v-model="speedTraversal.dodgeRider"
+                :options="dodgeRiderPresets"
+                use-input
+                fill-input
+                hide-selected
+                new-value-mode="add-unique"
+                dense
+                outlined
+                label="Dodge Rider"
+                placeholder="e.g. Adv on DEX saves"
+              >
+                <q-tooltip class="text-caption">Rider applied when taking the Dodge action</q-tooltip>
+              </q-select>
+            </div>
+
+            <div v-if="speedTraversal.bonusActionDisengage" class="col-12 col-sm-6 col-md-4 q-mt-xs">
+              <q-select
+                v-model="speedTraversal.disengageRider"
+                :options="disengageRiderPresets"
+                use-input
+                fill-input
+                hide-selected
+                new-value-mode="add-unique"
+                dense
+                outlined
+                label="Disengage Rider"
+                placeholder="e.g. Change to the ethereal plane"
+              >
+                <q-tooltip class="text-caption">Rider applied when taking the Disengage action</q-tooltip>
+              </q-select>
+            </div>
+
+            <div v-if="(speedTraversal as any).bonusActionHide" class="col-12 col-sm-6 col-md-4 q-mt-xs">
+              <q-select
+                v-model="(speedTraversal as any).hideRider"
+                :options="disengageRiderPresets"
+                use-input
+                fill-input
+                hide-selected
+                new-value-mode="add-unique"
+                dense
+                outlined
+                label="Hide Rider"
+                placeholder="e.g. Becomes Invisible until end of turn"
+              >
+                <q-tooltip class="text-caption">Rider applied when taking the Hide action</q-tooltip>
+              </q-select>
+            </div>
           </div>
 
           <!-- Specific Tactical Speeds -->
@@ -357,6 +447,155 @@
           </div>
         </div>
       </q-expansion-item>
+
+      <!-- Movement Action Riders Composer (Dash, Disengage, Dodge, Auras) -->
+      <div
+        class="q-pa-xs q-ma-xs rounded-borders"
+        style="background: rgba(255, 255, 255, 0.03); border: 1.5px solid #00b4d8; box-shadow: 0 2px 8px rgba(0, 180, 216, 0.15);"
+      >
+        <div class="row items-center justify-between q-pa-xs">
+          <div class="row items-center q-gutter-x-xs">
+            <q-icon name="directions_run" color="cyan-3" size="sm" />
+            <span class="text-subtitle2 text-weight-bold text-cyan-2">Movement Action Riders Composer</span>
+          </div>
+          <div class="row items-center q-gutter-x-xs">
+            <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+              <q-list dense dark class="bg-grey-10">
+                <q-item
+                  v-for="preset in SPEED_ACTION_RIDER_PRESETS"
+                  :key="preset.id"
+                  clickable
+                  v-close-popup
+                  @click="addPresetRider(preset)"
+                >
+                  <q-item-section>
+                    <q-item-label class="text-caption text-weight-medium">{{ preset.label }}</q-item-label>
+                    <q-item-label caption class="text-grey-5">{{ preset.action }}: {{ preset.rider }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+            <q-btn
+              dense
+              round
+              flat
+              size="sm"
+              icon="add"
+              color="cyan-3"
+              @click="addCustomActionRider"
+            >
+              <q-tooltip class="dnd-tip">Add custom movement action rider</q-tooltip>
+            </q-btn>
+          </div>
+        </div>
+
+        <div class="text-caption text-grey-4 q-px-xs q-mb-xs">
+          Compose rider effects for Dash, Disengage, Dodge, and movement triggers rendered directly on the Speed vital line.
+        </div>
+
+        <div class="row items-center justify-between q-px-xs q-mb-xs">
+          <q-toggle
+            v-model="monster.splitSpeedRiderRows"
+            dark
+            dense
+            size="xs"
+            color="cyan-4"
+            label="Disclose movement riders on indented sub-rows"
+            class="text-caption text-weight-medium text-cyan-2"
+          >
+            <q-tooltip>Renders movement riders on dedicated indented sub-rows (↳) directly beneath base speed.</q-tooltip>
+          </q-toggle>
+        </div>
+
+        <div v-if="!actionRiders.length" class="text-caption text-grey-5 q-pa-sm text-center">
+          No movement action riders added yet. Click "+", select a preset above, or use quick-mix tags below.
+        </div>
+
+        <div
+          v-for="(rider, rIdx) in actionRiders"
+          :key="rider.id || rIdx"
+          class="q-pa-xs q-mb-xs rounded-borders bg-grey-10"
+          style="border: 1px solid rgba(255, 255, 255, 0.15);"
+        >
+          <div class="row q-col-gutter-xs items-center">
+            <div class="col-12 col-sm-3">
+              <q-select
+                v-model="rider.action"
+                :options="actionTriggerOptions"
+                dense
+                outlined
+                dark
+                emit-value
+                map-options
+                use-input
+                new-value-mode="add-unique"
+                label="Trigger / Action"
+              />
+            </div>
+            <div class="col-6 col-sm-2">
+              <q-select
+                v-model="rider.actionType"
+                :options="['Action', 'Bonus Action', 'Reaction', 'Free']"
+                dense
+                outlined
+                dark
+                label="Economy"
+              />
+            </div>
+            <div class="col-6 col-sm-6">
+              <q-input
+                v-model="rider.rider"
+                dense
+                outlined
+                dark
+                label="Rider Clause / Formula"
+                placeholder="e.g. can Shove as a Bonus Action"
+              >
+                <template #append>
+                  <q-btn
+                    flat
+                    round
+                    dense
+                    size="xs"
+                    icon="close"
+                    color="red-4"
+                    @click="removeActionRider(rIdx)"
+                  >
+                    <q-tooltip class="dnd-tip">Remove this movement rider</q-tooltip>
+                  </q-btn>
+                </template>
+              </q-input>
+            </div>
+            <div class="col-12 col-sm-1 text-right">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                icon="delete"
+                color="negative"
+                @click="removeActionRider(rIdx)"
+              />
+            </div>
+          </div>
+          <!-- Live Preview Banner for this rider -->
+          <div class="row items-center justify-between q-mt-xs q-px-xs text-xs text-grey-4">
+            <span>Rendered Vital: <b class="text-cyan-3">{{ formatSpeedRiderPreview(rider) }}</b></span>
+            <div class="row items-center q-gutter-x-xs flex-wrap">
+              <q-btn dense flat size="xs" color="cyan-3" label="+ BA" @click="appendToken(rider, 'as a Bonus Action')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 of Temporary Hit Points')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Obscured" @click="appendToken(rider, 'Creatures 5ft of you are lightly obscured')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Adv Saves" @click="appendToken(rider, 'Until End Of Turn: Advantage on Strength, and Dexterity Saving Throws')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport Visited" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space visited this turn')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport Familiar" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space familiar to you')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport 10ft See" @click="appendToken(rider, 'Teleport up to 10ft to a point you can see')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ 1d8 Fire" @click="appendToken(rider, 'takes 1d8 fire damage')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Shove" @click="appendToken(rider, 'can Shove')" />
+              <q-btn dense flat size="xs" color="cyan-3" label="+ Ethereal" @click="appendToken(rider, 'shift to the Ethereal Plane')" />
+            </div>
+          </div>
+        </div>
+      </div>
     </q-card>
   </q-expansion-item>
 </template>
@@ -369,6 +608,11 @@ import { useI18n } from 'vue-i18n'
 import { basicArrayFilter } from '../filters'
 import { validateNumber } from './numberInput'
 import SwapButtons from './widgets/SwapButtons.vue'
+import {
+  SPEED_ACTION_RIDER_PRESETS,
+  formatSpeedActionRider,
+  SpeedActionRider,
+} from 'src/core/domain/speeds-traversal'
 
 export default defineComponent({
   name: 'SpeedsEditor',
@@ -389,7 +633,7 @@ export default defineComponent({
         note: '',
       }
     }
-    const speedTraversal = monster.speedTraversal
+    const speedTraversal = computed(() => monster.speedTraversal)
 
     const defaultSpeedOptions = computed(() => {
       return STANDARD_MOVEMENTS.map((m) => t(`monster.movement.type.${m}`)).sort((a, b) => a.localeCompare(b))
@@ -411,7 +655,27 @@ export default defineComponent({
       { label: 'Shunt to Ethereal Plane', value: 'ethereal_plane' },
     ]
 
-    const shuntDamageOptions = [
+        const dashRiderPresets = [
+      'Ignores Difficult Terrain',
+      'Doubles jump distance',
+      'Leaves a trail of fire',
+      'Disengages simultaneously',
+    ]
+
+    const dodgeRiderPresets = [
+      'Advantage on Dexterity saving throws',
+      'Attackers miss trigger counterattack',
+      'Damage from missed attacks halved',
+    ]
+
+    const disengageRiderPresets = [
+      'Change to the ethereal plane',
+      'Becomes Invisible until end of turn',
+      'Teleports up to 30 ft',
+      'Leaves a smoke cloud',
+    ]
+
+const shuntDamageOptions = [
       '1d6 force',
       '1d10 force',
       '2d6 force',
@@ -456,10 +720,82 @@ export default defineComponent({
       '0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', '60', '70', '80', '90', '100', '120', '150'
     ]
 
+    const actionTriggerOptions = [
+      'Dash',
+      'Disengage',
+      'Dodge',
+      'Hide',
+      'Dash or Disengage',
+      'Dodge or Disengage',
+      'Dash, Disengage, or Dodge',
+      'Dash, Disengage, Dodge, or Hide',
+      'Once per round',
+      'Once per round per creature',
+      'General',
+    ]
+
+    const actionRiders = computed(() => {
+      return monster.speedTraversal.actionRiders || []
+    })
+
+    const addCustomActionRider = () => {
+      if (!monster.speedTraversal.actionRiders) {
+        monster.speedTraversal.actionRiders = []
+      }
+      monster.speedTraversal.actionRiders.push({
+        id: `rider-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        action: 'Dash',
+        actionType: 'Bonus Action',
+        rider: 'can Shove as a Bonus Action',
+      })
+    }
+
+    const addPresetRider = (preset: typeof SPEED_ACTION_RIDER_PRESETS[number]) => {
+      if (!monster.speedTraversal.actionRiders) {
+        monster.speedTraversal.actionRiders = []
+      }
+      monster.speedTraversal.actionRiders.push({
+        id: `rider-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+        action: preset.action,
+        actionType: preset.actionType,
+        rider: preset.rider,
+      })
+    }
+
+    const removeActionRider = (idx: number) => {
+      if (monster.speedTraversal.actionRiders) {
+        monster.speedTraversal.actionRiders.splice(idx, 1)
+      }
+    }
+
+    const appendToken = (rider: SpeedActionRider, token: string) => {
+      if (!rider.rider) {
+        rider.rider = token
+      } else if (!rider.rider.includes(token)) {
+        rider.rider = `${rider.rider.trim()}, ${token}`
+      }
+    }
+
+    const formatSpeedRiderPreview = (rider: SpeedActionRider) => {
+      return formatSpeedActionRider(rider)
+    }
+
     return {
+      monster,
+      dashRiderPresets,
+      dodgeRiderPresets,
+      disengageRiderPresets,
       speeds: computed(() => monster.speeds),
       speedTraversal,
       speedPresetOptions,
+      actionTriggerOptions,
+      actionRiders,
+      SPEED_ACTION_RIDER_PRESETS,
+      addCustomActionRider,
+      addPresetRider,
+      removeActionRider,
+      appendToken,
+      formatSpeedRiderPreview,
       addSpeed: monster.addSpeed,
       deleteSpeed: monster.deleteSpeed,
       movementFilter,

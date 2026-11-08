@@ -368,6 +368,13 @@ export interface ActionOrientedPassives {
   bonusActionStudy?: boolean
   bonusActionHide?: boolean
   bonusActionInfluence?: boolean
+  bonusActionTools?: boolean
+  searchPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  studyPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  hidePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  influencePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  toolsPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  riders?: Record<string, string>
   conditions?: Record<string, string>
   search?: {
     perception?: boolean
@@ -447,6 +454,15 @@ export interface MonsterSpeedTraversal {
   // Aquatic / Breathing options
   aquaticBreathing?: 'none' | 'underwater' | 'amphibious' | 'water_only' | 'hold_breath'
   holdBreathDuration?: string
+
+  // Movement Action Riders
+  actionRiders?: Array<{
+    id: string
+    action: string
+    actionType?: 'Action' | 'Bonus Action' | 'Reaction' | 'Free'
+    rider: string
+    trigger?: string
+  }>
 }
 
 export interface MonsterAcConfig {
@@ -570,6 +586,17 @@ export interface DndLimitedUse {
   rate: string
 }
 
+export interface ActionDescriptionContainer {
+  id: string
+  kind: 'text' | 'table'
+  outcomeTarget?: string
+  text?: string
+  table?: {
+    headers: string[]
+    rows: string[][]
+  }
+}
+
 export interface MonsterTrait {
   name: string
   id: string
@@ -585,6 +612,7 @@ export interface MonsterTrait {
   rechargeCount?: number
   rechargeTagOverride?: string
   stagePool?: number | 'all'
+  descriptionContainers?: ActionDescriptionContainer[]
 }
 
 export interface ActionEffect {
@@ -600,6 +628,8 @@ export interface MonsterAction {
   rechargeMin?: number
   rechargeMax?: number
   actionType?: string
+  /** Weapon ability provenance; omitted/auto follows reach. Thrown denotes a thrown melee weapon. */
+  weaponAttackAbility?: DndStat | 'auto' | 'finesse' | 'thrown' | 'finesse_thrown'
   attackBonus?: number
   targetsText?: string
   legendaryOnly: boolean
@@ -626,8 +656,13 @@ export interface MonsterAction {
   /** Optional structured authoring; omitted legacy records retain their current output. */
   attackReach?: AttackReach
   attackSource?: AttackSource
+  attackCount?: number | string
+  attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
+  attackException?: string
   targeting?: AbilityTargeting
   outcomes?: AbilityOutcome[]
+  outcomeLayout?: 'linear' | 'grid_1x2' | 'grid_2x1' | 'grid_2x2' | 'table'
+  descriptionContainers?: ActionDescriptionContainer[]
 }
 
 export interface LairAction {
@@ -881,6 +916,7 @@ export interface Monster {
       overrideValue: number
     }
     class: string | undefined
+    subclass?: string
     level: number
     slots: number[]
     atWill: DndAtWillSpell[]
@@ -903,6 +939,8 @@ export interface Monster {
     refreshRate?: 'long_rest' | 'short_rest' | 'downtime'
     displayTitleMode?: 'class_names' | 'caster_source' | 'split_levels'
     bypassSlotLevelFilter?: boolean
+    splitHighCadence?: boolean
+    restrictedCadences?: string[]
     spellCadenceMap?: Record<string, string>
     levelCadenceMap?: Record<number, string>
     bonusActionLevelMap?: Record<number, boolean>
@@ -927,6 +965,11 @@ export interface Monster {
       slots?: number[]
       bypassSlotFilter?: boolean
       spells?: string[]
+      levelCadences?: Record<number, string>
+      levelBonusAction?: Record<number, boolean>
+      spellCadenceMap?: Record<string, string>
+      actionType?: 'Action' | 'Bonus Action'
+      resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
     }>
   }
   attacks: DndAttack[]
@@ -981,6 +1024,11 @@ export interface Monster {
   anatomyParts?: AnatomyPart[]
   runehammerTrack?: RunehammerTrack
   paragonConfig?: ParagonConfig
+  toolsPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  showXp?: boolean
+  compactNameplate?: boolean
+  customVariables?: Record<string, string | number>
+  customMacros?: Record<string, string>
 }
 
 // uhhhhhh

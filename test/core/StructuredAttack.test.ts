@@ -30,3 +30,23 @@ test('an authored bonus always wins and a non-attack has no bonus', () => {
   assert.equal(structuredAttackBonus(attack({}), source()), undefined)
   assert.equal(structuredAttackBonus(attack({ stat: 'WIS' }), source()), undefined)
 })
+
+
+test('authored finesse, thrown melee and explicit ability rules have stable provenance', () => {
+  const dex = { ...source(), stats: { ...source().stats, STR: 10, DEX: 20 } }
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', attackReach: 'melee', weaponAttackAbility: 'finesse' }, dex), 8)
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', attackReach: 'ranged', weaponAttackAbility: 'thrown' }, dex), 3)
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', attackReach: 'ranged', weaponAttackAbility: 'finesse_thrown' }, dex), 8)
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', attackReach: 'ranged', weaponAttackAbility: 'CHA' }, dex), 8)
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', weaponAttackAbility: 'finesse', attackBonus: 0 }, dex), 0)
+  assert.equal(structuredAttackBonus({ attackSource: 'weapon', weaponAttackAbility: 'finesse' }, source()), 7)
+  assert.equal(structuredAttackBonus({ attackSource: 'spell', weaponAttackAbility: 'STR' }, source({ stat: 'CHA' })), 8)
+})
+
+test('nonfinite bonuses and ability facts fall back to finite automatic values', () => {
+  for (const invalid of [NaN, Infinity, -Infinity]) {
+    assert.equal(structuredAttackBonus({ attackSource: 'weapon', attackReach: 'ranged', attackBonus: invalid }, source()), 5)
+    assert.equal(structuredAttackBonus({ attackSource: 'spell' }, source({ stat: 'CHA', attack: { override: true, overrideValue: invalid } })), 8)
+    assert.equal(structuredAttackBonus({ attackSource: 'weapon', weaponAttackAbility: 'finesse' }, { proficiency: invalid, stats: { STR: invalid, DEX: invalid } }), 0)
+  }
+})

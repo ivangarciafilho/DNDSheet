@@ -20,19 +20,31 @@ export const CADENCES: readonly CadenceDefinition[] = [
   cadence('LONG_REST','Long Rest','Long Rest','Rest and recovery','rest','Recovery after a Long Rest.'),
   cadence('LONG_OR_SHORT','Short or Long Rest','Short or Long Rest','Rest and recovery','rest','Recovery after either rest; not two separate resource pools.'),
   cadence('DOWNTIME','Downtime','Downtime','Rest and recovery','event','Authored recovery during downtime; the tool does not advance a campaign clock.'),
-  cadence('BLOODIED','Bloodied','Bloodied','Combat events','event','Recovery on becoming bloodied. This is not a bloodied-only availability restriction and does not automate combat.'),
+  cadence('WHILE_BLOODIED','While bloodied','While Bloodied','Combat states','event','Available or active while the creature is bloodied (at or below half HP).'),
+  cadence('WHEN_BLOODIED','When bloodied','When Bloodied','Combat states','event','Triggers or recovers when the creature first becomes bloodied.'),
+  cadence('AT_0_HP','At 0 hit points','At 0 HP','Combat states','event','Triggers or becomes active when reduced to 0 hit points.'),
+  cadence('AT_1_HP','At 1 hit point','At 1 HP','Combat states','event','Triggers or becomes active when reduced to 1 hit point or survives at 1 HP.'),
+  cadence('BLOODIED','Bloodied','Bloodied','Combat states','event','Recovery on becoming bloodied. This is not a bloodied-only availability restriction and does not automate combat.'),
   cadence('INITIATIVE','Initiative','Initiative','Combat events','event','Recovery at the authored initiative milestone.'),
   ...[['TURN','Turn'],['ROUND','Round'],['START_OF_ITS_TURN','Start of its turn'],['START_OF_A_TURN','Start of a turn'],['END_OF_ITS_TURN','End of its turn'],['END_OF_A_TURN','End of a turn'],['END_OF_CURRENT_TURN','End of current turn']].map(([id,label]) => cadence(id,label,label,'Turn boundaries','event',`Uses recover at the authored ${label.toLowerCase()} boundary.`)),
+  cadence('HIDDEN','Hidden','','Special','special','Cadence label is hidden on the statblock.'),
   cadence('AT_WILL','At Will','At Will','Special','special','No limited-use resource.'),
   cadence('RECHARGE','Recharge roll','Recharge','Special','special','Use the recharge-roll editor for a roll range.'),
 ]
-const aliases: Readonly<Record<string,string>> = { SHORT:'SHORT_REST', LONG:'LONG_REST', REST:'LONG_OR_SHORT', SHORT_OR_LONG_REST:'LONG_OR_SHORT', START_OF_YOUR_TURN:'START_OF_ITS_TURN', START_OF_CREATURE_TURN:'START_OF_A_TURN', END_OF_YOUR_TURN:'END_OF_ITS_TURN', END_OF_CREATURE_TURN:'END_OF_A_TURN' }
+const aliases: Readonly<Record<string,string>> = {
+  SHORT:'SHORT_REST', LONG:'LONG_REST', REST:'LONG_OR_SHORT', SHORT_OR_LONG_REST:'LONG_OR_SHORT',
+  START_OF_YOUR_TURN:'START_OF_ITS_TURN', START_OF_CREATURE_TURN:'START_OF_A_TURN',
+  END_OF_YOUR_TURN:'END_OF_ITS_TURN', END_OF_CREATURE_TURN:'END_OF_A_TURN',
+  HOURLY:'HOUR', '10_MINUTES':'TEN_MINUTES', '1_MINUTE':'MINUTE',
+  WHILEBLOODIED:'WHILE_BLOODIED', WHENBLOODIED:'WHEN_BLOODIED',
+  AT_0_HIT_POINTS:'AT_0_HP', AT_1_HIT_POINT:'AT_1_HP',
+}
 export function cadenceDefinition(value: string): CadenceDefinition | undefined {
   const id = value.trim().toUpperCase()
   return CADENCES.find(item => item.id === (aliases[id] || id))
 }
 export function cadenceOptions(saved: string) {
-  const options = CADENCES.filter(item => item.kind !== 'special').map(item => ({ value:item.id,label:item.label,category:item.category,help:item.help }))
+  const options = CADENCES.filter(item => item.id !== 'RECHARGE' && item.id !== 'AT_WILL').map(item => ({ value:item.id,label:item.label,category:item.category,help:item.help }))
   if (saved && !options.some(item => item.value === saved)) options.push({value:saved,label:`${cadenceDefinition(saved)?.label || saved} (saved)`,category:'Saved values',help:'Retains the saved cadence ID without silently rewriting it.'})
   return options.sort((a,b)=>a.category.localeCompare(b.category,'en') || a.label.localeCompare(b.label,'en'))
 }

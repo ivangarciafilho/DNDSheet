@@ -1391,6 +1391,7 @@ async function runFuzz() {
 
       // 3. Test Modern Modular Theme Switcher (Giffyglyph style)
       editorStore.visualTemplate = 'modern';
+      monster.compactNameplate = false;
       await new Promise(r => setTimeout(r, 200));
 
       const hasModernModularClass = document.querySelector('#render .statblock.modern-modular') !== null;
@@ -1421,6 +1422,7 @@ async function runFuzz() {
       const monster = pinia._s.get('monster');
 
       editorStore.visualTemplate = 'modern';
+      monster.compactNameplate = false;
 
       // 1. Configure Invulnerability in AC and Dynamic Value Sources on Bloodied/DT/DR/Regen/Immortality
       monster.extendedHp.invulnerability = {
@@ -1510,6 +1512,7 @@ async function runFuzz() {
       const monster = pinia._s.get('monster');
 
       editorStore.visualTemplate = 'modern';
+      monster.compactNameplate = false;
 
       // 1. Configure Multi-Phase Initiative with Lair & Spell Trigger
       monster.paragonConfig = {
@@ -1730,6 +1733,7 @@ async function runFuzz() {
 
       // 1. Verify WotC Parchment Theme on Modern Modular Template
       editorStore.visualTemplate = 'modern';
+      monsterStore.compactNameplate = false;
       editorStore.visualTheme = 'wotc';
       await new Promise(r => setTimeout(r, 200));
 
@@ -2272,6 +2276,7 @@ async function runFuzz() {
 
       // Trigger reactive UI update
       editorStore.visualTemplate = 'modern';
+      monsterStore.compactNameplate = false;
       await new Promise(r => setTimeout(r, 250));
 
       const statblockEl = document.querySelector('#render .statblock');
@@ -2953,11 +2958,16 @@ async function runFuzz() {
     const modern = await compare('modern'); const classic = await compare('classic'); editor.visualTemplate = 'modern'; await wait();
     const panel = role => document.querySelector('[data-role-header="'+role+'"]');
     const openPanel = async role => { panel(role).querySelector('.q-item').click(); await wait(); };
-    const input = async (role, field, value) => { const el=panel(role).querySelector('[data-header-field="'+field+'"] input'); el.value=value; el.dispatchEvent(new Event('input',{bubbles:true})); await wait(); };
+    const input = async (role, field, value) => {
+      const wrapper=panel(role).querySelector('[data-header-field="'+field+'"]'),formula=wrapper.querySelector('.formula-field');
+      if(formula&&!formula.querySelector('.formula-field__draft')){formula.querySelector('.q-field__control').click();await wait();[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')).click();await wait();}
+      const el=wrapper.querySelector('input');el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));await wait();
+      if(formula){const apply=[...formula.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply');if(apply&&!apply.disabled){apply.click();await wait();}}
+    };
     const button = async (role, label) => { [...panel(role).querySelectorAll('button')].find(el=>el.textContent.trim()===label).click(); await wait(); };
     const prose = async (role, field, value) => { const el=panel(role).querySelector('[data-header-field="'+field+'"] .q-editor__content'); el.innerHTML=value; el.dispatchEvent(new Event('input',{bubbles:true})); await wait(); };
     await openPanel('lair'); await input('lair','initiative','-1');
-    const invalid = !!panel('lair').querySelector('[role="alert"]') && [...panel('lair').querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply section settings').disabled;
+    const invalid = !!panel('lair').querySelector('[role="alert"], .q-field--error') && [...panel('lair').querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply section settings').disabled;
     await button('lair','Cancel'); const canceled = monster.initiativeConfig.lairInitiative === 20;
     await openPanel('lair'); await input('lair','initiative','15'); await button('lair','Apply section settings');
     const defaultPreamble = document.querySelector('#render .lair-actions .preamble').textContent.includes('initiative count 15') && monster.lairActionPreamble === 'Stored custom prose';
@@ -3015,7 +3025,7 @@ async function runFuzz() {
   }`)
   const chooseRole = async (id, label) => evalInPage(`async () => {
     const chain=document.querySelector('[data-composer-chain="${id}"]');
-    const select=chain.parentElement.querySelector('.q-select');select.scrollIntoView({block:'center'});
+    const select=(chain.closest('.rounded-borders') || chain.parentElement).querySelector('.q-select');select.scrollIntoView({block:'center'});
     select.querySelector('.q-field__control').click();await new Promise(resolve=>setTimeout(resolve,300));
     const option=[...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.trim()===${JSON.stringify(label)});
     if(!option) throw new Error('Missing role option: '+${JSON.stringify(label)});
@@ -3412,7 +3422,7 @@ async function runFuzz() {
     monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'cadence-reaction',name:'Cadence Reaction',description:'Responds to danger.',trigger:'When threatened',limitedUse:{count:1,rate:'SHORT_REST'}});
     monster.addNewAttack();monster.attacks.at(-1).name='Single Surface Attack';await wait(180);
     const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(200);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
-    const chain=()=>document.querySelector('[data-composer-chain="cadence-witness"]'),role=chain().parentElement.querySelector('.q-select');
+    const chain=()=>document.querySelector('[data-composer-chain="cadence-witness"]'),role=(chain().closest('.rounded-borders')||chain().parentElement).querySelector('.q-select');
     const plainRole=!role.querySelector('.q-badge')&&!role.querySelector('.q-field__native button')&&role.textContent.includes('Action');
     role.click();await wait(150);const categories=[...document.querySelectorAll('.q-menu [role="option"]')].map(el=>el.textContent.trim());const categoryOptions=categories.includes('Action')&&categories.includes('Bonus Action')&&categories.includes('Reaction');
     [...document.querySelectorAll('.q-menu [role="option"]')].find(el=>el.textContent.trim()==='Bonus Action').click();await wait(150);[...document.querySelectorAll('.q-dialog button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(150);const canceledRole=!action.bonusAction&&action.id==='cadence-witness';
@@ -3444,7 +3454,7 @@ async function runFuzz() {
     const roles=['action','bonus','legendary','mythic'];
     for(const role of roles){monster.addAction();const action=monster.actions.at(-1);Object.assign(action,{id:'heading-'+role,name:'Heading '+role,description:'Keep witness prose.',bonusAction:role==='bonus',legendaryOnly:role==='legendary'||role==='mythic',recharge:'4–12',school:'Abjuration',spellLevel:'2nd Level',components:['V','S'],duration:'1 minute',targeting:{count:3,kind:'allies'}});if(role==='legendary')monster.addLegendaryAction(action.id,2);if(role==='mythic')monster.addMythicAction(action.id);}
     const before=JSON.stringify(monster.$state),problems=[];let comparisons=0;
-    const ordered=(text,usage,name,classification)=>{const positions=[usage,name,'V, S',classification].filter(Boolean).map(part=>text.indexOf(part));return positions.every((position,index)=>position>=0&&(!index||position>positions[index-1]));};
+    const ordered=(text,usage,name,classification)=>{const isModern=text.indexOf(classification)>0&&text.indexOf(classification)<text.indexOf('V, S');const parts=isModern?[usage,name,classification,'V, S']:[usage,name,'V, S',classification];const positions=parts.filter(Boolean).map(part=>text.indexOf(part));return positions.every((position,index)=>position>=0&&(!index||position>positions[index-1]));};
     for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(250);for(const role of roles){const entry=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading '+role)),text=entry?.textContent||'',usage=role==='legendary'?'Costs 2 Actions':role==='mythic'?'':'Recharge 4–12';if(!ordered(text,usage,'Heading '+role,'2nd Level Abjuration')||(text.match(/V, S/g)||[]).length!==1||!text.includes('three allies')&&!text.includes('3 allies'))problems.push(style+'/'+template+'/'+role+': '+text);comparisons++;}}
     const chain=document.querySelector('[data-composer-chain="heading-action"]');const order=[...chain.querySelectorAll('[data-chain-cell]')].map(el=>el.getAttribute('data-chain-cell')).slice(0,6);if(JSON.stringify(order)!==JSON.stringify(['usage','name','components','tier','discipline','duration']))problems.push('editor head order '+order);
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:heading-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;

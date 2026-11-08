@@ -91,10 +91,111 @@
         <div class="text-caption">Click "+ Add Entry" above to create one.</div>
       </div>
 
-      <!-- Unified List of Actions & Traits -->
-      <div v-if="filteredEntries.length > 0" class="column q-gutter-y-xs">
+      <!-- Bulk Fold / Expand Controls -->
+      <div v-if="filteredEntries.length > 0" class="row items-center justify-between q-py-xs q-px-sm bg-grey-9 rounded-borders q-mb-xs">
+        <div class="text-caption text-grey-4">
+          <span>Showing <b>{{ filteredEntries.length }}</b> entries</span>
+        </div>
+        <div class="row items-center q-gutter-x-xs">
+          <q-btn
+            dense
+            flat
+            size="xs"
+            icon="unfold_less"
+            label="Collapse All"
+            color="amber-4"
+            no-caps
+            @click="collapseAllEntries"
+          />
+          <q-btn
+            dense
+            flat
+            size="xs"
+            icon="unfold_more"
+            label="Expand All"
+            color="amber-4"
+            no-caps
+            @click="expandAllEntries"
+          />
+        </div>
+      </div>
+
+      <!-- Grouped List of Actions & Traits by Category with Per-Category Fold / Unfold -->
+      <div v-if="groupedEntriesByCategory.length > 0" class="column q-gutter-y-sm">
         <div
-          v-for="item in filteredEntries"
+          v-for="catGroup in groupedEntriesByCategory"
+          :key="catGroup.role"
+          class="category-fold-group rounded-borders overflow-hidden"
+          style="border: 1px solid rgba(255, 255, 255, 0.14); background: rgba(15, 23, 42, 0.45);"
+        >
+          <!-- Category Fold / Unfold Header Bar -->
+          <div
+            class="row items-center justify-between q-px-sm q-py-xs cursor-pointer bg-grey-9 text-white"
+            style="border-bottom: 1px solid rgba(255, 255, 255, 0.08);"
+            @click="toggleCategoryCollapse(catGroup.role)"
+          >
+            <div class="row items-center q-gutter-x-xs">
+              <q-btn
+                flat
+                round
+                dense
+                size="xs"
+                :icon="isCategoryCollapsed(catGroup.role) ? 'chevron_right' : 'expand_more'"
+                color="amber-4"
+                @click.stop="toggleCategoryCollapse(catGroup.role)"
+              >
+                <q-tooltip>{{ isCategoryCollapsed(catGroup.role) ? 'Unfold Category Section' : 'Fold Category Section' }}</q-tooltip>
+              </q-btn>
+              <q-badge :color="getRoleBadgeColor(catGroup.role)" class="text-weight-bold text-caption">
+                {{ catGroup.label }} ({{ catGroup.items.length }})
+              </q-badge>
+              <span v-if="isCategoryCollapsed(catGroup.role)" class="text-caption text-grey-5 q-ml-xs">
+                — {{ catGroup.items.map((i) => i.name).join(', ') }}
+              </span>
+            </div>
+
+            <div class="row items-center q-gutter-x-xs" @click.stop>
+              <q-btn
+                dense
+                flat
+                size="xs"
+                icon="unfold_less"
+                label="Fold Cards"
+                color="grey-4"
+                no-caps
+                @click="collapseCategoryItems(catGroup.role)"
+              >
+                <q-tooltip>Collapse all individual entry cards inside {{ catGroup.label }}</q-tooltip>
+              </q-btn>
+              <q-btn
+                dense
+                flat
+                size="xs"
+                icon="unfold_more"
+                label="Unfold Cards"
+                color="grey-4"
+                no-caps
+                @click="expandCategoryItems(catGroup.role)"
+              >
+                <q-tooltip>Expand all individual entry cards inside {{ catGroup.label }}</q-tooltip>
+              </q-btn>
+              <q-btn
+                dense
+                flat
+                size="xs"
+                :icon="isCategoryCollapsed(catGroup.role) ? 'visibility' : 'visibility_off'"
+                :label="isCategoryCollapsed(catGroup.role) ? 'Unfold Category' : 'Fold Category'"
+                color="amber-3"
+                no-caps
+                @click="toggleCategoryCollapse(catGroup.role)"
+              />
+            </div>
+          </div>
+
+          <!-- Entries Inside Category (v-show keeps ComposerChain mounted in DOM) -->
+          <div v-show="!isCategoryCollapsed(catGroup.role)" class="column q-gutter-y-xs q-pa-xs">
+        <div
+          v-for="item in catGroup.items"
           :key="item.id"
           class="rounded-borders bg-grey-9 text-white q-pa-xs shadow-1"
           style="border: 1px solid rgba(255, 255, 255, 0.12);"
@@ -122,7 +223,20 @@
               </q-select>
             </div>
 
-            <div class="col text-weight-bold ellipsis" :title="item.name">{{ item.name }}</div>
+            <div class="col-auto">
+              <q-btn
+                flat
+                round
+                dense
+                size="sm"
+                :icon="isItemCollapsed(item.id) ? 'chevron_right' : 'expand_more'"
+                :color="isItemCollapsed(item.id) ? 'grey-5' : 'amber-4'"
+                @click.stop="toggleItemCollapse(item.id)"
+              >
+                <q-tooltip>{{ isItemCollapsed(item.id) ? 'Expand card' : 'Collapse card' }}</q-tooltip>
+              </q-btn>
+            </div>
+            <div class="col text-weight-bold ellipsis cursor-pointer" :title="item.name" @click="toggleItemCollapse(item.id)">{{ item.name }}</div>
 
             <!-- Swap and Delete Actions -->
             <div class="col-12 col-md-auto row items-center justify-end q-gutter-x-xs">
@@ -185,6 +299,7 @@
 
           <!-- Typed role adapters preserve each collection while using the same cell editor and renderer. -->
           <composer-chain
+            v-show="!isItemCollapsed(item.id)"
             v-if="item.rawAction || item.rawReaction || item.rawTrait || item.role === 'lair'"
             :action-id="item.id"
             :role="chainRole(item)"
@@ -192,20 +307,139 @@
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           />
 
-          <attack-composer v-if="item.rawAttack" :attack-id="item.id" />
+          <attack-composer v-show="!isItemCollapsed(item.id)" v-if="item.rawAttack" :attack-id="item.id" />
 
-          <entry-display-settings v-if="item.rawAction || item.role === 'lair'" :entry-id="item.id" :field="item.role === 'lair' ? 'lairActions' : 'actions'" />
+          <entry-display-settings v-show="!isItemCollapsed(item.id)" v-if="item.rawAction || item.role === 'lair'" :entry-id="item.id" :field="item.role === 'lair' ? 'lairActions' : 'actions'" />
 
-          <trait-display-settings v-if="item.rawTrait" :trait-id="item.id" />
+          <trait-display-settings v-show="!isItemCollapsed(item.id)" v-if="item.rawTrait" :trait-id="item.id" />
 
           <!-- Description Text Editor with Integrated Intellisense & Dropdowns -->
           <monster-text-editor
+            v-show="!isItemCollapsed(item.id)"
             v-if="!item.rawAttack"
             :field="item.description"
             i18n-label-key="monster.trait.description"
             :token-category="item.role === 'trait' ? 'trait' : item.role === 'lair' ? 'none' : 'action'"
             @update:model-value="(val: string) => updateItemDescription(item, val)"
           />
+
+          <!-- Description Containers (Multi-Description Blocks & Outcome Tables) -->
+          <div v-show="!isItemCollapsed(item.id)" v-if="!item.rawAttack" class="q-mt-sm q-pa-xs rounded-borders bg-grey-10 text-white" style="border: 1px dashed rgba(255, 255, 255, 0.2);">
+            <div class="row items-center justify-between q-px-xs q-py-xs flex-wrap q-gutter-xs">
+              <span class="text-caption text-amber-3 text-weight-bold">
+                Additional Description Containers &amp; Tables ({{ (item.descriptionContainers || []).length }})
+              </span>
+              <div class="row items-center q-gutter-x-xs">
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  size="xs"
+                  color="cyan-3"
+                  icon="notes"
+                  label="+ Text Block"
+                  @click="addTextContainer(item)"
+                />
+                <q-btn
+                  flat
+                  dense
+                  no-caps
+                  size="xs"
+                  color="amber-4"
+                  icon="casino"
+                  label="+ Dice Table"
+                  @click="addTableContainer(item)"
+                />
+              </div>
+            </div>
+
+            <div v-for="(container, cIdx) in (item.descriptionContainers || [])" :key="container.id || cIdx" class="q-pa-xs q-my-xs rounded-borders bg-grey-9">
+              <div class="row q-col-gutter-xs items-center q-mb-xs">
+                <div class="col-12 col-sm-4">
+                  <q-input
+                    v-model="container.outcomeTarget"
+                    dense
+                    outlined
+                    dark
+                    label="Outcome Target / Clause"
+                    placeholder="e.g. On Hit, On Failure, or leave blank"
+                    @update:model-value="syncContainers(item)"
+                  />
+                </div>
+                <div class="col-auto">
+                  <q-btn-toggle
+                    :model-value="container.kind"
+                    :options="[{ label: 'Text', value: 'text' }, { label: 'Table', value: 'table' }]"
+                    dense
+                    no-caps
+                    unelevated
+                    size="xs"
+                    toggle-color="amber-9"
+                    color="grey-8"
+                    @update:model-value="(val: 'text' | 'table') => setContainerKind(item, cIdx, val)"
+                  />
+                </div>
+                <q-space />
+                <div class="col-auto">
+                  <q-btn flat round dense size="xs" color="red-4" icon="close" @click="removeContainer(item, cIdx)" />
+                </div>
+              </div>
+
+              <!-- Text block container -->
+              <div v-if="container.kind === 'text'">
+                <q-input
+                  v-model="container.text"
+                  type="textarea"
+                  rows="2"
+                  dense
+                  outlined
+                  dark
+                  label="Container Text / Rider"
+                  placeholder="Additional rules clause or rider..."
+                  @update:model-value="syncContainers(item)"
+                />
+              </div>
+
+              <!-- Table container -->
+              <div v-else-if="container.kind === 'table' && container.table" class="column q-gutter-y-xs q-pa-xs">
+                <div class="row q-col-gutter-xs items-center">
+                  <div class="col-12 col-sm-6">
+                    <q-input
+                      :model-value="container.table.headers.join(', ')"
+                      dense
+                      outlined
+                      dark
+                      label="Headers (comma separated)"
+                      @update:model-value="(val) => {
+                        container.table.headers = String(val ?? '').split(',').map((s) => s.trim())
+                        syncContainers(item)
+                      }"
+                    />
+                  </div>
+                  <div class="col-auto">
+                    <q-btn flat dense no-caps size="xs" icon="add" label="Add Row" @click="addTableRow(container, item)" />
+                  </div>
+                </div>
+                <div v-for="(row, rIdx) in container.table.rows" :key="rIdx" class="row q-col-gutter-xs items-center q-my-xs">
+                  <div v-for="(cell, cellIdx) in row" :key="cellIdx" class="col">
+                    <q-input
+                      v-model="row[cellIdx]"
+                      dense
+                      outlined
+                      dark
+                      :label="container.table.headers[cellIdx] || ('Col ' + (cellIdx + 1))"
+                      @update:model-value="syncContainers(item)"
+                    />
+                  </div>
+                  <div class="col-auto">
+                    <q-btn flat round dense size="xs" color="red-4" icon="close" @click="removeTableRow(container, rIdx, item)" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+          </div>
         </div>
       </div>
     </q-card>
@@ -224,7 +458,8 @@ import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
 import SwapButtons from './widgets/SwapButtons.vue'
 import { v4 as uuidv4 } from 'uuid'
-import { ACTION_TEMPLATES, applyActionTemplate } from 'src/core/domain/action-templates'
+import { ACTION_TEMPLATES, applyActionTemplate, TEMPLATE_OWNED_FIELDS } from 'src/core/domain/action-templates'
+import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import MultiattackComposer from './composer/MultiattackComposer.vue'
@@ -398,25 +633,6 @@ export default defineComponent({
       ]
     })
 
-    const macroChips = computed(() => [
-      { label: '{NAME}', token: '{NAME}', color: 'amber-4', preview: monster.name || 'Monster' },
-      { label: '{STR_MOD}', token: '{STR_MOD}', color: 'red-4', preview: `${Math.floor(((monster.stats?.STR ?? 10) - 10) / 2)}` },
-      { label: '{DEX_MOD}', token: '{DEX_MOD}', color: 'blue-4', preview: `${Math.floor(((monster.stats?.DEX ?? 10) - 10) / 2)}` },
-      { label: '{CON_MOD}', token: '{CON_MOD}', color: 'green-4', preview: `${Math.floor(((monster.stats?.CON ?? 10) - 10) / 2)}` },
-      { label: '{DC:CON}', token: '{DC:CON}', color: 'purple-3', preview: `DC ${8 + monster.proficiency + Math.floor(((monster.stats?.CON ?? 10) - 10) / 2)}` },
-      { label: '{DC:WIS}', token: '{DC:WIS}', color: 'cyan-3', preview: `DC ${8 + monster.proficiency + Math.floor(((monster.stats?.WIS ?? 10) - 10) / 2)}` },
-      { label: '{PROF}', token: '{PROF}', color: 'indigo-3', preview: `+${monster.proficiency}` },
-      { label: '{AC}', token: '{AC}', color: 'teal-3', preview: `${monster.computedAc || 10}` },
-      { label: '{HP}', token: '{HP}', color: 'pink-3', preview: `${monster.computedHp || 10}` },
-      { label: '{DICE:2d6+4}', token: '{2d6+4}', color: 'yellow-4', preview: '11 (2d6 + 4)' },
-    ])
-
-    const insertMacro = (item: UnifiedEntry, token: string) => {
-      const currentDesc = item.description || ''
-      const updated = currentDesc ? `${currentDesc} ${token}` : token
-      updateItemDescription(item, updated)
-    }
-
     const addNewEntry = (role: string) => {
       if (role === 'multiattack') {
         monster.addMultiattack()
@@ -476,11 +692,87 @@ export default defineComponent({
           $q.notify({ type: 'warning', message: 'The entry changed. Review it before trying again.' })
           return
         }
-        monster.$patch(current.patch)
+        const patch = current.patch
+        monster.$patch(state => {
+          Object.assign(state, patch)
+          if (patch.bindings) state.bindings = patch.bindings
+        })
         selectedCategory.value = target
         $q.notify({ type: 'positive', message: current.kind === 'copy' ? 'Copy created. Original entry kept.' : 'Role changed. Entry data and references kept.' })
       })
     }
+    const addTextContainer = (item: UnifiedEntry) => {
+      const container: any = {
+        id: uuidv4(),
+        kind: 'text',
+        outcomeTarget: '',
+        text: ''
+      }
+      if (!item.descriptionContainers) item.descriptionContainers = []
+      item.descriptionContainers.push(container)
+      syncContainers(item)
+    }
+
+    const addTableContainer = (item: UnifiedEntry) => {
+      const container: any = {
+        id: uuidv4(),
+        kind: 'table',
+        outcomeTarget: '',
+        table: {
+          headers: ['Roll', 'Outcome Effect'],
+          rows: [
+            ['1-10', 'Minor effect'],
+            ['11-20', 'Major effect']
+          ]
+        }
+      }
+      if (!item.descriptionContainers) item.descriptionContainers = []
+      item.descriptionContainers.push(container)
+      syncContainers(item)
+    }
+
+    const removeContainer = (item: UnifiedEntry, index: number) => {
+      if (!item.descriptionContainers) return
+      item.descriptionContainers.splice(index, 1)
+      syncContainers(item)
+    }
+
+    const setContainerKind = (item: UnifiedEntry, index: number, newKind: 'text' | 'table') => {
+      if (!item.descriptionContainers || !item.descriptionContainers[index]) return
+      const c = item.descriptionContainers[index]
+      c.kind = newKind
+      if (newKind === 'table' && !c.table) {
+        c.table = {
+          headers: ['Roll', 'Outcome Effect'],
+          rows: [
+            ['1-10', 'Minor effect'],
+            ['11-20', 'Major effect']
+          ]
+        }
+      }
+      syncContainers(item)
+    }
+
+    const addTableRow = (container: any, item: UnifiedEntry) => {
+      if (!container.table) return
+      const colCount = Math.max(1, container.table.headers.length)
+      const newRow = Array(colCount).fill('')
+      container.table.rows.push(newRow)
+      syncContainers(item)
+    }
+
+    const removeTableRow = (container: any, rowIndex: number, item: UnifiedEntry) => {
+      if (!container.table) return
+      container.table.rows.splice(rowIndex, 1)
+      syncContainers(item)
+    }
+
+    const syncContainers = (item: UnifiedEntry) => {
+      if (item.rawAction) item.rawAction.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
+      if (item.rawTrait) item.rawTrait.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
+      if (item.rawReaction) (item.rawReaction as any).descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
+    }
+
     const updateItemDescription = (item: UnifiedEntry, val: string) => {
       item.description = val
       if (item.rawAction) {
@@ -597,7 +889,10 @@ export default defineComponent({
         persistent: true,
       }).onOk(() => {
         const applied = applyActionTemplate(action, template.id)
-        Object.assign(action, applied)
+        monster.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('actions', action.id), TEMPLATE_OWNED_FIELDS)
+          Object.assign(action, applied)
+        })
         item.name = applied.name
         item.description = applied.description
         item.recharge = applied.recharge
@@ -617,13 +912,83 @@ export default defineComponent({
         else if (role === 'trait') templateStore.addCustomTrait(target as MonsterTrait, name, icon)
         else templateStore.addCustomAction(target as MonsterAction, name, icon)
         $q.notify({
-          message: t('editor.template.added', [name]),
+          message: `${t('editor.template.added', [name])}. Saved numeric values are a snapshot; this creature’s formulas stay on this creature.`,
           type: 'positive',
         })
       })
     }
 
+    const collapsedMap = ref<Record<string, boolean>>({})
+    const collapsedCategoryMap = ref<Record<string, boolean>>({})
+
+    const categoryOrder: Array<{ role: UnifiedEntry['role']; label: string }> = [
+      { role: 'trait', label: 'Traits' },
+      { role: 'attack', label: 'Attacks' },
+      { role: 'action', label: 'Actions' },
+      { role: 'bonus_action', label: 'Bonus Actions' },
+      { role: 'reaction', label: 'Reactions' },
+      { role: 'legendary', label: 'Legendary Actions' },
+      { role: 'mythic', label: 'Mythic Actions' },
+      { role: 'lair', label: 'Lair Actions' },
+    ]
+
+    const groupedEntriesByCategory = computed(() => {
+      const entries = filteredEntries.value
+      return categoryOrder
+        .map((cat) => ({
+          role: cat.role,
+          label: cat.label,
+          items: entries.filter((e) => e.role === cat.role),
+        }))
+        .filter((group) => group.items.length > 0)
+    })
+
+    const isCategoryCollapsed = (role: string) => Boolean(collapsedCategoryMap.value[role])
+    const toggleCategoryCollapse = (role: string) => {
+      collapsedCategoryMap.value[role] = !collapsedCategoryMap.value[role]
+    }
+    const collapseCategoryItems = (role: string) => {
+      for (const item of filteredEntries.value) {
+        if (item.role === role) collapsedMap.value[item.id] = true
+      }
+    }
+    const expandCategoryItems = (role: string) => {
+      collapsedCategoryMap.value[role] = false
+      for (const item of filteredEntries.value) {
+        if (item.role === role) collapsedMap.value[item.id] = false
+      }
+    }
+
+    const isItemCollapsed = (id: string) => Boolean(collapsedMap.value[id])
+    const toggleItemCollapse = (id: string) => {
+      collapsedMap.value[id] = !collapsedMap.value[id]
+    }
+    const collapseAllEntries = () => {
+      for (const item of filteredEntries.value) {
+        collapsedMap.value[item.id] = true
+      }
+    }
+    const expandAllEntries = () => {
+      for (const group of groupedEntriesByCategory.value) {
+        collapsedCategoryMap.value[group.role] = false
+      }
+      for (const item of filteredEntries.value) {
+        collapsedMap.value[item.id] = false
+      }
+    }
+
     return {
+      collapsedMap,
+      collapsedCategoryMap,
+      groupedEntriesByCategory,
+      isCategoryCollapsed,
+      toggleCategoryCollapse,
+      collapseCategoryItems,
+      expandCategoryItems,
+      isItemCollapsed,
+      toggleItemCollapse,
+      collapseAllEntries,
+      expandAllEntries,
       monster,
       selectedCategory,
       categoryTabs,
@@ -632,11 +997,16 @@ export default defineComponent({
       visibleAssociationRoles,
       roleOptions,
       actionTemplateGroups,
-      macroChips,
-      insertMacro,
       addNewEntry,
       changeItemRole,
       updateItemDescription,
+      addTextContainer,
+      addTableContainer,
+      setContainerKind,
+      removeContainer,
+      addTableRow,
+      removeTableRow,
+      syncContainers,
       updateItemCost,
       deleteUnifiedItem,
       getRoleBadgeColor,

@@ -68,6 +68,9 @@ export interface SpellPlateModel {
   attack: string
   resource: string
   prepared: string
+  isPact?: boolean
+  maxPactLevel?: number
+  consolidatedSummary?: string
   metamagic?: {
     points: number
     refresh: string
@@ -143,16 +146,32 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
     .filter((row) => Number.isInteger(row.level) && row.level >= 0 && row.level <= 9 && row.spells.length > 0)
     .sort((a, b) => a.level - b.level)
     .map((row): SpellPlateLevel => {
+      const isExplicitlyHidden = input.levelCadenceMap?.[row.level] === 'hidden'
       const customCadence = cadenceLabel(input.levelCadenceMap?.[row.level])
-      const rawCadence = customCadence || defaultCadence
+      const rawCadence = isExplicitlyHidden ? '' : (customCadence || defaultCadence)
       const slotCount = row.level === 0 ? undefined : (isPact ? slots[maxPactLevel - 1] : slots[row.level - 1])
+      const cadenceText = row.level === 0 || isExplicitlyHidden || !rawCadence
+        ? ''
+        : (rawCadence === 'At Will' ? rawCadence : `Per ${rawCadence}`)
+      const isRestrictedCadence = (cadence?: string): boolean => {
+        if (!cadence) return false
+        const c = cadence.trim().toLowerCase()
+        if (c === '' || c === 'hidden' || c === 'none' || c === 'at will' || c === 'at_will' || c === 'slots' || c === 'always' || c === 'always prepared') return false
+        return true
+      }
+      const sortedSpells = [...row.spells].sort((a, b) => {
+        const aRestricted = isRestrictedCadence(a.cadence)
+        const bRestricted = isRestrictedCadence(b.cadence)
+        if (aRestricted === bRestricted) return 0
+        return aRestricted ? 1 : -1
+      })
       return {
         level: row.level,
         ordinal: ordinalLabel(row.level),
         slotCount: slotCount && slotCount > 0 ? slotCount : undefined,
-        cadence: row.level === 0 ? '' : (rawCadence === 'At Will' ? rawCadence : `Per ${rawCadence}`),
+        cadence: cadenceText,
         bonusAction: Boolean(row.bonusAction),
-        spells: row.spells.map(spellView),
+        spells: sortedSpells.map(spellView),
       }
     })
 
@@ -182,6 +201,8 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
     prepared: input.preparedCount && input.preparedCount > 0
       ? `${Math.trunc(input.preparedCount)} prepared ${input.className || 'Caster'} spells · ${cadenceLabel(input.preparedInterval) || 'Long Rest'}`
       : '',
+    isPact,
+    maxPactLevel,
     metamagic,
     levels,
   }

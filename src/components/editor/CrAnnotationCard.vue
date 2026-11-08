@@ -59,20 +59,9 @@
           <q-separator />
           <q-card-section>
             <div class="row">
-              <q-input
-                :model-value="crData.crAnnotation.maxDamage"
-                type="number"
-                :disable="crData.crAnnotation.automatic"
-                :label="$t('editor.crAnnotation.maxDamage')"
-                min="0"
-                class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm"
-                @update:model-value="
-                  (value: string | number | null) =>
-                    (crData.crAnnotation.maxDamage = validateNumber(value, 0))
-                "
-              >
-                <template #after>
-                  <q-btn
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
+                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxDamage`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxDamage')" />
+                <q-btn
                     push
                     :icon="
                       crData.crAnnotation.multitarget ? 'groups' : 'person'
@@ -91,41 +80,16 @@
                       }}
                     </q-tooltip>
                   </q-btn>
-                </template>
-              </q-input>
-              <q-input
-                :model-value="crData.crAnnotation.maxSave"
-                type="number"
-                :label="$t('editor.crAnnotation.maxSave')"
-                :disable="crData.crAnnotation.automatic"
-                min="0"
-                class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm"
-                @update:model-value="(value: string | number | null) => crData.crAnnotation.maxSave = validateNumber(value, 0)"
-              />
-              <q-input
-                :model-value="crData.crAnnotation.maxModifier"
-                type="number"
-                :label="$t('editor.crAnnotation.maxModifier')"
-                :disable="crData.crAnnotation.automatic"
-                min="0"
-                class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm"
-                @update:model-value="
-                  (value: string | number | null) =>
-                    (crData.crAnnotation.maxModifier = validateNumber(value, 0))
-                "
-              />
-              <q-input
-                :model-value="crData.crAnnotation.ehpModifier"
-                type="number"
-                :label="$t('editor.crAnnotation.ehpModifier')"
-                :disable="crData.crAnnotation.automatic"
-                min="0"
-                class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm"
-                @update:model-value="
-                  (value: string | number | null) =>
-                    (crData.crAnnotation.ehpModifier = validateNumber(value, 0))
-                "
-              />
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
+                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxSave`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxSave')" />
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
+                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxModifier')" />
+              </div>
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
+                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.ehpModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.ehpModifier')" />
+              </div>
               <q-input
                 :model-value="crData.crAnnotation.ehpMultiplier"
                 type="number"
@@ -141,18 +105,9 @@
                     ))
                 "
               />
-              <q-input
-                :model-value="crData.crAnnotation.acModifier"
-                type="number"
-                :label="$t('editor.crAnnotation.acModifier')"
-                :disable="crData.crAnnotation.automatic"
-                min="0"
-                class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm"
-                @update:model-value="
-                  (value: string | number | null) =>
-                    (crData.crAnnotation.acModifier = validateNumber(value, 0))
-                "
-              />
+              <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
+                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.acModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.acModifier')" />
+              </div>
             </div>
           </q-card-section>
         </div>
@@ -166,6 +121,7 @@ import { defineComponent, PropType } from '@vue/runtime-core'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import LockToggleButton from '../LockToggleButton.vue'
+import FormulaField from '../kit/FormulaField.vue'
 import { Monster, MonsterAction, MonsterTrait } from '../models'
 import { validateNumber } from './numberInput'
 
@@ -175,6 +131,7 @@ export default defineComponent({
   name: 'CrAnnotationCard',
   components: {
     LockToggleButton,
+    FormulaField,
   },
   props: {
     field: {

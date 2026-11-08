@@ -1,5 +1,37 @@
 # DNDSheet — Implementation Backlog
 
+## Build 184 Delivery Summary (2026-11-06)
+
+- **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`
+- **Build**: `184`
+- **Features Shipped**:
+  1. **Flush Trait & Action Header Border Alignment**: Unified `.sb-plate.sb-trait-streamlined` and `.sb-single-line` so all `.sb-head` badges sit `0px` flush against the `.sb-plate` frame border while multi-line trait descriptions wrap cleanly beneath the header badge on lines 2+.
+  2. **Redundant Cropping Controllers Removed**: Removed duplicate standalone `<dual-knob-crop-slider>` blocks in `A4LayerStudio.vue` (kept the integrated parallel `Crop X` and `Crop Y` sliders on `RadialOffsetController.vue`).
+  3. **Exclusive Per-Slider & Per-Knob-Side Reset Buttons**: Added individual reset buttons (`resetX`, `resetY`) next to X/Y offset sliders and 2 per-side reset buttons (`resetCropXMin`, `resetCropXMax`, `resetCropYMin`, `resetCropYMax`) on multivalued `Crop X` and `Crop Y` sliders in `RadialOffsetController.vue` and `DualKnobCropSlider.vue`.
+  4. **Auto-Balanced Ability Score, Modifier & Save Grid**: Rebalanced `.dnd-stats-2024 .stat-table` column tracks, padding, and `.save .dnd-adv-pill` arrow spacing so `DEX 18 | +4 | +6 ▲▲` never truncates or collides.
+  5. **Composer-Aligned Spell-Like Trait/Action Plate Row Ordering (`Exorcise` & `Astral Binding`)**: Placed `mechItems` (`Charisma Save DC 14`, `Ranged Spell Attack +6`) on Row 1 after `duration` and `scopeItems` on Row 2 in `buildPlateEntry` (`useProcessTokens.ts`).
+  6. **Expanded Durations & Categorized Tooltipped Catalogs**: Expanded `DURATIONS`, `TARGET_KINDS`, `TARGET_QUALIFIERS`, `PLANES`, and `AREA_SHAPES` in `action-composer.ts` and added categorized, alphabetically sorted, icon-annotated, color-badged, tooltipped catalogs in `ChainCell.vue` and `BasicsEditor.vue`.
+  7. **Contextual Split Riders Toggles**: Added contextual `↳ Sub-Row` toggles directly inside the AC Riders bar and each HP Rider module header in `BasicsEditor.vue`.
+- **Verification**: 361/361 unit tests passed, 50/50 live CDP browser fuzz tests passed, Quasar build exit code 0.
+
+---
+
+## Build 181 Delivery Summary (2026-11-02)
+
+- **Release Candidate**: `rc-2.4.3-build-181-occlusion-streamlined-actions-and-unified-spells`
+- **Build**: `181`
+- **Features Shipped**:
+  1. A4 Composition Layer Stack Ordering & Normal Blend Occlusion: dynamic descending zIndex based strictly on `a4Layers` array order, `.statblock-wrapper { z-index: auto }` inside `.a4-page-sheet` isolation context.
+  2. Transparent CR nameplate chip on `.cr-main-region` and `.compact-nameplate-row-1 .cn-cr`.
+  3. Top-aligned multi-line trait plates (`.sb-plate.sb-trait-streamlined .sb-row > .sb-cell.sb-head` top-aligned with padding-top: 5px).
+  4. Streamlined single-row action plates for Multiattack and simple actions (`[Multiattack] [Make 2 Attacks.]`).
+  5. Single unified monster spellcasting cell (`.sb-spells-unified-cell`) with interleaved line striping and zero internal row divider lines.
+  6. Decoupled regeneration vs temporary hit points (`Gains X of Temporary Hit Points while not Bloodied`).
+  7. Defensive CR calculation safeguards against missing `crAnnotation` and `atWill`.
+- **Verification**: 357/357 unit tests passed, 50/50 live CDP browser fuzz tests passed, Quasar build exit code 0.
+
+---
+
 ## Build161 delivery grouping and next packet
 
 This iteration connects registry → resolver → persisted store → silent materialization/history → shared control → actual editor consumers. Task completion is credited only with the closing evidence below. No requested mechanics are silently dropped or duplicated.
@@ -1058,3 +1090,17 @@ Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with 
 The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
 
 Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
+
+---
+
+## Build 183 — Backlog Grooming & Delivery Ledger
+
+- [x] **B183.1** Inline-block `.sb-head` and inline `.sb-body` flow for `.sb-plate.sb-trait-streamlined` so multi-line trait descriptions wrap to `x = 0` directly beneath the trait header badge (`src/css/statblock-grammar.scss`, `src/components/rendering/useProcessTokens.ts`).
+- [x] **B183.2** A4 Layer normal blend occlusion (top-of-backgrounds insertion + descending `z-index` + removal of opaque fallback background) and hardware SVG `<feColorMatrix>` luminance-to-alpha filters (`#a4-luminance-to-alpha`, `#a4-luminance-to-alpha-invert`) for `grayscaleAsAlpha` on opaque PNG/JPG layers (`src/components/rendering/WebRenderer.vue`, `src/components/editor/A4LayerStudio.vue`).
+- [x] **B183.3** Interactive Gradient Bar with multi-stop color keys, double-click `%` stop editing, and draggable SVG Falloff Curve overlay (`src/core/domain/gradient-curve.ts`, `src/components/editor/widgets/GradientOverlayController.vue`).
+- [x] **B183.4** Radial controller with X/Y values inside horizontal/vertical slider knobs, double-click inline editing, and parallel Horizontal/Vertical Cropping (`Crop X` / `Crop Y`) sliders (`src/components/editor/widgets/RadialOffsetController.vue`, `src/components/editor/widgets/DualKnobCropSlider.vue`).
+- [x] **B183.5** Compact single-row header/scope/mechanics plate for physical attacks (`Slam`) and hierarchical 3-row plate for spell-like traits/actions (`Exorcise, Abjuration Cantrip (V, S) | 1 round` on Row 1, `scope | mechanics` on Row 2, outcomes on Row 3) (`src/components/rendering/useProcessTokens.ts`).
+- [x] **B183.6** Indented relatable rider rows (`↳`) with one row per rider for Speed (`splitSpeedRiderRows` including `Hide`), HP (`splitHpRiderRows` separating `Bloodied`, `Temp HP`, `Regeneration`, `Death Prevention`, `DT`, `DR`), and AC (`splitAcRiderRows` separating each conditional AC note, trigger save, on-miss, on-hit, and AC invulnerability) (`src/components/rendering/useTextRenderer.ts`, `src/core/domain/defense-and-traits-utils.ts`, `src/components/editor/SpeedsEditor.vue`, `src/components/rendering/WebRenderer.vue`).
+- [x] **B183.7** Target count and noun rendering across structured/legacy attacks and actions (`scopePhrase` fallback to `target`/`targets`, `normalizeTargeting` empty-string guard, `FormulaField.vue` blur/input commit and target count presets, `reactionChainView` object formatting) (`src/core/domain/ability-grammar.ts`, `src/components/kit/FormulaField.vue`, `src/core/domain/reaction-composer.ts`).
+- [x] **B183.8** Category-level and card-level fold/unfold controls in `ActionsEditor.vue` using `v-show` to preserve `<composer-chain>` DOM hierarchy (`src/components/editor/ActionsEditor.vue`).
+- [x] **B183.9** Unit test suite (`test/core/Build183Features.test.ts`, 361/361 passing) and full 50-step live browser E2E verification (`node test/exhaustive-ui-fuzz.js`).

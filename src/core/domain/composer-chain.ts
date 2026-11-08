@@ -1,3 +1,4 @@
+import { WEAPON_ABILITY_RULES } from './action-composer.ts'
 import { actionUsageDraft, actionUsagePatch, validateActionUsage } from './action-usage.ts'
 import type {
   AbilityArea,
@@ -155,6 +156,7 @@ function readCell(cellId: string, role: ActionModelRole, action: Partial<Monster
       const reach = ability.attackReach ? `${REACH_TEXT[ability.attackReach]} ` : ''
       return text(`${reach}${ability.attackSource === 'spell' ? 'Spell' : 'Weapon'} Attack`)
     }
+    case 'weapon-ability': return text(WEAPON_ABILITY_RULES.find(rule => rule.value === (action.weaponAttackAbility || 'auto'))?.label || 'Automatic by reach')
     case 'attack-bonus': {
       const explicit = typeof action.attackBonus === 'number' && Number.isFinite(action.attackBonus)
       const value = explicit ? action.attackBonus : context.attackBonus
@@ -245,6 +247,7 @@ const repeatsPrintedText = (cellId: string, action: Partial<MonsterAction>, text
 
 const isVisible = (cellId: string, action: Partial<MonsterAction>, reading: CellReading | undefined): boolean => {
   if (cellId.startsWith('legacy-')) return reading !== undefined
+  if (cellId === 'weapon-ability') return inferAbility(action).attackSource === 'weapon'
   if (cellId === 'attack-bonus') return !!inferAbility(action).attackSource
   if (cellId === 'save-dc') return !!validStat(action.stat)
   return true
@@ -301,6 +304,7 @@ export function cellValue(action: Partial<MonsterAction>, cellId: string): unkno
     case 'components': return Array.isArray(action.components) ? [...action.components] : []
     case 'duration': return trimmed(action.duration)
     case 'attack': return attackKindOf(action)
+    case 'weapon-ability': return WEAPON_ABILITY_RULES.find(rule => rule.value === (action.weaponAttackAbility || 'auto'))?.label || 'Automatic by reach'
     case 'attack-bonus': return typeof action.attackBonus === 'number' ? action.attackBonus : ''
     case 'save-ability': return validStat(action.stat) ?? ''
     case 'save-dc': return action.save?.override ? action.save.overrideValue : ''
@@ -396,6 +400,8 @@ export function cellPatch(action: Partial<MonsterAction>, cellId: string, value:
       const type = action.actionType
       return { attackReach: undefined, attackSource: undefined, actionType: type === 'spell_attack' || type === 'weapon_attack' ? undefined : type }
     }
+    case 'weapon-ability':
+      return { weaponAttackAbility: WEAPON_ABILITY_RULES.find(rule => rule.label === text)?.value }
     case 'attack-bonus':
       return { attackBonus: wholeNumber(value) ?? undefined }
     case 'save-ability':
@@ -457,6 +463,7 @@ export function cellPatch(action: Partial<MonsterAction>, cellId: string, value:
 
 /** An empty string means the value can be committed; anything else is the message to show. */
 export function validateCell(cellId: string, value: unknown): string {
+  if (cellId === 'weapon-ability') return !trimmed(value) || WEAPON_ABILITY_RULES.some(rule => rule.label === trimmed(value)) ? '' : 'Choose a listed weapon ability rule.'
   if (cellId === 'usage' && typeof value === 'object') return validateActionUsage(value)
   switch (cellId) {
     case 'name':

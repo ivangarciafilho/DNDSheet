@@ -1,3 +1,5 @@
+import type { ComposableInitiativeRider } from './initiative-composer'
+
 export interface MonsterSenseItem {
   id: string
   name: string
@@ -74,6 +76,21 @@ export interface MonsterSpeedTraversal {
   // Aquatic / Breathing options
   aquaticBreathing?: 'none' | 'underwater' | 'amphibious' | 'water_only' | 'hold_breath'
   holdBreathDuration?: string
+
+  // Compoundable Cunning Action & Traversal Riders
+  dashRider?: string
+  dodgeRider?: string
+  disengageRider?: string
+  moveThroughCreaturesRider?: string
+
+  // Movement Action Riders
+  actionRiders?: Array<{
+    id: string
+    action: string
+    actionType?: 'Action' | 'Bonus Action' | 'Reaction' | 'Free'
+    rider: string
+    trigger?: string
+  }>
 }
 
 export interface MonsterAcConfig {
@@ -144,6 +161,7 @@ export interface MonsterInitiativeConfig {
   specialTrigger?: string
   specialTriggerSpell?: string
   customEffectNote?: string
+  riders?: ComposableInitiativeRider[]
 }
 
 export interface MonsterSkill {
@@ -192,6 +210,17 @@ export interface DndLimitedUse {
   rate: string
 }
 
+export interface ActionDescriptionContainer {
+  id: string
+  kind: 'text' | 'table'
+  outcomeTarget?: string
+  text?: string
+  table?: {
+    headers: string[]
+    rows: string[][]
+  }
+}
+
 export interface MonsterTrait {
   name: string
   id: string
@@ -206,7 +235,8 @@ export interface MonsterTrait {
   rechargeTiming?: string
   rechargeCount?: number
   rechargeTagOverride?: string
-  stagePool?: number | 'all'
+  stagePool?: number | string | 'all'
+  descriptionContainers?: ActionDescriptionContainer[]
 }
 
 export type DefenseModifierMode = 'none' | 'advantage' | 'disadvantage' | 'absorbs'
@@ -551,6 +581,13 @@ export interface ActionOrientedPassives {
   bonusActionStudy?: boolean
   bonusActionHide?: boolean
   bonusActionInfluence?: boolean
+  bonusActionTools?: boolean
+  searchPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  studyPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  hidePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  influencePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  toolsPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  riders?: Record<string, string>
   conditions?: Record<string, string>
   search?: {
     perception?: boolean
@@ -619,11 +656,19 @@ export interface EffectClause {
   damageType?: string
 }
 
+export interface OutcomeDiceTableRow {
+  roll: string
+  effect: string
+}
+
 export interface AbilityOutcome {
   /** Stable known triggers use hit/failure/success; unknown labels are preserved verbatim. */
   trigger: string
   effects: EffectClause[]
   rider?: string
+  targetFilter?: string
+  layoutSector?: 'all' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right' | 'row_1' | 'row_2' | 'col_1' | 'col_2' | string
+  diceTable?: OutcomeDiceTableRow[]
 }
 
 export interface MonsterAction {
@@ -634,6 +679,8 @@ export interface MonsterAction {
   rechargeMin?: number
   rechargeMax?: number
   actionType?: string
+  /** Weapon ability provenance; omitted/auto follows reach. Thrown denotes a thrown melee weapon. */
+  weaponAttackAbility?: DndStat | 'auto' | 'finesse' | 'thrown' | 'finesse_thrown'
   attackBonus?: number
   targetsText?: string
   legendaryOnly: boolean
@@ -660,8 +707,13 @@ export interface MonsterAction {
   /** Optional structured authoring; omitted legacy records retain their current output. */
   attackReach?: AttackReach
   attackSource?: AttackSource
+  attackCount?: number | string
+  attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
+  attackException?: string
   targeting?: AbilityTargeting
   outcomes?: AbilityOutcome[]
+  outcomeLayout?: 'linear' | 'grid_1x2' | 'grid_2x1' | 'grid_2x2' | 'table'
+  descriptionContainers?: ActionDescriptionContainer[]
 }
 
 export interface LairAction {
@@ -759,6 +811,26 @@ export interface MonsterReaction {
   description: string
   limitedUse: DndLimitedUse
   trigger: string
+  stagePool?: number | string | 'all'
+  school?: string
+  spellLevel?: string
+  components?: string[]
+  duration?: string
+  deliveryType?: 'Attack' | 'Save' | 'Aura' | 'Utility' | string
+  attackReach?: AttackReach
+  attackSource?: AttackSource
+  weaponAttackAbility?: DndStat | 'auto' | 'finesse' | 'thrown' | 'finesse_thrown'
+  attackBonus?: number
+  stat?: DndStat | 'none'
+  save?: {
+    override: boolean
+    overrideValue: number
+  }
+  range?: string
+  targeting?: AbilityTargeting
+  outcomes?: AbilityOutcome[]
+  outcomeLayout?: 'linear' | 'grid_1x2' | 'grid_2x1' | 'grid_2x2' | 'table'
+  effects?: ActionEffect[]
 }
 
 export interface CrAttackInfo {
@@ -911,6 +983,7 @@ export interface Monster {
       overrideValue: number
     }
     class: string | undefined
+    subclass?: string
     level: number
     slots: number[]
     atWill: DndAtWillSpell[]
@@ -933,15 +1006,23 @@ export interface Monster {
     refreshRate?: 'long_rest' | 'short_rest' | 'downtime'
     displayTitleMode?: 'class_names' | 'caster_source' | 'split_levels'
     bypassSlotLevelFilter?: boolean
+    splitHighCadence?: boolean
+    restrictedCadences?: string[]
     spellCadenceMap?: Record<string, string>
     classes?: Array<{
       id: string
       className: string
+      subclass?: string
       level: number
       stat: DndStat
       slots?: number[]
       bypassSlotFilter?: boolean
       spells?: string[]
+      levelCadences?: Record<number, string>
+      levelBonusAction?: Record<number, boolean>
+      spellCadenceMap?: Record<string, string>
+      actionType?: 'Action' | 'Bonus Action'
+      resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
     }>
   }
   attacks: DndAttack[]
@@ -996,6 +1077,11 @@ export interface Monster {
   anatomyParts?: AnatomyPart[]
   runehammerTrack?: RunehammerTrack
   paragonConfig?: ParagonConfig
+  toolsPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
+  showXp?: boolean
+  compactNameplate?: boolean
+  customVariables?: Record<string, string | number>
+  customMacros?: Record<string, string>
 }
 
 export interface TemplateMetadata<T> {
@@ -1426,7 +1512,9 @@ export function defaultMonster(): Monster {
       secondaryStat: 'none',
       statMode: 'add',
       advantage: false,
+      disadvantage: false,
       cantBeSurprised: false,
+      riders: [],
     },
     speedTraversal: {
       ignoresDifficultTerrain: false,
