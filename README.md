@@ -108,6 +108,13 @@ This project is written in Vue with Quasar and uses npm as its package manager. 
 
 Clone the repository install packages with `npm install`. The development server can then be started with `npm run dev`. Quasar can be manually invoked with `npx quasar [...]`.
 
+### Contributor workflow (DNDSheet fork)
+
+- `npm run gate` runs the full release gate (unit tests, lint, build, browser fuzz, help and spell smokes, GitHub Pages build and sub-path fuzz); results land in `.gate/summary.json`.
+- Exports are pinned by `test/goldens`. After an intended export change, review the `.actual` file the fuzz writes, then run `DNDSHEET_UPDATE_GOLDENS=1 npm run gate`.
+- Pages build: `PUBLIC_PATH=/DNDSheet/ DNDSHEET_BUILD_DIR=dist-pages npx quasar build`, published from the `gh-pages` branch to https://ivangarciafilho.github.io/DNDSheet/.
+- Roadmap and handoff notes: `docs/roadmap` (start with *Development Handoffs › Start here*).
+
 ### Translations
 
 Translations are welcome! All of the UI strings are contained in the `src/i18n` folder. To translate the UI to another language, we have to translate all of the strings in the [en-US index file](https://github.com/ebshimizu/5e-monster-maker/blob/master/src/i18n/en-US/index.ts).

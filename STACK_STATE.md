@@ -1,5 +1,7 @@
 # Local DNDSheet Stack State
 
+> Current: Build199 on `build185-repairs` (`96403c0`), live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
 - **Build199 (2026-11-08)**: closed A11.0, A13.0, A13.8; control inventory committed; golden fixture uses `setCR`; fuzz Step 48 menu wait polls. Release candidate `rc-2.4.3-build-199-inventories-and-flake-fixes`.
 
 - **Builds 197–198 (2026-11-08)**: closed A9.11 (audit), A12.3 (reload proof), A12.6 (editor costs per edition) and A9.12 (CR reads structured outcome damage, `structuredOutcomeDamage`); legacy Markdown cantrip colon; fuzz Step 37 storage/reload race fixed.

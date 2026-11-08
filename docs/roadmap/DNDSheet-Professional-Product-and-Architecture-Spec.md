@@ -1,19 +1,21 @@
 # DNDSheet — Product & Architecture Specification
 
-## Build185 status — specification versus shipped code (2026-11-08)
+## Build199 status — specification versus shipped code (2026-11-08)
 
 The CR-154 and CR-158 requirements remain the contract; Builds 162–184 implemented parts of them without recording acceptance. Status per requirement owner (details and remaining proofs in Backlog §Build185):
 
 | Requirement owner | Shipped behaviour | Contract still open |
 |---|---|---|
-| A13.9 sheet density | No horizontal rules; Senses beside Languages; aligned, striped vitals; dark-theme vitals at ≥ 4.5:1 | Initiative as minimal text/glyph instead of a pill; one number role; print proofs |
-| A12.10 compact spells | "(N/Cadence), Level N: spells." in one flowing cell; Hidden cadence; counted cadences stand alone | Same order in every text export; live resource amounts proven on edit and reload |
+| A13.9 sheet density | No horizontal rules; Senses beside Languages; aligned, striped vitals; one `.dnd-num` number role; initiative ▲▲/▼▼ via `advHtml`; 12-theme initiative ink ≥ 4.5:1; numbers bold in print | PDF/pixel print proof; decide whether the top plate stays white on dark themes |
+| A12.10 compact spells | "(N/Cadence), Level N: spells." in one flowing cell and in every text export (`spellLevelHeading`); Hidden and counted cadences survive reload; five exports pinned by goldens | Localised heading words; print proof |
+| A9.12 CR inputs | Unannotated actions contribute the average of their strongest hit/failure outcome (`structuredOutcomeDamage`); an explicit CR annotation wins | — |
+| Deployment | GitHub Pages build at `/DNDSheet/`; bundled `/homebrew/` assets resolved against the served base (`appAsset`) | First-run import hint for the empty Pages origin |
 | A12.8–A12.9 casting sources | Stacked class cards and combined caster level in one spellcasting engine | Stable-id sources and pools, provenance, SRD-checked multiclass metrics |
 | A11.5/A11.9 outcomes | Multiple description containers with dice tables | 4-region layouts, recipient filters, table diagnostics |
 | A11.7/A11.8 routing and traversal | Combat actions relocate by economy; speeds rider composer | Undo/export/migration proofs |
 | B3.6/B3.7 scores and species | Heuristics; 73-species catalog applied on selection | Preview/Apply/Cancel/undo and provenance before writing |
 
-**Amendments.** (1) Theme overrides for vitals use each theme's `--sb-cell-ink`; contrast ≥ 4.5:1 is a release gate for all 12 themes. (2) Help tips on vitals panels read their values from the panel's badges wrap ("Values: …"). (3) Spell level leads follow `spellLevelLead`: a cadence that carries its own count, or At Will, is shown without the slot count; Hidden keeps "(N slots)".
+**Amendments.** (1) Theme overrides for vitals use each theme's `--sb-cell-ink`; contrast ≥ 4.5:1 is a release gate for all 12 themes. (2) Help tips on vitals panels read their values from the panel's badges wrap ("Values: …"). (3) Spell level leads follow `spellLevelLead`: a cadence that carries its own count, or At Will, is shown without the slot count; Hidden keeps "(N slots)". (4) Every text export takes spell headings from `spellLevelHeading` and the type line from `creatureTypeLine` (no dangling comma). (5) The CR estimate never parses prose; structured outcomes are read when no CR annotation is included. (6) Saved asset URLs stay root-relative in data and are resolved at render time. (7) The release gate is `npm run gate`.
 
 The per-build contract sections below (Build 181, 183, 184) describe implementation details; where they conflict with this table, this table and the Backlog govern.
 

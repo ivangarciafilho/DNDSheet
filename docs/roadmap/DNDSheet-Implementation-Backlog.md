@@ -1,5 +1,12 @@
 # DNDSheet — Implementation Backlog
 
+## Current state — Build199 (2026-11-08)
+
+📍 *Backlog › Now* — **102 / 219 complete (46.58 %) by this file's rule; raw checkbox count 111 done / 117 open. Start from Handoffs §Start here.**
+
+Closed in Builds 186–199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Partial tasks keep their item lists in §Build186 grooming. Next order: A11.1–A11.4 → A13.3–A13.5 → A12.10 a3/d → A13.9 f2 → Pages d4 → partial tasks (A11.7, A11.8, B3.7, B3.6, A11.5/A11.9, A12.8/A12.9). A13.9 g2 needs a design decision first.
+
+---
 ## Build185 reconciliation — code state versus roadmap (2026-11-08)
 
 📍 *Backlog › Build185* — **Builds 162–184 shipped real features without ticking tasks. This section maps them to task ids so the roadmap describes the code again.**
@@ -12,10 +19,10 @@
 
 | Task | Delivered in code (build) | Remaining for Done-when |
 |---|---|---|
-| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Items a–h delivered (186–191). Left: f2 PDF/pixel proof and g2 top-plate design decision |
-| **A12.10** compact spell list | One unified spell cell, "(N/Cadence), Level N:", Hidden cadence (176–181); counted cadences no longer doubled (185) | Text, Markdown, LaTeX, Homebrewery headings in the same order; live slot-edit and reload proofs; print |
+| **A13.9** sheet density | Horizontal rules gone; Senses beside Languages; zero-indent vitals and interleaved striping (170–182); dark-theme vitals ink fixed and contrast-tested on 12 themes (185) | Items a–h done (186–191): number role, initiative grammar, retired pill CSS, paragon audit, print and 12-theme proofs, side-effect-free paragon rows. Left: f2 PDF/pixel proof, g2 design decision |
+| **A12.10** compact spell list | One unified spell cell, "(N/Cadence), Level N:", Hidden cadence (176–181); counted cadences no longer doubled (185) | Items a, a2, b, c done (192–197): shared `spellLevelHeading` in exports, golden exports, live edit and reload proofs. Left: a3 i18n, d print |
 | **A12.8 / A12.9** casting sources | Master spellcasting engine with stacked class cards, combined caster level, per-level cadence and action economy (171–176) | Stable-id source/pool model and lossless migration; per-source known/prepared/cantrip metrics with provenance; multiclass slot tests against SRD tables |
-| **A12.1 / A12.4** subclass catalogs and picker | Case-insensitive subclass resolver, picker filters for every casting class (175–176) | Persisted `subclass`; expanded-spell plans; invariants tests |
+| **A12.1 / A12.4** subclass catalogs and picker | Case-insensitive subclass resolver, picker filters for every casting class (175–176) | Subclass persisted and reload-proven (A12.3, 197). Left: expanded-spell plans; invariant tests |
 | **A11.7** combat activity routing | Search/Study/Influence/Hide/Tools relocate to Actions, Bonus or Legendary as 2-row plates; Tools action type (169–176) | Undo, export and association tests; redundant economy labels removed without losing facts |
 | **A11.8** traversal riders | Speeds rider composer, nine compoundable archetypes, `speeds-traversal.ts` + tests (176) | Migration of existing speeds; phase-change effects; export |
 | **A11.5 / A11.9** outcomes and random tables | Multiple description containers per action/trait/reaction with outcome targets and dice tables (171–176) | Up to 4 regions per container, audience/plane filters, overlap/gap diagnostics, print/prose |
@@ -170,7 +177,7 @@ Review corrections include disabled-override false cycles, raw/normalized spell 
 |---|---|
 | **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
 | **Code HEAD** | `6049127`;327core tests,50browser scenarios,focused binding lifecycle,5spell/12help themes,20plate parity;changed binding-code lint clean |
-| **Progress** | **9/28 loops shipped - 95/219 tasks complete (43.38%) - 1active/123pending** - seven tasks closed;A9.7 active |
+| **Progress** | **9/28 loops shipped - 102/219 tasks complete (46.58%) - 1active/116pending** - Build199: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8 closed since Build185; A9.7 active |
 | **Now** | Live persisted bindings,history and shared controls delivered on migrated fields;A9.7 remaining inventory/lifecycle sweep active. |
 | **Next** | Finish A9.7 numeric consumer/lifecycle migration,then A9.11/A9.12/A9.13 and A9.10 closeout;A10 caret completion follows. |
 
@@ -235,7 +242,7 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **95 / 219 complete - 1active - 123pending** | **43.38% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
+| **Total** | **28 loops** (TrackA167 / TrackB52) | **102 / 219 complete - 1active - 116pending** | **46.58% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
 
 ```mermaid
 pie showData

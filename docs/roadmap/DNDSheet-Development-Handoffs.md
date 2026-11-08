@@ -1,5 +1,59 @@
 # DNDSheet — Development Handoffs
 
+## Start here — Build199 state (2026-11-08)
+
+📍 *Handoffs › Start here* — **Everything below this section is history. Read this, run the gate, take the first open slice.**
+
+**Where the code is.**
+- Branch `build185-repairs` at `96403c0` on https://github.com/ivangarciafilho/DNDSheet (default branch). Tag `rc-2.4.3-build-199-inventories-and-flake-fixes`.
+- Live app: https://ivangarciafilho.github.io/DNDSheet/ (branch `gh-pages`, same commit built with `PUBLIC_PATH=/DNDSheet/`).
+- Release candidates: `.codex-temp/release-candidates/rc-2.4.3-build-NNN-*` (runnable `spa`, `release-candidate.json` with the gate summary, `SHA256SUMS.txt`). Local servers: 9106 → Build199, 9100 → Build185.
+- `statblock-overhaul` (`F:\AI_Resources\DNDSheet`, `1869921` + 84 uncommitted paths) equals the Build184 baseline `a7cc729`; it is another agent's checkout. Do not write there.
+
+**Workflow for every build.**
+1. Work in a fresh tree from `build185-repairs` (clone, or `git archive` into a temp folder with `node_modules` linked). One writer per tree; never edit a tree whose gate is running.
+2. Write the failing test first (core: `test/core/*.test.ts`; browser: fuzz step or smoke).
+3. `npm run gate` — nine steps: core, lint (0 errors), build, fuzz, help smoke, spell smoke, Pages build, Pages assets, Pages fuzz. Result in `.gate/summary.json`; any failure blocks the commit.
+4. An intended export change fails fuzz Step 51 and writes `test/goldens/<file>.actual`. Review it, then run `DNDSHEET_UPDATE_GOLDENS=1 npm run gate` and check `git diff test/goldens` shows only the intended lines.
+5. Commit on `build185-repairs`: lowercase `feat:`/`fix:`/`docs:` subject only, no AI attribution trailers. Bump `build.json`.
+6. Freeze the release candidate from `dist/spa`, tag `rc-2.4.3-build-NNN-<slug>`, push branch and tag.
+7. Publish Pages: commit the `dist-pages` tree (plus `.nojekyll`) on top of `gh-pages` and push.
+8. Docs: tick the Backlog task ids the build proves (with evidence and build number), update this section and `STACK_STATE.md`.
+
+**Next slices, in order.**
+
+| # | Slice | Input / note |
+|---|---|---|
+| 1 | **A11.1–A11.4** classify the 56 number inputs (literal · binding-capable · derived), register paths in `field-types.ts`, migrate to `FormulaField` | `DNDSheet-Control-Inventory.md` (regenerate with `node test/inventory.mjs docs/roadmap/DNDSheet-Control-Inventory.md`) |
+| 2 | **A13.3–A13.5** HelpTip kit, `help.ts` keys, `audit:help` with a floor | baseline 70 / 559 controls = 12.5 % |
+| 3 | **A12.10 a3, d** heading words into i18n; print proof | `spellLevelHeading` is English-only |
+| 4 | **A13.9 f2** PDF/pixel print proof with a bloodied fixture | print probe currently checks 0 bloodied numbers |
+| 5 | **Pages d4** first-run hint to import data (Pages origin has empty storage) | |
+| 6 | Partial tasks: A11.7 → A11.8 → B3.7 → B3.6 → A11.5/A11.9 → A12.8/A12.9 | Backlog §Build186 grooming lists each item |
+| — | **A13.9 g2** white top plate on dark themes: keep or theme it? | design decision, ask Ivan before coding |
+
+**Traps (newest first).**
+- Code passed to `evalInPage` sits in a template literal: `\s`, `\n` lose their backslash. Avoid backslash escapes there.
+- Never sleep a fixed time before reading a menu, a store or storage; poll with a bound (Steps 37, 48, 49 flaked this way).
+- Pinia registers a store only when something first uses it; `pinia._s.get(name)` can be `undefined` early.
+- A Vue `computed` must not write the store (the paragon rows rewrote data on render until Build190).
+- Lint and the Quasar build do not catch an identifier returned from `setup()` that was never imported; only the browser fuzz does.
+- PowerShell `>` writes UTF-16; write generated files from Node. Count every anchor before a scripted edit (CRLF vs LF breaks matches silently).
+- Root-relative asset paths break on Pages; render them through `appAsset()`.
+- `monster.CR` is an index into the CR table; set it with `setCR()` so proficiency follows.
+
+### Workload (Backlog checkboxes)
+
+| | Build185 `48fbbb4` | Build195 `7ffa77d` | Build199 `96403c0` |
+|---|---|---|---|
+| Task ids done / open (raw count) | 104 / 124 | 104 / 124 | 111 / 117 |
+| Headline (Backlog rule) | 95 / 219 | 95 / 219 | 102 / 219 (46.58 %) |
+| Acceptance sub-items done / open | 0 / 0 | 15 / 20 | 15 / 20 |
+
+Closed since Build185: A9.11, A9.12, A11.0, A12.3, A12.6, A13.0, A13.8. Product defects fixed: 9. Test flakes fixed: 4.
+
+---
+
 ## Build185 handoff — one committed baseline, one gate, one writer
 
 📍 *Handoffs › Build185* — **Start every session from the committed branch, not from a working tree; run the whole gate; tick tasks, don't prepend summaries.**
@@ -9,7 +63,7 @@
 ### Rules adopted from the Build162–184 divergence
 
 1. **Commit every build** on a branch before freezing its release candidate; the candidate folder must contain the runnable `spa`, never only `release-candidate.json`.
-2. **The gate is four runs**, all on the final source after the last edit: `npm test`, `node test/exhaustive-ui-fuzz.js`, `node test/statblock-help-browser-smoke.js`, `node test/spell-plate-browser-smoke.js` (plus `test/bindings-browser-smoke.mjs` when bindings change). A redesign updates the smoke it breaks in the same commit, with the reason in a comment.
+2. **The gate is `npm run gate`** (nine steps since Build195; it replaced the four manual runs), always on the final source after the last edit (plus `test/bindings-browser-smoke.mjs` when bindings change). A redesign updates the smoke it breaks in the same commit, with the reason in a comment.
 3. **One writer per checkout.** A second agent works in an exported copy or its own clone and lands through commits; it never edits another agent's working tree or index.
 4. **Docs ritual:** tick the task ids a build proves, update the Backlog dashboard and timeline, record partial work in the reconciliation table. Do not prepend per-build marketing summaries to Spec, Backlog and Handoffs.
 5. **Contrast and print are proofs, not opinions:** any theme or vitals CSS change re-runs the 12-theme help smoke.
