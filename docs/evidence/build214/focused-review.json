@@ -1,0 +1,28 @@
+{
+  "browser": {
+    "step": 55,
+    "scope": "focused pre-gate probe, not full55 suite",
+    "cases": 8,
+    "actualTablesPerModernEntry": 2,
+    "undo": true,
+    "reload": true,
+    "projectionNoMutation": true,
+    "consoleErrors": 0,
+    "runtimeErrors": 0
+  },
+  "review": {
+    "inlineSeparator": "fixed with core test",
+    "rootHtmlAndEnvFingerprint": "fixed with fingerprint test",
+    "literalTableMarkup": "fixed sanitizer preservation; strengthened browser assertion"
+  },
+  "protected": {
+    "files": 83,
+    "changed": 0,
+    "priorRcChecksums": {
+      "211": 98,
+      "212": 98,
+      "213": 97
+    },
+    "checksumFailures": 0
+  }
+}

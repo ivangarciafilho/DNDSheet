@@ -1,3 +1,11 @@
+## Build214 resumed — 2026-11-09
+
+- Official base verified: `e19a624`; isolated clone `.codex-temp/build214`, official origin. Protected `statblock-overhaul` checkout and Build213 candidate retained.
+- Ruling: finish shared outcome data-loss/formula/escaping/container repairs, then land the existing H15/H14 compiler safeguard before widening A11.5. Full A11.5/H11 remains open.
+- Compiler provenance: unchanged211 and213 both683 diagnostics with pinned TS6.0.3/vue-tsc3.3.14, no normalized differences. Historical682 is not relabeled as a clean baseline. Keep app dependencies separate.
+- Delegated disjoint writes: outcome core/web; compiler tooling; browser regression. Root owns integration, documentation, release and evidence. One browser fuzz at a time, no active-gate source edits.
+- Final gate10/10 passed on unchanged inputs:410 core,55 scenarios on SPA/Pages; H15 closes, combined118 complete/119 open. H14 guard is partial; H11 remains open. Publish/live receipt follows in Build214 report.
+
 # DNDSheet session checkpoint - 2026-10-30
 
 ## Current verified delivery — Build213 (2026-11-09)

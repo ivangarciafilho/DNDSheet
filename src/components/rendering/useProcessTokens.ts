@@ -1,3 +1,5 @@
+import { outcomesHtml } from 'src/core/domain/outcome-rendering'
+import { descriptionContainersHtml } from 'src/core/domain/description-containers'
 import { structuredAttackBonus } from 'src/core/domain/structured-attack'
 import { formatLimitedUses } from 'src/core/domain/cadence'
 import { countMultiattackReferences } from 'src/core/domain/multiattack-composer'
@@ -25,18 +27,10 @@ import { boldNumbers, phaseLabel, plateHtml } from './plate'
 import type { PlateCell } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
-import { abilityHeader, abilityIdentity, hasStructuredAbility, inferAbility, mechanicsPhrase, outcomePhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
+import { abilityHeader, abilityIdentity, hasStructuredAbility, inferAbility, mechanicsPhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
 import type { LairAction } from 'src/core/domain/types'
 import { listJoin } from './list-join'
-
-// Outcome sector helpers (A11.5): recipient and reference text is author input, so it is escaped before entering v-html.
-const escapeSectorHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
-const sectorRefs = (o: { refs?: string[] }, all: Array<{ id?: string; trigger: string }>) => {
-  const names = (o.refs ?? []).map((r) => all.find((x) => x.id === r && x !== o)?.trigger).filter((x): x is string => !!x)
-  return names.length ? ` (builds on the ${escapeSectorHtml(names.join(' and ').toLowerCase())} result)` : ''
-}
-
 
 export type MonsterContext =
   | MonsterTrait
@@ -468,18 +462,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     return input
   }
 
-  const formatDescriptionContainers = (containers?: any[]): string => {
-    if (!Array.isArray(containers) || containers.length === 0) return '';
-    return containers.map((c) => {
-      if (c.kind === 'table' && c.table) {
-        const headerHtml = (c.table.headers || []).map((h: string) => `<th>${h}</th>`).join('');
-        const rowsHtml = (c.table.rows || []).map((r: string[]) => `<tr>${r.map((cell: string) => `<td>${cell}</td>`).join('')}</tr>`).join('');
-        return `<table class="outcome-dice-table"><thead><tr>${headerHtml}</tr></thead><tbody>${rowsHtml}</tbody></table>`;
-      }
-      const outcomePrefix = c.outcomeTarget?.trim() ? `<i>${c.outcomeTarget.trim()}:</i> ` : '';
-      return `${outcomePrefix}${c.text || ''}`;
-    }).join(' ');
-  };
+  const formatDescriptionContainers = descriptionContainersHtml
 
   const processTokens = (
     input: string,
@@ -670,25 +653,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
     const scopeText = scopePhrase(ability, renderContext)
     const scope = scopeText ? [boldNumbers(scopeText)] : []
-    const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length) || (o.presentation && o.presentation !== 'inline'))
-    let effectsStr = ''
-    if (hasSectors) {
-      const sectorsHtml = ability.outcomes.map(o => {
-        const filterBadge = o.targetFilter?.trim() ? `<span class="outcome-target-badge">[${o.targetFilter.trim()}]</span> ` : ''
-        const effectsText = (o.effects || []).map(e => e.text || (e.formula ? `${e.formula}${e.damageType ? ' ' + e.damageType + ' damage' : ''}` : '')).filter(Boolean).join('. ')
-        const riderText = o.rider ? ` ${o.rider}` : ''
-        let tableHtml = ''
-        if (o.diceTable && o.diceTable.length) {
-          tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
-        }
-        return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient?.trim() ? ', ' + escapeSectorHtml(o.recipient.trim()) : ''}:</i> ${effectsText}${riderText}${sectorRefs(o, ability.outcomes)}${tableHtml}</div>`
-      }).join('')
-      effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
-    } else {
-      const outcomeHtml = outcomePhrase(ability, renderContext)
-        .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
-      effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
-    }
+    const effectsStr = outcomesHtml(ability, renderContext)
     const containersStr = formatDescriptionContainers(context.descriptionContainers)
     let desc = processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim()
 
@@ -700,7 +665,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     }
 
     const { discipline, components, duration } = abilityHeader(context)
-    const canStreamline = !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0 && !hasSectors
+    const canStreamline = !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0 && !effectsStr.includes('action-outcomes-grid')
     return buildPlateEntry(
       monster,
       {
@@ -736,6 +701,10 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
     const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
+
+    if (isModern && !context.customPreamble && hasStructuredAbility(context as Partial<MonsterAction>)) {
+      return structuredActionPlate(context as unknown as MonsterAction, monster, computeTraitTag(context))
+    }
 
     if (isModern && !context.customPreamble) {
       const tag = computeTraitTag(context)
@@ -904,26 +873,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
-        const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length) || (o.presentation && o.presentation !== 'inline'))
-        let effectsStr = ''
-        if (hasSectors) {
-          const sectorsHtml = ability.outcomes.map(o => {
-            const filterBadge = o.targetFilter?.trim() ? `<span class="outcome-target-badge">[${o.targetFilter.trim()}]</span> ` : ''
-            const effectsText = (o.effects || []).map(e => e.text || (e.formula ? `${e.formula}${e.damageType ? ' ' + e.damageType + ' damage' : ''}` : '')).filter(Boolean).join('. ')
-            const riderText = o.rider ? ` ${o.rider}` : ''
-            let tableHtml = ''
-            if (o.diceTable && o.diceTable.length) {
-              tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
-            }
-            return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient?.trim() ? ', ' + escapeSectorHtml(o.recipient.trim()) : ''}:</i> ${effectsText}${riderText}${sectorRefs(o, ability.outcomes)}${tableHtml}</div>`
-          }).join('')
-          effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
-        } else {
-          const outcomeHtml = outcomePhrase(ability, renderContext)
-            .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
-          effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
-        }
-        let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'reaction').trim()
+        const effectsStr = outcomesHtml(ability, renderContext)
+        let desc = processTokens(`${effectsStr}${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)} ${context.description || ''}`, context, monster, 'reaction').trim()
         if (context.stat && context.stat !== 'none') {
           desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
         }
@@ -948,7 +899,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         )
       }
 
-      const desc = processTokens(context.description, context, monster, 'reaction')
+      const desc = processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`, context, monster, 'reaction')
       return buildPlateEntry(
         monster,
         { stagePool: context?.stagePool, name: context.name, usage: usageText(context), extra: trigger ? [trigger] : [] },
@@ -956,10 +907,17 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       )
     }
 
+    if (hasStructuredAbility(context as Partial<MonsterAction>)) {
+      const { renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
+      const trigger = context.trigger?.trim() ? `<i>${t('monster.reaction.trigger')}:</i> ${context.trigger.trim()} ` : ''
+      const prose = text2024(context as unknown as MonsterAction, renderContext, { markup: 'html', componentsInLead: true })
+      return processTokens(`<b><i>${context.name}{reaction.limitedUse}.</i></b> ${trigger}${prose}`, context, monster, 'reaction')
+    }
+
     // case on the presence of a Trigger to choose old style rendering or new
     if (context.trigger === '') {
       return processTokens(
-        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description}`,
+        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`,
         context,
         monster,
         'reaction'
@@ -970,7 +928,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           'monster.reaction.trigger'
         )}:</i> ${context.trigger} <i>${t('monster.reaction.response')}:</i> ${
           context.description
-        }`,
+        } ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`,
         context,
         monster,
         'reaction'
@@ -1240,6 +1198,12 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   }
 
   const sanitizeWebString = (input: string) => {
+    // Preserve actual generated table tags before escaping. Already escaped author text
+    // must not be promoted into structural markup by the legacy tag restoration below.
+    const tableTags: string[] = []
+    let tableMarker = 'DNDSHEET_OUTCOME_TABLE_'
+    while (input.includes(tableMarker)) tableMarker += '_'
+    input = input.replace(/<(table class="outcome-dice-table"|\/?(?:table|thead|tbody|tr|th|td)|th scope="col")>/gi, (tag) => `${tableMarker}${tableTags.push(tag) - 1};`)
     // allowed tags are: bold, italic, underline, br, div, span, svg, path
     input = input.replace(/>/gi, '&gt;')
     input = input.replace(/</gi, '&lt;')
@@ -1279,7 +1243,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       return '<' + tag + '>'
     })
 
-    return input
+    return input.replace(new RegExp(`${tableMarker}(\\d+);`, 'g'), (_match, index) => tableTags[Number(index)])
   }
 
   const stripTags = (input: string) => {

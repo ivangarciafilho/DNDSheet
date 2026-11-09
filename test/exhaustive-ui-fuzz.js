@@ -3738,6 +3738,40 @@ async function runFuzz() {
   await sendCdp('Page.reload');await pause(1500)
   const tableReload=await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').randomTables)`)
   assert.deepEqual(JSON.parse(tableReload),JSON.parse(step54.after),'Imported table changed on reload')
+  console.log('\n--- Step 55: Outcome sectors retain resolved mechanics, safe author text and containers ---')
+  const step55=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor'),problems=[];
+    monster.$reset();monster.name='Outcome Pipeline Witness';monster.proficiency=3;
+    const containers=()=>[{id:'kept-text',kind:'text',outcomeTarget:'After <pulse>',text:'Container <b>emphasis retained</b>. <table>not markup</table>'},{id:'kept-table',kind:'table',table:{headers:['Choice <mark>','Consequence'],rows:[['A <choice>','Container table retained']]}}];
+    const outcomes=()=>[{id:'pulse-result',trigger:'hit',targetFilter:'Allies <scope>',recipient:'Each <recipient>',layoutSector:'top_left',presentation:'vertical',effects:[{kind:'damage',formula:'PB + 2',damageType:'radiant'}],rider:'Rider <rider>',diceTable:[{roll:'1 <roll>',effect:'Table <effect> retained'}]}];
+    monster.addAction();Object.assign(monster.actions.at(-1),{id:'outcome-action',name:'Outcome Action Witness',description:'Authored <b>action emphasis</b>.',attackReach:'ranged',attackSource:'spell',attackBonus:7,outcomes:outcomes(),descriptionContainers:containers()});
+    monster.addReaction();Object.assign(monster.reactions.at(-1),{id:'outcome-reaction',name:'Outcome Reaction Witness',description:'Authored <b>reaction emphasis</b>.',trigger:'When threatened',attackReach:'ranged',attackSource:'spell',attackBonus:7,outcomes:outcomes(),descriptionContainers:containers()});
+    await wait(250);const authored=JSON.stringify([monster.actions.find(a=>a.id==='outcome-action'),monster.reactions.find(a=>a.id==='outcome-reaction')]);
+    const entry=id=>{const selector=id==='outcome-action'?'.action':'.reaction';return [...document.querySelectorAll('#render '+selector)].find(el=>el.textContent.includes(id==='outcome-action'?'Outcome Action Witness':'Outcome Reaction Witness'));};
+    let checks=0;
+    const expected=['5','Radiant damage','Allies <scope>','Each <recipient>','Rider <rider>','1 <roll>','Table <effect> retained','Container','emphasis retained','Choice <mark>','A <choice>','Container table retained','<table>not markup</table>'];
+    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;for(const id of ['outcome-action','outcome-reaction']){
+      for(let attempt=0;attempt<50;attempt++){await wait(60);const current=entry(id),text=current?.textContent||'';if(expected.every(phrase=>text.includes(phrase))&&(template!=='modern'||current.querySelector('.outcome-sector')))break;}
+      const el=entry(id),text=el?.textContent||'';checks++;
+      for(const phrase of expected)if(!text.includes(phrase))problems.push(style+'/'+template+'/'+id+': missing '+phrase);
+      if(!el?.querySelector('b')||el.querySelector('scope,recipient,rider,roll,effect,pulse,mark,choice,script,img,iframe,[onerror],[onclick]'))problems.push(style+'/'+template+'/'+id+': unsafe or lost authored markup');
+      if(/PB\\s*\\+\\s*2/.test(text))problems.push(style+'/'+template+'/'+id+': unresolved formula');
+      if(template==='modern'&&!el?.querySelector('.outcome-sector'))problems.push(style+'/'+template+'/'+id+': sector missing');
+      if(template==='modern'&&(el?.querySelectorAll('table.outcome-dice-table').length!==2||text.includes('<table class=')))problems.push(style+'/'+template+'/'+id+': generated outcome/container tables must render as tables');
+    }}
+    const projectionPreserves=authored===JSON.stringify([monster.actions.find(a=>a.id==='outcome-action'),monster.reactions.find(a=>a.id==='outcome-reaction')]);
+    let history;for(let attempt=0;attempt<50&&!history;attempt++){history=pinia._s.get('history');if(!history)await wait(60);}if(!history)throw new Error('Outcome proof history store did not register');
+    history.pushSnapshot('Before outcome rider edit');monster.actions.find(a=>a.id==='outcome-action').outcomes[0].rider='Temporary outcome edit';await wait(100);history.undo();for(let attempt=0;attempt<50;attempt++){if(monster.actions.find(a=>a.id==='outcome-action')?.outcomes[0].rider==='Rider <rider>')break;await wait(60);}
+    const undone=monster.actions.find(a=>a.id==='outcome-action')?.outcomes[0].rider==='Rider <rider>';
+    return {problems,checks,projectionPreserves,undone,authored};
+  }`)
+  await sendCdp('Page.reload');await pause(1500)
+  const step55Reloaded=await evalInPage(`async()=>{for(let attempt=0;attempt<80;attempt++){const monster=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster'),action=monster?.actions.find(a=>a.id==='outcome-action'),reaction=monster?.reactions.find(a=>a.id==='outcome-reaction');if(action&&reaction)return JSON.parse(JSON.stringify([action,reaction]));await new Promise(resolve=>setTimeout(resolve,100));}throw new Error('Outcome witness did not hydrate after reload');}`)
+  assert.deepEqual(step55Reloaded,JSON.parse(step55.authored),'Step 55 outcome records survive hydration')
+  step55.persisted=true
+  delete step55.authored
+  console.log('Step 55 result:',JSON.stringify(step55))
+  if(step55.problems.length||step55.checks!==8||!step55.projectionPreserves||!step55.undone||!step55.persisted)throw new Error('Step 55 failed: '+JSON.stringify(step55))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3754,7 +3788,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 54 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 55 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

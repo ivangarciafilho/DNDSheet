@@ -17,7 +17,9 @@
     "audit:help": "node test/audit-help.mjs",
     "dev": "npx quasar dev",
     "build": "npx quasar build",
-    "build:pwa": "npx quasar build -m pwa"
+    "build:pwa": "npx quasar build -m pwa",
+    "typecheck": "node tools/typecheck.mjs",
+    "typecheck:setup": "cd tools/typecheck-runtime && npm ci --ignore-scripts --no-audit --no-fund"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.12",

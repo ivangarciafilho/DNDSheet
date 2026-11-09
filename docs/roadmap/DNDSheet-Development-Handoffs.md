@@ -1,6 +1,16 @@
 # DNDSheet — Development Handoffs
 
-## Current verified delivery — Build213 (2026-11-09)
+## Current verified delivery — Build214 (2026-11-09)
+
+Outcome pipeline repairs retain filters/sectors/dice tables, resolve shared formulas in action/reaction sectors, preserve containers in prose/reaction paths, render actual tables through the web boundary and tolerate incomplete older table data. **H15 closed**: compiler tools are pinned independently; configuration replaces the ad-hoc deprecation flag. H14's new-error safeguard is delivered, with613 existing diagnostics/0new/70resolved against the683-diagnostic approved baseline. Its debt burn-down remains open. Full H11/A11.5/A11.9 is not claimed complete.
+
+Final gate **10/10**,410 core tests,55 exhaustive browser scenarios on both SPA and Pages, help12 themes and spell5; zero browser errors. Inputs remained fingerprint-identical through the final run. Prior candidates and83 protected files are preserved. Release tag: `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`; source/Pages/live parity recorded in the publication receipt.
+
+[Build214 delivery and continuation](DNDSheet-Build214-Outcome-Pipeline-and-Type-Guard.md). Next: **H11/A11.5 stable container/region model and validation → A11.9 integration → H9 copy → H14 per-file debt**. H13 still requires three consecutive unchanged-source gates; this packet supplies one final qualifying run. H12 and H16 remain open.
+
+Workload: canonical219 IDs106 checked/113 open (unchanged); recovery18 IDs12 checked/6 open (**+1/−1**); combined237 IDs118 complete/119 open versus117/120. New scope IDs0. Repairs and new tests are not counted as additional roadmap closures. Historical snapshots below retain their original evidence boundaries.
+
+## Historical verified delivery — Build213 (2026-11-09)
 
 Release source `e55215f`; Pages `09f9945`; tag `rc-2.4.3-build-213-table-import-and-a4-print`, based on `2363765`. Official live footer213 and entry-asset parity verified. **H6 closed**: transactional Paste rows, global row-ID reservation, statblock-owned A4 tables, accessible headers and inspected portrait/landscape print output. Shared print fixes remove the editor splitter/clipping and notification UI; landscape now selects its actual paper orientation. Final gate9/9:400 core;54 browser scenarios on both SPA and Pages. Prior candidates and protected checkout retained.
 

@@ -4,6 +4,7 @@ import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
+import { gateSummaryPasses, gateInputFingerprint } from '../tools/gate-contract.mjs'
 
 const OUT = path.resolve('.gate')
 const PAGES_BASE = '/DNDSheet'
@@ -11,6 +12,7 @@ const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css
 fs.rmSync(OUT, { recursive: true, force: true })
 fs.mkdirSync(OUT, { recursive: true })
 const results = []
+const inputFingerprint = gateInputFingerprint()
 
 function run(name, command, env = {}) {
   return new Promise((resolve) => {
@@ -59,6 +61,7 @@ async function check(name, fn) {
 
 await run('core', 'npm test')
 await run('lint', 'npx eslint --ext .js,.ts,.vue src test')
+await run('typecheck', 'npm run typecheck')
 if (await run('build', 'npx quasar build')) {
   const spa = await serve('dist/spa', 9230, '')
   const url = 'http://localhost:9230/index.html#/'
@@ -80,6 +83,8 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
 }
 
 const failed = results.filter((r) => !r.ok)
-fs.writeFileSync(path.join(OUT, 'summary.json'), JSON.stringify({ ok: failed.length === 0, results }, null, 2))
-console.log(failed.length ? `GATE FAILED: ${failed.map((r) => r.step).join(', ')}` : `GATE PASSED: ${results.length} steps`)
-process.exit(failed.length ? 1 : 0)
+const summary = { ok: failed.length === 0 && inputFingerprint === gateInputFingerprint(), inputFingerprint, results }
+summary.ok = gateSummaryPasses(summary)
+fs.writeFileSync(path.join(OUT, 'summary.json'), JSON.stringify(summary, null, 2))
+console.log(!summary.ok ? `GATE FAILED: ${failed.map((r) => r.step).join(', ')}` : `GATE PASSED: ${results.length} steps`)
+process.exit(summary.ok ? 0 : 1)

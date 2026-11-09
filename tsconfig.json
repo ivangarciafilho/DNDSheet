@@ -27,7 +27,9 @@
       "stores/*": [
         "src/stores/*"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true,
+    "ignoreDeprecations": "6.0"
   },
   "include": [
     "src/**/*.ts",

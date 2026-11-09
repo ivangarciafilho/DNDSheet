@@ -1,12 +1,28 @@
 # DNDSheet — Product & Architecture Specification
 
-## Current verified delivery — Build213 (2026-11-09)
+## Current verified delivery — Build214 (2026-11-09)
+
+Outcome pipeline repairs retain filters/sectors/dice tables, resolve shared formulas in action/reaction sectors, preserve containers in prose/reaction paths, render actual tables through the web boundary and tolerate incomplete older table data. **H15 closed**: compiler tools are pinned independently; configuration replaces the ad-hoc deprecation flag. H14's new-error safeguard is delivered, with613 existing diagnostics/0new/70resolved against the683-diagnostic approved baseline. Its debt burn-down remains open. Full H11/A11.5/A11.9 is not claimed complete.
+
+Final gate **10/10**,410 core tests,55 exhaustive browser scenarios on both SPA and Pages, help12 themes and spell5; zero browser errors. Inputs remained fingerprint-identical through the final run. Prior candidates and83 protected files are preserved. Release tag: `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`; source/Pages/live parity recorded in the publication receipt.
+
+[Build214 delivery and continuation](DNDSheet-Build214-Outcome-Pipeline-and-Type-Guard.md). Next: **H11/A11.5 stable container/region model and validation → A11.9 integration → H9 copy → H14 per-file debt**. H13 still requires three consecutive unchanged-source gates; this packet supplies one final qualifying run. H12 and H16 remain open.
+
+Workload: canonical219 IDs106 checked/113 open (unchanged); recovery18 IDs12 checked/6 open (**+1/−1**); combined237 IDs118 complete/119 open versus117/120. New scope IDs0. Repairs and new tests are not counted as additional roadmap closures. Historical snapshots below retain their original evidence boundaries.
+
+## Historical verified delivery — Build213 (2026-11-09)
 
 Release source `e55215f`; Pages `09f9945`; tag `rc-2.4.3-build-213-table-import-and-a4-print`, based on `2363765`. Official live footer213 and entry-asset parity verified. **H6 closed**: transactional Paste rows, global row-ID reservation, statblock-owned A4 tables, accessible headers and inspected portrait/landscape print output. Shared print fixes remove the editor splitter/clipping and notification UI; landscape now selects its actual paper orientation. Final gate9/9:400 core;54 browser scenarios on both SPA and Pages. Prior candidates and protected checkout retained.
 
 [Build213 delivery, evidence and groomed continuation](DNDSheet-Build213-Table-Import-and-A4-Print.md) records the acceptance ruling and boundaries. Next: **H11 (A11.5 → A11.9) → H9 → H15/H14**. H13 requires three consecutive unchanged-source gates; only one final qualifying run is supplied here. H12 and owner-decision H16 remain open. Typecheck is outside the nine-step gate.
 
 Workload: canonical219 A/B IDs106 checked /113 open (unchanged); separate18 H IDs11 checked /7 open (**+1 completed /−1 open**). Combined237 IDs117 complete /120 open versus116 /121. New scope IDs0. Historical snapshots below retain their original counts and evidence.
+
+## Outcome and compiler contracts clarified for Build214
+
+Existing outcome data crosses normalization without losing filters, region labels or random-result rows. All web sector paths use the same formula resolution as prose; plain clause/container fields are escaped and generated table structure is retained through the web boundary. Rich-text description fields retain their existing contract. This does not establish the future N-container/four-region model or typed predicates: those remain the A11.5 design and acceptance target.
+
+The release gate now includes a pinned compiler comparison. Store/UI type debt is an explicit baseline, compared by complete normalized message multiplicity; new errors fail even if the overall count falls. No caller may silently refresh that baseline. Compiler tools are installed independently of the legacy build runtime. Freshness covers root entry HTML and environment/configuration files as well as source, tests, assets and tools.
 
 ## Historical verified release — Build212 (2026-11-09)
 

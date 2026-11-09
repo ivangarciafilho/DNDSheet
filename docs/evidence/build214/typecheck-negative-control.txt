@@ -1,0 +1,2 @@
+src/typecheck214-negative-control.ts: TS2322: Type 'number' is not assignable to type 'string'.
+Typecheck: 614 diagnostics; 1 new; 70 resolved (approved baseline 683, Build213 e19a624).

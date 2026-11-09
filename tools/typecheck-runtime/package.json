@@ -1,0 +1,9 @@
+{
+  "name": "dndsheet-typecheck-runtime",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "typescript": "6.0.3",
+    "vue-tsc": "3.3.14"
+  }
+}

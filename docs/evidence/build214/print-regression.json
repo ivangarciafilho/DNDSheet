@@ -1,0 +1,42 @@
+[
+  {
+    "file": "pages-landscape.pdf",
+    "pages": 1,
+    "size": [
+      841.92,
+      594.96
+    ],
+    "expectedText": true,
+    "outOfBoundsWords": 0
+  },
+  {
+    "file": "pages-portrait.pdf",
+    "pages": 1,
+    "size": [
+      594.96,
+      841.92
+    ],
+    "expectedText": true,
+    "outOfBoundsWords": 0
+  },
+  {
+    "file": "spa-landscape.pdf",
+    "pages": 1,
+    "size": [
+      841.92,
+      594.96
+    ],
+    "expectedText": true,
+    "outOfBoundsWords": 0
+  },
+  {
+    "file": "spa-portrait.pdf",
+    "pages": 1,
+    "size": [
+      594.96,
+      841.92
+    ],
+    "expectedText": true,
+    "outOfBoundsWords": 0
+  }
+]

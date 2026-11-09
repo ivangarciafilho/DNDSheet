@@ -5,6 +5,7 @@ import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { gateSummaryPasses, gateInputFingerprint } from './gate-contract.mjs'
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => (a.startsWith('--') ? [...acc, [a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : true]] : acc), []))
 const tree = path.resolve('.')
@@ -19,9 +20,8 @@ const git = (gitArgs, env = {}) => execFileSync('git', ['-C', repo, ...gitArgs],
 const summaryFile = path.join(tree, '.gate', 'summary.json')
 if (!fs.existsSync(summaryFile)) fail('no .gate/summary.json; run npm run gate first')
 const summary = JSON.parse(fs.readFileSync(summaryFile, 'utf8'))
-if (!summary.ok || summary.results.length !== 9) fail('gate summary is not a 9/9 pass')
-const newestSource = ['src', 'test', 'public'].flatMap((dir) => walk(path.join(tree, dir))).reduce((max, f) => Math.max(max, fs.statSync(f).mtimeMs), 0)
-if (fs.statSync(summaryFile).mtimeMs < newestSource) fail('sources changed after the gate ran')
+if (!gateSummaryPasses(summary)) fail('gate summary is not a complete named 10/10 pass')
+if (summary.inputFingerprint !== gateInputFingerprint(tree)) fail('gate inputs changed after the gate ran; run npm run gate again')
 
 // 2. Pages output lives in dist-pages/ (not dist-pages/spa/) and must carry the /DNDSheet/ base.
 const pages = path.join(tree, 'dist-pages'), spa = path.join(tree, 'dist', 'spa')

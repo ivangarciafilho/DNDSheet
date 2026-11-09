@@ -114,7 +114,9 @@ Clone the repository install packages with `npm install`. The development server
 
 ### Contributor workflow (DNDSheet fork)
 
-- `npm run gate` runs the full release gate (unit tests, lint, build, browser fuzz, help and spell smokes, GitHub Pages build and sub-path fuzz); results land in `.gate/summary.json`.
+- First install the pinned compiler tools with `npm run typecheck:setup`. These live in `tools/typecheck-runtime` separately from the application's legacy build dependencies.
+- `npm run typecheck` rejects new diagnostics against the reviewed Build213 baseline. Existing diagnostics remain technical debt; a passing comparison is not a clean typecheck.
+- `npm run gate` runs ten named steps: core tests, lint, typecheck comparison, SPA build and browser fuzz, help and spell smokes, Pages build, asset checks and Pages fuzz. Results land in `.gate/summary.json`. The publisher requires every named step once, successful and fresh.
 - Exports are pinned by `test/goldens`. After an intended export change, review the `.actual` file the fuzz writes, then run `DNDSHEET_UPDATE_GOLDENS=1 npm run gate`.
 - Pages build: `PUBLIC_PATH=/DNDSheet/ DNDSHEET_BUILD_DIR=dist-pages npx quasar build`, published from the `gh-pages` branch to https://ivangarciafilho.github.io/DNDSheet/.
 - Roadmap and handoff notes: `docs/roadmap` (start with *Development Handoffs › Start here*).

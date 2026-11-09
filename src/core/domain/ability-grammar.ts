@@ -1,3 +1,4 @@
+import { descriptionContainersText } from './description-containers.ts'
 import type { AbilityArea, AbilityOutcome, AbilityTargeting, AttackReach, AttackSource, DndStat, MonsterAction } from './types.ts'
 import { evaluateFormula } from './formula.ts'
 import type { FormulaContext, FormulaStyle } from './formula.ts'
@@ -269,6 +270,9 @@ const normalizeOutcomes = (input: unknown): AbilityOutcome[] => {
         damageType: typeof effect.damageType === 'string' ? effect.damageType : undefined,
       }))
       : [],
+    targetFilter: typeof outcome.targetFilter === 'string' ? outcome.targetFilter : undefined,
+    layoutSector: typeof outcome.layoutSector === 'string' ? outcome.layoutSector : undefined,
+    diceTable: Array.isArray(outcome.diceTable) ? outcome.diceTable.filter(isRecord).filter((row) => typeof row.roll === 'string' && typeof row.effect === 'string').map((row) => ({ roll: String(row.roll), effect: String(row.effect) })) : undefined,
     rider: typeof outcome.rider === 'string' ? outcome.rider : undefined,
     id: typeof outcome.id === 'string' ? outcome.id : undefined,
     recipient: typeof outcome.recipient === 'string' && outcome.recipient.trim() ? outcome.recipient.trim() : undefined,
@@ -535,7 +539,7 @@ export function outcomePhrase(
     const recipient = outcome.recipient?.trim() ? `, ${outcome.recipient.trim()}` : ''
     const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`
     const label = markLabel(markup === 'html' ? escapeOutcomeHtml(lead) : lead, markup)
-    return parts.length ? `${label} ${ensurePeriod(parts.join(' '))}` : label
+    return parts.length ? `${label} ${markup === 'html' ? escapeOutcomeHtml(ensurePeriod(parts.join(' '))) : ensurePeriod(parts.join(' '))}` : label
   })
 }
 
@@ -597,6 +601,8 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   }
 
   clauses.push(...outcomePhrase(ability, context, 'text2024', markup))
+  const containers = descriptionContainersText(action.descriptionContainers, markup === 'html')
+  if (containers) clauses.push(containers)
   if (ability.description.trim()) clauses.push(ability.description.trim())
   return clauses.join(' ')
 }
