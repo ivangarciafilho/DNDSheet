@@ -61,6 +61,19 @@
             />
           </div>
         </div>
+        <!-- A11.5 recipient, references and presentation -->
+        <div class="row q-col-gutter-xs items-center q-mt-xs">
+          <div class="col-12 col-sm-5">
+            <q-input v-help="'Who this result applies to, e.g. “each creature in the area”.'" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(index, { recipient: String(value ?? '') || undefined })" />
+          </div>
+          <div class="col-12 col-sm-4">
+            <q-select v-help="'Earlier results this one builds on, e.g. “half as much” on a success.'" :model-value="outcome.refs ?? []" :options="refOptions(index)" multiple emit-value map-options dense outlined dark label="Builds on" @update:model-value="(value: string[]) => setOutcome(index, { refs: value })" />
+          </div>
+          <div class="col-12 col-sm-3">
+            <q-select v-help="'How the clause is laid out; does not change the rules.'" :model-value="outcome.presentation ?? 'inline'" :options="['inline', 'vertical', 'horizontal']" dense outlined dark label="Layout" @update:model-value="(value: string) => setOutcome(index, { presentation: value as 'inline' | 'vertical' | 'horizontal' })" />
+          </div>
+          <div v-for="issue in issuesFor(outcome)" :key="issue.kind + issue.message" class="col-12 text-caption text-warning">⚠ {{ issue.message }}</div>
+        </div>
 
         <!-- Row 2: Effects (Damage / Text) -->
         <div v-for="(effect, effectIndex) in outcome.effects" :key="effectIndex" class="row q-col-gutter-xs items-center q-mt-xs">
@@ -207,6 +220,7 @@
 </template>
 
 <script lang="ts">
+import { newOutcomeId, triggerLead, validateOutcomes } from 'src/core/domain/outcome-graph'
 import { computed, defineComponent, PropType } from 'vue'
 import { DAMAGE_TYPES, OUTCOME_TRIGGERS } from 'src/core/domain/action-composer'
 import type { AbilityOutcome, ActionEffect, EffectClause, OutcomeDiceTableRow } from 'src/core/domain/types'
@@ -229,7 +243,7 @@ export default defineComponent({
     const emitEffects = (next: ActionEffect[]) => emit('update:modelValue', next)
 
     const setOutcome = (index: number, change: Partial<AbilityOutcome>) =>
-      emitOutcomes(outcomes.value.map((outcome, i) => (i === index ? { ...outcome, ...change } : outcome)))
+      emitOutcomes(outcomes.value.map((outcome, i) => (i === index ? { ...outcome, ...change } : outcome)).map((o) => (o.id ? o : { ...o, id: newOutcomeId() })))
 
     const setEffect = (index: number, effectIndex: number, change: Partial<EffectClause>) =>
       emitOutcomes(outcomes.value.map((outcome, i) => i !== index ? outcome : {
@@ -250,7 +264,7 @@ export default defineComponent({
       }))
 
     const addOutcome = () =>
-      emitOutcomes([...outcomes.value, { trigger: outcomes.value.length ? 'success' : 'hit', effects: [{ kind: 'damage', formula: '', damageType: '' }] }])
+      emitOutcomes([...outcomes.value, { id: newOutcomeId(), trigger: outcomes.value.length ? 'success' : 'hit', effects: [{ kind: 'damage', formula: '', damageType: '' }] }])
 
     const removeOutcome = (index: number) => emitOutcomes(outcomes.value.filter((_, i) => i !== index))
 
@@ -294,6 +308,8 @@ export default defineComponent({
       addDiceRow,
       updateDiceRow,
       removeDiceRow,
+      refOptions: (index: number) => outcomes.value.filter((o, i) => i !== index && o.id).map((o) => ({ label: triggerLead(o.trigger), value: o.id as string })),
+      issuesFor: (o: AbilityOutcome) => validateOutcomes(outcomes.value).filter((x) => x.outcomeId === o.id && x.kind !== 'empty'),
       setLegacy,
       addLegacy,
       removeLegacy,

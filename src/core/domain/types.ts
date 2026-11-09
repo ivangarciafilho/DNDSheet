@@ -662,6 +662,14 @@ export interface OutcomeDiceTableRow {
 }
 
 export interface AbilityOutcome {
+  /** A11.5 stable clause id so other clauses can reference this result. */
+  id?: string
+  /** Who the clause applies to, e.g. 'the target', 'each creature in the area', 'the creature that failed by 5 or more'. */
+  recipient?: string
+  /** Ids of earlier clauses whose result this clause builds on (e.g. 'half as much on a success'). */
+  refs?: string[]
+  /** Presentation only; never changes mechanics. */
+  presentation?: 'inline' | 'vertical' | 'horizontal'
   /** Stable known triggers use hit/failure/success; unknown labels are preserved verbatim. */
   trigger: string
   effects: EffectClause[]
