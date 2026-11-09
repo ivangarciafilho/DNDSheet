@@ -15,10 +15,16 @@ ___
 > - **Passive Checks** Search: 10/+0; Study: 14/+4; Influence: 10/+0; Hide (Bonus Action): 10/+0
 > - **Challenge** 9 (5,000 XP, PB +4)
 >___
+> ***Arcane Ward.*** Golden Export Fixture has a ward with 10 hit points.
 > ### Actions
+> ***Force Lash.*** Each creature within 10 feet must make a DC 15 Strength saving throw.
+>
 > ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). Golden Export Fixture has the following Wizard spells prepared:
 >
 > Cantrips (at will): *Fire Bolt*  
 > (4/Long Rest), Level 1: *Magic Missile*  
 > (1/Day), Level 3: *Fireball*  
+>
+> ### Reactions
+> ***Counter Glyph.*** *Trigger:* A creature within 60 feet casts a spell *Response:* Golden Export Fixture interrupts the spell.
 >

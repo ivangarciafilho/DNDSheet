@@ -1892,3 +1892,18 @@
   .a4-preview-viewport { display: block !important; overflow: visible !important; border: none !important; background: transparent !important; }
   .a4-page-sheet { aspect-ratio: auto !important; }
 }
+
+/* B7.6: reduce motion only on the app's own transitions. A global rule broke Quasar's menu focus hand-off and
+   tooltip tracking (Build216), so Quasar internals are deliberately left alone. Keep this list in step with any new
+   transition in src/ (`Select-String 'transition\s*:'`). */
+@media (prefers-reduced-motion: reduce) {
+  .combatant-card,
+  .chain-chip,
+  .chain-suggest-item,
+  .radar-puck,
+  .slider-mini-reset,
+  .pool-filter-btn,
+  .a4-scale-stage {
+    transition: none !important;
+  }
+}

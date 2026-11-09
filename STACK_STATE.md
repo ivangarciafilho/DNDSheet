@@ -4,6 +4,8 @@
 
 > Historical Build213 delivery: Build213, source `e55215f`, Pages `09f9945` (live footer verified), tag `rc-2.4.3-build-213-table-import-and-a4-print`. H6 closed; use the Build213 entry in Development Handoffs. Production link: https://ivangarciafilho.github.io/DNDSheet/.
 
+- **Build218 (2026-11-09)**: character JSON import (B4.17); failed saves warn the user (B5.8); reduced motion scoped and tested in both modes (B7.6, B7.5); Improved Initiative entries from the shared prose with reaction triggers (B4.18, B4.7 half); golden fixture covers traits, actions and reactions (B4.19); H23. Release candidate `rc-2.4.3-build-218-character-import-and-safe-saves`.
+
 - **Build217 (2026-11-09)**: 10 items — export goldens for Foundry, plain text and HTML (B4.12) plus character exports (B4.13); honest copy-link notice and shortener validation (B4.14); dangling-comma fix in the Markdown/plain-text exporter (B4.16); lint fixable flags made truthful (B2.6); storage, Auto-Tune and lint inventories (B5.1, B3.1, B2.1 progress); macro-rendering budget 0.18 ms / 5 000 chars (A17.8); Step 38 lookups poll (H17). Release candidate `rc-2.4.3-build-217-export-goldens-and-inventories`.
 
 - **Build216 (2026-11-09)**: 10 items — safe export file names (B4.11) and released download blobs (B4.15); export inventory (B4.1); dead intellisense-strip logic removed (A10.0, A10.7); splitter minimum widths (A16.4); presentation switches proven not to touch rules (B8.3); `tools/qa/` (A17.2); H12, H21. Fuzz Step 56. Reduced-motion rule tried and reverted (machine reports reduce; see B7.6). Release candidate `rc-2.4.3-build-216-export-names-and-qa-tools`.

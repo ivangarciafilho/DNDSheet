@@ -18,8 +18,6 @@ const statMap = {
   CHA: 'Cha',
 }
 
-const attackNoName =
-  '<i>{attack.distance}:</i> {attack.modifier} to hit, {attack.range}, {attack.targets}. <i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}'
 
 export function useImprovedInitRenderer() {
   const monster = useMonsterStore()
@@ -139,24 +137,21 @@ export function useImprovedInitRenderer() {
     ii.Languages = (renderer.languages.value || monster.languages).split(',').map((s: string) => s.trim()).filter(Boolean)
     ii.Challenge = CR[monster.CR].cr
 
-    // traits
-    ii.Traits = []
-    for (const trait of monster.traits) {
-      // name includes uses
-      const name = processTokens(
-        '{trait.name}{trait.limitedUse}',
-        trait,
-        monster,
-        'trait'
-      )
+    // Every entry list comes from the shared prose projection (the same one the stat block and Markdown use), so
+    // structured mechanics, cadences, reaction triggers and resolved tokens survive. Improved Initiative has no
+    // preamble field.
+    const poolEntries = (entries: string[]) =>
+      entries
+        .filter((entry) => entry.trim())
+        .map((entry) => {
+          const { title, body } = splitEntryLead(entry)
+          // Line breaks separate parts such as Trigger and Response; keep them as newlines, which Improved Initiative shows.
+          const content = stripTags(body.replace(/<br\s*\/?>/gi, '\n')).replace(/[ \t]+\n/g, '\n').trim()
+          return { Name: stripTags(title).trim(), Content: content }
+        })
 
-      ii.Traits.push({
-        Name: name,
-        Content: stripTags(
-          processTokens(trait.description, trait, monster, 'trait')
-        ),
-      })
-    }
+    // traits
+    ii.Traits = poolEntries(renderer.traits.value)
 
     // actions includes multiattack, regular attack, and extra actions
     ii.Actions = []
@@ -176,63 +171,9 @@ export function useImprovedInitRenderer() {
       })
     }
 
-    // attacks next
-    for (const attack of monster.attacks) {
-      ii.Actions.push({
-        Name: attack.name,
-        Content: stripTags(
-          processTokens(attackNoName, attack, monster, 'attack')
-        ),
-      })
-    }
+    // attacks, actions and bonus actions, in stat-block order
+    ii.Actions.push(...poolEntries(renderer.attacks.value), ...poolEntries(renderer.actions.value), ...poolEntries(renderer.bonusActions.value))
 
-    // full actions
-    const regularActions = monster.actions.filter(
-      (a) => !a.legendaryOnly && !a.bonusAction
-    )
-
-    for (const action of regularActions) {
-      const name = stripTags(
-        processTokens(
-          '{action.name}{action.limitedUse}',
-          action,
-          monster,
-          'action'
-        )
-      )
-
-      ii.Actions.push({
-        Name: name,
-        Content: stripTags(
-          processTokens(action.description, action, monster, 'action')
-        ),
-      })
-    }
-
-    // bonus actions
-    const bonusActions = monster.actions.filter((a) => a.bonusAction)
-    for (const ba of bonusActions) {
-      const name = stripTags(
-        processTokens('{action.name}{action.limitedUse}', ba, monster, 'action')
-      )
-
-      ii.Actions.push({
-        Name: name,
-        Content: stripTags(
-          processTokens(ba.description, ba, monster, 'action')
-        ),
-      })
-    }
-
-    // Legendary and mythic entries come from the shared prose projection, so structured mechanics
-    // (rolls, saves, outcomes) survive. Improved Initiative has no preamble field.
-    const poolEntries = (entries: string[]) =>
-      entries
-        .filter((entry) => entry.trim())
-        .map((entry) => {
-          const { title, body } = splitEntryLead(entry)
-          return { Name: stripTags(title), Content: stripTags(body) }
-        })
     ii.LegendaryActions = poolEntries(renderer.legendaryActions.value)
     ii.MythicActions = poolEntries(renderer.mythicActions.value)
 
@@ -276,18 +217,8 @@ export function useImprovedInitRenderer() {
       })
     }
 
-    // hold up reaction time
-    ii.Reactions = []
-    if (monster.reactions.length > 0) {
-      for (const reaction of monster.reactions) {
-        ii.Reactions.push({
-          Name: reaction.name,
-          Content: stripTags(
-            processTokens(reaction.description, undefined, monster, 'none')
-          ),
-        })
-      }
-    }
+    // reactions (with their triggers)
+    ii.Reactions = poolEntries(renderer.reactions.value)
 
     // i don't know what these fields are
     ii.Description = ''

@@ -71,5 +71,15 @@
       }
     }
   },
-  "items": []
+  "items": [
+    {
+      "name": "Arcane Ward",
+      "type": "feat",
+      "system": {
+        "description": {
+          "value": "{NAME} has a ward with 10 hit points."
+        }
+      }
+    }
+  ]
 }

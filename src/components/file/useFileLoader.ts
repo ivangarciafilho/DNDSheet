@@ -3,6 +3,9 @@ import { validate } from 'jsonschema'
 import { useQuasar } from 'quasar'
 import { SCHEMA } from 'src/data/SCHEMA'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useCharacterStore } from 'src/stores/character-store'
+import { useEditorStore } from 'src/stores/editor-store'
+import { importCharacter } from 'src/core/domain/character-import'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
 import { Monster } from '../models'
@@ -20,6 +23,15 @@ export function useFileLoader() {
         if (e.target != null && e.target.result != null) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const monster: any = JSON.parse(e.target.result.toString())
+
+          // B4.17: a .character.json file loads into the character sheet instead of failing as a monster.
+          const character = importCharacter(monster)
+          if (character) {
+            useCharacterStore().actor = character
+            useEditorStore().activeMode = 'character'
+            $q.notify({ type: 'positive', message: t('io.characterLoaded') })
+            return
+          }
 
           // validate
           if (!monster.saveVersion) {

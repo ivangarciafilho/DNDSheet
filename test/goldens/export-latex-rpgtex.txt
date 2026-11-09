@@ -29,7 +29,7 @@
   ]
 
   % Traits
-  
+  \DndMonsterAction{Arcane Ward} Golden Export Fixture has a ward with 10 hit points.
 
   
 
@@ -39,7 +39,7 @@
 
   
 
-  
+  \DndMonsterAction{Force Lash} Each creature within 10 feet must make a DC 15 Strength saving throw.
 
   % Spellcasting
   
@@ -58,6 +58,8 @@
 
   
 
+  \DndMonsterSection{Reactions}
+    \DndMonsterAction{Counter Glyph} \emph{Trigger:} A creature within 60 feet casts a spell \emph{Response:} Golden Export Fixture interrupts the spell.
   
 
   

@@ -1322,3 +1322,11 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Use full commit ids** in every script (`git rev-parse <short>` first); a short id became ambiguous and broke a control silently.
 - **Never run anything heavy while a fuzz runs**, not even `npm test`: Step 38 failed under that load.
 - **Next, in order:** B4.17 → B5.8 → B4.7 → B7.6 → A11.5 remainder → A11.9 → H9 → H14.
+
+## Handoff — after Build 218 (2026-11-09)
+
+- **Saving:** every persisted store writes through `createGuardedStorage` (`src/core/domain/guarded-storage.ts`); do not register `piniaPluginPersistedstate` directly again or failed saves go silent.
+- **Loading:** the Load file button accepts both `.5emm.json` monsters and `.character.json` characters (`importCharacter`).
+- **Reduced motion:** add any new `transition:` selector to the B7.6 list at the end of `app.scss`; Step 56 checks both motion modes explicitly.
+- **Golden fixture** now includes a trait, an action and a triggered reaction; expect golden diffs when touching any exporter's entry sections, and review them line by line.
+- **Next, in order:** B4.20 → A11.5 remainder → A11.9 → H9 → H14 → B5.7/B10.1 (owner decisions).

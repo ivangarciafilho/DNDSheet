@@ -3574,6 +3574,9 @@ async function runFuzz() {
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
     monster.$reset();editor.style='2024';editor.visualTemplate='modern';editor.visualTheme='wotc';
     monster.name='Golden Export Fixture';monster.setCR(12);monster.stats.INT=18;
+    monster.addTrait();Object.assign(monster.traits.at(-1),{id:'golden-trait',name:'Arcane Ward',description:'{NAME} has a ward with 10 hit points.'});
+    monster.addAction();Object.assign(monster.actions.at(-1),{id:'golden-action',name:'Force Lash',description:'Each creature within 10 feet must make a DC 15 Strength saving throw.'});
+    monster.addReaction();Object.assign(monster.reactions.at(-1),{id:'golden-reaction',name:'Counter Glyph',trigger:'A creature within 60 feet casts a spell',description:'{NAME} interrupts the spell.'});
     Object.assign(monster.spellcasting,{class:'Wizard',level:9,slots:[4,3,3,3,1,0,0,0,0],standard:['Fire Bolt','Magic Missile','Fireball'],resourceType:'slots',refreshRate:'long_rest',levelCadenceMap:{3:'1_day'}});
     await wait(400);
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click,texts={};
@@ -3775,7 +3778,7 @@ async function runFuzz() {
   console.log('Step 55 result:',JSON.stringify(step55))
   if(step55.problems.length||step55.checks!==8||!step55.projectionPreserves||!step55.undone||!step55.persisted)throw new Error('Step 55 failed: '+JSON.stringify(step55))
 
-  console.log('\n--- Step 56: Presentation switches leave rules untouched; zoom, focus, splitter and file names ---')
+  console.log('\n--- Step 56: Presentation switches leave rules untouched; motion, zoom, focus, splitter and file names ---')
   const step56=await evalInPage(`async()=>{
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor'),problems=[];
     monster.$reset();monster.name='Ogre: Elder/Chief?';monster.setCR(5);await wait(200);
@@ -3791,8 +3794,14 @@ async function runFuzz() {
     const splitterOk=!!after&&after.getBoundingClientRect().width>=319;if(!splitterOk)problems.push('preview narrower than 320 px');
     return {problems,switches,rulesUntouched,safeName,splitterOk};
   }`)
-  // Reduced motion is not asserted: the build machine itself reports prefers-reduced-motion: reduce, and a global
-  // 0.01 ms transition rule broke Quasar's menu focus hand-off (Step 35) and tooltip scroll tracking (help smoke). See B7.5.
+  // B7.6: both motion preferences are emulated explicitly, so the result never depends on this machine's Windows setting.
+  const motionProbe=`()=>{const el=document.createElement('div');el.className='a4-scale-stage';el.style.position='absolute';el.style.left='-9999px';document.body.appendChild(el);const d=getComputedStyle(el).transitionDuration;el.remove();return d.split(',').map(v=>parseFloat(v)||0);}`
+  await sendCdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await pause(150)
+  const reducedDurations=await evalInPage(motionProbe)
+  await sendCdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});await pause(150)
+  const normalDurations=await evalInPage(motionProbe)
+  await sendCdp('Emulation.setEmulatedMedia',{features:[]})
+  step56.reducedMotion=reducedDurations.every(v=>v===0)&&normalDurations.some(v=>v>0)
   // 200 % zoom on a 1280 px window is a 640 px layout viewport.
   await sendCdp('Emulation.setDeviceMetricsOverride',{width:640,height:900,deviceScaleFactor:2,mobile:false});await pause(400)
   step56.zoomNoOverflow=await evalInPage(`()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1`)
@@ -3802,7 +3811,7 @@ async function runFuzz() {
     for(const el of focusables.slice(0,25)){el.focus();if(document.activeElement===el)seen.add(el);}
     return seen.size>=Math.min(10,focusables.length)&&focusables.length>0;}`)
   console.log('Step 56 result:',JSON.stringify(step56,null,2))
-  if(step56.problems.length||!['rulesUntouched','safeName','splitterOk','zoomNoOverflow','keyboard'].every(key=>step56[key]===true))throw new Error('Step 56 failed: '+JSON.stringify(step56))
+  if(step56.problems.length||!['rulesUntouched','safeName','splitterOk','reducedMotion','zoomNoOverflow','keyboard'].every(key=>step56[key]===true))throw new Error('Step 56 failed: '+JSON.stringify(step56))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
