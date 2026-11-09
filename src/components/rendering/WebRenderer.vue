@@ -465,7 +465,7 @@
             v-for="(sBadge, sIdx) in sensesBadges"
             :key="'sense-badge-' + sIdx"
             class="dnd-cascade-badge"
-          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">, </span></span>
         </div>
       </div>
 
@@ -477,9 +477,11 @@
             v-for="(lBadge, lIdx) in languagesBadges"
             :key="'lang-badge-' + lIdx"
             class="dnd-cascade-badge"
-          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">, </span></span>
         </div>
-        <span v-else class="dnd-cascade-badge">&mdash;</span>
+        <div v-else class="dnd-cascade-badges-wrap">
+          <span class="dnd-cascade-badge">&mdash;</span>
+        </div>
       </div>
 
       <!-- Ability Scores 2024 -->
@@ -625,7 +627,7 @@
             v-for="(sBadge, sIdx) in sensesBadges"
             :key="'sense-badge-' + sIdx"
             class="dnd-cascade-badge"
-          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">, </span></span>
         </div>
       </div>
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': languagesStripe }">
@@ -635,9 +637,11 @@
             v-for="(lBadge, lIdx) in languagesBadges"
             :key="'lang-badge-' + lIdx"
             class="dnd-cascade-badge"
-          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">, </span></span>
         </div>
-        <span v-else class="dnd-cascade-badge">&mdash;</span>
+        <div v-else class="dnd-cascade-badges-wrap">
+          <span class="dnd-cascade-badge">&mdash;</span>
+        </div>
       </div>
       <template v-for="group in actionPassivesGroups" :key="group.name">
         <div class="skill dnd-cascade-panel dnd-cellular-row" :class="['cascade-skill-' + group.scopeLabel.toLowerCase(), { 'sb-striped': shouldStripeVital(group.scopeLabel, group.skills) }]">
@@ -1598,6 +1602,7 @@ export default defineComponent({
         : undefined
 
       return {
+        backgroundColor: layer.backgroundColor || undefined,
         backgroundImage: layer.url ? `url("${layer.url}")` : undefined,
         opacity: (layer.opacity ?? 100) / 100,
         mixBlendMode: layer.blendMode || 'normal',

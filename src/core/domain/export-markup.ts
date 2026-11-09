@@ -35,6 +35,9 @@ const escapeText = (text: string, format: TextExportFormat): string =>
     ? text.replace(/[\\{}$&%#_~^<>]/g, (char) => LATEX_ESCAPES[char])
     : text.replace(/[\\`*_[\]<>]/g, (char) => `\\${char}`)
 
+/** Plain authored text (names, AC type, creature type) placed straight into LaTeX macro arguments. */
+export const escapeLatexText = (text: string): string => escapeText(text ?? '', 'latex')
+
 type Emphasis = 'bold' | 'italic' | 'underline'
 
 const EMPHASIS: Readonly<Record<string, Emphasis>> = { b: 'bold', strong: 'bold', i: 'italic', em: 'italic', u: 'underline' }
@@ -104,4 +107,11 @@ export function exportMarkup(input: string, format: TextExportFormat): string {
     .replace(/\n[ \t]+/g, '\n')
     .replace(/\n{3,}/g, '\n\n')
     .trim()
+}
+
+/** "Large dragon, chaotic evil"; no dangling comma when alignment (or size/type) is empty. */
+export function creatureTypeLine(size?: string, type?: string, alignment?: string): string {
+  const head = [size, type].map((part) => (part ?? '').trim()).filter(Boolean).join(' ')
+  const tail = (alignment ?? '').trim()
+  return tail ? (head ? `${head}, ${tail}` : tail) : head
 }

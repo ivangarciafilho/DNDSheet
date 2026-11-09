@@ -1000,6 +1000,11 @@
           :disable="!monster.hpDieTypeOverride"
           outlined
           dense
+          @applied="(value: number | string) => {
+            const num = typeof value === 'string' ? parseInt(value.replace(/\D/g, ''), 10) : Number(value);
+            monster.HP.type = num || 8;
+            monster.setHpModifier(monster.HP.HD, monster.stats.CON);
+          }"
         >
           <template #append>
             <lock-toggle-button

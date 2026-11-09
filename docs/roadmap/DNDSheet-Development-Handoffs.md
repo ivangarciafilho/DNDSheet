@@ -1,5 +1,23 @@
 # DNDSheet — Development Handoffs
 
+## Build 185 closing packet — Vitals Alignment, Hit Die Dice Selector, Layer Occlusion, Defense Mirror Synchronization & Multi-Column Typography
+
+- **Release Candidate**: `rc-2.4.3-build-185-vitals-alignment-hd-dice-layer-occlusion-and-defense-reordering`
+- **Build**: `185` (previous `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows` and `rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates` preserved untouched)
+- **Verification Evidence**:
+  - `npm test`: **372 / 372 core unit tests passed** (100% green across 51 test suites, +11 tests over Build 184).
+  - `node test/exhaustive-ui-fuzz.js`: **All 50 live CDP browser fuzz steps passed with 0 console errors and 0 runtime exceptions**.
+  - `npx quasar build`: Clean build into `dist/spa` with exit code 0.
+- **Key Architectural Evolutions**:
+  1. **Vitals Row & Badge Pixel Alignment**: Standardized vitals rows (`.skill.dnd-cascade-panel`) across striped and unstriped states with `padding: 1.5px 6px !important; margin: 1px -6px !important; border-radius: 3px !important;`, wrapped empty languages badge (`&mdash;`) inside `<div class="dnd-cascade-badges-wrap">`, separated senses entries with comma + space (`", "`), and added dark theme vitals ink custom variables (`--sb-cell-ink`) ensuring WCAG AAA (>7:1) and AA (>4.5:1) compliance.
+  2. **Interactive Hit Die Dice Selection & Shorthand Display**: Added `Hit Die Sizes` preset option group (`d4 (Tiny)`, `d6 (Small)`, `d8 (Medium)`, `d10 (Large)`, `d12 (Huge)`, `d20 (Gargantuan)`) to `FormulaField.vue` when bound to `HP.type`, displayed clean shorthand (`d4`, `d6`, etc.), unlocked lock icon clickability on disabled parent wrappers, and enabled instant HP preview reactivity.
+  3. **A4 Composition Layer Solid Backing Occlusion**: Added optional `backgroundColor?: string` to `A4CompositionLayer` model, surfaced interactive color picker and hex input in `A4LayerStudio.vue`, and integrated `backgroundColor` into `getLayerStyle` in `WebRenderer.vue` for 100% occlusion under normal blend mode.
+  4. **Modular Defense Reordering & Synchronized Mirror Arrays**: Added `conditionResistancesList` and `conditionVulnerabilitiesList` to `SwappableField`, updated `swapItems` in `monster-store.ts` to automatically synchronize flat string mirror arrays (`resistances`, `immunities`, `vulnerabilities`, `conditions`, `conditionResistances`, `conditionVulnerabilities`), and expanded `ResistancesEditor.vue` with full bidirectional seeding and synchronization.
+  5. **Multi-Column Typography & Trait Frame Inset Harmonization**: Added multi-column balance (`column-fill: balance;`, `break-inside: avoid;`, and `break-after: avoid;` on headings) and harmonized streamlined trait header badges (`.sb-plate.sb-trait-streamlined .sb-cell.sb-head`) with a clean 8px inset (`margin: 1px 8px 1px 0; border: 1px solid var(--sb-rule); border-radius: 3px; padding: 2px 7px;`), eliminating 0px flush frame collisions.
+  6. **Modular Domain & Test Infrastructure**: Ported `src/core/domain/file-name.ts`, `src/core/domain/asset-url.ts`, `src/core/domain/guarded-storage.ts`, `src/core/domain/catalogs/subclass-spells.ts`, `src/components/kit/HelpTip.vue`, and registered `src/boot/help.ts` in `quasar.config.js`.
+
+---
+
 ## Build 184 closing packet — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Ability Score Grid, Composer-Aligned Plate Rows (`Exorcise` & `Astral Binding`), Enriched Durations/Catalogs & Contextual Split Rider Toggles
 
 - **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`

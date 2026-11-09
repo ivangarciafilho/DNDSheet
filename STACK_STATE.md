@@ -1,5 +1,44 @@
 # Local DNDSheet Stack State
 
+- **DNDSheet - Master Release Candidate v2.4.3-RC (Build 185): Vitals Alignment, Hit Die Dice Selector, Layer Occlusion & Defense Mirror Synchronization (100% COMPLETE & GREEN - 372/372 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-09)**:
+  * **What changed**:
+    * **Vitals Row & Badge Pixel Alignment (`statblock-grammar.scss`, `WebRenderer.vue`)**:
+      * Standardized vitals rows (`.skill.dnd-cascade-panel`) across striped and unstriped states with `padding: 1.5px 6px !important; margin: 1px -6px !important; border-radius: 3px !important;`, completely eliminating zebra-striping bleeds and horizontal label jumps.
+      * Wrapped empty languages row badge (`&mdash;`) inside `<div class="dnd-cascade-badges-wrap">`, maintaining perfect flex alignment with vitals rows.
+      * Separated senses entries with clean comma and space (`", "`).
+      * Added dark theme vitals ink CSS custom variables (`--sb-cell-ink`) ensuring WCAG AAA (>7:1) and AA (>4.5:1) compliance across Lovecraft, Dwarves, and Art Deco palettes.
+    * **Interactive Hit Die Dice Selection & Shorthand Display (`FormulaField.vue`, `BasicsEditor.vue`)**:
+      * Added `Hit Die Sizes` preset option group (`d4 (Tiny)`, `d6 (Small)`, `d8 (Medium)`, `d10 (Large)`, `d12 (Huge)`, `d20 (Gargantuan)`) to `FormulaField.vue` when bound to `HP.type`.
+      * Formatted shorthand display to show `d4`, `d6`, `d8`, etc. in the HP type field.
+      * Unlocked formula field lock icon clickability with `pointer-events: auto !important` on disabled parent wrappers.
+      * Wired live HP preview reactivity upon selecting hit die sizes or typing custom formulas.
+    * **A4 Composition Layer Solid Backing Occlusion (`editor-store.ts`, `A4LayerStudio.vue`, `WebRenderer.vue`)**:
+      * Added `backgroundColor?: string` property to `A4CompositionLayer` model.
+      * Surfaced interactive color picker and hex input in `A4LayerStudio.vue` under layer parameters.
+      * Integrated `backgroundColor` into `getLayerStyle` in `WebRenderer.vue`, allowing layers with normal blend mode at 100% opacity to fully occlude underlying layers even when artwork contains alpha channels.
+    * **Modular Defense Reordering & Synchronized Mirror Arrays (`models.ts`, `monster-store.ts`, `ResistancesEditor.vue`)**:
+      * Added `conditionResistancesList` and `conditionVulnerabilitiesList` to `SwappableField` union type.
+      * Updated `swapItems` in `monster-store.ts` to automatically synchronize flat string mirror arrays (`resistances`, `immunities`, `vulnerabilities`, `conditions`, `conditionResistances`, `conditionVulnerabilities`) upon item swaps.
+      * Updated `ResistancesEditor.vue` with full bidirectional seeding and synchronization for condition resistance and vulnerability lists.
+    * **Multi-Column Typography & Trait Frame Inset Harmonization (`statblock-grammar.scss`)**:
+      * Added multi-column balance and orphan prevention: `column-fill: balance;`, `break-inside: avoid;`, and `break-after: avoid;` on headings.
+      * Harmonized streamlined trait header badges (`.sb-plate.sb-trait-streamlined .sb-cell.sb-head`) with a clean 8px inset (`margin: 1px 8px 1px 0; border: 1px solid var(--sb-rule); border-radius: 3px; padding: 2px 7px;`), eliminating 0px flush border collisions.
+    * **Modular Domain & Test Infrastructure**:
+      * Ported `src/core/domain/file-name.ts` and `test/core/FileName.test.ts`.
+      * Ported `src/core/domain/asset-url.ts` and `test/core/AssetUrl.test.ts`.
+      * Ported `src/core/domain/guarded-storage.ts`.
+      * Ported `src/core/domain/catalogs/subclass-spells.ts`.
+      * Created `src/components/kit/HelpTip.vue` and registered `src/boot/help.ts` in `quasar.config.js`.
+      * Ported export markup utilities (`escapeLatexText`, `creatureTypeLine`) and added unit test suites.
+    * **Release Candidate Increment**:
+      * Incremented `build.json` to `{"build":"185"}`.
+      * Created immutable release candidate ledger `.codex-temp/release-candidates/rc-2.4.3-build-185-vitals-alignment-hd-dice-layer-occlusion-and-defense-reordering/release-candidate.json` and `SHA256SUMS.txt` (197 files).
+  * **Verification & Test Proof**:
+    * **Core Unit Tests (`npm test` / `npm run test:core`)**: **372 / 372 passed (100% green)** in 1.42s across 51 test suites (+11 new tests over Build 184).
+    * **In-Browser Live CDP Fuzz Suite (`node test/exhaustive-ui-fuzz.js`)**: All **50 consecutive phases passed with 0 console errors and 0 runtime exceptions**.
+    * **Production Build (`npx quasar build`)**: Compiled cleanly to `dist/spa` with **exit code 0**.
+    * **PWA Server**: Live on port 8080 (`http://localhost:8080/#/`).
+
 - **DNDSheet - Master Release Candidate v2.4.3-RC (Build 181): A4 Layer Occlusion, Transparent CR, Top-Aligned Traits, Streamlined Actions & Unified Spellcasting (100% COMPLETE & GREEN - 357/357 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-02)**:
   * **What changed**:
     * **A4 Composition Layer Stack Precedence & Normal Blend Occlusion (`WebRenderer.vue`, `app.scss`)**:

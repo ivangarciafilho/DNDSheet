@@ -4,12 +4,42 @@
 
 | | |
 |---|---|
-| **Version** | Build 184 — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Stat Grid, Composer-Aligned Plate Rows, Enriched Durations/Catalogs, and Contextual Split Riders · `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows` (Build 183 preserved) |
-| **Code HEAD** | `statblock-overhaul` · 361 core unit tests (100% green across 51 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
+| **Version** | Build 185 — Vitals Alignment, Hit Die Dice Selector, Layer Occlusion, Defense Mirror Synchronization & Multi-Column Typography · `rc-2.4.3-build-185-vitals-alignment-hd-dice-layer-occlusion-and-defense-reordering` (Build 184 and 183 preserved) |
+| **Code HEAD** | `statblock-overhaul` · 372 core unit tests (100% green across 51 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
 | **Progress** | **14/28 loops shipped · 138/219 tasks complete (63.01%) · active loops A13/A14/A15 interaction kits, tooltips & catalog audits** |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
+
+---
+
+## Build 185 Contract — Vitals Alignment, Hit Die Dice Selector, Layer Occlusion, Defense Mirror Synchronization & Multi-Column Typography
+
+1. **Vitals Row & Badge Pixel Alignment (`.skill.dnd-cascade-panel` & `WebRenderer.vue`)**:
+   - Standardized all vitals rows across striped and unstriped states with `padding: 1.5px 6px !important; margin: 1px -6px !important; border-radius: 3px !important;`, eliminating zebra-striping bleeds and horizontal label jumps.
+   - Wrapped empty languages badge (`&mdash;`) inside `<div class="dnd-cascade-badges-wrap">`, maintaining perfect flex alignment with vitals rows.
+   - Senses entries separated with clean comma and space (`", "`).
+   - Added dark theme vitals ink CSS custom variables (`--sb-cell-ink`) ensuring WCAG AAA (>7:1) and AA (>4.5:1) compliance across Lovecraft, Dwarves, and Art Deco palettes.
+
+2. **Interactive Hit Die Dice Selection & Shorthand Display (`FormulaField.vue` & `BasicsEditor.vue`)**:
+   - Added `Hit Die Sizes` preset option group (`d4 (Tiny)`, `d6 (Small)`, `d8 (Medium)`, `d10 (Large)`, `d12 (Huge)`, `d20 (Gargantuan)`) to `FormulaField.vue` when bound to `HP.type`.
+   - Formatted shorthand display to show `d4`, `d6`, `d8`, etc. in the HP type field.
+   - Unlocked formula field lock icon clickability with `pointer-events: auto !important` on disabled parent wrappers.
+   - Wired live HP preview reactivity upon selecting hit die sizes or typing custom formulas.
+
+3. **A4 Composition Layer Solid Backing Occlusion (`A4LayerStudio.vue` & `WebRenderer.vue`)**:
+   - Added optional `backgroundColor?: string` property to `A4CompositionLayer` model.
+   - Surfaced interactive color picker and hex input in `A4LayerStudio.vue` under layer parameters.
+   - Integrated `backgroundColor` into `getLayerStyle` in `WebRenderer.vue`, allowing layers with normal blend mode at 100% opacity to fully occlude underlying layers even when artwork contains alpha channels.
+
+4. **Modular Defense Reordering & Synchronized Mirror Arrays (`monster-store.ts` & `ResistancesEditor.vue`)**:
+   - Added `conditionResistancesList` and `conditionVulnerabilitiesList` to `SwappableField` union type.
+   - Updated `swapItems` in `monster-store.ts` to automatically synchronize flat string mirror arrays (`resistances`, `immunities`, `vulnerabilities`, `conditions`, `conditionResistances`, `conditionVulnerabilities`) upon item swaps.
+   - Updated `ResistancesEditor.vue` with full bidirectional seeding and synchronization for condition resistance and vulnerability lists.
+
+5. **Multi-Column Typography & Trait Frame Inset Harmonization (`statblock-grammar.scss`)**:
+   - Added multi-column balance and orphan prevention: `column-fill: balance;`, `break-inside: avoid;`, and `break-after: avoid;` on headings.
+   - Harmonized streamlined trait header badges (`.sb-plate.sb-trait-streamlined .sb-cell.sb-head`) with a clean 8px inset (`margin: 1px 8px 1px 0; border: 1px solid var(--sb-rule); border-radius: 3px; padding: 2px 7px;`), eliminating 0px flush frame collisions.
 
 ---
 

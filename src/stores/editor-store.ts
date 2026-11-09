@@ -11,6 +11,7 @@ export interface A4CompositionLayer {
   name: string
   url?: string
   maskUrl?: string
+  backgroundColor?: string // solid backing color for 100% normal blend occlusion
   opacity: number // 0 to 100
   blendMode: 'normal' | 'multiply' | 'screen' | 'overlay' | 'soft-light' | 'darken' | 'lighten' | 'color-dodge' | 'color-burn' | 'difference'
   visible: boolean

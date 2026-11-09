@@ -53,6 +53,13 @@
   --dnd-disadv-ink: #000000;
 }
 
+/* The top plate (initiative, nameplate) is painted white on every theme, so its advantage/disadvantage
+   ink follows that panel, not the dark theme body: the dark-theme inks measured 1.6:1 / 2.3:1 there. */
+.statblock:not(.theme-printer) .unified-top-plate {
+  --dnd-adv-ink: #1d6b29;
+  --dnd-disadv-ink: #a8211a;
+}
+
 /* Plate palette per theme: frame = theme border, head = accent, cells = theme panel */
 @mixin plate-palette($frame, $head-bg, $head-ink, $cell-bg, $cell-ink, $body-bg) {
   --sb-frame: #{$frame};
@@ -307,13 +314,10 @@
         min-height: 24px !important;
         height: auto !important;
         line-height: 1.25 !important;
-        padding: 3px 8px !important;
-        margin: -3px 8px 1px -8px !important;
-        border-top: 0 !important;
-        border-left: 0 !important;
-        border-right: 1px solid var(--sb-rule) !important;
-        border-bottom: 1px solid var(--sb-rule) !important;
-        border-radius: 0 0 3px 0 !important;
+        padding: 2px 7px !important;
+        margin: 1px 8px 1px 0 !important;
+        border: 1px solid var(--sb-rule) !important;
+        border-radius: 3px !important;
       }
 
       > .sb-cell.sb-body {
@@ -335,9 +339,9 @@
     }
 
     &.sb-single-line .sb-row > .sb-cell.sb-head {
-      margin: -3px 8px -3px -8px !important;
-      border-bottom: 0 !important;
-      border-radius: 0 !important;
+      margin: 1px 8px 1px 0 !important;
+      border: 1px solid var(--sb-rule) !important;
+      border-radius: 3px !important;
     }
   }
 
@@ -437,10 +441,11 @@
 
   .skill.dnd-cascade-panel,
   .skill.dnd-cellular-row {
-    padding: 1px 0 !important;
-    margin: 1px 0 !important;
+    padding: 1.5px 6px !important;
+    margin: 1px -6px !important;
     line-height: 1.45rem !important;
     box-sizing: border-box !important;
+    border-radius: 3px !important;
   }
 
   .skill.dnd-cascade-panel.sb-striped,
@@ -448,9 +453,9 @@
   .skill.dnd-cascade-panel.is-striped,
   .skill.dnd-cellular-row.is-striped {
     background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
-    padding: 1px 0 !important;
-    margin: 1px 0 !important;
-    border-radius: 2px !important;
+    padding: 1.5px 6px !important;
+    margin: 1px -6px !important;
+    border-radius: 3px !important;
     line-height: 1.45rem !important;
   }
 
@@ -755,12 +760,13 @@
     border: none !important;
     box-shadow: none !important;
     border-radius: 2px !important;
-    padding: 1px 0 !important;
-    margin: 1px 0 !important;
+    padding: 1.5px 6px !important;
+    margin: 1px -6px !important;
     line-height: 1.45rem !important;
     text-indent: 0 !important;
     overflow: visible !important;
     box-sizing: border-box !important;
+    border-radius: 3px !important;
 
     &:not(.sb-striped):not(.is-striped):not(.zebra-stripe-text) {
       background: transparent !important;
@@ -769,8 +775,9 @@
     &.sb-striped,
     &.is-striped {
       background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
-      padding: 1px 0 !important;
-      border-radius: 2px !important;
+      padding: 1.5px 6px !important;
+      margin: 1px -6px !important;
+      border-radius: 3px !important;
     }
 
     &.zebra-stripe-text {
@@ -977,5 +984,80 @@
     line-height: 1.35;
     overflow-wrap: anywhere;
     text-align: left;
+  }
+}
+
+/* Multi-column flow & orphan prevention */
+#render .statblock,
+.composer-preview .statblock {
+  column-fill: balance;
+
+  h3.section,
+  h4.sub-section-header {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  .sb-plate,
+  .dnd-stats-2024,
+  .dnd-cascade-panel {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+/* Vitals rows (cascade panels) hard-code parchment ink in app.scss, including an #render-scoped title rule;
+   dark themes read their own ink token instead, otherwise AC, HP, Speed and the other vitals sit near 1.3:1.
+   The :is() scope matches that ID weight and still reaches export and print renders through html. */
+:is(#render, .composer-preview, html) .statblock:is(
+    .theme-lovecraft_golden,
+    .theme-lovecraft_silver,
+    .theme-lovecraft_toxic,
+    .theme-lovecraft_spooky,
+    .theme-lovecraft_galactic,
+    .theme-lovecraft_fathomless,
+    .theme-dwarves_forge,
+    .theme-dwarves_aetherpunk,
+    .theme-art_deco
+  )
+  .skill.dnd-cellular-row {
+  color: var(--sb-cell-ink) !important;
+
+  span.name.dnd-cascade-title,
+  .dnd-cascade-badges-wrap,
+  .dnd-cascade-badge {
+    color: var(--sb-cell-ink) !important;
+  }
+}
+
+/* A11.9 random tables: theme tokens (--sb-*) so all 12 themes and print share one rule set. */
+.statblock .random-table-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0;
+  font-size: 0.9em;
+
+  th, td {
+    border: 1px solid var(--sb-rule, rgba(122, 31, 18, 0.35));
+    padding: 2px 6px;
+    vertical-align: top;
+  }
+  th {
+    background: var(--sb-head-bg, #7a200d);
+    color: var(--sb-head-ink, #fff8ec);
+    font-weight: 700;
+    text-align: left;
+  }
+  tbody tr:nth-child(even) td { background: var(--sb-stripe, transparent); }
+  .random-table-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
+}
+
+@media print {
+  .statblock .random-table { break-inside: avoid; }
+  .statblock .random-table-grid thead { display: table-header-group; }
+  .statblock .random-table-grid tr { break-inside: avoid; }
+  .statblock .random-table-grid th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
 }

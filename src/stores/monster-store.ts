@@ -1680,6 +1680,20 @@ export const useMonsterStore = defineStore('monster', {
       const tmp = targetArray[dest]
       targetArray[dest] = targetArray[source]
       targetArray[source] = tmp
+
+      if (target === 'resistancesList') {
+        this.resistances = (this.resistancesList as any[]).map(i => i.type)
+      } else if (target === 'conditionResistancesList') {
+        this.conditionResistances = (this.conditionResistancesList as any[]).map(i => i.type)
+      } else if (target === 'immunitiesList') {
+        this.immunities = (this.immunitiesList as any[]).map(i => i.type)
+      } else if (target === 'vulnerabilitiesList') {
+        this.vulnerabilities = (this.vulnerabilitiesList as any[]).map(i => i.type)
+      } else if (target === 'conditionVulnerabilitiesList') {
+        this.conditionVulnerabilities = (this.conditionVulnerabilitiesList as any[]).map(i => i.type)
+      } else if (target === 'conditionsList') {
+        this.conditions = (this.conditionsList as any[]).map(i => i.type)
+      }
     },
     moveItemUp(target: SwappableField, source: number) {
       if (source <= 0) return

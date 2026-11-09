@@ -747,7 +747,7 @@
               <!-- 3. CUSTOM BACKGROUND / FOREGROUND TEXTURE & FRAME LAYER CONTROLS -->
               <template v-else>
                 <div class="row q-col-gutter-xs items-center">
-                  <div class="col-6 col-sm-4">
+                  <div class="col-6 col-sm-3">
                     <q-select
                       v-model="layer.blendMode"
                       :options="blendModeOptions"
@@ -758,6 +758,25 @@
                       dark
                       label="Blend Mode"
                     />
+                  </div>
+                  <div class="col-6 col-sm-3">
+                    <q-input
+                      v-model="layer.backgroundColor"
+                      label="Solid Backing Fill (Occlusion)"
+                      dense
+                      outlined
+                      dark
+                      clearable
+                      placeholder="#fbf2e3"
+                    >
+                      <template #append>
+                        <q-icon name="colorize" class="cursor-pointer">
+                          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                            <q-color v-model="layer.backgroundColor" />
+                          </q-popup-proxy>
+                        </q-icon>
+                      </template>
+                    </q-input>
                   </div>
                   <div class="col-6 col-sm-4">
                     <div class="text-caption text-grey-4 flex justify-between">

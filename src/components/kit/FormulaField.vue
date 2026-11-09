@@ -50,10 +50,29 @@ const editing = ref(false), draft = ref(''), query = ref(''), previewText = ref(
 // nested formula editor still holds an unfinished or invalid draft.
 watch(() => editing.value || !!error.value, pending => emit('draft-state', pending), { immediate: true, flush: 'sync' })
 const disabled = computed(() => props.disable || !inspection.value?.editable)
-const display = computed(() => binding.value ? `${source.value} = ${String(value.value ?? '')}` : String(value.value ?? ''))
+const display = computed(() => {
+  if (binding.value) return `${source.value} = ${String(value.value ?? '')}`
+  if (props.path === 'HP.type' && typeof value.value === 'number') return `d${value.value}`
+  return String(value.value ?? '')
+})
 interface Option { label: string; value: string; icon: string; color: string; tip?: string; preview?: string; header?: boolean; disable?: boolean }
 const options = computed<Option[]>(() => {
   const result: Option[] = [{ label: 'ƒ Custom formula…', value: '__custom__', icon: 'fa-solid fa-calculator', color: 'primary', tip: 'Type a number or combine references with arithmetic.' }]
+  if (props.path === 'HP.type') {
+    result.push({ label: 'Hit Die Sizes', value: '__group_hd_sizes', icon: 'fa-solid fa-dice-d20', color: 'cyan-4', header: true, disable: true })
+    for (const d of [
+      { label: 'd4 (Tiny)', value: '4' },
+      { label: 'd6 (Small)', value: '6' },
+      { label: 'd8 (Medium)', value: '8' },
+      { label: 'd10 (Large)', value: '10' },
+      { label: 'd12 (Huge)', value: '12' },
+      { label: 'd20 (Gargantuan)', value: '20' }
+    ]) {
+      if (!query.value || d.label.toLowerCase().includes(query.value.toLowerCase()) || d.value.includes(query.value)) {
+        result.push({ label: d.label, value: d.value, icon: 'fa-solid fa-dice', color: 'cyan-3', preview: `d${d.value}` })
+      }
+    }
+  }
   if (props.path.endsWith('.targets') || props.path.endsWith('.targeting.count')) {
     result.push({ label: 'Target Count Presets', value: '__group_target_presets', icon: 'fa-solid fa-bullseye', color: 'amber-5', header: true, disable: true })
     for (const num of ['1', '2', '3', '4', '5']) {
