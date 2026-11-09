@@ -372,7 +372,7 @@
         <template v-else>
           <template v-for="(acBadge, aIdx) in sanitizedAcBadges" :key="'ac-badge-' + aIdx">
             <span class="dnd-cascade-badge" v-html="acBadge"></span>
-            <span v-if="aIdx < sanitizedAcBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
+            <span v-if="aIdx < sanitizedAcBadges.length - 1 && !sanitizedAcBadges[aIdx + 1]?.trim().startsWith('(')" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
       </div>
@@ -440,7 +440,7 @@
           </template>
           <template v-else>
             <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge">{{ spBadge.replace(/[.,;]+$/, '') }}</span>
               <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
@@ -575,7 +575,7 @@
           </template>
           <template v-else>
             <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge">{{ spBadge.replace(/[.,;]+$/, '') }}</span>
               <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
@@ -748,7 +748,7 @@
             <strong>{{ spellPlate.metamagic.refresh }}:</strong> <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points.
             <template v-if="spellPlate.metamagic.options.length">
               <span v-for="(meta, index) in spellPlate.metamagic.options" :key="'meta-' + index" class="q-ml-xs">
-                <strong>{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `${meta.cost} SP` }}</strong> to {{ meta.name }}<template v-if="meta.effect">: {{ meta.effect }}</template><span v-if="index < spellPlate.metamagic.options.length - 1">, </span>
+                <strong>{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `${meta.cost} SP` }}</strong> to {{ meta.name }}<template v-if="meta.effect">: {{ meta.effect.replace(/[.,;]+$/, '') }}</template><span v-if="index < spellPlate.metamagic.options.length - 1">, </span><span v-else>.</span>
               </span>
             </template>
           </div>
@@ -767,9 +767,9 @@
                   Cantrips (at will):
                 </template>
                 <template v-else>
-                  <template v-if="row.slotCount && row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.slotCount }}/{{ row.cadence.replace(/^Per\s+/i, '') }}), </template>
+                  <template v-if="row.slotCount && row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.slotCount }}/{{ row.cadence.replace(/^Per\s+/i, '').trim().replace(/^\(|\)$/g, '') }}), </template>
                   <template v-else-if="row.slotCount && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.slotCount }} slots), </template>
-                  <template v-else-if="row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.cadence.replace(/^Per\s+/i, '') }}), </template>
+                  <template v-else-if="row.cadence && row.cadence.toLowerCase() !== 'hidden' && (!spellPlate.isPact || row.level === spellPlate.maxPactLevel)">({{ row.cadence.replace(/^Per\s+/i, '').trim().replace(/^\(|\)$/g, '') }}), </template>
                   Level {{ row.level }}<template v-if="row.bonusAction"> (Bonus Action)</template>:
                 </template>
               </strong>
@@ -1087,6 +1087,7 @@ import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel } from 'src/core/domain/spell-plate'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
+import { cleanPunctuation } from 'src/core/domain/number-grammar'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statModifier } from 'src/core/domain/math-utils'
 import { statblockHelpText } from './statblock-help'
@@ -1509,6 +1510,7 @@ export default defineComponent({
         flexShrink: '0',
         zIndex: portraitZ,
         position: 'relative',
+        backgroundColor: pLayer?.backgroundColor || undefined,
         opacity: layerOpacity,
         mixBlendMode: layerBlend,
         display: layerDisplay,
@@ -1839,10 +1841,10 @@ export default defineComponent({
       const init = monster.initiative
       const score = 10 + (init.mod || 0)
       const modSign = (init.mod || 0) >= 0 ? '+' : ''
-      const modStr = `${score}/${modSign}${init.mod || 0} initiative`
+      const modStr = `${score}/${modSign}${init.mod || 0} Initiative`
       let advDisadv = ''
-      if (init.advantage) advDisadv = 'with Advantage'
-      else if (init.disadvantage) advDisadv = 'at Disadvantage'
+      if (init.advantage) advDisadv = 'With Advantage'
+      else if (init.disadvantage) advDisadv = 'At Disadvantage'
 
       let spellTrigger = ''
       const cfg = monster.initiativeConfig
@@ -1868,22 +1870,37 @@ export default defineComponent({
         }
       }
 
-      const notes: string[] = []
+      const rawNotes: string[] = []
       if (advDisadv && spellTrigger) {
-        notes.push(`${advDisadv} ${spellTrigger}`)
+        rawNotes.push(`${advDisadv} ${spellTrigger}`)
       } else {
-        if (advDisadv) notes.push(advDisadv)
-        if (spellTrigger) notes.push(spellTrigger)
+        if (advDisadv) rawNotes.push(advDisadv)
+        if (spellTrigger) rawNotes.push(spellTrigger)
       }
-      if (init.cantBeSurprised) notes.push("can't be Surprised")
+      if (init.cantBeSurprised) rawNotes.push("Can't be Surprised")
 
       // Include composable modular riders
       if (Array.isArray(cfg?.riders) && cfg.riders.length > 0) {
         const customRiders = formatInitiativeRiders(cfg.riders)
-        notes.push(...customRiders)
+        for (const rider of customRiders) {
+          if (!rawNotes.some(n => n.toLowerCase() === rider.toLowerCase())) {
+            rawNotes.push(rider)
+          }
+        }
       }
 
-      return notes.length > 0 ? `<b>${modStr}</b>, ${notes.join(', ')}` : `<b>${modStr}</b>`
+      // Deduplicate overlapping advantage/disadvantage claims
+      const finalNotes: string[] = []
+      for (const note of rawNotes) {
+        const lower = note.toLowerCase()
+        if (lower === 'with advantage' && finalNotes.some(n => n.toLowerCase().includes('advantage'))) continue
+        if (lower === 'at disadvantage' && finalNotes.some(n => n.toLowerCase().includes('disadvantage'))) continue
+        finalNotes.push(note.charAt(0).toUpperCase() + note.slice(1))
+      }
+
+      return finalNotes.length > 0
+        ? cleanPunctuation(`<b>${modStr}</b>, ${finalNotes.join(', ')}`)
+        : `<b>${modStr}</b>`
     })
 
     const spellPlate = computed(() => {

@@ -4,12 +4,50 @@
 
 | | |
 |---|---|
-| **Version** | Build 185 — Vitals Alignment, Hit Die Dice Selector, Layer Occlusion, Defense Mirror Synchronization & Multi-Column Typography · `rc-2.4.3-build-185-vitals-alignment-hd-dice-layer-occlusion-and-defense-reordering` (Build 184 and 183 preserved) |
-| **Code HEAD** | `statblock-overhaul` · 372 core unit tests (100% green across 51 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
+| **Version** | Build 186 — Number Grammar, Initiative Typography, Metamagic Punctuation, Cascade Flush Padding & Typographic Elegance · `rc-2.4.3-build-186-number-grammar-initiative-typography-and-metamagic-punctuation` (Build 185, 184, and 183 preserved) |
+| **Code HEAD** | `statblock-overhaul` · 377 core unit tests (100% green across 52 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
 | **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
-| **Progress** | **14/28 loops shipped · 138/219 tasks complete (63.01%) · active loops A13/A14/A15 interaction kits, tooltips & catalog audits** |
+| **Progress** | **15/28 loops shipped · 159/219 tasks complete (72.60%) · active loops A13/A14/A15 interaction kits, tooltips & catalog audits** |
 | **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
 | **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
+
+---
+
+## Build 186 Contract — Number Grammar, Initiative Typography, Metamagic Punctuation, Cascade Flush Padding & Typographic Elegance
+
+1. **Domain Engine: Number & Punctuation Grammar (`src/core/domain/number-grammar.ts`)**:
+   - Pure domain functions for clean typography and number grammar:
+     - `cleanPunctuation(text)`: Strips composite punctuation like `.,` and `;`, duplicate commas/semicolons, orphan trailing punctuation, double-wrapped nested tokens `((1/Day))` -> `(1/Day)`, spaces before punctuation marks (`On Success: ` instead of `On Success : `), and commas immediately before opening parentheses (`AC: 14 (` instead of `AC: 14, (`).
+     - `formatSignedModifier(num, useMinusGlyph)`: Formats signed numbers with optional Unicode minus glyph (`−`).
+     - `formatDiceFormula(count, dieSize, modifier)`: Standardizes hit dice and damage expressions (`13d10 + 39`, `1d8 - 2`).
+     - `formatInitiativeHeadline(mod, riders)`: Formats Title Case initiative headlines with capitalized riders.
+     - `formatOrdinal(n)`: Formats English ordinal numbers safely (`1st`, `2nd`, `3rd`, `4th`...).
+   - Verified in `test/core/NumberGrammar.test.ts` (5/5 tests green).
+
+2. **Headline Initiative & Composable Riders Alignment (`WebRenderer.vue`)**:
+   - Capitalized `Initiative` in `compactInitiativeDisplay` (`14/+4 Initiative, At Disadvantage, Gains 20 Temporary Hit Points`).
+   - Capitalized first letter of every rider note.
+   - Deduplicated overlapping `With Advantage` / `At Disadvantage` notes when already asserted by explicit riders.
+   - Wrapped composite string in `cleanPunctuation`.
+
+3. **Metamagic & Spell Cadence Clean Punctuation (`WebRenderer.vue`)**:
+   - Stripped trailing period/comma from metamagic options with `.replace(/[.,;]+$/, '')`, ensuring `meta.effect` never concatenates as `casting.,`.
+   - Appended trailing period `.` only after the final metamagic option.
+   - Sanitized double parentheses on custom level cadences like `((1/Day))` -> `(1/Day)`.
+
+4. **Cascade Panel Flush Zero Horizontal Padding (`src/css/statblock-grammar.scss`)**:
+   - Standardized `.skill.dnd-cascade-panel` and `.skill.dnd-cellular-row` across striped and unstriped states with `padding: 1px 0 !important; margin: 0 !important;`, satisfying the strict `0px` flush padding invariant required by Step 29 of the live CDP browser fuzz suite while retaining accessible zebra striping.
+
+5. **A4 Layer Studio Backing Presets & Portrait Occlusion (`A4LayerStudio.vue`, `WebRenderer.vue`)**:
+   - Added 1-click backing preset chips (`Clear`, `Parchment #fdf6e2`, `White #ffffff`, `Dark #1a1a1a`) and clear button to solid backing fill in `A4LayerStudio.vue`.
+   - Bound `backgroundColor: pLayer?.backgroundColor || undefined` in `a4PortraitStyle` in `WebRenderer.vue`.
+
+6. **Vitals & Skill Plate Typographic Elegance (`WebRenderer.vue`, `useTextRenderer.ts`, `DatabaseStudio.vue`)**:
+   - Eliminated comma before opening parenthesis in AC badges (`14 (19...` instead of `14, (19...`).
+   - Standardized hit dice formula modifier spacing in HP display (`13d10 + 39` instead of `13d10+39`).
+   - Prevented double nested parentheses in relocated skill action plates (`8/-2 (10/+0, Perception)` instead of `(8/-2, (10/+0, Perception))`).
+   - Stripped trailing punctuation on speed badges to prevent `.,` artifacting across speed riders.
+   - Cleaned space before colon in `DatabaseStudio.vue` preset descriptions.
 
 ---
 

@@ -441,11 +441,11 @@
 
   .skill.dnd-cascade-panel,
   .skill.dnd-cellular-row {
-    padding: 1.5px 6px !important;
-    margin: 1px -6px !important;
+    padding: 1px 0 !important;
+    margin: 0 !important;
     line-height: 1.45rem !important;
     box-sizing: border-box !important;
-    border-radius: 3px !important;
+    border-radius: 2px !important;
   }
 
   .skill.dnd-cascade-panel.sb-striped,
@@ -453,9 +453,9 @@
   .skill.dnd-cascade-panel.is-striped,
   .skill.dnd-cellular-row.is-striped {
     background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
-    padding: 1.5px 6px !important;
-    margin: 1px -6px !important;
-    border-radius: 3px !important;
+    padding: 1px 0 !important;
+    margin: 0 !important;
+    border-radius: 2px !important;
     line-height: 1.45rem !important;
   }
 
@@ -760,13 +760,13 @@
     border: none !important;
     box-shadow: none !important;
     border-radius: 2px !important;
-    padding: 1.5px 6px !important;
-    margin: 1px -6px !important;
+    padding: 1px 0 !important;
+    margin: 0 !important;
     line-height: 1.45rem !important;
     text-indent: 0 !important;
     overflow: visible !important;
     box-sizing: border-box !important;
-    border-radius: 3px !important;
+    border-radius: 2px !important;
 
     &:not(.sb-striped):not(.is-striped):not(.zebra-stripe-text) {
       background: transparent !important;

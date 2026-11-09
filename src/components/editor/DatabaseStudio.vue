@@ -371,7 +371,7 @@ export const BUILTIN_PRESETS = [
         targeting: { kind: 'enemies', range: 20, context: 'enemies 20 ft. of you across the Ethereal and Material Planes' },
         saveDc: 15,
         saveStat: 'Charisma',
-        description: 'On Success : takes 13 (3d8) Radiant, otherwise, double and until End Of Turn, Suppresses its effects leaving one or more creatures Possessed or Charmed by it, brought into the Material Plane if on the Ethereal Plane to closest unoccupied space, without Immunity to being Grappled and Prone.'
+        description: 'On Success: takes 13 (3d8) Radiant, otherwise, double and until End Of Turn, Suppresses its effects leaving one or more creatures Possessed or Charmed by it, brought into the Material Plane if on the Ethereal Plane to closest unoccupied space, without Immunity to being Grappled and Prone.'
       }
     ],
     spellcasting: {

@@ -80,9 +80,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     })
   })
 
-  const hpModifier = computed(() =>
-    monster.HP.modifier === 0 ? '' : `+${monster.HP.modifier}`
-  )
+  const hpModifier = computed(() => {
+    if (!monster.HP.modifier) return ''
+    return monster.HP.modifier > 0 ? ` + ${monster.HP.modifier}` : ` - ${Math.abs(monster.HP.modifier)}`
+  })
 
   const dynCtx = computed<DynamicValueContext>(() => ({
     avgHp: monster.avgHp,
@@ -977,7 +978,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
     if (!row.base) return parts.join('; ')
     const baseHtml = numHtml(`${row.base.passive}/${renderBonus(row.base.bonus)}`)
-    return parts.length > 0 ? `${baseHtml}, (${parts.join('; ')})` : baseHtml
+    return parts.length > 0 ? `${baseHtml} (${parts.join('; ')})` : baseHtml
   }
 
   const actionPassivesGroups = computed(() => {
@@ -1623,7 +1624,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
         const scores = formatGroupRow(row)
         const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
-        const formattedScores = scores.startsWith('(') ? scores : `(${scores})`
+        const formattedScores = scores.includes('(') ? scores : (scores.startsWith('(') ? scores : `(${scores})`)
         if (options.web !== false) {
           return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
         }
