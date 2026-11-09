@@ -133,9 +133,9 @@ Closed in Builds 186–200: A9.11, A9.12, A11.0, A11.1, A12.3, A12.6, A13.0, A13
 - [ ] d. Bound fields: a proposal never overwrites a live binding (test)
 
 **A11.5 / A11.9 outcomes and tables**
-- [ ] a. Cap of 4 regions per container enforced in UI and model
-- [ ] b. Audience/plane filters; overlap and gap diagnostics for dice tables
-- [ ] c. Print and prose export
+- [x] a. Cap of 4 regions per container enforced in UI and model (223)
+- [x] b. Audience/plane filters; overlap and gap diagnostics for dice tables (223)
+- [x] c. Print and prose export (223)
 
 **A12.8 / A12.9 casting sources**
 - [ ] a. Stable-id source/pool schema plus lossless migration from class/innate/multiclass fields
@@ -1330,3 +1330,20 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [x] **B4.18** Improved Initiative reactions were rendered with `processTokens(description, undefined, monster, 'none')`: no reaction context and no trigger in the export · XS — done (218): reactions come from the shared projection (“Trigger: … / Response: …”, line break kept)
 - [x] **B4.19** The golden fixture had no trait, action or reaction, so exporter changes to those sections went unseen by Step 51 · XS — done (218): one of each added; all eight format goldens regenerated and reviewed
 - [x] **B4.20** Tarrasque: `desc` for traits, actions and reactions from the shared prose, keeping `attack_bonus`/`damage_dice` (the remaining half of B4.7) · S — done (219): shared prose per source record, exact physical metadata, all-phase retention and target-supported mythic narrative; Step57 proves22 checks across templates/styles and reload
+
+
+## Build 223 — Container Regions, Dice Diagnostics, Senses Spacing & Condition Glossary
+
+Delivered **22 tasks across 5 cohesive domains** closing A11.5 items a, b, c; gate 10/10 PASS on frozen source (472 core unit tests, 57 UI fuzz steps, 12 help themes, 5 spell themes).
+- [x] **A11.5a** `ActionDescriptionRegion` typed model and `MAX_REGIONS_PER_CONTAINER = 4` hard cap enforced in domain model, normalization and additions (`src/core/domain/types.ts`, `src/core/domain/description-containers.ts`).
+- [x] **A11.5b** Deterministic dice range parser (`parseDiceRange`) and table diagnostics (`diagnoseDiceTable`) catching gaps and overlaps in dice roll tables.
+- [x] **A11.5c** Audience and plane region filtering (`filterContainerRegions`) with semantic HTML and plain prose export rendering (`descriptionContainersText`, `descriptionContainersHtml`).
+- [x] **B223.V1** HP rider grammar normalization: `Gains ${amt} Temporary Hit Points while not Bloodied` (removed extraneous "of") in `defense-and-traits-utils.ts`.
+- [x] **B223.V2** Speeds traversal preset and editor cleanup (`Gain 10 Temporary Hit Points`) in `speeds-traversal.ts` and `SpeedsEditor.vue`.
+- [x] **B223.V3** Speed rider trailing period cleanup in `useTextRenderer.ts`, preventing `., ` punctuation collisions when joining badges.
+- [x] **B223.T1** HTML-tag aware punctuation cleaner in `cleanPunctuation` (`number-grammar.ts`), stripping stray dots/commas before opening parentheses even across closing tags (`14. (`, `14/+4. (`).
+- [x] **B223.T2** `numHtml` trailing punctuation guard in `advFormat.ts`.
+- [x] **B223.T3** Universal senses spacing normalization (eliminated hardcoded `60ft` across darkvision, blindsight, life sense, divine sense, ethereal sight -> `60 ft.`).
+- [x] **B223.T4** Speed notation distance normalization (`40ft` -> `40 ft.`, `5ft` -> `5 ft.`).
+- [x] **B223.W1** Expanded 2024 core rules conditions glossary (`grappled`, `prone`, `incapacitated`, `restrained`, `invisible`) in `statblock-help.ts`.
+- [x] **B223.Q1** Dedicated unit test suite `test/core/DescriptionContainers.test.ts` (5 tests) and extended `NumberGrammar.test.ts` and `StatblockHelp.test.ts` suites.

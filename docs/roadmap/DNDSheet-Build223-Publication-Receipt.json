@@ -1,0 +1,45 @@
+{
+  "build": 223,
+  "version": "2.4.3",
+  "sourceCommit": "44a87af4293fdf9b7f573f55b1f92e8a6042ae42",
+  "baseCommit": "e766f8d167f40cf613c242c1dcfd5c8087fc4eb4",
+  "pagesCommit": "039b0f71747521f5caec1a8ff7c9f0a05f881e3a",
+  "releaseCandidateTag": "rc-2.4.3-build-223-description-containers-regions-and-grammar-hygiene",
+  "publishedDate": "2026-11-09T16:25:00-03:00",
+  "remoteUrl": "https://github.com/ivangarciafilho/DNDSheet.git",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "verification": {
+    "gatePassed": true,
+    "totalSteps": 10,
+    "steps": [
+      { "name": "core", "exitCode": 0, "status": "PASS", "tests": 472, "suites": 0 },
+      { "name": "lint", "exitCode": 0, "status": "PASS", "errors": 0 },
+      { "name": "typecheck", "exitCode": 0, "status": "PASS", "baseline": 613, "newDiagnostics": 0 },
+      { "name": "build", "exitCode": 0, "status": "PASS" },
+      { "name": "fuzz", "exitCode": 0, "status": "PASS", "steps": 57 },
+      { "name": "help", "exitCode": 0, "status": "PASS", "themes": 12 },
+      { "name": "spell", "exitCode": 0, "status": "PASS", "themes": 5 },
+      { "name": "pages-build", "exitCode": 0, "status": "PASS" },
+      { "name": "pages-assets", "exitCode": 0, "status": "PASS" },
+      { "name": "pages-fuzz", "exitCode": 0, "status": "PASS", "steps": 57 }
+    ]
+  },
+  "deliverables": [
+    "A11.5 ActionDescriptionRegion model with audience, plane, text, and table support",
+    "A11.5 MAX_REGIONS_PER_CONTAINER hard cap enforced in model and operations",
+    "A11.5 parseDiceRange for continuous, single, and die expressions",
+    "A11.5 diagnoseDiceTable for gap and overlap detection in dice roll tables",
+    "A11.5 filterContainerRegions for audience and plane-aware rendering",
+    "A11.5 Prose and HTML semantic region export with XSS escaping",
+    "HP rider grammar normalization (Gains X Temporary Hit Points while not Bloodied)",
+    "Speeds traversal preset cleanup (Gain 10 Temporary Hit Points)",
+    "Speed rider trailing period cleanup preventing ., punctuation collisions",
+    "HTML-tag aware cleanPunctuation preventing 14. ( and 14/+4. ( artifacts",
+    "numHtml trailing punctuation guard",
+    "Universal senses spacing normalization (60ft -> 60 ft.)",
+    "Speed notation distance normalization (40ft -> 40 ft., 5ft -> 5 ft.)",
+    "2024 core conditions glossary: grappled, prone, incapacitated, restrained, invisible",
+    "New DescriptionContainers.test.ts suite (5 tests)",
+    "Expanded NumberGrammar.test.ts and StatblockHelp.test.ts suites"
+  ]
+}

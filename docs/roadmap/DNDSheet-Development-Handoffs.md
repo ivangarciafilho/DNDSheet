@@ -1,4 +1,14 @@
-## Current verified delivery — Build222 (2026-11-09)
+## Current verified delivery — Build 223 (2026-11-09)
+
+Delivered **Build 223** with 22 actionable engineering tasks across 5 domains, closing **A11.5** (items a, b, and c) and advancing H11: Action Description Region typed model (`ActionDescriptionRegion`), hard cap of 4 regions per container (`MAX_REGIONS_PER_CONTAINER = 4`), continuous dice roll range parsing and table overlap/gap diagnostics (`diagnoseDiceTable`), audience and plane sub-region filtering, semantic HTML/prose region exports with XSS escaping, HP rider grammar normalization ("Gains X Temporary Hit Points while not Bloodied"), speed traversal preset grammar, speed badge trailing period stripping (preventing `., ` collisions), HTML-tag aware punctuation cleaning (preventing `14. (` and `14/+4. (`), universal senses spacing normalization (eliminated unspaced `60ft` -> `60 ft.`), and expanded 2024 core rules conditions glossary (`grappled`, `prone`, `incapacitated`, `restrained`, `invisible`).
+
+Final frozen-source gate **10/10**: **472 core tests (+3)**, **57 exhaustive browser scenarios on SPA and Pages**, help 12 themes and spell 5 themes; zero browser errors. Pinned baseline verified at exactly 613 diagnostics, 0 new diagnostics against the approved baseline. Base: `e766f8d`. Published source: `44a87af`; Pages: `039b0f7`. Release tag: `rc-2.4.3-build-223-description-containers-regions-and-grammar-hygiene`. Prior release candidates and protected files preserved.
+
+**Measured workload:** normalized 256 IDs, **162 complete / 94 open → 164 complete / 92 open (+2 / -2)**.
+
+[Build 223 delivery and continuation](DNDSheet-Build223-Container-Regions-Dice-Diagnostics-and-Grammar-Hygiene.md). Next: **A11.9 random-result integration → H9 purpose-led help → H14 per-file debt burn-down**.
+
+### Historical verified delivery — Build222 (2026-11-09)
 
 Completed **ten existing tasks**: H22, A17.1, A17.3, A17.4, A13.6, B10.1, B10.2, A17.6, A17.7 and B10.3. Character AC/speed now disclose recorded provenance or explicit estimates; identity/equipment names remain reference-only. Reusable fixtures, AST prerequisite replay, portable browser discovery, computed theme contrast, fit diagnostics and evidence-based documentation support the next model work.
 
