@@ -29,19 +29,79 @@ export const TIERS: readonly string[] = [
 /** Verbal, Somatic, Material, then the Concentration and Ritual tags, in stat block order. */
 export const COMPONENT_TAGS: readonly string[] = ['V', 'S', 'M', 'C', 'R']
 export const DURATIONS: readonly string[] = [
-  'Instantaneous', '1 round', '1 minute', '10 minutes', '1 hour', '8 hours', '24 hours',
-  'Until dispelled', 'Concentration, up to 1 minute',
+  // Turn & Round Milestones (Alphabetical within group)
+  'Instantaneous',
+  'Until end of combat',
+  'Until end of target\'s next turn',
+  'Until end of target\'s turn',
+  'Until end of turn',
+  'Until end of your next turn',
+  'Until start of target\'s next turn',
+  'Until start of your next turn',
+  // Measured Time Durations
+  '1 round',
+  '1 minute',
+  '10 minutes',
+  '1 hour',
+  '8 hours',
+  '24 hours',
+  // Concentration Durations
+  'Concentration, up to 1 round',
+  'Concentration, up to 1 minute',
+  'Concentration, up to 10 minutes',
+  'Concentration, up to 1 hour',
+  'Concentration, up to 8 hours',
+  'Concentration, up to 24 hours',
+  // Rest, Cycle & Condition Milestones
+  'Permanent',
+  'Special',
+  'Until Bloodied',
+  'Until Dawn',
+  'Until Dusk',
+  'Until Long Rest',
+  'Until Reduced to 0 HP',
+  'Until Short or Long Rest',
+  'Until dispelled',
+  'Until triggered',
 ]
 export const SAVE_ABILITIES: readonly string[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
-export const TARGET_KINDS: readonly string[] = ['creature', 'creatures', 'target', 'targets', 'object', 'objects', 'ally', 'allies', 'enemy', 'enemies']
-export const TARGET_QUALIFIERS: readonly string[] = ['which you can see', 'that it can see', 'of its choice', 'hostile to it', 'friendly to it']
-export const PLANES: readonly string[] = ['Material', 'Ethereal', 'Astral', 'Shadowfell', 'Feywild']
-export const AREA_SHAPES: readonly string[] = ['cone', 'cube', 'cylinder', 'emanation', 'line', 'sphere', 'radius sphere']
+export const TARGET_KINDS: readonly string[] = [
+  'ally', 'allies', 'celestial', 'celestials', 'construct', 'constructs',
+  'creature', 'creatures', 'dragon', 'dragons', 'elemental', 'elementals',
+  'enemy', 'enemies', 'fey', 'fiend', 'fiends', 'humanoid', 'humanoids',
+  'object', 'objects', 'point', 'self', 'space', 'spaces', 'structure', 'structures',
+  'target', 'targets', 'undead',
+]
+export const TARGET_QUALIFIERS: readonly string[] = [
+  'which you can see', 'that it can see', 'of its choice', 'of your choice',
+  'hostile to it', 'friendly to it', 'within reach', 'within range',
+  'that can hear it', 'that can see it', 'that is Bloodied', 'that is Prone',
+  'that is Grappled by it', 'that is Restrained', 'that is not Construct or Undead',
+  'including itself', 'other than itself',
+]
+export const PLANES: readonly string[] = [
+  'Material', 'Ethereal', 'Astral', 'Shadowfell', 'Feywild',
+  'Elemental Chaos', 'Nine Hells', 'Abyss', 'Celestia', 'Limbo', 'Mechanus', 'Far Realm',
+]
+export const AREA_SHAPES: readonly string[] = [
+  'cone', 'cube', 'cylinder', 'emanation', 'hemisphere', 'line', 'radius', 'radius sphere', 'sphere', 'square', 'wall',
+]
 export const LEGENDARY_COSTS: readonly string[] = ['1', '2', '3']
 export const DAMAGE_TYPES: readonly string[] = [
   'acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic',
   'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder',
 ]
+/** Authored rule labels are shared by editor reading, validation and patches. */
+export const WEAPON_ABILITY_RULES = [
+  { value: 'auto', label: 'Automatic by reach' },
+  { value: 'CHA', label: 'Charisma' }, { value: 'CON', label: 'Constitution' },
+  { value: 'DEX', label: 'Dexterity' },
+  { value: 'finesse', label: 'Finesse (better of STR and DEX)' },
+  { value: 'finesse_thrown', label: 'Finesse thrown melee weapon (better of STR and DEX)' },
+  { value: 'INT', label: 'Intelligence' }, { value: 'STR', label: 'Strength' },
+  { value: 'thrown', label: 'Thrown melee weapon (STR)' }, { value: 'WIS', label: 'Wisdom' },
+] as const
+
 /** Stored lower-case so the grammar prints "On Hit", "On Failure" and "On Success". */
 export const OUTCOME_TRIGGERS: readonly string[] = ['hit', 'failure', 'success']
 
@@ -55,6 +115,7 @@ const actionChain: readonly ComposerCellSpec[] = [
   { id: 'duration', label: 'Duration', row: 'head', editor: 'catalog', field: 'duration', options: DURATIONS, allowCustom: true },
   // One chip holds reach and source because the plate prints them as one phrase ("Ranged Spell Attack").
   { id: 'attack', label: 'Attack', row: 'mechanics', editor: 'catalog', field: 'attackSource' },
+  { id: 'weapon-ability', label: 'Weapon ability', row: 'mechanics', editor: 'catalog', field: 'weaponAttackAbility', options: WEAPON_ABILITY_RULES.map(rule => rule.label) },
   { id: 'attack-bonus', label: 'Attack bonus', row: 'mechanics', editor: 'number', field: 'attackBonus' },
   { id: 'save-ability', label: 'Save', row: 'mechanics', editor: 'catalog', field: 'stat', options: SAVE_ABILITIES },
   { id: 'save-dc', label: 'Save DC', row: 'mechanics', editor: 'number', field: 'save' },
@@ -86,8 +147,24 @@ const traitChain: readonly ComposerCellSpec[] = [
 
 const reactionChain: readonly ComposerCellSpec[] = [
   { id: 'usage', label: 'Uses', row: 'head', editor: 'text' },
+  { id: 'discipline', label: 'Discipline', row: 'head', editor: 'catalog', field: 'school', options: DISCIPLINES },
+  { id: 'tier', label: 'Tier', row: 'head', editor: 'catalog', field: 'spellLevel', options: TIERS },
   { id: 'name', label: 'Name', row: 'head', editor: 'text' },
+  { id: 'components', label: 'Components', row: 'head', editor: 'catalog', field: 'components', options: COMPONENT_TAGS, multiple: true },
+  { id: 'duration', label: 'Duration', row: 'head', editor: 'catalog', field: 'duration', options: DURATIONS, allowCustom: true },
   { id: 'trigger', label: 'Trigger', row: 'mechanics', editor: 'text' },
+  { id: 'attack', label: 'Attack', row: 'mechanics', editor: 'catalog', field: 'attackSource' },
+  { id: 'weapon-ability', label: 'Weapon ability', row: 'mechanics', editor: 'catalog', field: 'weaponAttackAbility', options: WEAPON_ABILITY_RULES.map(rule => rule.label) },
+  { id: 'attack-bonus', label: 'Attack bonus', row: 'mechanics', editor: 'number', field: 'attackBonus' },
+  { id: 'save-ability', label: 'Save', row: 'mechanics', editor: 'catalog', field: 'stat', options: SAVE_ABILITIES },
+  { id: 'save-dc', label: 'Save DC', row: 'mechanics', editor: 'number', field: 'save' },
+  { id: 'target-count', label: 'Targets', row: 'scope', editor: 'structured', field: 'targeting.count' },
+  { id: 'target-kind', label: 'Target kind', row: 'scope', editor: 'catalog', field: 'targeting.kind', options: TARGET_KINDS, allowCustom: true },
+  { id: 'target-qualifier', label: 'Qualifier', row: 'scope', editor: 'catalog', field: 'targeting.qualifier', options: TARGET_QUALIFIERS, allowCustom: true },
+  { id: 'target-range', label: 'Range', row: 'scope', editor: 'structured', field: 'targeting.range' },
+  { id: 'target-area', label: 'Area', row: 'scope', editor: 'structured', field: 'targeting.area' },
+  { id: 'target-planes', label: 'Planes', row: 'scope', editor: 'catalog', field: 'targeting.planes', options: PLANES, multiple: true, allowCustom: true },
+  { id: 'outcomes', label: 'Outcomes', row: 'outcomes', editor: 'structured', field: 'outcomes' },
   { id: 'description', label: 'Description', row: 'prose', editor: 'text' },
 ]
 

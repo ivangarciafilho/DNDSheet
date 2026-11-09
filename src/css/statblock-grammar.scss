@@ -19,6 +19,8 @@
 /* ------------------------------------------------------------------ tokens */
 
 .statblock {
+  font-family: ff-scala-sans-pro, ScalySans, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: 0.01em;
   --dnd-adv-ink: #1d6b29;
   --dnd-disadv-ink: #a8211a;
 
@@ -29,7 +31,8 @@
   --sb-cell-ink: #2b1b12;
   --sb-rule: rgba(122, 31, 18, 0.35);
   --sb-body-bg: rgba(255, 251, 242, 0.92);
-  --sb-stripe: rgba(122, 31, 18, 0.07);
+  --sb-stripe: rgba(122, 31, 18, 0.055);
+  --sb-stripe-shift: rgba(122, 31, 18, 0.04);
 }
 
 .statblock.theme-lovecraft_golden,
@@ -59,7 +62,8 @@
   --sb-cell-ink: #{$cell-ink};
   --sb-rule: #{rgba($frame, 0.45)};
   --sb-body-bg: #{$body-bg};
-  --sb-stripe: #{rgba($frame, 0.08)};
+  --sb-stripe: #{rgba($frame, 0.10)};
+  --sb-stripe-shift: #{rgba($frame, 0.06)};
 }
 
 .statblock.theme-wotc { @include plate-palette(#58180d, #58180d, #fdf1dc, #fbf2e3, #2c0e08, rgba(253, 246, 233, 0.96)); }
@@ -138,7 +142,7 @@
 #render .statblock,
 .composer-preview .statblock {
   /* the plate is the frame: the entry container steps back */
-  :is(.trait, .action, .attack, .multiattack):has(> .sb-plate) {
+  :is(.trait, .action, .reaction, .legendary, .attack, .multiattack):has(> .sb-plate) {
     background: none !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -158,6 +162,11 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
     text-indent: 0 !important;
     font-style: normal;
+  }
+
+  .innate-spellcasting.sb-plate,
+  .class-spellcasting.sb-plate {
+    margin: 0 0 6px !important;
   }
 
   .sb-row {
@@ -245,6 +254,14 @@
       opacity: 1;
     }
 
+    .sb-qual.school-cell {
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-transform: none;
+      opacity: 0.92;
+    }
+
     .sb-qual.sb-comp {
       font-size: 0.76rem;
       font-weight: 600;
@@ -271,7 +288,137 @@
     text-indent: 0 !important;
   }
 
-  .sb-body.sb-striped {
+  .sb-plate.sb-trait-streamlined {
+    display: block !important;
+    .sb-row {
+      display: flow-root !important;
+      position: relative !important;
+      background: var(--sb-cell-bg) !important;
+      padding: 3px 8px !important;
+      line-height: 1.42 !important;
+      min-height: 24px !important;
+
+      > .sb-cell.sb-head {
+        float: left !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        vertical-align: top !important;
+        white-space: nowrap !important;
+        min-height: 24px !important;
+        height: auto !important;
+        line-height: 1.25 !important;
+        padding: 3px 8px !important;
+        margin: -3px 8px 1px -8px !important;
+        border-top: 0 !important;
+        border-left: 0 !important;
+        border-right: 1px solid var(--sb-rule) !important;
+        border-bottom: 1px solid var(--sb-rule) !important;
+        border-radius: 0 0 3px 0 !important;
+      }
+
+      > .sb-cell.sb-body {
+        display: inline !important;
+        background: transparent !important;
+        color: var(--sb-cell-ink) !important;
+        font-weight: 500 !important;
+        font-size: 0.85rem !important;
+        line-height: 1.42 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        border: 0 !important;
+        margin: 0 !important;
+
+        > .sb-text {
+          display: inline !important;
+        }
+      }
+    }
+
+    &.sb-single-line .sb-row > .sb-cell.sb-head {
+      margin: -3px 8px -3px -8px !important;
+      border-bottom: 0 !important;
+      border-radius: 0 !important;
+    }
+  }
+
+  .dnd-stats-2024 {
+    gap: 4px !important;
+
+    .stat-table {
+      padding: 3px 4px !important;
+      column-gap: 1px !important;
+      row-gap: 2px !important;
+      grid-template-columns: minmax(22px, 0.82fr) minmax(16px, 0.60fr) minmax(20px, 0.72fr) minmax(38px, 1.66fr) !important;
+
+      > div {
+        padding: 2px 1px !important;
+        min-height: 24px !important;
+        font-size: clamp(0.72rem, 1.02vw, 0.83rem) !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+      }
+
+      .header-label {
+        font-size: 0.68rem !important;
+        letter-spacing: 0.01em !important;
+      }
+
+      .save {
+        padding: 2px 2px !important;
+
+        .dnd-adv-pill,
+        .dnd-disadv-pill {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 1px !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          border: 0 !important;
+          background: transparent !important;
+          box-shadow: none !important;
+          line-height: 1 !important;
+          white-space: nowrap !important;
+        }
+
+        .stat-save-arrows,
+        .dnd-adv-glyph {
+          font-size: 0.62em !important;
+          letter-spacing: -1.5px !important;
+          margin-left: 1px !important;
+          line-height: 1 !important;
+          display: inline-block !important;
+          transform: scaleX(0.92);
+          transform-origin: left center;
+        }
+      }
+    }
+  }
+
+  .dnd-vitals-indented-subrow {
+    display: flex !important;
+    align-items: baseline !important;
+    padding: 1px 0 1px 18px !important;
+    font-size: 0.86rem !important;
+    line-height: 1.35 !important;
+    color: var(--sb-cell-ink, #58180d) !important;
+    box-sizing: border-box !important;
+
+    .dnd-subrow-bullet {
+      margin-right: 6px !important;
+      font-size: 0.82rem !important;
+      color: var(--sb-badge-ink, #7a2012) !important;
+      opacity: 0.85 !important;
+    }
+
+    .dnd-subrow-content {
+      flex: 1 1 auto !important;
+    }
+  }
+
+  .sb-body.sb-striped,
+  .trait:not(.sb-plate).sb-striped,
+  .action:not(.sb-plate).sb-striped {
     padding: 0 8px !important;
     line-height: 1.5rem !important;
     background-image: repeating-linear-gradient(
@@ -279,9 +426,52 @@
       transparent 0,
       transparent 1.5rem,
       var(--sb-stripe) 1.5rem,
-      var(--sb-stripe) 3rem
+      var(--sb-stripe) 3rem,
+      transparent 3rem,
+      transparent 4.5rem,
+      var(--sb-stripe-shift, rgba(122, 31, 18, 0.035)) 4.5rem,
+      var(--sb-stripe-shift, rgba(122, 31, 18, 0.035)) 6rem
     ) !important;
     background-attachment: local;
+  }
+
+  .skill.dnd-cascade-panel,
+  .skill.dnd-cellular-row {
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.45rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .skill.dnd-cascade-panel.sb-striped,
+  .skill.dnd-cellular-row.sb-striped,
+  .skill.dnd-cascade-panel.is-striped,
+  .skill.dnd-cellular-row.is-striped {
+    background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    border-radius: 2px !important;
+    line-height: 1.45rem !important;
+  }
+
+  .skill.dnd-cascade-panel.zebra-stripe-text,
+  .skill.dnd-cellular-row.zebra-stripe-text {
+    background-color: transparent !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.45rem !important;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 1.45rem,
+      var(--sb-stripe, rgba(122, 31, 18, 0.10)) 1.45rem,
+      var(--sb-stripe, rgba(122, 31, 18, 0.10)) 2.9rem,
+      transparent 2.9rem,
+      transparent 4.35rem,
+      var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
+      var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
+    ) !important;
+    background-attachment: local !important;
   }
 }
 
@@ -300,10 +490,87 @@
 }
 
 /* Spell plates use the same theme tokens; authored tags appear once in their data text. */
-#render .statblock {
+:is(#render, .composer-preview, .statblock) {
   .class-spellcasting,
   .innate-spellcasting {
     margin-block: 6px !important;
+
+    /* Seamless interleaved row striping across the plate */
+    .sb-row.sb-striped,
+    .sb-row.is-striped {
+      background: var(--sb-stripe, rgba(122, 31, 18, 0.10)) !important;
+
+      > .sb-cell:not(.sb-head) {
+        background: transparent !important;
+      }
+    }
+
+    .sb-spell-resource-row,
+    .sb-spell-metamagic-row {
+      .sb-cell {
+        font-size: 0.8rem;
+        font-weight: 500;
+        line-height: 1.4;
+      }
+    }
+
+    .sb-spells-unified-cell,
+    .sb-spells-restricted-cell {
+      padding: 0 !important;
+      background: transparent !important;
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+
+      .spell-level-line {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 2.5px 8px !important;
+        line-height: 1.45rem !important;
+        min-height: 22px !important;
+        border-bottom: none !important;
+        background: transparent;
+
+        &:last-child {
+          border-bottom: none !important;
+        }
+
+        &.is-striped,
+        &:nth-child(even) {
+          background: var(--sb-stripe, rgba(122, 31, 18, 0.10)) !important;
+        }
+
+        &:nth-child(odd):not(.is-striped) {
+          background: transparent !important;
+        }
+
+        &.zebra-stripe-text {
+          background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 1.45rem,
+            var(--sb-stripe, rgba(122, 31, 18, 0.10)) 1.45rem,
+            var(--sb-stripe, rgba(122, 31, 18, 0.10)) 2.9rem,
+            transparent 2.9rem,
+            transparent 4.35rem,
+            var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
+            var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
+          ) !important;
+          background-attachment: local !important;
+        }
+      }
+    }
+
+    .sb-spells-restricted-cell {
+      background: rgba(88, 24, 13, 0.03) !important;
+
+      .restricted-cell-header {
+        border-bottom: 1px solid var(--sb-rule, rgba(122, 31, 18, 0.2)) !important;
+        background: rgba(88, 24, 13, 0.06) !important;
+        padding: 3px 8px !important;
+      }
+    }
   }
 
   .sb-plate .spell-tag-badge {
@@ -340,6 +607,38 @@
     min-width: 0;
     overflow-wrap: anywhere;
   }
+
+  .sb-plate .sb-spells-inline {
+    background: var(--sb-cell-bg) !important;
+    color: var(--sb-cell-ink) !important;
+    padding: 3px 8px !important;
+    display: inline-block !important;
+    line-height: 1.45 !important;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    .spell-inline-item {
+      display: inline;
+    }
+    .spell-name {
+      font-weight: 600;
+    }
+    .spell-tag-badge {
+      font-size: 0.8em;
+      opacity: 0.85;
+      font-style: italic;
+    }
+    .spell-sep {
+      color: inherit;
+      margin-right: 2px;
+    }
+  }
+
+  .sb-plate .sb-spell-head {
+    white-space: nowrap !important;
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
 }
 
 /* Rich tooltips (stat block + editor): readable width, consistent color code */
@@ -362,21 +661,321 @@
 .statblock-help-tip {
   z-index: 10000;
   box-sizing: border-box;
-  max-width: min(320px, calc(100vw - 20px));
+  max-width: min(340px, calc(100vw - 20px));
   max-height: calc(100vh - 20px);
   overflow: auto;
-  padding: 8px 11px;
-  border: 1px solid #7a1f12;
-  border-radius: 4px;
-  background: #1f1b18;
-  box-shadow: 0 3px 12px rgb(0 0 0 / 35%);
-  color: #f3ead7;
-  font-size: 0.82rem;
-  line-height: 1.4;
+  padding: 8px 12px;
+  border: 1.5px solid #8a2010;
+  border-radius: 6px;
+  background: #231c19;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  color: #f7ede1;
+  font-size: 0.84rem;
+  line-height: 1.45;
   pointer-events: none;
+
+  .tip-title {
+    color: #e5b358;
+    font-weight: 700;
+    margin-bottom: 3px;
+    font-size: 0.88rem;
+    display: block;
+  }
+  .tip-body {
+    color: #f7ede1;
+  }
+  .tip-detail {
+    color: #b5c7d3;
+    font-size: 0.8rem;
+    margin-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 3px;
+  }
 }
 
 [data-help]:focus-visible {
   outline: 2px solid #1769aa;
   outline-offset: 2px;
+}
+
+/* Modular Sectorized Action Outcomes Grid & Dice Tables */
+.action-outcomes-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 4px !important;
+  margin: 4px 0 !important;
+  width: 100% !important;
+
+  .outcome-sector {
+    background: rgba(115, 24, 21, 0.04) !important;
+    border: 1px solid rgba(115, 24, 21, 0.22) !important;
+    border-radius: 3px !important;
+    padding: 3px 6px !important;
+    font-size: 0.9em !important;
+    line-height: 1.35 !important;
+
+    .outcome-target-badge {
+      display: inline-block;
+      font-weight: 700;
+      color: #731815;
+      background: rgba(115, 24, 21, 0.08);
+      padding: 0 4px;
+      border-radius: 2px;
+      margin-right: 4px;
+    }
+  }
+}
+
+.outcome-dice-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 4px 0 !important;
+  font-size: 0.86em !important;
+
+  th, td {
+    border: 1px solid rgba(115, 24, 21, 0.25) !important;
+    padding: 2px 6px !important;
+  }
+  th {
+    background: rgba(115, 24, 21, 0.1) !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    color: #731815 !important;
+  }
+}
+
+/* Total Elimination of Pill Borders around AC, HP, Speed, Defenses, Senses, Languages, Passives & Spells */
+#render .statblock,
+.composer-preview .statblock,
+.statblock,
+.statblock.theme-wotc {
+  .skill.dnd-cellular-row,
+  .skill.dnd-cascade-panel {
+    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 2px !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.45rem !important;
+    text-indent: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+
+    &:not(.sb-striped):not(.is-striped):not(.zebra-stripe-text) {
+      background: transparent !important;
+    }
+
+    &.sb-striped,
+    &.is-striped {
+      background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
+      padding: 1px 0 !important;
+      border-radius: 2px !important;
+    }
+
+    &.zebra-stripe-text {
+      background-color: transparent !important;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 1.45rem,
+        var(--sb-stripe, rgba(122, 31, 18, 0.10)) 1.45rem,
+        var(--sb-stripe, rgba(122, 31, 18, 0.10)) 2.9rem,
+        transparent 2.9rem,
+        transparent 4.35rem,
+        var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
+        var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
+      ) !important;
+      background-attachment: local !important;
+    }
+
+    .dnd-cascade-title,
+    .name.dnd-cascade-title,
+    span.name.dnd-cascade-title {
+      display: inline !important;
+      min-width: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      border-right: none !important;
+      padding: 0 4px 0 0 !important;
+      margin: 0 !important;
+      text-indent: 0 !important;
+      font-size: 0.92rem !important;
+      font-weight: 800 !important;
+      color: #58180d !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      text-shadow: none !important;
+      border-radius: 0 !important;
+      flex-shrink: 0;
+
+      &::after {
+        content: ':';
+        margin-left: 1px;
+      }
+    }
+
+    .dnd-cascade-subtitle {
+      background: #58180d !important;
+      color: #fdf1dc !important;
+      border: none !important;
+      border-radius: 3px !important;
+      padding: 1px 5px !important;
+      margin: 0 5px !important;
+      font-size: 0.72rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      line-height: 1.1 !important;
+      vertical-align: middle !important;
+    }
+
+    .dnd-cascade-badges-wrap,
+    .dnd-defense-unified-body {
+      display: inline !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      vertical-align: baseline;
+
+      .dnd-cascade-badge,
+      .dnd-defense-prose-text {
+        display: inline !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        vertical-align: baseline !important;
+      }
+    }
+  }
+
+  /* Prevent plate wrappers from receiving leaking striped background */
+  .action:has(.sb-plate),
+  .trait:has(.sb-plate),
+  .reaction:has(.sb-plate),
+  .legendary:has(.sb-plate),
+  .action.sb-striped:has(.sb-plate),
+  .trait.sb-striped:has(.sb-plate),
+  .reaction.sb-striped:has(.sb-plate) {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Clean, compact spell level rows without split vertical borders */
+  .sb-spell-row {
+    .sb-cell.sb-spell-head {
+      border-right: none !important;
+    }
+    .sb-cell.sb-spells-inline {
+      border-left: none !important;
+    }
+  }
+}
+
+/* Compact 2-Row Cellular Nameplate */
+.compact-nameplate {
+  display: flex;
+  flex-direction: column;
+  border: 1.5px solid var(--sb-border, #58180d);
+  border-radius: 4px;
+  margin: 4px 0 6px 0;
+  background: var(--sb-cell-bg, #fdf6e9);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+
+  .compact-nameplate-row-1 {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    border-bottom: 1.5px solid var(--sb-border, #58180d);
+    background: transparent;
+    padding: 0;
+    gap: 0;
+
+    .compact-col {
+      padding: 4px 8px;
+      display: flex;
+      align-items: center;
+      border-right: 1.5px solid var(--sb-border, #58180d);
+      &:last-child {
+        border-right: none;
+      }
+    }
+
+    .cn-name {
+      font-weight: 800;
+      font-size: 1.05rem;
+      text-align: left;
+      justify-content: flex-start;
+      flex: 1 1 auto;
+      background: var(--sb-head-bg, #58180d);
+      color: var(--sb-head-ink, #fdf1dc);
+      overflow-wrap: anywhere;
+    }
+    .cn-identity {
+      font-size: clamp(0.72rem, 1.1vw, 0.82rem);
+      font-style: italic;
+      text-align: left;
+      justify-content: flex-start;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      flex: 1 1 auto;
+      background: rgba(88, 24, 13, 0.08);
+      color: var(--sb-cell-ink, #1f1b18);
+    }
+    .cn-cr {
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: center;
+      justify-content: center;
+      background: transparent !important;
+      color: var(--sb-head-bg, #58180d) !important;
+    }
+    .cn-pb {
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: center;
+      justify-content: center;
+      background: rgba(88, 24, 13, 0.08);
+      color: var(--sb-cell-ink, #1f1b18);
+    }
+    .cn-xp {
+      font-weight: 700;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-align: center;
+      justify-content: center;
+      background: var(--sb-head-bg, #58180d);
+      color: var(--sb-head-ink, #fdf1dc);
+    }
+    .cn-cr-pb {
+      font-weight: 800;
+      font-size: 0.82rem;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+  }
+
+  .compact-nameplate-row-2 {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 4px 8px;
+    font-size: 0.84rem;
+    background: var(--sb-cell-bg, #fdf6e9);
+    color: var(--sb-cell-ink, #1f1b18);
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
 }

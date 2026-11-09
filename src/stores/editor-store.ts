@@ -7,7 +7,7 @@ export type A4Layout = 'auto' | 'side_by_side' | 'stacked' | 'statblock_only'
 
 export interface A4CompositionLayer {
   id: string
-  type: 'statblock' | 'portrait' | 'background' | 'foreground'
+  type: 'statblock' | 'portrait' | 'background' | 'foreground' | 'custom'
   name: string
   url?: string
   maskUrl?: string
@@ -25,6 +25,18 @@ export interface A4CompositionLayer {
   cropY?: { min: number; max: number } // 0 to 100
   cropCenterX?: number // -100 to 100 (focal center for pre-crop offset)
   cropCenterY?: number // -100 to 100
+  // Grayscale Luminance Masking as Alpha
+  grayscaleAsAlpha?: boolean
+  grayscaleInvert?: boolean
+  // Gradient Overlays with Direction, Blend Mode, Opacity & Falloff Curves
+  gradientOverlay?: {
+    enabled?: boolean
+    direction?: 'left_to_right' | 'right_to_left' | 'top_to_bottom' | 'bottom_to_top' | 'vignette' | 'radial'
+    blendMode?: string
+    opacity?: number
+    curve?: 'linear' | 'ease_in' | 'ease_out' | 'smoothstep'
+    stops?: { color: string; offset: number }[]
+  }
   // Custom Overlay Layer Text
   showTextOverlay?: boolean
   overlayText?: string

@@ -1,31 +1,87 @@
 # DNDSheet — Development Handoffs
 
-## Build161 continuation — visible bindings before remaining sweep
+## Build 184 closing packet — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Ability Score Grid, Composer-Aligned Plate Rows (`Exorcise` & `Astral Binding`), Enriched Durations/Catalogs & Contextual Split Rider Toggles
 
-Read the new Specification contract and Backlog A9.7 packet, then the verified closing evidence. The completed pipeline uses core/domain/monster-bindings.ts, stores/binding-runtime.ts, kit/useBindings.ts and kit/FormulaField.vue. Main store actions delegate to the tested production action object. Runtime revision/errors/historySilent are nonpersisted; only authored bindings live in monster state.
+- **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`
+- **Build**: `184` (previous `rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates` preserved untouched)
+- **Verification Evidence**:
+  - `npm test`: **361 / 361 core unit tests passed** (100% green across 51 test suites).
+  - `node test/exhaustive-ui-fuzz.js`: **All 50 live CDP browser fuzz steps passed with 0 console errors and 0 runtime exceptions**.
+  - `npx quasar build`: Clean build into `dist/spa` with exit code 0.
+- **Key Architectural Evolutions**:
+  1. **Flush Trait & Action Header Border Alignment**: Updated `.sb-plate.sb-trait-streamlined` and `.sb-single-line` in `src/css/statblock-grammar.scss` and `src/components/rendering/useProcessTokens.ts` so every `.sb-head` badge sits `0px` flush against the `.sb-plate` frame border while multi-line descriptions wrap beneath the header badge on lines 2+.
+  2. **Redundant Standalone Crop Sliders Removed**: Removed duplicate `<dual-knob-crop-slider>` blocks from `A4LayerStudio.vue` now that parallel `Crop X` and `Crop Y` sliders are integrated directly into `RadialOffsetController.vue`.
+  3. **Exclusive Per-Slider & Per-Side Reset Icons**: Added `resetX`, `resetY`, `resetCropXMin`, `resetCropXMax`, `resetCropYMin`, and `resetCropYMax` buttons to `RadialOffsetController.vue` and `DualKnobCropSlider.vue`.
+  4. **Auto-Balanced Ability Scores & Saves**: Rebalanced `.dnd-stats-2024 .stat-table` column tracks (`minmax(22px, 0.82fr) minmax(16px, 0.60fr) minmax(20px, 0.72fr) minmax(38px, 1.66fr)`) and compact `.save` arrow styling in `WebRenderer.vue` and `statblock-grammar.scss` so `DEX 18 | +4 | +6 ▲▲` never collides or clips.
+  5. **Composer-Aligned Plate Row Ordering (`Exorcise` & `Astral Binding`)**: Updated `buildPlateEntry` in `useProcessTokens.ts` so spell-like plates render `Head + Duration + Mechanics (Save DC / Attack)` on Row 1, `Scope / Targets` on Row 2, and `Outcomes / Body` on Row 3.
+  6. **Enriched Durations & Categorized Tooltipped Catalogs**: Expanded `DURATIONS`, `TARGET_KINDS`, `TARGET_QUALIFIERS`, `PLANES`, and `AREA_SHAPES` in `action-composer.ts` and added categorized, alphabetically ordered, color-coded, icon-annotated, tooltipped options in `ChainCell.vue` and `BasicsEditor.vue`.
+  7. **Contextual Split Riders Toggles**: Added `↳ Sub-Row` toggles directly inside the AC Decoupled Riders section and each HP Rider module header in `BasicsEditor.vue`.
 
-Two workers reached usage limits during implementation. Their partial files were preserved and completed in this session, not counted as finished handoffs. The final independent source reviewer found no blocking defects and two minor follow-ups, recorded under A9 closeout. Subsequent target-facing checks reproduced/fixed raw-descriptor reactivity gaps with a failing computed-value test and visible sheet assertion. Do not regress safe own-property reading to arbitrary property traversal to gain Vue tracking; keep the explicit reactive adapter.
+---
 
-Resume A9.7 with a consumer/owner checklist and a bounded batch; no extra framework or duplicate preview. Preserve Build160 and configured origin data. Complete remaining numeric consumers and lifecycle ownership before A9.10; keep casting/outcomes/species expansion on their existing tasks. Use fresh frozen build output during browser jobs. The earlier provisional runs that failed are not final evidence; only the closing packet's successful runs count.
+## Build 183 closing packet — Radial Crop Knobs, Curved Gradient Bar, Indented Vitals & Hierarchical Plate Grammar
 
-## Build160 continuation packet — finish A9.2 before overlay adoption
+- **Release Candidate**: `rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates`
+- **Build**: `183` (previous `rc-2.4.3-build-182-gradient-overlays-indented-vitals-and-trait-flow` preserved)
+- **Verification Evidence**:
+  - `npm test`: **361 / 361 core unit tests passed** (100% green across 51 suites).
+  - `node test/exhaustive-ui-fuzz.js`: **All 50 live CDP browser fuzz steps passed with 0 console errors and 0 runtime exceptions**.
+  - `npx quasar build`: Clean build into `dist/spa` with exit code 0.
+- **Key Architectural Evolutions**:
+  1. **Inline Trait Flow**: Replaced vertical column cell constraints on `.sb-plate.sb-trait-streamlined` with inline-block `.sb-head` and inline `.sb-desc-inline` so lines 2+ wrap flush beneath the badge.
+  2. **Layer Occlusion & Hardware SVG Mask**: Inserted custom composition layers in descending z-index order and mounted `#a4-luminance-to-alpha` SVG filter matrix for dynamic opacity conversion of 24-bit PNGs.
+  3. **Interactive Gradient Bar & SVG Falloff Curve**: Delivered `GradientOverlayController.vue` and `gradient-curve.ts` with multi-stop color keys, draggable tension inflection knob, and CSS gradient resampling.
+  4. **Radial & Parallel Cropping Knobs**: Rendered values inside knobs with inline double-click editing and integrated parallel `Crop X` and `Crop Y` tracks.
+  5. **Indented Vitals Riders**: Emitted independent sub-row lines (`↳`) for Speed, HP, and AC riders in both MM2024 and MM2014 templates.
+  6. **Plate Row Ordering**: Separated Row 1 (Head + Duration), Row 2 (Scope + Mechanics), and Row 3 (Outcomes) for hierarchical spell-like plates (`Exorcise`).
+  7. **Category Fold / Unfold**: Grouped actions/traits cards with category-level fold/unfold toggles.
 
-Read the Build160 Specification contract and Backlog remaining packet first. Four new pure catalog modules own descriptors, safe paths, inspection and reference sources; tests live in FieldTypes, FieldPaths, FieldInspection and ReferenceSources. No store/UI consumers have adopted them. Preserve predecessor RCs and sample storage; do not reconfigure servers.
+---
 
-Resume with complex mode coverage rather than starting A9.3. AC descriptors and death-prevention save/burst descriptors expose pending mode policy; inspector blocks them. Read actual BasicsEditor applicability/default/OR branches and current domain consumers before declaring those gates reviewed. Keep original optional/null/symbolic authorship intact. Numeric fields with unsupported source identities remain blocked until their existing migration owners land.
+## Build 182 closing packet — Gradient Overlays, Hardware SVG Alpha Masking, Indented Vitals Riders & Inline Trait Flow Foundation
 
-Use execution/verification and functional-core guidance; apply UI/TTRPG skills only when that scope begins. Ruling: no A9.2 completion credit from a broad registry without exhaustive ownership/gate reconciliation. Progress remains88/219,one active task,130pending,9/28loops shipped. This packet refines existing work;it adds no new task IDs.
+- **Release Candidate**: `rc-2.4.3-build-182-gradient-overlays-indented-vitals-and-trait-flow`
+- **Build**: `182`
+- **Verification Evidence**:
+  - `npm test`: **357 / 357 core unit tests passed**.
+  - `node test/exhaustive-ui-fuzz.js`: **All 50 live CDP browser fuzz steps passed with 0 errors**.
+- **Key Architectural Evolutions**:
+  1. **A4 Studio Multi-Gradient Overlay Engine**: Designed gradient curve evaluator and tension model in `src/core/domain/gradient-curve.ts`.
+  2. **Hardware SVG Luminance Masking**: Integrated `#a4-luminance-to-alpha` filter matrix in `WebRenderer.vue`.
+  3. **Indented Relatable Vitals Sub-Rows**: Laid foundation for `splitSpeedRiderRows`, `splitHpRiderRows`, and `splitAcRiderRows`.
 
-Independent review's concrete defects were reproduced with failing tests and fixed: array readers bypassed accessors through iteration; absent literal source modes were rejected; poolCount depended on its own derived enabled flag; mixed symbolic values appeared scalar-editable. Reference review also corrected false cycles for disabled override values and raw spell ability keys. These checks do not replace saved-overlay/history/browser propagation tests in A9.3–9.
+---
+
+## Build 181 closing packet — A4 Layer Occlusion, Transparent CR, Top-Aligned Traits, Streamlined Actions & Unified Spellcasting
+
+- **Release Candidate**: `rc-2.4.3-build-181-occlusion-streamlined-actions-and-unified-spells`
+- **Build**: `181`
+- **Verification Evidence**:
+  - `npm test`: **357 / 357 core unit tests passed** (100% green across 50 test suites).
+  - `node test/exhaustive-ui-fuzz.js`: **All 50 live CDP browser fuzz steps passed with 0 console errors and 0 runtime exceptions**.
+  - `npx quasar build`: Clean build into `dist/spa` with exit code 0.
+  - Visual proof artifact: `candidate181-layers-traits-spells.png` in artifact directory.
+- **Key Architectural Evolutions**:
+  1. **A4 Layer Stack Precedence & Occlusion**: Custom layers placed above statblock in `A4LayerStudio.vue` with `blendMode: 'normal'` and 100% opacity occlude elements beneath them via dynamic descending z-index (`zIndex = (total - idx) * 10 + 10`) and `.statblock-wrapper { z-index: auto }` inside `.a4-page-sheet` isolation context.
+  2. **Transparent CR Badge**: `.cr-main-region` and `.compact-nameplate-row-1 .cn-cr` background is transparent, letting parchment show through and creature name visually pop.
+  3. **Top-Aligned Multi-Line Trait Labels**: `.sb-plate.sb-trait-streamlined .sb-row > .sb-cell.sb-head` uses `align-items: flex-start !important; padding-top: 5px !important;` so trait names (Arcane Condenser, Cortex) align with top of multi-line descriptions.
+  4. **Streamlined Single-Row Action Plates**: Simple actions without secondary mechanics (Multiattack 'Make 2 Attacks.') collapse into a single-row plate `[Multiattack] [Make 2 Attacks.]`.
+  5. **Single Unified Spellcasting Cell**: Consolidated all standard spell levels into a single unified cell (`.sb-spells-unified-cell`) with alternating line striping and removed horizontal cell divider borders.
+  6. **Decoupled Regeneration & Temporary Hit Points**: `recoveryType === 'temp_hp'` with `conditionModifier === 'not_bloodied'` writes 'Gains X of Temporary Hit Points while not Bloodied'.
+  7. **Defensive CR Calculations**: Optional chaining and safe fallback arrays for `crAnnotation` and `atWill` across `monster-store.ts` and `CalculateCr.ts`.
+
+---
 
 > **No loop starts unarmed, no loop ends undocumented.** For every loop of the [Implementation Backlog](DNDSheet-Implementation-Backlog.md): the goal, the exact sections of the [Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) to read, the files to open, the skills to load, the research to settle, the traps to disarm, the proofs to collect — and a closing packet that hands the next loop everything it needs.
 
 | | |
 |---|---|
-| **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
-| **State at hand-over** | `6049127`,Build161 at http://localhost:9124/candidate161/index.html#/. Build160 frozen,sample retained;327core/50browser plus focused binding lifecycle pass. |
-| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157 packet) |
-| **Current loop** | A9 active:9/14complete.95/219complete,A9.7active,123pending;no new scope. |
+| **Version** | Build 184 — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Stat Grid, Composer-Aligned Plate Rows, Enriched Durations/Catalogs, and Contextual Split Riders · `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows` (Build 183 preserved) |
+| **State at hand-over** | `statblock-overhaul`, Build 184 live at http://localhost:8080/#/. Build 183 frozen and preserved; 361 core unit tests and 50 live CDP browser fuzz steps pass with 0 errors. |
+| **Shipped** | A0 · A1 · A2 · A3 · A4 · A5 · A6 · A7 · A8 · A9 · A11 · A12 · A16 (A4 closeout §6.2; A5 §6.3; A6 §6.4; A7 §6.5.2; A8 Build 157; A9 Build 161; A11/A12/A16 Builds 180–184) |
+| **Current loops** | A10 caret completion ◐ · A13/A14/A15 interaction kits & tooltips ◐ · B4 export boundaries |
+
+---
 
 ---
 
@@ -1087,3 +1143,14 @@ Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with 
 The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
 
 Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
+
+---
+
+## Build 183 Handoff Packet — Inline Trait Flow, Hardware Luminance-to-Alpha, Interactive Curved Gradient Bar, Parallel Radial-Crop Knob Sliders, Indented Vitals Riders & Hierarchical Plate Grammar
+
+| Item | Evidence / Handoff |
+|---|---|
+| **Build & Tag** | Build `183`, candidate `.codex-temp/release-candidates/rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates` (with `rc-2.4.3-build-182-gradient-overlays-indented-vitals-and-trait-flow` preserved untouched). |
+| **Delivered Scope** | (1) Streamlined trait text wrapping directly beneath `.sb-head` (`x = 0`); (2) A4 layer normal blend occlusion + SVG `<feColorMatrix>` luminance-to-alpha (`grayscaleAsAlpha`) for opaque PNG/JPGs; (3) Interactive `GradientOverlayController.vue` with draggable color keys, double-click `%` stop editing, and draggable SVG falloff curve overlay (`gradient-curve.ts`); (4) `RadialOffsetController.vue` & `DualKnobCropSlider.vue` with X/Y values inside horizontal/vertical slider knobs, double-click inline editing, and parallel `Crop X` / `Crop Y` sliders; (5) Physical attacks (`Slam`) compact Row 1 (`name | scope | mechanics`) and spell-like traits/actions (`Exorcise`) hierarchical 3-row plate (`[Usage] Name, School/Level (Components) | Duration` on Row 1, `Scope | Mechanics` on Row 2, `Outcomes` on Row 3); (6) Indented `↳` rider rows for Speed (`splitSpeedRiderRows` + `Hide`), HP (`splitHpRiderRows` with separate `Bloodied`, `Temp HP`, `Regeneration`, `Death Prevention`, `DT`, `DR`), and AC (`splitAcRiderRows` with 1 row per rider); (7) Target count + noun grammar (`1 target which you can see 10 ft.`) + `FormulaField.vue` blur commit; (8) Category and item fold/unfold in `ActionsEditor.vue`. |
+| **Verification** | Core unit tests: **361/361 passing** (`npm test`, including `test/core/Build183Features.test.ts`); Quasar production build (`npx quasar build` exit 0); 50-step live browser CDP fuzz suite (`node test/exhaustive-ui-fuzz.js` 50/50 green, 0 console/runtime errors). |
+| **Live Evaluation** | Served at `http://localhost:8080/#/` and archived in `.codex-temp/release-candidates/rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates/spa`. |

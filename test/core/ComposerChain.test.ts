@@ -210,3 +210,19 @@ test('legendary and mythic entries edit their action-point cost in the usage slo
     assert.strictEqual(ROLE_CHAINS[role].find((cell) => cell.id === 'usage')?.field, 'cost')
   }
 })
+
+
+test('weapon provenance is an authored catalog cell with validated non-destructive patches', () => {
+  const input = action({ attackSource: 'weapon', attackReach: 'ranged', attackBonus: 11 })
+  const label = 'Finesse thrown melee weapon (better of STR and DEX)'
+  assert.equal(validateCell('weapon-ability', label), '')
+  assert.ok(validateCell('weapon-ability', 'guess from name'))
+  const patch = cellPatch(input, 'weapon-ability', label)
+  assert.deepEqual(patch, { weaponAttackAbility: 'finesse_thrown' })
+  const rows = chainView('action', { ...input, ...patch })
+  assert.equal(rows.flatMap(row => row.cells).find(cell => cell.id === 'weapon-ability')?.text, label)
+  assert.equal(input.weaponAttackAbility, undefined)
+  assert.equal(input.attackBonus, 11)
+  assert.deepEqual(cellPatch(input, 'weapon-ability', ''), { weaponAttackAbility: undefined })
+  assert.ok(!chainView('action', action({ attackSource: 'spell' })).flatMap(row => row.cells).some(cell => cell.id === 'weapon-ability'))
+})

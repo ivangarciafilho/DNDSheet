@@ -30,6 +30,7 @@ const actionPatch = (
   attackReach: values.attackReach,
   attackSource: values.attackSource,
   attackBonus: values.attackBonus,
+  weaponAttackAbility: values.weaponAttackAbility,
   targetsText: values.targetsText,
   stat: values.stat,
   save: values.save,
@@ -171,8 +172,8 @@ export const ACTION_TEMPLATES: readonly ActionTemplate[] = [
   },
 ]
 
-const TEMPLATE_OWNED_FIELDS: readonly (keyof MonsterAction)[] = [
-  'name', 'description', 'actionType', 'attackReach', 'attackSource', 'attackBonus', 'targetsText', 'stat', 'save',
+export const TEMPLATE_OWNED_FIELDS: readonly (keyof MonsterAction)[] = [
+  'weaponAttackAbility', 'name', 'description', 'actionType', 'attackReach', 'attackSource', 'attackBonus', 'targetsText', 'stat', 'save',
   'range', 'effects', 'school', 'spellLevel', 'components', 'duration', 'areaShape', 'areaDistance', 'deliveryType',
   'targeting', 'outcomes',
 ]

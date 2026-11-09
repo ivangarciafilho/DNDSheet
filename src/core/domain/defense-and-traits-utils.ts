@@ -85,7 +85,72 @@ export function formatDefenseItem(item: DamageDefenseItem): string {
  */
 export function formatDefenseList(items: DamageDefenseItem[] | undefined): string {
   if (!Array.isArray(items) || items.length === 0) return ''
-  return items.map(formatDefenseItem).filter(Boolean).join(', ')
+  // Group items sharing simple advantage or disadvantage
+  const advNames: string[] = []
+  const disadvNames: string[] = []
+
+  for (const item of items) {
+    if (!item) continue
+    const mode = item.mode || (item.absorbs ? 'absorbs' : item.advantage ? 'advantage' : item.disadvantage ? 'disadvantage' : 'none')
+    const hasComplex = Boolean(
+      item.saveOutcome ||
+      (item.acquiredCondition && item.acquiredCondition !== 'none') ||
+      item.customCondition ||
+      item.triggeredBenefit ||
+      (item.trigger && item.trigger !== 'none') ||
+      (item.duration && item.duration !== 'permanent') ||
+      item.note
+    )
+
+    if (!hasComplex && mode === 'advantage') {
+      const base = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+      if (base) advNames.push(base)
+    } else if (!hasComplex && mode === 'disadvantage') {
+      const base = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+      if (base) disadvNames.push(base)
+    }
+  }
+
+  const results: string[] = []
+  let advHandled = false
+  let disadvHandled = false
+
+  for (const item of items) {
+    if (!item) continue
+    const mode = item.mode || (item.absorbs ? 'absorbs' : item.advantage ? 'advantage' : item.disadvantage ? 'disadvantage' : 'none')
+    const hasComplex = Boolean(
+      item.saveOutcome ||
+      (item.acquiredCondition && item.acquiredCondition !== 'none') ||
+      item.customCondition ||
+      item.triggeredBenefit ||
+      (item.trigger && item.trigger !== 'none') ||
+      (item.duration && item.duration !== 'permanent') ||
+      item.note
+    )
+
+    if (!hasComplex && mode === 'advantage') {
+      if (advNames.length > 1) {
+        if (!advHandled) {
+          results.push(`(${advNames.join(', ')} (Advantage))`)
+          advHandled = true
+        }
+        continue
+      }
+    } else if (!hasComplex && mode === 'disadvantage') {
+      if (disadvNames.length > 1) {
+        if (!disadvHandled) {
+          results.push(`(${disadvNames.join(', ')} (Disadvantage))`)
+          disadvHandled = true
+        }
+        continue
+      }
+    }
+
+    const formatted = formatDefenseItem(item)
+    if (formatted) results.push(formatted)
+  }
+
+  return results.join(', ')
 }
 
 /**
@@ -731,8 +796,11 @@ export function formatMinimalistRegen(
 
   // Enriched Heuristic Special Conditions (5 target mechanics)
   const condMod = regen.conditionModifier || ''
+  const isTempHp = type === 'temp_hp' || type === 'absorb_temp_hp'
   if (condMod === 'not_bloodied' || regen.triggerCondition === 'not_bloodied') {
-    return `Regains ${amt} hit points while not Bloodied`
+    return isTempHp
+      ? `Gains ${amt} of Temporary Hit Points while not Bloodied`
+      : `Regains ${amt} hit points while not Bloodied`
   }
   if (condMod === 'head_not_severed' || (note && (note.toLowerCase().includes('head is not severed') || note.toLowerCase().includes('head not severed')))) {
     return `+${amt} hit points at start of your turn if your head is not severed`
@@ -744,7 +812,7 @@ export function formatMinimalistRegen(
     const untilStr = regen.maxHpReductionUntil || 'short rest'
     return `${dmgTypes} reduces maximum hit points until ${untilStr}`
   }
-  if (condMod === 'has_temp_hp' || (type === 'temp_hp' && regen.triggerCondition === 'has_temp_hp')) {
+  if (condMod === 'has_temp_hp' || (isTempHp && regen.triggerCondition === 'has_temp_hp')) {
     return `${amt} of temporary hit points if you have temporary hit points`
   }
   if (condMod === 'no_damage_since_previous_turn' || (regen.styleMode === 'natural' && types && (freq === 'no_damage_taken' || tf === 'turn'))) {
@@ -1347,9 +1415,13 @@ export function composeAcAndDefenses(
   // Decoupled When Hit logic
   let onHitText = ''
   if (cfg.onHit === 'damage_attacker') {
-    const dmgAmt = cfg.onHitDamageAmount || 10
-    const dmgType = cfg.onHitDamageType || 'Radiant'
-    onHitText = `On Hit Attacker takes ${dmgAmt} of ${dmgType} Damage`
+    const dmgAmt = cfg.onHitDamageAmount ?? 5
+    const dmgType = cfg.onHitDamageType || 'Fire'
+    let hitBase = `On Hit: Attacker takes ${dmgAmt} of ${dmgType}`
+    if (cfg.onHitDoubleBloodied || cfg.doubleIfBloodied) {
+      hitBase += ", double if you're bloodied"
+    }
+    onHitText = hitBase
   } else if (cfg.onHit === 'knocks_prone') {
     onHitText = 'On Hit Attacker Knocks Prone'
   } else if (cfg.onHit === 'retaliate_melee') {
@@ -1404,7 +1476,9 @@ export function composeAcAndDefenses(
         : `${rawStat} Saving Throw`
 
       let failText = ''
-      if (cfg.onSaveFailure === 'knocks_prone') {
+      if (cfg.onSaveFailure === 'otherwise_double_and_knocks_prone' || cfg.otherwiseDoubleProne) {
+        failText = 'otherwise double, and knocks prone'
+      } else if (cfg.onSaveFailure === 'knocks_prone') {
         failText = 'On Failure Knocks Prone'
       } else if (cfg.onSaveFailure === 'damage_attacker' || cfg.onSaveFailure === 'takes_damage') {
         const failAmt = resolveDynamicNumericSource(cfg.onSaveFailureDamageSource, cfg.onSaveFailureDamageAmount ?? 10, cfg.onSaveFailureDamageDice, { proficiency: pb, stats, avgHp: monster.AC * 10, cr, hd })
@@ -1430,10 +1504,16 @@ export function composeAcAndDefenses(
         const extras = [failText, succText].filter(Boolean)
         absoluteRuleText = extras.length > 0 ? `${core}, ${extras.join(', ')}` : core
       } else {
-        const core = `Attacker ${verbText} on a ${statClause} DC ${saveDc}`
+        const qualifiers = []
+        if (cfg.targetAdvantage) qualifiers.push(cfg.targetAdvantage.trim())
+        if (cfg.bloodiedDc) qualifiers.push(`${cfg.bloodiedDc} when Bloodied`)
+        const qualStr = qualifiers.length > 0 ? ` (${qualifiers.join(', ')})` : ''
+        const verbPrefix = rawVerb === 'must_succeed_a' || cfg.syntax === 'must_succeed_a' ? 'must succeed a' : `${verbText} on a`
+        const core = `Attacker ${verbPrefix} ${statClause} DC ${saveDc}${qualStr}`
         const clauses = [core]
-        if (failText) clauses.push(failText)
+        if (failText && !failText.startsWith('otherwise')) clauses.push(failText)
         if (succText) clauses.push(succText)
+        if (failText && failText.startsWith('otherwise')) clauses.push(failText)
         absoluteRuleText = clauses.join(', ')
       }
       break
@@ -1463,7 +1543,16 @@ export function composeAcAndDefenses(
       break
     case 'versus_damage_types':
     case 'damage_type':
-      triggerDesc = `${secAc ?? 30} against Attacks that deals ${dmgTypes}`
+      triggerDesc = `${secAc ?? 15} versus attacks that deals ${dmgTypes.toLowerCase()}`
+      break
+    case 'without_temp_hp':
+      triggerDesc = `${secAc ?? 15} without temporary hit points`
+      break
+    case 'cover_while_grappling':
+      triggerDesc = `${secAc ?? 20} from ${cfg.cover || '3/4 Cover'}, while Grappling ${cfg.grappleTarget || 'a creature'}`
+      break
+    case 'while_grappling':
+      triggerDesc = `${secAc ?? 20}, while Grappling ${cfg.grappleTarget || 'a creature'}`
       break
     case 'has_temp_hp':
       triggerDesc = `${secAc ?? 30} if It Has Temporary Hit Points`
@@ -1591,6 +1680,43 @@ export function composeAcAndDefenses(
   const armorTypeDesc = allParenthetical.join(', ')
 
   const badges: string[] = []
+  const splitRows = Boolean((monster as any).splitAcRiderRows)
+
+  if (splitRows) {
+    const baseArmorParts = [...armorParts]
+    if (monster.ACType && monster.ACType.trim() && !armorParts.some(p => monster.ACType!.toLowerCase().includes(p.toLowerCase()))) {
+      if (!cfg.baseMode || cfg.baseMode === 'flat') {
+        baseArmorParts.unshift(monster.ACType.trim())
+      }
+    }
+    const baseArmorDesc = baseArmorParts.join(', ')
+    const primaryBadge = `<strong class="pill-number">${base}</strong>${baseArmorDesc ? ` (${baseArmorDesc})` : ''}`
+    badges.push(primaryBadge)
+
+    if (isAbsoluteRule && absoluteRuleText) {
+      badges.push(absoluteRuleText)
+    }
+    for (const tn of tempNotes) {
+      if (tn) badges.push(tn)
+    }
+    if (triggerDesc) badges.push(triggerDesc)
+    if (onMissText) badges.push(onMissText)
+    if (onHitText) badges.push(onHitText)
+
+    const fullText = isAbsoluteRule && absoluteRuleText
+      ? absoluteRuleText
+      : (armorTypeDesc ? `${base} (${armorTypeDesc})` : `${base}`)
+
+    return {
+      totalAc: base,
+      armorTypeDesc,
+      badges,
+      fullText,
+      isAbsoluteRule,
+      absoluteRuleText: isAbsoluteRule ? absoluteRuleText : undefined,
+    }
+  }
+
   if (isAbsoluteRule && absoluteRuleText) {
     badges.push(absoluteRuleText)
     return {

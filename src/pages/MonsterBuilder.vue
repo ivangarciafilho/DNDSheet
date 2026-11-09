@@ -33,6 +33,7 @@
     >
       <template #before>
         <div id="editor" class="q-pa-md" style="width: 100%">
+          <database-studio class="q-mb-sm" />
           <q-list bordered separator class="rounded-borders">
             <a4-layer-studio />
             <basics-editor />
@@ -79,6 +80,7 @@ import AnatomyEditor from 'src/components/editor/AnatomyEditor.vue'
 import EncounterDynamicsEditor from 'src/components/editor/EncounterDynamicsEditor.vue'
 import RegionalEffectsEditor from 'src/components/editor/RegionalEffectsEditor.vue'
 import InventoryEditor from 'src/components/editor/InventoryEditor.vue'
+import DatabaseStudio from 'src/components/editor/DatabaseStudio.vue'
 import CharacterEditor from 'src/components/character/CharacterEditor.vue'
 import CharacterSheet from 'src/components/character/CharacterSheet.vue'
 import { useEditorStore } from 'src/stores/editor-store'
@@ -87,6 +89,7 @@ export default defineComponent({
   name: 'MonsterBuilder',
   components: {
     BasicsEditor,
+    DatabaseStudio,
     A4LayerStudio,
     WebRenderer,
     SavesEditor,
@@ -99,7 +102,7 @@ export default defineComponent({
     VillainActionsEditor,
     AnatomyEditor,
     EncounterDynamicsEditor,
-    RegionalEffectsEditor,
+        RegionalEffectsEditor,
     InventoryEditor,
     CharacterEditor,
     CharacterSheet,

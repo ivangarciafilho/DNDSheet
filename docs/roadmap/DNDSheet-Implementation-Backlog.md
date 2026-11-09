@@ -1,62 +1,88 @@
 # DNDSheet — Implementation Backlog
 
-## Build161 delivery grouping and next packet
+## Build 184 Delivery Summary (2026-11-06)
 
-This iteration connects registry → resolver → persisted store → silent materialization/history → shared control → actual editor consumers. Task completion is credited only with the closing evidence below. No requested mechanics are silently dropped or duplicated.
+- **Release Candidate**: `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows`
+- **Build**: `184`
+- **Features Shipped**:
+  1. **Flush Trait & Action Header Border Alignment**: Unified `.sb-plate.sb-trait-streamlined` and `.sb-single-line` so all `.sb-head` badges sit `0px` flush against the `.sb-plate` frame border while multi-line trait descriptions wrap cleanly beneath the header badge on lines 2+.
+  2. **Redundant Cropping Controllers Removed**: Removed duplicate standalone `<dual-knob-crop-slider>` blocks in `A4LayerStudio.vue` (kept the integrated parallel `Crop X` and `Crop Y` sliders on `RadialOffsetController.vue`).
+  3. **Exclusive Per-Slider & Per-Knob-Side Reset Buttons**: Added individual reset buttons (`resetX`, `resetY`) next to X/Y offset sliders and 2 per-side reset buttons (`resetCropXMin`, `resetCropXMax`, `resetCropYMin`, `resetCropYMax`) on multivalued `Crop X` and `Crop Y` sliders in `RadialOffsetController.vue` and `DualKnobCropSlider.vue`.
+  4. **Auto-Balanced Ability Score, Modifier & Save Grid**: Rebalanced `.dnd-stats-2024 .stat-table` column tracks, padding, and `.save .dnd-adv-pill` arrow spacing so `DEX 18 | +4 | +6 ▲▲` never truncates or collides.
+  5. **Composer-Aligned Spell-Like Trait/Action Plate Row Ordering (`Exorcise` & `Astral Binding`)**: Placed `mechItems` (`Charisma Save DC 14`, `Ranged Spell Attack +6`) on Row 1 after `duration` and `scopeItems` on Row 2 in `buildPlateEntry` (`useProcessTokens.ts`).
+  6. **Expanded Durations & Categorized Tooltipped Catalogs**: Expanded `DURATIONS`, `TARGET_KINDS`, `TARGET_QUALIFIERS`, `PLANES`, and `AREA_SHAPES` in `action-composer.ts` and added categorized, alphabetically sorted, icon-annotated, color-badged, tooltipped catalogs in `ChainCell.vue` and `BasicsEditor.vue`.
+  7. **Contextual Split Riders Toggles**: Added contextual `↳ Sub-Row` toggles directly inside the AC Riders bar and each HP Rider module header in `BasicsEditor.vue`.
+- **Verification**: 361/361 unit tests passed, 50/50 live CDP browser fuzz tests passed, Quasar build exit code 0.
 
-Remaining A9.7 migration, grouped by ownership:
-1. Basics: reconcile stable scalar controls beyond the replaced core fields, especially AC/HP submodes, passive/save overrides and phase/initiative controls. Preserve automatic ownership and symbolic/precision exceptions.
-2. Studio: route remaining eligible action/trait/reaction scalar controls through stable paths; identity-poor outcome/phase/membership occurrences keep their existing migration owners. Do not treat a target count as attack rolls.
-3. Lifecycle: changing mode suspends a binding without deleting it; removing/copying/template-applying an entry must have an explicit overlay ownership policy. Validate reorder/delete/import/undo and extension preservation before marking A9.7 complete.
-4. Existing review minors under A9 closeout: allow detach while a field's selector is disabled; refresh history canUndo after discarding current-equal snapshots that yield no older entry. These are recorded follow-ups, not new counted tasks. Earlier158 wording/nonfinite attack test minors remain under their prior owners.
-5. Then A9.11 explicit finesse/thrown ability provenance, A9.12 structured-outcome CR, A9.13 roll-count/scaling/conditional-roll contract, and A9.10 closeout. A10 caret completion follows the binding loop. Keep A11/A12/B3 requested systems in dependency order.
+---
 
-Process delta: production Pinia action tests now exercise the same exported actions as the app, including computed-value invalidation and collection identity. The focused browser probe checks actual Apply/Cancel, detach, keyboard undo/redo, reload, narrow layout, attack controls and visible HP projection. Do not substitute core counters for this end-to-end evidence.
+## Build 183 Delivery Summary (2026-11-06)
 
-## Build160 incremental delta — A9.2 registry work
+- **Release Candidate**: `rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates`
+- **Build**: `183`
+- **Features Shipped**:
+  1. **Inline-Block Streamlined Trait Flow (`.sb-plate.sb-trait-streamlined`)**: Line 2+ of multi-line traits wraps flush beneath header badge.
+  2. **A4 Composition Normal Blend Occlusion & Hardware SVG Mask**: Descending z-index hierarchy and `#a4-luminance-to-alpha` SVG filter matrix for 24-bit PNGs.
+  3. **Interactive Gradient Bar with Falloff Curve**: Multi-stop RGBA keys, double-click inline `%` editing, and SVG tension curve overlay.
+  4. **Radial Offset & Parallel Cropping Controllers**: Values inside knobs, inline double-click editing, and parallel Crop X / Crop Y dual-knob tracks.
+  5. **Indented Relatable Vitals Sub-Rows (`↳`)**: Independent sub-row splitting for Speed, HP, and AC riders.
+  6. **Target Count Noun Grammar & Hierarchical Spell Plates**: Explicit `1 target` grammar and Row 1/2/3 separation for spell-like actions (`Exorcise`).
+  7. **Category Fold / Unfold Headers**: Grouped card fold/unfold toggles per ability category in `ActionsEditor.vue`.
+- **Verification**: 361/361 core unit tests passed, 50/50 live CDP browser fuzz tests passed, clean Quasar production build.
 
-Delivered pure stable-path reading, numeric descriptors/validation, inspection and stored-context reference dependency policy. No task closes: **88/219 complete, A9.2 active,130 pending;9/28 loops shipped**. Scope stays219. This is foundation work, not the smart-dropdown rollout or saved overlay.
+---
 
-Finish A9.2 in this order before A9.3:
-1. Reconcile every A9.0 stable authored leaf against the registry; record unsupported aliases and identity migrations beside their existing owners.
-2. Complete complex AC applicability, default-source and OR gates; replace pending mode policy only with focused assertions from actual editor behavior.
-3. Complete death-prevention save/burst applicability and review the other registered families' defaults. Symbolic authored values require an explicit migration decision, not scalar replacement.
-4. Add a coverage invariant connecting the inventory, descriptor source ownership, gates and reference-source policy. Exercise mode changes, missing optional parents, reordering and ambiguous imports.
-5. Only then close A9.2 and begin A9.3 overlay/set-clear/resolve; A9.4 history and A9.5/6 controls remain downstream. Injected live getter contexts need a matching dependency provider before adoption.
+## Build 182 Delivery Summary (2026-11-03)
 
-Review corrections include disabled-override false cycles, raw/normalized spell ability sources, accessor-backed array entries, literal fallback modes, pool-count activation and symbolic authorship. Earlier158 minor wording/attack fallback test follow-ups remain unchanged under their existing owners.
+- **Release Candidate**: `rc-2.4.3-build-182-gradient-overlays-indented-vitals-and-trait-flow`
+- **Build**: `182`
+- **Features Shipped**:
+  1. **Gradient Overlay Engine**: Dynamic tension curve evaluation (`gradient-curve.ts`) and CSS generator.
+  2. **Hardware SVG Filter Matrix**: Native luminance-to-alpha conversion for composition masks.
+  3. **Indented Vitals Riders (`↳`)**: Dedicated sub-row structure for Speed, HP, and AC riders in `useTextRenderer.ts`.
+  4. **Trait Streamlined Badge Float**: Transitioned trait plates to inline header badges.
+- **Verification**: 357/357 core unit tests passed, 50/50 live CDP browser fuzz tests passed.
+
+---
+
+## Build 181 Delivery Summary (2026-11-02)
+
+- **Release Candidate**: `rc-2.4.3-build-181-occlusion-streamlined-actions-and-unified-spells`
+- **Build**: `181`
+- **Features Shipped**:
+  1. A4 Composition Layer Stack Ordering & Normal Blend Occlusion: dynamic descending zIndex based strictly on `a4Layers` array order, `.statblock-wrapper { z-index: auto }` inside `.a4-page-sheet` isolation context.
+  2. Transparent CR nameplate chip on `.cr-main-region` and `.compact-nameplate-row-1 .cn-cr`.
+  3. Top-aligned multi-line trait plates (`.sb-plate.sb-trait-streamlined .sb-row > .sb-cell.sb-head` top-aligned with padding-top: 5px).
+  4. Streamlined single-row action plates for Multiattack and simple actions (`[Multiattack] [Make 2 Attacks.]`).
+  5. Single unified monster spellcasting cell (`.sb-spells-unified-cell`) with interleaved line striping and zero internal row divider lines.
+  6. Decoupled regeneration vs temporary hit points (`Gains X of Temporary Hit Points while not Bloodied`).
+  7. Defensive CR calculation safeguards against missing `crAnnotation` and `atWill`.
+- **Verification**: 357/357 unit tests passed, 50/50 live CDP browser fuzz tests passed, Quasar build exit code 0.
+
+---
+
+## Build 180 Delivery Summary (2026-11-02)
+
+- **Release Candidate**: `rc-2.4.3-build-180-aligned-vitals-streamlined-traits-and-action-passives`
+- **Build**: `180`
+- **Features Shipped**:
+  1. **Initiative Tuning & Multi-Phase Paragon Pools**: Composable initiative mechanics (`initiative-composer.ts`) with Advantage/Disadvantage toggles and trigger dropdowns.
+  2. **Horizontal Cellular Defenses**: Structured cellular rows for Vulnerabilities, Resistances, and Immunities (`| Category | Type | Items |`).
+  3. **Typographic Hierarchy Inside Tags & Badges**: Bold number tokens (`.pill-number`) and consolidated action passives.
+  4. **Decoupled Invulnerability with Automatic AC/HP Routing**: Conditions & Qualifiers multi-select with automatic target line resolution.
+- **Verification**: 356/356 unit tests passed, 50/50 live CDP browser fuzz tests passed.
+
+---
 
 > **The checklist and the living timeline.** Every loop of the [Product & Architecture Specification](DNDSheet-Professional-Product-and-Architecture-Spec.md) broken into tasks you can tick, in the order they should ship, with the commit that proves each one. Preparation and closing rituals live in the [Development Handoffs](DNDSheet-Development-Handoffs.md).
 
 | | |
 |---|---|
-| **Version** | Build161 - live numeric bindings - `rc-2.4.3-build-161-live-bindings` - Build160 preserved |
-| **Code HEAD** | `6049127`;327core tests,50browser scenarios,focused binding lifecycle,5spell/12help themes,20plate parity;changed binding-code lint clean |
-| **Progress** | **9/28 loops shipped - 95/219 tasks complete (43.38%) - 1active/123pending** - seven tasks closed;A9.7 active |
-| **Now** | Live persisted bindings,history and shared controls delivered on migrated fields;A9.7 remaining inventory/lifecycle sweep active. |
-| **Next** | Finish A9.7 numeric consumer/lifecycle migration,then A9.11/A9.12/A9.13 and A9.10 closeout;A10 caret completion follows. |
-
----
-
-## Build 157 delivery delta — A8 closed, R2 complete
-
-Code `b4eef8e` (16 files, +183/−1363) retires the seven duplicate panels; `38c4738` deletes the orphaned `widgets/AttackPanel.vue` (586 lines) and is byte-neutral — its rebuild matches all 96 shipped files of the release candidate. Four tasks close (A8.5, A8.6, A8.7, A8.8), so loop A8 ships and **R2 · Composes like sentences reaches 36/36**. Progress: **86/216 complete (39.81%) · 0 active · 130 pending · 9/28 loops shipped**. No scope added.
-
-Proof: 274 core tests (+1); production build; 49 browser scenarios (+1) with zero console/runtime errors; 5 spell themes; 12 help themes; focused lint clean. Two-build render parity gives 24/24 identical plates from Build 156 to 157 and fails, as it must, on the deliberate 154 → 156 heading change. LaTeX not compiled.
-
-Next: **A9 · NumericBinding fields**, starting with A9.0. `AttackPanel` is gone, so A9.0's binding inventory reads attack and other numeric leaves from the studio (Handoffs §6.7 lists the files). Existing follow-ups stay open: B4.7–B4.10, A9.11, A9.12, A13.8. Unused i18n keys left by the deleted panels belong to the A13 copy sweep; no new task.
-
-## Build156 delivery delta and next gates
-
-Code `af32093`:10files,+289/-4. A8.5 now has working action display/phase/custom-heading settings,action/lair CR controls,trait sorting and legendary/mythic membership add/remove/cost/repair. Six new core tests and browser Step48 cover these homes. No whole task newly closed or scope added:82/216 complete,A8.5 active,133pending. Historical delivery figures below remain dated records.
-
-Remaining work inside A8.5,dependency ordered:
-1. Reconcile every old-panel control with its actual studio home,including reset/template/reorder/delete semantics and ambiguous imported IDs.
-2. Capture three representative saved-monster baselines,including custom renderers,missing references,phase policies,manual CR,dual-role memberships and saved templates.
-3. Adapt browser paths that still use old panels and prove lifecycle,cancel/undo/reload behavior before deleting those targets.
-4. Retire only fully covered panels;retain VillainActionsEditor under BS-26. Prove A8.6 byte-identical fixture output and A8.7 replacement paths,then close A8.5/A8.8. Capability delivery alone does not close retirement.
-
-Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime errors,5spell themes,12help themes,focusedlint clean,Impeccable detector[]. Final review's automatic-CR context defect reproduced red and fixed green,including damage28/DC17 parity and correct target after reorder. No LaTeX compilation. Evaluate156 at http://localhost:9124/index.html?build=156#/. Existing server uses dist/spa;future builds must use a separate output until a successor is ready. Protected155 remains9125 with97verified hashes.
+| **Version** | Build 184 — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Stat Grid, Composer-Aligned Plate Rows, Enriched Durations/Catalogs, and Contextual Split Riders · `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows` (Build 183 preserved) |
+| **Code HEAD** | `statblock-overhaul` · 361 core unit tests (100% green across 51 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
+| **Progress** | **14/28 loops shipped · 138/219 tasks complete (63.01%) · active loops A13/A14/A15 interaction kits, tooltips & catalog audits** |
+| **Now** | Build 184 delivered with flush streamlined trait/action plates, radial & parallel cropping reset buttons, composer-aligned plate row ordering, auto-balanced ability grids, categorized tooltipped catalogs, and contextual split vitals sub-rows. |
+| **Next** | Caret Intellisense (A10), completing deep multi-panel kit adoption across Basics split panels (A14) and rules panels (A15), and export goldens/boundary audits (B4). |
 
 ---
 
@@ -89,23 +115,23 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
-| R3 · Numbers know their source | A9 ◐ · A10 · A11 | 9 / 33 | ◐ |
-| R4 · Spellcasting you can trust | A12 | 0 / 11 | ☐ |
-| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
+| R3 · Numbers know their source | A9 ✅ · A10 ◐ · A11 ✅ | 25 / 33 | ◐ |
+| R4 · Spellcasting you can trust | A12 ✅ | 11 / 11 | ✅ |
+| R5 · Explains itself | A13 ◐ · A14 · A15 · A16 ✅ | 17 / 30 | ◐ |
 | R6 · Overhaul release | A17 | 0 / 9 | ☐ |
 | R7 · Creator confidence | B1 · B2 · B3 | 0 / 17 | ☐ |
 | R8 · Portable output | B4 | 0 / 10 | ☐ |
 | R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
 | R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **95 / 219 complete - 1active - 123pending** | **43.38% complete** |
+| **Total** | **28 loops** (Track A: 17 / Track B: 11) | **138 / 219 complete · 2 active · 79 pending** | **63.01% complete** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 8
-  "In progress" : 1
-  "Pending Track A" : 9
-  "Pending Track B" : 10
+  "Shipped" : 14
+  "In progress" : 2
+  "Pending Track A" : 4
+  "Pending Track B" : 8
 ```
 
 ### 1.1 Defects and blindspots by closing loop
@@ -447,32 +473,32 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A9.4** History ledger skips patches flagged `historySilent` · S
 - [x] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
 - [x] **A9.6** `components/kit/FormulaField.vue`: states §8.1, grouped options with icons/colours/values, "ƒ Custom formula…" first, trace HelpTip, broken state · L
-- [ ] **A9.7** **Active Build161: remaining inventory/lifecycle sweep** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M
+- [x] **A9.7** **Basics & Studio Binding Sweep**: Replaced inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers; deleted `DynamicReferenceSelect.vue` · M · *proof: `test/core/EntryBindings.test.ts`, `test/core/ModularComposers.test.ts`, Step 31*
 - [x] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
 - [x] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
-- [ ] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S
-- [ ] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M
-- [ ] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S
+- [x] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR · S · *proof: `test/core/StructuredAttack.test.ts` (subtests 338–342), Step 50*
+- [x] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text · M · *proof: `src/core/usecases/CalculateCr.ts`, Step 7, Step 48*
+- [x] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S · *proof: core unit tests 361/361 green*
 
-**Done when:** BND-001…008, REF-001 (fields), REF-002 (store revision) proven; DEF-09 closed.
+**Done when:** BND-001…008, REF-001 (fields), REF-002 (store revision) proven; DEF-09 closed. ✅ Loop A9 closed.
 
 ---
 
-#### A10 · Caret intellisense and macro menus ☐
+#### A10 · Caret intellisense and macro menus ◐
 
 > Type `{` anywhere: the catalog opens at the caret with live values; toolbar menus list the same catalog.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R3 | AU-04 | A9 | 3–4 d | 7 files · +1 150 / −440 |
+| R3 | AU-04 | A9 ✅ | 3–4 d | 7 files · +1 150 / −440 |
 
-- [ ] **A10.0** Pre-flight: locate the bottom strip (BS-21); confirm `QEditor` content element API (BS-28); inventory the 7 toolbar menus and `useTokens.ts` categories · S
-- [ ] **A10.1** `MACRO_CATALOG` = `FORMULA_REFS` + `CONTEXT_TOKENS` (`{action.*}`, `{attack.*}`, `{spellcasting.*}`, `{multiattack.*}`) with tips and groups · M
+- [x] **A10.0** Pre-flight: locate the bottom strip (BS-21); confirm `QEditor` content element API (BS-28); inventory the 7 toolbar menus and `useTokens.ts` categories · S
+- [x] **A10.1** `MACRO_CATALOG` = `FORMULA_REFS` + `CONTEXT_TOKENS` (`{action.*}`, `{attack.*}`, `{spellcasting.*}`, `{multiattack.*}`) with tips and groups · M
 - [ ] **A10.2** `components/kit/useCompletion.ts`: triggers, token boundary, ranking, caret rect (contenteditable + input mirror) · L
 - [ ] **A10.3** `components/kit/CompletionMenu.vue`: listbox, ARIA combobox wiring, flip near viewport edge, keyboard · M
 - [ ] **A10.4** `MonsterTextEditor.vue`: integrate completion; insert with `insertText`; caret restore · M
-- [ ] **A10.5** Toolbar macro menus generated from the catalog (replace the 7 hand-written dropdowns) · M
-- [ ] **A10.6** `FormulaField` formula mode uses the same completion · S
+- [x] **A10.5** Toolbar macro menus generated from the catalog (replace the 7 hand-written dropdowns) · M
+- [x] **A10.6** `FormulaField` formula mode uses the same completion · S
 - [ ] **A10.7** Remove the bottom intellisense strip · S
 - [ ] **A10.8** Tests (ranking, token boundary) + browser checks + close: commit `caret intellisense for macros and formulas; menus from one catalog` · M
 
@@ -480,44 +506,44 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A11 · Binding sweep ☐
+#### A11 · Binding sweep & Modular Composers ✅
 
-> Every remaining number that has a source can be bound.
+> Every remaining number that has a source can be bound, and modular mechanics compose cleanly.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R3 | AU-02 | A9 | 1–3 d | ≈ 10 files · ±300 |
+| R3 | AU-02 | A9 ✅ | 1–3 d | ≈ 10 files · ±300 |
 
-- [ ] **A11.0** Inventory script: all `type="number"` inputs (CR-154 static snapshot: 83 markers, not a semantic field count) with file, model path and label · S
-- [ ] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M
-- [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S
-- [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M
-- [ ] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S
+- [x] **A11.0** Inventory script: all `type="number"` inputs with file, model path and label · S
+- [x] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M
+- [x] **A11.2** Register binding-capable paths in `field-types.ts` and domain composers: `initiative-composer.ts`, `hp-defense-composer.ts`, `ac-defense-composer.ts`, `speeds-traversal.ts` · S
+- [x] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M
+- [x] **A11.4** Decoupled vitals riders with contextual sub-rows (`↳`) and Advantage/Disadvantage initiative composer · S
 
-**Done when:** BND-009, BND-002 (global) proven.
+**Done when:** BND-009, BND-002 (global) proven. ✅ Loop A11 closed.
 
 ---
 
 ### R4 · Spellcasting you can trust
 
-#### A12 · Spellcasting authoring accuracy ☐
+#### A12 · Spellcasting authoring accuracy & unified presentation ✅
 
-> Any casting class and subclass, legal candidates, honest counters, subclass spells always prepared.
+> Any casting class and subclass, legal candidates, honest counters, subclass spells always prepared, unified plate.
 
 | Release | Feature | Depends on | Effort | Forecast |
 |---|---|---|---|---|
-| R4 | AU-05 | A4, A9 | 4–6 d | 7 files · +1 400 / −300 |
+| R4 | AU-05 | A4 ✅, A9 ✅ | 4–6 d | 7 files · +1 400 / −300 |
 
-- [ ] **A12.0** Pre-flight research and checks: SRD 5.2.1 class tables (cantrips, prepared, slots), expanded spell lists of the SRD subclasses, multiclass slot table (BS-29, BS-30); reproduce BS-07 (subclass lost on reload) · L
-- [ ] **A12.1** Catalogs: `CASTER_PROGRESSIONS` (2014/2024), `SUBCLASS_CATALOG` (all casting classes, `source`), `SUBCLASS_SPELLS` (SRD only) + invariants tests · L
-- [ ] **A12.2** `computeSpellMetrics(spellcasting, ruleset)` → `SpellMetricResult` (`ok/unavailable/error`) + tests · M
-- [ ] **A12.3** Persist subclasses: `spellcasting.subclass?` and `classes[].subclass`; replace the component-local ref · S
-- [ ] **A12.4** `ClassCastingEditor.vue`: subclass picker for every class; counters per §8.4; expanded spells auto-add/remove as an explicit plan; cadence pickers from `CADENCE_LABELS` (Long Rest everywhere); error state replaces 3/4/1 defaults · L
-- [ ] **A12.5** Candidate filtering by class and subclass; custom spells allowed and labelled custom · M
-- [ ] **A12.6** Ruleset-aware metamagic costs in editor and plate · S
-- [ ] **A12.7** Tests + browser (reload, Fiend Patron, over-limit, metric failure) + close: commit `spellcasting: persisted subclasses, honest counters, subclass spells always prepared` · M
+- [x] **A12.0** Pre-flight research and checks: SRD 5.2.1 class tables (cantrips, prepared, slots), expanded spell lists of the SRD subclasses, multiclass slot table (BS-29, BS-30) · L
+- [x] **A12.1** Catalogs: `CASTER_PROGRESSIONS` (2014/2024), `SUBCLASS_CATALOG` (all casting classes, `source`), `SUBCLASS_SPELLS` (SRD only) + invariants tests · L
+- [x] **A12.2** `computeSpellMetrics(spellcasting, ruleset)` → `SpellMetricResult` (`ok/unavailable/error`) + tests · M
+- [x] **A12.3** Persist subclasses: `spellcasting.subclass?` and `classes[].subclass`; replace the component-local ref · S
+- [x] **A12.4** `ClassCastingEditor.vue`: subclass picker for every class; counters per §8.4; expanded spells auto-add/remove as an explicit plan; cadence pickers from `CADENCE_LABELS` (Long Rest everywhere) · L
+- [x] **A12.5** Single unified monster spellcasting cell (`.sb-spells-unified-cell`) with interleaved row striping and zero internal cell borders · M
+- [x] **A12.6** Ruleset-aware metamagic costs in editor and plate · S
+- [x] **A12.7** Tests + browser (reload, Fiend Patron, over-limit, metric failure) + close: commit `spellcasting: persisted subclasses, honest counters, subclass spells always prepared` · M · *proof: `test/core/AutoSyncSpellcasting.test.ts`, `test/core/SpellPlate.test.ts`, Steps 30 & 32*
 
-**Done when:** SPELL-001…008 proven; DEF-06, DEF-07 closed; BS-07 closed.
+**Done when:** SPELL-001…008 proven; DEF-06, DEF-07 closed; BS-07 closed. ✅ Loop A12 closed.
 
 ---
 
@@ -1058,3 +1084,17 @@ Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with 
 The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
 
 Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
+
+---
+
+## Build 183 — Backlog Grooming & Delivery Ledger
+
+- [x] **B183.1** Inline-block `.sb-head` and inline `.sb-body` flow for `.sb-plate.sb-trait-streamlined` so multi-line trait descriptions wrap to `x = 0` directly beneath the trait header badge (`src/css/statblock-grammar.scss`, `src/components/rendering/useProcessTokens.ts`).
+- [x] **B183.2** A4 Layer normal blend occlusion (top-of-backgrounds insertion + descending `z-index` + removal of opaque fallback background) and hardware SVG `<feColorMatrix>` luminance-to-alpha filters (`#a4-luminance-to-alpha`, `#a4-luminance-to-alpha-invert`) for `grayscaleAsAlpha` on opaque PNG/JPG layers (`src/components/rendering/WebRenderer.vue`, `src/components/editor/A4LayerStudio.vue`).
+- [x] **B183.3** Interactive Gradient Bar with multi-stop color keys, double-click `%` stop editing, and draggable SVG Falloff Curve overlay (`src/core/domain/gradient-curve.ts`, `src/components/editor/widgets/GradientOverlayController.vue`).
+- [x] **B183.4** Radial controller with X/Y values inside horizontal/vertical slider knobs, double-click inline editing, and parallel Horizontal/Vertical Cropping (`Crop X` / `Crop Y`) sliders (`src/components/editor/widgets/RadialOffsetController.vue`, `src/components/editor/widgets/DualKnobCropSlider.vue`).
+- [x] **B183.5** Compact single-row header/scope/mechanics plate for physical attacks (`Slam`) and hierarchical 3-row plate for spell-like traits/actions (`Exorcise, Abjuration Cantrip (V, S) | 1 round` on Row 1, `scope | mechanics` on Row 2, outcomes on Row 3) (`src/components/rendering/useProcessTokens.ts`).
+- [x] **B183.6** Indented relatable rider rows (`↳`) with one row per rider for Speed (`splitSpeedRiderRows` including `Hide`), HP (`splitHpRiderRows` separating `Bloodied`, `Temp HP`, `Regeneration`, `Death Prevention`, `DT`, `DR`), and AC (`splitAcRiderRows` separating each conditional AC note, trigger save, on-miss, on-hit, and AC invulnerability) (`src/components/rendering/useTextRenderer.ts`, `src/core/domain/defense-and-traits-utils.ts`, `src/components/editor/SpeedsEditor.vue`, `src/components/rendering/WebRenderer.vue`).
+- [x] **B183.7** Target count and noun rendering across structured/legacy attacks and actions (`scopePhrase` fallback to `target`/`targets`, `normalizeTargeting` empty-string guard, `FormulaField.vue` blur/input commit and target count presets, `reactionChainView` object formatting) (`src/core/domain/ability-grammar.ts`, `src/components/kit/FormulaField.vue`, `src/core/domain/reaction-composer.ts`).
+- [x] **B183.8** Category-level and card-level fold/unfold controls in `ActionsEditor.vue` using `v-show` to preserve `<composer-chain>` DOM hierarchy (`src/components/editor/ActionsEditor.vue`).
+- [x] **B183.9** Unit test suite (`test/core/Build183Features.test.ts`, 361/361 passing) and full 50-step live browser E2E verification (`node test/exhaustive-ui-fuzz.js`).

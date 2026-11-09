@@ -271,15 +271,30 @@ export interface MulticlassCalculationResult {
 }
 
 export const SRD_SUBCLASSES_BY_CLASS: Record<string, string[]> = {
-  Wizard: ['Evocation', 'Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Illusion', 'Necromancy', 'Transmutation', 'War Magic', 'Bladesinging'],
-  Sorcerer: ['Draconic Bloodline', 'Wild Magic', 'Divine Soul', 'Shadow Magic', 'Storm Sorcery', 'Aberrant Mind', 'Clockwork Soul'],
-  Warlock: ['Fiend', 'Great Old One', 'Archfey', 'Hexblade', 'Celestial', 'Fathomless', 'Genie', 'Undead'],
-  Cleric: ['Life Domain', 'Light Domain', 'War Domain', 'Trickery Domain', 'Tempest Domain', 'Nature Domain', 'Knowledge Domain', 'Forge Domain', 'Grave Domain', 'Twilight Domain', 'Peace Domain'],
-  Druid: ['Circle of the Land', 'Circle of the Moon', 'Circle of the Shepherd', 'Circle of Stars', 'Circle of Wildfire', 'Circle of Spores'],
-  Bard: ['College of Lore', 'College of Valor', 'College of Glamour', 'College of Swords', 'College of Whispers', 'College of Eloquence'],
-  Paladin: ['Oath of Devotion', 'Oath of the Ancients', 'Oath of Vengeance', 'Oath of Conquest', 'Oath of Redemption', 'Oath of the Watchers', 'Oathbreaker'],
-  Ranger: ['Hunter', 'Beast Master', 'Gloom Stalker', 'Horizon Walker', 'Monster Slayer', 'Fey Wanderer', 'Swarmkeeper'],
+  Wizard: ['Evocation', 'Abjuration', 'Conjuration', 'Divination', 'Enchantment', 'Illusion', 'Necromancy', 'Transmutation', 'War Magic', 'Bladesinging', 'Chronurgy', 'Graviturgy', 'Order of Scribes'],
+  Sorcerer: ['Draconic Bloodline', 'Wild Magic', 'Divine Soul', 'Shadow Magic', 'Storm Sorcery', 'Aberrant Mind', 'Clockwork Soul', 'Lunar Sorcery'],
+  Warlock: ['Fiend', 'Great Old One', 'Archfey', 'Hexblade', 'Celestial', 'Fathomless', 'Genie', 'Undead', 'Undying'],
+  Cleric: ['Life Domain', 'Light Domain', 'War Domain', 'Trickery Domain', 'Tempest Domain', 'Nature Domain', 'Knowledge Domain', 'Forge Domain', 'Grave Domain', 'Twilight Domain', 'Peace Domain', 'Death Domain', 'Order Domain', 'Arcana Domain'],
+  Druid: ['Circle of the Land', 'Circle of the Moon', 'Circle of the Shepherd', 'Circle of Stars', 'Circle of Wildfire', 'Circle of Spores', 'Circle of Dreams'],
+  Bard: ['College of Lore', 'College of Valor', 'College of Glamour', 'College of Swords', 'College of Whispers', 'College of Eloquence', 'College of Creation', 'College of Spirits'],
+  Paladin: ['Oath of Devotion', 'Oath of the Ancients', 'Oath of Vengeance', 'Oath of Conquest', 'Oath of Redemption', 'Oath of the Watchers', 'Oath of Glory', 'Oath of the Crown', 'Oathbreaker'],
+  Ranger: ['Hunter', 'Beast Master', 'Gloom Stalker', 'Horizon Walker', 'Monster Slayer', 'Fey Wanderer', 'Swarmkeeper', 'Drakewarden'],
   Artificer: ['Alchemist', 'Armorer', 'Artillerist', 'Battle Smith'],
+  Rogue: ['Arcane Trickster', 'Assassin', 'Thief', 'Swashbuckler', 'Inquisitive', 'Mastermind', 'Scout', 'Soulknife', 'Phantom'],
+  Fighter: ['Eldritch Knight', 'Battle Master', 'Champion', 'Cavalier', 'Samurai', 'Arcane Archer', 'Psi Warrior', 'Rune Knight', 'Echo Knight'],
+  Monk: ['Way of the Four Elements', 'Way of Shadow', 'Way of the Open Hand', 'Way of the Drunken Master', 'Kensei', 'Sun Soul', 'Way of Mercy', 'Way of the Astral Self', 'Way of the Ascendant Dragon'],
+  Barbarian: ['Path of Wild Magic', 'Path of the Zealot', 'Path of the Totem Warrior', 'Path of the Ancestral Guardian', 'Path of the Berserker', 'Path of the Storm Herald', 'Path of the Beast'],
+  'Blood Hunter': ['Order of the Ghostslayer', 'Order of the Profane Soul', 'Order of the Mutant', 'Order of the Lycan'],
+}
+
+/** Case-insensitive subclass lookup supporting all 5e classes and formatting variations */
+export function getSubclassesForClass(clsName?: string): string[] {
+  if (!clsName) return SRD_SUBCLASSES_BY_CLASS.Wizard || []
+  const clean = clsName.trim().toLowerCase()
+  for (const [key, list] of Object.entries(SRD_SUBCLASSES_BY_CLASS)) {
+    if (key.toLowerCase() === clean) return list
+  }
+  return []
 }
 
 /**

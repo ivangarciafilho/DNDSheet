@@ -1,3 +1,4 @@
+import { copyEntryBindings, entryBindingPrefix } from './entry-bindings.ts'
 import { defaultAction, defaultTrait, defaultCrAnnotation } from './types.ts'
 import type { Monster, MonsterAction, MonsterTrait, MonsterReaction, LairAction } from './types.ts'
 import type { ActionComposerRole } from './action-composer.ts'
@@ -48,6 +49,11 @@ export function roleTransition(monster: Monster, id: string, source: ActionCompo
     else if (target === 'lair') patch.lairActions = [...monster.lairActions, { ...common, crAnnotation: cr }]
     else patch.actions = [...monster.actions, { ...defaultAction(copyId), ...common, name, limitedUse: uses, crAnnotation: cr,
       bonusAction: target === 'bonus_action', legendaryOnly: target === 'legendary' || target === 'mythic' }]
+  }
+  if (!move && monster.bindings) {
+    const sourceCollection = source === 'trait' ? 'traits' : source === 'reaction' ? 'reactions' : source === 'lair' ? 'lairActions' : 'actions'
+    const targetCollection = target === 'trait' ? 'traits' : target === 'reaction' ? 'reactions' : target === 'lair' ? 'lairActions' : 'actions'
+    patch.bindings = copyEntryBindings(monster.bindings, entryBindingPrefix(sourceCollection, id), entryBindingPrefix(targetCollection, copyId), ['limitedUse', 'crAnnotation'])
   }
   if (move || target === 'legendary') patch.legendaryActions = { ...monster.legendaryActions, actions: memberships(monster.legendaryActions.actions, target === 'legendary') }
   if (move || target === 'mythic') patch.mythicActions = { ...monster.mythicActions, actions: memberships(monster.mythicActions.actions, target === 'mythic') }

@@ -26,6 +26,7 @@
       anchor="bottom left"
       self="top left"
       :offset="[0, 4]"
+      :transition-duration="0"
       max-width="min(94vw, 460px)"
       class="chain-editor-menu bg-grey-10 text-white"
       @before-show="startEditing"
@@ -36,6 +37,7 @@
 
         <q-input v-if="kind === 'text'" v-model="draft" dense outlined dark autofocus :label="cell.label" :hint="hint" />
 
+        <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input
           v-else-if="kind === 'number'"
           v-model="draft"
@@ -56,6 +58,8 @@
             dense
             class="chain-option"
             :class="{ 'chain-option--active': option.value === draft }"
+            :data-category="option.category || undefined"
+            :data-tone="option.tone || undefined"
             role="option"
             :aria-selected="option.value === draft ? 'true' : 'false'"
             @click="pick(option.value)"
@@ -64,14 +68,35 @@
             <q-item-section v-if="option.value === draft" side>
               <q-icon name="check" size="16px" color="amber-5" />
             </q-item-section>
+            <q-tooltip v-if="option.tooltip" class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+              {{ option.tooltip }}
+            </q-tooltip>
           </q-item>
         </div>
 
         <template v-else-if="kind === 'suggest'">
-          <q-input v-model="draft" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a suggestion or type your own" />
+          <q-input v-model="draft" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a categorized suggestion below or type your own" />
           <datalist :id="listId">
             <option v-for="option in spec.options" :key="option" :value="option" />
           </datalist>
+          <div v-if="suggestCatalog.length" class="chain-suggest-catalog q-mt-xs">
+            <div
+              v-for="item in suggestCatalog"
+              :key="item.value"
+              class="chain-suggest-item row items-center no-wrap justify-between q-px-sm q-py-xs cursor-pointer"
+              :class="{ 'chain-suggest-item--active': item.value === draft }"
+              @click="pick(item.value)"
+            >
+              <div class="row items-center no-wrap q-gutter-x-xs ellipsis">
+                <q-icon :name="item.icon" :color="item.color" size="14px" />
+                <span class="text-caption text-grey-2 ellipsis">{{ item.label }}</span>
+              </div>
+              <q-badge outline :color="item.color" :label="item.category" class="q-ml-xs" style="font-size: 9px; padding: 1px 4px" />
+              <q-tooltip class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+                {{ item.tooltip }}
+              </q-tooltip>
+            </div>
+          </div>
         </template>
 
         <div v-else-if="kind === 'multi'" class="chain-checks">
@@ -137,7 +162,7 @@
         <div class="row justify-end q-gutter-xs q-mt-sm">
           <q-btn v-if="clearable" flat dense no-caps size="sm" color="grey-4" label="Clear" @click="clear" />
           <q-btn v-close-popup flat dense no-caps size="sm" color="grey-4" label="Cancel" />
-          <q-btn type="submit" unelevated dense no-caps size="sm" color="amber-9" label="Apply" :disable="!!error" />
+          <q-btn v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-9" label="Apply" :disable="!!error || numericDraftPending" />
         </div>
       </form>
     </q-menu>
@@ -155,6 +180,8 @@ import { ATTACK_KINDS, validateCell } from 'src/core/domain/composer-chain'
 import type { ChainCellView } from 'src/core/domain/composer-chain'
 import type { DndStat } from 'src/core/domain/types'
 import ChainOutcomesEditor from './ChainOutcomesEditor.vue'
+import FormulaField from 'src/components/kit/FormulaField.vue'
+import type { NumericBinding } from 'src/core/domain/formula'
 
 type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects' | 'trait-cadence' | 'action-usage'
 
@@ -167,6 +194,7 @@ const HELP: Readonly<Record<string, string>> = {
   components: 'Verbal, Somatic and Material components, plus the Concentration and Ritual tags.',
   duration: 'Printed after the name unless Instantaneous.',
   attack: 'Melee or Ranged, Weapon or Spell. Prints as the attack roll.',
+  'weapon-ability': 'Automatic uses DEX for ranged-only attacks and STR otherwise. Finesse uses the better modifier. Thrown melee weapons keep STR unless finesse; thrown ranged weapons use Automatic. A numeric attack bonus overrides this rule.',
   'attack-bonus': "Bonus to hit. Blank uses the creature's own bonus.",
   'save-ability': 'The ability targets save with.',
   'save-dc': "The DC targets roll against. Blank uses the creature's DC for that ability.",
@@ -194,12 +222,14 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainCell',
-  components: { ChainOutcomesEditor, TraitCadenceEditor, ActionUsageEditor },
+  components: { FormulaField, ChainOutcomesEditor, TraitCadenceEditor, ActionUsageEditor },
   props: {
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
     value: { type: null as unknown as PropType<unknown>, default: undefined },
+    numericPath: { type: String, default: undefined },
+    numericDraftModel: { type: Function as PropType<(cellId: string) => object>, default: undefined },
     allowClear: { type: Boolean, default: true },
     numberHint: { type: String, default: "Leave blank to use the creature's own value" },
     validate: { type: Function as PropType<(value: unknown) => string>, default: undefined },
@@ -209,6 +239,8 @@ export default defineComponent({
     const usageEditor = ref<{ focus: () => void }>()
     const listId = `chain-cell-options-${++instances}`
     const open = ref(false)
+    const numericDraftPending = ref(false)
+    const isolatedNumericModel = ref<(object & { bindings?: Record<string, NumericBinding> }) | undefined>()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the draft's shape depends on the cell kind
     const draft = ref<any>('')
     const customEntry = ref('')
@@ -229,17 +261,114 @@ export default defineComponent({
       return 'text'
     })
 
+    const describeOption = (cellId: string, label: string, value: string) => {
+      if (cellId === 'discipline') {
+        const isMartial = ['Martial', 'Psionic', 'Supernatural'].includes(value)
+        return {
+          label,
+          value,
+          category: isMartial ? 'Origin' : 'School',
+          tone: isMartial ? 'amber' : 'purple',
+          tooltip: isMartial
+            ? `${label} origin classification printed in the ability header.`
+            : `${label} school of magic printed in the spell/action header.`,
+        }
+      }
+      if (cellId === 'tier') {
+        const isEpic = ['Heroic', 'Legendary', 'Mythic'].includes(value)
+        const isCantrip = value === 'Cantrip'
+        return {
+          label,
+          value,
+          category: isEpic ? 'Tier' : isCantrip ? 'At-Will' : 'Spell Slot',
+          tone: isEpic ? 'orange' : isCantrip ? 'teal' : 'blue',
+          tooltip: isCantrip
+            ? 'At-will cantrip tier (printed after the school name).'
+            : `${label} power or spell tier printed in the header.`,
+        }
+      }
+      if (cellId === 'attack') {
+        const isSpell = value.includes('spell')
+        return {
+          label,
+          value,
+          category: isSpell ? 'Spell' : 'Weapon',
+          tone: isSpell ? 'purple' : 'red',
+          tooltip: `${label} roll printed in the action mechanics row.`,
+        }
+      }
+      if (cellId === 'save-ability') {
+        const physical = ['STR', 'DEX', 'CON'].includes(value)
+        return {
+          label,
+          value,
+          category: physical ? 'Physical' : 'Mental',
+          tone: physical ? 'orange' : 'cyan',
+          tooltip: `Targets roll a ${label} saving throw against the Save DC.`,
+        }
+      }
+      return {
+        label,
+        value,
+        category: '',
+        tone: 'amber',
+        tooltip: `${label} (${props.cell.label})`,
+      }
+    }
+
     const selectOptions = computed(() => {
       switch (props.cell.id) {
         case 'attack':
-          return ATTACK_KINDS.map((attack) => ({ label: attack.label, value: attack.id }))
+          return ATTACK_KINDS.map((attack) => describeOption('attack', attack.label, attack.id))
         case 'save-ability':
-          return SAVE_ABILITIES.map((stat) => ({ label: `${ABILITY_NAMES[stat as DndStat]} (${stat})`, value: stat }))
+          return SAVE_ABILITIES.map((stat) => describeOption('save-ability', `${ABILITY_NAMES[stat as DndStat]} (${stat})`, stat))
         case 'usage':
-          return LEGENDARY_COSTS.map((cost) => ({ label: cost === '1' ? '1 Action' : `Costs ${cost} Actions`, value: cost }))
+          return LEGENDARY_COSTS.map((cost) => describeOption('usage', cost === '1' ? '1 Action' : `Costs ${cost} Actions`, cost))
         default:
-          return (props.spec.options ?? []).map((option) => ({ label: option, value: option }))
+          return (props.spec.options ?? []).map((option) => describeOption(props.cell.id, option, option))
       }
+    })
+
+    const suggestCatalog = computed(() => {
+      const raw = [...(props.spec.options ?? [])]
+      const q = typeof draft.value === 'string' ? draft.value.trim().toLowerCase() : ''
+      const categorize = (opt: string) => {
+        if (props.cell.id === 'duration') {
+          if (/^Instantaneous$/i.test(opt) || /turn|combat/i.test(opt)) {
+            return { category: 'Turn / Combat', icon: 'bolt', color: 'amber-5', order: 1, tooltip: `Tactical combat duration: ${opt}.` }
+          }
+          if (/^Concentration/i.test(opt)) {
+            return { category: 'Concentration', icon: 'psychology', color: 'purple-4', order: 2, tooltip: `Requires Concentration: ${opt}.` }
+          }
+          if (/^\d+\s+(round|minute|hour)/i.test(opt)) {
+            return { category: 'Measured Time', icon: 'schedule', color: 'cyan-4', order: 3, tooltip: `Fixed elapsed duration: ${opt}.` }
+          }
+          return { category: 'Rest / State', icon: 'autorenew', color: 'teal-4', order: 4, tooltip: `Condition, rest, or state milestone: ${opt}.` }
+        }
+        if (props.cell.id === 'target-kind') {
+          if (/^(ally|allies|enemy|enemies|self|creature|creatures|target|targets)$/i.test(opt)) {
+            return { category: 'Core Role', icon: 'groups', color: 'amber-5', order: 1, tooltip: `Target role or unit: ${opt}.` }
+          }
+          if (/^(object|objects|point|space|spaces|structure|structures)$/i.test(opt)) {
+            return { category: 'Object / Space', icon: 'category', color: 'cyan-4', order: 2, tooltip: `Inanimate or spatial target: ${opt}.` }
+          }
+          return { category: 'Creature Type', icon: 'pets', color: 'purple-4', order: 3, tooltip: `Specific creature type filter: ${opt}.` }
+        }
+        if (props.cell.id === 'target-qualifier') {
+          if (/see|hear/i.test(opt)) {
+            return { category: 'Sensory', icon: 'visibility', color: 'cyan-4', order: 1, tooltip: `Line-of-sight or sensory requirement: ${opt}.` }
+          }
+          if (/Bloodied|Prone|Grappled|Restrained|Construct|Undead/i.test(opt)) {
+            return { category: 'Condition / State', icon: 'New_releases', color: 'orange-4', order: 2, tooltip: `Target state or condition filter: ${opt}.` }
+          }
+          return { category: 'Selection', icon: 'tune', color: 'amber-4', order: 3, tooltip: `Target selection qualifier: ${opt}.` }
+        }
+        return { category: 'Option', icon: 'label', color: 'amber-4', order: 1, tooltip: opt }
+      }
+      return raw
+        .filter((opt) => !q || opt.toLowerCase().includes(q) || opt === draft.value)
+        .map((opt) => ({ label: opt, value: opt, ...categorize(opt) }))
+        .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label))
     })
 
     // Custom values already on the entry stay visible as checked options.
@@ -250,6 +379,8 @@ export default defineComponent({
 
     const startEditing = () => {
       customEntry.value = ''
+      numericDraftPending.value = false
+      isolatedNumericModel.value = props.numericPath ? props.numericDraftModel?.(props.cell.id) : undefined
       const value = copy(props.value)
       switch (kind.value) {
         case 'count':
@@ -277,8 +408,8 @@ export default defineComponent({
     const clearable = computed(() => props.allowClear && props.cell.state === 'set' && props.cell.id !== 'name' && props.spec.field !== 'cost')
 
     const apply = () => {
-      if (error.value) return
-      emit('commit', copy(draft.value))
+      if (error.value || numericDraftPending.value) return
+      emit('commit', copy(draft.value), props.numericPath ? isolatedNumericModel.value?.bindings?.[props.numericPath] ?? null : undefined)
       open.value = false
     }
     const isFieldEnter = (event: KeyboardEvent): boolean => {
@@ -369,6 +500,8 @@ export default defineComponent({
         : props.cell.legacy ? 'Printed exactly as written' : undefined)
 
     return {
+      isolatedNumericModel,
+      numericDraftPending,
       usageEditor,
       listId,
       open,
@@ -377,6 +510,7 @@ export default defineComponent({
       optionList,
       kind,
       selectOptions,
+      suggestCatalog,
       multiOptions,
       startEditing,
       error,
@@ -524,6 +658,61 @@ export default defineComponent({
 
 .chain-option--active {
   background: rgba(255, 179, 0, 0.14);
+}
+
+.chain-option[data-category]::after {
+  content: attr(data-category);
+  margin-left: auto;
+  padding: 1px 5px;
+  border-radius: 3px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 202, 40, 0.45);
+  color: #ffe082;
+  background: rgba(255, 179, 0, 0.12);
+}
+
+.chain-option[data-tone="purple"]::after {
+  border-color: rgba(186, 104, 200, 0.5);
+  color: #e1bee7;
+  background: rgba(156, 39, 176, 0.14);
+}
+
+.chain-option[data-tone="teal"]::after,
+.chain-option[data-tone="cyan"]::after {
+  border-color: rgba(77, 208, 225, 0.5);
+  color: #b2ebf2;
+  background: rgba(0, 188, 212, 0.14);
+}
+
+.chain-option[data-tone="red"]::after,
+.chain-option[data-tone="orange"]::after {
+  border-color: rgba(255, 138, 101, 0.5);
+  color: #ffccbc;
+  background: rgba(244, 81, 30, 0.14);
+}
+
+.chain-suggest-catalog {
+  max-height: 210px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.65);
+}
+
+.chain-suggest-item {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.12s ease;
+}
+
+.chain-suggest-item:hover {
+  background: rgba(255, 179, 0, 0.12);
+}
+
+.chain-suggest-item--active {
+  background: rgba(255, 179, 0, 0.2);
 }
 
 .chain-checks {

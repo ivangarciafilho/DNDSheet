@@ -1,6 +1,153 @@
 # DNDSheet — Product & Architecture Specification
 
-## Build161 binding contract and CR158 reaffirmation
+> **The roadmap bible.** One source of truth for *what* DNDSheet becomes, *why* it must, and *how* every layer changes — from the pixel on the stat block, through the composable that projects it, down to the pure function that computes it, and back up to the promise it serves.
+
+| | |
+|---|---|
+| **Version** | Build 184 — Flush Trait/Action Headers, Per-Slider/Per-Side Radial Resets, Auto-Balanced Stat Grid, Composer-Aligned Plate Rows, Enriched Durations/Catalogs, and Contextual Split Riders · `rc-2.4.3-build-184-flush-headers-radial-resets-stat-balance-and-plate-rows` (Build 183 preserved) |
+| **Code HEAD** | `statblock-overhaul` · 361 core unit tests (100% green across 51 suites), 50 live browser CDP fuzz steps passing with 0 console errors and 0 runtime exceptions, clean Quasar production build |
+| **Product** | Local fork of *Falindrith's D&D Monster Maker* v2.4.3 — Vue 3 · Quasar 2 · Pinia (persisted) · Vite · Node 22 |
+| **Progress** | **14/28 loops shipped · 138/219 tasks complete (63.01%) · active loops A13/A14/A15 interaction kits, tooltips & catalog audits** |
+| **Companions** | 📋 [Implementation Backlog](DNDSheet-Implementation-Backlog.md) — the checklist and living timeline · 🧭 [Development Handoffs](DNDSheet-Development-Handoffs.md) — how every loop starts armed and ends documented |
+| **Normative words** | **MUST** = release requirement · **SHOULD** = default unless a decision record says otherwise · **MAY** = optional |
+
+---
+
+## Build 184 Contract — Flush Trait/Action Header Border Alignment, Redundant Crop Slider Removal, Per-Slider/Per-Side Reset Knobs, Auto-Balanced Ability Score/Save Grid, Composer-Matched Plate Row Ordering (`Exorcise` & `Astral Binding`), Enriched Durations & Categorized Tooltipped Catalogs, and Contextual Split Riders Toggles
+
+1. **Consistent Trait & Action Header Border Alignment (`.sb-plate.sb-trait-streamlined` & `.sb-single-line`)**:
+   - All `.sb-head` cells across `.sb-plate` and `.sb-plate.sb-trait-streamlined` sit flush (`0px` distance) against the top and left borders of their `.sb-plate` frame (`float: left; margin: -3px 8px 1px -8px; padding: 3px 8px; border-right: 1px solid var(--sb-rule); border-bottom: 1px solid var(--sb-rule); border-radius: 0 0 3px 0`).
+   - Single-line streamlined plates (`.sb-plate.sb-trait-streamlined.sb-single-line`, e.g., `Heavy Metal` and `Multiattack`) sit flush against top, left, and bottom borders (`margin: -3px 8px -3px -8px; border-bottom: 0; border-radius: 0; display: flex; align-items: stretch`), matching `Search`, `Study`, `Influence`, and `Hide` while multi-line traits (`Arcane Condenser`, `Cortex`) flow lines 2+ cleanly underneath the header badge across the full width of the plate.
+   - `.innate-spellcasting.sb-plate`, `.class-spellcasting.sb-plate`, and `:is(.trait, .action, .reaction, .legendary, .attack, .multiattack):has(> .sb-plate)` share uniform `margin: 0 0 6px !important` spacing.
+
+2. **Removal of Redundant Standalone Edge Cropping Controllers in `A4LayerStudio.vue`**:
+   - Removed the redundant standalone `<dual-knob-crop-slider>` blocks for `Horizontal Edge Cropping` and `Vertical Edge Cropping` on both the portrait layer and custom composition layers, since parallel `Crop X` and `Crop Y` dual-knob tracks are integrated directly next to the `RadialOffsetController`.
+
+3. **Exclusive Per-Slider & Per-Knob-Side Reset Buttons (`RadialOffsetController.vue` & `DualKnobCropSlider.vue`)**:
+   - Added exclusive reset icon buttons (`restart_alt`) next to the **Y Offset slider** (`resetY` -> `0`) and **X Offset slider** (`resetX` -> `0`).
+   - Added **2 per-side reset icon buttons** on each multivalued cropping slider: Top (`resetCropYMin` -> `min: 0`) and Bottom (`resetCropYMax` -> `max: 100`) on `Crop Y`, and Left (`resetCropXMin` -> `min: 0`) and Right (`resetCropXMax` -> `max: 100`) on `Crop X` (as well as start/end resets on `DualKnobCropSlider.vue`).
+
+4. **Auto-Balanced Ability Score, Modifier & Save Grid (`.dnd-stats-2024 .stat-table`)**:
+   - Rebalanced `.stat-table` column proportions (`minmax(22px, 0.82fr) minmax(16px, 0.60fr) minmax(20px, 0.72fr) minmax(38px, 1.66fr)`), tightened card padding (`padding: 3px 4px; column-gap: 1px`), and styled `.save .dnd-adv-pill / .dnd-disadv-pill` and `.stat-save-arrows / .dnd-adv-glyph` (`font-size: 0.62em; letter-spacing: -1.5px; transform: scaleX(0.92)`) so saves with advantage/disadvantage (`DEX 18 | +4 | +6 ▲▲`) never collide with `MOD` or clip arrows on narrow 2-column layouts.
+
+5. **Composer-Aligned Spell-Like Trait/Action Plate Row Ordering (`Exorcise` & `Astral Binding`)**:
+   - Updated `buildPlateEntry` in `src/components/rendering/useProcessTokens.ts` so spell-like traits/actions place `mechItems` (`Charisma Save DC 14`, `Ranged Spell Attack +6`) on **Row 1** right after `duration`, `scopeItems` (`enemies 20 ft. of you across the Ethereal and Material Planes`) on **Row 2**, and outcomes (`On Hit:` / `On Failure:` / `On Success:`) on **Row 3**, matching the Composer UI row hierarchy (`Head + Mechanics` -> `Targets/Scope` -> `Outcomes`).
+
+6. **Expanded Duration Catalog (`DURATIONS`) & Categorized, Color-Coded, Icon-Annotated, Tooltipped Dropdowns**:
+   - Expanded `DURATIONS`, `TARGET_KINDS`, `TARGET_QUALIFIERS`, `PLANES`, and `AREA_SHAPES` in `src/core/domain/action-composer.ts` with turn/round/combat/rest/condition milestones (`Until end of turn`, `Until start of your next turn`, `Until end of your next turn`, `Until start of target's next turn`, `Until end of target's turn`, `Until end of target's next turn`, `Until end of combat`, `Until Bloodied`, `Until Reduced to 0 HP`, `Until Short or Long Rest`, `Until Long Rest`, `Until Dawn`, `Until Dusk`, `Until triggered`, `Concentration, up to 1 round`, etc.).
+   - Enhanced `ChainCell.vue` and `BasicsEditor.vue` dropdowns with grouped, alphabetically sorted options, semantic icons, color-coded category badges, and floating tooltips (`q-tooltip`).
+
+7. **Contextual "Split Riders into Sub-Rows (`↳`)" Toggles Close to Each Rider**:
+   - Added contextual `↳ Split AC Riders into Sub-Rows` and `↳ Sub-Row` toggles directly inside the AC Decoupled Riders bar and inside each HP Rider module header (`Bloodied`, `Damage Threshold`, `Damage Reduction`, `Regeneration & Temporary Hit Points`, `Mortality & Death Prevention`) in `BasicsEditor.vue`.
+
+---
+
+## Build 183 Contract — Inline Trait Flow, Hardware Luminance-to-Alpha Compositing, Interactive Curved Gradient Bar, Parallel Radial-Crop Knob Controllers, Indented Vitals Riders & Hierarchical Plate Grammar
+
+1. **Inline-Block Streamlined Trait Flow (`.sb-plate.sb-trait-streamlined`)**:
+   - `.sb-plate.sb-trait-streamlined > .sb-row` renders as `display: block` with zero internal row padding (`padding: 4px 8px`).
+   - `.sb-cell.sb-head` renders as `display: inline-block; float: none; min-height: 0; height: auto; line-height: 1.2; vertical-align: baseline; margin: -2px 7px 1px -4px`, allowing the header badge to sit inline at the start of Line 1 while Line 2+ of `.sb-cell.sb-body` (`display: inline`) wraps flush to `x = 0` directly beneath the badge.
+   - Structured actions that have no spell classification, scope, mechanics, or sectors also set `streamline: true` so simple prose actions share the same wrap-under-badge flow.
+
+2. **A4 Composition Layer Normal Blend Occlusion & Hardware SVG Luminance-to-Alpha Filter**:
+   - **Layer Stack Ordering**: `ensureCoreLayers()` and `insertBackgroundLayerOnTopOfBackgrounds()` insert newly added background/frame layers above existing background layers (immediately before `portrait` / `statblock`) and render in descending `z-index` (`100 - idx`), so the top-most layer in `A4LayerStudio.vue` has the highest `z-index` and occludes layers beneath it under `mix-blend-mode: normal`.
+   - **Hardware SVG `<feColorMatrix>` Filter**: `WebRenderer.vue` mounts hidden SVG filters `#a4-luminance-to-alpha` and `#a4-luminance-to-alpha-invert` that compute alpha directly from RGB luminance ($A' = 0.2126 R + 0.7152 G + 0.0722 B$, or $A' = 1 - (0.2126 R + 0.7152 G + 0.0722 B)$ when inverted). Any layer with `grayscaleAsAlpha: true` applies `filter: url(#a4-luminance-to-alpha)` (or `-invert`), converting dark pixels to transparent (`alpha = 0`) and bright pixels to opaque (`alpha = 1`) before compositing.
+
+3. **Interactive Gradient Bar with Multi-Stop Color Keys & Configurable SVG Falloff Curve Overlay**:
+   - **Domain Contract (`src/core/domain/gradient-curve.ts`)**:
+     - `evaluateGradientCurve(t, curve, tension)` evaluates normalized position $t \in [0, 1]$ across `'linear' | 'ease_in' | 'ease_out' | 'smoothstep' | 'custom'` (where power exponent $p = 2^{-\text{tension} \cdot 2}$ maps tension $\in [-1, 1]$ to $[0.25, 4.0]$).
+     - `formatCurvedGradientCss(overlay)` resamples adjacent color stops across 5 intermediate sub-intervals per segment in RGBA space along the active falloff curve and outputs standard CSS `linear-gradient(...)` or `radial-gradient(...)` for all 6 directions (`left_to_right`, `right_to_left`, `top_to_bottom`, `bottom_to_top`, `radial`, `vignette`).
+   - **UI/UX Contract (`src/components/editor/widgets/GradientOverlayController.vue`)**:
+     - Interactive Gradient Bar with draggable color key (stop) knobs (`+ Add Key` or click bar to insert stop, select stop to edit RGBA color or remove stop, **double-click stop knob to edit exact `%` offset inline**).
+     - Interactive **SVG Falloff Curve Overlay** rendered directly on top of the gradient bar with a draggable inflection point knob (`curveTension`) that shapes the alpha/color transition falloff in real time.
+
+4. **Radial Offset & Parallel Cropping Controllers with Values Inside Knobs (`RadialOffsetController.vue` & `DualKnobCropSlider.vue`)**:
+   - Replaced standalone X/Y numeric input boxes with a **Horizontal Offset Slider (`X`)** beneath the radar pad and a **Vertical Offset Slider (`Y`)** beside the radar pad.
+   - The current `X` and `Y` values are rendered **inside the draggable slider knobs**; **double-clicking a knob** opens an inline numeric input directly inside the knob for exact manual entry.
+   - **Parallel Cropping Integration**: When `cropX` and `cropY` bounds are provided to `RadialOffsetController.vue`, a **Vertical Cropping (`Crop Y`)** dual-knob slider is mounted in parallel beside the Vertical Offset slider, and a **Horizontal Cropping (`Crop X`)** dual-knob slider is mounted in parallel beneath the Horizontal Offset slider, with `%` values inside the knobs and double-click inline editing.
+
+5. **Indented Relatable Rider Sub-Rows for Speed, HP, and AC (`splitSpeedRiderRows`, `splitHpRiderRows`, `splitAcRiderRows`)**:
+   - **Speed (`monster.splitSpeedRiderRows`)**: Base movement speeds render on the primary `Speed` line; each locomotion rider (`Disengage`, `Dodge`, `Dash`, `Hide`, and custom `traversalRiders`) renders on its own dedicated `.dnd-vitals-indented-subrow` (`↳`) in both MM2024 and MM2014 templates.
+   - **HP (`monster.splitHpRiderRows`)**: Base HP and Hit Dice formula render on the primary `HP` line; `Bloodied`, `Temporary Hit Points` (`+X temp HP`), `Regeneration`, `Death Prevention`, `Damage Threshold (DT)`, `Damage Reduction (DR)`, and HP-routed `Invulnerability` each render as an independent badge on its own dedicated `.dnd-vitals-indented-subrow` (`↳`). Fixed `else if` mutual exclusion so Temporary HP and Regeneration coexist independently.
+   - **AC (`monster.splitAcRiderRows`)**: Base AC renders on the primary `AC` line; each conditional/relatable AC rider (Bloodied AC, Temporary HP AC, Damage Threshold, Attacker Save, On Miss, On Hit, and AC-routed Invulnerability) is emitted as a separate badge in `acBadges` and rendered on its own dedicated `.dnd-vitals-indented-subrow` (`↳`).
+
+6. **Target Count Noun Grammar, Compact Physical Attack Plates & Hierarchical Spell-Like Trait Plates**:
+   - **Target Count & Noun Fallback (`src/core/domain/ability-grammar.ts`)**:
+     - `normalizeTargeting` preserves inferred target kind/qualifier when explicit fields are empty strings `""`.
+     - `scopePhrase` defaults to `'target'` (singular) or `'targets'` (plural) whenever a target count is present without an explicit `kind` (even when `qualifier` is empty), ensuring `1 target` or `1 target which you can see 10 ft.` always renders the target count and noun.
+     - `FormulaField.vue` commits typed numeric literals on `@input-value` and `@blur` (without requiring Enter) and exposes `1 target`..`5 targets` quick presets on `.targets` / `.targeting.count` paths.
+   - **Compact Physical Attack Plate (`Slam`) vs Hierarchical Spell-Like Plate (`Exorcise`) (`src/components/rendering/useProcessTokens.ts`)**:
+     - **Physical Attacks (`!isSpellLike`)**: When an attack/action has no spell school/level/components, Row 1 consolidates the header badge, target/range scope, and attack/save mechanics onto a single row (`| Slam | 1 target which you can see 10 ft. | Melee Weapon Attack +4 |`), with outcomes (`Hit: ...`) on Row 2.
+     - **Spell-Like Traits & Actions (`isSpellLike`)**: Hierarchical Row 1 header cell combines `[Usage] [Name], [School/Level Classification] [(Components)]` inside `.sb-head` alongside `[Duration]` on Row 1 (`| RECHARGE 6–12 Exorcise, Abjuration Cantrip (V, S) | 1 round |`), followed by `[Scope] | [Mechanics]` on Row 2 (`| enemies 20 ft. of you across the Ethereal and Material Planes | Ranged Spell Attack +6 |`), and outcomes (`On Success: ...`) on Row 3.
+
+7. **Category Fold / Unfold Headers in Actions & Traits Studio (`ActionsEditor.vue`)**:
+   - Entries in `ActionsEditor.vue` are grouped by role (`groupedEntriesByCategory`) with a **Category Fold / Unfold Header Bar** per category showing entry count, per-category `Fold Cards` / `Unfold Cards`, and whole-category collapse (`v-show` preserving mounted `<composer-chain>` DOM hierarchy for E2E and reactive bindings).
+
+---
+
+## Build 182 Contract — Gradient Overlays, Hardware SVG Alpha Masking, Indented Vitals Riders & Inline Trait Flow Foundation
+
+1. **A4 Studio Multi-Gradient Overlay Engine**:
+   - Designed gradient curve evaluator and tension model in `src/core/domain/gradient-curve.ts`.
+   - Wired `GradientOverlayController.vue` into `A4LayerStudio.vue` with multi-stop color keys and direct angle/direction presets.
+2. **Hardware SVG Luminance Masking**:
+   - Integrated `#a4-luminance-to-alpha` filter matrix in `WebRenderer.vue` ensuring PNGs without native alpha can be masked dynamically via grayscale luminance.
+3. **Indented Relatable Vitals Sub-Rows**:
+   - Laid foundation for `splitSpeedRiderRows`, `splitHpRiderRows`, and `splitAcRiderRows` across `useTextRenderer.ts` and `statblock-grammar.scss`.
+4. **Trait Streamlined Badge Float**:
+   - Transitioned trait plates from reserved vertical grid cells to baseline inline-block header badges.
+
+---
+
+## Build 181 Contract — A4 Occlusion, Transparent CR, Top-Aligned Traits, Streamlined Actions & Unified Spellcasting
+
+1. **A4 Composition Layer Stack Precedence & Occlusion**:
+   - Element stacking inside `.a4-page-sheet` strictly obeys the layer order defined in `editorStore.a4Layers`.
+   - Index 0 represents the top of the composition and receives highest z-index: `zIndex = (total - idx) * 10 + 10`.
+   - Hardcoded CSS `z-index` declarations on `.a4-bg-layer`, `.a4-fg-layer`, and `.statblock-wrapper` are eliminated. `.statblock-wrapper` uses `z-index: auto` so that statblock and portrait participate directly in `.a4-page-sheet`'s stacking context (`isolation: isolate`).
+   - Normal blend mode layers with 100% opacity properly occlude statblock and layers beneath them via their alpha channel.
+
+2. **Transparent Nameplate CR Badge**:
+   - The `.cr-main-region` and `.compact-nameplate-row-1 .cn-cr` containers have a transparent background (`background: transparent !important; color: #58180d !important;`).
+   - The parchment background flows continuously beneath the CR chip, allowing the creature's name and identity to visually pop.
+
+3. **Top-Aligned Multi-Line Trait Labels**:
+   - `.sb-plate.sb-trait-streamlined .sb-row > .sb-cell.sb-head` enforces `align-items: flex-start !important; padding-top: 5px !important;`.
+   - Trait names (e.g. Arcane Condenser, Cortex) remain pinned to the top line of multi-line descriptions rather than vertically centering across the height of the row.
+
+4. **Streamlined Single-Row Action Plates**:
+   - Simple actions without secondary mechanics or scope cells (such as Multiattack 'Make 2 Attacks.') collapse into a single-row plate `[Multiattack] [Make 2 Attacks.]` via `streamline: true` in `useProcessTokens.ts`.
+   - Eliminates wasted vertical rows while preserving full structured plate styling.
+
+5. **Single Unified Monster Spellcasting Cell**:
+   - Standard spell levels (Cantrips, Level 1, Level 2, Level 3...) are consolidated into one unified cell (`.sb-spells-unified-cell`).
+   - Each spell level is an alternating striped row (`.spell-level-line`) with subtle contrast shifts.
+   - Horizontal cell divider borders between standard spell levels are removed. Cell splits remain strictly reserved for cadence boundaries (`splitHighCadence`).
+
+6. **Decoupled Regeneration & Temporary Hit Points**:
+   - `defense-and-traits-utils.ts` separates hit point regaining from temporary hit points across all condition modifiers.
+   - When `recoveryType === 'temp_hp'` with `conditionModifier === 'not_bloodied'`, the output is "Gains X of Temporary Hit Points while not Bloodied".
+
+7. **Defensive CR Computation**:
+   - `CalculateCr.ts` and `monster-store.ts` employ defensive optional chaining (`action.crAnnotation?.include`, `(action.limitedUse?.count || 0)`, `(this.spellcasting.atWill || [])`) so that imported or incomplete action structures do not throw unhandled runtime exceptions.
+
+---
+
+## Build 180 Contract — Aligned Vitals, Streamlined Traits, Action Passives & Cellular Defenses
+
+1. **Initiative Tuning & Multi-Phase Paragon Pools**:
+   - Composable initiative mechanics (`initiative-composer.ts`) supporting Advantage/Disadvantage toggles and trigger dropdowns.
+   - Multi-phase Paragon pool iterations with cascading bloodied indicators.
+2. **Cellular Prefix Badges for Defenses**:
+   - Defenses rendered in structured horizontal cellular rows (`| Vulnerabilities | Damage | ... |`).
+3. **Typographic Hierarchy & Action Passives**:
+   - Bolder number tokens (`.pill-number`) and consolidated action-grouped skills and passives without floating commas.
+4. **Decoupled Invulnerability with Automatic Routing**:
+   - Automatic routing of invulnerabilities to AC or HP based on conditions and qualifiers via `resolveInvulnerabilityDisplayLocation`.
+
+---
+
+## Build 161 binding contract and CR158 reaffirmation
 
 The registry's remaining AC and death-prevention mode gates now include actual default/OR cases; unused type-only leaves remain excluded. The immutable catalog is covered by uniqueness, bounds, ownership, deep-freeze and exclusion invariants. Optional scalar authorship does not grant permission to replace symbolic `all`/formula values.
 
@@ -3806,3 +3953,4 @@ Evidence:327core tests(+13);productionbuild;50exhaustive browser scenarios with 
 The first provisional browser attempts were rejected,not counted as successful evidence. Failing regressions corrected integer rounding,overlay-key merging,nested computed invalidation and record replacement;popup tests now wait for the previous cell menu to close rather than racing transitions. Final tests ran on frozen output. Independent source review found no blockers;two minor disabled-detach/history-boundary follow-ups remain under A9closeout.
 
 Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
+

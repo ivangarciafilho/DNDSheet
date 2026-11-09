@@ -10,7 +10,9 @@
           :spec="specFor(cell.id)"
           :value="valueFor(cell.id)"
           :validate="validatorFor(cell.id)"
-          @commit="(value: unknown) => commit(cell.id, value)"
+          :numeric-path="numericPathFor(cell.id)"
+          :numeric-draft-model="numericDraftModel"
+          @commit="(value: unknown, binding: NumericBinding | null | undefined) => commit(cell.id, value, binding)"
           @clear="commit(cell.id, '')"
         />
         <span v-else class="composer-chain__role-label" :data-chain-cell="cell.id">{{ cell.text }}</span>
@@ -36,6 +38,7 @@ import { reactionCellPatch, reactionCellValue, reactionChainView, validateReacti
 import { traitCellPatch, traitCellValue, traitChainView, validateTraitCell } from 'src/core/domain/trait-composer'
 import { lairChainView } from 'src/core/domain/role-headers'
 import ChainCell from './ChainCell.vue'
+import type { NumericBinding } from 'src/core/domain/formula'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
   head: 'Head',
@@ -115,7 +118,20 @@ export default defineComponent({
       props.role === 'reaction' ? (value: unknown) => validateReactionCell(cellId, value)
         : props.role === 'trait' ? (value: unknown) => validateTraitCell(cellId, value) : undefined
 
-    const commit = (cellId: string, value: unknown) => {
+    const numericPathFor = (cellId: string): string | undefined => {
+      if (!action.value) return undefined
+      const suffix = cellId === 'attack-bonus' ? 'attackBonus' : cellId === 'save-dc' ? 'save.overrideValue' : undefined
+      return suffix ? `actions[id=${encodeURIComponent(action.value.id)}].${suffix}` : undefined
+    }
+    const numericDraftModel = (cellId: string): object => {
+      const candidate = JSON.parse(JSON.stringify(monster.$state))
+      if (cellId === 'save-dc') {
+        const entry = candidate.actions.find((item: { id: string }) => item.id === props.actionId)
+        if (entry) entry.save.override = true
+      }
+      return candidate
+    }
+    const commit = (cellId: string, value: unknown, binding?: NumericBinding | null) => {
       const current = action.value
       if (current && pooled.value && cellId === 'usage') {
         emit('update:cost', Math.min(3, Math.max(1, Number(value) || 1)))
@@ -123,7 +139,16 @@ export default defineComponent({
       }
       if (current) {
         const target = current as unknown as Record<string, unknown>
-        for (const [key, next] of Object.entries(cellPatch(current, cellId, value))) target[key] = next
+        monster.$patch(state => {
+          const path = numericPathFor(cellId)
+          if (path) {
+            const bindings = { ...state.bindings }
+            if (binding) bindings[path] = binding
+            else delete bindings[path]
+            state.bindings = bindings
+          }
+          for (const [key, next] of Object.entries(cellPatch(current, cellId, value))) target[key] = next
+        })
         if (current.crAnnotation) autoUpdateCr(current.description, current.crAnnotation, current)
         return
       }
@@ -135,7 +160,7 @@ export default defineComponent({
       if (trait.value) Object.assign(trait.value, traitCellPatch(trait.value, cellId, value))
     }
 
-    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS }
+    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS, numericPathFor, numericDraftModel }
   },
 })
 </script>

@@ -286,16 +286,16 @@ export function buildAttackInfo(
 
   // Actions
   for (const action of monster.actions || []) {
-    if (action.crAnnotation.include && !action.legendaryOnly) {
+    if (action.crAnnotation?.include && !action.legendaryOnly) {
       data.actions.push({
         name: action.name,
         damage:
-          action.crAnnotation.maxDamage *
+          (action.crAnnotation.maxDamage || 0) *
           (action.crAnnotation.multitarget ? 2 : 1),
-        limited: action.limitedUse.count > 0 || action.recharge !== '',
-        uses: action.recharge !== '' ? 1 : action.limitedUse.count,
-        save: action.crAnnotation.maxSave,
-        toHit: action.crAnnotation.maxModifier,
+        limited: (action.limitedUse?.count || 0) > 0 || action.recharge !== '',
+        uses: action.recharge !== '' ? 1 : (action.limitedUse?.count || 0),
+        save: action.crAnnotation.maxSave || 0,
+        toHit: action.crAnnotation.maxModifier || 0,
         type: 'Action',
       })
     }
@@ -304,16 +304,16 @@ export function buildAttackInfo(
 
   // Traits
   for (const trait of monster.traits || []) {
-    if (trait.crAnnotation.include) {
+    if (trait.crAnnotation?.include) {
       data.traits.push({
         name: trait.name,
         damage:
-          trait.crAnnotation.maxDamage *
+          (trait.crAnnotation.maxDamage || 0) *
           (trait.crAnnotation.multitarget ? 2 : 1),
-        limited: trait.limitedUse.count > 0,
-        uses: trait.limitedUse.count,
-        save: trait.crAnnotation.maxSave,
-        toHit: trait.crAnnotation.maxModifier,
+        limited: (trait.limitedUse?.count || 0) > 0,
+        uses: trait.limitedUse?.count || 0,
+        save: trait.crAnnotation.maxSave || 0,
+        toHit: trait.crAnnotation.maxModifier || 0,
         remove: false,
         type: 'Trait',
       })
@@ -324,13 +324,13 @@ export function buildAttackInfo(
   // Lair Actions
   for (let idx = 0; idx < (monster.lairActions || []).length; idx++) {
     const la = monster.lairActions[idx]
-    if (la.crAnnotation.include) {
+    if (la.crAnnotation?.include) {
       data.lairActions.push({
         name: `Lair Action ${idx + 1}`,
         damage:
-          la.crAnnotation.maxDamage * (la.crAnnotation.multitarget ? 2 : 1),
-        save: la.crAnnotation.maxSave,
-        toHit: la.crAnnotation.maxModifier,
+          (la.crAnnotation.maxDamage || 0) * (la.crAnnotation.multitarget ? 2 : 1),
+        save: la.crAnnotation.maxSave || 0,
+        toHit: la.crAnnotation.maxModifier || 0,
         type: 'Lair Action',
       })
     }
@@ -341,17 +341,17 @@ export function buildAttackInfo(
   for (const la of monster.legendaryActions?.actions || []) {
     const maybeAction = monster.actions.find((a) => a.id === la.actionId)
     if (maybeAction != null) {
-      if (maybeAction.crAnnotation.include) {
+      if (maybeAction.crAnnotation?.include) {
         data.legendary.push({
           name: maybeAction.name,
           damage:
-            maybeAction.crAnnotation.maxDamage *
+            (maybeAction.crAnnotation.maxDamage || 0) *
             (maybeAction.crAnnotation.multitarget ? 2 : 1),
           limited:
-            maybeAction.limitedUse.count > 0 || maybeAction.recharge !== '',
-          uses: maybeAction.limitedUse.count,
-          save: maybeAction.crAnnotation.maxSave,
-          toHit: maybeAction.crAnnotation.maxModifier,
+            (maybeAction.limitedUse?.count || 0) > 0 || maybeAction.recharge !== '',
+          uses: maybeAction.limitedUse?.count || 0,
+          save: maybeAction.crAnnotation.maxSave || 0,
+          toHit: maybeAction.crAnnotation.maxModifier || 0,
           cost: la.cost,
           type: 'Legendary',
         })

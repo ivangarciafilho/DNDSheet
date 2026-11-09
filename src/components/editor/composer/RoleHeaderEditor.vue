@@ -3,7 +3,7 @@
     <form class="q-pa-sm" @submit.prevent="apply">
       <p class="text-caption">These settings apply to the whole {{ role }} section. Entry membership and content are kept.</p>
       <div v-for="field in fields" :key="field.id" :data-header-field="field.id" class="q-mb-sm">
-        <q-input v-if="field.kind === 'number'" v-model="draft[field.id]" type="number" min="0" :max="role === 'lair' ? 40 : 99" dense outlined dark :label="field.label" />
+        <formula-field v-if="field.kind === 'number'" :key="numericDraftVersion" data-enter-local :path="numericPath" :label="field.label" :draft-model="numericModel" @applied="value => draft[field.id] = value" @draft-state="value => numericDraftPending = value" />
         <q-checkbox v-else-if="field.kind === 'toggle'" v-model="draft.custom" dark dense :label="field.label" />
         <q-input v-else-if="field.kind === 'text'" v-model="draft[field.id]" dense outlined dark :label="field.label" />
         <template v-else-if="field.kind === 'prose' && (role === 'mythic' || draft.custom)">
@@ -15,7 +15,7 @@
       <div v-if="error" role="alert" class="text-red-3 q-mb-sm">{{ error }}</div>
       <div class="row justify-end q-gutter-xs">
         <q-btn flat dense no-caps label="Cancel" @click="open = false" />
-        <q-btn type="submit" dense no-caps color="amber-9" label="Apply section settings" :disable="!!error" />
+        <q-btn type="submit" dense no-caps color="amber-9" label="Apply section settings" :disable="!!error || numericDraftPending" />
       </div>
     </form>
     <span role="status" class="q-px-sm text-caption">{{ status }}</span>
@@ -29,12 +29,18 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { ROLE_HEADERS, ROLE_HEADER_RESETS, roleHeaderDraft, roleHeaderPatch, validateRoleHeader } from 'src/core/domain/role-headers'
 import type { HeaderRole, RoleHeaderDraft } from 'src/core/domain/role-headers'
 import MonsterTextEditor from '../MonsterTextEditor.vue'
+import FormulaField from 'src/components/kit/FormulaField.vue'
+import type { NumericBinding } from 'src/core/domain/formula'
 
 const { t } = useI18n()
 const props = defineProps<{ role: HeaderRole }>()
 const monster = useMonsterStore()
 const open = ref(false)
 const status = ref('')
+const numericDraftPending = ref(false)
+const numericDraftVersion = ref(0)
+const numericPath = computed(() => props.role === 'legendary' ? 'legendaryActions.count' : 'initiativeConfig.lairInitiative')
+const numericModel = ref<object & { bindings?: Record<string, NumericBinding> }>({})
 const draft = ref(roleHeaderDraft(monster, props.role))
 const title = computed(() => ({ legendary: 'Legendary', mythic: 'Mythic', lair: 'Lair' }[props.role]))
 const fields = computed(() => ROLE_HEADERS[props.role])
@@ -43,10 +49,29 @@ const resetField = (field: keyof RoleHeaderDraft) => {
   const key = ROLE_HEADER_RESETS[props.role][field]
   if (key && (field === 'preamble' || field === 'triggerDescription')) draft.value[field] = t(key)
 }
-const resetDraft = () => { draft.value = roleHeaderDraft(monster, props.role); status.value = '' }
+const resetDraft = () => {
+  draft.value = roleHeaderDraft(monster, props.role); status.value = ''; numericDraftPending.value = false
+  const candidate = JSON.parse(JSON.stringify(monster.$state))
+  // The lair section can be configured before initiative scheduling is enabled.
+  if (props.role === 'lair') {
+    candidate.initiativeConfig.useLairInitiative = true
+    candidate.initiativeConfig.lairInitiative ??= draft.value.initiative
+  }
+  numericModel.value = candidate
+  numericDraftVersion.value++
+}
 const apply = () => {
-  if (error.value) return
-  Object.assign(monster, roleHeaderPatch(monster, props.role, draft.value))
+  if (error.value || numericDraftPending.value) return
+  monster.$patch(state => {
+    Object.assign(state, roleHeaderPatch(monster, props.role, draft.value))
+    if (props.role !== 'mythic') {
+      const bindings = { ...state.bindings }
+      const binding = numericModel.value.bindings?.[numericPath.value]
+      if (binding) bindings[numericPath.value] = binding
+      else delete bindings[numericPath.value]
+      state.bindings = bindings
+    }
+  })
   status.value = 'Section settings applied'
   open.value = false
 }

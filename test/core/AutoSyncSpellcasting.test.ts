@@ -8,6 +8,7 @@ import {
   getSpellSlotsForClass,
   calculateSpellcastingMetrics,
   calculateMulticlassSpellcasting,
+  getSubclassesForClass,
 } from '../../src/core/usecases/AutoSyncSpellcasting.ts'
 import { getSpellMetadata, getSpellTagString } from '../../src/core/domain/spell-metadata.ts'
 import { migrateMonsterSchema } from '../../src/core/usecases/MigrateMonsterSchema.ts'
@@ -150,4 +151,28 @@ test('AutoSyncSpellcasting - Advanced Tri-Class Multiclassing & Subclasses', () 
   assert.strictEqual(result.classes?.[2].saveDc, 15)
   assert.strictEqual(result.classes?.[2].spellAttack, 7)
   assert.strictEqual(result.classes?.[2].subclass, 'Fiend')
+})
+
+test('getSubclassesForClass - case-insensitive resolution across 5e classes', () => {
+  // Uppercase from data store
+  const warlockSubs = getSubclassesForClass('WARLOCK')
+  assert.ok(warlockSubs.includes('Fiend'))
+  assert.ok(warlockSubs.includes('Celestial'))
+  assert.ok(warlockSubs.includes('Hexblade'))
+
+  const wizardSubs = getSubclassesForClass('wizard')
+  assert.ok(wizardSubs.includes('Evocation'))
+  assert.ok(wizardSubs.includes('Bladesinging'))
+
+  // Rogue and Fighter archetypes
+  const rogueSubs = getSubclassesForClass('Rogue')
+  assert.ok(rogueSubs.includes('Arcane Trickster'))
+  assert.ok(rogueSubs.includes('Soulknife'))
+
+  const fighterSubs = getSubclassesForClass('FIGHTER')
+  assert.ok(fighterSubs.includes('Eldritch Knight'))
+  assert.ok(fighterSubs.includes('Battle Master'))
+
+  // Fallback on missing or undefined
+  assert.ok(getSubclassesForClass(undefined).length > 0)
 })

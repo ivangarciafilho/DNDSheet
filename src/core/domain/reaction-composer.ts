@@ -1,9 +1,11 @@
 import type { ComposerRow } from './action-composer.ts'
 import { COMPOSER_ROW_ORDER, ROLE_CHAINS } from './action-composer.ts'
 import type { ChainCellView, ChainRowView } from './composer-chain.ts'
-import type { MonsterReaction } from './types.ts'
+import { cellPatch, cellValue } from './composer-chain.ts'
+import type { MonsterAction, MonsterReaction } from './types.ts'
 
 const clean = (value: unknown): string => (typeof value === 'string' ? value.trim() : '')
+const CORE_REACTION_CELLS = new Set(['usage', 'name', 'trigger'])
 
 export function reactionChainView(reaction: MonsterReaction, usage: string): ChainRowView[] {
   const cells = new Map<string, ChainCellView>()
@@ -15,7 +17,34 @@ export function reactionChainView(reaction: MonsterReaction, usage: string): Cha
 
   for (const spec of ROLE_CHAINS.reaction) {
     if (spec.row === 'prose') continue
-    const text = values[spec.id] ?? ''
+    const direct = values[spec.id]
+    const val = direct !== undefined ? direct : reactionCellValue(reaction, spec.id)
+    let text = ''
+    if (typeof val === 'object' && val !== null) {
+      if (Array.isArray(val)) {
+        text = val.length ? `${val.length} items` : ''
+      } else if ('count' in val && (val as { count?: unknown }).count !== undefined && (val as { count?: unknown }).count !== '') {
+        const c = val as { count: unknown; mode?: string }
+        text = `${c.mode === 'up_to' ? 'up to ' : ''}${c.count}`
+      } else if ('distance' in val && (val as { distance?: unknown }).distance !== undefined && (val as { distance?: unknown }).distance !== '') {
+        const r = val as { distance: unknown; unit?: string; relation?: string }
+        text = `${r.relation ? r.relation + ' ' : ''}${r.distance} ${r.unit || 'ft'}.`
+      } else if ('shape' in val && (val as { shape?: unknown }).shape) {
+        const a = val as { shape: string; distance?: unknown; unit?: string }
+        text = a.distance ? `${a.distance}-${a.unit || 'foot'} ${a.shape}` : a.shape
+      }
+    } else if (val !== undefined && val !== null) {
+      text = clean(String(val))
+    }
+
+    // Visibility guards
+    if (spec.id === 'weapon-ability' && (reaction as any).attackSource !== 'weapon') continue
+    if (spec.id === 'attack-bonus' && !(reaction as any).attackSource) continue
+    if (spec.id === 'save-dc' && (!(reaction as any).stat || (reaction as any).stat === 'none')) continue
+
+    // Core cells always display. Non-core cells display when configured/set.
+    if (!CORE_REACTION_CELLS.has(spec.id) && !text) continue
+
     const view: ChainCellView = {
       id: spec.id,
       label: spec.label,
@@ -43,7 +72,7 @@ export function reactionCellValue(reaction: MonsterReaction, cellId: string): un
         ? `${reaction.limitedUse.count}/${reaction.limitedUse.rate}`
         : ''
     case 'trigger': return reaction.trigger ?? ''
-    default: return undefined
+    default: return cellValue(reaction as unknown as Partial<MonsterAction>, cellId)
   }
 }
 
@@ -74,6 +103,6 @@ export function reactionCellPatch(reaction: MonsterReaction, cellId: string, val
       const rate = aliases[rateText.toLowerCase()] ?? rateText.toUpperCase().replace(/[ -]+/g, '_')
       return { limitedUse: { count: Number(match[1]), rate } }
     }
-    default: return {}
+    default: return cellPatch(reaction as unknown as MonsterAction, cellId, value) as unknown as Partial<MonsterReaction>
   }
 }

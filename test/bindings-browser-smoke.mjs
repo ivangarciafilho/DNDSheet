@@ -4,7 +4,7 @@ import os from 'node:os'
 import path from 'node:path'
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dnd-bindings-'))
 const port = 9229
-const url = process.env.DNDSHEET_E2E_URL || 'http://localhost:9124/candidate161/index.html#/'
+const url = process.env.DNDSHEET_E2E_URL || 'http://localhost:9124/candidate162/index.html#/'
 const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', url])
 const wait = ms => new Promise(resolve => setTimeout(resolve, ms))
 let ws
@@ -84,6 +84,50 @@ try {
     const toggle=document.querySelector('[data-attack-composer="binding-attack"] [data-chain-cell="modifier.override"]');toggle.click();await wait(150);const yes=[...document.querySelectorAll('.chain-editor-menu [role="option"]')].find(el=>el.textContent.trim()==='Yes');if(!yes)throw new Error('Missing attack override option');yes.click();await wait(350);
     const bonus=document.querySelector('[data-formula-field="attacks[id=binding-attack].modifier.overrideValue"]');bonus.querySelector('.q-field__control').click();await wait(200);const customBonus=[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula'));if(!customBonus)throw new Error('Override picker inactive '+JSON.stringify({modifier:attack.modifier,html:bonus.innerHTML.slice(0,450)}));customBonus.click();await wait(150);[...bonus.querySelectorAll('button')].find(el=>el.textContent.trim()==='Cancel').click();await wait(300);return true;
   }`)
+  result.structuredDraft = await evaluate(`async()=>{
+    const wait=ms=>new Promise(r=>setTimeout(r,ms)),m=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    m.addAction();const a=m.actions.at(-1);Object.assign(a,{id:'binding-action',name:'Finesse witness',attackSource:'weapon',attackReach:'melee',attackBonus:undefined,description:'Keeps authored prose.'});m.stats.STR=10;m.stats.DEX=18;await wait(120);
+    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(150);
+    const chain=()=>document.querySelector('[data-composer-chain="binding-action"]');
+    chain().querySelector('[data-chain-cell="weapon-ability"]').click();await wait(180);const finesse=[...document.querySelectorAll('.chain-editor-menu [role="option"]')].find(el=>el.textContent.trim()==='Finesse (better of STR and DEX)');if(!finesse)throw new Error('Missing finesse choice');finesse.click();await wait(350);
+    if(a.weaponAttackAbility!=='finesse'||!chain().querySelector('[data-chain-cell="attack-bonus"]').textContent.includes('+'+(m.proficiency+4)))throw new Error('Finesse projection mismatch');
+    m.stats.DEX=20;await wait(100);if(!chain().querySelector('[data-chain-cell="attack-bonus"]').textContent.includes('+'+(m.proficiency+5)))throw new Error('Finesse does not follow ability');
+    const path='actions[id=binding-action].attackBonus';
+    const open=async()=>{chain().querySelector('[data-chain-cell="attack-bonus"]').click();await wait(180);const field=document.querySelector('.chain-editor-menu .formula-field');field.querySelector('.q-field__control').click();await wait(180);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')).click();await wait(120);return field;};
+    let field=await open();let input=field.querySelector('input');input.value='1/2';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);if(![...document.querySelector('.chain-editor-menu').querySelectorAll('button')].filter(el=>el.textContent.trim()==='Apply').at(-1)?.disabled)throw new Error('Outer Apply permits invalid nested draft');input.value='PB+2';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);[...field.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').click();await wait(100);
+    const menu=document.querySelector('.chain-editor-menu');[...menu.querySelectorAll('button')].filter(el=>el.textContent.trim()==='Cancel').at(-1).click();await wait(350);if(m.bindings[path]||a.attackBonus!==undefined)throw new Error('Outer cancel leaked binding');
+    field=await open();input=field.querySelector('input');input.value='PB+2';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);input.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));input.dispatchEvent(new KeyboardEvent('keyup',{key:'Enter',bubbles:true}));await wait(150);
+    if(!document.querySelector('.chain-editor-menu')||m.bindings[path])throw new Error('Nested Enter committed outer draft');
+    [...document.querySelector('.chain-editor-menu').querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply').click();await wait(350);if(m.bindings[path]?.expr!=='PB+2'||a.attackBonus!==m.proficiency+2)throw new Error('Outer Apply failed');
+    m.proficiency+=1;await wait(100);if(a.attackBonus!==m.proficiency+2)throw new Error('Bound bonus not live');
+    return {finesse:true,sourceUpdate:true,cancel:true,enterIsolated:true,apply:true};
+  }`)
+  result.basicsFamilies = await evaluate(`async()=>{
+    const wait=ms=>new Promise(r=>setTimeout(r,ms)),m=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
+    const paths=['extendedHp.damageThreshold','extendedHp.damageReduction','extendedHp.regeneration.amount','initiativeConfig.lairInitiative','paragonConfig.poolCount'];
+    m.initiativeConfig.useLairInitiative=true;
+    for(const path of paths)m.setBinding(path,{mode:'formula',expr:path==='paragonConfig.poolCount'?'PB':'PB*5'});
+    await wait(100);m.proficiencyOverride=true;m.proficiency=4;await wait(150);
+    if(m.extendedHp.damageThreshold!==20||m.extendedHp.regeneration.amount!==20||!m.extendedHp.regeneration.enabled||m.initiativeConfig.lairInitiative!==20||m.paragonConfig.phaseConfigs.length!==4)throw new Error('Basics dependent projection failed');
+    const threshold=document.querySelector('[data-formula-field="extendedHp.damageThreshold"]');if(!threshold)throw new Error('Threshold smart control missing');
+    for(const path of paths)m.clearBinding(path);m.paragonConfig.poolCount=1;
+    return {controls:true,sourceUpdates:true,phaseTopology:true};
+  }`)
+  result.suspendedDetach = await evaluate(`async()=>{
+    const wait=ms=>new Promise(r=>setTimeout(r,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=pinia._s.get('monster'),h=pinia._s.get('history');
+    h.clear();h.pushSnapshot('Current only');if(h.undo()!==false||h.canUndo)throw new Error('History flags stale after pruning current-only snapshot');await wait(70);
+    m.hpModifierOverride=true;m.setBinding('HP.modifier',{mode:'formula',expr:'PB'});m.hpModifierOverride=false;await wait(100);
+    const field=document.querySelector('[data-formula-field="HP.modifier"]'),button=field?.querySelector('[aria-label="Detach HP Modifier binding"]')||[...field?.querySelectorAll('button')||[]].find(el=>el.getAttribute('aria-label')?.startsWith('Detach '));
+    if(!button||button.disabled)throw new Error('Suspended binding detach unavailable');button.click();await wait(100);if(m.bindings['HP.modifier'])throw new Error('Suspended binding remains attached');m.hpModifierOverride=true;
+    return true;
+  }`)
+  result.deletionHistory = await evaluate(`async()=>{
+    const wait=ms=>new Promise(r=>setTimeout(r,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=pinia._s.get('monster'),h=pinia._s.get('history');
+    m.speeds.push({id:'binding-delete',type:'fly',speed:30,note:''});const path='speeds[id=binding-delete].speed';m.setBinding(path,{mode:'formula',expr:'PB*10'});h.clear();h.pushSnapshot('Before delete');m.deleteSpeed('binding-delete');await wait(100);
+    if(m.bindings[path]||m.speeds.some(s=>s.id==='binding-delete'))throw new Error('Delete left owned binding');
+    if(!h.undo())throw new Error('Deleted record cannot undo');await wait(80);if(!m.bindings[path]||!m.speeds.some(s=>s.id==='binding-delete'))throw new Error('Undo lost binding ownership');
+    if(!h.redo())throw new Error('Deleted record cannot redo');await wait(80);if(m.bindings[path]||m.speeds.some(s=>s.id==='binding-delete'))throw new Error('Redo left binding');return true;
+  }`)
   // Reuse the existing exhaustive attack scenario as a short diagnostic gate.
   const suite = fs.readFileSync(new URL('./exhaustive-ui-fuzz.js', import.meta.url), 'utf8')
   const helperStart = suite.indexOf('const sheetEntryHelper = `') + 'const sheetEntryHelper = `'.length
@@ -94,6 +138,9 @@ try {
   const matrix = await evaluate(suite.slice(scenarioStart, scenarioEnd))
   if (matrix.problems.length || matrix.comparisons !== 4 || Object.entries(matrix).some(([key, value]) => key !== 'problems' && key !== 'comparisons' && value !== true)) throw new Error('Attack scenario failed: '+JSON.stringify(matrix))
   result.attackMatrix = true
+  await send('Page.reload'); await wait(1600)
+  result.weaponReload = await evaluate("()=>{const m=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');return m.actions.find(a=>a.id==='binding-action')?.weaponAttackAbility==='finesse'&&m.bindings['actions[id=binding-action].attackBonus']?.expr==='PB+2'}")
+  if (!result.weaponReload) throw new Error('Weapon metadata or binding lost on reload')
   await send('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
   await wait(200)
   result.narrow = await evaluate('async()=>{const wait=ms=>new Promise(r=>setTimeout(r,ms)),field=document.querySelector(\'[data-formula-field="stats.CHA"]\');field.querySelector(\'.q-field__control\').click();await wait(100);[...document.querySelectorAll(\'.q-menu .q-item\')].find(el=>el.textContent.includes(\'Custom formula\')).click();await wait(100);const draft=field.querySelector(\'.formula-field__draft\'),okay=draft.scrollWidth<=field.clientWidth+1;[...field.querySelectorAll(\'button\')].find(el=>el.textContent.trim()===\'Cancel\').click();return okay;}')
@@ -102,7 +149,7 @@ try {
   await evaluate('async()=>{const m=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\');m.setBinding(\'HP.HD\',{mode:\'formula\',expr:\'PB+1\'});await new Promise(r=>setTimeout(r,100));const field=document.querySelector(\'[data-formula-field="HP.HD"]\');field.scrollIntoView({block:\'center\'});field.querySelector(\'.q-field__control\').click();}')
   await wait(200)
   const shot = await send('Page.captureScreenshot', { format: 'png' })
-  fs.writeFileSync(path.resolve('.codex-temp/rc161-bindings.png'), Buffer.from(shot.result.data, 'base64'))
+  fs.writeFileSync(path.resolve('.codex-temp/rc162-bindings.png'), Buffer.from(shot.result.data, 'base64'))
   result.sheetSync = await evaluate('()=>{const m=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\');return m.HP.HD===m.proficiency+1&&document.querySelector(\'#render .statblock\').textContent.includes(String(m.HP.HD)+\'d8\')}')
   if (!result.reload || !result.narrow || !result.attackUI || !result.sheetSync || errors.length) throw new Error(JSON.stringify({ result, errors }))
   console.log('PASS binding UI/store/history/reload:', JSON.stringify(result))

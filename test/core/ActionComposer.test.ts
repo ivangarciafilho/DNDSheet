@@ -33,7 +33,7 @@ test('action head and mechanics cells follow the plate head and mechanics order'
     )
     assert.deepStrictEqual(
       ROLE_CHAINS[role].filter((cell) => cell.row === 'mechanics').map((cell) => cell.id),
-      ['attack', 'attack-bonus', 'save-ability', 'save-dc']
+      ['attack', 'weapon-ability', 'attack-bonus', 'save-ability', 'save-dc']
     )
   }
 })

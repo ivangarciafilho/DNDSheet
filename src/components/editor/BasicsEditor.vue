@@ -83,13 +83,29 @@
                 <span>Statblock Occlusion / Overlap</span>
                 <span>{{ editorStore.a4PictureOcclusion || 0 }}%</span>
               </div>
-              <q-slider
-                v-model="editorStore.a4PictureOcclusion"
-                :min="0"
-                :max="100"
-                color="cyan-4"
-                dense
-              />
+              <div class="row items-center q-col-gutter-xs">
+                <div class="col">
+                  <q-slider
+                    v-model="editorStore.a4PictureOcclusion"
+                    :min="0"
+                    :max="100"
+                    color="cyan-4"
+                    dense
+                  />
+                </div>
+                <div class="col-auto">
+                  <q-input
+                    v-model.number="editorStore.a4PictureOcclusion"
+                    type="number"
+                    min="0"
+                    max="100"
+                    dense
+                    outlined
+                    label="%"
+                    style="width: 70px;"
+                  />
+                </div>
+              </div>
               <div class="text-caption text-grey-5" style="font-size: 0.72rem;">
                 0% = Side by Side | 50% = Covers Half | 100% = Full Cover
               </div>
@@ -100,13 +116,29 @@
                 <span>Statblock Background Opacity</span>
                 <span>{{ editorStore.a4StatblockOpacity ?? 100 }}%</span>
               </div>
-              <q-slider
-                v-model="editorStore.a4StatblockOpacity"
-                :min="0"
-                :max="100"
-                color="amber-4"
-                dense
-              />
+              <div class="row items-center q-col-gutter-xs">
+                <div class="col">
+                  <q-slider
+                    v-model="editorStore.a4StatblockOpacity"
+                    :min="0"
+                    :max="100"
+                    color="amber-4"
+                    dense
+                  />
+                </div>
+                <div class="col-auto">
+                  <q-input
+                    v-model.number="editorStore.a4StatblockOpacity"
+                    type="number"
+                    min="0"
+                    max="100"
+                    dense
+                    outlined
+                    label="%"
+                    style="width: 70px;"
+                  />
+                </div>
+              </div>
               <div class="text-caption text-grey-5" style="font-size: 0.72rem;">
                 Reveals underlying artwork and page textures
               </div>
@@ -243,15 +275,33 @@
           outlined
           dense
         />
+        <div class="col-12 row items-center q-gutter-md q-my-xs">
+          <q-toggle
+            v-model="monster.showXp"
+            label="Show XP on Nameplate"
+            dense
+            color="amber-9"
+          >
+            <q-tooltip class="dnd-tip">When enabled, discloses calculated XP on the header nameplate.</q-tooltip>
+          </q-toggle>
+          <q-toggle
+            v-model="monster.compactNameplate"
+            label="Compact Nameplate Layout"
+            dense
+            color="amber-9"
+          >
+            <q-tooltip class="dnd-tip">Displays a streamlined, ultra-compact 2-row plate layout for high information density.</q-tooltip>
+          </q-toggle>
+        </div>
       </div>
 
-      <!-- 4. Size, Type, Subtype & Alignment -->
+      <!-- 4. Size, Type, Subtype, Species & Alignment -->
       <div class="row q-col-gutter-xs items-center q-mt-xs">
         <q-select
           :model-value="monster.size"
           :options="sizeValues"
           :label="$t('monster.size')"
-          class="col-12 col-sm-3"
+          class="col-6 col-sm-2"
           outlined
           dense
           @update:model-value="monster.setSize"
@@ -262,7 +312,7 @@
           use-input
           input-debounce="0"
           :label="$t('monster.type')"
-          class="col-12 col-sm-3"
+          class="col-6 col-sm-2"
           new-value-mode="add-unique"
           outlined
           dense
@@ -271,11 +321,28 @@
         <q-input
           v-model="monster.subtype"
           label="Subtype Tag"
-          class="col-12 col-sm-3"
+          class="col-6 col-sm-2"
           outlined
           dense
           placeholder="e.g. shapechanger"
         />
+        <q-select
+          v-model="selectedSpecies"
+          :options="speciesOptions"
+          label="Species / Lineage"
+          class="col-6 col-sm-3"
+          outlined
+          dense
+          emit-value
+          map-options
+          clearable
+          @update:model-value="onSpeciesSelected"
+        >
+          <template #prepend>
+            <q-icon name="fingerprint" color="primary" />
+          </template>
+          <q-tooltip class="text-caption">Auto-populate traits, speeds, senses, and racial stat hints</q-tooltip>
+        </q-select>
         <q-select
           v-model="monster.alignment"
           :options="alignmentOptions"
@@ -292,13 +359,46 @@
 
       <!-- 5. Ability Scores (Feeds AC, HP & Initiative) -->
       <div class="row items-center justify-between q-mt-md q-mb-xs">
-        <div class="text-subtitle2 text-weight-bold text-grey-4">
-          Ability Scores
+        <div class="row items-center q-gutter-x-sm">
+          <span class="text-subtitle2 text-weight-bold text-grey-4">Ability Scores</span>
+          <q-badge
+            :color="pointBuyInfo.isValid ? (pointBuyInfo.remaining === 0 ? 'positive' : 'amber-8') : 'negative'"
+            class="text-weight-bold text-caption"
+          >
+            Point Buy: {{ pointBuyInfo.remaining }} / 27 remaining
+          </q-badge>
         </div>
-        <div class="text-caption text-grey-5">
-          Modifiers, saves, and DCs auto-calculate in real time
+        <div class="row items-center q-gutter-x-xs">
+          <q-btn size="xs" outline dense color="primary" label="Standard Array" @click="applyStandardArray">
+            <q-tooltip class="text-caption">Apply standard 5e array: 15, 14, 13, 12, 10, 8</q-tooltip>
+          </q-btn>
+          <q-btn size="xs" outline dense color="grey-5" label="All 8s" @click="applyAllStats(8)">
+            <q-tooltip class="text-caption">Reset all ability scores to baseline 8</q-tooltip>
+          </q-btn>
+          <q-btn size="xs" outline dense color="grey-5" label="All 10s" @click="applyAllStats(10)">
+            <q-tooltip class="text-caption">Reset all ability scores to baseline 10</q-tooltip>
+          </q-btn>
         </div>
       </div>
+
+      <!-- Monster Role Archetype Heuristics Chips -->
+      <div class="row items-center q-gutter-x-xs q-mb-sm">
+        <span class="text-caption text-grey-5 q-mr-xs">Archetypes:</span>
+        <q-btn
+          v-for="arch in roleArchetypes"
+          :key="arch.id"
+          size="xs"
+          :color="arch.color"
+          outline
+          dense
+          :icon="arch.icon"
+          :label="arch.label"
+          @click="applyArchetype(arch)"
+        >
+          <q-tooltip class="text-caption">{{ arch.description }}</q-tooltip>
+        </q-btn>
+      </div>
+
       <div class="row q-col-gutter-sm q-mb-md">
         <formula-field
           v-for="stat in statKeys"
@@ -360,6 +460,17 @@
             📐 Armor Class Compositor & Defensive Mechanics (Direct Real-time Auto-Calculation)
           </div>
           <div class="row items-center q-gutter-x-xs">
+            <q-toggle
+              v-model="monster.splitAcRiderRows"
+              dark
+              dense
+              size="xs"
+              color="blue-4"
+              label="Split AC Riders into Sub-Rows"
+              class="text-caption text-weight-medium text-blue-2 q-mr-xs"
+            >
+              <q-tooltip>Renders AC relatable riders on dedicated indented sub-rows (↳) directly beneath base AC.</q-tooltip>
+            </q-toggle>
             <q-badge outline color="cyan-4" class="text-weight-bold text-caption">
               Auto-Synced to AC in Real Time
             </q-badge>
@@ -504,6 +615,9 @@
                   <q-item-section v-if="scope.opt.category" side>
                     <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
                   </q-item-section>
+                  <q-tooltip class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+                    {{ scope.opt.tooltip || `${scope.opt.label}${scope.opt.category ? ' (' + scope.opt.category + ')' : ''}` }}
+                  </q-tooltip>
                 </q-item>
               </template>
             </q-select>
@@ -534,19 +648,15 @@
                   <q-item-section v-if="scope.opt.category" side>
                     <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
                   </q-item-section>
+                  <q-tooltip class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+                    {{ scope.opt.tooltip || `${scope.opt.label}${scope.opt.category ? ' (' + scope.opt.category + ')' : ''}` }}
+                  </q-tooltip>
                 </q-item>
               </template>
             </q-select>
           </div>
           <div v-if="needsSecondaryAc" class="col-12 col-sm-4">
-            <q-input
-              v-model.number="acConfig.secondaryAc"
-              type="number"
-              dense
-              outlined
-              label="Secondary AC / Value"
-              @update:model-value="onAcCompositorChanged"
-            />
+            <formula-field path="acConfig.secondaryAc" label="Secondary AC / Value" dense outlined @applied="onAcCompositorChanged" />
           </div>
         </div>
 
@@ -641,19 +751,7 @@
               />
             </div>
             <div class="col-12 col-sm-2">
-              <q-select
-                v-model="acConfig.saveDc"
-                :options="saveDcPresetOptions"
-                use-input
-                fill-input
-                hide-selected
-                dense
-                outlined
-                label="Save DC"
-                new-value-mode="add-unique"
-                @input-value="(val) => { if (val) acConfig.saveDc = isNaN(Number(val)) ? val : Number(val); onAcCompositorChanged(); }"
-                @update:model-value="onAcCompositorChanged"
-              />
+              <formula-field path="acConfig.saveDc" label="Save DC" dense outlined @applied="onAcCompositorChanged" />
             </div>
           </div>
 
@@ -677,19 +775,7 @@
               />
             </div>
             <div v-if="acConfig.onSaveFailure === 'takes_damage' || acConfig.onSaveFailure === 'damage_attacker'" class="col-6 col-sm-2">
-              <q-select
-                v-model="acConfig.onSaveFailureDamageAmount"
-                :options="damageAmountPresets"
-                use-input
-                fill-input
-                hide-selected
-                dense
-                outlined
-                label="Fail Dmg"
-                new-value-mode="add-unique"
-                @input-value="(val) => { acConfig.onSaveFailureDamageAmount = validateNumber(val, 10); onAcCompositorChanged(); }"
-                @update:model-value="onAcCompositorChanged"
-              />
+              <formula-field path="acConfig.onSaveFailureDamageAmount" label="Fail Dmg" dense outlined @applied="onAcCompositorChanged" />
             </div>
             <div v-if="acConfig.onSaveFailure === 'takes_damage' || acConfig.onSaveFailure === 'damage_attacker'" class="col-6 col-sm-2">
               <q-select
@@ -720,19 +806,7 @@
               />
             </div>
             <div v-if="acConfig.onSaveSuccess === 'takes_damage' || acConfig.onSaveSuccess === 'damage_attacker'" class="col-6 col-sm-2">
-              <q-select
-                v-model="acConfig.onSaveSuccessDamageAmount"
-                :options="damageAmountPresets"
-                use-input
-                fill-input
-                hide-selected
-                dense
-                outlined
-                label="Succ Dmg"
-                new-value-mode="add-unique"
-                @input-value="(val) => { acConfig.onSaveSuccessDamageAmount = validateNumber(val, 13); onAcCompositorChanged(); }"
-                @update:model-value="onAcCompositorChanged"
-              />
+              <formula-field path="acConfig.onSaveSuccessDamageAmount" label="Succ Dmg" dense outlined @applied="onAcCompositorChanged" />
             </div>
             <div v-if="acConfig.onSaveSuccess === 'takes_damage' || acConfig.onSaveSuccess === 'damage_attacker'" class="col-6 col-sm-2">
               <q-select
@@ -799,7 +873,22 @@
           </div>
         </div>
 
-        <!-- 6h. Decoupled On Miss & When Hit Logic -->
+        <!-- 6h. Decoupled On Miss & When Hit Logic + Contextual Split Riders Toggle -->
+        <div class="row items-center justify-between q-mt-xs q-px-xs">
+          <span class="text-caption text-cyan-3 text-weight-bold">Decoupled AC Riders (On Miss / When Hit)</span>
+          <q-toggle
+            v-model="monster.splitAcRiderRows"
+            dark
+            dense
+            size="xs"
+            color="cyan-4"
+            label="↳ Split AC Riders into Sub-Rows"
+            class="text-caption text-cyan-2"
+            data-contextual-split-ac="true"
+          >
+            <q-tooltip>Renders AC riders (On Miss, When Hit, Attacker Save, Conditional AC) on dedicated indented sub-rows (↳) beneath base AC.</q-tooltip>
+          </q-toggle>
+        </div>
         <div class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-6">
             <q-select
@@ -830,37 +919,13 @@
         <!-- On Miss Extra Inputs -->
         <div v-if="acConfig.onMiss === 'hits_target_feet'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-6">
-            <q-select
-              v-model="acConfig.onMissDistance"
-              :options="['5', '10', '15', '20', '30', '60']"
-              use-input
-              fill-input
-              hide-selected
-              dense
-              outlined
-              label="Hit Another Creature Within Distance (ft)"
-              new-value-mode="add-unique"
-              @input-value="(val) => { acConfig.onMissDistance = validateNumber(val, 10); onAcCompositorChanged(); }"
-              @update:model-value="onAcCompositorChanged"
-            />
+            <formula-field path="acConfig.onMissDistance" label="Hit Another Creature Within Distance (ft)" dense outlined @applied="onAcCompositorChanged" />
           </div>
         </div>
 
         <div v-if="acConfig.onMiss === 'damage_attacker'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-6 col-sm-3">
-            <q-select
-              v-model="acConfig.onMissDamageAmount"
-              :options="damageAmountPresets"
-              use-input
-              fill-input
-              hide-selected
-              dense
-              outlined
-              label="Damage Amount"
-              new-value-mode="add-unique"
-              @input-value="(val) => { acConfig.onMissDamageAmount = validateNumber(val, 5); onAcCompositorChanged(); }"
-              @update:model-value="onAcCompositorChanged"
-            />
+            <formula-field path="acConfig.onMissDamageAmount" label="Damage Amount" dense outlined @applied="onAcCompositorChanged" />
           </div>
           <div class="col-6 col-sm-3">
             <q-select
@@ -877,19 +942,7 @@
         <!-- When Hit Extra Inputs -->
         <div v-if="acConfig.onHit === 'damage_attacker'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-6 col-sm-3">
-            <q-select
-              v-model="acConfig.onHitDamageAmount"
-              :options="damageAmountPresets"
-              use-input
-              fill-input
-              hide-selected
-              dense
-              outlined
-              label="On Hit Damage Amount"
-              new-value-mode="add-unique"
-              @input-value="(val) => { acConfig.onHitDamageAmount = validateNumber(val, 10); onAcCompositorChanged(); }"
-              @update:model-value="onAcCompositorChanged"
-            />
+            <formula-field path="acConfig.onHitDamageAmount" label="On Hit Damage Amount" dense outlined @applied="onAcCompositorChanged" />
           </div>
           <div class="col-6 col-sm-3">
             <q-select
@@ -1048,21 +1101,26 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center">
-            <div class="col-12 col-sm-3">
-              <q-checkbox
-                v-model="initiativeConfig.advantage"
-                label="Advantage on Initiative"
+            <div class="col-12 col-sm-5 row items-center q-gutter-x-xs">
+              <span class="text-caption text-grey-4 q-mr-xs">Roll State:</span>
+              <q-btn-toggle
+                v-model="initiativeRollMode"
                 dense
-                @update:model-value="(val) => { if (val) initiativeConfig.disadvantage = false }"
-              />
-            </div>
-            <div class="col-12 col-sm-3">
-              <q-checkbox
-                v-model="initiativeConfig.disadvantage"
-                label="Disadvantage on Initiative"
-                dense
-                @update:model-value="(val) => { if (val) initiativeConfig.advantage = false }"
-              />
+                no-caps
+                rounded
+                unelevated
+                size="sm"
+                toggle-color="primary"
+                color="grey-9"
+                text-color="grey-4"
+                :options="[
+                  { label: 'Normal', value: 'normal' },
+                  { label: 'Advantage ▲▲', value: 'advantage' },
+                  { label: 'Disadvantage ▼▼', value: 'disadvantage' }
+                ]"
+              >
+                <q-tooltip class="dnd-tip">Toggle whether creature rolls Initiative normally, with Advantage, or with Disadvantage.</q-tooltip>
+              </q-btn-toggle>
             </div>
             <div class="col-12 col-sm-3">
               <q-checkbox
@@ -1078,14 +1136,8 @@
                 dense
               />
             </div>
-            <div v-if="initiativeConfig.useLairInitiative" class="col-6 col-sm-1">
-              <q-input
-                v-model.number="initiativeConfig.lairInitiative"
-                type="number"
-                dense
-                outlined
-                label="Lair"
-              />
+            <div v-if="initiativeConfig.useLairInitiative" class="col-6 col-sm-2">
+              <formula-field path="initiativeConfig.lairInitiative" label="Lair" dense outlined />
             </div>
           </div>
 
@@ -1136,6 +1188,154 @@
             </div>
           </div>
 
+          <!-- Modular Composable Initiative Riders -->
+          <div
+            class="q-pa-sm rounded-borders"
+            style="background: rgba(147, 51, 234, 0.05); border: 1px dashed rgba(147, 51, 234, 0.4);"
+          >
+            <div class="row items-center justify-between q-mb-xs">
+              <div class="text-caption text-weight-bold" style="color: #c084fc;">
+                ⚡ Composable Initiative Riders & Permutable Mechanics
+              </div>
+              <q-badge v-if="initiativeConfig.riders && initiativeConfig.riders.length > 0" color="purple-5" outline>
+                {{ initiativeConfig.riders.length }} Active Rider{{ initiativeConfig.riders.length > 1 ? 's' : '' }}
+              </q-badge>
+            </div>
+
+            <!-- Existing Riders Chips List -->
+            <div v-if="initiativeConfig.riders && initiativeConfig.riders.length > 0" class="row q-gutter-xs q-mb-sm">
+              <q-chip
+                v-for="(rider, rIdx) in initiativeConfig.riders"
+                :key="rider.id || 'r-' + rIdx"
+                removable
+                dense
+                color="purple-9"
+                text-color="purple-1"
+                @remove="removeInitiativeRider(rIdx)"
+              >
+                {{ formatInitiativeRider(rider) }}
+              </q-chip>
+            </div>
+
+            <!-- Composer Row: Precondition, Target Types, Roll Effect, Action -->
+            <div class="row q-col-gutter-xs items-center">
+              <div class="col-12 col-sm-3">
+                <q-select
+                  v-model="newRiderAdvMode"
+                  :options="initiativeAdvModeOptions"
+                  emit-value
+                  map-options
+                  dense
+                  outlined
+                  label="Roll Precondition"
+                />
+              </div>
+
+              <div class="col-12 col-sm-4">
+                <q-select
+                  v-model="newRiderCreatureTypes"
+                  :options="creatureTypeOptions"
+                  multiple
+                  use-chips
+                  dense
+                  outlined
+                  label="Target Creature Types"
+                  placeholder="e.g. Fiends, Undead"
+                />
+              </div>
+
+              <div v-if="newRiderCreatureTypes && newRiderCreatureTypes.length > 0" class="col-12 col-sm-2">
+                <q-select
+                  v-model="newRiderRollEffect"
+                  :options="[
+                    { label: 'Disadvantage', value: 'disadvantage' },
+                    { label: 'Advantage', value: 'advantage' }
+                  ]"
+                  emit-value
+                  map-options
+                  dense
+                  outlined
+                  label="Target Roll Effect"
+                />
+              </div>
+
+              <div :class="newRiderCreatureTypes && newRiderCreatureTypes.length > 0 ? 'col-12 col-sm-3' : 'col-12 col-sm-5'">
+                <q-select
+                  v-model="newRiderActionType"
+                  :options="initiativeActionTypeOptions"
+                  emit-value
+                  map-options
+                  dense
+                  outlined
+                  label="Composable Action"
+                >
+                  <template #option="scope">
+                    <q-item v-bind="scope.itemProps" dense>
+                      <q-item-section v-if="scope.opt.icon" avatar style="min-width: 24px;">
+                        <q-icon :name="scope.opt.icon" :color="scope.opt.color || 'purple-4'" size="xs" />
+                      </q-item-section>
+                      <q-item-section>
+                        <q-item-label class="text-weight-medium">{{ scope.opt.label }}</q-item-label>
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+            </div>
+
+            <!-- Parameter Row: Spell Name / HP Amount / Move Distance / Custom Text & Add Button -->
+            <div class="row q-col-gutter-xs items-center q-mt-xs">
+              <div v-if="newRiderActionType === 'cast_spell'" class="col-12 col-sm-6">
+                <q-input
+                  v-model="newRiderSpellName"
+                  dense
+                  outlined
+                  label="Spell Name"
+                  placeholder="e.g. Thaumaturgy, Compelled Duel"
+                />
+              </div>
+              <div v-else-if="newRiderActionType === 'regain_hp' || newRiderActionType === 'gain_temp_hp'" class="col-12 col-sm-6">
+                <q-input
+                  v-model="newRiderHpAmount"
+                  dense
+                  outlined
+                  :label="newRiderActionType === 'regain_hp' ? 'Hit Points Regained' : 'Temporary Hit Points Gained'"
+                  placeholder="e.g. 10 or 2d8+2"
+                />
+              </div>
+              <div v-else-if="newRiderActionType === 'move_distance'" class="col-12 col-sm-6">
+                <q-input
+                  v-model="newRiderMoveDistance"
+                  dense
+                  outlined
+                  label="Distance (e.g. 10ft)"
+                  placeholder="10ft"
+                />
+              </div>
+              <div v-else-if="newRiderActionType === 'custom'" class="col-12 col-sm-6">
+                <q-input
+                  v-model="newRiderCustomText"
+                  dense
+                  outlined
+                  label="Custom Action Text"
+                  placeholder="e.g. Can take the Disengage action"
+                />
+              </div>
+
+              <div class="col-12 col-sm-3 q-ml-auto text-right">
+                <q-btn
+                  color="purple"
+                  icon="add"
+                  label="Add Rider"
+                  dense
+                  unelevated
+                  class="full-width"
+                  @click="addInitiativeRider"
+                />
+              </div>
+            </div>
+          </div>
+
           <!-- Single Gate for Paragon Multi-Phase Pools & Per-Phase Initiative Counts -->
           <div
             class="q-pa-sm rounded-borders"
@@ -1152,16 +1352,7 @@
             <div class="q-mt-xs q-gutter-y-xs text-caption">
               <div class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-3">
-                  <q-input
-                    v-model.number="monster.paragonConfig.poolCount"
-                    type="number"
-                    min="1"
-                    max="10"
-                    dense
-                    outlined
-                    label="Number of Stage Pools"
-                    @update:model-value="updateParagonPoolHp"
-                  />
+                  <formula-field path="paragonConfig.poolCount" label="Number of Stage Pools" dense outlined @applied="updateParagonPoolHp" />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-input
@@ -1215,15 +1406,42 @@
         caption="Bloodied, Damage Threshold/Reduction, Invulnerability, Regeneration & Immortality"
       >
         <div class="q-pa-sm q-gutter-y-sm">
+          <div class="row items-center justify-between q-px-xs q-mb-xs">
+            <q-toggle
+              v-model="monster.splitHpRiderRows"
+              dark
+              dense
+              size="xs"
+              color="red-4"
+              label="Split HP Relatable Riders into Sub-Rows"
+              class="text-caption text-weight-medium text-red-2"
+            >
+              <q-tooltip>Renders HP relatable riders (Temporary HP, Bloodied riders, Death Prevention, Damage Threshold) on dedicated indented sub-rows (↳) directly beneath base HP.</q-tooltip>
+            </q-toggle>
+          </div>
           <!-- Row 1: Bloodied & Per-Phase Bloodied States -->
           <div class="q-pa-sm rounded-borders" style="background: rgba(239, 68, 68, 0.05); border: 1px solid rgba(239, 68, 68, 0.25);">
             <div class="row items-center justify-between q-mb-xs">
               <div class="text-caption text-weight-bold text-red-4">
                 🩸 Bloodied & Phase Thresholds
               </div>
-              <q-badge v-if="(extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none') || extendedHp.showBloodied || monster.paragonConfig.poolCount > 1" color="red-5" outline>
-                {{ monster.paragonConfig.poolCount > 1 ? `${monster.paragonConfig.poolCount} Stages` : `Bloodied: ${extendedHp.bloodiedSource === 'flat' ? (extendedHp.bloodiedOverride || Math.max(1, Math.floor(monster.avgHp / 2))) : getDynamicSourceValue(extendedHp.bloodiedSource || 'half_hp', extendedHp.bloodiedDice)} HP` }}
-              </q-badge>
+              <div class="row items-center q-gutter-x-sm">
+                <q-toggle
+                  v-model="monster.splitHpRiderRows"
+                  dark
+                  dense
+                  size="xs"
+                  color="red-4"
+                  label="↳ Sub-Row"
+                  class="text-caption text-red-2"
+                  data-contextual-split-hp="bloodied"
+                >
+                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                </q-toggle>
+                <q-badge v-if="(extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none') || extendedHp.showBloodied || monster.paragonConfig.poolCount > 1" color="red-5" outline>
+                  {{ monster.paragonConfig.poolCount > 1 ? `${monster.paragonConfig.poolCount} Stages` : `Bloodied: ${extendedHp.bloodiedSource === 'flat' ? (extendedHp.bloodiedOverride || Math.max(1, Math.floor(monster.avgHp / 2))) : getDynamicSourceValue(extendedHp.bloodiedSource || 'half_hp', extendedHp.bloodiedDice)} HP` }}
+                </q-badge>
+              </div>
             </div>
 
             <!-- Single-Stage Bloodied Source Row (Hidden when Multi-Stage Paragon uses per-phase Bloodied checkboxes) -->
@@ -1250,6 +1468,9 @@
                       <q-item-section v-if="scope.opt.category" side>
                         <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
                       </q-item-section>
+                      <q-tooltip class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+                        {{ scope.opt.tooltip || `${scope.opt.label}${scope.opt.category ? ' (' + scope.opt.category + ')' : ''}` }}
+                      </q-tooltip>
                     </q-item>
                   </template>
                 </q-select>
@@ -1377,9 +1598,23 @@
               <div class="text-caption text-weight-bold text-blue-4">
                 🛡️ Damage Threshold (DT — Ignores hits below threshold)
               </div>
-              <q-badge v-if="(extendedHp.damageThreshold && extendedHp.damageThreshold > 0) || (extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' && extendedHp.damageThresholdSource !== 'none')" color="blue-4" outline>
-                DT {{ extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageThresholdSource, extendedHp.damageThresholdDice) : extendedHp.damageThreshold }}
-              </q-badge>
+              <div class="row items-center q-gutter-x-sm">
+                <q-toggle
+                  v-model="monster.splitHpRiderRows"
+                  dark
+                  dense
+                  size="xs"
+                  color="blue-4"
+                  label="↳ Sub-Row"
+                  class="text-caption text-blue-2"
+                  data-contextual-split-hp="dt"
+                >
+                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                </q-toggle>
+                <q-badge v-if="(extendedHp.damageThreshold && extendedHp.damageThreshold > 0) || (extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' && extendedHp.damageThresholdSource !== 'none')" color="blue-4" outline>
+                  DT {{ extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageThresholdSource, extendedHp.damageThresholdDice) : extendedHp.damageThreshold }}
+                </q-badge>
+              </div>
             </div>
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-4">
@@ -1417,20 +1652,8 @@
                 />
               </div>
               <div v-else-if="!extendedHp.damageThresholdSource || extendedHp.damageThresholdSource === 'flat' || extendedHp.damageThresholdSource === 'none'" class="col-12 col-sm-4">
-                <q-select
-                  v-model="extendedHp.damageThreshold"
-                  :options="dtPresetOptions"
-                  use-input
-                  fill-input
-                  hide-selected
-                  label="Damage Threshold Value"
-                  dense
-                  outlined
-                  clearable
-                  new-value-mode="add-unique"
-                  @input-value="(val) => (extendedHp.damageThreshold = validateNumber(val, null))"
-                  @update:model-value="(val) => (extendedHp.damageThreshold = validateNumber(val, null))"
-                />
+                <formula-field path="extendedHp.damageThreshold" label="Damage Threshold Value" dense outlined />
+                <q-btn v-if="extendedHp.damageThreshold != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageThreshold')" />
               </div>
               <div v-else class="col-12 col-sm-4">
                 <div class="q-pa-xs rounded-borders text-caption text-blue-3 text-weight-bold" style="background: rgba(255,255,255,0.05); height: 40px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);">
@@ -1471,9 +1694,23 @@
               <div class="text-caption text-weight-bold text-emerald-4" style="color: #34d399;">
                 ⚔️ Damage Reduction (DR — Subtracts from incoming damage)
               </div>
-              <q-badge v-if="(extendedHp.damageReduction && extendedHp.damageReduction > 0) || (extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' && extendedHp.damageReductionSource !== 'none')" color="teal-4" outline>
-                DR {{ extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageReductionSource, extendedHp.damageReductionDice) : extendedHp.damageReduction }}
-              </q-badge>
+              <div class="row items-center q-gutter-x-sm">
+                <q-toggle
+                  v-model="monster.splitHpRiderRows"
+                  dark
+                  dense
+                  size="xs"
+                  color="teal-4"
+                  label="↳ Sub-Row"
+                  class="text-caption text-teal-2"
+                  data-contextual-split-hp="dr"
+                >
+                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                </q-toggle>
+                <q-badge v-if="(extendedHp.damageReduction && extendedHp.damageReduction > 0) || (extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' && extendedHp.damageReductionSource !== 'none')" color="teal-4" outline>
+                  DR {{ extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageReductionSource, extendedHp.damageReductionDice) : extendedHp.damageReduction }}
+                </q-badge>
+              </div>
             </div>
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-4">
@@ -1511,20 +1748,8 @@
                 />
               </div>
               <div v-else-if="!extendedHp.damageReductionSource || extendedHp.damageReductionSource === 'flat' || extendedHp.damageReductionSource === 'none'" class="col-12 col-sm-4">
-                <q-select
-                  v-model="extendedHp.damageReduction"
-                  :options="drPresetOptions"
-                  use-input
-                  fill-input
-                  hide-selected
-                  label="Damage Reduction Value"
-                  dense
-                  outlined
-                  clearable
-                  new-value-mode="add-unique"
-                  @input-value="(val) => (extendedHp.damageReduction = validateNumber(val, null))"
-                  @update:model-value="(val) => (extendedHp.damageReduction = validateNumber(val, null))"
-                />
+                <formula-field path="extendedHp.damageReduction" label="Damage Reduction Value" dense outlined />
+                <q-btn v-if="extendedHp.damageReduction != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageReduction')" />
               </div>
               <div v-else class="col-12 col-sm-4">
                 <div class="q-pa-xs rounded-borders text-caption text-teal-3 text-weight-bold" style="background: rgba(255,255,255,0.05); height: 40px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);">
@@ -1569,6 +1794,18 @@
                 💚 Regeneration & Temporary Hit Points Module
               </div>
               <div class="row items-center q-gutter-x-xs">
+                <q-toggle
+                  v-model="monster.splitHpRiderRows"
+                  dark
+                  dense
+                  size="xs"
+                  color="teal-4"
+                  label="↳ Sub-Row"
+                  class="text-caption text-teal-2 q-mr-xs"
+                  data-contextual-split-hp="regen"
+                >
+                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                </q-toggle>
                 <q-badge
                   v-if="regenPreview"
                   color="positive"
@@ -1645,15 +1882,7 @@
                   </q-select>
                 </div>
                 <div v-if="!extendedHp.regeneration.valueSource || extendedHp.regeneration.valueSource === 'flat'" class="col-12 col-sm-4">
-                  <q-input
-                    v-model.number="extendedHp.regeneration.amount"
-                    type="number"
-                    min="0"
-                    label="Amount"
-                    dense
-                    outlined
-                    @update:model-value="(val) => { extendedHp.regeneration.enabled = Number(val) > 0 }"
-                  />
+                  <formula-field path="extendedHp.regeneration.amount" label="Amount" dense outlined @applied="(val) => { extendedHp.regeneration.enabled = val > 0 }" />
                 </div>
                 <div v-else-if="extendedHp.regeneration.valueSource === 'dice' || extendedHp.regeneration.valueSource.startsWith('dice_')" class="col-12 col-sm-4">
                   <q-input
@@ -1797,14 +2026,28 @@
               <div class="text-caption text-weight-bold text-amber-4">
                 👑 Mortality & Death Prevention (Mortal / Immortal / Undead Fortitude)
               </div>
-              <q-badge
-                v-if="deathPrevention.enabled && deathPrevention.name !== 'Mortal' && deathPreventionPreview"
-                color="amber-5"
-                outline
-                class="q-pa-xs"
-              >
-                {{ deathPreventionPreview }}
-              </q-badge>
+              <div class="row items-center q-gutter-x-sm">
+                <q-toggle
+                  v-model="monster.splitHpRiderRows"
+                  dark
+                  dense
+                  size="xs"
+                  color="amber-4"
+                  label="↳ Sub-Row"
+                  class="text-caption text-amber-2"
+                  data-contextual-split-hp="mortality"
+                >
+                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                </q-toggle>
+                <q-badge
+                  v-if="deathPrevention.enabled && deathPrevention.name !== 'Mortal' && deathPreventionPreview"
+                  color="amber-5"
+                  outline
+                  class="q-pa-xs"
+                >
+                  {{ deathPreventionPreview }}
+                </q-badge>
+              </div>
             </div>
 
             <div class="row q-col-gutter-sm items-center">
@@ -1863,19 +2106,7 @@
               <!-- Critical Hits to Kill Mode -->
               <div v-if="deathPrevention.dcRule === 'until_x_crits'" class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-4">
-                  <q-select
-                    v-model="deathPrevention.critHitsToKill"
-                    :options="['1', '2', '3', '4', '5', '10']"
-                    use-input
-                    fill-input
-                    hide-selected
-                    dense
-                    outlined
-                    label="Critical Hits Required to Slay (X)"
-                    new-value-mode="add-unique"
-                    @input-value="(val) => (deathPrevention.critHitsToKill = validateNumber(val, 3))"
-                    @update:model-value="(val) => (deathPrevention.critHitsToKill = validateNumber(val, 3))"
-                  />
+                  <formula-field path="extendedHp.deathPrevention.critHitsToKill" label="Critical Hits Required to Slay (X)" dense outlined />
                 </div>
                 <div class="col-12 col-sm-8 text-caption text-amber-3">
                   Hides numeric HP on statblock: <code>Immortal (Until being hit by {{ deathPrevention.critHitsToKill || 3 }} Critical Hits)</code>
@@ -1910,15 +2141,7 @@
                   </q-select>
                 </div>
                 <div v-if="deathPrevention.returnHpSource === 'flat'" class="col-12 col-sm-3">
-                  <q-input
-                    v-model.number="deathPrevention.returnHpValue"
-                    type="number"
-                    min="1"
-                    dense
-                    outlined
-                    label="Return HP Value"
-                    @update:model-value="(v) => { deathPrevention.returnHpAmount = Number(v) || 1 }"
-                  />
+                  <formula-field path="extendedHp.deathPrevention.returnHpValue" label="Return HP Value" dense outlined @applied="(val) => { deathPrevention.returnHpAmount = val }" />
                 </div>
                 <div v-else-if="deathPrevention.returnHpSource === 'dice' || deathPrevention.returnHpSource?.startsWith('dice_')" class="col-12 col-sm-3">
                   <q-input
@@ -1944,13 +2167,7 @@
                   />
                 </div>
                 <div v-if="deathPrevention.requiresSave || deathPrevention.dcRule === 'custom_save'" class="col-6 col-sm-3">
-                  <q-input
-                    v-model.number="deathPrevention.saveDc"
-                    type="number"
-                    dense
-                    outlined
-                    label="Save DC"
-                  />
+                  <formula-field path="extendedHp.deathPrevention.saveDc" label="Save DC" dense outlined />
                 </div>
               </div>
 
@@ -1976,14 +2193,7 @@
               <!-- Death Burst Damage Configuration -->
               <div v-if="deathPrevention.dcRule === 'upon_death_burst' || deathPrevention.uponDeathDealsDamage" class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-3">
-                  <q-input
-                    v-model.number="deathPrevention.deathBurstDamageAmount"
-                    type="number"
-                    min="1"
-                    dense
-                    outlined
-                    label="Death Burst Damage"
-                  />
+                  <formula-field path="extendedHp.deathPrevention.deathBurstDamageAmount" label="Death Burst Damage" dense outlined />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
@@ -2006,15 +2216,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-3">
-                  <q-input
-                    v-model.number="deathPrevention.deathBurstRange"
-                    type="number"
-                    min="5"
-                    step="5"
-                    dense
-                    outlined
-                    label="Burst Radius (ft)"
-                  />
+                  <formula-field path="extendedHp.deathPrevention.deathBurstRange" label="Burst Radius (ft)" dense outlined />
                 </div>
               </div>
 
@@ -2130,15 +2332,7 @@
                   <q-chip dense outline color="accent" class="q-ma-none text-weight-bold">
                     🧠 Telepathy
                   </q-chip>
-                  <q-input
-                    v-model.number="lang.telepathyRange"
-                    type="number"
-                    label="Range (ft)"
-                    dense
-                    outlined
-                    style="width: 110px;"
-                    @update:model-value="syncLanguagesToString"
-                  />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].telepathyRange`" label="Range (ft)" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2489,15 +2683,7 @@
                   <q-chip dense outline color="secondary" class="q-ma-none text-weight-bold">
                     🐾 Handle Animals
                   </q-chip>
-                  <q-input
-                    v-model.number="getAnimalHandling(lang).dc"
-                    type="number"
-                    label="Base DC"
-                    dense
-                    outlined
-                    style="width: 100px;"
-                    @update:model-value="syncLanguagesToString"
-                  />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].animalHandling.dc`" label="Base DC" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2689,15 +2875,7 @@
                   <q-chip dense outline color="purple" class="q-ma-none text-weight-bold">
                     💀 Undead (Command / Speak with Undead)
                   </q-chip>
-                  <q-input
-                    v-model.number="getUndeadConfig(lang).telepathicRange"
-                    type="number"
-                    label="Range (ft)"
-                    dense
-                    outlined
-                    style="width: 100px;"
-                    @update:model-value="syncLanguagesToString"
-                  />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].undeadConfig.telepathicRange`" label="Range (ft)" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2752,15 +2930,7 @@
                   <q-chip dense outline color="brown" class="q-ma-none text-weight-bold">
                     🪦 Dead (Speak with Dead)
                   </q-chip>
-                  <q-input
-                    v-model.number="getDeadConfig(lang).maxQuestions"
-                    type="number"
-                    label="Questions"
-                    dense
-                    outlined
-                    style="width: 90px;"
-                    @update:model-value="syncLanguagesToString"
-                  />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].deadConfig.maxQuestions`" label="Questions" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2885,6 +3055,7 @@
           </div>
         </div>
       </q-expansion-item>
+      <database-studio class="q-mt-sm" />
     </q-card>
   </q-expansion-item>
 </template>
@@ -2899,13 +3070,23 @@ import { ALL_OFFICIAL_LANGUAGES } from 'src/data/LANGUAGES'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { computed, defineComponent, ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import { basicArrayFilter } from '../filters'
 import LockToggleButton from '../LockToggleButton.vue'
+import DatabaseStudio from './DatabaseStudio.vue'
 import SwapButtons from './widgets/SwapButtons.vue'
 import FormulaField from '../kit/FormulaField.vue'
+import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { validateNumber } from './numberInput'
 import { avgHP } from 'src/core/domain/math-utils'
 import { v4 as uuidv4 } from 'uuid'
+import {
+  calculatePointBuySpent,
+  STANDARD_ARRAY,
+  MONSTER_ROLE_ARCHETYPES,
+  SPECIES_CATALOG,
+  type MonsterRoleArchetype,
+} from 'src/core/domain/species-and-heuristics'
 import {
   formatLanguagesList,
   formatMinimalistRegen,
@@ -2915,6 +3096,16 @@ import {
   resolveInvulnerabilityDisplayLocation,
   composeAcAndDefenses,
 } from 'src/core/domain/defense-and-traits-utils'
+import {
+  ComposableInitiativeRider,
+  InitiativeAdvantageMode,
+  InitiativeActionType,
+  INITIATIVE_ADV_MODE_OPTIONS,
+  INITIATIVE_ACTION_TYPE_OPTIONS,
+  STANDARD_CREATURE_TYPE_OPTIONS,
+  formatInitiativeRider,
+  formatInitiativeRiders,
+} from 'src/core/domain/initiative-composer'
 import { MonsterAcConfig, MonsterLanguageItem, ParagonPhaseConfig } from '../models'
 
 const STANDARD_DAMAGE_TYPES = [
@@ -3001,6 +3192,109 @@ export default defineComponent({
       STANDARD_ALIGNMENT,
       alignmentOptions
     )
+
+    const $q = useQuasar()
+    const pointBuyInfo = computed(() => calculatePointBuySpent(monster.stats))
+    const roleArchetypes = Object.values(MONSTER_ROLE_ARCHETYPES)
+    const speciesOptions = SPECIES_CATALOG.map((s) => ({ label: s.name, value: s.id }))
+
+    const applyStandardArray = () => {
+      monster.$patch((state) => {
+        Object.assign(state.stats, STANDARD_ARRAY)
+      })
+    }
+
+    const applyAllStats = (val: number) => {
+      monster.$patch((state) => {
+        for (const k of statKeys) {
+          state.stats[k] = val
+        }
+      })
+    }
+
+    const applyArchetype = (arch: MonsterRoleArchetype) => {
+      monster.$patch((state) => {
+        Object.assign(state.stats, arch.stats)
+      })
+      $q.notify({
+        type: 'positive',
+        message: `Applied ${arch.label} stat heuristic array`,
+      })
+    }
+
+    const selectedSpecies = ref<string | null>(null)
+    const onSpeciesSelected = (speciesId: string | null) => {
+      if (!speciesId) return
+      const entry = SPECIES_CATALOG.find((s) => s.id === speciesId)
+      if (!entry) return
+      $q.dialog({
+        title: `Apply ${entry.name} Features?`,
+        message: `This will update Type (${entry.type}), Subtype (${entry.subtype || 'none'}), Speed (${entry.speed || 30}ft), and append ${entry.traits.length} species traits.`,
+        ok: { label: 'Apply', color: 'primary' },
+        cancel: true,
+      }).onOk(() => {
+        monster.$patch((state) => {
+          if (entry.type) state.type = entry.type
+          if (entry.subtype) state.subtype = entry.subtype
+          if (entry.size) state.size = entry.size
+          if (entry.speed) {
+            const walk = state.speeds.find((s) => !s.type || s.type.toLowerCase() === 'walk')
+            if (walk) walk.speed = entry.speed
+          }
+          if (entry.traits && entry.traits.length > 0) {
+            for (const t of entry.traits) {
+              if (!state.traits.some((existing) => existing.name.toLowerCase() === t.name.toLowerCase())) {
+                state.traits.push({
+                  id: `trait-species-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+                  name: t.name,
+                  description: t.description,
+                  customPreamble: false,
+                  limitedUse: { count: 0, rate: '' },
+                  crAnnotation: { include: false },
+                })
+              }
+            }
+          }
+          if (entry.senses && entry.senses.length > 0) {
+            for (const s of entry.senses) {
+              const val = parseInt(s.value) || 60
+              if (/darkvision/i.test(s.name)) {
+                if (!state.senses.darkvision || state.senses.darkvision < val) state.senses.darkvision = val
+              } else if (/blindsight/i.test(s.name)) {
+                if (!state.senses.blindsight || state.senses.blindsight < val) state.senses.blindsight = val
+              } else if (/tremorsense/i.test(s.name)) {
+                if (!state.senses.tremorsense || state.senses.tremorsense < val) state.senses.tremorsense = val
+              } else if (/truesight/i.test(s.name)) {
+                if (!state.senses.truesight || state.senses.truesight < val) state.senses.truesight = val
+              } else {
+                state.sensesNotes = state.sensesNotes ? `${state.sensesNotes}, ${s.name} ${s.value}` : `${s.name} ${s.value}`
+              }
+            }
+          }
+          if (entry.resistances && entry.resistances.length > 0) {
+            for (const res of entry.resistances) {
+              if (!state.resistances.includes(res)) state.resistances.push(res)
+            }
+          }
+          if (entry.immunities && entry.immunities.length > 0) {
+            for (const imm of entry.immunities) {
+              if (!state.immunities.includes(imm)) state.immunities.push(imm)
+            }
+          }
+          if (entry.languages && entry.languages.length > 0) {
+            for (const lang of entry.languages) {
+              if (!state.languages.toLowerCase().includes(lang.toLowerCase())) {
+                state.languages = state.languages ? `${state.languages}, ${lang}` : lang
+              }
+            }
+          }
+        })
+        $q.notify({
+          type: 'positive',
+          message: `Auto-populated features from ${entry.name}! Racial stat hints: ${Object.entries(entry.statBonuses).map(([s, b]) => `+${b} ${s}`).join(', ')}`,
+        })
+      })
+    }
 
     const ensureExtendedHp = () => {
       if (!monster.extendedHp) {
@@ -3374,6 +3668,21 @@ export default defineComponent({
     }
     const initiativeConfig = computed(() => monster.initiativeConfig || defaultInitConfig)
 
+    const initiativeRollMode = computed({
+      get: () => {
+        if (initiativeConfig.value.advantage) return 'advantage'
+        if (initiativeConfig.value.disadvantage) return 'disadvantage'
+        return 'normal'
+      },
+      set: (val: 'normal' | 'advantage' | 'disadvantage') => {
+        if (!monster.initiativeConfig) {
+          monster.initiativeConfig = { ...defaultInitConfig }
+        }
+        monster.initiativeConfig.advantage = val === 'advantage'
+        monster.initiativeConfig.disadvantage = val === 'disadvantage'
+      }
+    })
+
     const secondaryStatOptions = [
       { label: 'None (DEX only)', value: 'none', category: 'Standard', icon: 'flash_on', color: 'grey-5' },
       { label: 'Charisma (CHA)', value: 'CHA', category: 'Ability', icon: 'auto_awesome', color: 'purple-4' },
@@ -3401,6 +3710,7 @@ export default defineComponent({
       { label: 'Choose lowest Dice to Cast Compelled Duel', value: 'cast_compelled_duel', category: 'Spell Trigger', icon: 'auto_fix_high', color: 'amber-4' },
       { label: 'Choose lowest Dice to Cast Thaumaturgy', value: 'cast_thaumaturgy', category: 'Spell Trigger', icon: 'auto_fix_high', color: 'amber-4' },
       { label: 'Choose lowest Dice to Cast Custom Spell...', value: 'cast_custom', category: 'Spell Trigger', icon: 'auto_fix_high', color: 'amber-4' },
+      { label: 'While Bloodied, acts twice per round', value: 'while_bloodied_act_twice', category: 'Dramatic Triggers', icon: 'bloodtype', color: 'red-4' },
       { label: 'Custom Initiative Note...', value: 'custom', category: 'Custom', icon: 'edit_note', color: 'cyan-4' },
     ]
 
@@ -3417,11 +3727,66 @@ export default defineComponent({
       else if (trig === 'within_1d6_rounds') parts.push('Within 1d6 of rounds')
       else if (trig === 'no_temp_hp_remaining') parts.push('No Temp HP')
       else if (trig === 'hp_not_equal_max') parts.push('HP != Max')
+      else if (trig === 'while_bloodied_act_twice') parts.push('Acts twice while Bloodied')
+      else if (trig === 'cast_thaumaturgy' || trig === 'choose_lowest_thaumaturgy') parts.push('can cast Thaumaturgy')
+      else if (trig === 'cast_compelled_duel' || trig === 'choose_lowest_compelled_duel') parts.push('can cast Compelled Duel')
+      else if (trig === 'cast_custom' || trig === 'choose_lowest_custom') parts.push(`can cast ${initiativeConfig.value.specialTriggerSpell || 'Spell'}`)
+      else if (trig === 'custom' && initiativeConfig.value.customEffectNote) parts.push(initiativeConfig.value.customEffectNote)
       if (initiativeConfig.value.useLairInitiative && trig !== 'at_end_and_start_lair') {
         parts.push(`| ${initiativeConfig.value.lairInitiative ?? 20} (Lair)`)
       }
+
+      // Modular composable riders
+      if (Array.isArray(initiativeConfig.value.riders) && initiativeConfig.value.riders.length > 0) {
+        const ridersFormatted = formatInitiativeRiders(initiativeConfig.value.riders)
+        if (ridersFormatted.length > 0) {
+          parts.push(...ridersFormatted)
+        }
+      }
+
       return parts.join(', ')
     })
+
+    // Composable Initiative Riders Composer State & Methods
+    const newRiderAdvMode = ref<InitiativeAdvantageMode>('none')
+    const newRiderCreatureTypes = ref<string[]>([])
+    const newRiderRollEffect = ref<'disadvantage' | 'advantage'>('disadvantage')
+    const newRiderActionType = ref<InitiativeActionType>('none')
+    const newRiderSpellName = ref('')
+    const newRiderHpAmount = ref<number | string>(10)
+    const newRiderMoveDistance = ref<number | string>('10ft')
+    const newRiderCustomText = ref('')
+
+    const addInitiativeRider = () => {
+      if (!monster.initiativeConfig.riders) {
+        monster.initiativeConfig.riders = []
+      }
+      const rider: ComposableInitiativeRider = {
+        id: uuidv4(),
+        advMode: newRiderAdvMode.value,
+        targetCreatureTypes: [...newRiderCreatureTypes.value],
+        targetRollEffect: newRiderRollEffect.value,
+        actionType: newRiderActionType.value,
+        spellName: newRiderSpellName.value.trim(),
+        hpAmount: newRiderHpAmount.value,
+        moveDistance: newRiderMoveDistance.value,
+        customText: newRiderCustomText.value.trim(),
+      }
+      monster.initiativeConfig.riders.push(rider)
+      // Reset form controls
+      newRiderAdvMode.value = 'none'
+      newRiderCreatureTypes.value = []
+      newRiderRollEffect.value = 'disadvantage'
+      newRiderActionType.value = 'none'
+      newRiderSpellName.value = ''
+      newRiderCustomText.value = ''
+    }
+
+    const removeInitiativeRider = (index: number) => {
+      if (monster.initiativeConfig.riders) {
+        monster.initiativeConfig.riders.splice(index, 1)
+      }
+    }
 
     // Ensure portrait initialized
     const defaultPortrait = {
@@ -3833,6 +4198,19 @@ export default defineComponent({
       }
     }
 
+    // Keep the legacy base AC projection current when a formula source changes.
+    // An explicitly disabled compositor keeps ownership of its manual AC.
+    watch(() => JSON.stringify(monster.acConfig), () => {
+      if (monster.acConfig?.enabled && Object.keys(monster.bindings || {}).some((path) => path.startsWith('acConfig.'))) {
+        onAcCompositorChanged()
+      }
+    }, { immediate: true })
+
+    const clearHpThreshold = (field: 'damageThreshold' | 'damageReduction') => {
+      monster.clearBinding(`extendedHp.${field}`)
+      extendedHp.value[field] = null
+    }
+
     const recoveryTypeOptions = [
       { label: 'Absorb Damage as Hit Points', value: 'absorb_hp', category: 'Absorption', icon: 'flash_on', color: 'amber-4' },
       { label: 'Absorb Damage as Temp HP', value: 'absorb_temp_hp', category: 'Absorption', icon: 'shield', color: 'amber-4' },
@@ -3874,6 +4252,16 @@ export default defineComponent({
       'Death Ward',
       'Custom',
     ]
+
+    watch(() => portrait.value.position, (pos) => {
+      if (pos === 'none') {
+        editorStore.a4Layout = 'statblock_only'
+      } else if (pos === 'top' || pos === 'bottom') {
+        editorStore.a4Layout = 'stacked'
+      } else if (pos === 'left' || pos === 'right') {
+        editorStore.a4Layout = 'side_by_side'
+      }
+    })
 
     const onPortraitFileSelected = (file: File | null) => {
       if (!file) return
@@ -4052,6 +4440,16 @@ export default defineComponent({
       syncParagonPhaseRows()
     }
 
+    // A bound pool count can change when its source changes, without another
+    // Apply click. Reconcile only a mismatched topology; loading matching saved
+    // phase rows must retain their authored HP and names.
+    watch(() => monster.paragonConfig?.poolCount, (count) => {
+      if (!monster.bindings?.['paragonConfig.poolCount']) return
+      const p = monster.paragonConfig
+      const expectedRows = count > 1 ? count : 0
+      if (p && p.phaseConfigs?.length !== expectedRows) updateParagonPoolHp()
+    }, { immediate: true })
+
     const computedParagonPoolSummary = computed(() => {
       const p = monster.paragonConfig
       if (!p || !p.enabled || (p.poolCount || 1) <= 1) return ''
@@ -4072,6 +4470,13 @@ export default defineComponent({
         monster.stats[stat] = validateNumber(value, 10)
       }
     }
+
+    watch(() => extendedHp.value.regeneration.amount, (amount) => {
+      if (monster.bindings?.['extendedHp.regeneration.amount']) extendedHp.value.regeneration.enabled = amount > 0
+    }, { immediate: true })
+    watch(() => deathPrevention.value.returnHpValue, (amount) => {
+      if (monster.bindings?.['extendedHp.deathPrevention.returnHpValue']) deathPrevention.value.returnHpAmount = amount
+    }, { immediate: true })
 
     // Languages logic
     if (!Array.isArray(monster.languagesList)) {
@@ -4211,6 +4616,10 @@ export default defineComponent({
       monster.languages = formatLanguagesList(monster.languagesList, monster.specialCommunicationArchetype)
     }
 
+    watch(() => JSON.stringify(monster.languagesList), () => {
+      if (Object.keys(monster.bindings || {}).some((path) => path.startsWith('languagesList['))) syncLanguagesToString()
+    }, { immediate: true })
+
     const onLanguageSelected = (val: string | null) => {
       if (!val) return
       const name = val.trim()
@@ -4312,7 +4721,12 @@ export default defineComponent({
     }
 
     const removeLanguage = (index: number) => {
-      monster.languagesList.splice(index, 1)
+      const language = monster.languagesList[index]
+      if (!language) return
+      monster.$patch(state => {
+        state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('languagesList', language.id))
+        state.languagesList.splice(index, 1)
+      })
       syncLanguagesToString()
     }
 
@@ -4330,6 +4744,7 @@ export default defineComponent({
       statKeys,
       updateStat,
       validateNumber,
+      clearHpThreshold,
       extendedHp,
       tempHpConfig,
       tempHpTriggerOptions,
@@ -4337,6 +4752,7 @@ export default defineComponent({
       damageTypeWithNoneOptions,
       onRegenDamageTypeTriggerChanged,
       initiativeConfig,
+      initiativeRollMode,
       secondaryStatOptions,
       statModeOptions,
       initiativePreview,
@@ -4386,6 +4802,19 @@ export default defineComponent({
       onInvulnerabilityConditionsChanged,
       onTogglePhaseBloodied,
       initiativeTriggerOptions,
+      initiativeAdvModeOptions: INITIATIVE_ADV_MODE_OPTIONS,
+      initiativeActionTypeOptions: INITIATIVE_ACTION_TYPE_OPTIONS,
+      newRiderAdvMode,
+      newRiderCreatureTypes,
+      newRiderRollEffect,
+      newRiderActionType,
+      newRiderSpellName,
+      newRiderHpAmount,
+      newRiderMoveDistance,
+      newRiderCustomText,
+      addInitiativeRider,
+      removeInitiativeRider,
+      formatInitiativeRider,
       bloodiedAtPhaseOptions,
       onRegenFrequencyChanged,
       onDeathPreventionTemplateChanged,
@@ -4424,6 +4853,14 @@ export default defineComponent({
       getPlantsConfig,
       getUndeadConfig,
       getDeadConfig,
+      pointBuyInfo,
+      roleArchetypes,
+      speciesOptions,
+      selectedSpecies,
+      applyStandardArray,
+      applyAllStats,
+      applyArchetype,
+      onSpeciesSelected,
     }
   },
 })

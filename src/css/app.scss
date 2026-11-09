@@ -273,7 +273,7 @@
         flex-direction: column;
         align-items: stretch;
         justify-content: stretch;
-        min-width: 42px;
+        min-width: clamp(28px, 3.5vw, 40px);
         padding: 0 !important;
         gap: 0 !important;
 
@@ -282,8 +282,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 3px 8px;
-          font-size: 0.68rem;
+          padding: 3px 4px;
+          font-size: clamp(0.58rem, 0.9vw, 0.68rem);
           font-weight: 800;
           letter-spacing: 0.05em;
           text-transform: uppercase;
@@ -297,8 +297,8 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          padding: 4px 8px;
-          font-size: 0.92rem;
+          padding: 4px 4px;
+          font-size: clamp(0.78rem, 1.2vw, 0.92rem);
           font-weight: 900;
           line-height: 1.15;
           white-space: nowrap;
@@ -306,16 +306,16 @@
       }
 
       .cr-main-region {
-        background: #7a200d;
-        color: #ffffff;
+        background: transparent !important;
+        color: #58180d !important;
 
         .region-label {
-          color: rgba(255, 255, 255, 0.92);
-          border-bottom-color: rgba(255, 255, 255, 0.25);
+          color: #58180d !important;
+          border-bottom-color: rgba(88, 24, 13, 0.25) !important;
         }
 
         .region-val {
-          color: #ffffff;
+          color: #58180d !important;
         }
       }
 
@@ -343,7 +343,7 @@
 
   .name-cluster {
     flex: 2 1 auto;
-    min-width: 140px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     justify-content: stretch;
@@ -389,27 +389,33 @@
     .monster-meta-badges.top-plate-meta-row {
       flex: 1;
       display: flex;
+      flex-wrap: wrap;
       align-items: stretch;
       justify-content: stretch;
       gap: 0;
       min-height: 26px;
       background: #f8fafc;
+      overflow: visible;
 
       .dnd-meta-badge {
-        flex: 1 1 0;
+        flex: 1 1 auto;
+        min-width: 0;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: clamp(0.7rem, 1.1vw, 0.8rem);
+        font-size: clamp(0.62rem, 1vw, 0.78rem);
         font-weight: 700;
         text-transform: capitalize;
-        padding: 3px 6px;
+        padding: 2px 3px;
         border-radius: 0;
         border: none;
         border-right: 1.5px solid #cbd5e0;
         line-height: 1.15;
         text-align: center;
-        white-space: nowrap;
+        white-space: normal;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+        overflow: visible;
 
         &:last-child {
           border-right: none;
@@ -565,7 +571,8 @@
   .dnd-cascade-title {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
+    min-width: 95px;
     font-weight: 800 !important;
     font-size: clamp(0.72rem, 1vw, 0.8rem);
     text-transform: uppercase;
@@ -976,22 +983,36 @@
 
 /* Elimination of Pill Design Boxes / Panels for AC, HP, Speed, Senses, Languages, and Spell Rows */
 .statblock {
-  .skill.dnd-cellular-row {
-    background: transparent !important;
+  .skill.dnd-cellular-row,
+  .skill.dnd-cascade-panel {
+    display: block !important;
+    background: transparent;
+
+    &.is-striped,
+    &.sb-striped {
+      background: rgba(122, 31, 18, 0.055) !important;
+    }
     border: none !important;
     box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 2px 0 !important;
-    margin: 2px 0 !important;
-    align-items: baseline !important;
+    border-radius: 2px !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.45 !important;
+    text-indent: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
 
     .dnd-cascade-title,
     .name.dnd-cascade-title,
     span.name.dnd-cascade-title {
+      display: inline !important;
+      min-width: 0 !important;
       background: transparent !important;
       border: none !important;
       border-right: none !important;
       padding: 0 4px 0 0 !important;
+      margin: 0 !important;
+      text-indent: 0 !important;
       font-size: 0.92rem !important;
       font-weight: 800 !important;
       color: #58180d !important;
@@ -1095,19 +1116,20 @@
 
 /* Interleaved Per-Line Horizontal Zebra Stripes for Verbose Text Blocks */
 .zebra-stripe-text {
+  background-color: transparent !important;
   background-image: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.98) 0,
-    rgba(255, 255, 255, 0.98) 1.5rem,
-    rgba(218, 228, 242, 0.72) 1.5rem,
-    rgba(218, 228, 242, 0.72) 3rem
+    transparent 0,
+    transparent 1.5rem,
+    rgba(90, 40, 10, 0.04) 1.5rem,
+    rgba(90, 40, 10, 0.04) 3rem
   ) !important;
   background-attachment: local;
   line-height: 1.5rem !important;
-  padding: 0 8px !important;
-  border-radius: 5px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
-  margin-top: 4px;
+  padding: 0 4px !important;
+  border-radius: 4px;
+  border: none !important;
+  margin-top: 2px;
   box-sizing: border-box;
   text-indent: 0 !important;
 }
@@ -1189,12 +1211,12 @@
     box-shadow: 0 1px 4px rgba(88, 24, 13, 0.2) !important;
 
     .cr-main-region {
-      background: #58180d !important;
+      background: transparent !important;
       .region-label {
-        color: #fdf1dc !important;
+        color: #58180d !important;
       }
       .region-val {
-        color: #ffffff !important;
+        color: #58180d !important;
       }
     }
     .cr-sub-region {
@@ -1229,7 +1251,85 @@
   }
 
   /* Panels & Badges */
-  .dnd-cascade-panel {
+  .skill.dnd-cascade-panel,
+  .skill.dnd-cellular-row {
+    display: block !important;
+    background: transparent;
+
+    &.is-striped,
+    &.sb-striped {
+      background: rgba(122, 31, 18, 0.055) !important;
+    }
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 2px !important;
+    overflow: visible !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: 1.45 !important;
+    text-indent: 0 !important;
+    box-sizing: border-box !important;
+
+    .dnd-cascade-title,
+    .name.dnd-cascade-title,
+    span.name.dnd-cascade-title {
+      display: inline !important;
+      min-width: 0 !important;
+      background: transparent !important;
+      color: #58180d !important;
+      text-shadow: none !important;
+      border: none !important;
+      border-right: none !important;
+      font-weight: 800 !important;
+      font-size: 0.92rem !important;
+      height: auto !important;
+      min-height: auto !important;
+      padding: 0 4px 0 0 !important;
+      margin: 0 !important;
+      text-indent: 0 !important;
+      border-radius: 0 !important;
+      box-sizing: border-box !important;
+
+      &::after {
+        content: ':';
+        margin-left: 1px;
+      }
+    }
+    .dnd-cascade-subtitle {
+      background: #58180d !important;
+      color: #fff8ed !important;
+      border: none !important;
+      border-right: none !important;
+      border-radius: 3px !important;
+      padding: 1px 5px !important;
+      margin: 0 5px !important;
+      font-size: 0.72rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      align-self: center !important;
+      height: auto !important;
+      min-height: auto !important;
+      display: inline-flex !important;
+      line-height: 1.1 !important;
+      vertical-align: middle !important;
+    }
+    .dnd-cascade-badges-wrap,
+    .dnd-defense-unified-body {
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+
+      .dnd-cascade-badge {
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+    }
+  }
+
+  .dnd-cascade-panel:not(.skill) {
     background: rgba(253, 241, 220, 0.92) !important;
     border: 1.5px solid #9c2b1b !important;
     box-shadow: 0 1px 3px rgba(88, 24, 13, 0.08) !important;
@@ -1406,9 +1506,9 @@
     border: 1.5px solid #58180d !important;
 
     .cr-main-region {
-      background: #58180d !important;
+      background: transparent !important;
       .region-label, .region-val {
-        color: #fdf1dc !important;
+        color: #58180d !important;
       }
     }
     .cr-sub-region {
@@ -1663,6 +1763,7 @@
   background-color: #fbf2e3;
   color: #2c0e08;
   position: relative;
+  isolation: isolate;
   box-shadow: 0 16px 45px rgba(0, 0, 0, 0.4), 0 2px 10px rgba(0, 0, 0, 0.2);
   border-radius: 2px;
   padding: 38px 36px 42px 36px;
@@ -1741,18 +1842,17 @@
     background-position: center;
     background-repeat: no-repeat;
     pointer-events: none;
-
-    &.a4-bg-layer {
-      z-index: 1;
-    }
-    &.a4-fg-layer {
-      z-index: 10;
-    }
+    /* z-index is dynamically set by layer stack precedence order in A4 studio */
   }
 
   .statblock-wrapper {
     position: relative;
-    z-index: 3;
+    /* z-index is dynamically computed to honor layer stacking precedence */
+  }
+
+  .statblock.has-custom-bg-opacity {
+    background-color: var(--a4-sb-bg-color, rgba(253, 241, 220, 0.9)) !important;
+    background-image: none !important;
   }
 
   .a4-book-header {
@@ -1913,6 +2013,17 @@
   .sc-spell { font-style: italic; }
   .sc-spell .spell-tag-badge { font-style: normal; font-size: 0.85em; color: #6b3fa0; }
   .sc-stat { opacity: 0.9; }
+}
+
+// Ensure interactive append controls (such as lock toggle buttons) remain clickable inside disabled fields
+.q-field--disabled {
+  .q-field__append,
+  .q-field__prepend {
+    pointer-events: auto !important;
+    * {
+      pointer-events: auto !important;
+    }
+  }
 }
 
 // Shared stat block grammar (kept last so it wins the cascade)

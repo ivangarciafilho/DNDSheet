@@ -9,11 +9,18 @@ export interface AttackBonusSource {
   spellcasting?: { stat?: DndStat; attack?: { override?: boolean; overrideValue?: number } }
 }
 
-/**
- * Weapon attacks without an authored bonus use Strength for melee/both reach and Dexterity for ranged-only reach.
- * Weapon properties cannot be inferred from reach. Finesse, thrown exceptions and homebrew need an authored bonus until explicit ability bindings land.
- */
+/** Omitted provenance retains the existing reach default. A thrown ranged weapon
+ * (such as a dart) keeps Automatic; the thrown rule explicitly means a melee weapon. */
 export const weaponAttackStat = (reach: AttackReach | undefined): DndStat => (reach === 'ranged' ? 'DEX' : 'STR')
+const finite = (value: unknown, fallback: number): number => typeof value === 'number' && Number.isFinite(value) ? value : fallback
+const modifier = (source: AttackBonusSource, stat: DndStat): number => statModifier(finite(source.stats[stat], 10))
+export function weaponAttackAbility(action: Partial<MonsterAction>, source: AttackBonusSource): DndStat {
+  const rule = action.weaponAttackAbility
+  if (rule === 'finesse' || rule === 'finesse_thrown') return modifier(source, 'DEX') > modifier(source, 'STR') ? 'DEX' : 'STR'
+  if (rule === 'thrown') return 'STR'
+  if (['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].includes(rule || '')) return rule as DndStat
+  return weaponAttackStat(inferAbility(action).attackReach)
+}
 
 /** One automatic bonus for the sheet, the composer chip and every export: an authored number always wins. */
 export function structuredAttackBonus(action: Partial<MonsterAction>, source: AttackBonusSource): number | undefined {
@@ -22,10 +29,10 @@ export function structuredAttackBonus(action: Partial<MonsterAction>, source: At
   if (ability.attackSource === 'spell') {
     const attack = source.spellcasting?.attack
     if (attack?.override && typeof attack.overrideValue === 'number' && Number.isFinite(attack.overrideValue)) return attack.overrideValue
-    return source.proficiency + statModifier(source.stats[source.spellcasting?.stat ?? 'INT'] ?? 10)
+    return finite(source.proficiency, 0) + modifier(source, source.spellcasting?.stat ?? 'INT')
   }
   if (ability.attackSource === 'weapon') {
-    return source.proficiency + statModifier(source.stats[weaponAttackStat(ability.attackReach)] ?? 10)
+    return finite(source.proficiency, 0) + modifier(source, weaponAttackAbility(action, source))
   }
   return undefined
 }

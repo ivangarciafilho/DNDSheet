@@ -402,23 +402,68 @@
           <!-- SEARCH: Insight, Perception, Survival -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
-              <div class="row items-center justify-between q-mb-xs">
+              <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-primary">🔍 Search Checks</span>
-                <q-btn-toggle
-                  v-model="passives.searchActionType"
+                <div class="row items-center q-gutter-x-xs">
+                  <q-select
+                    v-model="passives.searchPlacement"
+                    :options="placementOptions"
+                    emit-value
+                    map-options
+                    dense
+                    outlined
+                    dark
+                    options-dense
+                    style="min-width: 140px;"
+                    label="Placement"
+                  >
+                    <q-tooltip class="dnd-tip">Relocate Search to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
+                  </q-select>
+                  <q-btn-toggle
+                    v-model="passives.searchActionType"
+                    dense
+                    no-caps
+                    rounded
+                    unelevated
+                    size="xs"
+                    toggle-color="primary"
+                    color="grey-9"
+                    text-color="grey-4"
+                    :options="[
+                      { label: 'Action', value: 'Action' },
+                      { label: 'Bonus Action', value: 'Bonus Action' },
+                    ]"
+                  />
+                </div>
+              </div>
+              <div class="q-mb-xs">
+                <q-input
                   dense
-                  no-caps
-                  rounded
-                  unelevated
-                  size="xs"
-                  toggle-color="primary"
-                  color="grey-9"
-                  text-color="grey-4"
-                  :options="[
-                    { label: 'Action', value: 'Action' },
-                    { label: 'Bonus Action', value: 'Bonus Action' },
-                  ]"
-                />
+                  outlined
+                  dark
+                  v-model="passives.riders.search"
+                  label="Search Scope / Verbose Rider"
+                  placeholder="e.g. 60ft across Ethereal and Material Planes: Sense the Presence of Undeads..."
+                >
+                  <template #append>
+                    <q-btn v-if="passives.riders.search" flat round dense size="xs" icon="close" @click="passives.riders.search = ''">
+                      <q-tooltip class="dnd-tip">Clear rider</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
+                </q-input>
+                <div class="row items-center q-gutter-xs q-mt-xs">
+                  <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+                    <q-list dense dark class="bg-grey-10">
+                      <q-item v-for="(pr, prIdx) in riderPresets.search" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('search', pr)">
+                        <q-item-section class="text-caption">{{ pr }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Ethereal (60ft)" @click="appendRiderTag('search', '60ft across Ethereal and Material Planes')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Undead/Fiends" @click="appendRiderTag('search', 'Sense Undead and Fiends')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('search', 'DC 15 check')" />
+                </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('search')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
                 <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
@@ -490,23 +535,68 @@
           <!-- STUDY: Arcana, History, Investigation, Medicine, Nature, Religion -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
-              <div class="row items-center justify-between q-mb-xs">
+              <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-info">📖 Study Checks</span>
-                <q-btn-toggle
-                  v-model="passives.studyActionType"
+                <div class="row items-center q-gutter-x-xs">
+                  <q-select
+                    v-model="passives.studyPlacement"
+                    :options="placementOptions"
+                    emit-value
+                    map-options
+                    dense
+                    outlined
+                    dark
+                    options-dense
+                    style="min-width: 140px;"
+                    label="Placement"
+                  >
+                    <q-tooltip class="dnd-tip">Relocate Study to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
+                  </q-select>
+                  <q-btn-toggle
+                    v-model="passives.studyActionType"
+                    dense
+                    no-caps
+                    rounded
+                    unelevated
+                    size="xs"
+                    toggle-color="info"
+                    color="grey-9"
+                    text-color="grey-4"
+                    :options="[
+                      { label: 'Action', value: 'Action' },
+                      { label: 'Bonus Action', value: 'Bonus Action' },
+                    ]"
+                  />
+                </div>
+              </div>
+              <div class="q-mb-xs">
+                <q-input
                   dense
-                  no-caps
-                  rounded
-                  unelevated
-                  size="xs"
-                  toggle-color="info"
-                  color="grey-9"
-                  text-color="grey-4"
-                  :options="[
-                    { label: 'Action', value: 'Action' },
-                    { label: 'Bonus Action', value: 'Bonus Action' },
-                  ]"
-                />
+                  outlined
+                  dark
+                  v-model="passives.riders.study"
+                  label="Study Scope / Verbose Rider"
+                  placeholder="e.g. Touch: Learn target's Alignment, and if its either Charmed or Possessed..."
+                >
+                  <template #append>
+                    <q-btn v-if="passives.riders.study" flat round dense size="xs" icon="close" @click="passives.riders.study = ''">
+                      <q-tooltip class="dnd-tip">Clear rider</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
+                </q-input>
+                <div class="row items-center q-gutter-xs q-mt-xs">
+                  <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+                    <q-list dense dark class="bg-grey-10">
+                      <q-item v-for="(pr, prIdx) in riderPresets.study" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('study', pr)">
+                        <q-item-section class="text-caption">{{ pr }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Touch" @click="appendRiderTag('study', 'Touch: Learn target alignment')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Resistances" @click="appendRiderTag('study', 'Learn vulnerabilities, resistances, immunities')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('study', 'DC 15 check')" />
+                </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('study')" :key="`study-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
                 <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
@@ -578,23 +668,68 @@
           <!-- INFLUENCE: Deception, Intimidation, Performance, Persuasion, Animal Handling -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
-              <div class="row items-center justify-between q-mb-xs">
+              <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-amber-8">🗣️ Influence Checks</span>
-                <q-btn-toggle
-                  v-model="passives.influenceActionType"
+                <div class="row items-center q-gutter-x-xs">
+                  <q-select
+                    v-model="passives.influencePlacement"
+                    :options="placementOptions"
+                    emit-value
+                    map-options
+                    dense
+                    outlined
+                    dark
+                    options-dense
+                    style="min-width: 140px;"
+                    label="Placement"
+                  >
+                    <q-tooltip class="dnd-tip">Relocate Influence to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
+                  </q-select>
+                  <q-btn-toggle
+                    v-model="passives.influenceActionType"
+                    dense
+                    no-caps
+                    rounded
+                    unelevated
+                    size="xs"
+                    toggle-color="amber-9"
+                    color="grey-9"
+                    text-color="grey-4"
+                    :options="[
+                      { label: 'Action', value: 'Action' },
+                      { label: 'Bonus Action', value: 'Bonus Action' },
+                    ]"
+                  />
+                </div>
+              </div>
+              <div class="q-mb-xs">
+                <q-input
                   dense
-                  no-caps
-                  rounded
-                  unelevated
-                  size="xs"
-                  toggle-color="amber-9"
-                  color="grey-9"
-                  text-color="grey-4"
-                  :options="[
-                    { label: 'Action', value: 'Action' },
-                    { label: 'Bonus Action', value: 'Bonus Action' },
-                  ]"
-                />
+                  outlined
+                  dark
+                  v-model="passives.riders.influence"
+                  label="Influence Scope / Verbose Rider"
+                  placeholder="e.g. De-escalate hostile creatures with DC 15 Charisma check..."
+                >
+                  <template #append>
+                    <q-btn v-if="passives.riders.influence" flat round dense size="xs" icon="close" @click="passives.riders.influence = ''">
+                      <q-tooltip class="dnd-tip">Clear rider</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
+                </q-input>
+                <div class="row items-center q-gutter-xs q-mt-xs">
+                  <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+                    <q-list dense dark class="bg-grey-10">
+                      <q-item v-for="(pr, prIdx) in riderPresets.influence" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('influence', pr)">
+                        <q-item-section class="text-caption">{{ pr }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('influence', 'DC 15 Charisma check')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Must Hear" @click="appendRiderTag('influence', 'Creature must hear and understand')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ 30ft" @click="appendRiderTag('influence', 'within 30ft')" />
+                </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('influence')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
                 <div class="col-3 text-caption">{{ pKey === 'animalHandling' ? 'Animal Hdl.' : pKey.charAt(0).toUpperCase() + pKey.slice(1) }}</div>
@@ -666,23 +801,68 @@
           <!-- HIDE: Acrobatics, Athletics, Sleight of Hand, Stealth -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
-              <div class="row items-center justify-between q-mb-xs">
+              <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-deep-purple-4">🥷 Hide Checks</span>
-                <q-btn-toggle
-                  v-model="passives.hideActionType"
+                <div class="row items-center q-gutter-x-xs">
+                  <q-select
+                    v-model="passives.hidePlacement"
+                    :options="placementOptions"
+                    emit-value
+                    map-options
+                    dense
+                    outlined
+                    dark
+                    options-dense
+                    style="min-width: 140px;"
+                    label="Placement"
+                  >
+                    <q-tooltip class="dnd-tip">Relocate Hide to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
+                  </q-select>
+                  <q-btn-toggle
+                    v-model="passives.hideActionType"
+                    dense
+                    no-caps
+                    rounded
+                    unelevated
+                    size="xs"
+                    toggle-color="deep-purple-6"
+                    color="grey-9"
+                    text-color="grey-4"
+                    :options="[
+                      { label: 'Action', value: 'Action' },
+                      { label: 'Bonus Action', value: 'Bonus Action' },
+                    ]"
+                  />
+                </div>
+              </div>
+              <div class="q-mb-xs">
+                <q-input
                   dense
-                  no-caps
-                  rounded
-                  unelevated
-                  size="xs"
-                  toggle-color="deep-purple-6"
-                  color="grey-9"
-                  text-color="grey-4"
-                  :options="[
-                    { label: 'Action', value: 'Action' },
-                    { label: 'Bonus Action', value: 'Bonus Action' },
-                  ]"
-                />
+                  outlined
+                  dark
+                  v-model="passives.riders.hide"
+                  label="Hide Scope / Verbose Rider"
+                  placeholder="e.g. Can hide in dim light or darkness even while observed..."
+                >
+                  <template #append>
+                    <q-btn v-if="passives.riders.hide" flat round dense size="xs" icon="close" @click="passives.riders.hide = ''">
+                      <q-tooltip class="dnd-tip">Clear rider</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
+                </q-input>
+                <div class="row items-center q-gutter-xs q-mt-xs">
+                  <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+                    <q-list dense dark class="bg-grey-10">
+                      <q-item v-for="(pr, prIdx) in riderPresets.hide" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('hide', pr)">
+                        <q-item-section class="text-caption">{{ pr }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Light Obscurement" @click="appendRiderTag('hide', 'Must have light obscurement or 3/4 cover')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ While Observed" @click="appendRiderTag('hide', 'Can hide while observed in dim light')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Invisible" @click="appendRiderTag('hide', 'Become invisible until start of next turn')" />
+                </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('hide')" :key="`hide-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
                 <div class="col-3 text-caption">{{ passiveLabel(pKey) }}</div>
@@ -747,6 +927,90 @@
                     placeholder="Qualifier"
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- USE TOOL: Artisan tools, kits, musical instruments -->
+          <div class="col-12 col-md-6">
+            <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
+              <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
+                <span class="text-caption text-weight-bold text-teal-4">🛠️ Use Tool Checks</span>
+                <div class="row items-center q-gutter-x-xs">
+                  <q-select
+                    v-model="passives.toolsPlacement"
+                    :options="placementOptions"
+                    emit-value
+                    map-options
+                    dense
+                    outlined
+                    dark
+                    options-dense
+                    style="min-width: 140px;"
+                    label="Placement"
+                  >
+                    <q-tooltip class="dnd-tip">Relocate Use Tool to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
+                  </q-select>
+                  <q-btn-toggle
+                    v-model="passives.toolsActionType"
+                    dense
+                    no-caps
+                    rounded
+                    unelevated
+                    size="xs"
+                    toggle-color="teal-6"
+                    color="grey-9"
+                    text-color="grey-4"
+                    :options="[
+                      { label: 'Action', value: 'Action' },
+                      { label: 'Bonus Action', value: 'Bonus Action' },
+                    ]"
+                  />
+                </div>
+              </div>
+              <div class="q-mb-xs">
+                <q-input
+                  dense
+                  outlined
+                  dark
+                  v-model="passives.riders.tools"
+                  label="Use Tool Scope / Verbose Rider"
+                  placeholder="e.g. Can craft or repair equipment during short rest..."
+                >
+                  <template #append>
+                    <q-btn v-if="passives.riders.tools" flat round dense size="xs" icon="close" @click="passives.riders.tools = ''">
+                      <q-tooltip class="dnd-tip">Clear rider</q-tooltip>
+                    </q-btn>
+                  </template>
+                  <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
+                </q-input>
+                <div class="row items-center q-gutter-xs q-mt-xs">
+                  <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
+                    <q-list dense dark class="bg-grey-10">
+                      <q-item v-for="(pr, prIdx) in riderPresets.tools" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('tools', pr)">
+                        <q-item-section class="text-caption">{{ pr }}</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-btn-dropdown>
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ 1 min" @click="appendRiderTag('tools', 'in 1 minute')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ Bonus Action" @click="appendRiderTag('tools', 'as a bonus action')" />
+                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('tools', 'DC 15 tool check')" />
+                </div>
+              </div>
+              <div v-if="monster.tools && monster.tools.length > 0" class="row q-gutter-xs q-mt-xs">
+                <q-chip
+                  v-for="t in monster.tools"
+                  :key="t.id"
+                  dense
+                  size="sm"
+                  color="teal-9"
+                  text-color="teal-1"
+                >
+                  {{ t.name }} ({{ t.stat }})
+                </q-chip>
+              </div>
+              <div v-else class="text-caption text-grey-5 q-pa-xs">
+                No tools configured yet. Add tools above in Section 2 to include them here.
               </div>
             </div>
           </div>
@@ -914,6 +1178,13 @@ export default defineComponent({
           searchActionType: 'Action',
           studyActionType: 'Action',
           influenceActionType: 'Action',
+          toolsActionType: 'Action',
+          searchPlacement: 'header',
+          studyPlacement: 'header',
+          influencePlacement: 'header',
+          hidePlacement: 'header',
+          toolsPlacement: 'header',
+          riders: { search: '', study: '', influence: '', hide: '', tools: '' },
           perception: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
           investigation: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
           insight: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
@@ -930,9 +1201,26 @@ export default defineComponent({
           animalHandling: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
         }
       }
-      if (!monster.passives.influenceActionType) {
-        monster.passives.influenceActionType = 'Action'
+      if (!monster.passives.riders) {
+        monster.passives.riders = { search: '', study: '', influence: '', hide: '', tools: '' }
       }
+      if (typeof monster.passives.riders.search !== 'string') monster.passives.riders.search = ''
+      if (typeof monster.passives.riders.study !== 'string') monster.passives.riders.study = ''
+      if (typeof monster.passives.riders.influence !== 'string') monster.passives.riders.influence = ''
+      if (typeof monster.passives.riders.hide !== 'string') monster.passives.riders.hide = ''
+      if (typeof monster.passives.riders.tools !== 'string') monster.passives.riders.tools = ''
+
+      if (!monster.passives.searchPlacement) monster.passives.searchPlacement = 'header'
+      if (!monster.passives.studyPlacement) monster.passives.studyPlacement = 'header'
+      if (!monster.passives.influencePlacement) monster.passives.influencePlacement = 'header'
+      if (!monster.passives.hidePlacement) monster.passives.hidePlacement = 'header'
+      if (!monster.passives.toolsPlacement) monster.passives.toolsPlacement = 'header'
+
+      if (!monster.passives.searchActionType) monster.passives.searchActionType = 'Action'
+      if (!monster.passives.studyActionType) monster.passives.studyActionType = 'Action'
+      if (!monster.passives.influenceActionType) monster.passives.influenceActionType = 'Action'
+      if (!monster.passives.hideActionType) monster.passives.hideActionType = 'Action'
+      if (!monster.passives.toolsActionType) monster.passives.toolsActionType = 'Action'
       return monster.passives
     }
 
@@ -961,6 +1249,13 @@ export default defineComponent({
         aop.bonusActionStudy = p.studyActionType === 'Bonus Action'
         aop.bonusActionHide = p.hideActionType === 'Bonus Action'
         aop.bonusActionInfluence = p.influenceActionType === 'Bonus Action'
+
+        aop.searchPlacement = p.searchPlacement || 'header'
+        aop.studyPlacement = p.studyPlacement || 'header'
+        aop.influencePlacement = p.influencePlacement || 'header'
+        aop.hidePlacement = p.hidePlacement || 'header'
+        aop.toolsPlacement = p.toolsPlacement || 'header'
+        aop.riders = { ...(p.riders || {}) }
 
         if (!aop.conditions) aop.conditions = {}
         for (const key of Object.keys(p)) {
@@ -1080,6 +1375,57 @@ export default defineComponent({
       ]
     }
 
+    const placementOptions = [
+      { label: 'Vitals / Header', value: 'header' },
+      { label: 'Actions', value: 'action' },
+      { label: 'Bonus Actions', value: 'bonus_action' },
+      { label: 'Legendary Actions', value: 'legendary' },
+    ]
+
+    const riderPresets = {
+      search: [
+        '60ft across Ethereal and Material Planes: Sense the Presence of Undeads, Fiends, and Celestials.',
+        'Secret doors or hidden compartments within 10ft.',
+        'Discern truth or deception from any creature speaking to it.',
+        'Track creatures across any terrain, including magical tracking.',
+      ],
+      study: [
+        "Touch: Learn target's Alignment, and if its either Charmed or Possessed.",
+        'Learn damage vulnerabilities, resistances, and immunities within 30ft.',
+        'Identify spells cast or magical effects active on target.',
+        'Recall ancient lore or sacred rites regarding celestial or fiendish origins.',
+      ],
+      influence: [
+        'De-escalate hostile creatures with DC 15 Charisma check.',
+        'Creature must be able to hear and understand.',
+        'Command beast or summoned creature as a bonus action.',
+        'Inspire allies within 30ft to add +1d4 to attack rolls.',
+      ],
+      hide: [
+        'Must have light obscurement or three-quarters cover.',
+        'Can hide in dim light or darkness even while observed.',
+        'Break line of sight and shift silently up to 10ft.',
+        'Become invisible until the start of next turn or until an attack is made.',
+      ],
+      tools: [
+        'Herbalism Kit: Brew curative poultice or antitoxin in 1 minute.',
+        "Thieves' Tools: Pick locks or disarm traps as a bonus action.",
+        "Poisoner's Kit: Apply lethal coating to weapon as a bonus action.",
+        'Craft or repair equipment during short rest with DC 15 check.',
+      ],
+    }
+
+    const applyRiderPreset = (category: 'search' | 'study' | 'influence' | 'hide' | 'tools', text: string) => {
+      if (!passives.value.riders) passives.value.riders = { search: '', study: '', influence: '', hide: '', tools: '' }
+      passives.value.riders[category] = text
+    }
+
+    const appendRiderTag = (category: 'search' | 'study' | 'influence' | 'hide' | 'tools', tag: string) => {
+      if (!passives.value.riders) passives.value.riders = { search: '', study: '', influence: '', hide: '', tools: '' }
+      const cur = passives.value.riders[category] || ''
+      passives.value.riders[category] = cur ? `${cur}, ${tag}` : tag
+    }
+
     return {
       monster,
       skills: computed(() => monster.skills),
@@ -1089,6 +1435,10 @@ export default defineComponent({
       toolOptions: availableTools,
       onToolSelected,
       passives,
+      placementOptions,
+      riderPresets,
+      applyRiderPreset,
+      appendRiderTag,
       groupPassiveKeys,
       passiveLabel,
       effectiveSkillActionType,

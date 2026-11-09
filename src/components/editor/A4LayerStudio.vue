@@ -679,33 +679,47 @@
                     <radial-offset-controller
                       v-model:x="editorStore.a4PortraitOffsetX"
                       v-model:y="editorStore.a4PortraitOffsetY"
+                      v-model:crop-x="editorStore.a4PortraitCropX"
+                      v-model:crop-y="editorStore.a4PortraitCropY"
                       :min="-300"
                       :max="300"
                       :step="2"
-                      label="Post-Crop Layer Position Gizmo"
+                      label="Post-Crop Position &amp; Parallel Crop"
                       unit="px"
                       color="cyan"
                       icon="open_with"
                     />
                   </div>
 
-                  <!-- Multivalued Dual-Knob Crop Sliders (Horizontal & Vertical) -->
-                  <div class="col-12 col-sm-6 q-py-xs">
-                    <dual-knob-crop-slider
-                      v-model="editorStore.a4PortraitCropX"
-                      label="Horizontal Edge Cropping"
-                      start-label="Left"
-                      end-label="Right"
-                      color="cyan"
+                  <!-- Grayscale as Alpha Luminance Mask for Portrait -->
+                  <div class="col-12 row items-center q-gutter-x-md q-my-xs">
+                    <q-checkbox
+                      v-model="layer.grayscaleAsAlpha"
+                      label="Use Grayscale as Alpha (Luminance Mask)"
+                      dark
+                      dense
+                      color="cyan-4"
+                      class="text-caption text-weight-bold"
+                    >
+                      <q-tooltip>Uses image grayscale luminance as alpha channel even when imported without alpha transparency</q-tooltip>
+                    </q-checkbox>
+                    <q-checkbox
+                      v-if="layer.grayscaleAsAlpha"
+                      v-model="layer.grayscaleInvert"
+                      label="Invert Luminance"
+                      dark
+                      dense
+                      color="cyan-4"
+                      class="text-caption"
                     />
                   </div>
-                  <div class="col-12 col-sm-6 q-py-xs">
-                    <dual-knob-crop-slider
-                      v-model="editorStore.a4PortraitCropY"
-                      label="Vertical Edge Cropping"
-                      start-label="Top"
-                      end-label="Bottom"
-                      color="cyan"
+
+                  <!-- Interactive Gradient Overlay & Falloff Curve for Portrait -->
+                  <div class="col-12 q-my-xs">
+                    <gradient-overlay-controller
+                      :model-value="layer.gradientOverlay"
+                      :blend-mode-options="blendModeOptions"
+                      @update:model-value="(val) => layer.gradientOverlay = val"
                     />
                   </div>
 
@@ -828,39 +842,22 @@
                     <radial-offset-controller
                       :x="layer.offsetX || 0"
                       :y="layer.offsetY || 0"
+                      :crop-x="layer.cropX || { min: 0, max: 100 }"
+                      :crop-y="layer.cropY || { min: 0, max: 100 }"
                       :min="-300"
                       :max="300"
                       :step="2"
-                      label="Post-Crop Layer Position Gizmo"
+                      label="Post-Crop Position &amp; Parallel Crop"
                       unit="px"
                       :color="layer.type === 'foreground' ? 'purple' : 'blue'"
                       icon="open_with"
                       @update:x="(val: number) => layer.offsetX = val"
                       @update:y="(val: number) => layer.offsetY = val"
+                      @update:crop-x="(val: { min: number; max: number }) => layer.cropX = val"
+                      @update:crop-y="(val: { min: number; max: number }) => layer.cropY = val"
                     />
                   </div>
 
-                  <!-- Dual-Knob Cropping for Custom Layer -->
-                  <div class="col-12 col-sm-6 q-py-xs">
-                    <dual-knob-crop-slider
-                      :model-value="layer.cropX || { min: 0, max: 100 }"
-                      label="Horizontal Edge Cropping"
-                      start-label="Left"
-                      end-label="Right"
-                      :color="layer.type === 'foreground' ? 'purple' : 'blue'"
-                      @update:model-value="(val: { min: number; max: number }) => layer.cropX = val"
-                    />
-                  </div>
-                  <div class="col-12 col-sm-6 q-py-xs">
-                    <dual-knob-crop-slider
-                      :model-value="layer.cropY || { min: 0, max: 100 }"
-                      label="Vertical Edge Cropping"
-                      start-label="Top"
-                      end-label="Bottom"
-                      :color="layer.type === 'foreground' ? 'purple' : 'blue'"
-                      @update:model-value="(val: { min: number; max: number }) => layer.cropY = val"
-                    />
-                  </div>
                   <div class="col-12 col-sm-12">
                     <q-select
                       v-model="layer.maskUrl"
@@ -877,6 +874,40 @@
                         <q-icon name="brush" color="purple-3" />
                       </template>
                     </q-select>
+                  </div>
+
+                  <!-- Grayscale as Alpha Luminance Mask -->
+                  <div class="col-12 row items-center q-gutter-x-md q-my-xs">
+                    <q-checkbox
+                      v-model="layer.grayscaleAsAlpha"
+                      label="Use Grayscale as Alpha (Luminance Mask)"
+                      dark
+                      dense
+                      color="purple-4"
+                      class="text-caption text-weight-bold"
+                    >
+                      <q-tooltip>Treats texture brightness/luminance as transparency mask (black=transparent, white=opaque)</q-tooltip>
+                    </q-checkbox>
+                    <q-checkbox
+                      v-if="layer.grayscaleAsAlpha"
+                      v-model="layer.grayscaleInvert"
+                      label="Invert Luminance"
+                      dark
+                      dense
+                      color="purple-4"
+                      class="text-caption"
+                    >
+                      <q-tooltip>Inverts white and black transparency</q-tooltip>
+                    </q-checkbox>
+                  </div>
+
+                  <!-- Interactive Gradient Overlays Section with Color Keys, Falloff Curve Overlay & Blend Modes -->
+                  <div class="col-12 q-mt-xs">
+                    <gradient-overlay-controller
+                      :model-value="layer.gradientOverlay"
+                      :blend-mode-options="blendModeOptions"
+                      @update:model-value="(val) => layer.gradientOverlay = val"
+                    />
                   </div>
 
                   <!-- Custom Layer Text Overlay (Headers, Footers, Page Notes) -->
@@ -982,13 +1013,13 @@ import { computed, defineComponent, ref, watch } from 'vue'
 import { useEditorStore, A4CompositionLayer } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
 import RadialOffsetController from './widgets/RadialOffsetController.vue'
-import DualKnobCropSlider from './widgets/DualKnobCropSlider.vue'
+import GradientOverlayController from './widgets/GradientOverlayController.vue'
 
 export default defineComponent({
   name: 'A4LayerStudio',
   components: {
     RadialOffsetController,
-    DualKnobCropSlider,
+    GradientOverlayController,
   },
   props: {
     inline: {
@@ -1059,15 +1090,14 @@ export default defineComponent({
         statblockLayer.type = 'statblock'
       }
 
-      // 2. Creature Portrait Artwork Layer (if portrait exists)
-      const hasPortrait = Boolean(monsterStore.portrait?.url)
+      // 2. Creature Portrait Artwork Layer (always present as core layer in composition)
       let portraitLayer = editorStore.a4Layers.find(l => l.id === 'portrait_layer' || l.type === 'portrait')
-      if (hasPortrait && !portraitLayer) {
+      if (!portraitLayer) {
         portraitLayer = {
           id: 'portrait_layer',
           type: 'portrait',
           name: 'Creature Portrait Artwork',
-          url: monsterStore.portrait.url,
+          url: monsterStore.portrait?.url || '',
           opacity: 100,
           blendMode: 'normal',
           visible: true,
@@ -1076,15 +1106,21 @@ export default defineComponent({
           scale: editorStore.a4PortraitScale ?? 100,
           occlusion: editorStore.a4PictureOcclusion || 0,
         }
-        // Insert behind statblock by default
+        // Insert behind statblock by default (higher array index = lower z-index)
         const sIdx = editorStore.a4Layers.findIndex(l => l.type === 'statblock')
-        if (sIdx > 0) {
-          editorStore.a4Layers.splice(sIdx, 0, portraitLayer)
-        } else {
-          editorStore.a4Layers.unshift(portraitLayer)
-        }
-      } else if (portraitLayer && hasPortrait) {
-        portraitLayer.url = monsterStore.portrait.url
+        const insertAt = sIdx >= 0 ? sIdx + 1 : editorStore.a4Layers.length
+        editorStore.a4Layers.splice(insertAt, 0, portraitLayer)
+      } else {
+        portraitLayer.url = monsterStore.portrait?.url || ''
+      }
+    }
+
+    const insertBackgroundLayerOnTopOfBackgrounds = (layer: A4CompositionLayer) => {
+      const firstBgIdx = editorStore.a4Layers.findIndex(l => l.type === 'background')
+      if (firstBgIdx >= 0) {
+        editorStore.a4Layers.splice(firstBgIdx, 0, layer)
+      } else {
+        editorStore.a4Layers.push(layer)
       }
     }
 
@@ -1149,8 +1185,8 @@ export default defineComponent({
       }
 
       if (newLayerType.value === 'background') {
-        // Place backgrounds towards the bottom of the stack
-        editorStore.a4Layers.push(layer)
+        // Place new background above existing backgrounds so 'normal' blend occludes backgrounds beneath it
+        insertBackgroundLayerOnTopOfBackgrounds(layer)
       } else {
         // Place foregrounds towards the top
         editorStore.a4Layers.unshift(layer)
@@ -1181,7 +1217,7 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
           }
-          editorStore.a4Layers.push(layer)
+          insertBackgroundLayerOnTopOfBackgrounds(layer)
           break
 
         case 'phb_parchment':
@@ -1197,7 +1233,7 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
           }
-          editorStore.a4Layers.push(layer)
+          insertBackgroundLayerOnTopOfBackgrounds(layer)
           break
 
         case 'silvered_parchment':
@@ -1213,7 +1249,7 @@ export default defineComponent({
             offsetX: 0,
             offsetY: 0,
           }
-          editorStore.a4Layers.push(layer)
+          insertBackgroundLayerOnTopOfBackgrounds(layer)
           break
 
         case 'watercolor_splash':
@@ -1317,7 +1353,13 @@ export default defineComponent({
     })
 
     const portraitPositionModel = computed({
-      get: () => monsterStore.portrait?.position || 'right',
+      get: () => {
+        if (editorStore.a4Layout === 'statblock_only') return 'none'
+        if (editorStore.a4Layout === 'stacked') {
+          return monsterStore.portrait?.position === 'bottom' ? 'bottom' : 'top'
+        }
+        return monsterStore.portrait?.position === 'left' ? 'left' : 'right'
+      },
       set: (val: 'left' | 'right' | 'top' | 'bottom' | 'none') => {
         if (!monsterStore.portrait) {
           monsterStore.portrait = {
@@ -1328,6 +1370,13 @@ export default defineComponent({
           }
         } else {
           monsterStore.portrait.position = val
+        }
+        if (val === 'none') {
+          editorStore.a4Layout = 'statblock_only'
+        } else if (val === 'top' || val === 'bottom') {
+          editorStore.a4Layout = 'stacked'
+        } else {
+          editorStore.a4Layout = 'side_by_side'
         }
       }
     })

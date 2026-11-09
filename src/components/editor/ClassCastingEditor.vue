@@ -1,11 +1,6 @@
 <template>
-  <q-expansion-item
-    expand-separator
-    :label="$t('editor.spellcasting.class.label')"
-    :caption="$t('editor.spellcasting.class.caption')"
-    header-class="bg-purple-10"
-  >
-    <q-card>
+  <div class="class-casting-editor-panel q-mt-sm">
+    <q-card class="bg-grey-10 text-white rounded-borders" style="border: 1px solid rgba(255, 255, 255, 0.12);">
       <q-card-section>
         <!-- Primary Class, Subclass, Level, Stat, DC & Attack -->
         <div class="row q-col-gutter-xs items-center">
@@ -25,7 +20,9 @@
 
           <q-select
             v-model="primarySubclass"
-            :options="primarySubclassOptions"
+            :options="filteredPrimarySubclasses"
+            @filter="filterPrimarySubclasses"
+            input-debounce="0"
             label="Subclass"
             new-value-mode="add-unique"
             use-input
@@ -212,6 +209,18 @@
                   <q-tooltip class="bg-grey-9 text-caption">Allow selecting spells beyond the class's standard 5e maximum slot level.</q-tooltip>
                 </q-checkbox>
               </div>
+
+              <div class="col-12 col-sm-3 flex items-center">
+                <q-checkbox
+                  v-model="monster.spellcasting.splitHighCadence"
+                  label="Split Restricted Cadences"
+                  dense
+                  color="amber-4"
+                  class="text-caption text-weight-bold"
+                >
+                  <q-tooltip class="bg-grey-9 text-caption">Split spells with restricted cadences (Short/Long Rest, Dawn, etc.) into an appended secondary cell.</q-tooltip>
+                </q-checkbox>
+              </div>
             </div>
           </div>
 
@@ -253,7 +262,9 @@
                   />
                   <q-select
                     v-model="clsEntry.subclass"
-                    :options="getSubclassesFor(clsEntry.className)"
+                    :options="extraSubclassOptions[clsEntry.className] || getSubclassesFor(clsEntry.className)"
+                    @filter="(val, update) => filterExtraSubclasses(clsEntry.className, val, update)"
+                    input-debounce="0"
                     label="Subclass"
                     new-value-mode="add-unique"
                     use-input
@@ -299,6 +310,96 @@
                       <q-tooltip class="text-caption">Remove Class</q-tooltip>
                     </q-btn>
                   </div>
+
+                  <!-- Class Exclusive Spells Management -->
+                  <div class="col-12 q-mt-xs">
+                    <q-expansion-item
+                      dense
+                      dense-toggle
+                      expand-separator
+                      icon="menu_book"
+                      :label="`${clsEntry.className || 'Class'} Stored Spells (${(clsEntry.spells || []).length})`"
+                      class="bg-grey-10 rounded-borders text-caption"
+                    >
+                      <div class="q-pa-xs">
+                        <div class="row q-gutter-x-xs items-center q-mb-xs">
+                          <q-select
+                            v-model="newSpellForClass[clsEntry.id || cIdx]"
+                            :options="spellOptionsForClass(clsEntry.className)"
+                            use-input
+                            fill-input
+                            hide-selected
+                            clearable
+                            dense
+                            outlined
+                            dark
+                            label="Add Spell to Class"
+                            class="col"
+                          />
+                          <q-btn
+                            dense
+                            color="purple-4"
+                            icon="add"
+                            label="Add"
+                            size="sm"
+                            :disable="!newSpellForClass[clsEntry.id || cIdx]"
+                            @click="addSpellToClass(clsEntry, cIdx)"
+                          />
+                        </div>
+
+                        <div v-if="clsEntry.spells && clsEntry.spells.length" class="column q-gutter-y-xs">
+                          <div
+                            v-for="(spName, spIdx) in clsEntry.spells"
+                            :key="spName + spIdx"
+                            class="row items-center justify-between q-pa-xs bg-grey-9 rounded-borders"
+                          >
+                            <span class="text-weight-medium text-white">{{ spName }}</span>
+                            <div class="row items-center q-gutter-x-xs">
+                              <q-select
+                                :model-value="monster.spellcasting?.spellCadenceMap?.[spName] || 'At Will'"
+                                :options="cadenceOptions"
+                                dense
+                                borderless
+                                dark
+                                emit-value
+                                map-options
+                                options-dense
+                                style="width: 110px;"
+                                @update:model-value="(v) => setSpellCadence(spName, v)"
+                              >
+                                <q-tooltip class="text-caption">Spell recovery cadence</q-tooltip>
+                              </q-select>
+                              <q-btn
+                                dense
+                                flat
+                                round
+                                size="xs"
+                                :color="monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'amber-4' : 'grey-5'"
+                                :icon="monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'flash_on' : 'flash_off'"
+                                @click="toggleSpellBonusAction(spName)"
+                              >
+                                <q-tooltip class="dnd-tip">
+                                  {{ monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'Cast as Bonus Action' : 'Cast as Action' }}
+                                </q-tooltip>
+                              </q-btn>
+                              <q-btn
+                                flat
+                                round
+                                dense
+                                size="xs"
+                                icon="close"
+                                color="negative"
+                                @click="removeSpellFromClass(clsEntry, spIdx)"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                        <div v-else class="text-grey-5 text-center text-xs q-pa-xs">
+                          No exclusive spells stored yet for this class. Select a spell above to assign.
+                        </div>
+                      </div>
+                    </q-expansion-item>
+                  </div>
                 </div>
 
                 <div class="row justify-between items-center q-mt-xs">
@@ -337,18 +438,9 @@
           <div class="col-12 q-pa-xs q-mb-xs">
             <div class="row q-col-gutter-xs items-center q-pa-xs rounded-borders bg-grey-9 text-white" style="border: 1px solid rgba(255, 255, 255, 0.12);">
               <div class="col-12 col-sm-3">
-                <q-input
-                  v-model.number="monster.spellcasting.preparedCountOverride"
-                  type="number"
-                  min="0"
-                  label="Prepared Spells Count"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                >
-                  <q-tooltip>Custom number of spells the creature can prepare (defaults to 5e class calculation if empty)</q-tooltip>
-                </q-input>
+                <formula-field path="spellcasting.preparedCountOverride" label="Prepared Spells Count">
+                  <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" @click="resetPreparedCount"><q-tooltip>Use the class calculation.</q-tooltip></q-btn></template>
+                </formula-field>
               </div>
 
               <div class="col-12 col-sm-3">
@@ -378,16 +470,7 @@
               </div>
 
               <div v-if="monster.spellcasting.cantripSwitch" class="col-6 col-sm-2">
-                <q-input
-                  v-model.number="monster.spellcasting.cantripSwitchCount"
-                  type="number"
-                  min="1"
-                  label="Count"
-                  dense
-                  outlined
-                  dark
-                  hide-bottom-space
-                />
+                <formula-field path="spellcasting.cantripSwitchCount" label="Count" />
               </div>
 
               <div v-if="monster.spellcasting.cantripSwitch" class="col-6 col-sm-2">
@@ -423,16 +506,7 @@
 
               <div v-if="metamagicEnabled && monster.spellcasting.metamagic" class="row q-col-gutter-xs items-center q-mt-xs">
                 <div class="col-12 col-sm-3">
-                  <q-input
-                    v-model.number="monster.spellcasting.metamagic.sorceryPoints"
-                    type="number"
-                    min="0"
-                    label="Sorcery Points"
-                    dense
-                    outlined
-                    dark
-                    hide-bottom-space
-                  />
+                  <formula-field path="spellcasting.metamagic.sorceryPoints" label="Sorcery Points" />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
@@ -491,6 +565,17 @@
             <div class="text-caption text-weight-bold text-purple-3 q-mb-xs flex items-center justify-between">
               <span>Folded Level Thresholds &amp; Assigned Spells</span>
               <div class="row items-center q-gutter-x-xs">
+                <q-btn
+                  dense
+                  size="xs"
+                  :color="monster.spellcasting.alwaysAvailableOnly ? 'purple-6' : 'grey-8'"
+                  :label="monster.spellcasting.alwaysAvailableOnly ? 'Always Ready: ON' : 'All Cadences'"
+                  @click="monster.spellcasting.alwaysAvailableOnly = !monster.spellcasting.alwaysAvailableOnly"
+                >
+                  <q-tooltip class="dnd-tip" max-width="260px">
+                    Filter out spells bound to limited cadences (Short Rest, Long Rest, Dawn, Dusk, Ritual, Downtime) to show always-ready spells only.
+                  </q-tooltip>
+                </q-btn>
                 <q-btn
                   dense
                   size="xs"
@@ -563,7 +648,11 @@
                             min="0"
                             style="width: 60px;"
                             input-class="text-center font-bold"
-                            @update:model-value="(val: string | number | null) => (monster.spellcasting.slots[level - 1] = validateNumber(val, 0))"
+                            @update:model-value="(val: string | number | null) => {
+                              const nextSlots = [...(monster.spellcasting.slots || [0,0,0,0,0,0,0,0,0])]
+                              nextSlots[level - 1] = validateNumber(val, 0)
+                              monster.spellcasting.slots = nextSlots
+                            }"
                           />
                         </div>
                       </template>
@@ -670,7 +759,7 @@
         </div>
       </q-card-section>
     </q-card>
-  </q-expansion-item>
+  </div>
 </template>
 
 <script lang="ts">
@@ -679,9 +768,10 @@ import { useClasses } from 'src/data/CLASS'
 import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import FormulaField from '../kit/FormulaField.vue'
+import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { useSpellLevels } from '../spell/useSpellLevels'
 import { validateNumber } from './numberInput'
 import {
@@ -690,6 +780,7 @@ import {
   getDefaultStatForClass,
   getSpellSlotsForClass,
   SRD_SUBCLASSES_BY_CLASS,
+  getSubclassesForClass,
   ClassEntry
 } from 'src/core/usecases/AutoSyncSpellcasting'
 import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
@@ -705,6 +796,10 @@ export default defineComponent({
     const classFilter = ref(false)
 
     const monster = useMonsterStore()
+    const resetPreparedCount = () => {
+      monster.clearBinding('spellcasting.preparedCountOverride')
+      monster.spellcasting.preparedCountOverride = null
+    }
     const spells = useSpellsStore()
     const { rechargeTimeOptions } = useRechargeTimes()
     const classes = useClasses()
@@ -726,15 +821,50 @@ export default defineComponent({
 
     const cadenceOptions = CADENCE_OPTIONS
 
-    const primarySubclass = ref<string>('')
+    const primarySubclass = computed<string>({
+      get: () => monster.spellcasting.subclass || '',
+      set: (val: string) => {
+        monster.spellcasting.subclass = val || ''
+      }
+    })
 
     const primarySubclassOptions = computed(() => {
       const cls = monster.spellcasting.class || 'Wizard'
-      return SRD_SUBCLASSES_BY_CLASS[cls] || []
+      return getSubclassesForClass(cls)
     })
 
+    const filteredPrimarySubclasses = ref<string[]>(getSubclassesForClass(monster.spellcasting.class || 'Wizard'))
+    watch(primarySubclassOptions, (opts) => {
+      filteredPrimarySubclasses.value = opts
+    })
+
+    const filterPrimarySubclasses = (val: string, update: (fn: () => void) => void) => {
+      update(() => {
+        const full = primarySubclassOptions.value
+        if (!val) {
+          filteredPrimarySubclasses.value = full
+        } else {
+          const needle = val.toLowerCase()
+          filteredPrimarySubclasses.value = full.filter((v: string) => v.toLowerCase().includes(needle))
+        }
+      })
+    }
+
+    const extraSubclassOptions = ref<Record<string, string[]>>({})
+    const filterExtraSubclasses = (clsName: string, val: string, update: (fn: () => void) => void) => {
+      update(() => {
+        const full = getSubclassesForClass(clsName)
+        if (!val) {
+          extraSubclassOptions.value[clsName] = full
+        } else {
+          const needle = val.toLowerCase()
+          extraSubclassOptions.value[clsName] = full.filter((v: string) => v.toLowerCase().includes(needle))
+        }
+      })
+    }
+
     const getSubclassesFor = (clsName?: string) => {
-      return SRD_SUBCLASSES_BY_CLASS[clsName || 'Wizard'] || []
+      return getSubclassesForClass(clsName || 'Wizard')
     }
 
     const metrics = computed(() => {
@@ -798,7 +928,12 @@ export default defineComponent({
 
     const removeExtraClass = (idx: number) => {
       if (monster.spellcasting.classes) {
-        monster.spellcasting.classes.splice(idx, 1)
+        const entry = monster.spellcasting.classes[idx]
+        if (!entry) return
+        monster.$patch(state => {
+          state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('spellcasting.classes', entry.id))
+          state.spellcasting.classes.splice(idx, 1)
+        })
         updateSpellcastingSlots(monster.spellcasting.level)
       }
     }
@@ -922,6 +1057,13 @@ export default defineComponent({
       monster.spellcasting.spellCadenceMap[spellId] = cadence
     }
 
+    const toggleSpellBonusAction = (spellId: string) => {
+      if (!monster.spellcasting.bonusActionSpellMap) {
+        monster.spellcasting.bonusActionSpellMap = {}
+      }
+      monster.spellcasting.bonusActionSpellMap[spellId] = !monster.spellcasting.bonusActionSpellMap[spellId]
+    }
+
     const getCadenceLabel = (val: string): string => {
       const match = cadenceOptions.find((c) => c.value === val)
       return match ? match.label : val
@@ -977,6 +1119,31 @@ export default defineComponent({
       monster.spellcasting.levelCadenceMap[lvl] = val
     }
 
+    const newSpellForClass = ref<Record<string, any>>({})
+    const spellOptionsForClass = (className?: string) => {
+      if (!className) return spells.allSpellOptions
+      const filtered = spells.allSpellOptions.filter((s) =>
+        s.class && s.class.some((c: string) => c.toLowerCase() === className.toLowerCase())
+      )
+      return filtered.length > 0 ? filtered : spells.allSpellOptions
+    }
+    const addSpellToClass = (clsEntry: any, index: number) => {
+      const key = clsEntry.id || index
+      const spellVal = newSpellForClass.value[key]
+      if (!spellVal) return
+      const spellName = typeof spellVal === 'object' ? spellVal.value || spellVal.label : spellVal
+      if (!clsEntry.spells) clsEntry.spells = []
+      if (!clsEntry.spells.includes(spellName)) {
+        clsEntry.spells.push(spellName)
+      }
+      newSpellForClass.value[key] = null
+    }
+    const removeSpellFromClass = (clsEntry: any, spIdx: number) => {
+      if (clsEntry.spells) {
+        clsEntry.spells.splice(spIdx, 1)
+      }
+    }
+
     const spellOptionsByLevel = (level: number, className?: string) => {
       let list = spells.allSpellOptions.filter((s) => s.level === level)
       if (className) {
@@ -992,11 +1159,16 @@ export default defineComponent({
       monster,
       primarySubclass,
       primarySubclassOptions,
+      filteredPrimarySubclasses,
+      filterPrimarySubclasses,
+      extraSubclassOptions,
+      filterExtraSubclasses,
       getSubclassesFor,
       extraClasses,
       addExtraClass,
       removeExtraClass,
       onExtraClassChanged,
+      resetPreparedCount,
       metrics,
       spellLevels,
       classDisplayValue,
@@ -1010,9 +1182,14 @@ export default defineComponent({
       getSpellName,
       getSpellCadence,
       setSpellCadence,
+      toggleSpellBonusAction,
       getCadenceLabel,
       removeSpell,
       spellOptionsByLevel,
+      newSpellForClass,
+      spellOptionsForClass,
+      addSpellToClass,
+      removeSpellFromClass,
       validateNumber,
       rechargeTimeOptions,
       resourceTypeOptions,

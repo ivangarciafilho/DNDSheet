@@ -11,6 +11,9 @@ export interface AbilityProjection {
   targeting?: AbilityTargeting
   outcomes: AbilityOutcome[]
   description: string
+  attackCount?: number | string
+  attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
+  attackException?: string
 }
 
 export interface AbilityRenderContext {
@@ -123,19 +126,46 @@ const SMALL_NUMBER_VALUES: Record<string, number> = {
 const parseTargets = (input: string | undefined): Pick<AbilityTargeting, 'count' | 'countMode' | 'kind' | 'qualifier'> | undefined => {
   const text = String(input ?? '').trim()
   if (!text) return undefined
-  const match = text.match(/^(?:(up\s+to)\s+)?(all|\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(.+)$/i)
-  if (!match) return undefined
+  // Support formula tokens like {1+CANTRIP_TIER} as well as numbers and words
+  const match = text.match(/^(?:(up\s+to)\s+)?(\{.+?\}|all|\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(.+)$/i)
+  if (!match) {
+    // If text starts with a relative clause without an explicit count (e.g. "which you can see")
+    const relMatch = text.match(/^(?:(which|that|who)\s+(.+))$/i)
+    if (relMatch) {
+      return {
+        count: 1,
+        countMode: 'exact',
+        kind: 'target',
+        qualifier: text.trim(),
+      }
+    }
+    return undefined
+  }
 
-  const countText = match[2].toLowerCase()
-  const count = countText === 'all'
+  const rawCount = match[2]
+  const countText = rawCount.toLowerCase()
+  const count = /^\{.+\}$/.test(rawCount)
+    ? rawCount
+    : countText === 'all'
     ? 'all'
     : /^\d+$/.test(countText)
     ? Number(countText)
     : SMALL_NUMBER_VALUES[countText]
+
   const targetText = match[3].trim()
-  const targetDetail = targetText.match(/^(.+?)\s+(which|that|who)\s+(.+)$/i)
-  const kind = (targetDetail?.[1] ?? targetText).trim()
-  const qualifier = targetDetail ? `${targetDetail[2].toLowerCase()} ${targetDetail[3].trim()}` : undefined
+  // Check if targetText starts directly with relative pronoun e.g. "which you can see"
+  const leadingRel = targetText.match(/^(which|that|who)\s+(.+)$/i)
+  let kind = 'target'
+  let qualifier: string | undefined
+
+  if (leadingRel) {
+    kind = 'target'
+    qualifier = `${leadingRel[1].toLowerCase()} ${leadingRel[2].trim()}`
+  } else {
+    const targetDetail = targetText.match(/^(.+?)\s+(which|that|who)\s+(.+)$/i)
+    kind = (targetDetail?.[1] ?? targetText).trim()
+    qualifier = targetDetail ? `${targetDetail[2].toLowerCase()} ${targetDetail[3].trim()}` : undefined
+  }
 
   return {
     count,
@@ -198,8 +228,8 @@ const normalizeTargeting = (input: unknown): AbilityTargeting | undefined => {
   const result: AbilityTargeting = {}
   if (input.count === 'all' || validAbilityNumber(input.count)) result.count = input.count
   if (input.countMode === 'exact' || input.countMode === 'up_to') result.countMode = input.countMode
-  if (typeof input.kind === 'string') result.kind = input.kind
-  if (typeof input.qualifier === 'string') result.qualifier = input.qualifier
+  if (typeof input.kind === 'string' && input.kind.trim()) result.kind = input.kind.trim()
+  if (typeof input.qualifier === 'string' && input.qualifier.trim()) result.qualifier = input.qualifier.trim()
   if (typeof input.raw === 'string') result.raw = input.raw
   if (Array.isArray(input.planes)) result.planes = input.planes.filter((plane): plane is string => typeof plane === 'string')
 
@@ -272,6 +302,9 @@ export function inferAbility(action: Partial<MonsterAction>): AbilityProjection 
     targeting,
     outcomes: action.outcomes !== undefined ? normalizeOutcomes(action.outcomes) : legacyOutcomes(action.effects),
     description: String(action.description ?? ''),
+    attackCount: action.attackCount,
+    attackRollModifier: action.attackRollModifier,
+    attackException: action.attackException,
   }
 }
 
@@ -387,7 +420,12 @@ export function scopePhrase(
   if (!targeting) return ''
 
   const count = resolvedCount(targeting.count, context)
-  const kind = normalizeKind(String(targeting.kind ?? ''), count)
+  let rawKind = String(targeting.kind ?? '').trim()
+  if (!rawKind && count) {
+    const isPlural = count.text === 'all' || (count.number !== undefined && count.number > 1)
+    rawKind = isPlural ? 'targets' : 'target'
+  }
+  const kind = normalizeKind(rawKind, count)
   const countText = count
     ? `${targeting.countMode === 'up_to' ? 'up to ' : ''}${formatCount(count, mode === 'text2024')}`
     : ''
@@ -412,9 +450,25 @@ export function mechanicsPhrase(ability: AbilityProjection, context: AbilityRend
   const phrases: string[] = []
   if (ability.attackSource) {
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
+    const hasCount = ability.attackCount !== undefined && String(ability.attackCount).trim() !== ''
+    const numCount = Number(ability.attackCount)
+    const countStr = hasCount ? `${ability.attackCount} ` : ''
+    const isPlural = hasCount && (isNaN(numCount) || numCount > 1)
+    const attackWord = isPlural ? 'Attacks' : 'Attack'
     const bonus = context.attackBonus ?? ability.attackBonus
-    const bonusText = bonus === undefined ? '' : ` ${valueText(bonus, context, 'bonus')}`
-    phrases.push(`${reach}${ability.attackSource === 'spell' ? 'Spell' : 'Weapon'} Attack${bonusText}`)
+    const bonusPrefix = isPlural ? ' of ' : ' '
+    const bonusText = bonus === undefined ? '' : `${bonusPrefix}${valueText(bonus, context, 'bonus')}`
+
+    const glyph = ability.attackRollModifier === 'advantage'
+      ? '▲▲'
+      : ability.attackRollModifier === 'disadvantage'
+      ? '▼▼'
+      : ''
+    const exception = ability.attackException?.trim() ?? ''
+    const modParts = [glyph, exception].filter(Boolean)
+    const modText = modParts.length ? ` (${modParts.join(' ')})` : ''
+
+    phrases.push(`${countStr}${reach}${ability.attackSource === 'spell' ? 'Spell' : 'Weapon'} ${attackWord}${bonusText}${modText}`)
   }
   if (ability.saveAbility) {
     const dc = context.saveDc ?? ability.saveDc
@@ -462,7 +516,12 @@ export function outcomePhrase(
     const effects = outcome.effects.map((effect) => effectText(effect, context)).filter(Boolean).map(ensurePeriod)
     const parts = [...effects]
     if (outcome.rider?.trim()) parts.push(outcome.rider.trim())
-    const label = markLabel(`${triggerLabel(outcome.trigger, mode)}:`, markup)
+    if (outcome.diceTable && outcome.diceTable.length) {
+      const rows = outcome.diceTable.map((r) => `${r.roll}: ${r.effect}`).join('; ')
+      parts.push(`(${rows})`)
+    }
+    const filterPrefix = outcome.targetFilter?.trim() ? `[${outcome.targetFilter.trim()}] ` : ''
+    const label = markLabel(`${filterPrefix}${triggerLabel(outcome.trigger, mode)}:`, markup)
     return parts.length ? `${label} ${ensurePeriod(parts.join(' '))}` : label
   })
 }
@@ -490,7 +549,14 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   if (ability.attackSource) {
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
     const bonus = attackBonus === undefined ? '' : ` ${valueText(attackBonus, context, 'bonus')}`
-    const attack = `${markLabel(`${reach}Attack Roll:`, markup)}${bonus}`
+    const count = (action.attackCount && Number(action.attackCount) > 1) ? Number(action.attackCount) : undefined
+    const sourceLabel = ability.attackSource === 'spell' ? 'Spell' : 'Weapon'
+    const rollMod = action.attackRollModifier === 'advantage' ? '▲▲ ' : action.attackRollModifier === 'disadvantage' ? '▼▼ ' : ''
+    const exc = action.attackException ? `${rollMod}${action.attackException}`.trim() : rollMod.trim()
+    const excText = exc ? ` (${exc})` : ''
+    const attack = count
+      ? `${markLabel(`${count} ${reach}${sourceLabel} Attacks of`, markup)}${bonus}${excText}`
+      : `${markLabel(`${reach}Attack Roll:`, markup)}${bonus}${excText}`
     const range = ability.targeting?.range
     const attackScope = scopePhrase({ ...ability, targeting: ability.targeting ? {
       ...ability.targeting,

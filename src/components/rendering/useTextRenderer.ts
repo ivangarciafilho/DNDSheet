@@ -11,6 +11,7 @@ import {
   composeAcAndDefenses,
   DynamicValueContext,
 } from 'src/core/domain/defense-and-traits-utils'
+import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed } from 'vue'
@@ -45,6 +46,7 @@ import type {
   SkillGroupRow,
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
+import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
 export function useTextRenderer(options: { web?: boolean } = {}) {
@@ -66,6 +68,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     processReaction,
     processTokens,
     processTrait,
+    buildPlateEntry,
   } = useProcessTokens(options)
 
   const stats = computed(() => {
@@ -141,7 +144,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const inv = monster.extendedHp?.invulnerability
       if (inv) {
         const loc = resolveInvulnerabilityDisplayLocation(inv)
-        if (loc === 'ac' && !res.isAbsoluteRule) {
+        if (loc === 'ac' && (!res.isAbsoluteRule || (monster as any).splitAcRiderRows)) {
           const ruling = composeInvulnerabilityRuling(inv)
           if (ruling && !badges.includes(ruling)) badges.push(ruling)
         }
@@ -149,7 +152,21 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return badges
     }
 
-    const baseAc = `<strong class="pill-number">${monster.AC}</strong>${monster.ACType && monster.ACType.trim() !== '' ? ` (${monster.ACType.trim()})` : ''}`
+    const splitAc = Boolean((monster as any).splitAcRiderRows)
+    const rawAcType = monster.ACType ? monster.ACType.trim() : ''
+    if (splitAc && rawAcType) {
+      const badges: string[] = [`<strong class="pill-number">${monster.AC}</strong>`]
+      const parts = rawAcType.split(/\s*[;,]\s*/).filter(Boolean)
+      for (const p of parts) badges.push(p)
+      const inv = monster.extendedHp?.invulnerability
+      if (inv && resolveInvulnerabilityDisplayLocation(inv) === 'ac') {
+        const ruling = composeInvulnerabilityRuling(inv)
+        if (ruling) badges.push(ruling)
+      }
+      return badges
+    }
+
+    const baseAc = `<strong class="pill-number">${monster.AC}</strong>${rawAcType !== '' ? ` (${rawAcType})` : ''}`
     const badges: string[] = [baseAc]
 
     const inv = monster.extendedHp?.invulnerability
@@ -207,10 +224,15 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       poolCount > 1
     )
 
-    // 1. Primary HP & Hit Dice (Merged cleanly)
+    // 1. Primary HP & Hit Dice (Merged cleanly, or split Bloodied into its own rider row when splitHpRiderRows is enabled)
     const dicePart = `<span class="dnd-hp-hd">(${monster.HP.HD}d${monster.HP.type}${hpModifier.value})</span>`
     if (!isParagon && bloodiedValue.value != null) {
-      badges.push(`<strong class="pill-number">${monster.avgHp}</strong>/<strong class="pill-number text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
+      if ((monster as any).splitHpRiderRows) {
+        badges.push(`<strong class="pill-number">${monster.avgHp}</strong> ${dicePart}`)
+        badges.push(`<strong class="pill-number text-red-7">${bloodiedValue.value}</strong> Bloodied`)
+      } else {
+        badges.push(`<strong class="pill-number">${monster.avgHp}</strong>/<strong class="pill-number text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
+      }
     } else {
       badges.push(`<strong class="pill-number">${monster.avgHp}</strong> ${dicePart}`)
     }
@@ -269,7 +291,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       }
     }
 
-    // 3. Regeneration & Temporary Hit Points
+    // 3. Regeneration & Temporary Hit Points (each pushed as an independent rider badge)
     if (
       ext?.regeneration?.enabled &&
       (ext.regeneration.displayMode === 'minimalist' ||
@@ -280,7 +302,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (minRegen) {
         badges.push(minRegen)
       }
-    } else if (!ext?.regeneration && ext?.tempHp && ext.tempHp.amount > 0) {
+    }
+    if (ext?.tempHp && ext.tempHp.amount > 0) {
       const thp = ext.tempHp
       let trigStr = ''
       if (thp.trigger === 'start_turn') trigStr = ' at start of turn'
@@ -476,11 +499,24 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         parts.push('ignores difficult terrain')
       }
       const cunning: string[] = []
-      if (trav.bonusActionDash) cunning.push('Dash')
-      if (trav.bonusActionDodge) cunning.push('Dodge')
-      if (trav.bonusActionDisengage) cunning.push('Disengage')
+      if (trav.bonusActionDash) {
+        cunning.push(trav.dashRider?.trim() ? `Dash (${trav.dashRider.trim()})` : 'Dash')
+      }
+      if (trav.bonusActionDodge) {
+        cunning.push(trav.dodgeRider?.trim() ? `Dodge (${trav.dodgeRider.trim()})` : 'Dodge')
+      }
+      if (trav.bonusActionDisengage) {
+        cunning.push(trav.disengageRider?.trim() ? `Disengage (${trav.disengageRider.trim()})` : 'Disengage')
+      }
       if (cunning.length > 0) {
-        parts.push(`bonus action ${cunning.join('/')}`)
+        const cunningSeparator = cunning.every((c) => !c.includes('(')) ? '/' : ', '
+        parts.push(`bonus action ${cunning.join(cunningSeparator)}`)
+      }
+      if (Array.isArray(trav.actionRiders) && trav.actionRiders.length > 0) {
+        for (const rider of trav.actionRiders) {
+          const formatted = formatSpeedActionRider(rider)
+          if (formatted) parts.push(formatted)
+        }
       }
       if (trav.bonusActionSpeed && trav.bonusActionSpeed > 0) {
         parts.push(`bonus action speed ${trav.bonusActionSpeed} ft.`)
@@ -520,10 +556,112 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return parts.join('; ')
   })
 
+  const speedBaseBadges = computed(() => {
+    const trav = monster.speedTraversal
+    const parts = monster.speeds.map((s) => {
+      const typeLower = (s.type || '').toLowerCase()
+      const isFly = typeLower === 'fly'
+      const isSwim = typeLower === 'swim'
+      const noteBits: string[] = []
+      if ((s.hover || (isFly && s.hover)) && !s.note?.toLowerCase().includes('hover')) {
+        noteBits.push('hover')
+      }
+      if (isSwim && trav?.aquaticBreathing && trav.aquaticBreathing !== 'none') {
+        if (trav.aquaticBreathing === 'amphibious') {
+          noteBits.push('amphibious')
+        } else if (trav.aquaticBreathing === 'underwater') {
+          noteBits.push('can breathe underwater')
+        } else if (trav.aquaticBreathing === 'water_only') {
+          noteBits.push('can only breathe underwater')
+        } else if (trav.aquaticBreathing === 'hold_breath') {
+          noteBits.push(`can hold breath for ${trav.holdBreathDuration?.trim() || '1 hour'}`)
+        }
+      }
+      if (s.note && s.note.trim()) {
+        noteBits.push(s.note.trim())
+      }
+      const note = noteBits.length > 0 ? ` (${noteBits.join(', ')})` : ''
+      const type =
+        s.type != null && s.type.toLowerCase() === 'walk' ? '' : `${s.type} `
+      return `${capitalize(type)}${s.speed} ft.${note}`
+    })
+
+    if (trav?.trackingSpeed && trav.trackingSpeed > 0) {
+      parts.push(`tracking ${trav.trackingSpeed} ft.`)
+    }
+    if (trav?.stealthSpeed && trav.stealthSpeed > 0) {
+      parts.push(`stealth ${trav.stealthSpeed} ft.`)
+    }
+    if (trav?.bonusActionSpeed && trav.bonusActionSpeed > 0) {
+      parts.push(`bonus action speed ${trav.bonusActionSpeed} ft.`)
+    }
+    return parts
+  })
+
+  const speedRiderBadges = computed(() => {
+    const trav = monster.speedTraversal
+    if (!trav) return []
+    const riders: string[] = []
+
+    if (trav.bonusActionDash) {
+      riders.push(trav.dashRider?.trim() ? `Dash: ${trav.dashRider.trim()}` : 'Bonus Action Dash')
+    }
+    if (trav.bonusActionDodge) {
+      riders.push(trav.dodgeRider?.trim() ? `Dodge: ${trav.dodgeRider.trim()}` : 'Bonus Action Dodge')
+    }
+    if (trav.bonusActionDisengage) {
+      riders.push(trav.disengageRider?.trim() ? `Disengage: ${trav.disengageRider.trim()}` : 'Bonus Action Disengage')
+    }
+    if ((trav as any).bonusActionHide) {
+      riders.push((trav as any).hideRider?.trim() ? `Hide: ${(trav as any).hideRider.trim()}` : 'Bonus Action Hide')
+    }
+    if (Array.isArray(trav.actionRiders) && trav.actionRiders.length > 0) {
+      for (const rider of trav.actionRiders) {
+        const formatted = formatSpeedActionRider(rider)
+        if (formatted) riders.push(formatted)
+      }
+    }
+    if (trav.amorphous1Inch) {
+      riders.push('Amorphous: Move through 1-inch spaces without squeezing')
+    }
+    if (trav.amorphousCannotEnterLiquids) {
+      riders.push("Amorphous: Can't enter liquid bodies")
+    }
+    if (trav.moveThroughCreaturesDifficultTerrain) {
+      if (trav.moveThroughCreaturesShunt) {
+        if (trav.shuntDestination === 'ethereal_plane') {
+          riders.push('Move through creature spaces as difficult terrain (shunts creature to Ethereal Plane)')
+        } else {
+          const dmg = trav.moveThroughCreaturesShuntDamage?.trim() || '1d10 force'
+          riders.push(`Move through creature spaces as difficult terrain (shunts to adjacent space dealing ${dmg} damage)`)
+        }
+      } else {
+        riders.push('Move through creature spaces as difficult terrain')
+      }
+    }
+    if (trav.moveThroughCreaturesTwoSizesDifferent) {
+      riders.push('Move through spaces of creatures 2 sizes different')
+    }
+    if (trav.ignoresDifficultTerrain) {
+      riders.push('Ignores difficult terrain')
+    }
+    if (trav.etherealJaunt && trav.etherealJaunt !== 'none') {
+      if (trav.etherealJaunt === 'bonus_action') {
+        riders.push('Ethereal Jaunt (Bonus Action: shift to/from Ethereal Plane)')
+      } else if (trav.etherealJaunt === 'action') {
+        riders.push('Ethereal Jaunt (Action: shift to/from Ethereal Plane)')
+      } else if (trav.etherealJaunt === 'at_will') {
+        riders.push('Ethereal Jaunt (shift to/from Ethereal Plane at will)')
+      }
+    }
+    if (trav.note && trav.note.trim()) {
+      riders.push(trav.note.trim())
+    }
+    return riders
+  })
+
   const speedBadges = computed(() => {
-    const raw = speeds.value
-    if (!raw) return []
-    return raw.split(/;\s*/).map((s) => s.trim()).filter(Boolean)
+    return [...speedBaseBadges.value, ...speedRiderBadges.value]
   })
 
   // skills renderer
@@ -617,21 +755,94 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     type DefenseEntry = { text: string; html: string }
     const getItems = (list: any[] | undefined, fallback: string[] | undefined): DefenseEntry[] => {
       if (Array.isArray(list) && list.length > 0) {
-        return list
-          .map((item) => {
-            const mode = item?.mode || (item?.absorbs ? 'absorbs' : item?.advantage ? 'advantage' : item?.disadvantage ? 'disadvantage' : 'none')
-            if (mode === 'advantage' || mode === 'disadvantage') {
-              const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
-              if (!plain) return null
-              return {
-                text: `${plain} (${mode === 'advantage' ? 'Advantage' : 'Disadvantage'})`,
-                html: advHtml(escapeHtml(plain), mode === 'advantage', mode === 'disadvantage', `${mode === 'advantage' ? 'Advantage' : 'Disadvantage'} on saving throws against ${plain}`),
+        const advList: { name: string; item: any }[] = []
+        const disadvList: { name: string; item: any }[] = []
+
+        for (const item of list) {
+          if (!item) continue
+          const mode = item?.mode || (item?.absorbs ? 'absorbs' : item?.advantage ? 'advantage' : item?.disadvantage ? 'disadvantage' : 'none')
+          const hasComplex = Boolean(
+            item.saveOutcome ||
+            (item.acquiredCondition && item.acquiredCondition !== 'none') ||
+            item.customCondition ||
+            item.triggeredBenefit ||
+            (item.trigger && item.trigger !== 'none') ||
+            (item.duration && item.duration !== 'permanent') ||
+            item.note
+          )
+          if (!hasComplex && mode === 'advantage') {
+            const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+            if (plain) advList.push({ name: plain, item })
+          } else if (!hasComplex && mode === 'disadvantage') {
+            const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+            if (plain) disadvList.push({ name: plain, item })
+          }
+        }
+
+        const entries: DefenseEntry[] = []
+        let advHandled = false
+        let disadvHandled = false
+
+        for (const item of list) {
+          if (!item) continue
+          const mode = item?.mode || (item?.absorbs ? 'absorbs' : item?.advantage ? 'advantage' : item?.disadvantage ? 'disadvantage' : 'none')
+          const hasComplex = Boolean(
+            item.saveOutcome ||
+            (item.acquiredCondition && item.acquiredCondition !== 'none') ||
+            item.customCondition ||
+            item.triggeredBenefit ||
+            (item.trigger && item.trigger !== 'none') ||
+            (item.duration && item.duration !== 'permanent') ||
+            item.note
+          )
+
+          if (!hasComplex && mode === 'advantage') {
+            if (advList.length > 1) {
+              if (!advHandled) {
+                const joined = advList.map((x) => x.name).join(', ')
+                entries.push({
+                  text: `(${joined} (Advantage))`,
+                  html: `(${advHtml(escapeHtml(joined), true, false, `Advantage on saving throws against ${joined}`)})`,
+                })
+                advHandled = true
               }
+              continue
             }
-            const text = formatDefenseItem(item)
-            return text ? { text, html: escapeHtml(text) } : null
-          })
-          .filter((e): e is DefenseEntry => e != null)
+            const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+            if (!plain) continue
+            entries.push({
+              text: `${plain} (Advantage)`,
+              html: advHtml(escapeHtml(plain), true, false, `Advantage on saving throws against ${plain}`),
+            })
+            continue
+          }
+
+          if (!hasComplex && mode === 'disadvantage') {
+            if (disadvList.length > 1) {
+              if (!disadvHandled) {
+                const joined = disadvList.map((x) => x.name).join(', ')
+                entries.push({
+                  text: `(${joined} (Disadvantage))`,
+                  html: `(${advHtml(escapeHtml(joined), false, true, `Disadvantage on saving throws against ${joined}`)})`,
+                })
+                disadvHandled = true
+              }
+              continue
+            }
+            const plain = formatDefenseItem({ ...item, mode: 'none', advantage: false, disadvantage: false, absorbs: false })
+            if (!plain) continue
+            entries.push({
+              text: `${plain} (Disadvantage)`,
+              html: advHtml(escapeHtml(plain), false, true, `Disadvantage on saving throws against ${plain}`),
+            })
+            continue
+          }
+
+          const text = formatDefenseItem(item)
+          if (text) entries.push({ text, html: escapeHtml(text) })
+        }
+
+        return entries
       }
       if (Array.isArray(fallback) && fallback.length > 0) {
         return fallback
@@ -653,9 +864,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       key: string,
       scopeLabel: string,
       damageList: DefenseEntry[],
-      conditionList: DefenseEntry[]
+      conditionList: DefenseEntry[],
+      forceSplit = false
     ) => {
-      if (damageList.length === 0 && conditionList.length === 0) return null
+      if (damageList.length === 0 && conditionList.length === 0) return []
 
       // Concise items first, verbose items (conditions, bypasses, parentheses) last
       const isVerboseItem = (s: string) => s.includes('(') || s.includes('that ') || s.includes('from ') || s.includes(';')
@@ -667,42 +879,83 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           return a.text.length - b.text.length
         })
 
-      const sortedDamages = sortVerboseLast(damageList)
-      const sortedConditions = sortVerboseLast(conditionList)
+      // Preserve authored order unless explicitly configured to auto-sort
+      const finalDamages = monster.autoSortDefenses ? sortVerboseLast(damageList) : damageList
+      const finalConditions = monster.autoSortDefenses ? sortVerboseLast(conditionList) : conditionList
       const join = (items: DefenseEntry[], field: 'text' | 'html') => items.map((i) => i[field]).join(', ')
       const compose = (field: 'text' | 'html') =>
-        sortedDamages.length > 0 && sortedConditions.length > 0
-          ? `${join(sortedDamages, field)}; ${join(sortedConditions, field)}`
-          : sortedDamages.length > 0
-          ? join(sortedDamages, field)
-          : join(sortedConditions, field)
+        finalDamages.length > 0 && finalConditions.length > 0
+          ? `${join(finalDamages, field)}; ${join(finalConditions, field)}`
+          : finalDamages.length > 0
+          ? join(finalDamages, field)
+          : join(finalConditions, field)
 
       const formattedText = compose('text')
-      const isVerbose = formattedText.length > 65 || sortedDamages.length + sortedConditions.length >= 4
+      const isVerbose = formattedText.length > 60 || finalDamages.length + finalConditions.length >= 4
 
-      return {
+      // Dedicated row splitting per category (or smart auto-split on line overflow)
+      const shouldSplit = forceSplit || (Boolean(monster.autoSplitDefenses) && isVerbose)
+
+      if (shouldSplit && finalDamages.length > 0 && finalConditions.length > 0) {
+        const rows: any[] = []
+        rows.push({
+          key: `${key}_damage`,
+          title: `${scopeLabel} (Damage)`,
+          scopeLabel,
+          subTypeLabel: '',
+          damageItems: finalDamages.map((i) => i.text),
+          conditionItems: [],
+          items: finalDamages.map((i) => i.text),
+          formattedText: join(finalDamages, 'text'),
+          formattedProse: join(finalDamages, 'html'),
+          isVerbose: join(finalDamages, 'text').length > 60,
+        })
+        rows.push({
+          key: `${key}_condition`,
+          title: `Condition ${scopeLabel}`,
+          scopeLabel: `Condition ${scopeLabel}`,
+          subTypeLabel: '',
+          damageItems: [],
+          conditionItems: finalConditions.map((i) => i.text),
+          items: finalConditions.map((i) => i.text),
+          formattedText: join(finalConditions, 'text'),
+          formattedProse: join(finalConditions, 'html'),
+          isVerbose: join(finalConditions, 'text').length > 60,
+        })
+        return rows
+      }
+
+      return [{
         key,
         title: scopeLabel,
         scopeLabel,
         subTypeLabel: '',
-        damageItems: sortedDamages.map((i) => i.text),
-        conditionItems: sortedConditions.map((i) => i.text),
-        items: [...sortedDamages, ...sortedConditions].map((i) => i.text),
+        damageItems: finalDamages.map((i) => i.text),
+        conditionItems: finalConditions.map((i) => i.text),
+        items: [...finalDamages, ...finalConditions].map((i) => i.text),
         formattedText,
         formattedProse: compose('html'),
         isVerbose,
-      }
+      }]
     }
 
+    const categoryOrder = Array.isArray((monster as any).defenseCategoryOrder) && (monster as any).defenseCategoryOrder.length === 3
+      ? (monster as any).defenseCategoryOrder
+      : ['vulnerabilities', 'resistances', 'immunities']
+
     const sections: any[] = []
-    const vulnSec = buildUnifiedSection('vulnerabilities', 'Vulnerabilities', vulnDamages, vulnConditions)
-    if (vulnSec) sections.push(vulnSec)
-
-    const resSec = buildUnifiedSection('resistances', 'Resistances', resDamages, resConditions)
-    if (resSec) sections.push(resSec)
-
-    const immSec = buildUnifiedSection('immunities', 'Immunities', immDamages, immConditions)
-    if (immSec) sections.push(immSec)
+    for (const cat of categoryOrder) {
+      if (cat === 'vulnerabilities') {
+        const splitVuln = Boolean(monster.splitVulnRows || (monster as any).splitDefenseRows?.vulnerabilities)
+        sections.push(...buildUnifiedSection('vulnerabilities', 'Vulnerabilities', vulnDamages, vulnConditions, splitVuln))
+      } else if (cat === 'resistances') {
+        const splitRes = Boolean(monster.splitResRows || (monster as any).splitDefenseRows?.resistances)
+        sections.push(...buildUnifiedSection('resistances', 'Resistances', resDamages, resConditions, splitRes))
+      } else if (cat === 'immunities') {
+        const splitImm = Boolean(monster.splitImmRows || (monster as any).splitDefenseRows?.immunities)
+        sections.push(...buildUnifiedSection('immunities', 'Immunities', immDamages, immConditions, splitImm))
+      }
+    }
 
     return sections
   })
@@ -716,7 +969,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   }
 
   const formatCheckEntry = (entry: SkillCheckEntry, labels: string[]): string => {
-    const inner = `${numHtml(`${entry.passive}, ${renderBonus(entry.bonus)}`)} ${labels.map(escapeHtml).join(' and ')}${condHtml(entry.condition)}`
+    const inner = `${numHtml(`${entry.passive}/${renderBonus(entry.bonus)}`)}, ${labels.map(escapeHtml).join(' and ')}${condHtml(entry.condition)}`
     return `<span class="dnd-check">${advHtml(inner, entry.advantage, entry.disadvantage)}</span>`
   }
 
@@ -803,6 +1056,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       },
     })
 
+    const placementFor = (groupId: string): string => {
+      return aop?.[groupId + 'Placement'] ?? editorPassives?.[groupId + 'Placement'] ?? (monster as any)[groupId + 'Placement'] ?? 'header'
+    }
+
     const groups: {
       name: string
       scopeLabel: string
@@ -810,23 +1067,26 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       skills: string
       badges: string[]
       tip: string
-    }[] = rows.map((row) => {
-      const html = formatGroupRow(row)
-      return {
-        name: `${row.label}${row.actionType === 'Bonus Action' ? ' (Bonus Action)' : ''}`,
-        scopeLabel: row.label,
-        subTypeLabel: row.actionType,
-        skills: html,
-        badges: [html],
-        tip: row.tip,
-      }
-    })
+    }[] = rows
+      .filter((row) => placementFor(row.id) === 'header')
+      .map((row) => {
+        const html = formatGroupRow(row)
+        return {
+          name: `${row.label}${row.actionType === 'Bonus Action' ? ' (Bonus Action)' : ''}`,
+          scopeLabel: row.label,
+          subTypeLabel: row.actionType,
+          skills: html,
+          badges: [html],
+          tip: row.tip,
+        }
+      })
 
     // Tools: same entry grammar as skills ("13, +3 Calligrapher's Supplies")
-    if (Array.isArray(monster.tools) && monster.tools.length > 0) {
+    if (placementFor('tools') === 'header' && Array.isArray(monster.tools) && monster.tools.length > 0) {
+      const defaultToolAction = (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
       for (const actionType of ['Action', 'Bonus Action'] as SkillActionType[]) {
         const entries = monster.tools
-          .filter((tool) => (tool.bonusAction ? 'Bonus Action' : 'Action') === actionType)
+          .filter((tool) => (tool.bonusAction ? 'Bonus Action' : defaultToolAction) === actionType)
           .map((tool) => {
             const bonus = tool.override
               ? tool.overrideValue
@@ -870,18 +1130,18 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       .join('; ')
   })
 
-  const formatSingleSenseItem = (item: any): string => {
+  const formatSingleSenseItem = (item: any, omitScope = false): string => {
     const rangeUnit = item.rangeUnit || 'ft'
-    const rangeStr = item.range != null && item.range > 0 ? `${item.range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}` : ''
+    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}` : ''
     const notes: string[] = []
 
     // Universal modifiers
     if (item.blindBeyond) notes.push('blind beyond it')
-    if (item.acrossPlanes) notes.push('across Material and Ethereal planes')
+    if (item.acrossPlanes && !omitScope) notes.push('across Material and Ethereal planes')
 
     // Sense-specific modifiers
     if (item.echolocation) notes.push("can't while deafened")
-    if (item.devilsSight) notes.push('ignore Magical Darkness')
+    if (item.devilsSight) notes.push(omitScope ? 'ignores Magical Darkness' : 'ignore Magical Darkness')
     if (item.lightImpairment && item.lightImpairment !== 'none') {
       if (item.lightImpairment === 'bright_light') notes.push('Blind on Bright Light')
       else if (item.lightImpairment === 'daylight') notes.push('Blind on Daylight')
@@ -929,11 +1189,17 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return `sense sentience (${rangeStr || '60ft'}, ${modeStr}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'darkvision') {
+      if (omitScope) {
+        return `darkvision${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
+      }
       return `darkvision (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'blindsight' || lowerName === 'blindsense' || lowerName === 'echolocation') {
       if (lowerName === 'echolocation' && !notes.includes("can't while deafened")) {
         notes.unshift("can't while deafened")
+      }
+      if (omitScope) {
+        return `blindsight${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
       }
       return `blindsight (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
@@ -942,6 +1208,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const targets = item.targetCreatureTypes && item.targetCreatureTypes.length > 0
         ? item.targetCreatureTypes.join(', ')
         : 'living creatures'
+      if (omitScope) {
+        return `${modeStr} of ${targets}${notes.length > 0 ? `, ${notes.join(', ')}` : ''}`
+      }
       return `life sense (${modeStr} of ${targets}, within ${rangeStr || '5 miles'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'divine sense') {
@@ -949,6 +1218,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const targets = item.targetCreatureTypes && item.targetCreatureTypes.length > 0
         ? item.targetCreatureTypes.join(', ')
         : 'celestials, fiends, and undead'
+      if (omitScope) {
+        return `${modeStr} of ${targets}${notes.length > 0 ? `, ${notes.join(', ')}` : ''}`
+      }
       return `divine sense (${modeStr} of ${targets}, within ${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
 
@@ -972,10 +1244,42 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const sensesBadges = computed(() => {
     const items: string[] = []
     if (Array.isArray(monster.sensesList) && monster.sensesList.length > 0) {
-      monster.sensesList.forEach((item) => {
-        const formatted = formatSingleSenseItem(item)
-        if (formatted) items.push(formatted)
-      })
+      const planarGroup: any[] = []
+      const nonPlanar: any[] = []
+
+      for (const item of monster.sensesList) {
+        if (item.acrossPlanes && item.range != null && item.range > 0) {
+          planarGroup.push(item)
+        } else {
+          nonPlanar.push(item)
+        }
+      }
+
+      if (planarGroup.length > 1) {
+        const rangeUnit = planarGroup[0].rangeUnit || 'ft'
+        const range = planarGroup[0].range
+        const allSameRange = planarGroup.every((it) => it.range === range && (it.rangeUnit || 'ft') === rangeUnit)
+        if (allSameRange) {
+          const rangeStr = `${range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}`
+          const commonPrefix = `${rangeStr} across Material and Ethereal Planes`
+          const parts = planarGroup.map((item) => formatSingleSenseItem(item, true)).filter(Boolean)
+          items.push(`${commonPrefix}: ${parts.join(', ')}`)
+          nonPlanar.forEach((item) => {
+            const formatted = formatSingleSenseItem(item, false)
+            if (formatted) items.push(formatted)
+          })
+        } else {
+          monster.sensesList.forEach((item) => {
+            const formatted = formatSingleSenseItem(item, false)
+            if (formatted) items.push(formatted)
+          })
+        }
+      } else {
+        monster.sensesList.forEach((item) => {
+          const formatted = formatSingleSenseItem(item, false)
+          if (formatted) items.push(formatted)
+        })
+      }
     } else {
       Object.entries(monster.senses).forEach(([k, v]) => {
         if (v > 0) items.push(`${k} ${v} ft.`)
@@ -1042,7 +1346,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const processedTraitsList = computed(() => {
     const list = [...(monster.traits ?? [])]
 
-    // Regeneration Detailed Trait
+    // Regeneration & Temporary Hit Points Detailed Trait
     const regen = monster.extendedHp?.regeneration
     const regenAmtStr = regen
       ? resolveDynamicNumericSource(regen.valueSource, regen.amount ?? 10, regen.diceFormula, dynCtx.value)
@@ -1054,18 +1358,41 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       (regen.displayMode === 'detailed' || regen.displayMode === 'both')
     ) {
       const amt = regenAmtStr
+      const recoveryType = regen.recoveryType || 'regen'
+      const isTempHp = recoveryType === 'temp_hp' || recoveryType === 'absorb_temp_hp'
+      const traitName = isTempHp
+        ? (recoveryType === 'absorb_temp_hp' ? 'Absorbing Vigor' : 'Temporary Hit Points')
+        : (recoveryType === 'absorb_hp' ? 'Damage Absorption' : 'Regeneration')
+
       const disTypes = Array.isArray(regen.disruptedByTypes) && regen.disruptedByTypes.length > 0
         ? regen.disruptedByTypes.join(' or ')
         : (regen.disruptedBy?.trim() || '')
       const note = regen.disruptedByNote ? regen.disruptedByNote.trim() : ''
       const dis = [disTypes, note].filter(Boolean).join(', ')
-      const desc = dis
-        ? `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function at the start of its next turn. The ${monster.name.toLowerCase()} dies only if it starts its turn with 0 hit points and doesn't regenerate.`
-        : `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn if it has at least 1 hit point.`
-      if (!list.some((t) => t.name?.trim().toLowerCase() === 'regeneration')) {
+
+      let desc = ''
+      if (recoveryType === 'absorb_temp_hp') {
+        const absorbType = regen.triggeredByDamageType || 'lightning'
+        desc = `Whenever the ${monster.name.toLowerCase()} is subjected to ${absorbType} damage, it takes no damage and instead gains a number of temporary hit points equal to ${amt}.`
+      } else if (recoveryType === 'absorb_hp') {
+        const absorbType = regen.triggeredByDamageType || 'necrotic'
+        desc = `Whenever the ${monster.name.toLowerCase()} is subjected to ${absorbType} damage, it takes no damage and instead regains a number of hit points equal to ${amt}.`
+      } else if (isTempHp) {
+        // Pure temporary hit points gain
+        desc = dis
+          ? `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points at the start of its turn. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function at the start of its next turn.`
+          : `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points at the start of its turn.`
+      } else {
+        // Pure healing / regeneration
+        desc = dis
+          ? `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function at the start of its next turn. The ${monster.name.toLowerCase()} dies only if it starts its turn with 0 hit points and doesn't regenerate.`
+          : `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn if it has at least 1 hit point.`
+      }
+
+      if (!list.some((t) => t.name?.trim().toLowerCase() === traitName.toLowerCase())) {
         list.push({
           id: 'auto-regeneration',
-          name: 'Regeneration',
+          name: traitName,
           description: desc,
           limitedUse: { count: 0, rate: '' },
           crAnnotation: {
@@ -1263,17 +1590,103 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return filterByStagePool(monster.attacks.filter((a) => !a.legendaryOnly)).map((a) => processAttack(a, monster))
   })
 
+  const relocatedCombatActions = (targetPlacement: 'action' | 'bonus_action' | 'legendary'): string[] => {
+    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
+    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const placementFor = (groupId: string): string => {
+      return aop?.[groupId + 'Placement'] ?? editorPassives?.[groupId + 'Placement'] ?? (monster as any)[groupId + 'Placement'] ?? 'header'
+    }
+    const groupType = (flag: unknown, editorType: unknown): SkillActionType =>
+      flag || editorType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+    const inputs = (monster.skills ?? []).map((sk) => ({
+      key: normalizeSkillKey(sk.key),
+      label: skillLabel(sk.key, sk.skill?.label),
+      stat: ((sk.skill?.stat as DndStat) ?? ((SKILL as any)[sk.key]?.stat as DndStat)) ?? 'INT',
+      bonus: bonusForSkill(monster, sk),
+      advantage: Boolean(sk.advantage),
+      disadvantage: Boolean(sk.disadvantage),
+      condition: sk.condition?.trim() || sk.conditional?.trim() || '',
+    }))
+    const rows = computeSkillGroupLayout({
+      stats: monster.stats,
+      skills: inputs,
+      groupActionTypes: {
+        search: groupType(aop?.bonusActionSearch, editorPassives?.searchActionType),
+        study: groupType(aop?.bonusActionStudy, editorPassives?.studyActionType),
+        influence: groupType(aop?.bonusActionInfluence, editorPassives?.influenceActionType),
+        hide: groupType(aop?.bonusActionHide, editorPassives?.hideActionType),
+      },
+    })
+    const actionResults = rows
+      .filter((row) => placementFor(row.id) === targetPlacement)
+      .map((row) => {
+        const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
+        const scores = formatGroupRow(row)
+        const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
+        const formattedScores = scores.startsWith('(') ? scores : `(${scores})`
+        if (options.web !== false) {
+          return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
+        }
+        return `<b><i>${name} ${formattedScores}.</i></b>${rider ? ` ${rider}` : ''}`
+      })
+
+    // Tools relocation
+    const effectiveToolsPlacement = (): string => {
+      const p = placementFor('tools')
+      if (p === 'header') return 'header'
+      if (p === 'legendary') return 'legendary'
+      if (p === 'bonus_action' || (monster as any).toolsActionType === 'Bonus Action') return 'bonus_action'
+      return 'action'
+    }
+    const toolPlacement = effectiveToolsPlacement()
+    if (toolPlacement === targetPlacement && Array.isArray(monster.tools) && monster.tools.length > 0) {
+      const toolEntries = monster.tools.map((tool) => {
+        const bonus = tool.override
+          ? tool.overrideValue
+          : statModifier(monster.stats[tool.stat] ?? 10) +
+            (tool.proficient ? monster.proficiency : 0) +
+            (tool.expertise ? monster.proficiency : 0)
+        const mode = effectiveAdvantage(tool.advantage, tool.disadvantage)
+        const entry: SkillCheckEntry = {
+          key: tool.id,
+          label: tool.name,
+          stat: tool.stat,
+          passive: passiveScore(bonus, tool.advantage, tool.disadvantage),
+          bonus,
+          advantage: mode === 'advantage',
+          disadvantage: mode === 'disadvantage',
+          condition: tool.condition?.trim() ?? '',
+        }
+        return formatCheckEntry(entry, [tool.name])
+      })
+      if (toolEntries.length > 0) {
+        const label = targetPlacement === 'legendary' ? 'Use Tool (Costs 1 Action)' : 'Use Tool'
+        const scores = toolEntries.join('; ')
+        const formattedScores = `(${scores})`
+        const rider = (aop?.riders?.['tools'] ?? (editorPassives?.riders as any)?.['tools'] ?? '').trim()
+        if (options.web !== false) {
+          actionResults.push(buildPlateEntry(monster, { name: label, scores: formattedScores }, rider))
+        } else {
+          actionResults.push(`<b><i>${label} ${formattedScores}.</i></b>${rider ? ` ${rider}` : ''}`)
+        }
+      }
+    }
+    return actionResults
+  }
+
   // non-legendary only actions
   const actions = computed(() => {
-    return filterByStagePool(
+    const base = filterByStagePool(
       monster.actions.filter((a) => !a.legendaryOnly && !a.bonusAction)
     ).map((a) => processAction(a, monster))
+    return [...relocatedCombatActions('action'), ...base]
   })
 
   const bonusActions = computed(() => {
-    return filterByStagePool(
+    const base = filterByStagePool(
       monster.actions.filter((a) => !a.legendaryOnly && a.bonusAction)
     ).map((a) => processAction(a, monster))
+    return [...relocatedCombatActions('bonus_action'), ...base]
   })
 
   const multiattacks = computed(() =>
@@ -1284,11 +1697,12 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     processLegendaryPreamble(monster.legendaryActions, monster)
   )
 
-  const legendaryActions = computed(() =>
-    monster.legendaryActions.actions.map((a) =>
+  const legendaryActions = computed(() => {
+    const base = monster.legendaryActions.actions.map((a) =>
       processLegendaryAction(a.actionId, a.cost, monster)
     )
-  )
+    return [...relocatedCombatActions('legendary'), ...base]
+  })
 
   const mythicTrait = computed(() =>
     processMythicActionTrait(monster.mythicActions, monster)
@@ -1305,7 +1719,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   )
 
   const reactions = computed(() =>
-    monster.reactions.map((r) => processReaction(r, monster))
+    filterByStagePool(monster.reactions).map((r) => processReaction(r, monster))
   )
 
   const lairActionPreamble = computed(() => processLairActionPreamble(monster))
@@ -1363,6 +1777,18 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         qualifiers.push(`Choose lowest Dice to Cast ${String(cfg.specialTriggerSpell || '').trim() || 'Spell'}`)
       } else if (cfg.specialTrigger === 'custom' && cfg.customEffectNote) {
         qualifiers.push(String(cfg.customEffectNote).trim())
+      }
+    }
+
+    // Modular composable riders (e.g. "Fiends and Undead have Disadvantage on Initiative Roll", "At Disadvantage, Cast Spell")
+    if (Array.isArray(cfg?.riders) && cfg.riders.length > 0) {
+      const formattedRiders = formatInitiativeRiders(cfg.riders)
+      for (const rider of formattedRiders) {
+        if (rider.toLowerCase().includes('have disadvantage on initiative roll') || rider.toLowerCase().includes('have advantage on initiative roll')) {
+          extraCells.push(rider)
+        } else {
+          qualifiers.push(rider)
+        }
       }
     }
 
@@ -1537,6 +1963,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     saves,
     speeds,
     speedBadges,
+    speedBaseBadges,
+    speedRiderBadges,
     skills,
     tools,
     vulnerabilities,

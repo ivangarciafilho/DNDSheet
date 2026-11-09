@@ -42,6 +42,7 @@ export const useHistoryStore = defineStore('history', () => {
     try {
       const currentState = JSON.parse(JSON.stringify(monsterStore.$state))
       const entry = ledger.undo(currentState)
+      updateFlags()
       if (entry) {
         monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
         updateFlags()
@@ -63,6 +64,7 @@ export const useHistoryStore = defineStore('history', () => {
     try {
       const currentState = JSON.parse(JSON.stringify(monsterStore.$state))
       const entry = ledger.redo(currentState)
+      updateFlags()
       if (entry) {
         monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
         updateFlags()
