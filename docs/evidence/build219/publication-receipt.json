@@ -1,0 +1,143 @@
+{
+  "build": 219,
+  "url": "https://ivangarciafilho.github.io/DNDSheet/?build=219#/",
+  "releaseSource": "64066d666b2d0b55ed07c1793333e71a3e170db2",
+  "base": "ac4bdaea5998e80df81d19285cc21465da16dcd3",
+  "pagesCommit": "d28f171e197cd2fa370615cb09a414804b783a66",
+  "tag": "rc-2.4.3-build-219-tarrasque-prose-and-mechanics",
+  "gate": {
+    "ok": true,
+    "inputFingerprint": "2cedd5b6a67b5c27364c00e487705d2e8783137d06af24fb34f8751340578e2d",
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 3
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 28
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 44
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 178
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 8
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 42
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 180
+      }
+    ]
+  },
+  "live": {
+    "status": "built",
+    "indexSha256": "fa3fe135ce74451e03c5cdfa008d67598b3cc30360ea47c426f52c780c0a58d1",
+    "assets": [
+      {
+        "path": "/DNDSheet/assets/index.e01f8e02.js",
+        "sha256": "f0d9fdab89234f8d4f29f5116656f92d6bfa827d0193da1e8f326caf15115620"
+      },
+      {
+        "path": "/DNDSheet/assets/index.2f4a8880.css",
+        "sha256": "919c0fac982d568fff2b2b78a508b008b794e8e0368e89edeb60dffa46aa2376"
+      },
+      {
+        "path": "/DNDSheet/assets/MonsterBuilder.85b58fcc.js",
+        "sha256": "11e325c2c02d83f6711419b8b676cc9274de44423d2efac0b6dbb357aab6a71f"
+      }
+    ],
+    "footer": "v2.4.3 build 219",
+    "footerVerifiedBy": "read-only official browser inspection"
+  },
+  "candidate": {
+    "path": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-219-tarrasque-prose-and-mechanics",
+    "verifiedEntries": 96
+  },
+  "workload": {
+    "normalized": {
+      "total": 256,
+      "before": {
+        "complete": 150,
+        "open": 106
+      },
+      "after": {
+        "complete": 152,
+        "open": 104
+      },
+      "delta": {
+        "complete": 2,
+        "open": -2
+      }
+    },
+    "raw": {
+      "total": 265,
+      "before": {
+        "complete": 159,
+        "open": 106
+      },
+      "after": {
+        "complete": 161,
+        "open": 104
+      }
+    },
+    "closed": [
+      "B4.7",
+      "B4.20"
+    ],
+    "newTaskIds": 0,
+    "acceptanceItems": 20,
+    "coreTests": {
+      "before": 427,
+      "after": 442,
+      "delta": 15
+    },
+    "browserScenariosPerBuild": {
+      "before": 56,
+      "after": 57,
+      "delta": 1
+    }
+  },
+  "verifiedAt": "2026-11-09T10:00:17.860Z"
+}

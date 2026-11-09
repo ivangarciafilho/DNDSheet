@@ -71,3 +71,8 @@ After this delivery: A11.5 stable container/region ownership and typed result/pr
 6. Implement transactional editor commands and meaningful previews with Apply/Cancel/undo/redo, stable IDs and no render-time writes.
 7. Resolve once into a common presentation model, then web and prose adapters. Specify each target's phase/omission policy instead of inheriting live-sheet filtering accidentally.
 8. Prove the full fixture matrix: save/import/reload, web/prose/VTT outputs, 12 themes and compiled print including long tables. Close A11.5 only after its whole acceptance; then connect A11.9 random-result tables.
+
+
+## Published release
+
+Source `64066d666b2d0b55ed07c1793333e71a3e170db2`; Pages `d28f171e197cd2fa370615cb09a414804b783a66`; tag `rc-2.4.3-build-219-tarrasque-prose-and-mechanics`. GitHub Pages reports built; live footer219 verified without changing browser data. Live index, entry JavaScript/CSS and MonsterBuilder chunk match tested Pages bytes. Frozen candidate copied to central archive with all96 entries verified. [Publication receipt](../evidence/build219/publication-receipt.json).
