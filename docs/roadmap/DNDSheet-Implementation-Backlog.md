@@ -1,4 +1,14 @@
-### Current verified delivery — Build 221 (2026-11-09)
+## Current verified delivery — Build222 (2026-11-09)
+
+Completed **ten existing tasks**: H22, A17.1, A17.3, A17.4, A13.6, B10.1, B10.2, A17.6, A17.7 and B10.3. Character AC/speed now disclose recorded provenance or explicit estimates; identity/equipment names remain reference-only. Reusable fixtures, AST prerequisite replay, portable browser discovery, computed theme contrast, fit diagnostics and evidence-based documentation support the next model work.
+
+Final frozen-source gate **10/10**, **469 core tests (+16 versus reproduced base453)**, **58 exhaustive browser steps on SPA and Pages**, plus **60 fixture/theme cases with120 computed AC head/body contrast samples**,10 fit views and the existing help/spell probes. Type guard613 existing diagnostics/0new; existing debt remains. Prior candidates219–221 preserved. Release tag: rc-2.4.3-build-222-character-truth-and-release-proofs. Base:964f645fe5352b8cd7c9f8908a6ebd9cbd12133e. Publication receipt records final source/Pages identities and live parity.
+
+**Measured workload:** normalized256 IDs, **152 complete/104 open →162 complete/94 open (+10/−10)**; raw265 IDs161/104 →171/94, including9 historical checked B183 rows. No new IDs. Build221's historical headline156/100 is not the checkbox baseline; clean-base tests reproduce453, not its headline454. The actual ledger and test command outputs govern this packet.
+
+[Build222 delivery and continuation](DNDSheet-Build222-Character-Truth-and-Release-Proofs.md) and [feature matrix](DNDSheet-Feature-Matrix.md) record evidence and limits. A17.7/B10.3 have overlapping documentation outputs and distinct pre-existing contracts; they are not new acceptance aliases. The representative contrast/fit probes do not close all panel accessibility/zoom/print work. **Next: A11.5 stable container/region ownership and typed validation →A11.9 →H9 →H14 per-file debt.**
+
+### Historical verified delivery — Build 221 (2026-11-09)
 
 Delivered **Build 221** with 22 actionable engineering tasks across 5 domains: Attack & Action Bonus Typography & Grammar (+0 signed attack roll bonuses, automated target noun fallbacks), Action Prose & Outcome Grammar Sanitization (colon leading whitespace elimination, distance unit normalization, composite punctuation stripping), Skill Action Group Parentheses & Notation Cleanup (elimination of nested double parens in Search/Hide), Speed Locomotion & Senses Distance Typography, and Documentation & Provenance Ledger.
 
@@ -740,7 +750,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A13.3** `components/kit/HelpTip.vue`, `v-help` directive, generalised delegated host (from A5) · M — `v-help` (201) and `HelpTip.vue` focusable icon (202); the sheet keeps its delegated `statblock-help` host — progress (201): `v-help` directive (`src/boot/help.ts`: native tooltip + `aria-description`) adopted on 15 Senses controls; coverage 12.5 % → 15.2 %. Left: `HelpTip.vue` icon component, delegated host
 - [ ] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M
 - [x] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M — `test/audit-help.mjs`, floor `test/help-floor.txt` = 35 %, `npm run audit:help` (202)
-- [ ] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M
+- [x] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A13.8** Verify BS-40 under CR-154: delegated help, print and global `.statblock` selectors target the sole rendered sheet; no inline composer preview DOM; record the decision (*added A7*) · S — decision: one sheet. Only `WebRenderer.vue` renders `.statblock`; fuzz Step 46 asserts no `[data-composer-preview]`/attack/multiattack preview DOM; help smoke and the print probe target `#render .statblock` (199)
 - [ ] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S
 
@@ -817,13 +827,13 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R6 | QA-01 | A4…A16 | 2–3 d | 12 files · +1 300 / −400 |
 
-- [ ] **A17.1** `test/fixtures/monsters/*.json` (Seraph, pact, full, innate, legacy actions) used by node tests and probes · M
+- [x] **A17.1** `test/fixtures/monsters/*.json` (Seraph, pact, full, innate, legacy actions) used by node tests and probes · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A17.2** Move QA helpers from `%TEMP%` to `tools/qa/` (shot, splice, fixture loader, overflow probe, doc check) · S — done (216): `tools/qa/` with `count-tasks.mjs` (now A/B/H), `edit-anchored.mjs`, `shots.mjs` (repo-relative paths), new `run-step.mjs` (one fuzz step in a fresh Chrome) and a README. Fixture loader and overflow probe live in the fuzz itself
-- [ ] **A17.3** Update `test/exhaustive-ui-fuzz.js` to the plate grammar and the unified studio; locate headless Chrome (BS-36) · L
-- [ ] **A17.4** Theme matrix: 12 selectable themes × fixture, computed contrast table (SBG-005) · M
+- [x] **A17.3** Update `test/exhaustive-ui-fuzz.js` to the plate grammar and the unified studio; locate headless Chrome (BS-36) · L — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
+- [x] **A17.4** Theme matrix: 12 selectable themes × fixture, computed contrast table (SBG-005) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [ ] **A17.5** Budgets: keystroke → preview, completion, select open, resolver pass (§15.4) · M
-- [ ] **A17.6** `npx quasar build` clean · S
-- [ ] **A17.7** Rewrite `STACK_STATE.md` and the README feature list from evidence (DEF-14, BS-03) · M
+- [x] **A17.6** `npx quasar build` clean · S — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
+- [x] **A17.7** Rewrite `STACK_STATE.md` and the README feature list from evidence (DEF-14, BS-03) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A17.8** Profile macro rendering on a 5 000-character description (BS-15); screenshot storage policy (BS-37) · S — done (217): `Build217.test.ts`: 0.18 ms per 5 000-character description (20 runs after warm-up), budget 16 ms. Screenshot policy: screenshots are evidence, never committed — they go to the scratch tree or `%TEMP%`, and reports cite them by path
 - [ ] **A17.9** Release: annotated local tag `v2.5.0-statblock`, release notes, docs ritual · S
 
@@ -976,9 +986,9 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|
 | R10 | F-11 | all | 2–5 d |
 
-- [ ] **B10.1** Decide reference-only scope or required inputs for derived values (TASK-060) · S
-- [ ] **B10.2** AC/speed provenance or visible estimate labels (TASK-061) · M
-- [ ] **B10.3** README, STACK_STATE and feature matrix regenerated from release evidence; close (TASK-062) · M
+- [x] **B10.1** Decide reference-only scope or required inputs for derived values (TASK-060) · S — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
+- [x] **B10.2** AC/speed provenance or visible estimate labels (TASK-061) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
+- [x] **B10.3** README, STACK_STATE and feature matrix regenerated from release evidence; close (TASK-062) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 
 **Done when:** DOM-006, PRD-002…003, REL-002 proven.
 
@@ -1310,7 +1320,7 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [x] **B4.13** Character exports (JSON, Markdown, text): goldens and a JSON round-trip test · S — done (217): `Build217.test.ts`: character Markdown and plain-text goldens (`test/goldens/character-*.txt`) and a lossless JSON test. There is no character JSON *import* path (B4.17)
 - [x] **B4.14** Copy link sends the whole monster to a third-party URL shortener without telling the user; show a one-line notice or offer the long link only · S — done (217): the copy-link notice names tinyurl.com and says it now stores the monster; the shortener reply must be an `https` URL with a 2xx status, otherwise the long link is copied instead of an error page. Verified by code review; no automated test drives the clipboard
 - [x] **B7.6** Reduced motion done safely: scope a reduce rule to the app's own decorative transitions (never Quasar's menu/tooltip internals), and run the fuzz under explicit `Emulation.setEmulatedMedia` for both `no-preference` and `reduce` so results do not depend on the build machine's Windows setting · M — done (218): reduce rule scoped to the 7 selectors that own a transition in src/ (Quasar internals untouched); fuzz Step 56 emulates both `reduce` and `no-preference` and checks the probe’s duration is 0 and > 0 respectively, independent of the machine setting; Step 35 and the help smoke still pass
-- [ ] **H22** `tools/qa/run-step.mjs` cannot extract steps whose page code uses `${…}` interpolation (Step 35 is one); evaluate the step's template through the fuzz's own helpers instead · S
+- [x] **H22** `tools/qa/run-step.mjs` cannot extract steps whose page code uses `${…}` interpolation (Step 35 is one); evaluate the step's template through the fuzz's own helpers instead · S — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **B2.6** Lint “fixable” honesty: the lint dialog showed “Auto-Fixable” and counted `CR_DRIFT` and `SPELL_SLOTS_EMPTY` on its Fix button although `autoFixMonster` repairs neither · XS — done (217): flags false, test asserts every fixable issue disappears after auto-fix
 - [x] **B4.16** `exportToMarkdown`/`exportToPlainText` printed “Medium humanoid, ” with an empty alignment (the Build196 fix never reached this exporter) · XS — done (217)
 - [x] **B4.17** Character JSON can be exported but not imported; add an import path (validate, migrate, confirm overwrite) or drop the export · S — done (218): `core/domain/character-import.ts`: `looksLikeCharacter` tells a character file from a monster file (no `saveVersion`, class/level/race and six numeric scores); `importCharacter` merges over the default character, keeps unknown fields, clamps scores 1–30 and level 1–20. The normal Load file button now loads `.character.json` into the character sheet and switches mode. Tests: export → import round-trip, junk/partial/monster rejection

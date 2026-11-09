@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
+import { findChrome } from '../tools/qa/chrome.mjs'
 import { spawn } from 'node:child_process'
 import http from 'node:http'
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
 
-const CHROME_PATH = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+const CHROME_PATH = findChrome()
 const PORT = 9223
 let activeBrowser
 
@@ -2405,6 +2406,7 @@ async function runFuzz() {
   }
 
   console.log('\n--- PHASE 33: A4 Studio Radial/Dual-Knob Cropping, Far-Left Recharge, Defense Consolidation & Spell Cadence Badges ---')
+  console.log('\n--- Step 33: Unified composition and phase presentation ---')
   const step33 = await evalInPage(`
     async () => {
       const qApp = document.querySelector('#q-app');
@@ -3869,6 +3871,17 @@ async function runFuzz() {
   if(!checks57.reload)console.log('Reload export difference:',JSON.stringify({before:exports57[3],after:reloaded57}))
   console.log('Step 57 result:',JSON.stringify(checks57))
   if(Object.values(checks57).some(value=>value!==true))throw new Error('Step 57 failed: '+JSON.stringify(checks57))
+  console.log('\n--- Step 58: Character vitals disclose estimates and preserve recorded provenance ---')
+  const step58=await evalInPage(`async()=>{
+    const p=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,e=p._s.get('editor');e.activeMode='character';await new Promise(r=>setTimeout(r,100));const c=p._s.get('character');c.resetCharacter();await new Promise(r=>setTimeout(r,0));c.actor.stats.DEX=18;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    const sheet=()=>document.querySelector('.character-sheet')||document.querySelector('#char-splitter > .q-splitter__after');const defaults=sheet().textContent.includes('Estimate')&&sheet().textContent.includes('30 ft. placeholder')&&sheet().textContent.includes('armor, shields and features are not applied');
+    const panel=[...document.querySelectorAll('#char-editor .q-expansion-item')].find(x=>x.textContent.includes('Armor Class & Speed'));if(!panel.classList.contains('q-expansion-item--expanded'))panel.querySelector('.q-item').click();await new Promise(r=>setTimeout(r,100));
+    const fill=(label,value)=>{const input=[...panel.querySelectorAll('input')].find(x=>x.getAttribute('aria-label')===label);if(!input)throw Error('Missing vital input '+label);input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));};
+    fill('Recorded Armor Class','19');fill('Recorded Speed (ft.)','0');fill('Armor Class source / notes','Plate and shield');fill('Speed source / notes','Immobile form');await new Promise(r=>setTimeout(r,200));const recorded=[...panel.querySelectorAll('input')].find(x=>x.getAttribute('aria-label')==='Recorded Armor Class').value==='19'&&c.actor.combatVitals.armorClass===19&&c.actor.combatVitals.speed===0&&sheet().textContent.includes('Recorded value')&&sheet().textContent.includes('Immobile form');const readable=[...sheet().querySelectorAll('.character-vital-value')].length===3&&[...sheet().querySelectorAll('.character-vital-value')].every(n=>getComputedStyle(n).color==='rgb(88, 24, 13)')&&!!sheet().querySelector('.character-vital-sources');return {defaults,recorded,readable};}`)
+  await sendCdp('Page.reload');await pause(1500)
+  step58.reload=await evalInPage(`async()=>{for(let i=0;i<60;i++){const p=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia,c=p?._s.get('character'),sheet=document.querySelector('#char-splitter > .q-splitter__after');if(c?.actor.combatVitals?.armorClass===19&&c.actor.combatVitals.speed===0&&sheet?.textContent.includes('Plate and shield'))return true;await new Promise(r=>setTimeout(r,50))}return false;}`)
+  console.log('Step 58 result:',JSON.stringify(step58));assert.ok(Object.values(step58).every(Boolean),'Character vital provenance failed: '+JSON.stringify(step58))
+
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3885,7 +3898,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 57 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 58 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

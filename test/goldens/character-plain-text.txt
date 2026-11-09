@@ -1,9 +1,9 @@
 GOLDEN HERO
 Level 1 Champion Fighter (Human) • Soldier • Neutral Good
 ----------------------------------------
-Armor Class: 12
+Armor Class: 12 (estimate: 10 + DEX modifier; armor, shields and features are not applied.)
 Hit Points: 12 / 12
-Speed: 30 ft.
+Speed: 30 ft. (estimate: 30 ft. placeholder; species, class and equipment are not applied.)
 Proficiency Bonus: +2
 ----------------------------------------
 STR 15 (+2) | DEX 14 (+2) | CON 13 (+1) | INT 10 (+0) | WIS 12 (+1) | CHA 8 (-1)

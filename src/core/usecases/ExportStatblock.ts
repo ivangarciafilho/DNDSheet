@@ -1,3 +1,4 @@
+import { characterVitals, characterVitalText } from '../domain/character-truth.ts'
 import { structuredAttackBonus } from '../domain/structured-attack.ts'
 import { actionRecharge } from '../domain/action-usage.ts'
 import { formatLimitedUses } from '../domain/cadence.ts'
@@ -924,10 +925,10 @@ export function exportCharacterToMarkdown(char: CharacterActor): string {
   lines.push(`## ${char.name}`)
   lines.push(`*Level ${char.level} ${char.subclass ? char.subclass + ' ' : ''}${char.class} (${char.race}) • ${char.background} • ${char.alignment}*`)
   lines.push('___')
-  const ac = 10 + statModifier(char.stats.DEX)
-  lines.push(`**Armor Class** ${ac}`)
+  const vitals = characterVitals(char)
+  lines.push(`**Armor Class** ${characterVitalText(vitals.armorClass)}`)
   lines.push(`**Hit Points** ${char.hp.current} / ${char.hp.max}${char.hp.temp > 0 ? ` (+${char.hp.temp} temp)` : ''}`)
-  lines.push(`**Speed** 30 ft.`)
+  lines.push(`**Speed** ${characterVitalText(vitals.speed, ' ft.')}`)
   lines.push(`**Proficiency Bonus** +${char.proficiency}`)
   lines.push('___')
 
@@ -1007,10 +1008,10 @@ export function exportCharacterToPlainText(char: CharacterActor): string {
   lines.push(char.name.toUpperCase())
   lines.push(`Level ${char.level} ${char.subclass ? char.subclass + ' ' : ''}${char.class} (${char.race}) • ${char.background} • ${char.alignment}`)
   lines.push('----------------------------------------')
-  const ac = 10 + statModifier(char.stats.DEX)
-  lines.push(`Armor Class: ${ac}`)
+  const vitals = characterVitals(char)
+  lines.push(`Armor Class: ${characterVitalText(vitals.armorClass)}`)
   lines.push(`Hit Points: ${char.hp.current} / ${char.hp.max}${char.hp.temp > 0 ? ` (+${char.hp.temp} temp)` : ''}`)
-  lines.push(`Speed: 30 ft.`)
+  lines.push(`Speed: ${characterVitalText(vitals.speed, ' ft.')}`)
   lines.push(`Proficiency Bonus: +${char.proficiency}`)
   lines.push('----------------------------------------')
   lines.push(

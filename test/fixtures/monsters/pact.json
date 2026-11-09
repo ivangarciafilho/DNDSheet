@@ -1,0 +1,371 @@
+{
+  "name": "Pact Adept",
+  "bindings": {},
+  "nickname": "",
+  "saveVersion": 11,
+  "useArticleInToken": false,
+  "alphaTraits": true,
+  "size": "Medium",
+  "type": "humanoid",
+  "alignment": "",
+  "languages": "Common, Infernal",
+  "AC": 14,
+  "ACType": "",
+  "acConfig": {
+    "enabled": false,
+    "baseMode": "flat",
+    "abilityBonus": "none",
+    "defenseItem": "none",
+    "temporary": "none",
+    "conditional": "none"
+  },
+  "CR": 5,
+  "lairCr": -1,
+  "lairCrNote": "in lair",
+  "useCrDisplayOverride": false,
+  "crOverride": "",
+  "proficiency": 2,
+  "proficiencyOverride": false,
+  "HP": {
+    "HD": 9,
+    "type": 8,
+    "modifier": 18
+  },
+  "hpModifierOverride": false,
+  "hpDieTypeOverride": false,
+  "stats": {
+    "STR": 10,
+    "DEX": 10,
+    "CON": 10,
+    "INT": 10,
+    "WIS": 10,
+    "CHA": 18
+  },
+  "saves": {
+    "STR": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "DEX": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "CON": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "INT": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "WIS": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "CHA": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    }
+  },
+  "speeds": [
+    {
+      "id": "fixture-walk",
+      "type": "walk",
+      "speed": 30,
+      "note": ""
+    }
+  ],
+  "skills": [],
+  "resistances": [],
+  "immunities": [],
+  "vulnerabilities": [],
+  "conditions": [],
+  "senses": {
+    "blindsight": 0,
+    "darkvision": 0,
+    "tremorsense": 0,
+    "truesight": 0
+  },
+  "sensesNotes": "",
+  "sensesList": [],
+  "passivePerception": {
+    "override": false,
+    "overrideValue": 0
+  },
+  "traits": [],
+  "spellcasting": {
+    "stat": "CHA",
+    "save": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "modifier": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "attack": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "subclass": "",
+    "level": 5,
+    "slots": [
+      0,
+      0,
+      2,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "atWill": [],
+    "standard": [
+      "Eldritch Blast",
+      "Hex",
+      "Fireball"
+    ],
+    "notes": "",
+    "atWillNotes": "",
+    "useCustomClassPreamble": false,
+    "customClassPreamble": "",
+    "useCustomInnatePreamble": false,
+    "customInnatePreamble": "",
+    "resourceType": "pact",
+    "refreshRate": "short_rest",
+    "displayTitleMode": "class_names",
+    "bypassSlotLevelFilter": false,
+    "splitHighCadence": false,
+    "restrictedCadences": [
+      "short rest",
+      "long rest",
+      "midnight",
+      "midday",
+      "dusk",
+      "dawn",
+      "downtime",
+      "ritual",
+      "weekly",
+      "monthly",
+      "yearly"
+    ],
+    "spellCadenceMap": {},
+    "levelCadenceMap": {},
+    "bonusActionLevelMap": {},
+    "metamagic": {
+      "enabled": false,
+      "sorceryPoints": 0,
+      "refreshRate": "Long Rest",
+      "options": []
+    },
+    "cantripSwitch": false,
+    "cantripSwitchCount": 1,
+    "cantripSwitchInterval": "Short Rest",
+    "preparedInterval": "Long Rest",
+    "customRefreshRate": "",
+    "classes": [],
+    "class": "Warlock"
+  },
+  "attacks": [],
+  "actions": [],
+  "multiattacks": [],
+  "multiattackOptions": {
+    "useCustomRenderer": false,
+    "customMultiattackRenderer": "",
+    "postscript": ""
+  },
+  "legendaryActions": {
+    "count": 0,
+    "actions": [],
+    "useCustomPreamble": false,
+    "customPreamble": ""
+  },
+  "mythicActions": {
+    "triggerName": "",
+    "triggerRecharge": "Recharges after a Short or Long Rest",
+    "triggerDescription": "If {NAME} would be reduced to 0 hit points, its current hit point total instead resets to {monster.hp} hit points. Additionally, the {NAME} can now use the options in the \"Mythic Actions\" section for 1 hour. Award a party an additional [x]XP ([x] XP total) for defeating the {NAME} after this trait activates.",
+    "preamble": "If {NAME}'s mythic trait is active, it can use the options below as legendary actions.",
+    "actions": []
+  },
+  "reactions": [],
+  "useCustomLairActionPreamble": false,
+  "lairActionPreamble": "",
+  "lairActions": [],
+  "regionalEffects": [],
+  "regionalEffectDescription": "",
+  "randomTables": [],
+  "inventory": "",
+  "autoEstimateDefenseCr": true,
+  "portrait": {
+    "url": "",
+    "position": "none",
+    "width": 220,
+    "caption": ""
+  },
+  "extendedHp": {
+    "showBloodied": false,
+    "bloodiedSource": "none",
+    "bloodiedDice": "2d8",
+    "damageThresholdSource": "flat",
+    "damageThresholdDice": "2d6",
+    "damageThresholdDisruption": "none",
+    "damageReductionSource": "flat",
+    "damageReductionDice": "1d6",
+    "damageReductionDisruption": "none",
+    "invulnerability": {
+      "enabled": false,
+      "rule": "none",
+      "customRule": "",
+      "firstXCount": 1,
+      "disruption": "none",
+      "customDisruption": "",
+      "displayLocation": "ac",
+      "combiner": "or",
+      "customLogic": ""
+    },
+    "bloodiedOverride": null,
+    "damageThreshold": null,
+    "damageReduction": null,
+    "regeneration": {
+      "enabled": false,
+      "recoveryType": "regen",
+      "valueSource": "flat",
+      "amount": 10,
+      "timeframe": "turn",
+      "frequency": "turn_start",
+      "diceFormula": "",
+      "disruptedByTypes": [
+        "acid",
+        "fire"
+      ],
+      "disruptedByNote": "",
+      "displayMode": "minimalist",
+      "conditionModifier": "none",
+      "maxHpReductionUntil": "short rest",
+      "styleMode": "concise"
+    },
+    "deathPrevention": {
+      "enabled": false,
+      "name": "Mortal",
+      "dcRule": "CON save DC 5 + damage taken",
+      "returnHpSource": "1",
+      "returnHpValue": 1,
+      "returnHpDice": "2d8",
+      "requiresSave": false,
+      "saveStat": "CON",
+      "saveDc": 15,
+      "hideHp": false,
+      "critHitsToKill": 3,
+      "exceptions": [
+        "radiant",
+        "critical hit"
+      ],
+      "customNote": "",
+      "displayMode": "minimalist"
+    }
+  },
+  "detailedDamageModifiers": [],
+  "actionOrientedPassives": {
+    "bonusActionSearch": false,
+    "bonusActionStudy": false,
+    "bonusActionHide": false,
+    "bonusActionInfluence": false,
+    "search": {
+      "perception": false,
+      "investigation": false,
+      "survival": false
+    },
+    "study": {
+      "arcana": false,
+      "history": false,
+      "nature": false,
+      "religion": false
+    },
+    "hide": {
+      "stealth": false,
+      "acrobatics": false,
+      "sleightOfHand": false
+    },
+    "influence": {
+      "insight": false,
+      "persuasion": false,
+      "deception": false,
+      "intimidation": false
+    }
+  },
+  "resistancesList": [],
+  "immunitiesList": [],
+  "vulnerabilitiesList": [],
+  "conditionsList": [],
+  "languagesList": [],
+  "splitVulnRows": false,
+  "splitResRows": false,
+  "splitImmRows": false,
+  "autoSplitDefenses": false,
+  "autoSortDefenses": false,
+  "defenseCategoryOrder": [
+    "vulnerabilities",
+    "resistances",
+    "immunities"
+  ],
+  "splitSpeedRiderRows": false,
+  "splitHpRiderRows": false,
+  "splitAcRiderRows": false,
+  "tools": [],
+  "initiativeConfig": {
+    "proficient": false,
+    "secondaryStat": "none",
+    "statMode": "add",
+    "advantage": false,
+    "cantBeSurprised": false
+  },
+  "speedTraversal": {
+    "ignoresDifficultTerrain": false,
+    "bonusActionDash": false,
+    "bonusActionDodge": false,
+    "bonusActionDisengage": false,
+    "bonusActionSpeed": 0,
+    "trackingSpeed": 0,
+    "stealthSpeed": 0,
+    "note": "",
+    "actionRiders": []
+  },
+  "villainActions": [],
+  "bloodiedActions": [],
+  "reactiveActions": [],
+  "comboActions": [],
+  "anatomyParts": [],
+  "conditionVulnerabilitiesList": [],
+  "conditionResistancesList": [],
+  "specialCommunicationArchetype": "none",
+  "runehammerTrack": {
+    "enabled": false,
+    "timerDie": "d4",
+    "name": "Escalation Track",
+    "events": []
+  },
+  "paragonConfig": {
+    "enabled": false,
+    "poolCount": 1,
+    "poolHp": [],
+    "initiativeStep": "Initiative 20 & 10",
+    "enrageNote": "",
+    "activePoolFilter": "all",
+    "phaseName": "Phase",
+    "bloodiedPerPhase": [],
+    "phaseConfigs": []
+  },
+  "toolsPlacement": "header",
+  "showXp": true,
+  "compactNameplate": false,
+  "customVariables": {},
+  "customMacros": {},
+  "format": "2024"
+}

@@ -2,9 +2,9 @@ ___
 ## Golden Hero
 *Level 1 Champion Fighter (Human) • Soldier • Neutral Good*
 ___
-**Armor Class** 12
+**Armor Class** 12 (estimate: 10 + DEX modifier; armor, shields and features are not applied.)
 **Hit Points** 12 / 12
-**Speed** 30 ft.
+**Speed** 30 ft. (estimate: 30 ft. placeholder; species, class and equipment are not applied.)
 **Proficiency Bonus** +2
 ___
 |STR|DEX|CON|INT|WIS|CHA|

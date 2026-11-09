@@ -11,7 +11,7 @@
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
-        <div id="char-editor" class="q-pa-md" style="width: 100%">
+        <div id="char-editor" class="q-pa-md editor-fit" style="width: 100%">
           <character-editor />
         </div>
       </template>
@@ -34,7 +34,7 @@
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
-        <div id="editor" class="q-pa-md" style="width: 100%">
+        <div id="editor" class="q-pa-md editor-fit" style="width: 100%">
           <database-studio class="q-mb-sm" />
           <q-list bordered separator class="rounded-borders">
             <a4-layer-studio />

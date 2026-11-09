@@ -1,3 +1,10 @@
+## Build222 verified — 2026-11-09
+
+- Remote refreshed through Build221 source964f645. Interrupted work preserved in stash, then applied to the current base. Build219 archive96 checksums verified; current published candidate remains intact.
+- Ten existing target IDs: H22,A17.1,A17.3,A17.4,A13.6,B10.1,B10.2,A17.6,A17.7,B10.3. No new IDs. Baseline measured normalized152 complete/104 open; raw161/104. Build221 headline156/100 is not supported by its checkboxes.
+- Character reference-only scope, recorded AC/speed provenance and labelled estimates; shared web/text projection, JSON round trip and focused reload proof. No render-time writes.
+- Five fixtures,60 theme cases/120 computed contrast samples,10-view fit inventory and failing clipped control. Runner AST/unit checks pass; real Step35 replay passed. Final frozen-source gate10/10,469 core,58 scenarios per SPA/Pages; ten existing IDs closed, normalized162/94. Publication receipt records final identities.
+
 ## Build219 — 2026-11-09
 
 - Refreshed official remote: four new commits215–218 through fullbaseac4bdaea5998e80df81d19285cc21465da16dcd3. Isolated219 clone; prior214 candidate retained.

@@ -1,0 +1,54 @@
+{
+  "closed": [
+    "H22",
+    "A17.1",
+    "A17.3",
+    "A17.4",
+    "A13.6",
+    "B10.1",
+    "B10.2",
+    "A17.6",
+    "A17.7",
+    "B10.3"
+  ],
+  "newIds": 0,
+  "normalized": {
+    "total": 256,
+    "before": {
+      "complete": 152,
+      "open": 104
+    },
+    "after": {
+      "complete": 162,
+      "open": 94
+    },
+    "delta": {
+      "complete": 10,
+      "open": -10
+    }
+  },
+  "raw": {
+    "total": 265,
+    "before": {
+      "complete": 161,
+      "open": 104
+    },
+    "after": {
+      "complete": 171,
+      "open": 94
+    }
+  },
+  "core": {
+    "before": 453,
+    "after": 469,
+    "delta": 16
+  },
+  "browserStepsPerTarget": {
+    "before": 57,
+    "after": 58,
+    "delta": 1
+  },
+  "themeCases": 60,
+  "contrastSamples": 120,
+  "fitViews": 10
+}

@@ -1,0 +1,16 @@
+(node:36612) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build222/test/statblock-help-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build222\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Print probe: {"media":true,"count":13,"light":[],"reds":0,"notRed":[]}
+Statblock UI smoke passed: shared row grammar, 12 theme contrast probes, hover/focus help, viewport repositioning, Escape, detached-target cleanup
+(node:24796) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build222/test/release-matrix-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build222\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Release matrix passed: 5 shared fixtures × 12 themes; 120 computed head/body contrast samples
+(node:74824) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build222/tools/qa/overflow-probe.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build222\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Fit inventory: 10 views, 0 clipping observations; report .gate/fit.json

@@ -1,0 +1,680 @@
+{
+  "name": "Legacy Action Keeper",
+  "bindings": {},
+  "nickname": "",
+  "saveVersion": 8,
+  "useArticleInToken": false,
+  "alphaTraits": true,
+  "size": "Medium",
+  "type": "humanoid",
+  "alignment": "",
+  "languages": "",
+  "AC": 10,
+  "ACType": "",
+  "acConfig": {
+    "enabled": false,
+    "baseMode": "flat",
+    "abilityBonus": "none",
+    "defenseItem": "none",
+    "temporary": "none",
+    "conditional": "none"
+  },
+  "CR": 0,
+  "lairCr": -1,
+  "lairCrNote": "in lair",
+  "useCrDisplayOverride": false,
+  "crOverride": "",
+  "proficiency": 2,
+  "proficiencyOverride": false,
+  "HP": {
+    "HD": 1,
+    "type": 8,
+    "modifier": 0
+  },
+  "hpModifierOverride": false,
+  "hpDieTypeOverride": false,
+  "stats": {
+    "STR": 10,
+    "DEX": 10,
+    "CON": 10,
+    "INT": 10,
+    "WIS": 10,
+    "CHA": 10
+  },
+  "saves": {
+    "STR": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "DEX": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "CON": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "INT": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "WIS": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    },
+    "CHA": {
+      "proficient": false,
+      "override": false,
+      "overrideValue": 0
+    }
+  },
+  "speeds": [
+    {
+      "id": "fixture-walk",
+      "type": "walk",
+      "speed": 30,
+      "note": ""
+    }
+  ],
+  "skills": [],
+  "resistances": [],
+  "immunities": [],
+  "vulnerabilities": [],
+  "conditions": [],
+  "senses": {
+    "blindsight": 0,
+    "darkvision": 0,
+    "tremorsense": 0,
+    "truesight": 0
+  },
+  "sensesNotes": "",
+  "sensesList": [],
+  "passivePerception": {
+    "override": false,
+    "overrideValue": 0
+  },
+  "traits": [],
+  "spellcasting": {
+    "stat": "INT",
+    "save": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "modifier": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "attack": {
+      "override": false,
+      "overrideValue": 0
+    },
+    "subclass": "",
+    "level": 1,
+    "slots": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "atWill": [],
+    "standard": [],
+    "notes": "",
+    "atWillNotes": "",
+    "useCustomClassPreamble": false,
+    "customClassPreamble": "",
+    "useCustomInnatePreamble": false,
+    "customInnatePreamble": "",
+    "resourceType": "slots",
+    "refreshRate": "long_rest",
+    "displayTitleMode": "class_names",
+    "bypassSlotLevelFilter": false,
+    "splitHighCadence": false,
+    "restrictedCadences": [
+      "short rest",
+      "long rest",
+      "midnight",
+      "midday",
+      "dusk",
+      "dawn",
+      "downtime",
+      "ritual",
+      "weekly",
+      "monthly",
+      "yearly"
+    ],
+    "spellCadenceMap": {},
+    "levelCadenceMap": {},
+    "bonusActionLevelMap": {},
+    "metamagic": {
+      "enabled": false,
+      "sorceryPoints": 0,
+      "refreshRate": "Long Rest",
+      "options": []
+    },
+    "cantripSwitch": false,
+    "cantripSwitchCount": 1,
+    "cantripSwitchInterval": "Short Rest",
+    "preparedInterval": "Long Rest",
+    "customRefreshRate": "",
+    "classes": []
+  },
+  "attacks": [],
+  "actions": [
+    {
+      "name": "Authored action",
+      "id": "action",
+      "description": "action witness prose.",
+      "recharge": "5-6",
+      "limitedUse": {
+        "count": 3,
+        "rate": "DAY"
+      },
+      "save": {
+        "override": true,
+        "overrideValue": 19
+      },
+      "range": "60 ft.",
+      "stat": "CHA",
+      "effects": [
+        {
+          "case": "Failure",
+          "effect": "Legacy witness effect"
+        }
+      ],
+      "legendaryOnly": false,
+      "customPreamble": false,
+      "bonusAction": false,
+      "crAnnotation": {
+        "maxDamage": 42,
+        "maxSave": 0,
+        "maxModifier": 0,
+        "multitarget": false,
+        "ehpMultiplier": 1,
+        "ehpModifier": 0,
+        "acModifier": 0,
+        "include": false,
+        "automatic": false
+      },
+      "attackSource": "spell",
+      "attackReach": "ranged",
+      "attackBonus": 7,
+      "stagePool": "all",
+      "school": "Evocation",
+      "spellLevel": "Cantrip",
+      "components": [
+        "V",
+        "S"
+      ],
+      "duration": "1 minute",
+      "targeting": {
+        "count": 3,
+        "kind": "creatures",
+        "range": {
+          "distance": 60,
+          "unit": "ft"
+        }
+      },
+      "outcomes": [
+        {
+          "trigger": "failure",
+          "effects": [
+            {
+              "formula": "2d6",
+              "damageType": "radiant"
+            }
+          ],
+          "rider": "Witness rider"
+        }
+      ]
+    },
+    {
+      "name": "Authored bonus",
+      "id": "bonus",
+      "description": "bonus witness prose.",
+      "recharge": "5-6",
+      "limitedUse": {
+        "count": 3,
+        "rate": "DAY"
+      },
+      "save": {
+        "override": true,
+        "overrideValue": 19
+      },
+      "range": "60 ft.",
+      "stat": "CHA",
+      "effects": [
+        {
+          "case": "Failure",
+          "effect": "Legacy witness effect"
+        }
+      ],
+      "legendaryOnly": false,
+      "customPreamble": false,
+      "bonusAction": true,
+      "crAnnotation": {
+        "maxDamage": 42,
+        "maxSave": 0,
+        "maxModifier": 0,
+        "multitarget": false,
+        "ehpMultiplier": 1,
+        "ehpModifier": 0,
+        "acModifier": 0,
+        "include": false,
+        "automatic": false
+      },
+      "attackSource": "spell",
+      "attackReach": "ranged",
+      "attackBonus": 7,
+      "stagePool": "all",
+      "school": "Evocation",
+      "spellLevel": "Cantrip",
+      "components": [
+        "V",
+        "S"
+      ],
+      "duration": "1 minute",
+      "targeting": {
+        "count": 3,
+        "kind": "creatures",
+        "range": {
+          "distance": 60,
+          "unit": "ft"
+        }
+      },
+      "outcomes": [
+        {
+          "trigger": "failure",
+          "effects": [
+            {
+              "formula": "2d6",
+              "damageType": "radiant"
+            }
+          ],
+          "rider": "Witness rider"
+        }
+      ]
+    },
+    {
+      "name": "Authored legendary",
+      "id": "legendary",
+      "description": "legendary witness prose.",
+      "recharge": "5-6",
+      "limitedUse": {
+        "count": 3,
+        "rate": "DAY"
+      },
+      "save": {
+        "override": true,
+        "overrideValue": 19
+      },
+      "range": "60 ft.",
+      "stat": "CHA",
+      "effects": [
+        {
+          "case": "Failure",
+          "effect": "Legacy witness effect"
+        }
+      ],
+      "legendaryOnly": true,
+      "customPreamble": false,
+      "bonusAction": false,
+      "crAnnotation": {
+        "maxDamage": 42,
+        "maxSave": 0,
+        "maxModifier": 0,
+        "multitarget": false,
+        "ehpMultiplier": 1,
+        "ehpModifier": 0,
+        "acModifier": 0,
+        "include": false,
+        "automatic": false
+      },
+      "attackSource": "spell",
+      "attackReach": "ranged",
+      "attackBonus": 7,
+      "stagePool": "all",
+      "school": "Evocation",
+      "spellLevel": "Cantrip",
+      "components": [
+        "V",
+        "S"
+      ],
+      "duration": "1 minute",
+      "targeting": {
+        "count": 3,
+        "kind": "creatures",
+        "range": {
+          "distance": 60,
+          "unit": "ft"
+        }
+      },
+      "outcomes": [
+        {
+          "trigger": "failure",
+          "effects": [
+            {
+              "formula": "2d6",
+              "damageType": "radiant"
+            }
+          ],
+          "rider": "Witness rider"
+        }
+      ]
+    },
+    {
+      "name": "Authored mythic",
+      "id": "mythic",
+      "description": "mythic witness prose.",
+      "recharge": "5-6",
+      "limitedUse": {
+        "count": 3,
+        "rate": "DAY"
+      },
+      "save": {
+        "override": true,
+        "overrideValue": 19
+      },
+      "range": "60 ft.",
+      "stat": "CHA",
+      "effects": [
+        {
+          "case": "Failure",
+          "effect": "Legacy witness effect"
+        }
+      ],
+      "legendaryOnly": true,
+      "customPreamble": false,
+      "bonusAction": false,
+      "crAnnotation": {
+        "maxDamage": 42,
+        "maxSave": 0,
+        "maxModifier": 0,
+        "multitarget": false,
+        "ehpMultiplier": 1,
+        "ehpModifier": 0,
+        "acModifier": 0,
+        "include": false,
+        "automatic": false
+      },
+      "attackSource": "spell",
+      "attackReach": "ranged",
+      "attackBonus": 7,
+      "stagePool": "all",
+      "school": "Evocation",
+      "spellLevel": "Cantrip",
+      "components": [
+        "V",
+        "S"
+      ],
+      "duration": "1 minute",
+      "targeting": {
+        "count": 3,
+        "kind": "creatures",
+        "range": {
+          "distance": 60,
+          "unit": "ft"
+        }
+      },
+      "outcomes": [
+        {
+          "trigger": "failure",
+          "effects": [
+            {
+              "formula": "2d6",
+              "damageType": "radiant"
+            }
+          ],
+          "rider": "Witness rider"
+        }
+      ]
+    }
+  ],
+  "multiattacks": [
+    {
+      "id": "combo",
+      "actions": [
+        "action"
+      ],
+      "attacks": []
+    }
+  ],
+  "multiattackOptions": {
+    "useCustomRenderer": false,
+    "customMultiattackRenderer": "",
+    "postscript": ""
+  },
+  "legendaryActions": {
+    "count": 3,
+    "actions": [
+      {
+        "actionId": "legendary",
+        "cost": 2
+      }
+    ],
+    "useCustomPreamble": false,
+    "customPreamble": ""
+  },
+  "mythicActions": {
+    "triggerName": "Witness Awakening",
+    "triggerRecharge": "Recharges after a Short or Long Rest",
+    "triggerDescription": "At zero HP.",
+    "preamble": "",
+    "actions": [
+      {
+        "actionId": "mythic",
+        "cost": 3
+      }
+    ]
+  },
+  "reactions": [
+    {
+      "id": "reaction",
+      "name": "Authored reaction",
+      "description": "reaction witness prose.",
+      "trigger": "When struck",
+      "limitedUse": {
+        "count": 4,
+        "rate": "DAY"
+      }
+    }
+  ],
+  "useCustomLairActionPreamble": false,
+  "lairActionPreamble": "",
+  "lairActions": [
+    {
+      "id": "lair",
+      "description": "lair witness prose for {2d6} radiant damage.",
+      "crAnnotation": {
+        "maxDamage": 0,
+        "maxSave": 0,
+        "maxModifier": 0,
+        "multitarget": false,
+        "ehpMultiplier": 1,
+        "ehpModifier": 0,
+        "acModifier": 0,
+        "include": true,
+        "automatic": true
+      }
+    }
+  ],
+  "regionalEffects": [],
+  "regionalEffectDescription": "",
+  "randomTables": [],
+  "inventory": "",
+  "autoEstimateDefenseCr": true,
+  "portrait": {
+    "url": "",
+    "position": "none",
+    "width": 220,
+    "caption": ""
+  },
+  "extendedHp": {
+    "showBloodied": false,
+    "bloodiedSource": "none",
+    "bloodiedDice": "2d8",
+    "damageThresholdSource": "flat",
+    "damageThresholdDice": "2d6",
+    "damageThresholdDisruption": "none",
+    "damageReductionSource": "flat",
+    "damageReductionDice": "1d6",
+    "damageReductionDisruption": "none",
+    "invulnerability": {
+      "enabled": false,
+      "rule": "none",
+      "customRule": "",
+      "firstXCount": 1,
+      "disruption": "none",
+      "customDisruption": "",
+      "displayLocation": "ac",
+      "combiner": "or",
+      "customLogic": ""
+    },
+    "bloodiedOverride": null,
+    "damageThreshold": null,
+    "damageReduction": null,
+    "regeneration": {
+      "enabled": false,
+      "recoveryType": "regen",
+      "valueSource": "flat",
+      "amount": 10,
+      "timeframe": "turn",
+      "frequency": "turn_start",
+      "diceFormula": "",
+      "disruptedByTypes": [
+        "acid",
+        "fire"
+      ],
+      "disruptedByNote": "",
+      "displayMode": "minimalist",
+      "conditionModifier": "none",
+      "maxHpReductionUntil": "short rest",
+      "styleMode": "concise"
+    },
+    "deathPrevention": {
+      "enabled": false,
+      "name": "Mortal",
+      "dcRule": "CON save DC 5 + damage taken",
+      "returnHpSource": "1",
+      "returnHpValue": 1,
+      "returnHpDice": "2d8",
+      "requiresSave": false,
+      "saveStat": "CON",
+      "saveDc": 15,
+      "hideHp": false,
+      "critHitsToKill": 3,
+      "exceptions": [
+        "radiant",
+        "critical hit"
+      ],
+      "customNote": "",
+      "displayMode": "minimalist"
+    }
+  },
+  "detailedDamageModifiers": [],
+  "actionOrientedPassives": {
+    "bonusActionSearch": false,
+    "bonusActionStudy": false,
+    "bonusActionHide": false,
+    "bonusActionInfluence": false,
+    "search": {
+      "perception": false,
+      "investigation": false,
+      "survival": false
+    },
+    "study": {
+      "arcana": false,
+      "history": false,
+      "nature": false,
+      "religion": false
+    },
+    "hide": {
+      "stealth": false,
+      "acrobatics": false,
+      "sleightOfHand": false
+    },
+    "influence": {
+      "insight": false,
+      "persuasion": false,
+      "deception": false,
+      "intimidation": false
+    }
+  },
+  "resistancesList": [],
+  "immunitiesList": [],
+  "vulnerabilitiesList": [],
+  "conditionsList": [],
+  "languagesList": [],
+  "splitVulnRows": false,
+  "splitResRows": false,
+  "splitImmRows": false,
+  "autoSplitDefenses": false,
+  "autoSortDefenses": false,
+  "defenseCategoryOrder": [
+    "vulnerabilities",
+    "resistances",
+    "immunities"
+  ],
+  "splitSpeedRiderRows": false,
+  "splitHpRiderRows": false,
+  "splitAcRiderRows": false,
+  "tools": [],
+  "initiativeConfig": {
+    "proficient": false,
+    "secondaryStat": "none",
+    "statMode": "add",
+    "advantage": false,
+    "cantBeSurprised": false
+  },
+  "speedTraversal": {
+    "ignoresDifficultTerrain": false,
+    "bonusActionDash": false,
+    "bonusActionDodge": false,
+    "bonusActionDisengage": false,
+    "bonusActionSpeed": 0,
+    "trackingSpeed": 0,
+    "stealthSpeed": 0,
+    "note": "",
+    "actionRiders": []
+  },
+  "villainActions": [],
+  "bloodiedActions": [],
+  "reactiveActions": [],
+  "comboActions": [],
+  "anatomyParts": [],
+  "conditionVulnerabilitiesList": [],
+  "conditionResistancesList": [],
+  "specialCommunicationArchetype": "none",
+  "runehammerTrack": {
+    "enabled": false,
+    "timerDie": "d4",
+    "name": "Escalation Track",
+    "events": []
+  },
+  "paragonConfig": {
+    "enabled": false,
+    "poolCount": 1,
+    "poolHp": [],
+    "initiativeStep": "Initiative 20 & 10",
+    "enrageNote": "",
+    "activePoolFilter": "all",
+    "phaseName": "Phase",
+    "bloodiedPerPhase": [],
+    "phaseConfigs": []
+  },
+  "toolsPlacement": "header",
+  "showXp": true,
+  "compactNameplate": false,
+  "customVariables": {},
+  "customMacros": {},
+  "format": "2014"
+}

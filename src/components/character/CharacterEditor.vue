@@ -99,6 +99,24 @@
       </q-card>
     </q-expansion-item>
 
+    <q-expansion-item group="char-group" icon="shield" label="Armor Class & Speed" header-class="text-weight-bold text-teal-4" class="q-mb-sm rounded-borders border-subtle">
+      <q-card><q-card-section>
+        <div class="text-caption q-mb-sm">Class, species and equipment names are references. Enter totals from your character's rules or keep the labelled estimates.</div>
+        <div class="editor-fit-grid">
+          <div class="editor-fit-cell">
+            <q-input :model-value="actor.combatVitals?.armorClass ?? null" @update:model-value="setVital('armorClass', $event)" label="Recorded Armor Class" type="number" min="0" clearable dense outlined />
+            <q-input :model-value="actor.combatVitals?.armorClassSource ?? null" @update:model-value="setVital('armorClassSource', $event)" label="Armor Class source / notes" dense outlined class="q-mt-xs" />
+            <div class="text-caption q-mt-xs" data-character-ac-provenance>{{ vitals.armorClass.value }} — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
+          </div>
+          <div class="editor-fit-cell">
+            <q-input :model-value="actor.combatVitals?.speed ?? null" @update:model-value="setVital('speed', $event)" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined />
+            <q-input :model-value="actor.combatVitals?.speedSource ?? null" @update:model-value="setVital('speedSource', $event)" label="Speed source / notes" dense outlined class="q-mt-xs" />
+            <div class="text-caption q-mt-xs" data-character-speed-provenance>{{ vitals.speed.value }} ft. — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
+          </div>
+        </div>
+      </q-card-section></q-card>
+    </q-expansion-item>
+
     <!-- 2. Ability Scores & Modifiers -->
     <q-expansion-item
       group="char-group"
@@ -617,6 +635,7 @@
 </template>
 
 <script lang="ts">
+import { characterVitals } from 'src/core/domain/character-truth'
 import { computed, defineComponent, ref } from 'vue'
 import { useCharacterStore } from 'src/stores/character-store'
 import { DndStat, DND_SKILLS } from 'src/core/domain/types'
@@ -625,6 +644,14 @@ export default defineComponent({
   name: 'CharacterEditor',
   setup() {
     const charStore = useCharacterStore()
+    const setVital = (field: 'armorClass' | 'speed' | 'armorClassSource' | 'speedSource', value: string | number | null) => {
+      const next = { ...charStore.actor.combatVitals }
+      if (field === 'armorClass' || field === 'speed') {
+        const number = value === null || value === '' ? null : Number(value)
+        next[field] = number !== null && Number.isFinite(number) && number >= 0 ? number : null
+      } else next[field] = String(value ?? '')
+      charStore.actor.combatVitals = next
+    }
     const abilityKeys: DndStat[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']
     const skillFilter = ref('')
     const portraitFile = ref<File | null>(null)
@@ -720,7 +747,9 @@ export default defineComponent({
     })
 
     return {
-      actor: charStore.actor,
+      setVital,
+      vitals: computed(() => characterVitals(charStore.actor)),
+      actor: computed(() => charStore.actor),
       charStore,
       abilityKeys,
       formatMod,

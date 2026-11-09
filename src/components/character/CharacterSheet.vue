@@ -127,15 +127,16 @@
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
               <div class="text-caption text-weight-bold text-grey-8">ARMOR CLASS</div>
-              <div class="text-h5 text-weight-bold">
-                {{ 10 + charStore.getModifier('DEX') }}
+              <div class="text-h5 text-weight-bold character-vital-value">
+                {{ vitals.armorClass.value }}
               </div>
+              <div class="text-caption text-grey-8" data-character-ac-provenance>{{ vitals.armorClass.kind === 'recorded' ? 'Recorded' : 'Estimate' }}</div>
             </div>
           </div>
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
               <div class="text-caption text-weight-bold text-grey-8">INITIATIVE</div>
-              <div class="text-h5 text-weight-bold">
+              <div class="text-h5 text-weight-bold character-vital-value">
                 {{ formatMod(charStore.getModifier('DEX')) }}
               </div>
             </div>
@@ -143,9 +144,15 @@
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
               <div class="text-caption text-weight-bold text-grey-8">SPEED</div>
-              <div class="text-h5 text-weight-bold">30 ft.</div>
+              <div class="text-h5 text-weight-bold character-vital-value">{{ vitals.speed.value }} ft.</div>
+              <div class="text-caption text-grey-8" data-character-speed-provenance>{{ vitals.speed.kind === 'recorded' ? 'Recorded' : 'Estimate' }}</div>
             </div>
           </div>
+        </div>
+
+        <div class="character-vital-sources text-caption q-mb-sm">
+          <div>AC — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
+          <div>Speed — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
         </div>
 
         <!-- HP Box -->
@@ -368,6 +375,7 @@
 </template>
 
 <script lang="ts">
+import { characterVitals } from 'src/core/domain/character-truth'
 import { computed, defineComponent } from 'vue'
 import { useCharacterStore } from 'src/stores/character-store'
 import { DndStat, DND_SKILLS } from 'src/core/domain/types'
@@ -406,6 +414,7 @@ export default defineComponent({
 
     return {
       actor: charStore.actor,
+      vitals: computed(() => characterVitals(charStore.actor)),
       charStore,
       abilityKeys,
       dndSkills: DND_SKILLS,
@@ -484,4 +493,6 @@ export default defineComponent({
 .q-pa-2xs {
   padding: 2px 4px;
 }
+.character-vital-value { color: #58180d; font-size: clamp(1rem, 2vw, 1.4rem); line-height: 1.25; white-space: nowrap; }
+.character-vital-sources { color: #58180d; overflow-wrap: anywhere; line-height: 1.35; }
 </style>

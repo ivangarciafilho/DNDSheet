@@ -19,7 +19,9 @@
     "build": "npx quasar build",
     "build:pwa": "npx quasar build -m pwa",
     "typecheck": "node tools/typecheck.mjs",
-    "typecheck:setup": "cd tools/typecheck-runtime && npm ci --ignore-scripts --no-audit --no-fund"
+    "typecheck:setup": "cd tools/typecheck-runtime && npm ci --ignore-scripts --no-audit --no-fund",
+    "audit:fit": "node tools/qa/overflow-probe.js",
+    "test:e2e:matrix": "node --experimental-strip-types test/release-matrix-browser-smoke.js"
   },
   "dependencies": {
     "@quasar/extras": "^1.16.12",
@@ -52,6 +54,7 @@
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
+    "acorn": "8.15.0",
     "autoprefixer": "^10.4.2",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",

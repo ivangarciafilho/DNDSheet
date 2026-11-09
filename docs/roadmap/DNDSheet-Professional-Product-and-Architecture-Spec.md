@@ -1,4 +1,14 @@
-### Current verified delivery — Build219 (2026-11-09)
+## Current verified delivery — Build222 (2026-11-09)
+
+Completed **ten existing tasks**: H22, A17.1, A17.3, A17.4, A13.6, B10.1, B10.2, A17.6, A17.7 and B10.3. Character AC/speed now disclose recorded provenance or explicit estimates; identity/equipment names remain reference-only. Reusable fixtures, AST prerequisite replay, portable browser discovery, computed theme contrast, fit diagnostics and evidence-based documentation support the next model work.
+
+Final frozen-source gate **10/10**, **469 core tests (+16 versus reproduced base453)**, **58 exhaustive browser steps on SPA and Pages**, plus **60 fixture/theme cases with120 computed AC head/body contrast samples**,10 fit views and the existing help/spell probes. Type guard613 existing diagnostics/0new; existing debt remains. Prior candidates219–221 preserved. Release tag: rc-2.4.3-build-222-character-truth-and-release-proofs. Base:964f645fe5352b8cd7c9f8908a6ebd9cbd12133e. Publication receipt records final source/Pages identities and live parity.
+
+**Measured workload:** normalized256 IDs, **152 complete/104 open →162 complete/94 open (+10/−10)**; raw265 IDs161/104 →171/94, including9 historical checked B183 rows. No new IDs. Build221's historical headline156/100 is not the checkbox baseline; clean-base tests reproduce453, not its headline454. The actual ledger and test command outputs govern this packet.
+
+[Build222 delivery and continuation](DNDSheet-Build222-Character-Truth-and-Release-Proofs.md) and [feature matrix](DNDSheet-Feature-Matrix.md) record evidence and limits. A17.7/B10.3 have overlapping documentation outputs and distinct pre-existing contracts; they are not new acceptance aliases. The representative contrast/fit probes do not close all panel accessibility/zoom/print work. **Next: A11.5 stable container/region ownership and typed validation →A11.9 →H9 →H14 per-file debt.**
+
+### Historical verified delivery — Build219 (2026-11-09)
 
 Completed the remaining Tarrasque export scope **B4.20 and B4.7**, retaining Build218's Improved Initiative work. Twenty acceptance items cover shared trait/action/reaction prose, triggers, formulas, exact physical attack metadata, duplicate names, phase retention, containers, legendary definitions, innate spells, cantrips, mythic narrative, plain-text boundaries, determinism and reload. No new task IDs were created.
 

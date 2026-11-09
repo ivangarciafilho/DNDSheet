@@ -1237,6 +1237,8 @@ export function defaultAttack(): DndAttack {
 }
 
 export interface CharacterActor {
+  /** User-recorded totals; absent values retain explicitly labelled estimates. */
+  combatVitals?: { armorClass?: number | null; speed?: number | null; armorClassSource?: string; speedSource?: string }
   id: string
   name: string
   class: string

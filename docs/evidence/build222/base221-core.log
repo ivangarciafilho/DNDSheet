@@ -1,0 +1,3006 @@
+
+> 5e-monster-maker@2.4.3 test
+> npm run test:core
+
+
+> 5e-monster-maker@2.4.3 test:core
+> node --experimental-strip-types --test test/core/*.test.ts
+
+TAP version 13
+# (node:35192) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AbilityGrammar.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: explicit ability fields produce the same mechanics, scope, and outcome phrases without mutating the action
+ok 1 - explicit ability fields produce the same mechanics, scope, and outcome phrases without mutating the action
+  ---
+  duration_ms: 15.1741
+  type: 'test'
+  ...
+# Subtest: save abilities retain area, origin, and plane qualifiers in screen and 2024 text
+ok 2 - save abilities retain area, origin, and plane qualifiers in screen and 2024 text
+  ---
+  duration_ms: 0.9427
+  type: 'test'
+  ...
+# Subtest: legacy fields are inferred conservatively and left untouched when text is ambiguous
+ok 3 - legacy fields are inferred conservatively and left untouched when text is ambiguous
+  ---
+  duration_ms: 7.7926
+  type: 'test'
+  ...
+# Subtest: explicit targeting wins while missing legacy-compatible fields can still be inferred
+ok 4 - explicit targeting wins while missing legacy-compatible fields can still be inferred
+  ---
+  duration_ms: 1.0258
+  type: 'test'
+  ...
+# Subtest: empty or malformed optional targeting does not discard safe legacy inference
+ok 5 - empty or malformed optional targeting does not discard safe legacy inference
+  ---
+  duration_ms: 0.6991
+  type: 'test'
+  ...
+# Subtest: formula-backed target counts resolve from the current monster context
+ok 6 - formula-backed target counts resolve from the current monster context
+  ---
+  duration_ms: 1.9037
+  type: 'test'
+  ...
+# Subtest: unsupported legacy range text remains visible instead of being guessed into structured targeting
+ok 7 - unsupported legacy range text remains visible instead of being guessed into structured targeting
+  ---
+  duration_ms: 0.52
+  type: 'test'
+  ...
+# Subtest: 2024 text marks clause labels for HTML surfaces without changing a single word
+ok 8 - 2024 text marks clause labels for HTML surfaces without changing a single word
+  ---
+  duration_ms: 1.4972
+  type: 'test'
+  ...
+# Subtest: HTML 2024 text marks the saving throw and every outcome label, including bare ones
+ok 9 - HTML 2024 text marks the saving throw and every outcome label, including bare ones
+  ---
+  duration_ms: 1.6137
+  type: 'test'
+  ...
+# Subtest: malformed imported ability fields are ignored without crashing the statblock projection
+ok 10 - malformed imported ability fields are ignored without crashing the statblock projection
+  ---
+  duration_ms: 1.1474
+  type: 'test'
+  ...
+# Subtest: target nouns agree with their count in screen and 2024 text
+ok 11 - target nouns agree with their count in screen and 2024 text
+  ---
+  duration_ms: 1.5657
+  type: 'test'
+  ...
+# Subtest: attack granularity: attackCount, roll modifiers and exceptions format accurately in mechanicsPhrase
+ok 12 - attack granularity: attackCount, roll modifiers and exceptions format accurately in mechanicsPhrase
+  ---
+  duration_ms: 0.477
+  type: 'test'
+  ...
+# (node:50460) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AbilityMetadata.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: metadata preserves authored values and matches the plate word order
+ok 13 - metadata preserves authored values and matches the plate word order
+  ---
+  duration_ms: 5.6066
+  type: 'test'
+  ...
+# Subtest: none/blank fields and instantaneous duration add no metadata noise
+ok 14 - none/blank fields and instantaneous duration add no metadata noise
+  ---
+  duration_ms: 0.6397
+  type: 'test'
+  ...
+# Subtest: attack prose retains target qualifiers, area, origin and planes exactly once
+ok 15 - attack prose retains target qualifiers, area, origin and planes exactly once
+  ---
+  duration_ms: 1.3645
+  type: 'test'
+  ...
+# Subtest: utility abilities retain scope without inventing an attack or save
+ok 16 - utility abilities retain scope without inventing an attack or save
+  ---
+  duration_ms: 0.859
+  type: 'test'
+  ...
+# Subtest: metadata HTML uses semantic emphasis, while literal angle brackets remain text
+ok 17 - metadata HTML uses semantic emphasis, while literal angle brackets remain text
+  ---
+  duration_ms: 0.6526
+  type: 'test'
+  ...
+# Subtest: heading-aware prose leaves components in the lead exactly once
+ok 18 - heading-aware prose leaves components in the lead exactly once
+  ---
+  duration_ms: 0.4375
+  type: 'test'
+  ...
+# Subtest: HTML heading identity escapes authored component markup while text preserves it
+ok 19 - HTML heading identity escapes authored component markup while text preserves it
+  ---
+  duration_ms: 0.5037
+  type: 'test'
+  ...
+# (node:69628) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ActionAssociations.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: choices exclude current membership, allow other-role membership and group stable IDs
+ok 20 - choices exclude current membership, allow other-role membership and group stable IDs
+  ---
+  duration_ms: 6.2378
+  type: 'test'
+  ...
+# Subtest: adding membership preserves source identity and content and defaults the legendary pool
+ok 21 - adding membership preserves source identity and content and defaults the legendary pool
+  ---
+  duration_ms: 1.3465
+  type: 'test'
+  ...
+# Subtest: remove membership keeps source and other role references, including duplicate legacy records
+ok 22 - remove membership keeps source and other role references, including duplicate legacy records
+  ---
+  duration_ms: 0.4765
+  type: 'test'
+  ...
+# Subtest: repair a missing reference preserves cost and rejects stale, duplicate and ambiguous sources
+ok 23 - repair a missing reference preserves cost and rejects stale, duplicate and ambiguous sources
+  ---
+  duration_ms: 0.7631
+  type: 'test'
+  ...
+# Subtest: membership cost edits are scoped, validated and preserve missing source metadata
+ok 24 - membership cost edits are scoped, validated and preserve missing source metadata
+  ---
+  duration_ms: 0.607
+  type: 'test'
+  ...
+# (node:32684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ActionComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every supported role has a non-empty, uniquely keyed composer descriptor chain
+ok 25 - every supported role has a non-empty, uniquely keyed composer descriptor chain
+  ---
+  duration_ms: 2.6595
+  type: 'test'
+  ...
+# Subtest: action roles share the same ordered chain while role-specific entries use their own fields
+ok 26 - action roles share the same ordered chain while role-specific entries use their own fields
+  ---
+  duration_ms: 2.2665
+  type: 'test'
+  ...
+# Subtest: action head and mechanics cells follow the plate head and mechanics order
+ok 27 - action head and mechanics cells follow the plate head and mechanics order
+  ---
+  duration_ms: 0.4984
+  type: 'test'
+  ...
+# Subtest: action descriptor groups follow statblock plate order and include legacy and structured data
+ok 28 - action descriptor groups follow statblock plate order and include legacy and structured data
+  ---
+  duration_ms: 0.4796
+  type: 'test'
+  ...
+# (node:79488) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ActionTemplates.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: action template catalog has stable unique ids and human-readable names
+ok 29 - action template catalog has stable unique ids and human-readable names
+  ---
+  duration_ms: 1.8174
+  type: 'test'
+  ...
+# Subtest: applying a template replaces its owned ability fields and keeps identity, role, usage, and CR settings
+ok 30 - applying a template replaces its owned ability fields and keeps identity, role, usage, and CR settings
+  ---
+  duration_ms: 2.191
+  type: 'test'
+  ...
+# Subtest: template application clears stale mechanics owned by the template
+ok 31 - template application clears stale mechanics owned by the template
+  ---
+  duration_ms: 0.3875
+  type: 'test'
+  ...
+# Subtest: unknown template ids do not alter the action
+ok 32 - unknown template ids do not alter the action
+  ---
+  duration_ms: 0.341
+  type: 'test'
+  ...
+# Subtest: applied nested template data is isolated from the catalog and other actions
+ok 33 - applied nested template data is isolated from the catalog and other actions
+  ---
+  duration_ms: 0.4159
+  type: 'test'
+  ...
+# Subtest: the ranged-weapon template does not imply a long range unsupported by the model
+ok 34 - the ranged-weapon template does not imply a long range unsupported by the model
+  ---
+  duration_ms: 0.2906
+  type: 'test'
+  ...
+# (node:65356) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ActionUsage.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: usage draft reads the actual limited-use economy without mutating it
+ok 35 - usage draft reads the actual limited-use economy without mutating it
+  ---
+  duration_ms: 2.0115
+  type: 'test'
+  ...
+# Subtest: recharge draft honors renderer precedence including bounds and imported legacy fields
+ok 36 - recharge draft honors renderer precedence including bounds and imported legacy fields
+  ---
+  duration_ms: 1.8184
+  type: 'test'
+  ...
+# Subtest: applying limited uses clears competing cadence fields and preserves unrelated data
+ok 37 - applying limited uses clears competing cadence fields and preserves unrelated data
+  ---
+  duration_ms: 0.691
+  type: 'test'
+  ...
+# Subtest: recharge, custom and clear produce one unambiguous cadence and survive JSON serialization
+ok 38 - recharge, custom and clear produce one unambiguous cadence and survive JSON serialization
+  ---
+  duration_ms: 0.4326
+  type: 'test'
+  ...
+# Subtest: invalid drafts cannot apply while saved custom rates remain supported
+ok 39 - invalid drafts cannot apply while saved custom rates remain supported
+  ---
+  duration_ms: 0.5732
+  type: 'test'
+  ...
+# (node:5840) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AssetUrl.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: root-relative app assets follow the deployment base
+ok 40 - root-relative app assets follow the deployment base
+  ---
+  duration_ms: 1.8074
+  type: 'test'
+  ...
+# Subtest: absolute, protocol-relative, data and blob URLs are untouched
+ok 41 - absolute, protocol-relative, data and blob URLs are untouched
+  ---
+  duration_ms: 0.2891
+  type: 'test'
+  ...
+# Subtest: already-based paths and empty values are left as they are
+ok 42 - already-based paths and empty values are left as they are
+  ---
+  duration_ms: 0.2565
+  type: 'test'
+  ...
+# (node:38056) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AttackComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: numeric attack cells address stable records rather than positions
+ok 43 - numeric attack cells address stable records rather than positions
+  ---
+  duration_ms: 5.571
+  type: 'test'
+  ...
+# Subtest: attack adapter covers distinct ranges, modifiers and all damage models
+ok 44 - attack adapter covers distinct ranges, modifiers and all damage models
+  ---
+  duration_ms: 0.6783
+  type: 'test'
+  ...
+# Subtest: nested attack patches preserve identity, extensions and sibling distances
+ok 45 - nested attack patches preserve identity, extensions and sibling distances
+  ---
+  duration_ms: 1.9138
+  type: 'test'
+  ...
+# Subtest: additional damage edits retain IDs and notes without mutating source
+ok 46 - additional damage edits retain IDs and notes without mutating source
+  ---
+  duration_ms: 0.6235
+  type: 'test'
+  ...
+# Subtest: invalid and unknown attack edits are rejected at the domain boundary
+ok 47 - invalid and unknown attack edits are rejected at the domain boundary
+  ---
+  duration_ms: 0.8082
+  type: 'test'
+  ...
+# Subtest: clearing an attack field cannot silently reset a required value
+ok 48 - clearing an attack field cannot silently reset a required value
+  ---
+  duration_ms: 0.5788
+  type: 'test'
+  ...
+# Subtest: additional damage IDs containing dots and URL characters remain stable
+ok 49 - additional damage IDs containing dots and URL characters remain stable
+  ---
+  duration_ms: 0.6518
+  type: 'test'
+  ...
+# (node:41920) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AutoSyncSpellcasting.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: AutoSyncSpellcasting - Wizard Level 9 Slot Progression & Save DC
+ok 50 - AutoSyncSpellcasting - Wizard Level 9 Slot Progression & Save DC
+  ---
+  duration_ms: 6.8059
+  type: 'test'
+  ...
+# Subtest: AutoSyncSpellcasting - Half Caster Paladin Slot Progression
+ok 51 - AutoSyncSpellcasting - Half Caster Paladin Slot Progression
+  ---
+  duration_ms: 0.4158
+  type: 'test'
+  ...
+# Subtest: AutoSyncSpellcasting - Warlock Pact Magic Slots
+ok 52 - AutoSyncSpellcasting - Warlock Pact Magic Slots
+  ---
+  duration_ms: 0.2122
+  type: 'test'
+  ...
+# Subtest: AutoSyncSpellcasting - Spellcasting Metrics Calculation
+ok 53 - AutoSyncSpellcasting - Spellcasting Metrics Calculation
+  ---
+  duration_ms: 0.8158
+  type: 'test'
+  ...
+# Subtest: AutoSyncSpellcasting - Multiclass 5e Calculation & Dual Save DCs
+ok 54 - AutoSyncSpellcasting - Multiclass 5e Calculation & Dual Save DCs
+  ---
+  duration_ms: 1.0185
+  type: 'test'
+  ...
+# Subtest: SpellMetadata - Components, Concentration and Rituals
+ok 55 - SpellMetadata - Components, Concentration and Rituals
+  ---
+  duration_ms: 0.5656
+  type: 'test'
+  ...
+# Subtest: AutoSyncSpellcasting - Advanced Tri-Class Multiclassing & Subclasses
+ok 56 - AutoSyncSpellcasting - Advanced Tri-Class Multiclassing & Subclasses
+  ---
+  duration_ms: 0.5676
+  type: 'test'
+  ...
+# Subtest: getSubclassesForClass - case-insensitive resolution across 5e classes
+ok 57 - getSubclassesForClass - case-insensitive resolution across 5e classes
+  ---
+  duration_ms: 0.5112
+  type: 'test'
+  ...
+# (node:76668) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/AutoTuneCr.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: AutoTuneCr - Scale Kobold up to CR 3
+ok 58 - AutoTuneCr - Scale Kobold up to CR 3
+  ---
+  duration_ms: 92.174
+  type: 'test'
+  ...
+# Subtest: AutoTuneCr - Scale Adult Black Dragon down to CR 5
+ok 59 - AutoTuneCr - Scale Adult Black Dragon down to CR 5
+  ---
+  duration_ms: 39.5427
+  type: 'test'
+  ...
+# (node:74836) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/BindingDependencies.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: literal bindings resolve with existing styles and reject malformed imported values safely
+ok 60 - literal bindings resolve with existing styles and reject malformed imported values safely
+  ---
+  duration_ms: 3.4454
+  type: 'test'
+  ...
+# Subtest: dependency ordering puts bound sources first and is stable across insertion order
+ok 61 - dependency ordering puts bound sources first and is stable across insertion order
+  ---
+  duration_ms: 4.6884
+  type: 'test'
+  ...
+# Subtest: cycles report deterministic strongly connected field groups including self bindings
+ok 62 - cycles report deterministic strongly connected field groups including self bindings
+  ---
+  duration_ms: 1.5921
+  type: 'test'
+  ...
+# Subtest: aliases and function/dice operands contribute dependencies, unbound sources stay external
+ok 63 - aliases and function/dice operands contribute dependencies, unbound sources stay external
+  ---
+  duration_ms: 1.1182
+  type: 'test'
+  ...
+# Subtest: invalid formulas, unknown references and oversized graphs fail explicitly instead of a partial order
+ok 64 - invalid formulas, unknown references and oversized graphs fail explicitly instead of a partial order
+  ---
+  duration_ms: 10.5889
+  type: 'test'
+  ...
+# Subtest: finite literal magnitudes bypass formula notation parsing
+ok 65 - finite literal magnitudes bypass formula notation parsing
+  ---
+  duration_ms: 0.557
+  type: 'test'
+  ...
+# Subtest: reference mode accepts one catalog identity, never an expression or numeric literal
+ok 66 - reference mode accepts one catalog identity, never an expression or numeric literal
+  ---
+  duration_ms: 0.7983
+  type: 'test'
+  ...
+# (node:9276) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/BindingStore.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: production Pinia actions follow sources, detach and skip identical literal patches
+ok 67 - production Pinia actions follow sources, detach and skip identical literal patches
+  ---
+  duration_ms: 30.1334
+  type: 'test'
+  ...
+# Subtest: hydrated expressions resolve and invalid drafts preserve the store
+ok 68 - hydrated expressions resolve and invalid drafts preserve the store
+  ---
+  duration_ms: 4.3595
+  type: 'test'
+  ...
+# Subtest: materialization preserves live collection record identity
+ok 69 - materialization preserves live collection record identity
+  ---
+  duration_ms: 3.5047
+  type: 'test'
+  ...
+# (node:41412) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Build183Features.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: gradient-curve: evaluateGradientCurve respects boundary values and monotonic curves
+ok 70 - gradient-curve: evaluateGradientCurve respects boundary values and monotonic curves
+  ---
+  duration_ms: 2.041
+  type: 'test'
+  ...
+# Subtest: gradient-curve: formatCurvedGradientCss formats all directions and interpolates curved stops
+ok 71 - gradient-curve: formatCurvedGradientCss formats all directions and interpolates curved stops
+  ---
+  duration_ms: 1.7644
+  type: 'test'
+  ...
+# Subtest: ability-grammar: scopePhrase renders target count with default target/targets noun when kind is omitted
+ok 72 - ability-grammar: scopePhrase renders target count with default target/targets noun when kind is omitted
+  ---
+  duration_ms: 3.286
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils: composeAcAndDefenses splits each AC rider into its own badge when splitAcRiderRows is true
+ok 73 - defense-and-traits-utils: composeAcAndDefenses splits each AC rider into its own badge when splitAcRiderRows is true
+  ---
+  duration_ms: 2.0918
+  type: 'test'
+  ...
+# \# macro budget: 0.34 ms per 5 000-character description
+# (node:63360) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Build217.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every lint issue marked fixable is actually repaired by autoFixMonster (B2.1)
+ok 74 - every lint issue marked fixable is actually repaired by autoFixMonster (B2.1)
+  ---
+  duration_ms: 7.4767
+  type: 'test'
+  ...
+# Subtest: character Markdown and plain-text exports match their goldens (B4.13)
+ok 75 - character Markdown and plain-text exports match their goldens (B4.13)
+  ---
+  duration_ms: 41.2411
+  type: 'test'
+  ...
+# Subtest: character JSON export is lossless (B4.13)
+ok 76 - character JSON export is lossless (B4.13)
+  ---
+  duration_ms: 3.0313
+  type: 'test'
+  ...
+# Subtest: macro rendering of a 5 000-character description stays inside its budget (A17.8)
+ok 77 - macro rendering of a 5 000-character description stays inside its budget (A17.8)
+  ---
+  duration_ms: 12.8835
+  type: 'test'
+  ...
+# (node:76976) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Build218.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: a character export imports back unchanged (B4.17)
+ok 78 - a character export imports back unchanged (B4.17)
+  ---
+  duration_ms: 4.2786
+  type: 'test'
+  ...
+# Subtest: monster files, junk and partial characters are told apart (B4.17)
+ok 79 - monster files, junk and partial characters are told apart (B4.17)
+  ---
+  duration_ms: 0.6978
+  type: 'test'
+  ...
+# Subtest: guarded storage reports failed writes, at most once per quiet period (B5.8)
+ok 80 - guarded storage reports failed writes, at most once per quiet period (B5.8)
+  ---
+  duration_ms: 0.7403
+  type: 'test'
+  ...
+# Subtest: guarded storage survives a blocked or missing backend (B5.8)
+ok 81 - guarded storage survives a blocked or missing backend (B5.8)
+  ---
+  duration_ms: 0.5001
+  type: 'test'
+  ...
+# (node:74756) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Cadence.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: one rest use prints a compact label while multiple uses retain the quantity
+ok 82 - one rest use prints a compact label while multiple uses retain the quantity
+  ---
+  duration_ms: 1.712
+  type: 'test'
+  ...
+# Subtest: canonical cadence covers requested intervals, solar events, rests and bloodied
+ok 83 - canonical cadence covers requested intervals, solar events, rests and bloodied
+  ---
+  duration_ms: 0.4681
+  type: 'test'
+  ...
+# Subtest: saved aliases and unknown cadence values stay selectable without normalization
+ok 84 - saved aliases and unknown cadence values stay selectable without normalization
+  ---
+  duration_ms: 0.9681
+  type: 'test'
+  ...
+# Subtest: cadence groups and options are sorted within their semantic scope
+ok 85 - cadence groups and options are sorted within their semantic scope
+  ---
+  duration_ms: 2.561
+  type: 'test'
+  ...
+# Subtest: trait cadence shares the compact formatter while keeping conditional text and manual overrides
+ok 86 - trait cadence shares the compact formatter while keeping conditional text and manual overrides
+  ---
+  duration_ms: 0.6699
+  type: 'test'
+  ...
+# Subtest: trait interval and unknown rates keep quantity and authored identity
+ok 87 - trait interval and unknown rates keep quantity and authored identity
+  ---
+  duration_ms: 0.299
+  type: 'test'
+  ...
+# Subtest: core token projections share compact rest labels without changing stored quantities
+ok 88 - core token projections share compact rest labels without changing stored quantities
+  ---
+  duration_ms: 2.3699
+  type: 'test'
+  ...
+# (node:78724) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/CalculateCr.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: DMG CR Solver - Golden SRD Monsters Validation
+    # Subtest: Calculate CR for Aboleth (Aboleth.5emm.json)
+    ok 1 - Calculate CR for Aboleth (Aboleth.5emm.json)
+      ---
+      duration_ms: 5.0508
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Acolyte (Acolyte.5emm.json)
+    ok 2 - Calculate CR for Acolyte (Acolyte.5emm.json)
+      ---
+      duration_ms: 0.8441
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Adult Black Dragon (Adult Black Dragon.5emm.json)
+    ok 3 - Calculate CR for Adult Black Dragon (Adult Black Dragon.5emm.json)
+      ---
+      duration_ms: 2.1894
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Adult Blue Dragon (Adult Blue Dragon.5emm.json)
+    ok 4 - Calculate CR for Adult Blue Dragon (Adult Blue Dragon.5emm.json)
+      ---
+      duration_ms: 1.7703
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Adult Frost Dragon (Adult Frost Dragon.5emm.json)
+    ok 5 - Calculate CR for Adult Frost Dragon (Adult Frost Dragon.5emm.json)
+      ---
+      duration_ms: 0.9693
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Air Elemental (Air Elemental.5emm.json)
+    ok 6 - Calculate CR for Air Elemental (Air Elemental.5emm.json)
+      ---
+      duration_ms: 0.6882
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Ancient Green Dragon (Ancient Green Dragon.5emm.json)
+    ok 7 - Calculate CR for Ancient Green Dragon (Ancient Green Dragon.5emm.json)
+      ---
+      duration_ms: 0.7184
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Archmage (Archmage.5emm.json)
+    ok 8 - Calculate CR for Archmage (Archmage.5emm.json)
+      ---
+      duration_ms: 0.8835
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Azer (Azer.5emm.json)
+    ok 9 - Calculate CR for Azer (Azer.5emm.json)
+      ---
+      duration_ms: 1.0363
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Basilisk (Basilisk.5emm.json)
+    ok 10 - Calculate CR for Basilisk (Basilisk.5emm.json)
+      ---
+      duration_ms: 0.6058
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Knight (Knight.5emm.json)
+    ok 11 - Calculate CR for Knight (Knight.5emm.json)
+      ---
+      duration_ms: 0.3656
+      type: 'test'
+      ...
+    # Subtest: Calculate CR for Kobold (Kobold.5emm.json)
+    ok 12 - Calculate CR for Kobold (Kobold.5emm.json)
+      ---
+      duration_ms: 0.4145
+      type: 'test'
+      ...
+    1..12
+ok 89 - DMG CR Solver - Golden SRD Monsters Validation
+  ---
+  duration_ms: 92.466
+  type: 'test'
+  ...
+# (node:19640) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/CharacterActor.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CharacterActor - Default initialization and stat modifiers
+ok 90 - CharacterActor - Default initialization and stat modifiers
+  ---
+  duration_ms: 2.3856
+  type: 'test'
+  ...
+# Subtest: CharacterActor - Inventory weight and encumbrance calculations
+ok 91 - CharacterActor - Inventory weight and encumbrance calculations
+  ---
+  duration_ms: 0.5518
+  type: 'test'
+  ...
+# Subtest: CharacterActor - Level progression and standard proficiency scaling
+ok 92 - CharacterActor - Level progression and standard proficiency scaling
+  ---
+  duration_ms: 0.2581
+  type: 'test'
+  ...
+# Subtest: CharacterActor - Hit Dice and Spell Slot tracking state transitions
+ok 93 - CharacterActor - Hit Dice and Spell Slot tracking state transitions
+  ---
+  duration_ms: 1.4367
+  type: 'test'
+  ...
+# Subtest: CharacterActor - Saving Throws, Skills & Spellcasting calculations
+ok 94 - CharacterActor - Saving Throws, Skills & Spellcasting calculations
+  ---
+  duration_ms: 0.5704
+  type: 'test'
+  ...
+# (node:10388) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/CombatTracker.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: CombatTracker - Damage absorption through Temp HP, Healing, and Conditions
+ok 95 - CombatTracker - Damage absorption through Temp HP, Healing, and Conditions
+  ---
+  duration_ms: 3.0072
+  type: 'test'
+  ...
+# Subtest: CombatTracker - Initiative Sorting
+ok 96 - CombatTracker - Initiative Sorting
+  ---
+  duration_ms: 0.4239
+  type: 'test'
+  ...
+# Subtest: CombatTracker - Create combatant from CharacterActor
+ok 97 - CombatTracker - Create combatant from CharacterActor
+  ---
+  duration_ms: 0.7208
+  type: 'test'
+  ...
+# Subtest: CombatTracker - Advance and Previous Turn Lifecycle across rounds
+ok 98 - CombatTracker - Advance and Previous Turn Lifecycle across rounds
+  ---
+  duration_ms: 0.3901
+  type: 'test'
+  ...
+# Subtest: CombatTracker - Death Save progression and stabilization/death thresholds
+ok 99 - CombatTracker - Death Save progression and stabilization/death thresholds
+  ---
+  duration_ms: 0.5436
+  type: 'test'
+  ...
+# (node:57624) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ComposerChain.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: chain rows follow the plate: head, mechanics, scope, outcomes, prose
+ok 100 - chain rows follow the plate: head, mechanics, scope, outcomes, prose
+  ---
+  duration_ms: 24.9272
+  type: 'test'
+  ...
+# Subtest: head chips keep the plate word order: a spell level leads its school, a cantrip follows it
+ok 101 - head chips keep the plate word order: a spell level leads its school, a cantrip follows it
+  ---
+  duration_ms: 1.2308
+  type: 'test'
+  ...
+# Subtest: set chips read like the plate they become
+ok 102 - set chips read like the plate they become
+  ---
+  duration_ms: 2.3004
+  type: 'test'
+  ...
+# Subtest: save chips appear with the save and show the resolved DC
+ok 103 - save chips appear with the save and show the resolved DC
+  ---
+  duration_ms: 0.9734
+  type: 'test'
+  ...
+# Subtest: legacy values stay visible and are flagged when structured data hides them from the plate
+ok 104 - legacy values stay visible and are flagged when structured data hides them from the plate
+  ---
+  duration_ms: 9.1556
+  type: 'test'
+  ...
+# Subtest: legacy text that only repeats what the plate already prints is not shown twice
+ok 105 - legacy text that only repeats what the plate already prints is not shown twice
+  ---
+  duration_ms: 1.1897
+  type: 'test'
+  ...
+# Subtest: the attack chip sets reach, source and the legacy action type together, and clears them together
+ok 106 - the attack chip sets reach, source and the legacy action type together, and clears them together
+  ---
+  duration_ms: 1.2545
+  type: 'test'
+  ...
+# Subtest: scope patches merge into targeting, never mutate the action, and drop empty targeting
+ok 107 - scope patches merge into targeting, never mutate the action, and drop empty targeting
+  ---
+  duration_ms: 1.0906
+  type: 'test'
+  ...
+# Subtest: outcome, save, component and legacy patches keep the stored shapes the renderer reads
+ok 108 - outcome, save, component and legacy patches keep the stored shapes the renderer reads
+  ---
+  duration_ms: 1.6037
+  type: 'test'
+  ...
+# Subtest: numbers accept plain values, formulas and nothing; anything else is invalid
+ok 109 - numbers accept plain values, formulas and nothing; anything else is invalid
+  ---
+  duration_ms: 4.736
+  type: 'test'
+  ...
+# Subtest: editors refuse values the plate cannot print
+ok 110 - editors refuse values the plate cannot print
+  ---
+  duration_ms: 1.4711
+  type: 'test'
+  ...
+# Subtest: a blank name is flagged instead of silently rendering an empty head
+ok 111 - a blank name is flagged instead of silently rendering an empty head
+  ---
+  duration_ms: 0.6691
+  type: 'test'
+  ...
+# Subtest: legendary and mythic entries edit their action-point cost in the usage slot
+ok 112 - legendary and mythic entries edit their action-point cost in the usage slot
+  ---
+  duration_ms: 1.5559
+  type: 'test'
+  ...
+# Subtest: weapon provenance is an authored catalog cell with validated non-destructive patches
+ok 113 - weapon provenance is an authored catalog cell with validated non-destructive patches
+  ---
+  duration_ms: 0.6865
+  type: 'test'
+  ...
+# (node:6548) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ComposerPreservation.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: v8 migration preserves complete composer records, memberships and edit round trips
+ok 114 - v8 migration preserves complete composer records, memberships and edit round trips
+  ---
+  duration_ms: 8.4606
+  type: 'test'
+  ...
+# Subtest: v9 migration preserves complete composer records, memberships and edit round trips
+ok 115 - v9 migration preserves complete composer records, memberships and edit round trips
+  ---
+  duration_ms: 2.2278
+  type: 'test'
+  ...
+# Subtest: v10 migration preserves complete composer records, memberships and edit round trips
+ok 116 - v10 migration preserves complete composer records, memberships and edit round trips
+  ---
+  duration_ms: 2.2523
+  type: 'test'
+  ...
+# Subtest: v11 migration preserves complete composer records, memberships and edit round trips
+ok 117 - v11 migration preserves complete composer records, memberships and edit round trips
+  ---
+  duration_ms: 1.7474
+  type: 'test'
+  ...
+# Subtest: all seven model projections follow shared plate row precedence without mutating source
+ok 118 - all seven model projections follow shared plate row precedence without mutating source
+  ---
+  duration_ms: 7.3076
+  type: 'test'
+  ...
+# Subtest: shared import migration preserves optional spellcasting policies and legacy language names
+ok 119 - shared import migration preserves optional spellcasting policies and legacy language names
+  ---
+  duration_ms: 1.4679
+  type: 'test'
+  ...
+# (node:64084) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/CrStructuredDamage.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: the damaging outcome sums its damage clauses at their average
+ok 120 - the damaging outcome sums its damage clauses at their average
+  ---
+  duration_ms: 4.3485
+  type: 'test'
+  ...
+# Subtest: the strongest outcome counts once; text clauses and success halves do not add
+ok 121 - the strongest outcome counts once; text clauses and success halves do not add
+  ---
+  duration_ms: 0.622
+  type: 'test'
+  ...
+# Subtest: formula references resolve from the monster, invalid formulas count as zero
+ok 122 - formula references resolve from the monster, invalid formulas count as zero
+  ---
+  duration_ms: 5.1411
+  type: 'test'
+  ...
+# Subtest: A9.12: an action with damage only in its structured outcome reaches the CR estimate
+ok 123 - A9.12: an action with damage only in its structured outcome reaches the CR estimate
+  ---
+  duration_ms: 5.853
+  type: 'test'
+  ...
+# (node:58848) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/CreatureTypeLine.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: alignment follows the type after a comma
+ok 124 - alignment follows the type after a comma
+  ---
+  duration_ms: 1.6521
+  type: 'test'
+  ...
+# Subtest: an empty alignment leaves no dangling comma
+ok 125 - an empty alignment leaves no dangling comma
+  ---
+  duration_ms: 0.2666
+  type: 'test'
+  ...
+# Subtest: missing size or type collapses cleanly
+ok 126 - missing size or type collapses cleanly
+  ---
+  duration_ms: 0.2404
+  type: 'test'
+  ...
+# (node:60936) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/DefenseAndTraitsUtils.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: defense-and-traits-utils - formatDefenseItem & formatDefenseList
+ok 127 - defense-and-traits-utils - formatDefenseItem & formatDefenseList
+  ---
+  duration_ms: 2.5323
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - formatLanguageItem & formatLanguagesList
+ok 128 - defense-and-traits-utils - formatLanguageItem & formatLanguagesList
+  ---
+  duration_ms: 1.9361
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - computeTraitTag consolidated tags
+ok 129 - defense-and-traits-utils - computeTraitTag consolidated tags
+  ---
+  duration_ms: 0.687
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - formatMinimalistRegen & formatMinimalistDeathPrevention
+ok 130 - defense-and-traits-utils - formatMinimalistRegen & formatMinimalistDeathPrevention
+  ---
+  duration_ms: 1.7199
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - composeInvulnerabilityRuling decoupled rules & N combinable conditions
+ok 131 - defense-and-traits-utils - composeInvulnerabilityRuling decoupled rules & N combinable conditions
+  ---
+  duration_ms: 2.4086
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - unified 15 timeframes for formatMinimalistRegen & computeTraitTag
+ok 132 - defense-and-traits-utils - unified 15 timeframes for formatMinimalistRegen & computeTraitTag
+  ---
+  duration_ms: 0.3811
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - 5 Enhanced Regeneration Heuristics & Invulnerability Combiner
+ok 133 - defense-and-traits-utils - 5 Enhanced Regeneration Heuristics & Invulnerability Combiner
+  ---
+  duration_ms: 0.5538
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - AC Submodule Attacker Save Permutations
+ok 134 - defense-and-traits-utils - AC Submodule Attacker Save Permutations
+  ---
+  duration_ms: 7.6861
+  type: 'test'
+  ...
+# Subtest: defense-and-traits-utils - Minimalist Death Prevention Prose Targets
+ok 135 - defense-and-traits-utils - Minimalist Death Prevention Prose Targets
+  ---
+  duration_ms: 0.7107
+  type: 'test'
+  ...
+# (node:56560) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/EntryBindings.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: explicit record deletion cleans only its exact encoded identity and descendants
+ok 136 - explicit record deletion cleans only its exact encoded identity and descendants
+  ---
+  duration_ms: 3.0755
+  type: 'test'
+  ...
+# Subtest: template content replacement clears owned expressions and preserves usage and CR policy
+ok 137 - template content replacement clears owned expressions and preserves usage and CR policy
+  ---
+  duration_ms: 0.4688
+  type: 'test'
+  ...
+# Subtest: role copy rebases only compatible copied mechanics and detaches expression object identity
+ok 138 - role copy rebases only compatible copied mechanics and detaches expression object identity
+  ---
+  duration_ms: 3.9953
+  type: 'test'
+  ...
+# Subtest: compatible role moves retain overlay ownership and inactive expressions
+ok 139 - compatible role moves retain overlay ownership and inactive expressions
+  ---
+  duration_ms: 0.6703
+  type: 'test'
+  ...
+# (node:64600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/EntryDisplay.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: entry policy patches own phase and heading only, without mutating mechanics
+ok 140 - entry policy patches own phase and heading only, without mutating mechanics
+  ---
+  duration_ms: 2.7221
+  type: 'test'
+  ...
+# (node:64324) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ExportBoundary.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: escapeLatexText makes raw strings safe inside LaTeX macro arguments (B4.9)
+ok 141 - escapeLatexText makes raw strings safe inside LaTeX macro arguments (B4.9)
+  ---
+  duration_ms: 1.6546
+  type: 'test'
+  ...
+# Subtest: a current .5emm.json save round-trips unchanged (B4.6)
+ok 142 - a current .5emm.json save round-trips unchanged (B4.6)
+  ---
+  duration_ms: 5.8711
+  type: 'test'
+  ...
+# (node:59484) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ExportMarkup.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: export markup: Markdown keeps card text and paragraph boundaries without web markup
+ok 143 - export markup: Markdown keeps card text and paragraph boundaries without web markup
+  ---
+  duration_ms: 4.404
+  type: 'test'
+  ...
+# Subtest: export markup: classed emphasis is web chrome, authored emphasis stays
+ok 144 - export markup: classed emphasis is web chrome, authored emphasis stays
+  ---
+  duration_ms: 1.6157
+  type: 'test'
+  ...
+# Subtest: export markup: adjacent cells are separated once, never before punctuation
+ok 145 - export markup: adjacent cells are separated once, never before punctuation
+  ---
+  duration_ms: 0.3998
+  type: 'test'
+  ...
+# Subtest: export markup: comparison signs in prose stay text
+ok 146 - export markup: comparison signs in prose stay text
+  ---
+  duration_ms: 0.3096
+  type: 'test'
+  ...
+# Subtest: export markup: LaTeX produces balanced commands and escapes authored special characters
+ok 147 - export markup: LaTeX produces balanced commands and escapes authored special characters
+  ---
+  duration_ms: 0.3732
+  type: 'test'
+  ...
+# Subtest: export markup: LaTeX strips card chrome while keeping every field and line
+ok 148 - export markup: LaTeX strips card chrome while keeping every field and line
+  ---
+  duration_ms: 1.1073
+  type: 'test'
+  ...
+# Subtest: export markup: breaks, entities and embedded scripts are normalised without leaking tags
+ok 149 - export markup: breaks, entities and embedded scripts are normalised without leaking tags
+  ---
+  duration_ms: 0.484
+  type: 'test'
+  ...
+# Subtest: export markup: an entry lead splits into its title and the body after it
+ok 150 - export markup: an entry lead splits into its title and the body after it
+  ---
+  duration_ms: 1.6859
+  type: 'test'
+  ...
+# Subtest: export markup: a misnested lead still exports as the entry name
+ok 151 - export markup: a misnested lead still exports as the entry name
+  ---
+  duration_ms: 0.797
+  type: 'test'
+  ...
+# (node:75340) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ExportStatblock.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ExportStatblock - Markdown export format
+ok 152 - ExportStatblock - Markdown export format
+  ---
+  duration_ms: 29.1793
+  type: 'test'
+  ...
+# Subtest: ExportStatblock - structured abilities use the 2024 text grammar while legacy output stays unchanged
+ok 153 - ExportStatblock - structured abilities use the 2024 text grammar while legacy output stays unchanged
+  ---
+  duration_ms: 12.4506
+  type: 'test'
+  ...
+# Subtest: ExportStatblock - Plain Text export format
+ok 154 - ExportStatblock - Plain Text export format
+  ---
+  duration_ms: 6.3893
+  type: 'test'
+  ...
+# Subtest: ExportStatblock - HTML snippet export format
+ok 155 - ExportStatblock - HTML snippet export format
+  ---
+  duration_ms: 3.2531
+  type: 'test'
+  ...
+# Subtest: ExportStatblock - Foundry VTT Actor5e JSON structure
+ok 156 - ExportStatblock - Foundry VTT Actor5e JSON structure
+  ---
+  duration_ms: 3.615
+  type: 'test'
+  ...
+# Subtest: ExportStatblock - CharacterActor Markdown, Plain Text, and JSON exports
+ok 157 - ExportStatblock - CharacterActor Markdown, Plain Text, and JSON exports
+  ---
+  duration_ms: 2.5918
+  type: 'test'
+  ...
+# Subtest: 2024 action export puts cadence before identity and components before classification
+ok 158 - 2024 action export puts cadence before identity and components before classification
+  ---
+  duration_ms: 3.8625
+  type: 'test'
+  ...
+# Subtest: 2024 structured attacks print the same automatic bonus as the sheet
+ok 159 - 2024 structured attacks print the same automatic bonus as the sheet
+  ---
+  duration_ms: 5.9712
+  type: 'test'
+  ...
+# (node:9492) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ExtendedFeatures.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Extended Features - Extended HP Attributes & Bloodied Computation
+ok 160 - Extended Features - Extended HP Attributes & Bloodied Computation
+  ---
+  duration_ms: 4.1812
+  type: 'test'
+  ...
+# Subtest: Extended Features - Detailed Damage Modifiers Vertical List Structure
+ok 161 - Extended Features - Detailed Damage Modifiers Vertical List Structure
+  ---
+  duration_ms: 0.6424
+  type: 'test'
+  ...
+# Subtest: Extended Features - Action Oriented Passives Data Model
+ok 162 - Extended Features - Action Oriented Passives Data Model
+  ---
+  duration_ms: 0.545
+  type: 'test'
+  ...
+# Subtest: Extended Features - Trait Recharge & Conditionals Section Flags
+ok 163 - Extended Features - Trait Recharge & Conditionals Section Flags
+  ---
+  duration_ms: 0.6232
+  type: 'test'
+  ...
+# Subtest: Extended Features - Monster Portrait Configuration
+ok 164 - Extended Features - Monster Portrait Configuration
+  ---
+  duration_ms: 0.5326
+  type: 'test'
+  ...
+# (node:65516) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/FieldInspection.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: inspection respects enabled overrides without changing saved values
+ok 165 - inspection respects enabled overrides without changing saved values
+  ---
+  duration_ms: 5.7654
+  type: 'test'
+  ...
+# Subtest: inspection fails closed for unsupported or ambiguous targets
+ok 166 - inspection fails closed for unsupported or ambiguous targets
+  ---
+  duration_ms: 1.9645
+  type: 'test'
+  ...
+# Subtest: optional numeric leaves require an existing owner and never invoke accessors
+ok 167 - optional numeric leaves require an existing owner and never invoke accessors
+  ---
+  duration_ms: 0.777
+  type: 'test'
+  ...
+# Subtest: literal fallback modes and pool enabling controls remain editable
+ok 168 - literal fallback modes and pool enabling controls remain editable
+  ---
+  duration_ms: 0.827
+  type: 'test'
+  ...
+# Subtest: symbolic authorship requires explicit migration rather than scalar overwrite
+ok 169 - symbolic authorship requires explicit migration rather than scalar overwrite
+  ---
+  duration_ms: 0.7902
+  type: 'test'
+  ...
+# Subtest: AC modes admit only the currently authored scalar owner
+ok 170 - AC modes admit only the currently authored scalar owner
+  ---
+  duration_ms: 0.7575
+  type: 'test'
+  ...
+# Subtest: death prevention preserves OR branches and parent visibility defaults
+ok 171 - death prevention preserves OR branches and parent visibility defaults
+  ---
+  duration_ms: 1.3919
+  type: 'test'
+  ...
+# (node:72648) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/FieldPaths.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: stable collection addresses survive reordering and encoded IDs
+ok 172 - stable collection addresses survive reordering and encoded IDs
+  ---
+  duration_ms: 2.5016
+  type: 'test'
+  ...
+# Subtest: semantic skill and spell-level addresses do not serialize occurrence indices
+ok 173 - semantic skill and spell-level addresses do not serialize occurrence indices
+  ---
+  duration_ms: 0.8227
+  type: 'test'
+  ...
+# Subtest: malformed, prototype, noncanonical and index addresses fail closed
+ok 174 - malformed, prototype, noncanonical and index addresses fail closed
+  ---
+  duration_ms: 1.0676
+  type: 'test'
+  ...
+# Subtest: missing, duplicate, inherited and accessor-backed targets never silently resolve
+ok 175 - missing, duplicate, inherited and accessor-backed targets never silently resolve
+  ---
+  duration_ms: 1.2208
+  type: 'test'
+  ...
+# Subtest: stable selectors treat prototype-looking identity values as plain data
+ok 176 - stable selectors treat prototype-looking identity values as plain data
+  ---
+  duration_ms: 0.2639
+  type: 'test'
+  ...
+# Subtest: optional leaves do not create missing parents or collection members
+ok 177 - optional leaves do not create missing parents or collection members
+  ---
+  duration_ms: 0.3587
+  type: 'test'
+  ...
+# Subtest: collection readers never invoke index accessors or custom iterators
+ok 178 - collection readers never invoke index accessors or custom iterators
+  ---
+  duration_ms: 0.5216
+  type: 'test'
+  ...
+# (node:58500) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/FieldTypes.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: registry exposes only canonical checkpoint paths
+ok 179 - registry exposes only canonical checkpoint paths
+  ---
+  duration_ms: 4.1792
+  type: 'test'
+  ...
+# Subtest: stable collection families and nested identities are covered
+ok 180 - stable collection families and nested identities are covered
+  ---
+  duration_ms: 0.8955
+  type: 'test'
+  ...
+# Subtest: descriptors carry instantiated gates, units and literal table policy
+ok 181 - descriptors carry instantiated gates, units and literal table policy
+  ---
+  duration_ms: 2.4319
+  type: 'test'
+  ...
+# Subtest: editor constraints are enforced without invented bonus caps
+ok 182 - editor constraints are enforced without invented bonus caps
+  ---
+  duration_ms: 0.8132
+  type: 'test'
+  ...
+# Subtest: all scalar fields reject nonfinite, fractional and nonnumeric inputs
+ok 183 - all scalar fields reject nonfinite, fractional and nonnumeric inputs
+  ---
+  duration_ms: 0.844
+  type: 'test'
+  ...
+# Subtest: die type follows the actual editor catalog
+ok 184 - die type follows the actual editor catalog
+  ---
+  duration_ms: 0.4775
+  type: 'test'
+  ...
+# Subtest: reference eligibility uses known scalar references and field groups
+ok 185 - reference eligibility uses known scalar references and field groups
+  ---
+  duration_ms: 0.3871
+  type: 'test'
+  ...
+# Subtest: complete scalar inventory has unique immutable reviewed descriptors and explicit exclusions
+ok 186 - complete scalar inventory has unique immutable reviewed descriptors and explicit exclusions
+  ---
+  duration_ms: 28.1838
+  type: 'test'
+  ...
+# Subtest: compound gates and their selector instantiations are immutable
+ok 187 - compound gates and their selector instantiations are immutable
+  ---
+  duration_ms: 0.8356
+  type: 'test'
+  ...
+# (node:53996) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/FileName.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: export file names keep authored text but drop characters no platform accepts (B4.11)
+ok 188 - export file names keep authored text but drop characters no platform accepts (B4.11)
+  ---
+  duration_ms: 2.4896
+  type: 'test'
+  ...
+# Subtest: empty, blank or reserved names fall back safely
+ok 189 - empty, blank or reserved names fall back safely
+  ---
+  duration_ms: 0.3561
+  type: 'test'
+  ...
+# Subtest: very long names are cut so the suffix always survives
+ok 190 - very long names are cut so the suffix always survives
+  ---
+  duration_ms: 0.4004
+  type: 'test'
+  ...
+# (node:70236) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Formula.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: context derives the stat block numbers
+ok 191 - context derives the stat block numbers
+  ---
+  duration_ms: 1.8205
+  type: 'test'
+  ...
+# Subtest: derived values from the store override computed defaults
+ok 192 - derived values from the store override computed defaults
+  ---
+  duration_ms: 0.5433
+  type: 'test'
+  ...
+# Subtest: arithmetic follows precedence and rounds down at the end
+ok 193 - arithmetic follows precedence and rounds down at the end
+  ---
+  duration_ms: 3.3507
+  type: 'test'
+  ...
+# Subtest: references resolve and keep their natural style
+ok 194 - references resolve and keep their natural style
+  ---
+  duration_ms: 1.0592
+  type: 'test'
+  ...
+# Subtest: aliases and legacy token spellings resolve
+ok 195 - aliases and legacy token spellings resolve
+  ---
+  duration_ms: 0.603
+  type: 'test'
+  ...
+# Subtest: dice stay symbolic and print average with the roll
+ok 196 - dice stay symbolic and print average with the roll
+  ---
+  duration_ms: 2.0648
+  type: 'test'
+  ...
+# Subtest: dice collapse to their average when divided
+ok 197 - dice collapse to their average when divided
+  ---
+  duration_ms: 0.4433
+  type: 'test'
+  ...
+# Subtest: functions
+ok 198 - functions
+  ---
+  duration_ms: 0.544
+  type: 'test'
+  ...
+# Subtest: a leading + asks for bonus style
+ok 199 - a leading + asks for bonus style
+  ---
+  duration_ms: 0.6787
+  type: 'test'
+  ...
+# Subtest: explicit style wins
+ok 200 - explicit style wins
+  ---
+  duration_ms: 0.864
+  type: 'test'
+  ...
+# Subtest: trace substitutes every reference for tooltips
+ok 201 - trace substitutes every reference for tooltips
+  ---
+  duration_ms: 1.6229
+  type: 'test'
+  ...
+# Subtest: errors carry a position and suggestions
+ok 202 - errors carry a position and suggestions
+  ---
+  duration_ms: 5.1708
+  type: 'test'
+  ...
+# Subtest: bindings resolve from refs, formulas, legacy numbers and empty values
+ok 203 - bindings resolve from refs, formulas, legacy numbers and empty values
+  ---
+  duration_ms: 4.3592
+  type: 'test'
+  ...
+# Subtest: suggestions rank exact, prefix and label matches
+ok 204 - suggestions rank exact, prefix and label matches
+  ---
+  duration_ms: 4.6257
+  type: 'test'
+  ...
+# Subtest: catalog: groups and references are alphabetical, ids and aliases unique
+ok 205 - catalog: groups and references are alphabetical, ids and aliases unique
+  ---
+  duration_ms: 1.143
+  type: 'test'
+  ...
+# Subtest: legacy free-text spellings normalize to references
+ok 206 - legacy free-text spellings normalize to references
+  ---
+  duration_ms: 1.1629
+  type: 'test'
+  ...
+# Subtest: dice formatting helpers
+ok 207 - dice formatting helpers
+  ---
+  duration_ms: 0.2133
+  type: 'test'
+  ...
+# Subtest: macros inside rich text: formulas render, context tokens and junk stay
+ok 208 - macros inside rich text: formulas render, context tokens and junk stay
+  ---
+  duration_ms: 1.1717
+  type: 'test'
+  ...
+# (node:73556) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/HistoryLedger.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: silent materialization and identical current snapshots do not consume undo steps
+ok 209 - silent materialization and identical current snapshots do not consume undo steps
+  ---
+  duration_ms: 1.9423
+  type: 'test'
+  ...
+# Subtest: HistoryLedger - Undo and Redo lifecycle with branch invalidation
+ok 210 - HistoryLedger - Undo and Redo lifecycle with branch invalidation
+  ---
+  duration_ms: 0.7066
+  type: 'test'
+  ...
+# Subtest: HistoryLedger - Bounded capacity eviction
+ok 211 - HistoryLedger - Bounded capacity eviction
+  ---
+  duration_ms: 0.6992
+  type: 'test'
+  ...
+# Subtest: HistoryLedger - Deep snapshot mutation isolation
+ok 212 - HistoryLedger - Deep snapshot mutation isolation
+  ---
+  duration_ms: 1.5415
+  type: 'test'
+  ...
+# Subtest: HistoryLedger - Empty state and clear behavior
+ok 213 - HistoryLedger - Empty state and clear behavior
+  ---
+  duration_ms: 0.3987
+  type: 'test'
+  ...
+# (node:79848) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/IngestAiStatblock.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: IngestAiStatblock - Markdown fenced JSON with commentary
+ok 214 - IngestAiStatblock - Markdown fenced JSON with commentary
+  ---
+  duration_ms: 5.7954
+  type: 'test'
+  ...
+# Subtest: IngestAiStatblock - Invalid JSON input gracefully fails
+ok 215 - IngestAiStatblock - Invalid JSON input gracefully fails
+  ---
+  duration_ms: 0.3714
+  type: 'test'
+  ...
+# (node:66140) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/InitiativeComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Initiative Composer: formats target creature type riders with advantage or disadvantage
+ok 216 - Initiative Composer: formats target creature type riders with advantage or disadvantage
+  ---
+  duration_ms: 1.9083
+  type: 'test'
+  ...
+# Subtest: Initiative Composer: formats roll pre-condition combined with actions
+ok 217 - Initiative Composer: formats roll pre-condition combined with actions
+  ---
+  duration_ms: 0.3479
+  type: 'test'
+  ...
+# Subtest: Initiative Composer: formats HP and Temporary HP riders cleanly distinct
+ok 218 - Initiative Composer: formats HP and Temporary HP riders cleanly distinct
+  ---
+  duration_ms: 0.2565
+  type: 'test'
+  ...
+# Subtest: Initiative Composer: formats movement riders
+ok 219 - Initiative Composer: formats movement riders
+  ---
+  duration_ms: 0.5649
+  type: 'test'
+  ...
+# Subtest: Initiative Composer: formatInitiativeRiders batches and filters empty clauses
+ok 220 - Initiative Composer: formatInitiativeRiders batches and filters empty clauses
+  ---
+  duration_ms: 1.5576
+  type: 'test'
+  ...
+# (node:18208) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/LintMonster.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: LintMonster - Detect orphan multiattacks and missing damage types
+ok 221 - LintMonster - Detect orphan multiattacks and missing damage types
+  ---
+  duration_ms: 7.3613
+  type: 'test'
+  ...
+# Subtest: LintMonster - Clean SRD monster passes with zero errors
+ok 222 - LintMonster - Clean SRD monster passes with zero errors
+  ---
+  duration_ms: 4.4944
+  type: 'test'
+  ...
+# (node:76440) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ListJoin.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: list join: one item stands alone and two items take a plain "and"
+ok 223 - list join: one item stands alone and two items take a plain "and"
+  ---
+  duration_ms: 1.6308
+  type: 'test'
+  ...
+# Subtest: list join: three or more items keep the serial comma
+ok 224 - list join: three or more items keep the serial comma
+  ---
+  duration_ms: 0.2738
+  type: 'test'
+  ...
+# (node:62712) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/LocalStorageAdapter.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: LocalStorageAdapter - CRUD operations
+ok 225 - LocalStorageAdapter - CRUD operations
+  ---
+  duration_ms: 13.9587
+  type: 'test'
+  ...
+# Subtest: LocalStorageAdapter - Bulk Export and Import
+ok 226 - LocalStorageAdapter - Bulk Export and Import
+  ---
+  duration_ms: 2.7575
+  type: 'test'
+  ...
+# (node:64832) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/MigrateMonsterSchema.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: MigrateMonsterSchema - Legacy v1 to current v11 schema migration
+ok 227 - MigrateMonsterSchema - Legacy v1 to current v11 schema migration
+  ---
+  duration_ms: 5.2459
+  type: 'test'
+  ...
+# Subtest: MigrateMonsterSchema - Idempotence on already current v11 schema
+ok 228 - MigrateMonsterSchema - Idempotence on already current v11 schema
+  ---
+  duration_ms: 1.8632
+  type: 'test'
+  ...
+# (node:39592) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ModularComposers.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Modular Composers - Armor Class 8 Permutations Suite
+ok 229 - Modular Composers - Armor Class 8 Permutations Suite
+  ---
+  duration_ms: 2.1203
+  type: 'test'
+  ...
+# Subtest: Modular Composers - Hit Points 28 Defense Survival Rules Suite
+ok 230 - Modular Composers - Hit Points 28 Defense Survival Rules Suite
+  ---
+  duration_ms: 1.3096
+  type: 'test'
+  ...
+# Subtest: Modular Composers - Traversal and Cunning Actions 10 Riders Suite
+ok 231 - Modular Composers - Traversal and Cunning Actions 10 Riders Suite
+  ---
+  duration_ms: 0.5482
+  type: 'test'
+  ...
+# Subtest: Modular Composers - Actions & Traits Studio 4 Compositions Suite
+ok 232 - Modular Composers - Actions & Traits Studio 4 Compositions Suite
+  ---
+  duration_ms: 19.72
+  type: 'test'
+  ...
+# (node:51336) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/MonsterBindings.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: bindings resolve source first and keep immutable authored overlay
+ok 233 - bindings resolve source first and keep immutable authored overlay
+  ---
+  duration_ms: 15.4568
+  type: 'test'
+  ...
+# Subtest: invalid candidates reject atomically and cycles retain committed values
+ok 234 - invalid candidates reject atomically and cycles retain committed values
+  ---
+  duration_ms: 4.0188
+  type: 'test'
+  ...
+# Subtest: detaching retains materialized value, stable IDs survive reorder and deletion is diagnosed
+ok 235 - detaching retains materialized value, stable IDs survive reorder and deletion is diagnosed
+  ---
+  duration_ms: 1.4616
+  type: 'test'
+  ...
+# Subtest: inactive bindings suspend without destroying expressions or symbolic authorship
+ok 236 - inactive bindings suspend without destroying expressions or symbolic authorship
+  ---
+  duration_ms: 1.4531
+  type: 'test'
+  ...
+# Subtest: automatic CON hit-point bonus is synchronized before HP-dependent bindings
+ok 237 - automatic CON hit-point bonus is synchronized before HP-dependent bindings
+  ---
+  duration_ms: 1.1481
+  type: 'test'
+  ...
+# (node:55500) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/MultiattackComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: multiattack references retain occurrence order and resolve strictly by stable ID
+ok 238 - multiattack references retain occurrence order and resolve strictly by stable ID
+  ---
+  duration_ms: 3.0353
+  type: 'test'
+  ...
+# Subtest: removing the last repeated reference preserves the first occurrence and source model
+ok 239 - removing the last repeated reference preserves the first occurrence and source model
+  ---
+  duration_ms: 0.5985
+  type: 'test'
+  ...
+# Subtest: moving references edits only their own ordered list
+ok 240 - moving references edits only their own ordered list
+  ---
+  duration_ms: 0.5251
+  type: 'test'
+  ...
+# Subtest: replacement repairs a missing target without changing group identity or other occurrences
+ok 241 - replacement repairs a missing target without changing group identity or other occurrences
+  ---
+  duration_ms: 0.35
+  type: 'test'
+  ...
+# Subtest: stale, fractional and invalid reference edits cannot change the wrong occurrence
+ok 242 - stale, fractional and invalid reference edits cannot change the wrong occurrence
+  ---
+  duration_ms: 0.5145
+  type: 'test'
+  ...
+# Subtest: adding references permits repeated IDs but rejects unavailable targets
+ok 243 - adding references permits repeated IDs but rejects unavailable targets
+  ---
+  duration_ms: 0.2914
+  type: 'test'
+  ...
+# Subtest: renderer collation counts prototype-like IDs safely and keeps first-seen order
+ok 244 - renderer collation counts prototype-like IDs safely and keeps first-seen order
+  ---
+  duration_ms: 0.4238
+  type: 'test'
+  ...
+# (node:78972) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/NumberGrammar.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: number grammar: cleanPunctuation removes composite punctuation collisions
+ok 245 - number grammar: cleanPunctuation removes composite punctuation collisions
+  ---
+  duration_ms: 2.6705
+  type: 'test'
+  ...
+# Subtest: number grammar: formatSignedModifier formats numbers with optional Unicode minus
+ok 246 - number grammar: formatSignedModifier formats numbers with optional Unicode minus
+  ---
+  duration_ms: 0.4645
+  type: 'test'
+  ...
+# Subtest: number grammar: formatDiceFormula formats standardized expressions with spaces
+ok 247 - number grammar: formatDiceFormula formats standardized expressions with spaces
+  ---
+  duration_ms: 0.3033
+  type: 'test'
+  ...
+# Subtest: number grammar: formatInitiativeHeadline formats Title Case headline with capitalized riders
+ok 248 - number grammar: formatInitiativeHeadline formats Title Case headline with capitalized riders
+  ---
+  duration_ms: 0.3778
+  type: 'test'
+  ...
+# Subtest: number grammar: formatOrdinal formats English ordinal numbers safely
+ok 249 - number grammar: formatOrdinal formats English ordinal numbers safely
+  ---
+  duration_ms: 0.3223
+  type: 'test'
+  ...
+# Subtest: number grammar: formatDistanceUnit normalizes distance notations
+ok 250 - number grammar: formatDistanceUnit normalizes distance notations
+  ---
+  duration_ms: 0.5255
+  type: 'test'
+  ...
+# Subtest: number grammar: formatMetricDistance converts feet to standard 5e metric
+ok 251 - number grammar: formatMetricDistance converts feet to standard 5e metric
+  ---
+  duration_ms: 0.378
+  type: 'test'
+  ...
+# Subtest: number grammar: sanitizeProsePunctuation combines distance and punctuation cleanup
+ok 252 - number grammar: sanitizeProsePunctuation combines distance and punctuation cleanup
+  ---
+  duration_ms: 0.2688
+  type: 'test'
+  ...
+# Subtest: number grammar: empty and null inputs safely return empty strings or standard fallbacks
+ok 253 - number grammar: empty and null inputs safely return empty strings or standard fallbacks
+  ---
+  duration_ms: 0.593
+  type: 'test'
+  ...
+# Subtest: number grammar: formatInitiativeHeadline without riders produces clean single clause
+ok 254 - number grammar: formatInitiativeHeadline without riders produces clean single clause
+  ---
+  duration_ms: 0.8043
+  type: 'test'
+  ...
+# (node:11632) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/OutcomeClauses.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: recipient folds into the trigger lead, never a second colon
+ok 255 - recipient folds into the trigger lead, never a second colon
+  ---
+  duration_ms: 4.1711
+  type: 'test'
+  ...
+# Subtest: references name the referenced trigger in plain text
+ok 256 - references name the referenced trigger in plain text
+  ---
+  duration_ms: 1.8966
+  type: 'test'
+  ...
+# Subtest: a self or missing reference is dropped from prose
+ok 257 - a self or missing reference is dropped from prose
+  ---
+  duration_ms: 0.3924
+  type: 'test'
+  ...
+# Subtest: html markup escapes author text in the lead
+ok 258 - html markup escapes author text in the lead
+  ---
+  duration_ms: 0.4703
+  type: 'test'
+  ...
+# Subtest: validateOutcomes reports self, missing, duplicate and cycles
+ok 259 - validateOutcomes reports self, missing, duplicate and cycles
+  ---
+  duration_ms: 1.2368
+  type: 'test'
+  ...
+# Subtest: withStableIds keeps existing ids and fills missing ones uniquely
+ok 260 - withStableIds keeps existing ids and fills missing ones uniquely
+  ---
+  duration_ms: 0.5033
+  type: 'test'
+  ...
+# Subtest: 2024 text export carries recipients and references as prose
+ok 261 - 2024 text export carries recipients and references as prose
+  ---
+  duration_ms: 2.0129
+  type: 'test'
+  ...
+# Subtest: 2024 html export escapes recipients
+ok 262 - 2024 html export escapes recipients
+  ---
+  duration_ms: 0.737
+  type: 'test'
+  ...
+# Subtest: presentation never changes the mechanics text
+ok 263 - presentation never changes the mechanics text
+  ---
+  duration_ms: 1.1716
+  type: 'test'
+  ...
+# Subtest: custom triggers keep their authored label
+ok 264 - custom triggers keep their authored label
+  ---
+  duration_ms: 0.8838
+  type: 'test'
+  ...
+# (node:78984) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/OutcomeRendering.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: normalization preserves and clones compositor data through serialization
+ok 265 - normalization preserves and clones compositor data through serialization
+  ---
+  duration_ms: 4.6498
+  type: 'test'
+  ...
+# Subtest: sector rendering resolves formulas and includes each effect and table once
+ok 266 - sector rendering resolves formulas and includes each effect and table once
+  ---
+  duration_ms: 6.0792
+  type: 'test'
+  ...
+# Subtest: sector and inline rendering escape every authored clause value
+ok 267 - sector and inline rendering escape every authored clause value
+  ---
+  duration_ms: 0.982
+  type: 'test'
+  ...
+# Subtest: containers retain target labels and table contents in escaped html and export prose
+ok 268 - containers retain target labels and table contents in escaped html and export prose
+  ---
+  duration_ms: 2.6262
+  type: 'test'
+  ...
+# Subtest: inline outcomes separate following containers and authored prose
+ok 269 - inline outcomes separate following containers and authored prose
+  ---
+  duration_ms: 0.6925
+  type: 'test'
+  ...
+# Subtest: incomplete legacy table containers remain safe through web and prose projection
+ok 270 - incomplete legacy table containers remain safe through web and prose projection
+  ---
+  duration_ms: 0.487
+  type: 'test'
+  ...
+# (node:67680) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ParagonPools.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: equal pools stored as the editor stores them (number[]) read as one phrase
+ok 271 - equal pools stored as the editor stores them (number[]) read as one phrase
+  ---
+  duration_ms: 2.8751
+  type: 'test'
+  ...
+# Subtest: a legacy single number expands to poolCount equal pools
+ok 272 - a legacy single number expands to poolCount equal pools
+  ---
+  duration_ms: 0.3404
+  type: 'test'
+  ...
+# Subtest: unequal pools are listed in order with their pool number
+ok 273 - unequal pools are listed in order with their pool number
+  ---
+  duration_ms: 0.4634
+  type: 'test'
+  ...
+# Subtest: missing, empty or invalid pool HP yields null so the renderer keeps its fallback
+ok 274 - missing, empty or invalid pool HP yields null so the renderer keeps its fallback
+  ---
+  duration_ms: 0.3545
+  type: 'test'
+  ...
+# Subtest: invalid entries are dropped without renumbering the valid pools
+ok 275 - invalid entries are dropped without renumbering the valid pools
+  ---
+  duration_ms: 0.4294
+  type: 'test'
+  ...
+# (node:580) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/Plate.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: plate: head cell first, data cells after, body last
+ok 276 - plate: head cell first, data cells after, body last
+  ---
+  duration_ms: 2.5859
+  type: 'test'
+  ...
+# Subtest: plate: empty cells and empty rows are dropped
+ok 277 - plate: empty cells and empty rows are dropped
+  ---
+  duration_ms: 0.3929
+  type: 'test'
+  ...
+# Subtest: plate: tooltips and help keys stay entity-free so the web sanitizer keeps the tag
+ok 278 - plate: tooltips and help keys stay entity-free so the web sanitizer keeps the tag
+  ---
+  duration_ms: 1.0178
+  type: 'test'
+  ...
+# Subtest: plate: cell content flows inside one inline wrapper
+ok 279 - plate: cell content flows inside one inline wrapper
+  ---
+  duration_ms: 0.3507
+  type: 'test'
+  ...
+# Subtest: plate: long bodies get reading stripes, measured on visible text
+ok 280 - plate: long bodies get reading stripes, measured on visible text
+  ---
+  duration_ms: 0.3208
+  type: 'test'
+  ...
+# Subtest: boldNumbers: numbers with units bold, words and markup untouched
+ok 281 - boldNumbers: numbers with units bold, words and markup untouched
+  ---
+  duration_ms: 0.6498
+  type: 'test'
+  ...
+# Subtest: phaseLabel: stage names follow the configured phase word
+ok 282 - phaseLabel: stage names follow the configured phase word
+  ---
+  duration_ms: 0.2965
+  type: 'test'
+  ...
+# (node:69412) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ProcessTokens.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: ProcessTokens - Dice arithmetic and HP token
+ok 283 - ProcessTokens - Dice arithmetic and HP token
+  ---
+  duration_ms: 5.311
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - Save DC and Attack Modifier tokens
+ok 284 - ProcessTokens - Save DC and Attack Modifier tokens
+  ---
+  duration_ms: 0.5942
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - Name token and capitalization
+ok 285 - ProcessTokens - Name token and capitalization
+  ---
+  duration_ms: 7.1552
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - XP token calculations
+ok 286 - ProcessTokens - XP token calculations
+  ---
+  duration_ms: 16.2129
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - Generic monster properties and trait context
+ok 287 - ProcessTokens - Generic monster properties and trait context
+  ---
+  duration_ms: 1.3543
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - Advanced Macros (Cantrip Tier, Dynamic Dice with Stat Mods, Shorthands)
+ok 288 - ProcessTokens - Advanced Macros (Cantrip Tier, Dynamic Dice with Stat Mods, Shorthands)
+  ---
+  duration_ms: 0.809
+  type: 'test'
+  ...
+# Subtest: ProcessTokens - formula engine resolves references and expressions left by older handlers
+ok 289 - ProcessTokens - formula engine resolves references and expressions left by older handlers
+  ---
+  duration_ms: 10.4404
+  type: 'test'
+  ...
+# (node:78228) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/RandomTable.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: diceRange parses counts, faces and modifiers
+ok 290 - diceRange parses counts, faces and modifiers
+  ---
+  duration_ms: 3.356
+  type: 'test'
+  ...
+# Subtest: diagnoseTable finds gaps, overlaps, reversed ranges and bad dice
+ok 291 - diagnoseTable finds gaps, overlaps, reversed ranges and bad dice
+  ---
+  duration_ms: 1.2845
+  type: 'test'
+  ...
+# Subtest: lookupRoll only answers an explicit roll
+ok 292 - lookupRoll only answers an explicit roll
+  ---
+  duration_ms: 0.754
+  type: 'test'
+  ...
+# Subtest: prose and markdown output are sorted and escaped
+ok 293 - prose and markdown output are sorted and escaped
+  ---
+  duration_ms: 0.6031
+  type: 'test'
+  ...
+# Subtest: parseLegacyTable turns free text into stable rows
+ok 294 - parseLegacyTable turns free text into stable rows
+  ---
+  duration_ms: 1.5105
+  type: 'test'
+  ...
+# Subtest: normalizeRandomTables repairs partial and hostile shapes
+ok 295 - normalizeRandomTables repairs partial and hostile shapes
+  ---
+  duration_ms: 1.0362
+  type: 'test'
+  ...
+# Subtest: migration always yields a randomTables array and keeps authored tables
+ok 296 - migration always yields a randomTables array and keeps authored tables
+  ---
+  duration_ms: 3.7735
+  type: 'test'
+  ...
+# Subtest: nextRandomTableRow continues after the highest range and clamps to the dice
+ok 297 - nextRandomTableRow continues after the highest range and clamps to the dice
+  ---
+  duration_ms: 0.4339
+  type: 'test'
+  ...
+# Subtest: table text import previews without mutation and preserves authored metadata and unchanged row identities
+ok 298 - table text import previews without mutation and preserves authored metadata and unchanged row identities
+  ---
+  duration_ms: 2.4538
+  type: 'test'
+  ...
+# Subtest: table text import refuses partial, overlapping, reversed and outside-dice input
+ok 299 - table text import refuses partial, overlapping, reversed and outside-dice input
+  ---
+  duration_ms: 1.4281
+  type: 'test'
+  ...
+# Subtest: signed table ranges import safely and row ids never collide with retained rows
+ok 300 - signed table ranges import safely and row ids never collide with retained rows
+  ---
+  duration_ms: 0.4605
+  type: 'test'
+  ...
+# Subtest: text import reserves ids from other saved tables before allocating rows
+ok 301 - text import reserves ids from other saved tables before allocating rows
+  ---
+  duration_ms: 0.2349
+  type: 'test'
+  ...
+# (node:66252) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ReactionComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: reaction chain preserves plate order and includes the reaction trigger as its own cell
+ok 302 - reaction chain preserves plate order and includes the reaction trigger as its own cell
+  ---
+  duration_ms: 5.7233
+  type: 'test'
+  ...
+# Subtest: reaction cell patches update only their owned persisted fields
+ok 303 - reaction cell patches update only their owned persisted fields
+  ---
+  duration_ms: 0.8597
+  type: 'test'
+  ...
+# Subtest: reaction usage rejects ambiguous input and accepts supported free-form rate labels
+ok 304 - reaction usage rejects ambiguous input and accepts supported free-form rate labels
+  ---
+  duration_ms: 0.5921
+  type: 'test'
+  ...
+# (node:58548) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/ReferenceSources.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: disabled override values cannot create false dependency cycles
+ok 305 - disabled override values cannot create false dependency cycles
+  ---
+  duration_ms: 6.3681
+  type: 'test'
+  ...
+# Subtest: raw spell attack and save selectors remain distinct from normalized spell modifier selectors
+ok 306 - raw spell attack and save selectors remain distinct from normalized spell modifier selectors
+  ---
+  duration_ms: 1.0674
+  type: 'test'
+  ...
+# Subtest: every canonical reference and alias has an explicit source policy
+ok 307 - every canonical reference and alias has an explicit source policy
+  ---
+  duration_ms: 2.5815
+  type: 'test'
+  ...
+# Subtest: default context reads stored PB and HP values, without store getter injection
+ok 308 - default context reads stored PB and HP values, without store getter injection
+  ---
+  duration_ms: 0.3721
+  type: 'test'
+  ...
+# Subtest: save and spell overrides gate numeric dependencies and invalid overrides fall through
+ok 309 - save and spell overrides gate numeric dependencies and invalid overrides fall through
+  ---
+  duration_ms: 0.5534
+  type: 'test'
+  ...
+# Subtest: perception uses semantic keys and speed uses encoded stable IDs
+ok 310 - perception uses semantic keys and speed uses encoded stable IDs
+  ---
+  duration_ms: 0.5719
+  type: 'test'
+  ...
+# Subtest: duplicate active identities are rejected
+ok 311 - duplicate active identities are rejected
+  ---
+  duration_ms: 0.682
+  type: 'test'
+  ...
+# Subtest: transitive reference dependencies expose cross-field cycles
+ok 312 - transitive reference dependencies expose cross-field cycles
+  ---
+  duration_ms: 0.7121
+  type: 'test'
+  ...
+# (node:25212) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/RetiredPillClasses.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: retired pill classes are neither emitted nor styled anywhere in src
+ok 313 - retired pill classes are neither emitted nor styled anywhere in src
+  ---
+  duration_ms: 321.4732
+  type: 'test'
+  ...
+# (node:79508) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/RoleHeaders.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: section header catalog covers each persisted role context without introducing entry names
+ok 314 - section header catalog covers each persisted role context without introducing entry names
+  ---
+  duration_ms: 3.2459
+  type: 'test'
+  ...
+# Subtest: legendary header updates preserve action membership and unrelated fields without mutating the input
+ok 315 - legendary header updates preserve action membership and unrelated fields without mutating the input
+  ---
+  duration_ms: 1.7027
+  type: 'test'
+  ...
+# Subtest: mythic header changes preserve membership and authored whitespace
+ok 316 - mythic header changes preserve membership and authored whitespace
+  ---
+  duration_ms: 0.5678
+  type: 'test'
+  ...
+# Subtest: lair header patch preserves initiative tuning, stored custom prose, and entry collections
+ok 317 - lair header patch preserves initiative tuning, stored custom prose, and entry collections
+  ---
+  duration_ms: 0.4578
+  type: 'test'
+  ...
+# Subtest: header counts reject blank, fractional, out-of-range and non-numeric values without any patch
+ok 318 - header counts reject blank, fractional, out-of-range and non-numeric values without any patch
+  ---
+  duration_ms: 0.8375
+  type: 'test'
+  ...
+# Subtest: lair initiative macro follows the current context and defaults to twenty for older saves
+ok 319 - lair initiative macro follows the current context and defaults to twenty for older saves
+  ---
+  duration_ms: 2.2533
+  type: 'test'
+  ...
+# Subtest: section reset catalog restores each legacy preset without resetting other fields
+ok 320 - section reset catalog restores each legacy preset without resetting other fields
+  ---
+  duration_ms: 0.4663
+  type: 'test'
+  ...
+# (node:70316) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/RoleTransition.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: role transition action -> action is non-destructive and deterministic
+ok 321 - role transition action -> action is non-destructive and deterministic
+  ---
+  duration_ms: 5.2854
+  type: 'test'
+  ...
+# Subtest: role transition action -> bonus_action is non-destructive and deterministic
+ok 322 - role transition action -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.9949
+  type: 'test'
+  ...
+# Subtest: role transition action -> trait is non-destructive and deterministic
+ok 323 - role transition action -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.9469
+  type: 'test'
+  ...
+# Subtest: role transition action -> reaction is non-destructive and deterministic
+ok 324 - role transition action -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.4845
+  type: 'test'
+  ...
+# Subtest: role transition action -> legendary is non-destructive and deterministic
+ok 325 - role transition action -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 1.7311
+  type: 'test'
+  ...
+# Subtest: role transition action -> mythic is non-destructive and deterministic
+ok 326 - role transition action -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.4957
+  type: 'test'
+  ...
+# Subtest: role transition action -> lair is non-destructive and deterministic
+ok 327 - role transition action -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.4982
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> action is non-destructive and deterministic
+ok 328 - role transition bonus_action -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.3937
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> bonus_action is non-destructive and deterministic
+ok 329 - role transition bonus_action -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.5741
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> trait is non-destructive and deterministic
+ok 330 - role transition bonus_action -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.7288
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> reaction is non-destructive and deterministic
+ok 331 - role transition bonus_action -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.3945
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> legendary is non-destructive and deterministic
+ok 332 - role transition bonus_action -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.2066
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> mythic is non-destructive and deterministic
+ok 333 - role transition bonus_action -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1575
+  type: 'test'
+  ...
+# Subtest: role transition bonus_action -> lair is non-destructive and deterministic
+ok 334 - role transition bonus_action -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.2043
+  type: 'test'
+  ...
+# Subtest: role transition trait -> action is non-destructive and deterministic
+ok 335 - role transition trait -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.2313
+  type: 'test'
+  ...
+# Subtest: role transition trait -> bonus_action is non-destructive and deterministic
+ok 336 - role transition trait -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.2523
+  type: 'test'
+  ...
+# Subtest: role transition trait -> trait is non-destructive and deterministic
+ok 337 - role transition trait -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.1291
+  type: 'test'
+  ...
+# Subtest: role transition trait -> reaction is non-destructive and deterministic
+ok 338 - role transition trait -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.1822
+  type: 'test'
+  ...
+# Subtest: role transition trait -> legendary is non-destructive and deterministic
+ok 339 - role transition trait -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.1986
+  type: 'test'
+  ...
+# Subtest: role transition trait -> mythic is non-destructive and deterministic
+ok 340 - role transition trait -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1932
+  type: 'test'
+  ...
+# Subtest: role transition trait -> lair is non-destructive and deterministic
+ok 341 - role transition trait -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.187
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> action is non-destructive and deterministic
+ok 342 - role transition reaction -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.173
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> bonus_action is non-destructive and deterministic
+ok 343 - role transition reaction -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.1502
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> trait is non-destructive and deterministic
+ok 344 - role transition reaction -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.1426
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> reaction is non-destructive and deterministic
+ok 345 - role transition reaction -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.101
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> legendary is non-destructive and deterministic
+ok 346 - role transition reaction -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.1348
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> mythic is non-destructive and deterministic
+ok 347 - role transition reaction -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1556
+  type: 'test'
+  ...
+# Subtest: role transition reaction -> lair is non-destructive and deterministic
+ok 348 - role transition reaction -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.1571
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> action is non-destructive and deterministic
+ok 349 - role transition legendary -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.263
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> bonus_action is non-destructive and deterministic
+ok 350 - role transition legendary -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.1536
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> trait is non-destructive and deterministic
+ok 351 - role transition legendary -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.1767
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> reaction is non-destructive and deterministic
+ok 352 - role transition legendary -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.1429
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> legendary is non-destructive and deterministic
+ok 353 - role transition legendary -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.093
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> mythic is non-destructive and deterministic
+ok 354 - role transition legendary -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1192
+  type: 'test'
+  ...
+# Subtest: role transition legendary -> lair is non-destructive and deterministic
+ok 355 - role transition legendary -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.2123
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> action is non-destructive and deterministic
+ok 356 - role transition mythic -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.4496
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> bonus_action is non-destructive and deterministic
+ok 357 - role transition mythic -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.2666
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> trait is non-destructive and deterministic
+ok 358 - role transition mythic -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.2085
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> reaction is non-destructive and deterministic
+ok 359 - role transition mythic -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.1536
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> legendary is non-destructive and deterministic
+ok 360 - role transition mythic -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.1561
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> mythic is non-destructive and deterministic
+ok 361 - role transition mythic -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1079
+  type: 'test'
+  ...
+# Subtest: role transition mythic -> lair is non-destructive and deterministic
+ok 362 - role transition mythic -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.1489
+  type: 'test'
+  ...
+# Subtest: role transition lair -> action is non-destructive and deterministic
+ok 363 - role transition lair -> action is non-destructive and deterministic
+  ---
+  duration_ms: 0.216
+  type: 'test'
+  ...
+# Subtest: role transition lair -> bonus_action is non-destructive and deterministic
+ok 364 - role transition lair -> bonus_action is non-destructive and deterministic
+  ---
+  duration_ms: 0.1506
+  type: 'test'
+  ...
+# Subtest: role transition lair -> trait is non-destructive and deterministic
+ok 365 - role transition lair -> trait is non-destructive and deterministic
+  ---
+  duration_ms: 0.2083
+  type: 'test'
+  ...
+# Subtest: role transition lair -> reaction is non-destructive and deterministic
+ok 366 - role transition lair -> reaction is non-destructive and deterministic
+  ---
+  duration_ms: 0.1519
+  type: 'test'
+  ...
+# Subtest: role transition lair -> legendary is non-destructive and deterministic
+ok 367 - role transition lair -> legendary is non-destructive and deterministic
+  ---
+  duration_ms: 0.2065
+  type: 'test'
+  ...
+# Subtest: role transition lair -> mythic is non-destructive and deterministic
+ok 368 - role transition lair -> mythic is non-destructive and deterministic
+  ---
+  duration_ms: 0.1578
+  type: 'test'
+  ...
+# Subtest: role transition lair -> lair is non-destructive and deterministic
+ok 369 - role transition lair -> lair is non-destructive and deterministic
+  ---
+  duration_ms: 0.0942
+  type: 'test'
+  ...
+# Subtest: missing entries, invalid roles and duplicate target IDs cannot mutate a document
+ok 370 - missing entries, invalid roles and duplicate target IDs cannot mutate a document
+  ---
+  duration_ms: 0.1352
+  type: 'test'
+  ...
+# Subtest: pool transitions retain costs, position, unknown membership metadata and unrelated settings
+ok 371 - pool transitions retain costs, position, unknown membership metadata and unrelated settings
+  ---
+  duration_ms: 0.2513
+  type: 'test'
+  ...
+# (node:65928) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/SkillActionGroups.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: every standard skill belongs to exactly one action group
+ok 372 - every standard skill belongs to exactly one action group
+  ---
+  duration_ms: 2.5668
+  type: 'test'
+  ...
+# Subtest: the misspelled stored key and its correct spelling both resolve
+ok 373 - the misspelled stored key and its correct spelling both resolve
+  ---
+  duration_ms: 0.3151
+  type: 'test'
+  ...
+# Subtest: passive score follows 10 + bonus with +/-5 and cancels when both apply
+ok 374 - passive score follows 10 + bonus with +/-5 and cancels when both apply
+  ---
+  duration_ms: 0.2917
+  type: 'test'
+  ...
+# Subtest: all four group rows render even with no trained skills
+ok 375 - all four group rows render even with no trained skills
+  ---
+  duration_ms: 1.7975
+  type: 'test'
+  ...
+# Subtest: trained skills are disclosed only inside their own group and never in a Skills row
+ok 376 - trained skills are disclosed only inside their own group and never in a Skills row
+  ---
+  duration_ms: 1.2538
+  type: 'test'
+  ...
+# Subtest: a skill equal to its group base is omitted as redundant
+ok 377 - a skill equal to its group base is omitted as redundant
+  ---
+  duration_ms: 0.4923
+  type: 'test'
+  ...
+# Subtest: a passive override is disclosed even when the bonus matches the base
+ok 378 - a passive override is disclosed even when the bonus matches the base
+  ---
+  duration_ms: 0.4405
+  type: 'test'
+  ...
+# Subtest: a skill with a different action economy gets its own row for that group
+ok 379 - a skill with a different action economy gets its own row for that group
+  ---
+  duration_ms: 0.409
+  type: 'test'
+  ...
+# Subtest: skills outside every group fall into a Skills row
+ok 380 - skills outside every group fall into a Skills row
+  ---
+  duration_ms: 2.8588
+  type: 'test'
+  ...
+# Subtest: identical entries merge into one disclosure
+ok 381 - identical entries merge into one disclosure
+  ---
+  duration_ms: 1.2101
+  type: 'test'
+  ...
+# (node:39584) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/SpeciesAndHeuristics.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: point buy: standard array costs exactly 27 points
+ok 382 - point buy: standard array costs exactly 27 points
+  ---
+  duration_ms: 1.9086
+  type: 'test'
+  ...
+# Subtest: point buy: baseline 8s cost 0 points leaving 27 remaining
+ok 383 - point buy: baseline 8s cost 0 points leaving 27 remaining
+  ---
+  duration_ms: 0.383
+  type: 'test'
+  ...
+# Subtest: point buy: flags stats outside 8-15 bounds
+ok 384 - point buy: flags stats outside 8-15 bounds
+  ---
+  duration_ms: 1.6019
+  type: 'test'
+  ...
+# Subtest: monster role archetypes: cover all 6 requested roles with appropriate stat profiles
+ok 385 - monster role archetypes: cover all 6 requested roles with appropriate stat profiles
+  ---
+  duration_ms: 0.304
+  type: 'test'
+  ...
+# Subtest: species catalog: carries core species with traits, stat hints, and senses
+ok 386 - species catalog: carries core species with traits, stat hints, and senses
+  ---
+  duration_ms: 0.869
+  type: 'test'
+  ...
+# (node:78968) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/SpeedsTraversal.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: SpeedsTraversal - Formats Dash can Shove as a Bonus Action
+ok 387 - SpeedsTraversal - Formats Dash can Shove as a Bonus Action
+  ---
+  duration_ms: 1.7336
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - Formats Dash or Disengage Teleport rider
+ok 388 - SpeedsTraversal - Formats Dash or Disengage Teleport rider
+  ---
+  duration_ms: 0.5459
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - Formats 5ft Damage Aura (1d8 Fire)
+ok 389 - SpeedsTraversal - Formats 5ft Damage Aura (1d8 Fire)
+  ---
+  duration_ms: 0.3221
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - Formats Once per round creature entering/leaving triggers
+ok 390 - SpeedsTraversal - Formats Once per round creature entering/leaving triggers
+  ---
+  duration_ms: 0.3229
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - Formats Teleport to visited point and Ethereal shift
+ok 391 - SpeedsTraversal - Formats Teleport to visited point and Ethereal shift
+  ---
+  duration_ms: 0.4168
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - Formats New Movement Action Riders (Temp HP, Obscured, Adv Saves, Teleports)
+ok 392 - SpeedsTraversal - Formats New Movement Action Riders (Temp HP, Obscured, Adv Saves, Teleports)
+  ---
+  duration_ms: 0.269
+  type: 'test'
+  ...
+# Subtest: SpeedsTraversal - All 15 Presets are Defined and Non-Empty
+ok 393 - SpeedsTraversal - All 15 Presets are Defined and Non-Empty
+  ---
+  duration_ms: 0.4937
+  type: 'test'
+  ...
+# (node:68684) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/SpellLevelHeading.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: exports read the web heading order: lead, then Level N, then colon
+ok 394 - exports read the web heading order: lead, then Level N, then colon
+  ---
+  duration_ms: 2.1789
+  type: 'test'
+  ...
+# Subtest: cantrips, hidden cadence and a custom refresh
+ok 395 - cantrips, hidden cadence and a custom refresh
+  ---
+  duration_ms: 0.5933
+  type: 'test'
+  ...
+# Subtest: pact magic shows the shared slot lead only on the pact level
+ok 396 - pact magic shows the shared slot lead only on the pact level
+  ---
+  duration_ms: 0.3345
+  type: 'test'
+  ...
+# Subtest: the helper and the web plate composition never diverge
+ok 397 - the helper and the web plate composition never diverge
+  ---
+  duration_ms: 1.7658
+  type: 'test'
+  ...
+# (node:76124) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/SpellPlate.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: spell plate: ordinals use teen exceptions and level rows stay sorted
+ok 398 - spell plate: ordinals use teen exceptions and level rows stay sorted
+  ---
+  duration_ms: 4.9657
+  type: 'test'
+  ...
+# Subtest: spell plate: Pact Magic reports its highest slot pool without fabricating other levels
+ok 399 - spell plate: Pact Magic reports its highest slot pool without fabricating other levels
+  ---
+  duration_ms: 0.5578
+  type: 'test'
+  ...
+# Subtest: spell plate: full caster totals and per-level slot counts are distinct from pact slots
+ok 400 - spell plate: full caster totals and per-level slot counts are distinct from pact slots
+  ---
+  duration_ms: 0.5481
+  type: 'test'
+  ...
+# Subtest: spell plate: metamagic catalog selects edition-specific costs and preserves unknown custom names
+ok 401 - spell plate: metamagic catalog selects edition-specific costs and preserves unknown custom names
+  ---
+  duration_ms: 1.0509
+  type: 'test'
+  ...
+# Subtest: cadence catalog prevents long-rest resources from being labelled Daily
+ok 402 - cadence catalog prevents long-rest resources from being labelled Daily
+  ---
+  duration_ms: 0.5508
+  type: 'test'
+  ...
+# Subtest: spell plate: absent slot data stays absent instead of inventing a resource count
+ok 403 - spell plate: absent slot data stays absent instead of inventing a resource count
+  ---
+  duration_ms: 0.3475
+  type: 'test'
+  ...
+# Subtest: innate spell plate: keeps each recharge group separate and preserves processed notes
+ok 404 - innate spell plate: keeps each recharge group separate and preserves processed notes
+  ---
+  duration_ms: 0.5978
+  type: 'test'
+  ...
+# Subtest: spell level lead: a cadence that carries its own count is not prefixed with the slot count
+ok 405 - spell level lead: a cadence that carries its own count is not prefixed with the slot count
+  ---
+  duration_ms: 0.4789
+  type: 'test'
+  ...
+# (node:72024) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/StatblockHelp.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: statblock help: every published key has non-empty plain-language copy
+ok 406 - statblock help: every published key has non-empty plain-language copy
+  ---
+  duration_ms: 1.5878
+  type: 'test'
+  ...
+# Subtest: statblock help: unknown and missing keys safely produce no tooltip
+ok 407 - statblock help: unknown and missing keys safely produce no tooltip
+  ---
+  duration_ms: 0.2424
+  type: 'test'
+  ...
+# Subtest: statblock help: lookup returns the authored description by stable key
+ok 408 - statblock help: lookup returns the authored description by stable key
+  ---
+  duration_ms: 0.2424
+  type: 'test'
+  ...
+# Subtest: statblock help: usage copy selects the die from the displayed recharge range
+ok 409 - statblock help: usage copy selects the die from the displayed recharge range
+  ---
+  duration_ms: 0.5289
+  type: 'test'
+  ...
+# Subtest: statblock help: 2024 revision glossary entries are present and explain rules clearly
+ok 410 - statblock help: 2024 revision glossary entries are present and explain rules clearly
+  ---
+  duration_ms: 0.1792
+  type: 'test'
+  ...
+# (node:76372) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/StructuredAttack.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: weapon attacks default by reach: melee and thrown use Strength, ranged uses Dexterity
+ok 411 - weapon attacks default by reach: melee and thrown use Strength, ranged uses Dexterity
+  ---
+  duration_ms: 2.3084
+  type: 'test'
+  ...
+# Subtest: spell attacks follow the spellcasting ability and its override, exactly like the sheet
+ok 412 - spell attacks follow the spellcasting ability and its override, exactly like the sheet
+  ---
+  duration_ms: 0.3134
+  type: 'test'
+  ...
+# Subtest: an authored bonus always wins and a non-attack has no bonus
+ok 413 - an authored bonus always wins and a non-attack has no bonus
+  ---
+  duration_ms: 0.3389
+  type: 'test'
+  ...
+# Subtest: authored finesse, thrown melee and explicit ability rules have stable provenance
+ok 414 - authored finesse, thrown melee and explicit ability rules have stable provenance
+  ---
+  duration_ms: 0.2726
+  type: 'test'
+  ...
+# Subtest: nonfinite bonuses and ability facts fall back to finite automatic values
+ok 415 - nonfinite bonuses and ability facts fall back to finite automatic values
+  ---
+  duration_ms: 0.4911
+  type: 'test'
+  ...
+# (node:54976) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/TarrasqueExport.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: Tarrasque: shared prose lead becomes name once, mechanics remain in desc
+ok 416 - Tarrasque: shared prose lead becomes name once, mechanics remain in desc
+  ---
+  duration_ms: 4.3795
+  type: 'test'
+  ...
+# Subtest: Tarrasque: duplicate printed names retain independently supplied bonuses
+ok 417 - Tarrasque: duplicate printed names retain independently supplied bonuses
+  ---
+  duration_ms: 0.7648
+  type: 'test'
+  ...
+# Subtest: Tarrasque: an explicit zero bonus is retained
+ok 418 - Tarrasque: an explicit zero bonus is retained
+  ---
+  duration_ms: 0.2679
+  type: 'test'
+  ...
+# Subtest: Tarrasque: custom prose without a lead retains its full body and source name
+ok 419 - Tarrasque: custom prose without a lead retains its full body and source name
+  ---
+  duration_ms: 0.304
+  type: 'test'
+  ...
+# Subtest: Tarrasque: old misnested legendary leads retain cost and full outcome
+ok 420 - Tarrasque: old misnested legendary leads retain cost and full outcome
+  ---
+  duration_ms: 0.3226
+  type: 'test'
+  ...
+# Subtest: Tarrasque: reaction trigger and response retain line separation
+ok 421 - Tarrasque: reaction trigger and response retain line separation
+  ---
+  duration_ms: 0.1558
+  type: 'test'
+  ...
+# Subtest: Tarrasque: header number pills, help hooks and advantage chrome become plain text
+ok 422 - Tarrasque: header number pills, help hooks and advantage chrome become plain text
+  ---
+  duration_ms: 1.9835
+  type: 'test'
+  ...
+# Subtest: Tarrasque: table rows and cells remain readable without HTML
+ok 423 - Tarrasque: table rows and cells remain readable without HTML
+  ---
+  duration_ms: 0.2806
+  type: 'test'
+  ...
+# Subtest: Tarrasque: encoded author angle brackets remain literal after markup removal
+ok 424 - Tarrasque: encoded author angle brackets remain literal after markup removal
+  ---
+  duration_ms: 0.7433
+  type: 'test'
+  ...
+# Subtest: Tarrasque: script/style payloads and actual markup never leak into fields
+ok 425 - Tarrasque: script/style payloads and actual markup never leak into fields
+  ---
+  duration_ms: 0.7285
+  type: 'test'
+  ...
+# Subtest: Tarrasque: numeric entities decode safely while invalid code points remain authored text
+ok 426 - Tarrasque: numeric entities decode safely while invalid code points remain authored text
+  ---
+  duration_ms: 0.2987
+  type: 'test'
+  ...
+# Subtest: Tarrasque: comparison signs, apostrophes and blank headers survive
+ok 427 - Tarrasque: comparison signs, apostrophes and blank headers survive
+  ---
+  duration_ms: 0.1289
+  type: 'test'
+  ...
+# Subtest: Tarrasque: physical damage dice preserve base and each extra die independently
+ok 428 - Tarrasque: physical damage dice preserve base and each extra die independently
+  ---
+  duration_ms: 0.1951
+  type: 'test'
+  ...
+# Subtest: Tarrasque: single physical damage and negative modifier metadata keep their meaning
+ok 429 - Tarrasque: single physical damage and negative modifier metadata keep their meaning
+  ---
+  duration_ms: 0.1611
+  type: 'test'
+  ...
+# Subtest: phase prefixes preserve cadence in the title without duplicating the lead
+ok 430 - phase prefixes preserve cadence in the title without duplicating the lead
+  ---
+  duration_ms: 0.1112
+  type: 'test'
+  ...
+# (node:47700) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/TraitComposer.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: trait chain shows the renderer cadence before the name and preserves conditional text
+ok 431 - trait chain shows the renderer cadence before the name and preserves conditional text
+  ---
+  duration_ms: 2.2424
+  type: 'test'
+  ...
+# Subtest: trait cadence editing preserves identity, grouping, description and CR without aliasing
+ok 432 - trait cadence editing preserves identity, grouping, description and CR without aliasing
+  ---
+  duration_ms: 0.5012
+  type: 'test'
+  ...
+# Subtest: clearing trait cadence removes its overrides without clearing conditional policy
+ok 433 - clearing trait cadence removes its overrides without clearing conditional policy
+  ---
+  duration_ms: 0.2659
+  type: 'test'
+  ...
+# Subtest: trait cadence rejects invalid counts and malformed drafts before applying
+ok 434 - trait cadence rejects invalid counts and malformed drafts before applying
+  ---
+  duration_ms: 0.4502
+  type: 'test'
+  ...
+# Subtest: trait grouping defaults are explicit and existing custom headings survive toggles
+ok 435 - trait grouping defaults are explicit and existing custom headings survive toggles
+  ---
+  duration_ms: 0.5377
+  type: 'test'
+  ...
+# Subtest: cadence changes update generated headings and retain authored headings
+ok 436 - cadence changes update generated headings and retain authored headings
+  ---
+  duration_ms: 0.2451
+  type: 'test'
+  ...
+# Subtest: phase choices bound imported counts and retain a saved out-of-range phase without a huge list
+ok 437 - phase choices bound imported counts and retain a saved out-of-range phase without a huge list
+  ---
+  duration_ms: 0.2176
+  type: 'test'
+  ...
+# (node:77612) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/temp/dndsheet220/base221/test/core/TypecheckGate.test.ts is not specified and it doesn't parse as CommonJS.
+# Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+# To eliminate this warning, add "type": "module" to F:\\temp\\dndsheet220\\base221\\package.json.
+# (Use `node --trace-warnings ...` to show where the warning was created)
+# Subtest: type signatures ignore positions and checkout location but retain messages and multiplicity
+ok 438 - type signatures ignore positions and checkout location but retain messages and multiplicity
+  ---
+  duration_ms: 3.2373
+  type: 'test'
+  ...
+# Subtest: gate requires every named step once including typecheck, all successful
+ok 439 - gate requires every named step once including typecheck, all successful
+  ---
+  duration_ms: 0.6764
+  type: 'test'
+  ...
+# Subtest: global compiler errors and unrecognized output fail closed
+ok 440 - global compiler errors and unrecognized output fail closed
+  ---
+  duration_ms: 1.2601
+  type: 'test'
+  ...
+# Subtest: gate freshness covers tools and build metadata while excluding installed dependencies
+ok 441 - gate freshness covers tools and build metadata while excluding installed dependencies
+  ---
+  duration_ms: 25.4774
+  type: 'test'
+  ...
+1..441
+# tests 453
+# suites 0
+# pass 453
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1705.9236

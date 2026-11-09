@@ -1,11 +1,12 @@
 import assert from 'node:assert/strict'
+import { findChrome } from '../tools/qa/chrome.mjs'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import http from 'node:http'
 import os from 'node:os'
 import path from 'node:path'
 
-const chromePath = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+const chromePath = findChrome()
 const port = 9226
 const appUrl = process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
 const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dn-sheet-help-'))
