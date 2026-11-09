@@ -58,7 +58,7 @@ export function tableToMarkdown(table: RandomTable): string {
 export function parseLegacyTable(id: string, dice: string, text: string): RandomTable {
   const rows: RandomTableRow[] = [];
   for (const line of text.split(/\r?\n/)) {
-    const m = /^\s*(\d+)\s*(?:[-–]\s*(\d+))?\s*[:.)]\s*(.+)$/.exec(line);
+    const m = /^\s*(-?\d+)\s*(?:[-–]\s*(-?\d+))?\s*[:.)]\s*(.+)$/.exec(line);
     if (m) rows.push({ id: `${id}-r${rows.length + 1}`, min: Number(m[1]), max: Number(m[2] ?? m[1]), text: m[3].trim() });
   }
   return { id, dice, rows };
@@ -104,4 +104,35 @@ export function nextRandomTableRow(table: RandomTable, id: string): RandomTableR
   const top = diceRange(table.dice)?.max ?? last + 1
   const min = Math.min(last + 1, top)
   return { id, min, max: min, text: '' }
+}
+
+
+/** Explicit, lossless authoring preview; never scans or rewrites saved prose automatically. */
+export function previewRandomTableImport(table: RandomTable, input: string, reservedIds: readonly string[] = []): {
+  table: RandomTable; invalidLines: number[]; diagnostics: TableDiagnostic[]; canApply: boolean
+} {
+  const invalidLines: number[] = []
+  input.split(/\r?\n/).forEach((line, index) => {
+    if (line.trim() && parseLegacyTable(table.id, table.dice, line).rows.length !== 1) invalidLines.push(index + 1)
+  })
+  const parsed = parseLegacyTable(table.id, table.dice, input)
+  const used = new Set([...reservedIds, table.id, ...table.rows.map(row => row.id)])
+  const retained = new Set<string>()
+  const rows = parsed.rows.map((row, index) => {
+    const prior = table.rows.find(old => !retained.has(old.id) && old.min === row.min && old.max === row.max && old.text === row.text)
+    if (prior) { retained.add(prior.id); return { ...row, id: prior.id } }
+    let id = `${table.id}-import-${index + 1}`
+    while (used.has(id)) id += '-new'
+    used.add(id)
+    return { ...row, id }
+  })
+  const next = { ...table, rows }
+  const diagnostics = diagnoseTable(next)
+  const range = diceRange(table.dice)
+  for (const row of rows) {
+    if (!Number.isSafeInteger(row.min) || !Number.isSafeInteger(row.max) || (range && (row.min < range.min || row.max > range.max))) {
+      diagnostics.push({ kind: 'range', message: `Row ${row.min}–${row.max} is outside the dice range.`, rowIds: [row.id] })
+    }
+  }
+  return { table: next, invalidLines, diagnostics, canApply: invalidLines.length === 0 && !diagnostics.some(d => d.kind !== 'gap') }
 }

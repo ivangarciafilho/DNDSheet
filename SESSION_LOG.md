@@ -1,6 +1,14 @@
 # DNDSheet session checkpoint - 2026-10-30
 
-## Current checkpoint — Build212 (2026-11-09)
+## Current verified delivery — Build213 (2026-11-09)
+
+Candidate `rc-2.4.3-build-213-table-import-and-a4-print`, based on `2363765`. **H6 closed**: transactional Paste rows, global row-ID reservation, statblock-owned A4 tables, accessible headers and inspected portrait/landscape print output. Shared print fixes remove the editor splitter/clipping and notification UI; landscape now selects its actual paper orientation. Final gate9/9:400 core;54 browser scenarios on both SPA and Pages. Prior candidates and protected checkout retained.
+
+[Build213 delivery, evidence and groomed continuation](docs/roadmap/DNDSheet-Build213-Table-Import-and-A4-Print.md) records the acceptance ruling and boundaries. Next: **H11 (A11.5 → A11.9) → H9 → H15/H14**. H13 requires three consecutive unchanged-source gates; only one final qualifying run is supplied here. H12 and owner-decision H16 remain open. Typecheck is outside the nine-step gate.
+
+Workload: canonical219 A/B IDs106 checked /113 open (unchanged); separate18 H IDs11 checked /7 open (**+1 completed /−1 open**). Combined237 IDs117 complete /120 open versus116 /121. New scope IDs0. Historical snapshots below retain their original counts and evidence.
+
+## Historical checkpoint — Build212 (2026-11-09)
 
 Recovery committed/pushed as `fb73b1a`; Pages `7aff988`; official site displays212. Final nine-step gate passed (396 core;53 browser steps on SPA and Pages). All16 Markdown documents reviewed and current canonical entry points synchronized. See `docs/roadmap/DNDSheet-Build212-Recovery-and-Documentation-Sync.md`. Resume H6, then H11, H9, H15/H14; keep remaining gates explicit. Protected dirty checkout and prior candidates unchanged.
 

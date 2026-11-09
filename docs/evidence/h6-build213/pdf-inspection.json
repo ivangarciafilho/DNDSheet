@@ -1,0 +1,38 @@
+[
+  {
+    "file": "pages-landscape.pdf",
+    "pages": 1,
+    "widthPt": 841.9199829101562,
+    "heightPt": 594.9599609375,
+    "expectedText": true,
+    "noInterfaceText": true,
+    "withinPageBounds": true
+  },
+  {
+    "file": "pages-portrait.pdf",
+    "pages": 1,
+    "widthPt": 594.9599609375,
+    "heightPt": 841.9199829101562,
+    "expectedText": true,
+    "noInterfaceText": true,
+    "withinPageBounds": true
+  },
+  {
+    "file": "spa-landscape.pdf",
+    "pages": 1,
+    "widthPt": 841.9199829101562,
+    "heightPt": 594.9599609375,
+    "expectedText": true,
+    "noInterfaceText": true,
+    "withinPageBounds": true
+  },
+  {
+    "file": "spa-portrait.pdf",
+    "pages": 1,
+    "widthPt": 594.9599609375,
+    "heightPt": 841.9199829101562,
+    "expectedText": true,
+    "noInterfaceText": true,
+    "withinPageBounds": true
+  }
+]

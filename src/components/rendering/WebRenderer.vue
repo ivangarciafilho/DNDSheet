@@ -928,10 +928,10 @@
         ></li>
       </ul>
     </div>
-    <div v-for="rt in randomTables" :key="rt.id" class="random-table">
+    <div v-for="rt in randomTables" :key="rt.id" class="random-table" data-a4-owner="statblock">
           <h3 class="section">{{ rt.title || $t('editor.randomTables.defaultTitle') }}</h3>
-          <table class="random-table-grid">
-            <thead><tr><th>{{ rt.dice }}</th><th>{{ $t('editor.randomTables.result') }}</th></tr></thead>
+          <table class="random-table-grid" :aria-label="rt.title || $t('editor.randomTables.defaultTitle')">
+            <thead><tr><th scope="col">{{ rt.dice }}</th><th scope="col">{{ $t('editor.randomTables.result') }}</th></tr></thead>
             <tbody>
               <tr v-for="row in rt.sortedRows" :key="row.id">
                 <td class="random-table-range">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td>{{ row.text }}</td>

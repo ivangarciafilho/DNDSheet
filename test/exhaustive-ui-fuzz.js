@@ -1,3 +1,4 @@
+import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -3674,6 +3675,69 @@ async function runFuzz() {
   }`)
   console.log('Step 53 result:',JSON.stringify(step53))
   if(step53.checks!==32||step53.problems.length)throw new Error('Step 53 failed: '+JSON.stringify(step53))
+  console.log('\n--- Step 54: Transactional table paste and statblock-owned A4 tables ---')
+  const step54=await evalInPage(`async()=>{
+    const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+    const until=async(fn,label)=>{for(let i=0;i<60;i++){const value=fn();if(value)return value;await wait(40)}throw new Error('Table paste: '+label)};
+    monster.$reset();monster.name='Table A4 Fixture';monster.randomTables=[{id:'paste',title:'Wild Surge',dice:'1d6',fallback:'Calm',rows:[{id:'stable',min:1,max:2,text:'Fire'}]}];
+    const before=JSON.stringify(monster.randomTables);
+    const panel=await until(()=>[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Random Tables'),'panel');
+    if(!panel.classList.contains('q-expansion-item--expanded'))panel.querySelector('.q-item').click();
+    const history=await until(()=>pinia._s.get('history'),'history store');
+    const paste=await until(()=>[...panel.querySelectorAll('button')].find(b=>b.textContent.trim().endsWith('Paste rows')),'paste button');
+    const open=async()=>{paste.click();return until(()=>document.querySelector('.table-import-dialog'),'dialog')};
+    const fill=async(dialog,value)=>{const field=dialog.querySelector('textarea');field.value=value;field.dispatchEvent(new Event('input',{bubbles:true}));await wait(100)};
+    let dialog=await open();await fill(dialog,'1-2: Fire'+String.fromCharCode(10)+'3-6: Frost');
+    const previewSafe=JSON.stringify(monster.randomTables)===before&&dialog.querySelectorAll('tbody tr').length===2;
+    [...dialog.querySelectorAll('button')].find(b=>b.textContent.trim()==='Cancel').click();await until(()=>!document.querySelector('.table-import-dialog'),'cancel closes');
+    const cancelled=JSON.stringify(monster.randomTables)===before;
+    dialog=await open();await fill(dialog,'1: Fire'+String.fromCharCode(10)+'bad row');
+    const apply=()=>[...dialog.querySelectorAll('button')].find(b=>b.textContent.trim()==='Replace rows');
+    const blocked=apply().disabled&&dialog.textContent.includes('lines: 2')&&JSON.stringify(monster.randomTables)===before;
+    await fill(dialog,'1-2: Fire'+String.fromCharCode(10)+'3-6: Frost');apply().click();
+    await until(()=>!document.querySelector('.table-import-dialog')&&monster.randomTables[0].rows.length===2,'apply');
+    const applied=monster.randomTables[0].rows[0].id==='stable'&&monster.randomTables[0].fallback==='Calm';
+    const after=JSON.stringify(monster.randomTables);history.undo();await until(()=>JSON.stringify(monster.randomTables)===before,'undo');await until(()=>document.querySelectorAll('#render .random-table-grid tbody tr').length===2,'undo rendered');
+    history.redo();await until(()=>JSON.stringify(monster.randomTables)===after,'redo');await until(()=>document.querySelectorAll('#render .random-table-grid tbody tr').length===3,'redo rendered');
+    const stale=JSON.stringify(monster.randomTables);const rejected=monster.replaceRandomTableRows('missing','1-6: Lost')===false&&JSON.stringify(monster.randomTables)===stale;
+    editor.a4StatblockScaleX=100;editor.a4StatblockScaleY=100;editor.a4StatblockOffsetX=0;editor.a4StatblockOffsetY=0;editor.a4StatblockOpacity=100;
+    editor.a4PreviewMode=true;editor.a4Layout='statblock_only';editor.a4Orientation='portrait';editor.a4Zoom='fit';
+    const table=await until(()=>document.querySelector('.a4-page-sheet #render .random-table-grid'),'A4 table');
+    const block=table.closest('.statblock'),owner=table.closest('[data-a4-owner]');
+    const single=document.querySelectorAll('#render .random-table-grid').length===1&&owner?.dataset.a4Owner==='statblock';
+    const named=table.getAttribute('aria-label')==='Wild Surge'&&[...table.querySelectorAll('thead th')].every(th=>th.scope==='col');
+    const layer=editor.a4Layers.find(l=>l.type==='statblock');
+    editor.a4StatblockOffsetX=17;await until(()=>getComputedStyle(block).transform!=='none','transform');const moved=getComputedStyle(block).transform.includes('17');
+    layer.visible=false;await until(()=>table.getClientRects().length===0,'layer hide');const hidden=table.getClientRects().length===0;
+    layer.visible=true;editor.a4StatblockOffsetX=0;await until(()=>table.getClientRects().length>0,'layer show');
+    const priorZ=getComputedStyle(block).zIndex;const index=editor.a4Layers.indexOf(layer);editor.a4Layers.splice(index,1);editor.a4Layers.push(layer);await wait(100);
+    const ordered=Number(getComputedStyle(block).zIndex)===20&&table.closest('.statblock')===block&&Number(priorZ)>=20;
+    return {previewSafe,cancelled,blocked,applied,rejected,single,named,moved,hidden,ordered,after};
+  }`)
+  console.log('Step 54 result:',JSON.stringify(step54))
+  for(const key of ['previewSafe','cancelled','blocked','applied','rejected','single','named','moved','hidden','ordered'])if(step54[key]!==true)throw new Error('Step 54 failed '+key+': '+JSON.stringify(step54))
+  const tableEvidence=path.resolve('.gate/table-evidence');fs.mkdirSync(tableEvidence,{recursive:true})
+  const tableRun=(process.env.DNDSHEET_E2E_URL||'').includes('/DNDSheet')?'pages':'spa'
+  for(const theme of ['wotc','printer','lovecraft_golden','lovecraft_silver','lovecraft_toxic','lovecraft_spooky','lovecraft_galactic','lovecraft_fathomless','dwarves_forge','dwarves_aetherpunk','art_nouveau','art_deco']){
+    await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.visualTheme='${theme}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
+    const shot=await sendCdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(tableEvidence,tableRun+'-'+theme+'.png'),Buffer.from(shot.result.data,'base64'))
+  }
+  await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.visualTheme='wotc';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
+  await sendCdp('Emulation.setEmulatedMedia',{media:'print'})
+  const tablePrint=await evalInPage(`()=>{const table=document.querySelector('#render .random-table-grid');return {media:matchMedia('print').matches,keep:getComputedStyle(table.closest('.random-table')).breakInside,header:getComputedStyle(table.querySelector('thead')).display,row:getComputedStyle(table.querySelector('tbody tr')).breakInside,text:table.textContent}}`)
+  if(!tablePrint.media||tablePrint.keep!=='avoid'||tablePrint.header!=='table-header-group'||tablePrint.row!=='avoid'||!tablePrint.text.includes('Frost')||!tablePrint.text.includes('Calm'))throw new Error('Table print: '+JSON.stringify(tablePrint))
+  for(const orientation of ['portrait','landscape']){
+    await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.a4Orientation='${orientation}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
+    const printPage=await evalInPage(`()=>({page:getComputedStyle(document.body).page,notice:[...document.querySelectorAll('.q-notifications')].some(el=>getComputedStyle(el).display!=='none'),editorHidden:getComputedStyle(document.querySelector('#splitter > .q-splitter__before')).display==='none',sheetUnclipped:getComputedStyle(document.querySelector('#splitter > .q-splitter__after')).overflow==='visible'})`)
+    if(printPage.notice||!printPage.editorHidden||!printPage.sheetUnclipped||(orientation==='landscape'&&printPage.page!=='dndsheet-landscape'))throw new Error('Print orientation/notice: '+JSON.stringify(printPage))
+    const pdf=await sendCdp('Page.printToPDF',{printBackground:true,preferCSSPageSize:true});if(!pdf.result?.data)throw new Error('Missing A4 table PDF');fs.writeFileSync(path.join(tableEvidence,tableRun+'-'+orientation+'.pdf'),Buffer.from(pdf.result.data,'base64'))
+  }
+  await sendCdp('Emulation.setEmulatedMedia',{media:''})
+  const tableShot=await sendCdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(tableEvidence,tableRun+'-table.png'),Buffer.from(tableShot.result.data,'base64'))
+  await sendCdp('Page.reload');await pause(1500)
+  const tableReload=await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').randomTables)`)
+  assert.deepEqual(JSON.parse(tableReload),JSON.parse(step54.after),'Imported table changed on reload')
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3690,7 +3754,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 53 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 54 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

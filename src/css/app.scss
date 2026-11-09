@@ -1788,6 +1788,16 @@
     size: A4 portrait;
     margin: 8mm;
   }
+  @page dndsheet-landscape {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  body:has(.a4-page-sheet.a4-landscape) {
+    page: dndsheet-landscape;
+  }
+  .q-notifications, .q-dialog, .q-menu, .q-tooltip {
+    display: none !important;
+  }
   body, #q-app {
     background: #ffffff !important;
   }
@@ -1873,3 +1883,12 @@
 .outcome-sector.outcome-vertical { display: flex; flex-direction: column; gap: .15em; }
 .outcome-sector.outcome-horizontal { display: flex; flex-wrap: wrap; gap: .35em; align-items: baseline; }
 
+
+@media print {
+  #splitter, #char-splitter { display: block !important; height: auto !important; overflow: visible !important; }
+  #splitter > .q-splitter__before, #char-splitter > .q-splitter__before { display: none !important; }
+  #splitter > .q-splitter__after, #char-splitter > .q-splitter__after { width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+  #splitter > .q-splitter__after > .q-pa-md, #char-splitter > .q-splitter__after > .q-pa-md { padding: 0 !important; }
+  .a4-preview-viewport { display: block !important; overflow: visible !important; border: none !important; background: transparent !important; }
+  .a4-page-sheet { aspect-ratio: auto !important; }
+}

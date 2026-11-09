@@ -761,6 +761,8 @@
 
 @media print {
   .statblock .random-table { break-inside: avoid; }
+  .statblock .random-table-grid thead { display: table-header-group; }
+  .statblock .random-table-grid tr { break-inside: avoid; }
   .statblock .random-table-grid th {
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

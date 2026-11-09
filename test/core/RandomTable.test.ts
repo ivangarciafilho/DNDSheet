@@ -64,3 +64,43 @@ test('nextRandomTableRow continues after the highest range and clamps to the dic
   assert.strictEqual(nextRandomTableRow({ id: 't', dice: '1d6', rows: [{ id: 'a', min: 1, max: 6, text: '' }] }, 'n').min, 6)
   assert.strictEqual(nextRandomTableRow({ id: 't', dice: '1d6', rows: [] }, 'n').min, 1)
 })
+
+
+import { previewRandomTableImport } from '../../src/core/domain/random-table.ts'
+
+test('table text import previews without mutation and preserves authored metadata and unchanged row identities', () => {
+  const table = { id: 't', title: 'Wild', dice: '1d6', fallback: 'calm', rows: [{ id: 'stable', min: 1, max: 2, text: 'Fire' }] }
+  const before = JSON.stringify(table)
+  const preview = previewRandomTableImport(table, '1-2: Fire\n3–6. Ice')
+  assert.ok(preview.canApply)
+  assert.strictEqual(JSON.stringify(table), before)
+  assert.strictEqual(preview.table.rows[0].id, 'stable')
+  assert.deepStrictEqual(preview.table.rows.map(r => [r.min, r.max, r.text]), [[1,2,'Fire'],[3,6,'Ice']])
+  assert.strictEqual(preview.table.fallback, 'calm')
+  assert.strictEqual(preview.table.title, 'Wild')
+  assert.deepStrictEqual(preview, previewRandomTableImport(table, '1-2: Fire\n3–6. Ice'))
+})
+
+test('table text import refuses partial, overlapping, reversed and outside-dice input', () => {
+  const table = { id: 't', dice: '1d6', rows: [] }
+  for (const input of ['', '1: Fire\nmisspelled row', '1-4: Fire\n4-6: Ice', '3-1: Fire', '0-6: Fire', '1-7: Fire']) {
+    assert.strictEqual(previewRandomTableImport(table, input).canApply, false, input)
+  }
+  assert.deepStrictEqual(previewRandomTableImport(table, '1: Fire\nbad').invalidLines, [2])
+  assert.ok(previewRandomTableImport(table, '1-2: Fire').canApply, 'gaps remain explicit warnings')
+})
+
+test('signed table ranges import safely and row ids never collide with retained rows', () => {
+  const table = { id: 't', dice: '1d4-3', rows: [{ id: 't-r1', min: 1, max: 1, text: 'Wind' }] }
+  const preview = previewRandomTableImport(table, '-2--1: Frost\n0: Fire\n1: Wind')
+  assert.ok(preview.canApply)
+  assert.strictEqual(preview.table.rows[2].id, 't-r1')
+  assert.strictEqual(new Set(preview.table.rows.map(r => r.id)).size, 3)
+})
+
+
+test('text import reserves ids from other saved tables before allocating rows', () => {
+  const preview = previewRandomTableImport({ id: 't', dice: '1d6', rows: [] }, '1-6: Fire', ['t-import-1'])
+  assert.ok(preview.canApply)
+  assert.notStrictEqual(preview.table.rows[0].id, 't-import-1')
+})

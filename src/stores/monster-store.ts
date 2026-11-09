@@ -1,4 +1,4 @@
-import { nextRandomTableRow } from 'src/core/domain/random-table'
+import { previewRandomTableImport, nextRandomTableRow } from 'src/core/domain/random-table'
 import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { validate } from 'jsonschema'
 import { sortBy, union } from 'lodash'
@@ -1510,6 +1510,15 @@ export const useMonsterStore = defineStore('monster', {
       const id = uuidv4()
       if (!Array.isArray(this.randomTables)) this.randomTables = []
       this.randomTables.push({ id, title: '', dice: '1d6', rows: [{ id: uuidv4(), min: 1, max: 6, text: '' }] })
+    },
+    replaceRandomTableRows(tableId: string, input: string) {
+      const table = (this.randomTables ?? []).find(t => t.id === tableId)
+      if (!table) return false
+      const reserved = (this.randomTables ?? []).flatMap(t => [t.id, ...t.rows.map(row => row.id)])
+      const preview = previewRandomTableImport(table, input, reserved)
+      if (!preview.canApply) return false
+      table.rows = preview.table.rows
+      return true
     },
     deleteRandomTable(tableId: string) {
       const idx = (this.randomTables ?? []).findIndex((t) => t.id === tableId)

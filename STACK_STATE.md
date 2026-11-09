@@ -1,7 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build212, source `fb73b1a`, Pages `7aff988`, live at https://ivangarciafilho.github.io/DNDSheet/. Use the current Build212 entry in Development Handoffs and the Build212 Recovery and Documentation Sync report.
+> Current delivery: Build213, tag `rc-2.4.3-build-213-table-import-and-a4-print`. H6 closed; use the Build213 entry in Development Handoffs. Production link: https://ivangarciafilho.github.io/DNDSheet/.
 
+- **Build213 (2026-11-09)**: transactional table-text import and A4 print closeout; actual landscape page size, full-width/unclipped print, no notification UI, named/scoped tables. Gate9/9,400 core,54 browser steps per SPA/Pages; four inspected PDFs. Workload116/121→117/120 across237 tracked IDs; H6 closes, no new scope.
 - **Build212 (2026-11-09)**: recovered initiative cancellation and accessible roll glyphs, four historical packets, official source links and build identity. Source `fb73b1a`; frozen RC98 verified entries; gate9/9,396 core,53 browser steps on SPA and Pages. No new whole-task closures. Historical entries below retain their original evidence boundaries.
 - **Build211 (2026-11-08)**: H10, H17, H18 closed — `tools/publish.mjs` (guarded RC + tag + gh-pages publish) and in-repo `tools/make-rc.mjs`; fuzz Step 38 waits for its controls; control run proves Step 52 catches the Build208 reset leak. Gate 9/9, fuzz 52/52. Release candidate `rc-2.4.3-build-211-publish-guard`.
 

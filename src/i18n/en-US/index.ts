@@ -410,6 +410,14 @@ export default {
     },
     randomTables: {
       label: 'Random Tables',
+      paste: 'Paste rows',
+      pasteHelp: 'Paste one result per line, such as 1–2: Fire. Review before replacing rows; the name, dice and Otherwise result stay unchanged. Unreadable lines block Apply.',
+      pasteInput: 'Rows to import',
+      invalidLines: 'Check the format on lines: {lines}.',
+      tableMissing: 'This table is no longer available. Cancel and select another table.',
+      cancelImport: 'Cancel',
+      applyImport: 'Replace rows',
+
       help: 'Roll tables for wild effects, loot or lair events. Each row covers a range of the roll; the warnings below a table list rolls no row covers and rows that overlap.',
       add: 'Add table',
       delete: 'Delete table',
