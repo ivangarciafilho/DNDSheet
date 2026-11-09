@@ -1,3 +1,4 @@
+import { formatSignedModifier } from './number-grammar.ts'
 import { descriptionContainersText } from './description-containers.ts'
 import type { AbilityArea, AbilityOutcome, AbilityTargeting, AttackReach, AttackSource, DndStat, MonsterAction } from './types.ts'
 import { evaluateFormula } from './formula.ts'
@@ -319,9 +320,18 @@ export function inferAbility(action: Partial<MonsterAction>): AbilityProjection 
 const valueText = (input: number | string, context: AbilityRenderContext = {}, style: FormulaStyle = 'number'): string => {
   if (typeof input === 'number') return Number.isFinite(input) ? formatNumber(input, style) : ''
   const source = String(input ?? '').trim()
+  if (style === 'bonus' && /^-?\d+$/.test(source)) {
+    const num = Number(source)
+    return num > 0 ? `+${num}` : String(num)
+  }
   if (!source || !context.formulaContext) return source
   const result = evaluateFormula(source, context.formulaContext, { style })
   if (!result.ok || (style !== 'dice' && result.dice.length > 0)) return source
+  if (style === 'bonus') {
+    if (typeof result.value === 'number') {
+      return result.value > 0 ? `+${result.value}` : String(result.value)
+    }
+  }
   return result.text
 }
 
@@ -542,7 +552,7 @@ export function outcomePhrase(
     }
     const filterPrefix = outcome.targetFilter?.trim() ? `[${outcome.targetFilter.trim()}] ` : ''
     const recipient = outcome.recipient?.trim() ? `, ${outcome.recipient.trim()}` : ''
-    const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`
+    const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`.replace(/\s+:/g, ':')
     const label = markLabel(markup === 'html' ? escapeOutcomeHtml(lead) : lead, markup)
     return parts.length ? `${label} ${markup === 'html' ? escapeOutcomeHtml(ensurePeriod(parts.join(' '))) : ensurePeriod(parts.join(' '))}` : label
   })

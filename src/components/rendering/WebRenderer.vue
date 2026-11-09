@@ -485,6 +485,8 @@
       <!-- Ability Scores 2024 -->
       <div
         class="stats dnd-stats-2024"
+        role="region"
+        aria-label="Ability Scores and Saving Throws"
         style="width: 100%; max-width: 100%; box-sizing: border-box;"
       >
         <div class="stat-table">
@@ -2858,10 +2860,10 @@ export default defineComponent({
       min-width: 0 !important;
       max-width: 100% !important;
       box-sizing: border-box !important;
-      grid-template-columns: minmax(22px, 0.82fr) minmax(16px, 0.60fr) minmax(20px, 0.72fr) minmax(38px, 1.66fr);
+      grid-template-columns: minmax(22px, 0.85fr) minmax(16px, 0.65fr) minmax(22px, 0.9fr) minmax(36px, 1.4fr);
       grid-template-rows: repeat(3, auto);
       grid-template-areas: 'blank blank mod save' 'stat-1 score-1 mod-1 save-1' 'stat-2 score-2 mod-2 save-2';
-      column-gap: 1px;
+      column-gap: 2px;
       row-gap: 2px;
       padding: 3px 4px !important;
 
@@ -2880,9 +2882,16 @@ export default defineComponent({
 
       .header-label {
         font-family: ScalaSansCaps;
-        font-size: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.5px;
         color: #69665f;
         text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
       }
 
       .header-label.mod {

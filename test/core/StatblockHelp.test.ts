@@ -43,4 +43,8 @@ test('statblock help: 2024 revision glossary entries are present and explain rul
   assert.ok(statblockHelpText('incapacitated').includes('Actions or Reactions'))
   assert.ok(statblockHelpText('restrained').includes('Dexterity saving throws'))
   assert.ok(statblockHelpText('invisible').includes('impossible to see'))
+  assert.ok(statblockHelpText('random-tables').includes('Random Tables allow GMs'))
+  assert.ok(statblockHelpText('description-containers').includes('Description Containers allow'))
+  assert.ok(statblockHelpText('outcome-layout').includes('Outcome Layout sectors'))
+  assert.ok(statblockHelpText('skill-actions').includes('Combat Action Groups map'))
 })

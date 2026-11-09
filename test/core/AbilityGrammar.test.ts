@@ -262,3 +262,35 @@ test('attack granularity: attackCount, roll modifiers and exceptions format accu
   })
   assert.deepStrictEqual(mechanicsPhrase(inferAbility(disAction)), ['2 Melee Weapon Attacks of +5 (▼▼ in Dim Light)'])
 })
+
+test('attack bonus formatting preserves explicit 0 or string "0" without sign', () => {
+  const zeroAction = action({
+    attackSource: 'weapon',
+    attackReach: 'melee',
+    attackBonus: 0,
+  })
+  const phrases = mechanicsPhrase(inferAbility(zeroAction), { attackBonus: 0 })
+  assert.deepStrictEqual(phrases, ['Melee Weapon Attack 0'])
+
+  const strZeroAction = action({
+    attackSource: 'spell',
+    attackReach: 'ranged',
+    attackBonus: '0' as unknown as number,
+  })
+  const strPhrases = mechanicsPhrase(inferAbility(strZeroAction), { attackBonus: '0' as unknown as number })
+  assert.deepStrictEqual(strPhrases, ['Ranged Spell Attack 0'])
+})
+
+test('outcomePhrase strips whitespace before colon in outcome labels', () => {
+  const ability = inferAbility(action({
+    outcomes: [
+      {
+        trigger: 'On Success ',
+        effects: [{ case: 'success', formula: '13', damageType: 'radiant' }],
+      },
+    ],
+  }))
+  const phrases = outcomePhrase(ability, {}, 'screen', 'text')
+  assert.ok(phrases[0].startsWith('On Success:'))
+  assert.ok(!phrases[0].includes('On Success :'))
+})

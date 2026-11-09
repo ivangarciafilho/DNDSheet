@@ -1,4 +1,7 @@
-import type { ActionDescriptionContainer, ActionDescriptionRegion } from './types'
+import type { ActionDescriptionContainer, ActionDescriptionRegion } from './types.ts'
+import type { RandomTable } from './random-table.ts'
+import { formatRandomTableAsHtml, tableToProse } from './random-table.ts'
+import { cleanPunctuation, formatDistanceUnit, sanitizeProsePunctuation } from './number-grammar.ts'
 
 export const MAX_REGIONS_PER_CONTAINER = 4
 
@@ -143,9 +146,10 @@ export function filterContainerRegions(
 export function normalizeContainer(container: ActionDescriptionContainer): ActionDescriptionContainer {
   const norm: ActionDescriptionContainer = {
     id: container.id || `container-${Math.random().toString(36).slice(2, 9)}`,
-    kind: container.kind === 'table' ? 'table' : 'text',
+    kind: container.kind === 'table' ? 'table' : container.kind === 'random_table' ? 'random_table' : 'text',
     outcomeTarget: container.outcomeTarget ? plain(container.outcomeTarget).trim() : undefined,
     text: container.text ? plain(container.text) : undefined,
+    randomTableId: container.randomTableId ? plain(container.randomTableId).trim() : undefined,
   }
 
   if (container.kind === 'table' && container.table) {
@@ -159,10 +163,11 @@ export function normalizeContainer(container: ActionDescriptionContainer): Actio
     norm.regions = container.regions.slice(0, MAX_REGIONS_PER_CONTAINER).map((r, rIdx) => ({
       id: r.id || `region-${rIdx}-${Math.random().toString(36).slice(2, 7)}`,
       title: r.title ? plain(r.title).trim() : undefined,
-      kind: r.kind === 'table' ? 'table' : 'text',
+      kind: r.kind === 'table' ? 'table' : r.kind === 'random_table' ? 'random_table' : 'text',
       audience: r.audience,
       plane: r.plane ? plain(r.plane).trim() : undefined,
       text: r.text ? plain(r.text) : undefined,
+      randomTableId: r.randomTableId ? plain(r.randomTableId).trim() : undefined,
       table: r.table
         ? {
             headers: Array.isArray(r.table.headers) ? r.table.headers.map(plain) : [],
@@ -204,15 +209,28 @@ export function addRegionToContainer(
 /**
  * Plain prose preserves every authored container and region in order for text exports.
  */
-export function descriptionContainersText(containers?: ActionDescriptionContainer[], html = false): string {
+export function descriptionContainersText(
+  containers?: ActionDescriptionContainer[],
+  html = false,
+  randomTables: RandomTable[] = []
+): string {
   const text = entries(containers)
     .map((container) => {
       const parts: string[] = []
-      const prefix = plain(container.outcomeTarget).trim() ? `${plain(container.outcomeTarget).trim()}: ` : ''
-      const content =
-        container.kind === 'table' && container.table
-          ? [tableData(container.table).headers.join(' | '), ...tableData(container.table).rows.map((row) => row.join(' | '))].join('; ')
-          : plain(container.text)
+      const targetLabel = plain(container.outcomeTarget).replace(/[:\s]+$/, '').trim()
+      const prefix = targetLabel ? `${targetLabel}: ` : ''
+
+      let content = ''
+      if (container.kind === 'random_table' || container.randomTableId) {
+        const found = randomTables.find((t) => t.id === (container.randomTableId || container.id))
+        if (found) content = tableToProse(found)
+      }
+      if (!content) {
+        content =
+          container.kind === 'table' && container.table
+            ? [tableData(container.table).headers.join(' | '), ...tableData(container.table).rows.map((row) => row.join(' | '))].join('; ')
+            : plain(container.text)
+      }
 
       if (prefix || content) {
         parts.push(`${prefix}${content}`.trim())
@@ -223,10 +241,19 @@ export function descriptionContainersText(containers?: ActionDescriptionContaine
           const regTitle = reg.title ? `[${reg.title}] ` : ''
           const regAudience = reg.audience && reg.audience !== 'all' ? `(${reg.audience}) ` : ''
           const regPlane = reg.plane ? `[${reg.plane} Plane] ` : ''
-          const regContent =
-            reg.kind === 'table' && reg.table
-              ? [tableData(reg.table).headers.join(' | '), ...tableData(reg.table).rows.map((row) => row.join(' | '))].join('; ')
-              : plain(reg.text)
+
+          let regContent = ''
+          if (reg.kind === 'random_table' || reg.randomTableId) {
+            const found = randomTables.find((t) => t.id === (reg.randomTableId || reg.id))
+            if (found) regContent = tableToProse(found)
+          }
+          if (!regContent) {
+            regContent =
+              reg.kind === 'table' && reg.table
+                ? [tableData(reg.table).headers.join(' | '), ...tableData(reg.table).rows.map((row) => row.join(' | '))].join('; ')
+                : plain(reg.text)
+          }
+
           if (regTitle || regAudience || regPlane || regContent) {
             parts.push(`${regTitle}${regAudience}${regPlane}${regContent}`.trim())
           }
@@ -238,26 +265,42 @@ export function descriptionContainersText(containers?: ActionDescriptionContaine
     .filter(Boolean)
     .join(' ')
 
-  return html ? escapeOutcomeHtml(text) : text
+  const sanitized = sanitizeProsePunctuation(text)
+  return html ? escapeOutcomeHtml(sanitized) : sanitized
 }
 
 /**
  * Semantic HTML renderer for description containers and their sub-regions.
  */
-export function descriptionContainersHtml(containers?: ActionDescriptionContainer[]): string {
+export function descriptionContainersHtml(
+  containers?: ActionDescriptionContainer[],
+  randomTables: RandomTable[] = []
+): string {
   return entries(containers)
     .map((container) => {
       const parts: string[] = []
-      const prefix = plain(container.outcomeTarget).trim()
-        ? `<i>${escapeOutcomeHtml(plain(container.outcomeTarget).trim())}:</i> `
+      const targetLabel = plain(container.outcomeTarget).replace(/[:\s]+$/, '').trim()
+      const prefix = targetLabel
+        ? `<i>${escapeOutcomeHtml(targetLabel)}:</i> `
         : ''
 
-      if (container.kind === 'table' && container.table) {
-        const headers = tableData(container.table).headers.map((header) => `<th scope="col">${escapeOutcomeHtml(header)}</th>`).join('')
-        const rows = tableData(container.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(cell)}</td>`).join('')}</tr>`).join('')
-        parts.push(`${prefix}<table class="outcome-dice-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`)
-      } else if (plain(container.text).trim()) {
-        parts.push(`${prefix}${escapeOutcomeHtml(plain(container.text))}`)
+      let hasMain = false
+      if (container.kind === 'random_table' || container.randomTableId) {
+        const found = randomTables.find((t) => t.id === (container.randomTableId || container.id))
+        if (found) {
+          parts.push(`${prefix}${formatRandomTableAsHtml(found)}`)
+          hasMain = true
+        }
+      }
+      if (!hasMain) {
+        if (container.kind === 'table' && container.table) {
+          const headers = tableData(container.table).headers.map((header) => `<th scope="col">${escapeOutcomeHtml(header)}</th>`).join('')
+          const rows = tableData(container.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
+          parts.push(`${prefix}<table class="outcome-dice-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`)
+        } else if (plain(container.text).trim()) {
+          const formattedText = cleanPunctuation(formatDistanceUnit(escapeOutcomeHtml(plain(container.text))))
+          parts.push(`${prefix}${formattedText}`)
+        }
       }
 
       if (Array.isArray(container.regions) && container.regions.length > 0) {
@@ -271,12 +314,21 @@ export function descriptionContainersHtml(containers?: ActionDescriptionContaine
             const metaHeader = metaTokens.length ? `<div class="region-meta">${metaTokens.join(' ')}</div>` : ''
 
             let regBody = ''
-            if (reg.kind === 'table' && reg.table) {
-              const rHeaders = tableData(reg.table).headers.map((h) => `<th scope="col">${escapeOutcomeHtml(h)}</th>`).join('')
-              const rRows = tableData(reg.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(cell)}</td>`).join('')}</tr>`).join('')
-              regBody = `<table class="outcome-dice-table region-table"><thead><tr>${rHeaders}</tr></thead><tbody>${rRows}</tbody></table>`
-            } else if (plain(reg.text).trim()) {
-              regBody = `<div class="region-text">${escapeOutcomeHtml(plain(reg.text))}</div>`
+            if (reg.kind === 'random_table' || reg.randomTableId) {
+              const found = randomTables.find((t) => t.id === (reg.randomTableId || reg.id))
+              if (found) {
+                regBody = formatRandomTableAsHtml(found)
+              }
+            }
+            if (!regBody) {
+              if (reg.kind === 'table' && reg.table) {
+                const rHeaders = tableData(reg.table).headers.map((h) => `<th scope="col">${escapeOutcomeHtml(h)}</th>`).join('')
+                const rRows = tableData(reg.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
+                regBody = `<table class="outcome-dice-table region-table"><thead><tr>${rHeaders}</tr></thead><tbody>${rRows}</tbody></table>`
+              } else if (plain(reg.text).trim()) {
+                const cleanRegText = cleanPunctuation(formatDistanceUnit(escapeOutcomeHtml(plain(reg.text))))
+                regBody = `<div class="region-text">${cleanRegText}</div>`
+              }
             }
 
             return `<div class="description-region">${metaHeader}${regBody}</div>`

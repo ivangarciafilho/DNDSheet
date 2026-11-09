@@ -55,6 +55,10 @@ export const STATBLOCK_HELP = Object.freeze({
   incapacitated: 'An Incapacitated creature can’t take Actions or Reactions, and its Concentration is broken.',
   restrained: 'A Restrained creature’s Speed is 0, attack rolls against it have Advantage, its attack rolls have Disadvantage, and it has Disadvantage on Dexterity saving throws.',
   invisible: 'An Invisible creature is impossible to see without special senses, has Advantage on attack rolls, and attacks against it have Disadvantage.',
+  'random-tables': 'Random Tables allow GMs to quickly determine chaotic or variable spell effects, wild magic, or outcome branches by rolling dice.',
+  'description-containers': 'Description Containers allow dividing complex trait effects across structured target groups, planes, and dice tables without mixing distinct rules.',
+  'outcome-layout': 'Outcome Layout sectors display results for hits, misses, saves, or target categories in clear, parallel visual columns.',
+  'skill-actions': 'Combat Action Groups map standard 2024 active checks (Search, Study, Influence, Hide) into action plates so players and DMs find applicable check DCs immediately.',
 } as const)
 
 export type StatblockHelpKey = keyof typeof STATBLOCK_HELP

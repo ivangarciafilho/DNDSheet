@@ -214,10 +214,11 @@ export interface DndLimitedUse {
 export interface ActionDescriptionRegion {
   id: string
   title?: string
-  kind: 'text' | 'table'
+  kind: 'text' | 'table' | 'random_table'
   audience?: 'all' | 'target' | 'creatures' | 'caster'
   plane?: string
   text?: string
+  randomTableId?: string
   table?: {
     headers: string[]
     rows: string[][]
@@ -226,9 +227,10 @@ export interface ActionDescriptionRegion {
 
 export interface ActionDescriptionContainer {
   id: string
-  kind: 'text' | 'table'
+  kind: 'text' | 'table' | 'random_table'
   outcomeTarget?: string
   text?: string
+  randomTableId?: string
   table?: {
     headers: string[]
     rows: string[][]
@@ -692,6 +694,7 @@ export interface AbilityOutcome {
   targetFilter?: string
   layoutSector?: 'all' | 'top_left' | 'top_right' | 'bottom_left' | 'bottom_right' | 'row_1' | 'row_2' | 'col_1' | 'col_2' | string
   diceTable?: OutcomeDiceTableRow[]
+  randomTableId?: string
 }
 
 export interface MonsterAction {

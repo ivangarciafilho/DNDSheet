@@ -641,7 +641,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const saveDc = context.stat && context.stat !== 'none'
       ? saveForAction(monster, context.stat, context.save)
       : undefined
-    return { ability, renderContext: { attackBonus, saveDc, formulaContext } }
+    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables } }
   }
 
   /** Modern Modular plate; `usage` is the recharge/uses chip, or the legendary cost. */
@@ -655,7 +655,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const scopeText = scopePhrase(ability, renderContext)
     const scope = scopeText ? [boldNumbers(scopeText)] : []
     const effectsStr = outcomesHtml(ability, renderContext)
-    const containersStr = formatDescriptionContainers(context.descriptionContainers)
+    const containersStr = formatDescriptionContainers(context.descriptionContainers, monster.randomTables)
     let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim())
 
     if (context.stat && context.stat !== 'none') {
@@ -715,7 +715,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         ? `${context.limitedUse.count}/${t(`recharge.${context.limitedUse.rate}`)}`
         : ''
       const desc = processTokens(context.description, context, monster, 'trait')
-      const containersStr = formatDescriptionContainers(context.descriptionContainers)
+      const containersStr = formatDescriptionContainers(context.descriptionContainers, monster.randomTables)
       const fullDesc = containersStr ? (desc ? `${desc} ${containersStr}` : containersStr) : desc
       return buildPlateEntry(
         monster,
@@ -737,7 +737,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       return processTokens(`${poolBadge}<b><i>{trait.name}{trait.limitedUse}.</i></b> ${prose}`, context, monster, 'trait')
     }
 
-    const containersStr = formatDescriptionContainers(context.descriptionContainers)
+    const containersStr = formatDescriptionContainers(context.descriptionContainers, monster.randomTables)
     if (context.customPreamble) {
       const desc = processTokens(context.description, context, monster, 'trait')
       return poolBadge + (containersStr ? `${desc} ${containersStr}` : desc)
@@ -838,7 +838,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     }
 
     if (context.customPreamble) {
-      return poolBadge + processTokens(`${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`, context, monster, 'action')
+      return poolBadge + processTokens(`${context.description} ${formatDescriptionContainers(context.descriptionContainers, monster.randomTables)}`, context, monster, 'action')
     } else if (hasStructuredAbility(context)) {
       return structuredActionLine(context, monster, `${poolBadge}<b><i>${[usageText(context), abilityIdentity(context, 'html')].filter(Boolean).join(' · ')}.</i></b>`)
     } else if (context.stat !== 'none') {
@@ -849,14 +849,14 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           monster,
           context.stat,
           context.save
-        )}, {action.range}. {action.effects} ${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`,
+        )}, {action.range}. {action.effects} ${context.description} ${formatDescriptionContainers(context.descriptionContainers, monster.randomTables)}`,
         context,
         monster,
         'action'
       )
     } else {
       return processTokens(
-        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`,
+        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers(context.descriptionContainers, monster.randomTables)}`,
         context,
         monster,
         'action'
@@ -883,7 +883,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
         const effectsStr = outcomesHtml(ability, renderContext)
-        let desc = processTokens(`${effectsStr}${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)} ${context.description || ''}`, context, monster, 'reaction').trim()
+        let desc = processTokens(`${effectsStr}${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
         if (context.stat && context.stat !== 'none') {
           desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
         }
@@ -908,7 +908,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         )
       }
 
-      const desc = processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`, context, monster, 'reaction')
+      const desc = processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`, context, monster, 'reaction')
       return buildPlateEntry(
         monster,
         { stagePool: context?.stagePool, name: context.name, usage: usageText(context), extra: trigger ? [trigger] : [] },
@@ -926,7 +926,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     // case on the presence of a Trigger to choose old style rendering or new
     if (context.trigger === '') {
       return processTokens(
-        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`,
+        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
         context,
         monster,
         'reaction'
@@ -937,7 +937,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           'monster.reaction.trigger'
         )}:</i> ${context.trigger} <i>${t('monster.reaction.response')}:</i> ${
           context.description
-        } ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers)}`,
+        } ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
         context,
         monster,
         'reaction'

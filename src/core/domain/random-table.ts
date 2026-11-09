@@ -136,3 +136,71 @@ export function previewRandomTableImport(table: RandomTable, input: string, rese
   }
   return { table: next, invalidLines, diagnostics, canApply: invalidLines.length === 0 && !diagnostics.some(d => d.kind !== 'gap') }
 }
+
+const esc = (s: string) => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
+export function formatRandomTableAsHtml(table: RandomTable): string {
+  const titleHtml = table.title ? `<div class="random-table-title"><strong>${esc(table.title)}</strong></div>` : ''
+  const head = `<thead><tr><th scope="col">${esc(table.dice)}</th><th scope="col">Effect</th></tr></thead>`
+  const rows = [...table.rows]
+    .sort((a, b) => a.min - b.min)
+    .map((r) => `<tr><td>${esc(span(r))}</td><td>${esc(r.text)}</td></tr>`)
+  if (table.fallback) {
+    rows.push(`<tr><td><em>Otherwise</em></td><td>${esc(table.fallback)}</td></tr>`)
+  }
+  const body = `<tbody>${rows.join('')}</tbody>`
+  return `<div class="random-table-container" data-table-id="${esc(table.id)}">${titleHtml}<table class="outcome-dice-table random-table">${head}${body}</table></div>`
+}
+
+export interface OutcomeRandomTableDiagnostics {
+  missingTableIds: string[]
+  orphanTableIds: string[]
+  emptyTableIds: string[]
+}
+
+export function diagnoseOutcomeRandomTables(
+  tables: RandomTable[] = [],
+  referencedTableIds: string[] = []
+): OutcomeRandomTableDiagnostics {
+  const tableMap = new Map<string, RandomTable>()
+  for (const t of tables) {
+    if (t && t.id) tableMap.set(t.id, t)
+  }
+  const missingTableIds: string[] = []
+  const emptyTableIds: string[] = []
+  const refSet = new Set(referencedTableIds.filter(Boolean))
+  for (const id of refSet) {
+    const table = tableMap.get(id)
+    if (!table) {
+      missingTableIds.push(id)
+    } else if (!table.rows || table.rows.length === 0) {
+      emptyTableIds.push(id)
+    }
+  }
+  const orphanTableIds: string[] = []
+  if (refSet.size > 0) {
+    for (const t of tables) {
+      if (t && t.id && !refSet.has(t.id)) {
+        orphanTableIds.push(t.id)
+      }
+    }
+  }
+  return { missingTableIds, orphanTableIds, emptyTableIds }
+}
+
+export function resolveTableOutcome(
+  table: RandomTable,
+  explicitRoll?: number
+): { title?: string; dice: string; resultText: string; isFallback: boolean } {
+  if (explicitRoll !== undefined && Number.isFinite(explicitRoll)) {
+    const row = table.rows.find((r) => explicitRoll >= r.min && explicitRoll <= r.max)
+    if (row) {
+      return { title: table.title, dice: table.dice, resultText: row.text, isFallback: false }
+    }
+    if (table.fallback) {
+      return { title: table.title, dice: table.dice, resultText: table.fallback, isFallback: true }
+    }
+    return { title: table.title, dice: table.dice, resultText: `No effect for roll ${explicitRoll}`, isFallback: true }
+  }
+  return { title: table.title, dice: table.dice, resultText: tableToProse(table), isFallback: false }
+}
