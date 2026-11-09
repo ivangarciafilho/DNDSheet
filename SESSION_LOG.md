@@ -1,3 +1,11 @@
+## Build219 — 2026-11-09
+
+- Refreshed official remote: four new commits215–218 through fullbaseac4bdaea5998e80df81d19285cc21465da16dcd3. Isolated219 clone; prior214 candidate retained.
+- Source identity drift: build.json still214 and canonicaltop214 despite append218. Fix219metadata, use fullcommit+gate fingerprint as authority.
+- Scope B4.20/B4.7 remaining export work;20 acceptance items, whole-task accounting separate. Root browser/docs/integration; delegated exporter/sharedtrait boundary, read-only review.
+- Baseline raw265/159done106open; normalized256/150done106open. No new task IDs planned.
+- Final frozen-source gate10/10:442 core,57 SPA/Pages scenarios,22 export checks. Pinia reset fixture yielded before mutations to prove automatic persistence; no forced-save workaround. B4.7/B4.20 closed; normalized150/106 →152/104. Publication receipt tracks final remote/live parity.
+
 ## Build214 resumed — 2026-11-09
 
 - Official base verified: `e19a624`; isolated clone `.codex-temp/build214`, official origin. Protected `statblock-overhaul` checkout and Build213 candidate retained.

@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build214, source `5ca9379`, Pages `e1ab48d` (live footer214 and entry parity verified); tag `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`. Gate10/10,410 core,55 browser scenarios per SPA/Pages. H15 closed; H14 guard delivered with613 existing diagnostics, debt open. H11 model/export gaps remain open. See current Development Handoffs and Build214 report. Publication receipt records remote source/Pages/live parity.
+> Current: Build219, B4.7/B4.20 complete; gate10/10,442 core tests,57 scenarios per SPA/Pages. Normalized workload150/106 →152/104 across256 IDs. Release receipt records final identities. A11.5 →A11.9 →H9 →H14 remain next. H13 retains its215 closure.
+
+> Historical Build214: Build214, source `5ca9379`, Pages `e1ab48d` (live footer214 and entry parity verified); tag `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`. Gate10/10,410 core,55 browser scenarios per SPA/Pages. H15 closed; H14 guard delivered with613 existing diagnostics, debt open. H11 model/export gaps remain open. See current Development Handoffs and Build214 report. Publication receipt records remote source/Pages/live parity.
 
 > Historical Build213 delivery: Build213, source `e55215f`, Pages `09f9945` (live footer verified), tag `rc-2.4.3-build-213-table-import-and-a4-print`. H6 closed; use the Build213 entry in Development Handoffs. Production link: https://ivangarciafilho.github.io/DNDSheet/.
 

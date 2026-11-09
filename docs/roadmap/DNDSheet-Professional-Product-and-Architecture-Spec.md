@@ -1,6 +1,16 @@
-# DNDSheet — Product & Architecture Specification
+### Current verified delivery — Build219 (2026-11-09)
 
-## Current verified delivery — Build214 (2026-11-09)
+Completed the remaining Tarrasque export scope **B4.20 and B4.7**, retaining Build218's Improved Initiative work. Twenty acceptance items cover shared trait/action/reaction prose, triggers, formulas, exact physical attack metadata, duplicate names, phase retention, containers, legendary definitions, innate spells, cantrips, mythic narrative, plain-text boundaries, determinism and reload. No new task IDs were created.
+
+Final frozen-source gate **10/10**: **442 core tests (+15)**, **57 exhaustive scenarios on SPA and Pages (+1 each)**, including22 export checks; help12 themes and spell5. Type guard:613 existing diagnostics,0new; the approved683 baseline is unchanged. Prior candidates214–218 and83 protected files are preserved. Base: ac4bdaea5998e80df81d19285cc21465da16dcd3. Release tag: rc-2.4.3-build-219-tarrasque-prose-and-mechanics. Publication receipt records final source/Pages identities and live parity.
+
+Workload (unique IDs, excluding9 historical B183 rows): **256 total;150 complete/106 open →152 complete/104 open (+2/−2)**. Raw ledger:265 total;159/106 →161/104. The20 acceptance items are not20 whole-task closures. H13 retains its recorded Build215 closure; H14 debt, H22 tooling and H11/A11.5/A11.9 remain open.
+
+[Build219 evidence and groomed continuation](DNDSheet-Build219-Complete-Tarrasque-Export.md). Next: **A11.5 stable container/region ownership and typed validation → A11.9 random-result integration → H9 purpose-led help → H14 per-file debt**. The eight-step A11.5 packet preserves migration, identity, transactional editing, export and print gates before closure. Historical status below is superseded for current planning.
+
+ DNDSheet — Product & Architecture Specification
+
+## Historical verified delivery — Build214 (2026-11-09)
 
 Outcome pipeline repairs retain filters/sectors/dice tables, resolve shared formulas in action/reaction sectors, preserve containers in prose/reaction paths, render actual tables through the web boundary and tolerate incomplete older table data. **H15 closed**: compiler tools are pinned independently; configuration replaces the ad-hoc deprecation flag. H14's new-error safeguard is delivered, with613 existing diagnostics/0new/70resolved against the683-diagnostic approved baseline. Its debt burn-down remains open. Full H11/A11.5/A11.9 is not claimed complete.
 

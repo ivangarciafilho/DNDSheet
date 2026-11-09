@@ -3497,7 +3497,7 @@ async function runFuzz() {
     for(const role of roles){monster.addAction();const action=monster.actions.at(-1);Object.assign(action,{id:'heading-'+role,name:'Heading '+role,description:'Keep witness prose.',bonusAction:role==='bonus',legendaryOnly:role==='legendary'||role==='mythic',recharge:'4–12',school:'Abjuration',spellLevel:'2nd Level',components:['V','S'],duration:'1 minute',targeting:{count:3,kind:'allies'}});if(role==='legendary')monster.addLegendaryAction(action.id,2);if(role==='mythic')monster.addMythicAction(action.id);}
     const before=JSON.stringify(monster.$state),problems=[];let comparisons=0;
     const ordered=(text,usage,name,classification)=>{const isModern=text.indexOf(classification)>0&&text.indexOf(classification)<text.indexOf('V, S');const parts=isModern?[usage,name,classification,'V, S']:[usage,name,'V, S',classification];const positions=parts.filter(Boolean).map(part=>text.indexOf(part));return positions.every((position,index)=>position>=0&&(!index||position>positions[index-1]));};
-    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(250);for(const role of roles){const entry=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading '+role)),text=entry?.textContent||'',usage=role==='legendary'?'Costs 2 Actions':role==='mythic'?'':'Recharge 4–12';if(!ordered(text,usage,'Heading '+role,'2nd Level Abjuration')||(text.match(/V, S/g)||[]).length!==1||!text.includes('three allies')&&!text.includes('3 allies'))problems.push(style+'/'+template+'/'+role+': '+text);comparisons++;}}
+    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;for(let attempt=0;attempt<60;attempt++){if(roles.every(role=>[...document.querySelectorAll('#render .action')].some(el=>el.textContent.includes('Heading '+role))))break;await wait(50);}for(const role of roles){const entry=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Heading '+role)),text=entry?.textContent||'',usage=role==='legendary'?'Costs 2 Actions':role==='mythic'?'':'Recharge 4–12';if(!ordered(text,usage,'Heading '+role,'2nd Level Abjuration')||(text.match(/V, S/g)||[]).length!==1||!text.includes('three allies')&&!text.includes('3 allies'))problems.push(style+'/'+template+'/'+role+': '+text);comparisons++;}}
     const chain=document.querySelector('[data-composer-chain="heading-action"]');const order=[...chain.querySelectorAll('[data-chain-cell]')].map(el=>el.getAttribute('data-chain-cell')).slice(0,6);if(JSON.stringify(order)!==JSON.stringify(['usage','name','components','tier','discipline','duration']))problems.push('editor head order '+order);
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:heading-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
     try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=await captured.at(-1).text();if(!ordered(text,'Recharge 4–12','Heading action','2nd Level Abjuration'))problems.push(label+': heading order');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
@@ -3538,6 +3538,7 @@ async function runFuzz() {
   console.log('\n--- Step 49: Studio-only editor, reaction templates and reversible section resets ---')
   const step49=await evalInPage(`async()=>{
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),app=document.querySelector('#q-app').__vue_app__,pinia=app.config.globalProperties.$pinia,monster=pinia._s.get('monster'),templates=pinia._s.get('templates'),t=app.config.globalProperties.$t;
+    for(let attempt=0;attempt<60&&document.querySelectorAll('#editor > .q-list > .q-expansion-item').length!==15;attempt++)await wait(50);
     const retired=['Traits','Attacks','Multiattack','Reactions','Legendary Actions','Mythic Actions','Lair Actions'],panels=[...document.querySelectorAll('#editor > .q-list > .q-expansion-item')],labels=panels.map(el=>el.querySelector('.q-item__label')?.textContent.trim()),retirement=retired.every(label=>!labels.includes(label)),villainKept=labels.includes('Villain & Bloodied Actions')&&labels.includes('Random Tables'),panelCount=panels.length;
     monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'retire-reaction',name:'Saved response',description:'Keep response.',trigger:'When threatened',limitedUse:{count:2,rate:'DAWN'}});
     monster.addAction();monster.addLegendaryAction(monster.actions.at(-1).id,2);monster.addMythicAction(monster.actions.at(-1).id);monster.addLairAction();await wait(200);
@@ -3812,6 +3813,62 @@ async function runFuzz() {
     return seen.size>=Math.min(10,focusables.length)&&focusables.length>0;}`)
   console.log('Step 56 result:',JSON.stringify(step56,null,2))
   if(step56.problems.length||!['rulesUntouched','safeName','splitterOk','reducedMotion','zoomNoOverflow','keyboard'].every(key=>step56[key]===true))throw new Error('Step 56 failed: '+JSON.stringify(step56))
+
+  console.log('\n--- Step 57: Tarrasque exports complete prose without losing numeric mechanics ---')
+  await evalInPage(`async()=>{
+    const p=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=p._s.get('monster'),e=p._s.get('editor');m.$reset();await new Promise(resolve=>setTimeout(resolve,0));m.name='Export Witness';m.proficiencyOverride=true;m.proficiency=3;e.a4PreviewMode=false;e.style='2024';e.visualTemplate='modern';
+    const outcomes=()=>[{id:'result',trigger:'hit',recipient:'Each ally',targetFilter:'Allies',effects:[{kind:'damage',formula:'PB + 2',damageType:'radiant'}],diceTable:[{roll:'1',effect:'Recover vigor'}]}];
+    const containers=()=>[{id:'container',kind:'text',outcomeTarget:'Afterward',text:'Retain <scope> exactly.'}];
+    m.addTrait();Object.assign(m.traits.at(-1),{id:'structured-trait',name:'Structured Aura',description:'{NAME} shelters allies.',outcomes:outcomes(),descriptionContainers:containers(),stagePool:'2'});
+    m.addTrait();Object.assign(m.traits.at(-1),{id:'legacy-trait',name:'Legacy Ward',description:'{NAME} endures.',limitedUse:{count:2,rate:'LONG_REST'},stagePool:'2'});
+    for(const [id,name,bonus,custom] of [['structured-action','Radiant Lash',false,false],['bonus','Bonus Flash',true,false],['custom','Unheaded',false,true],['legend','Hidden Burst',false,false]]){m.addAction();const a=m.actions.at(-1);Object.assign(a,{id,name,description:custom?'Standalone {NAME}.':name+' remains.',bonusAction:bonus,customPreamble:custom,stagePool:'2'});if(id==='structured-action'||id==='legend')Object.assign(a,{attackReach:'ranged',attackSource:'spell',attackBonus:7,outcomes:outcomes(),descriptionContainers:containers()});if(id==='legend')a.legendaryOnly=true;}
+    m.addReaction();Object.assign(m.reactions.at(-1),{id:'reaction',name:'Answer',trigger:'When {NAME} is threatened',description:'{NAME} responds.',outcomes:outcomes(),stagePool:'2'});
+    for(const [id,bonus,count,die,damage] of [['physical-one',7,2,6,4],['physical-two',11,1,8,2]]){m.addNewAttack();const a=m.attacks.at(-1);Object.assign(a,{id,name:'Twin',description:id+' retained.',stagePool:'2'});Object.assign(a.modifier,{override:true,overrideValue:bonus});Object.assign(a.damage,{count,dice:die});Object.assign(a.damage.modifier,{override:true,overrideValue:damage});if(id==='physical-one')a.additionalDamage=[{id:'fire-rider',count:1,dice:4,type:'fire',note:''}];}
+    m.addNewAttack();const hidden=m.attacks.at(-1);Object.assign(hidden,{id:'legendary-definition',name:'Hidden Claw',legendaryOnly:true,description:'Physical legendary definition retained.'});Object.assign(hidden.modifier,{override:true,overrideValue:13});Object.assign(hidden.damage,{count:3,dice:10});Object.assign(hidden.damage.modifier,{override:true,overrideValue:6});m.legendaryActions.count=3;m.legendaryActions.actions=[{actionId:'legend',cost:2}];m.spellcasting.atWill=[{id:'innate',count:1,rate:'DAY',spells:['Light']}];m.spellcasting.class='Wizard';m.spellcasting.level=5;m.spellcasting.standard=['Fire Bolt'];m.mythicActions.triggerName='Second Dawn';m.mythicActions.triggerDescription='{NAME} awakens.';m.mythicActions.actions=[{actionId:'legend',cost:2}];m.languages='Celestial';m.languagesList=[{name:'Celestial'}];m.paragonConfig.enabled=true;m.paragonConfig.poolCount=2;m.paragonConfig.activePoolFilter='1';
+    await new Promise(resolve=>setTimeout(resolve,300));
+  }`)
+  const capture57=`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;
+    URL.createObjectURL=blob=>{captured.push(blob);return 'blob:witness219'};HTMLAnchorElement.prototype.click=function(){};
+    try{for(let i=0;i<60&&document.querySelector('.q-menu');i++)await wait(40);const menuButton=[...document.querySelectorAll('header button')].find(b=>b.querySelector('i')?.textContent.trim()==='download');menuButton.click();let item;for(let i=0;i<50&&!item;i++){item=[...document.querySelectorAll('.q-menu .q-item')].find(x=>x.textContent.trim()==='Export JSON (Tarrasque.io format)');if(!item)await wait(40)}if(!item)throw new Error('Missing Tarrasque export');item.click();for(let i=0;i<50&&!captured.length;i++)await wait(40);if(!captured.length)throw new Error('Missing Tarrasque file');return JSON.parse(await captured[0].text());}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+  }`
+  const exports57=[]
+  const state57=await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').$state)`)
+  for(const style of ['2014','2024'])for(const template of ['modern','classic']){
+    await evalInPage(`async()=>{const e=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');e.style='${style}';e.visualTemplate='${template}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
+    exports57.push(await evalInPage(capture57))
+  }
+  const first57=exports57[0],traits57=first57.special_abilities||[],actions57=first57.actions||[],rx57=first57.reactions||[],twins57=actions57.filter(x=>x.name==='Twin'),all57=JSON.stringify(first57)
+  const checks57={
+    structuredTrait:traits57.some(x=>x.name.includes('Structured Aura')&&/5 Radiant damage/.test(x.desc)&&x.desc.includes('Allies')),
+    legacyTrait:traits57.some(x=>x.name.includes('Legacy Ward')&&x.name.includes('2/')&&x.desc.includes('Export Witness endures')&&!x.desc.includes('Legacy Ward')),
+    attackProse:twins57.length===2&&/fire/i.test(twins57[0].desc)&&/slashing/i.test(twins57[0].desc),
+    legendaryPhysical:actions57.some(x=>x.name==='Hidden Claw'&&x.attack_bonus===13&&x.damage_dice==='3d10'&&x.damage_bonus===6&&x.desc.includes('legendary definition')),
+    numericMetadata:twins57.length===2&&twins57[0].attack_bonus===7&&twins57[1].attack_bonus===11&&twins57[0].damage_dice==='2d6+1d4'&&twins57[1].damage_dice==='1d8'&&twins57[0].damage_bonus===4&&twins57[1].damage_bonus===2,
+    structuredAction:actions57.some(x=>x.name.includes('Radiant Lash')&&x.desc.includes('5 Radiant damage')&&x.desc.includes('+7')),
+    bonusOnce:actions57.filter(x=>x.name.includes('Bonus Flash')).length===1,
+    reaction:rx57.length===1&&rx57[0].desc.includes('When Export Witness is threatened')&&rx57[0].desc.includes('Export Witness responds')&&rx57[0].desc.includes('5 Radiant damage'),
+    customPreamble:actions57.some(x=>x.name==='Unheaded'&&x.desc.includes('Standalone Export Witness')),
+    duplicateNames:twins57.length===2&&twins57[0].desc.includes('physical-one')&&twins57[1].desc.includes('physical-two'),
+    offPhase:actions57.some(x=>x.name.includes('Radiant Lash'))&&rx57.length===1&&traits57.some(x=>x.name.includes('Structured Aura')),
+    containers:traits57.some(x=>x.name.includes('Structured Aura')&&x.desc.split('Afterward').length===2&&x.desc.split('Recover vigor').length===2),
+    cantrip:traits57.some(x=>x.name==='Class Spellcasting'&&x.desc.includes('Fire Bolt')&&!x.desc.includes('*Fire Bolt*')&&!x.desc.includes('> Cantrips')),
+    mythic:traits57.some(x=>x.name==='Mythic Actions'&&x.desc.includes('Hidden Burst'))&&traits57.some(x=>x.name.includes('Second Dawn')&&x.desc.includes('awakens')),
+    plainBoundary:!all57.includes('undefined')&&all57.includes('<scope>')&&!/<(?:span|div|strong|table)\b|\[object Object\]/.test(all57),
+    templateInvariant:JSON.stringify(exports57[0])===JSON.stringify(exports57[1])&&JSON.stringify(exports57[2])===JSON.stringify(exports57[3]),
+    legendary:first57.legendary_actions?.length===1&&first57.legendary_actions[0].name.includes('Hidden Burst')&&first57.legendary_actions[0].desc.includes('5 Radiant damage'),
+    innate:traits57.some(x=>x.desc.includes('Light'))&&!all57.includes('[object Object]'),
+    header:typeof first57.languages==='string'&&first57.languages.includes('Celestial')&&!first57.languages.includes('<span'),
+  }
+  const repeated57=await evalInPage(capture57);checks57.repeat=JSON.stringify(repeated57)===JSON.stringify(exports57[3])
+  checks57.noMutation=state57===await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').$state)`)
+  await sendCdp('Page.reload');await pause(1500)
+  const hydrated57=await evalInPage(`async()=>{for(let i=0;i<60;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster');const e=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('editor');if(m?.actions.some(a=>a.id==='structured-action')&&e?.style==='2024'&&e?.visualTemplate==='classic'&&m.proficiencyOverride)return true;await new Promise(resolve=>setTimeout(resolve,50))}return false;}`)
+  const reloaded57=hydrated57?await evalInPage(capture57):null
+  checks57.reload=JSON.stringify(reloaded57)===JSON.stringify(exports57[3])
+  if(!checks57.reload)console.log('Reload export difference:',JSON.stringify({before:exports57[3],after:reloaded57}))
+  console.log('Step 57 result:',JSON.stringify(checks57))
+  if(Object.values(checks57).some(value=>value!==true))throw new Error('Step 57 failed: '+JSON.stringify(checks57))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3828,7 +3885,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 56 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 57 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

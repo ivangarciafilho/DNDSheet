@@ -1,0 +1,5 @@
+
+> 5e-monster-maker@2.4.3 typecheck
+> node tools/typecheck.mjs
+
+Typecheck: 613 diagnostics; 0 new; 70 resolved (approved baseline 683, Build213 e19a624).

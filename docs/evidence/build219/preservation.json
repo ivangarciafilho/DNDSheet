@@ -1,0 +1,26 @@
+{
+  "protectedFiles": 83,
+  "differences": 0,
+  "candidates": [
+    {
+      "candidate": "rc-2.4.3-build-214-outcome-pipeline-and-type-guard",
+      "verified": 97
+    },
+    {
+      "candidate": "rc-2.4.3-build-215-export-boundary",
+      "verified": 97
+    },
+    {
+      "candidate": "rc-2.4.3-build-216-export-names-and-qa-tools",
+      "verified": 97
+    },
+    {
+      "candidate": "rc-2.4.3-build-217-export-goldens-and-inventories",
+      "verified": 97
+    },
+    {
+      "candidate": "rc-2.4.3-build-218-character-import-and-safe-saves",
+      "verified": 96
+    }
+  ]
+}

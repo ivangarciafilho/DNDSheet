@@ -1,0 +1,44 @@
+{
+  "normalized": {
+    "total": 256,
+    "before": {
+      "complete": 150,
+      "open": 106
+    },
+    "after": {
+      "complete": 152,
+      "open": 104
+    },
+    "delta": {
+      "complete": 2,
+      "open": -2
+    }
+  },
+  "raw": {
+    "total": 265,
+    "before": {
+      "complete": 159,
+      "open": 106
+    },
+    "after": {
+      "complete": 161,
+      "open": 104
+    }
+  },
+  "closed": [
+    "B4.7",
+    "B4.20"
+  ],
+  "newTaskIds": 0,
+  "acceptanceItems": 20,
+  "coreTests": {
+    "before": 427,
+    "after": 442,
+    "delta": 15
+  },
+  "browserScenariosPerBuild": {
+    "before": 56,
+    "after": 57,
+    "delta": 1
+  }
+}

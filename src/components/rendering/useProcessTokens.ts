@@ -728,6 +728,14 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       )
     }
 
+    // Trait cadence remains owned by the trait token adapter; only mechanics and
+    // outcomes use the shared ability prose. Custom preambles retain their override.
+    if (!context.customPreamble && hasStructuredAbility(context as Partial<MonsterAction>)) {
+      const { renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
+      const prose = text2024(context as unknown as MonsterAction, renderContext, { markup: 'html' })
+      return processTokens(`${poolBadge}<b><i>{trait.name}{trait.limitedUse}.</i></b> ${prose}`, context, monster, 'trait')
+    }
+
     const containersStr = formatDescriptionContainers(context.descriptionContainers)
     if (context.customPreamble) {
       const desc = processTokens(context.description, context, monster, 'trait')
@@ -829,7 +837,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     }
 
     if (context.customPreamble) {
-      return poolBadge + processTokens(context.description, context, monster, 'action')
+      return poolBadge + processTokens(`${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`, context, monster, 'action')
     } else if (hasStructuredAbility(context)) {
       return structuredActionLine(context, monster, `${poolBadge}<b><i>${[usageText(context), abilityIdentity(context, 'html')].filter(Boolean).join(' · ')}.</i></b>`)
     } else if (context.stat !== 'none') {
@@ -840,14 +848,14 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           monster,
           context.stat,
           context.save
-        )}, {action.range}. {action.effects} ${context.description}`,
+        )}, {action.range}. {action.effects} ${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`,
         context,
         monster,
         'action'
       )
     } else {
       return processTokens(
-        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description}`,
+        `${poolBadge}<b><i>{action.name}{action.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers(context.descriptionContainers)}`,
         context,
         monster,
         'action'

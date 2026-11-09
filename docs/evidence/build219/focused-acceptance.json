@@ -1,0 +1,30 @@
+{
+  "base": "ac4bdaea5998e80df81d19285cc21465da16dcd3",
+  "checks": {
+    "structuredTrait": true,
+    "legacyTrait": true,
+    "attackProse": true,
+    "legendaryPhysical": true,
+    "numericMetadata": true,
+    "structuredAction": true,
+    "bonusOnce": true,
+    "reaction": true,
+    "customPreamble": true,
+    "duplicateNames": true,
+    "offPhase": true,
+    "containers": true,
+    "cantrip": true,
+    "mythic": true,
+    "plainBoundary": true,
+    "templateInvariant": true,
+    "legendary": true,
+    "innate": true,
+    "header": true,
+    "repeat": true,
+    "noMutation": true,
+    "reload": true
+  },
+  "passed": 22,
+  "scope": "focused pre-gate browser proof, not full suite",
+  "newCoreTests": 15
+}

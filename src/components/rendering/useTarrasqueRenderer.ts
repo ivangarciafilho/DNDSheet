@@ -1,10 +1,13 @@
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useI18n } from 'vue-i18n'
-import { DndAttack, DndStat, MonsterAction } from '../models'
+import { DndStat } from '../models'
 import { avgRoll, renderBonus } from './mathRendering'
 import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
+import { tarrasqueDamageDice, tarrasqueEntry, tarrasqueText } from 'src/core/domain/tarrasque-export'
+import { structuredAttackBonus } from 'src/core/domain/structured-attack'
+import { spellLevelHeading } from 'src/core/domain/spell-plate'
 
 const statMap = {
   STR: 'strength',
@@ -15,31 +18,14 @@ const statMap = {
   CHA: 'charisma',
 }
 
-const attackNoName =
-  '<i>{attack.distance}:</i> {attack.modifier} to hit, {attack.range}, {attack.targets}. <i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}'
-
 // this one's for tarrasque.io
 // since i like using niche things, it exists here
 export function useTarrasqueRenderer() {
   const monster = useMonsterStore()
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
-  const { processTokens, stripTags } = useProcessTokens({ web: false })
+  const { processTokens, processTrait, processAction, processAttack, processReaction, processLegendaryAction } = useProcessTokens({ web: false })
   const { t } = useI18n()
-
-  // does not account for versatile
-  const attackDamageDice = (attack: DndAttack) => {
-    const base = `${attack.damage.count}d${attack.damage.dice}`
-
-    const extra =
-      attack.additionalDamage.length > 0
-        ? `+${attack.additionalDamage
-            .map((ad) => `${ad.count}d${ad.dice}`)
-            .join('+')}`
-        : ''
-
-    return base + extra
-  }
 
   // Tarrasque.io also uses JSON so we'll corral the 5emm monster data into tarrasque's format
   const renderTarrasqueJson = () => {
@@ -98,141 +84,68 @@ export function useTarrasqueRenderer() {
 
     // immunities, resistances, senses, languages
     // Header values carry web chrome (number pills, advantage marks); Tarrasque wants plain text.
-    tio.damage_vulnerabilities = stripTags(renderer.vulnerabilities.value)
-    tio.damage_resistances = stripTags(renderer.resistances.value)
-    tio.damage_immunities = stripTags(renderer.immunities.value)
-    tio.condition_immunities = stripTags(renderer.conditions.value)
-    tio.senses = stripTags(renderer.senses.value)
+    tio.damage_vulnerabilities = tarrasqueText(renderer.vulnerabilities.value)
+    tio.damage_resistances = tarrasqueText(renderer.resistances.value)
+    tio.damage_immunities = tarrasqueText(renderer.immunities.value)
+    tio.condition_immunities = tarrasqueText(renderer.conditions.value)
+    tio.senses = tarrasqueText(renderer.senses.value)
 
-    tio.languages = stripTags(renderer.languages.value)
+    tio.languages = tarrasqueText(renderer.languages.value)
     tio.challenge_rating = CR[monster.CR].cr
 
-    // traits
-    // tarrasque.io calls these special abilities
-    tio.special_abilities = []
-    for (const trait of monster.traits) {
-      // name includes uses
-      const name = processTokens(
-        '{trait.name}{trait.limitedUse}',
-        trait,
-        monster,
-        'trait'
-      )
+    // Pair each shared prose projection with its source record. Names are not identity:
+    // duplicate names and cadence-prefixed leads must not redirect numeric metadata.
+    tio.special_abilities = monster.traits.map((trait) =>
+      tarrasqueEntry(processTrait(trait, monster), trait.name, trait.crAnnotation?.maxModifier ?? 0)
+    )
 
-      tio.special_abilities.push({
-        name,
-        desc: stripTags(
-          processTokens(trait.description, trait, monster, 'trait')
-        ),
-        attack_bonus: trait.crAnnotation.maxModifier,
-      })
-    }
-
-    // actions includes multiattack, regular attack, and extra actions
-    // and they'll also include bonus actions because i don't think there's currently space for that
+    // The existing target contract merges bonus actions into actions and retains
+    // physical attack fields. Only their description now comes from shared prose.
     tio.actions = []
-
-    // tarrasque io likes to have multiattack first looks like
     if (monster.multiattacks.length > 0) {
       tio.actions.push({
         name: 'Multiattack',
-        desc: stripTags(
-          processTokens(
-            '{multiattack.all}. {multiattack.postscript}',
-            monster.multiattacks,
-            monster,
-            'multiattack'
-          )
-        ),
+        desc: tarrasqueText(processTokens('{multiattack.all}. {multiattack.postscript}', monster.multiattacks, monster, 'multiattack')),
         attack_bonus: 0,
       })
     }
-
-    // attacks next
+    // Keep every physical definition: legendary references otherwise lose their dice/bonus source.
     for (const attack of monster.attacks) {
       tio.actions.push({
-        name: attack.name,
-        desc: stripTags(processTokens(attackNoName, attack, monster, 'attack')),
-        attack_bonus: monster.attackModifier(attack.id),
-        damage_dice: attackDamageDice(attack),
+        ...tarrasqueEntry(processAttack(attack, monster), attack.name, monster.attackModifier(attack.id)),
+        damage_dice: tarrasqueDamageDice(attack),
         damage_bonus: monster.attackDamageModifier(attack.id),
       })
     }
+    for (const action of monster.actions.filter((entry) => !entry.legendaryOnly)) {
+      tio.actions.push(tarrasqueEntry(
+        processAction(action, monster),
+        action.name,
+        structuredAttackBonus(action, monster) ?? action.crAnnotation?.maxModifier ?? 0
+      ))
+    }
 
-    // generic actions
-    // I don't currently have a "damage dice" field for this so we're gonna leave it blank and hope it doesn't explode
-    const regularActions = monster.actions.filter((a) => !a.legendaryOnly)
-
-    for (const action of regularActions) {
-      const name = stripTags(
-        processTokens(
-          '{action.name}{action.limitedUse}',
-          action,
-          monster,
-          'action'
-        )
+    // Project original memberships, independently of the sheet's active phase filter.
+    if (monster.legendaryActions.actions.length > 0) {
+      tio.legendary_desc = tarrasqueText(renderer.legendaryPreamble.value)
+      tio.legendary_actions = monster.legendaryActions.actions.map((member) =>
+        tarrasqueEntry(processLegendaryAction(member.actionId, member.cost, monster))
       )
-
-      tio.actions.push({
-        name,
-        desc: stripTags(
-          processTokens(action.description, action, monster, 'action')
-        ),
-        attack_bonus: action.crAnnotation.maxModifier,
+    }
+    // There is no established dedicated mythic field in this target adapter.
+    // Retain the rule as a labeled special ability using the existing target shape.
+    if (monster.mythicActions.actions.length > 0) {
+      const mythicTrait = renderer.mythicTrait.value
+      if (mythicTrait.trim()) tio.special_abilities.push(tarrasqueEntry(mythicTrait))
+      const mythicEntries = monster.mythicActions.actions.map((member) =>
+        processLegendaryAction(member.actionId, member.cost, monster)
+      )
+      tio.special_abilities.push({
+        name: 'Mythic Actions',
+        desc: tarrasqueText([renderer.mythicPreamble.value, ...mythicEntries].join('\n')),
+        attack_bonus: 0,
       })
     }
-
-    // legendary actions
-    if (monster.legendaryActions.actions.length > 0) {
-      tio.legendary_desc = stripTags(renderer.legendaryPreamble.value)
-
-      tio.legendary_actions = []
-      for (const a of monster.legendaryActions.actions) {
-        const action = monster.legendaryAction(a.actionId)
-
-        if (action) {
-          // process the name
-          const count =
-            a.cost > 1 ? t('editor.legendary.renderedCost', [a.cost]) : ''
-
-          let description = ''
-          if (action.type === 'action') {
-            // process
-            if (action.action.legendaryOnly) {
-              // need it without the name attached
-              description = processTokens(
-                action.action.description,
-                action.action as MonsterAction,
-                monster,
-                'action'
-              )
-            } else {
-              description = processTokens(
-                t('presets.legendaryAction', [action.action.name]),
-                undefined,
-                monster,
-                'none'
-              )
-            }
-          } else if (action.type === 'attack') {
-            // process
-            description = processTokens(
-              t('presets.legendaryAttack', [action.action.name]),
-              undefined,
-              monster,
-              'none'
-            )
-          }
-
-          tio.legendary_actions.push({
-            name: action.action.name + count,
-            desc: stripTags(description),
-            attack_bonus: 0,
-          })
-        }
-      }
-    }
-
     // spellcasting
     // this counts as a special ability
     // we're just gonna basically copy-pasta the markdown exporter for the description...
@@ -243,9 +156,7 @@ export function useTarrasqueRenderer() {
 
       if (cantrips.length > 0)
         renderedRows.push(
-          `> ${t('editor.spellcasting.slot.cantripLabel')} *${cantrips.join(
-            ', '
-          )}*  `
+          `${spellLevelHeading({ level: 0, labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} ${cantrips.join(', ')}`
         )
 
       renderer.classSpellcastingSlots.value.forEach((slot) => {
@@ -257,7 +168,7 @@ export function useTarrasqueRenderer() {
 
       tio.special_abilities.push({
         name: t('editor.spellcasting.class.label'),
-        desc: stripTags(renderedSpellcasting),
+        desc: tarrasqueText(renderedSpellcasting),
         attack_bonus: 0,
       })
     }
@@ -265,11 +176,13 @@ export function useTarrasqueRenderer() {
     // innate
     // more pasta
     if (spellcasting.atWill.length > 0) {
-      const atWillRendered = renderer.innateSpellcastingLists.value.join('\n• ')
+      const atWillRendered = renderer.innateSpellcastingLists.value
+        .map((list) => `${list.renderedLabel}: ${list.renderedSpells}`)
+        .join('\n• ')
 
       tio.special_abilities.push({
         name: t('editor.spellcasting.innate.label'),
-        desc: stripTags(
+        desc: tarrasqueText(
           `${renderer.innateSpellcastingPreamble.value}\n• ${atWillRendered}`
         ),
         attack_bonus: 0,
@@ -283,20 +196,14 @@ export function useTarrasqueRenderer() {
 
     if (spells.length > 0) tio.spellList = spells
 
-    // hold up reaction time
+    // Reaction prose includes its trigger, mechanics, outcomes and context tokens.
     if (monster.reactions.length > 0) {
-      tio.reactions = []
-      for (const reaction of monster.reactions) {
-        tio.reactions.push({
-          name: reaction.name,
-          desc: stripTags(
-            processTokens(reaction.description, undefined, monster, 'none')
-          ),
-          attack_bonus: 0,
-        })
-      }
+      tio.reactions = monster.reactions.map((reaction) => tarrasqueEntry(
+        processReaction(reaction, monster),
+        reaction.name,
+        structuredAttackBonus({ ...reaction, stagePool: reaction.stagePool === undefined ? undefined : String(reaction.stagePool) }, monster) ?? 0
+      ))
     }
-
     tio.group = 'Custom (5e Monster Maker)'
     return JSON.stringify(tio)
   }
