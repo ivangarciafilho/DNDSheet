@@ -673,7 +673,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         if (o.diceTable && o.diceTable.length) {
           tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
         }
-        return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}:</i> ${effectsText}${riderText}${tableHtml}</div>`
+        return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient ? ', ' + o.recipient : ''}:</i> ${effectsText}${riderText}${(o.refs || []).length ? ' (builds on ' + (o.refs || []).map((r: string) => ability.outcomes.find((x) => x.id === r)?.trigger).filter(Boolean).join(' and ') + ')' : ''}${tableHtml}</div>`
       }).join('')
       effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
     } else {
@@ -907,7 +907,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
             if (o.diceTable && o.diceTable.length) {
               tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
             }
-            return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}:</i> ${effectsText}${riderText}${tableHtml}</div>`
+            return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient ? ', ' + o.recipient : ''}:</i> ${effectsText}${riderText}${(o.refs || []).length ? ' (builds on ' + (o.refs || []).map((r: string) => ability.outcomes.find((x) => x.id === r)?.trigger).filter(Boolean).join(' and ') + ')' : ''}${tableHtml}</div>`
           }).join('')
           effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
         } else {

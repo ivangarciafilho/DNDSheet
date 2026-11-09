@@ -1869,3 +1869,7 @@
 
 // Shared stat block grammar (kept last so it wins the cascade)
 @import './statblock-grammar.scss';
+
+.outcome-sector.outcome-vertical { display: flex; flex-direction: column; gap: .15em; }
+.outcome-sector.outcome-horizontal { display: flex; flex-wrap: wrap; gap: .35em; align-items: baseline; }
+

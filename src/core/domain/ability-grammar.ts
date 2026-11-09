@@ -270,6 +270,10 @@ const normalizeOutcomes = (input: unknown): AbilityOutcome[] => {
       }))
       : [],
     rider: typeof outcome.rider === 'string' ? outcome.rider : undefined,
+    id: typeof outcome.id === 'string' ? outcome.id : undefined,
+    recipient: typeof outcome.recipient === 'string' && outcome.recipient.trim() ? outcome.recipient.trim() : undefined,
+    refs: Array.isArray(outcome.refs) ? outcome.refs.filter((r): r is string => typeof r === 'string') : undefined,
+    presentation: outcome.presentation === 'vertical' || outcome.presentation === 'horizontal' ? outcome.presentation : undefined,
   }))
 }
 
@@ -516,6 +520,9 @@ export function outcomePhrase(
     const effects = outcome.effects.map((effect) => effectText(effect, context)).filter(Boolean).map(ensurePeriod)
     const parts = [...effects]
     if (outcome.rider?.trim()) parts.push(outcome.rider.trim())
+    const refLeads = (outcome.refs ?? []).map((r) => ability.outcomes.find((o) => o.id === r)?.trigger).filter((x): x is string => !!x)
+    if (refLeads.length) parts.push(`(builds on the  result)`)
+    if (outcome.recipient) parts.unshift(`:`)
     if (outcome.diceTable && outcome.diceTable.length) {
       const rows = outcome.diceTable.map((r) => `${r.roll}: ${r.effect}`).join('; ')
       parts.push(`(${rows})`)
