@@ -32,7 +32,7 @@
               use-input
               input-debounce="0"
               new-value-mode="add-unique"
-              label="Add Speed (select or type to add)..."
+              label="Add Speed (select or type to add)..." v-help="'Add walk, burrow, climb, fly or swim speed, or type a custom one.'"
               placeholder="Select or type movement type (e.g. fly, swim, burrow, climb)"
               clearable
               @update:model-value="onSpeedSelected"
@@ -119,7 +119,7 @@
                 <q-checkbox
                   v-model="speed.hover"
                   dense
-                  label="Hover (does not fall if speed reduced to 0)"
+                  label="Hover (does not fall if speed reduced to 0)" v-help="'Flying creature that stays aloft even when its speed drops to 0 or it is incapacitated.'"
                   color="accent"
                 />
               </div>
@@ -159,7 +159,7 @@
                 <q-checkbox
                   v-model="speedTraversal.amorphous1Inch"
                   dense
-                  label="Move through 1-inch spaces without squeezing"
+                  label="Move through 1-inch spaces without squeezing" v-help="'Fits through gaps as narrow as 1 inch, like an ooze.'"
                   color="teal"
                 />
               </div>
@@ -167,7 +167,7 @@
                 <q-checkbox
                   v-model="speedTraversal.amorphousCannotEnterLiquids"
                   dense
-                  label="Cannot enter liquid bodies"
+                  label="Cannot enter liquid bodies" v-help="'This speed does not work in water or other liquids.'"
                   color="teal"
                 />
               </div>
@@ -175,7 +175,7 @@
                 <q-checkbox
                   v-model="speedTraversal.moveThroughCreaturesDifficultTerrain"
                   dense
-                  label="Move through creature spaces as difficult terrain"
+                  label="Move through creature spaces as difficult terrain" v-help="'Can move through other creatures’ spaces, treating them as difficult terrain.'"
                   color="teal"
                 />
               </div>
@@ -183,7 +183,7 @@
                 <q-checkbox
                   v-model="speedTraversal.moveThroughCreaturesTwoSizesDifferent"
                   dense
-                  label="Move through spaces of creatures 2+ sizes different"
+                  label="Move through spaces of creatures 2+ sizes different" v-help="'Can pass through a creature at least two sizes larger or smaller.'"
                   color="teal"
                 />
               </div>
@@ -192,7 +192,7 @@
                   <q-checkbox
                     v-model="speedTraversal.moveThroughCreaturesShunt"
                     dense
-                    label="Shunts creature if ending turn inside"
+                    label="Shunts creature if ending turn inside" v-help="'Ending its turn inside a creature pushes that creature out.'"
                     color="teal"
                   />
                 </div>
@@ -205,7 +205,7 @@
                       map-options
                       dense
                       outlined
-                      label="Shunt Outcome"
+                      label="Shunt Outcome" v-help="'What happens to a creature pushed out when the movement ends inside it.'"
                     />
                   </div>
                   <div v-if="speedTraversal.shuntDestination !== 'ethereal_plane'" class="col-12 col-sm-6">
@@ -216,7 +216,7 @@
                       outlined
                       use-input
                       new-value-mode="add-unique"
-                      label="Shunt Damage"
+                      label="Shunt Damage" v-help="'Damage dealt to a creature shunted out of this space.'"
                       placeholder="e.g. 1d10 force"
                     />
                   </div>
@@ -230,7 +230,7 @@
                   map-options
                   dense
                   outlined
-                  label="Planar Shift (Material / Ethereal)"
+                  label="Planar Shift (Material / Ethereal)" v-help="'Can shift between the Material and Ethereal planes while moving.'"
                 />
               </div>
             </div>
@@ -253,7 +253,7 @@
                   map-options
                   dense
                   outlined
-                  label="Aquatic Breathing"
+                  label="Aquatic Breathing" v-help="'Can breathe water (and whether it can still breathe air).'"
                 />
               </div>
               <div v-if="speedTraversal.aquaticBreathing === 'hold_breath'" class="col-12 col-sm-6">
@@ -261,7 +261,7 @@
                   v-model="speedTraversal.holdBreathDuration"
                   dense
                   outlined
-                  label="Hold Breath Duration"
+                  label="Hold Breath Duration" v-help="'How long the creature can hold its breath.'"
                   placeholder="e.g. 1 hour, 15 minutes"
                 />
               </div>
@@ -274,7 +274,7 @@
               <q-checkbox
                 v-model="speedTraversal.ignoresDifficultTerrain"
                 dense
-                label="Ignores Difficult Terrain"
+                label="Ignores Difficult Terrain" v-help="'Moves through difficult terrain without spending extra movement.'"
                 color="secondary"
               />
             </div>
@@ -282,7 +282,7 @@
               <q-checkbox
                 v-model="speedTraversal.bonusActionDash"
                 dense
-                label="Bonus Action Dash"
+                label="Bonus Action Dash" v-help="'Can take the Dash action as a bonus action.'"
                 color="primary"
               />
             </div>
@@ -290,7 +290,7 @@
               <q-checkbox
                 v-model="speedTraversal.bonusActionDodge"
                 dense
-                label="Bonus Action Dodge"
+                label="Bonus Action Dodge" v-help="'Can take the Dodge action as a bonus action.'"
                 color="primary"
               />
             </div>
@@ -298,7 +298,7 @@
               <q-checkbox
                 v-model="speedTraversal.bonusActionDisengage"
                 dense
-                label="Bonus Action Disengage"
+                label="Bonus Action Disengage" v-help="'Can take the Disengage action as a bonus action.'"
                 color="primary"
               />
             </div>
@@ -306,7 +306,7 @@
               <q-checkbox
                 v-model="(speedTraversal as any).bonusActionHide"
                 dense
-                label="Bonus Action Hide"
+                label="Bonus Action Hide" v-help="'Can take the Hide action as a bonus action.'"
                 color="primary"
               />
             </div>
@@ -322,7 +322,7 @@
                 new-value-mode="add-unique"
                 dense
                 outlined
-                label="Dash Rider"
+                label="Dash Rider" v-help="'Extra effect when the creature Dashes.'"
                 placeholder="e.g. Ignores Difficult Terrain"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dash action</q-tooltip>
@@ -339,7 +339,7 @@
                 new-value-mode="add-unique"
                 dense
                 outlined
-                label="Dodge Rider"
+                label="Dodge Rider" v-help="'Extra effect when the creature Dodges.'"
                 placeholder="e.g. Adv on DEX saves"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dodge action</q-tooltip>
@@ -356,7 +356,7 @@
                 new-value-mode="add-unique"
                 dense
                 outlined
-                label="Disengage Rider"
+                label="Disengage Rider" v-help="'Extra effect when the creature Disengages.'"
                 placeholder="e.g. Change to the ethereal plane"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Disengage action</q-tooltip>
@@ -373,7 +373,7 @@
                 new-value-mode="add-unique"
                 dense
                 outlined
-                label="Hide Rider"
+                label="Hide Rider" v-help="'Extra effect when the creature Hides.'"
                 placeholder="e.g. Becomes Invisible until end of turn"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Hide action</q-tooltip>
@@ -392,7 +392,7 @@
                 use-input
                 fill-input
                 hide-selected
-                label="Bonus Action Speed"
+                label="Bonus Action Speed" v-help="'Speed granted when moving as a bonus action.'"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.bonusActionSpeed = validateNumber(val, 0))"
@@ -408,7 +408,7 @@
                 use-input
                 fill-input
                 hide-selected
-                label="Tracking Speed"
+                label="Tracking Speed" v-help="'Speed while tracking quarry.'"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.trackingSpeed = validateNumber(val, 0))"
@@ -424,7 +424,7 @@
                 use-input
                 fill-input
                 hide-selected
-                label="Stealth / Silent Speed"
+                label="Stealth / Silent Speed" v-help="'Movement that does not break Stealth or make noise.'"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.stealthSpeed = validateNumber(val, 0))"
@@ -439,7 +439,7 @@
                 dense
                 outlined
                 v-model="speedTraversal.note"
-                label="Traversal Note"
+                label="Traversal Note" v-help="'Free text added after the speed.'"
                 placeholder="e.g. climbing does not cost extra movement, ignores nonmagical webbing"
                 clearable
               />
@@ -529,7 +529,7 @@
                 map-options
                 use-input
                 new-value-mode="add-unique"
-                label="Trigger / Action"
+                label="Trigger / Action" v-help="'What triggers this traversal option.'"
               />
             </div>
             <div class="col-6 col-sm-2">
@@ -539,7 +539,7 @@
                 dense
                 outlined
                 dark
-                label="Economy"
+                label="Economy" v-help="'Which part of the turn this costs: action, bonus action, reaction or free.'"
               />
             </div>
             <div class="col-6 col-sm-6">
@@ -548,7 +548,7 @@
                 dense
                 outlined
                 dark
-                label="Rider Clause / Formula"
+                label="Rider Clause / Formula" v-help="'Extra wording or a formula, such as half speed.'"
                 placeholder="e.g. can Shove as a Bonus Action"
               >
                 <template #append>

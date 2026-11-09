@@ -21,7 +21,7 @@
               :options="availableSkills"
               emit-value
               map-options
-              label="Add Skill..."
+              label="Add Skill..." v-help="'Add a skill the creature is proficient or expert in.'"
               placeholder="Select skill to add"
               clearable
               @update:model-value="onSkillSelected"
@@ -167,7 +167,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Override"
+                    label="Override" v-help="'Type a fixed bonus instead of the computed one.'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (skill.overrideValue = validateNumber(val, 0))"
                     @update:model-value="(val) => (skill.overrideValue = validateNumber(val, 0))"
@@ -178,7 +178,7 @@
                     dense
                     outlined
                     :model-value="skill.condition || skill.conditional || ''"
-                    label="Condition / Trigger"
+                    label="Condition / Trigger" v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
                     placeholder="e.g. in darkness, vs undead"
                     clearable
                     @update:model-value="(val) => { skill.condition = `${val ?? ''}`; skill.conditional = `${val ?? ''}` }"
@@ -209,7 +209,7 @@
               map-options
               use-input
               new-value-mode="add-unique"
-              label="Add Tool..."
+              label="Add Tool..." v-help="'Add a tool proficiency, such as a Poisoner’s Kit.'"
               placeholder="Select or type tool"
               clearable
               @update:model-value="onToolSelected"
@@ -349,7 +349,7 @@
                     outlined
                     v-model="tool.stat"
                     :options="['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']"
-                    label="Stat"
+                    label="Stat" v-help="'Ability used for this skill.'"
                   />
                 </div>
                 <div v-if="tool.override" class="col-3">
@@ -363,7 +363,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Mod"
+                    label="Mod" v-help="'Ability modifier used for this skill.'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (tool.overrideValue = validateNumber(val, 0))"
                     @update:model-value="(val) => (tool.overrideValue = validateNumber(val, 0))"
@@ -374,7 +374,7 @@
                     dense
                     outlined
                     v-model="tool.condition"
-                    label="Condition / Trigger"
+                    label="Condition / Trigger" v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
                     placeholder="e.g. traps, locks only"
                     clearable
                   />
@@ -415,7 +415,7 @@
                     dark
                     options-dense
                     style="min-width: 140px;"
-                    label="Placement"
+                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
                   >
                     <q-tooltip class="dnd-tip">Relocate Search to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
                   </q-select>
@@ -442,7 +442,7 @@
                   outlined
                   dark
                   v-model="passives.riders.search"
-                  label="Search Scope / Verbose Rider"
+                  label="Search Scope / Verbose Rider" v-help="'Extra wording for the Search action (Perception, Investigation, Survival).'"
                   placeholder="e.g. 60ft across Ethereal and Material Planes: Sense the Presence of Undeads..."
                 >
                   <template #append>
@@ -473,14 +473,14 @@
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
-                      label="Auto"
+                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
-                      label="Ovr"
+                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -491,14 +491,14 @@
                       dense
                       size="xs"
                       :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲"
+                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼"
+                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
@@ -514,7 +514,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Score"
+                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
@@ -548,7 +548,7 @@
                     dark
                     options-dense
                     style="min-width: 140px;"
-                    label="Placement"
+                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
                   >
                     <q-tooltip class="dnd-tip">Relocate Study to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
                   </q-select>
@@ -575,7 +575,7 @@
                   outlined
                   dark
                   v-model="passives.riders.study"
-                  label="Study Scope / Verbose Rider"
+                  label="Study Scope / Verbose Rider" v-help="'Extra wording for the Study action (Arcana, History, Investigation, Nature, Religion).'"
                   placeholder="e.g. Touch: Learn target's Alignment, and if its either Charmed or Possessed..."
                 >
                   <template #append>
@@ -606,14 +606,14 @@
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
-                      label="Auto"
+                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
-                      label="Ovr"
+                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -624,14 +624,14 @@
                       dense
                       size="xs"
                       :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲"
+                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼"
+                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
@@ -647,7 +647,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Score"
+                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
@@ -681,7 +681,7 @@
                     dark
                     options-dense
                     style="min-width: 140px;"
-                    label="Placement"
+                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
                   >
                     <q-tooltip class="dnd-tip">Relocate Influence to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
                   </q-select>
@@ -708,7 +708,7 @@
                   outlined
                   dark
                   v-model="passives.riders.influence"
-                  label="Influence Scope / Verbose Rider"
+                  label="Influence Scope / Verbose Rider" v-help="'Extra wording for the Influence action (Deception, Intimidation, Performance, Persuasion, Animal Handling).'"
                   placeholder="e.g. De-escalate hostile creatures with DC 15 Charisma check..."
                 >
                   <template #append>
@@ -739,14 +739,14 @@
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
-                      label="Auto"
+                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
-                      label="Ovr"
+                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -757,14 +757,14 @@
                       dense
                       size="xs"
                       :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲"
+                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼"
+                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
@@ -780,7 +780,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Score"
+                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
@@ -814,7 +814,7 @@
                     dark
                     options-dense
                     style="min-width: 140px;"
-                    label="Placement"
+                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
                   >
                     <q-tooltip class="dnd-tip">Relocate Hide to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
                   </q-select>
@@ -841,7 +841,7 @@
                   outlined
                   dark
                   v-model="passives.riders.hide"
-                  label="Hide Scope / Verbose Rider"
+                  label="Hide Scope / Verbose Rider" v-help="'Extra wording for the Hide action (Stealth).'"
                   placeholder="e.g. Can hide in dim light or darkness even while observed..."
                 >
                   <template #append>
@@ -872,14 +872,14 @@
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
-                      label="Auto"
+                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
-                      label="Ovr"
+                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -890,14 +890,14 @@
                       dense
                       size="xs"
                       :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲"
+                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
                       dense
                       size="xs"
                       :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼"
+                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
@@ -913,7 +913,7 @@
                     use-input
                     fill-input
                     hide-selected
-                    label="Score"
+                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
@@ -947,7 +947,7 @@
                     dark
                     options-dense
                     style="min-width: 140px;"
-                    label="Placement"
+                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
                   >
                     <q-tooltip class="dnd-tip">Relocate Use Tool to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
                   </q-select>
@@ -974,7 +974,7 @@
                   outlined
                   dark
                   v-model="passives.riders.tools"
-                  label="Use Tool Scope / Verbose Rider"
+                  label="Use Tool Scope / Verbose Rider" v-help="'Extra wording for using a tool as an action.'"
                   placeholder="e.g. Can craft or repair equipment during short rest..."
                 >
                   <template #append>

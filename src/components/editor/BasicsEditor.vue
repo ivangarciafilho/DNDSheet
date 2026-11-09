@@ -15,7 +15,7 @@
         class="q-mb-sm rounded-borders"
         style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
         icon="photo_camera"
-        label="Monster Portrait"
+        label="Monster Portrait" v-help="'Image shown with the stat block.'"
         caption="Add creature illustration to the left or right of the stat block"
       >
         <div class="q-pa-sm">
@@ -32,7 +32,7 @@
             />
             <q-input
               v-model="portrait.url"
-              label="Image URL or Data URI"
+              label="Image URL or Data URI" v-help="'Web address or embedded image for the portrait.'"
               dense
               outlined
               class="col-12 col-sm-8"
@@ -278,7 +278,7 @@
         <div class="col-12 row items-center q-gutter-md q-my-xs">
           <q-toggle
             v-model="monster.showXp"
-            label="Show XP on Nameplate"
+            label="Show XP on Nameplate" v-help="'Show the experience points next to the challenge rating.'"
             dense
             color="amber-9"
           >
@@ -286,7 +286,7 @@
           </q-toggle>
           <q-toggle
             v-model="monster.compactNameplate"
-            label="Compact Nameplate Layout"
+            label="Compact Nameplate Layout" v-help="'Fit name, size, type and CR on fewer lines.'"
             dense
             color="amber-9"
           >
@@ -329,7 +329,7 @@
         <q-select
           v-model="selectedSpecies"
           :options="speciesOptions"
-          label="Species / Lineage"
+          label="Species / Lineage" v-help="'Species or lineage; applies its traits, size and speed.'"
           class="col-6 col-sm-3"
           outlined
           dense
@@ -369,13 +369,13 @@
           </q-badge>
         </div>
         <div class="row items-center q-gutter-x-xs">
-          <q-btn size="xs" outline dense color="primary" label="Standard Array" @click="applyStandardArray">
+          <q-btn size="xs" outline dense color="primary" label="Standard Array" v-help="'Assign 15, 14, 13, 12, 10, 8 to the abilities.'" @click="applyStandardArray">
             <q-tooltip class="text-caption">Apply standard 5e array: 15, 14, 13, 12, 10, 8</q-tooltip>
           </q-btn>
-          <q-btn size="xs" outline dense color="grey-5" label="All 8s" @click="applyAllStats(8)">
+          <q-btn size="xs" outline dense color="grey-5" label="All 8s" v-help="'Set every ability score to 8.'" @click="applyAllStats(8)">
             <q-tooltip class="text-caption">Reset all ability scores to baseline 8</q-tooltip>
           </q-btn>
-          <q-btn size="xs" outline dense color="grey-5" label="All 10s" @click="applyAllStats(10)">
+          <q-btn size="xs" outline dense color="grey-5" label="All 10s" v-help="'Set every ability score to 10.'" @click="applyAllStats(10)">
             <q-tooltip class="text-caption">Reset all ability scores to baseline 10</q-tooltip>
           </q-btn>
         </div>
@@ -466,7 +466,7 @@
               dense
               size="xs"
               color="blue-4"
-              label="Split AC Riders into Sub-Rows"
+              label="Split AC Riders into Sub-Rows" v-help="'Show each AC condition on its own line.'"
               class="text-caption text-weight-medium text-blue-2 q-mr-xs"
             >
               <q-tooltip>Renders AC relatable riders on dedicated indented sub-rows (↳) directly beneath base AC.</q-tooltip>
@@ -487,7 +487,7 @@
               map-options
               dense
               outlined
-              label="Base AC Source"
+              label="Base AC Source" v-help="'Where the base Armor Class comes from: natural armor, worn armor or a formula.'"
               @update:model-value="onAcCompositorChanged"
             >
               <template #option="scope">
@@ -601,7 +601,7 @@
               map-options
               dense
               outlined
-              label="Conditional AC Modifier"
+              label="Conditional AC Modifier" v-help="'AC bonus or penalty that applies only in a stated situation.'"
               @update:model-value="onAcCompositorChanged"
             >
               <template #option="scope">
@@ -634,7 +634,7 @@
               map-options
               dense
               outlined
-              label="Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)"
+              label="Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)" v-help="'Pick a defensive pattern such as Legendary Resistance-style rules or regeneration blocks.'"
               @update:model-value="onAcCompositorChanged"
             >
               <template #option="scope">
@@ -671,7 +671,7 @@
               use-chips
               dense
               outlined
-              label="Creature Types (e.g. Undead, Fiends)"
+              label="Creature Types (e.g. Undead, Fiends)" v-help="'Creature types this applies to.'"
               @update:model-value="onAcCompositorChanged"
             />
           </div>
@@ -734,7 +734,7 @@
                 :options="['Strength', 'Dexterity', 'Constitution', 'Intelligence', 'Wisdom', 'Charisma']"
                 dense
                 outlined
-                label="Save Ability"
+                label="Save Ability" v-help="'Ability used for the saving throw.'"
                 @update:model-value="onAcCompositorChanged"
               />
             </div>
@@ -746,12 +746,12 @@
                 map-options
                 dense
                 outlined
-                label="DC Source"
+                label="DC Source" v-help="'Where the DC comes from: spell save DC, a formula or a fixed number.'"
                 @update:model-value="onAcCompositorChanged"
               />
             </div>
             <div class="col-12 col-sm-2">
-              <formula-field path="acConfig.saveDc" label="Save DC" dense outlined @applied="onAcCompositorChanged" />
+              <formula-field path="acConfig.saveDc" label="Save DC" v-help="'Difficulty Class of the saving throw.'" dense outlined @applied="onAcCompositorChanged" />
             </div>
           </div>
 
@@ -770,7 +770,7 @@
                 map-options
                 dense
                 outlined
-                label="On Failure Outcome"
+                label="On Failure Outcome" v-help="'What happens on a failed save.'"
                 @update:model-value="onAcCompositorChanged"
               />
             </div>
@@ -801,7 +801,7 @@
                 map-options
                 dense
                 outlined
-                label="On Success Outcome"
+                label="On Success Outcome" v-help="'What happens on a successful save.'"
                 @update:model-value="onAcCompositorChanged"
               />
             </div>
@@ -839,7 +839,7 @@
               :options="timeframeOptions"
               dense
               outlined
-              label="Timeframe"
+              label="Timeframe" v-help="'When this repeats, e.g. start of each turn.'"
               @update:model-value="onAcCompositorChanged"
             />
           </div>
@@ -853,7 +853,7 @@
               :options="lightLevelOptions"
               dense
               outlined
-              label="Light Level"
+              label="Light Level" v-help="'Light needed: bright, dim or darkness.'"
               @update:model-value="onAcCompositorChanged"
             />
           </div>
@@ -933,7 +933,7 @@
               :options="damageTypeOptions"
               dense
               outlined
-              label="Damage Type"
+              label="Damage Type" v-help="'Type of damage, e.g. fire or slashing.'"
               @update:model-value="onAcCompositorChanged"
             />
           </div>
@@ -942,7 +942,7 @@
         <!-- When Hit Extra Inputs -->
         <div v-if="acConfig.onHit === 'damage_attacker'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-6 col-sm-3">
-            <formula-field path="acConfig.onHitDamageAmount" label="On Hit Damage Amount" dense outlined @applied="onAcCompositorChanged" />
+            <formula-field path="acConfig.onHitDamageAmount" label="On Hit Damage Amount" v-help="'Damage dealt on a hit.'" dense outlined @applied="onAcCompositorChanged" />
           </div>
           <div class="col-6 col-sm-3">
             <q-select
@@ -950,7 +950,7 @@
               :options="damageTypeOptions"
               dense
               outlined
-              label="On Hit Damage Type"
+              label="On Hit Damage Type" v-help="'Damage type dealt on a hit.'"
               @update:model-value="onAcCompositorChanged"
             />
           </div>
@@ -1047,7 +1047,7 @@
             <div class="col-12 col-sm-3">
               <q-checkbox
                 v-model="initiativeConfig.proficient"
-                label="Add Proficiency Bonus"
+                label="Add Proficiency Bonus" v-help="'Add the proficiency bonus to this value.'"
                 dense
               />
             </div>
@@ -1057,7 +1057,7 @@
                 :options="secondaryStatOptions"
                 emit-value
                 map-options
-                label="Secondary Ability"
+                label="Secondary Ability" v-help="'Second ability that also feeds this value.'"
                 dense
                 outlined
               >
@@ -1125,19 +1125,19 @@
             <div class="col-12 col-sm-3">
               <q-checkbox
                 v-model="initiativeConfig.cantBeSurprised"
-                label="Can't be Surprised"
+                label="Can't be Surprised" v-help="'The creature cannot be surprised at the start of combat.'"
                 dense
               />
             </div>
             <div class="col-6 col-sm-2">
               <q-checkbox
                 v-model="initiativeConfig.useLairInitiative"
-                label="Lair Initiative"
+                label="Lair Initiative" v-help="'Initiative count for lair actions (usually 20, losing ties).'"
                 dense
               />
             </div>
             <div v-if="initiativeConfig.useLairInitiative" class="col-6 col-sm-2">
-              <formula-field path="initiativeConfig.lairInitiative" label="Lair" dense outlined />
+              <formula-field path="initiativeConfig.lairInitiative" label="Lair" v-help="'Lair initiative: lair actions happen on initiative count 20.'" dense outlined />
             </div>
           </div>
 
@@ -1290,7 +1290,7 @@
                   v-model="newRiderSpellName"
                   dense
                   outlined
-                  label="Spell Name"
+                  label="Spell Name" v-help="'Spell the creature casts.'"
                   placeholder="e.g. Thaumaturgy, Compelled Duel"
                 />
               </div>
@@ -1352,14 +1352,14 @@
             <div class="q-mt-xs q-gutter-y-xs text-caption">
               <div class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-3">
-                  <formula-field path="paragonConfig.poolCount" label="Number of Stage Pools" dense outlined @applied="updateParagonPoolHp" />
+                  <formula-field path="paragonConfig.poolCount" label="Number of Stage Pools" v-help="'How many hit point stages the creature has (paragon or boss phases).'" dense outlined @applied="updateParagonPoolHp" />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-input
                     v-model="monster.paragonConfig.phaseName"
                     dense
                     outlined
-                    label="Stage Naming (Phase/Pool)"
+                    label="Stage Naming (Phase/Pool)" v-help="'Word used for stages on the sheet.'"
                     placeholder="Phase"
                   />
                 </div>
@@ -1368,7 +1368,7 @@
                     v-model="monster.paragonConfig.transitionEffect"
                     dense
                     outlined
-                    label="Stage Transition Fury / Trigger"
+                    label="Stage Transition Fury / Trigger" v-help="'What happens when the creature moves to its next stage.'"
                     placeholder="e.g. sheds all conditions and unleashes Bloodied roar"
                   />
                 </div>
@@ -1415,7 +1415,7 @@
               dense
               size="xs"
               color="red-4"
-              label="Split HP Relatable Riders into Sub-Rows"
+              label="Split HP Relatable Riders into Sub-Rows" v-help="'Show each hit point rider on its own line.'"
               class="text-caption text-weight-medium text-red-2"
             >
               <q-tooltip>Renders HP relatable riders (Temporary HP, Bloodied riders, Death Prevention, Damage Threshold) on dedicated indented sub-rows (↳) directly beneath base HP.</q-tooltip>
@@ -1456,7 +1456,7 @@
                   map-options
                   dense
                   outlined
-                  label="Bloodied Threshold Source"
+                  label="Bloodied Threshold Source" v-help="'How the Bloodied threshold is set: half HP, a fixed value or dice.'"
                   @update:model-value="(val) => { extendedHp.showBloodied = val !== 'none' }"
                 >
                   <template #option="scope">
@@ -1490,7 +1490,7 @@
               <div v-else-if="extendedHp.bloodiedSource === 'flat'" class="col-12 col-sm-6">
                 <formula-field
                   path="extendedHp.bloodiedOverride"
-                  label="Bloodied HP Value"
+                  label="Bloodied HP Value" v-help="'Hit points at which the creature counts as Bloodied.'"
                   dense
                   outlined
                   @applied="(val: number | string) => { extendedHp.bloodiedOverride = Number(val) || 0; if (extendedHp.bloodiedOverride > 0) extendedHp.showBloodied = true; }"
@@ -1521,7 +1521,7 @@
                     :model-value="Boolean(phaseCfg.isBloodied)"
                     color="red-5"
                     dense
-                    label="Bloodied"
+                    label="Bloodied" v-help="'Bloodied: at or below half its hit points.'"
                     class="text-weight-bold text-red-4"
                     @update:model-value="(val) => onTogglePhaseBloodied(pIdx, Boolean(val))"
                   />
@@ -1531,7 +1531,7 @@
                     v-model="phaseCfg.name"
                     dense
                     outlined
-                    label="Stage Label"
+                    label="Stage Label" v-help="'Name for this stage, e.g. Phase 2.'"
                     @update:model-value="syncParagonPhaseRows"
                   />
                 </div>
@@ -1566,7 +1566,7 @@
                     v-model="phaseCfg.diceFormula"
                     dense
                     outlined
-                    label="Dice Formula"
+                    label="Dice Formula" v-help="'Dice expression, e.g. 2d6 + 3.'"
                     placeholder="e.g. 6d10"
                     @update:model-value="syncParagonPhaseRows"
                   />
@@ -1578,7 +1578,7 @@
                     dense
                     outlined
                     clearable
-                    label="HP Override"
+                    label="HP Override" v-help="'Fixed hit points for this stage instead of the computed value.'"
                     @update:model-value="syncParagonPhaseRows"
                   />
                 </div>
@@ -1656,7 +1656,7 @@
                 />
               </div>
               <div v-else-if="!extendedHp.damageThresholdSource || extendedHp.damageThresholdSource === 'flat' || extendedHp.damageThresholdSource === 'none'" class="col-12 col-sm-4">
-                <formula-field path="extendedHp.damageThreshold" label="Damage Threshold Value" dense outlined />
+                <formula-field path="extendedHp.damageThreshold" label="Damage Threshold Value" v-help="'Damage of a single hit below this number is ignored (damage threshold).'" dense outlined />
                 <q-btn v-if="extendedHp.damageThreshold != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageThreshold')" />
               </div>
               <div v-else class="col-12 col-sm-4">
@@ -1672,7 +1672,7 @@
                   map-options
                   dense
                   outlined
-                  label="Disrupted By"
+                  label="Disrupted By" v-help="'Damage types that stop this effect until the start of its next turn.'"
                 >
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps" dense>
@@ -1752,7 +1752,7 @@
                 />
               </div>
               <div v-else-if="!extendedHp.damageReductionSource || extendedHp.damageReductionSource === 'flat' || extendedHp.damageReductionSource === 'none'" class="col-12 col-sm-4">
-                <formula-field path="extendedHp.damageReduction" label="Damage Reduction Value" dense outlined />
+                <formula-field path="extendedHp.damageReduction" label="Damage Reduction Value" v-help="'Damage subtracted from each hit.'" dense outlined />
                 <q-btn v-if="extendedHp.damageReduction != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageReduction')" />
               </div>
               <div v-else class="col-12 col-sm-4">
@@ -1768,7 +1768,7 @@
                   map-options
                   dense
                   outlined
-                  label="Disrupted By"
+                  label="Disrupted By" v-help="'Damage types that stop this effect until the start of its next turn.'"
                 >
                   <template #option="scope">
                     <q-item v-bind="scope.itemProps" dense>
@@ -1841,7 +1841,7 @@
                     map-options
                     dense
                     outlined
-                    label="Recovery Mode"
+                    label="Recovery Mode" v-help="'How the creature recovers: regeneration, temporary hit points or other.'"
                     @update:model-value="() => { extendedHp.regeneration.enabled = true }"
                   >
                     <template #option="scope">
@@ -1867,7 +1867,7 @@
                     map-options
                     dense
                     outlined
-                    label="Value Source"
+                    label="Value Source" v-help="'Where the value comes from: fixed, dice or a formula.'"
                     @update:model-value="() => { extendedHp.regeneration.enabled = true }"
                   >
                     <template #option="scope">
@@ -1893,7 +1893,7 @@
                     v-model="extendedHp.regeneration.diceFormula"
                     dense
                     outlined
-                    label="Dice Formula"
+                    label="Dice Formula" v-help="'Dice expression, e.g. 2d6 + 3.'"
                     placeholder="e.g. 2d10 + 5"
                     @update:model-value="() => { extendedHp.regeneration.enabled = true }"
                   />
@@ -1914,7 +1914,7 @@
                     map-options
                     dense
                     outlined
-                    label="Frequency & Trigger"
+                    label="Frequency & Trigger" v-help="'How often this happens and what sets it off.'"
                     @update:model-value="onRegenFrequencyChanged"
                   >
                     <template #option="scope">
@@ -1938,7 +1938,7 @@
                     :options="damageTypeOptions"
                     dense
                     outlined
-                    label="Trigger Damage Type"
+                    label="Trigger Damage Type" v-help="'Damage type that triggers this effect.'"
                     @update:model-value="onRegenDamageTypeTriggerChanged"
                   />
                 </div>
@@ -1961,7 +1961,7 @@
                     :options="displayModeOptions"
                     emit-value
                     map-options
-                    label="Display Format"
+                    label="Display Format" v-help="'How this appears on the sheet.'"
                     dense
                     outlined
                     @update:model-value="() => { extendedHp.regeneration.enabled = true }"
@@ -2003,7 +2003,7 @@
                     :options="['short rest', 'long rest', 'short or long rest', 'dawn', 'midnight', '24 hours']"
                     dense
                     outlined
-                    label="Maximum HP Reduction Duration"
+                    label="Maximum HP Reduction Duration" v-help="'How long a hit point maximum reduction lasts.'"
                     @update:model-value="() => { extendedHp.regeneration.enabled = true }"
                   />
                 </div>
@@ -2099,7 +2099,7 @@
                   :options="displayModeOptions"
                   emit-value
                   map-options
-                  label="Display Format"
+                  label="Display Format" v-help="'How this appears on the sheet.'"
                   dense
                   outlined
                 />
@@ -2110,7 +2110,7 @@
               <!-- Critical Hits to Kill Mode -->
               <div v-if="deathPrevention.dcRule === 'until_x_crits'" class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-4">
-                  <formula-field path="extendedHp.deathPrevention.critHitsToKill" label="Critical Hits Required to Slay (X)" dense outlined />
+                  <formula-field path="extendedHp.deathPrevention.critHitsToKill" label="Critical Hits Required to Slay (X)" v-help="'Number of critical hits needed to kill the creature.'" dense outlined />
                 </div>
                 <div class="col-12 col-sm-8 text-caption text-amber-3">
                   Hides numeric HP on statblock: <code>Immortal (Until being hit by {{ deathPrevention.critHitsToKill || 3 }} Critical Hits)</code>
@@ -2145,7 +2145,7 @@
                   </q-select>
                 </div>
                 <div v-if="deathPrevention.returnHpSource === 'flat'" class="col-12 col-sm-3">
-                  <formula-field path="extendedHp.deathPrevention.returnHpValue" label="Return HP Value" dense outlined @applied="(val) => { deathPrevention.returnHpAmount = val }" />
+                  <formula-field path="extendedHp.deathPrevention.returnHpValue" label="Return HP Value" v-help="'Hit points the creature has when it returns to life.'" dense outlined @applied="(val) => { deathPrevention.returnHpAmount = val }" />
                 </div>
                 <div v-else-if="deathPrevention.returnHpSource === 'dice' || deathPrevention.returnHpSource?.startsWith('dice_')" class="col-12 col-sm-3">
                   <q-input
@@ -2167,11 +2167,11 @@
                     :options="['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']"
                     dense
                     outlined
-                    label="Save Stat"
+                    label="Save Stat" v-help="'Ability used for the saving throw.'"
                   />
                 </div>
                 <div v-if="deathPrevention.requiresSave || deathPrevention.dcRule === 'custom_save'" class="col-6 col-sm-3">
-                  <formula-field path="extendedHp.deathPrevention.saveDc" label="Save DC" dense outlined />
+                  <formula-field path="extendedHp.deathPrevention.saveDc" label="Save DC" v-help="'Difficulty Class of the saving throw.'" dense outlined />
                 </div>
               </div>
 
@@ -2189,7 +2189,7 @@
                     map-options
                     dense
                     outlined
-                    label="Revival Timing"
+                    label="Revival Timing" v-help="'When the creature comes back: next turn, dawn, after a delay.'"
                   />
                 </div>
               </div>
@@ -2197,7 +2197,7 @@
               <!-- Death Burst Damage Configuration -->
               <div v-if="deathPrevention.dcRule === 'upon_death_burst' || deathPrevention.uponDeathDealsDamage" class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-3">
-                  <formula-field path="extendedHp.deathPrevention.deathBurstDamageAmount" label="Death Burst Damage" dense outlined />
+                  <formula-field path="extendedHp.deathPrevention.deathBurstDamageAmount" label="Death Burst Damage" v-help="'Damage dealt when the creature dies and bursts.'" dense outlined />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
@@ -2205,7 +2205,7 @@
                     :options="damageTypeOptions"
                     dense
                     outlined
-                    label="Burst Damage Type"
+                    label="Burst Damage Type" v-help="'Damage type of the burst.'"
                   />
                 </div>
                 <div class="col-12 col-sm-3">
@@ -2220,7 +2220,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-3">
-                  <formula-field path="extendedHp.deathPrevention.deathBurstRange" label="Burst Radius (ft)" dense outlined />
+                  <formula-field path="extendedHp.deathPrevention.deathBurstRange" label="Burst Radius (ft)" v-help="'Radius of the burst in feet.'" dense outlined />
                 </div>
               </div>
 
@@ -2263,7 +2263,7 @@
         class="q-mt-sm rounded-borders"
         style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
         icon="translate"
-        label="Languages"
+        label="Languages" v-help="'Languages the creature speaks or understands.'"
         caption="Select official D&D languages, configure telepathy and understand-only options"
       >
         <div class="q-pa-sm">
@@ -2305,7 +2305,7 @@
               use-input
               input-debounce="0"
               new-value-mode="add-unique"
-              label="Select or Type Language to Add"
+              label="Select or Type Language to Add" v-help="'Pick a language or type a new one.'"
               dense
               outlined
               class="col-12"
@@ -2336,7 +2336,7 @@
                   <q-chip dense outline color="accent" class="q-ma-none text-weight-bold">
                     🧠 Telepathy
                   </q-chip>
-                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].telepathyRange`" label="Range (ft)" dense outlined @applied="syncLanguagesToString" />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].telepathyRange`" label="Range (ft)" v-help="'Range in feet.'" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2567,7 +2567,7 @@
                           :options="saveTypeOptions"
                           dense
                           outlined
-                          label="Save Type"
+                          label="Save Type" v-help="'Which saving throw is required.'"
                           @update:model-value="syncLanguagesToString"
                         />
                       </div>
@@ -2575,7 +2575,7 @@
                         <q-input
                           v-model.number="lang.saveDc"
                           type="number"
-                          label="Save DC"
+                          label="Save DC" v-help="'Difficulty Class of the saving throw.'"
                           dense
                           outlined
                           @update:model-value="syncLanguagesToString"
@@ -2645,7 +2645,7 @@
                         map-options
                         dense
                         outlined
-                        label="Concentration Interaction"
+                        label="Concentration Interaction" v-help="'How this interacts with concentration on a spell.'"
                         @update:model-value="syncLanguagesToString"
                       />
                     </div>
@@ -2657,7 +2657,7 @@
                         map-options
                         dense
                         outlined
-                        label="Requires Concentration"
+                        label="Requires Concentration" v-help="'The effect ends if the creature loses concentration.'"
                         @update:model-value="syncLanguagesToString"
                       />
                     </div>
@@ -2687,7 +2687,7 @@
                   <q-chip dense outline color="secondary" class="q-ma-none text-weight-bold">
                     🐾 Handle Animals
                   </q-chip>
-                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].animalHandling.dc`" label="Base DC" dense outlined @applied="syncLanguagesToString" />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].animalHandling.dc`" label="Base DC" v-help="'Difficulty Class before modifiers.'" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2799,7 +2799,7 @@
                 <div class="col-12 col-sm-6">
                   <q-input
                     v-model="getAnimalsConfig(lang).note"
-                    label="Note"
+                    label="Note" v-help="'Free text shown with this entry.'"
                     dense
                     outlined
                     placeholder="e.g. within 30 ft."
@@ -2859,7 +2859,7 @@
                 <div class="col-12 col-sm-6">
                   <q-input
                     v-model="getPlantsConfig(lang).note"
-                    label="Note"
+                    label="Note" v-help="'Free text shown with this entry.'"
                     dense
                     outlined
                     placeholder="e.g. ordinary and plant creatures"
@@ -2879,7 +2879,7 @@
                   <q-chip dense outline color="purple" class="q-ma-none text-weight-bold">
                     💀 Undead (Command / Speak with Undead)
                   </q-chip>
-                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].undeadConfig.telepathicRange`" label="Range (ft)" dense outlined @applied="syncLanguagesToString" />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].undeadConfig.telepathicRange`" label="Range (ft)" v-help="'Range in feet.'" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2914,7 +2914,7 @@
                 <div class="col-12">
                   <q-input
                     v-model="getUndeadConfig(lang).note"
-                    label="Note"
+                    label="Note" v-help="'Free text shown with this entry.'"
                     dense
                     outlined
                     placeholder="e.g. skeletons and zombies under its command"
@@ -2934,7 +2934,7 @@
                   <q-chip dense outline color="brown" class="q-ma-none text-weight-bold">
                     🪦 Dead (Speak with Dead)
                   </q-chip>
-                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].deadConfig.maxQuestions`" label="Questions" dense outlined @applied="syncLanguagesToString" />
+                  <formula-field :path="`languagesList[id=${encodeURIComponent(lang.id)}].deadConfig.maxQuestions`" label="Questions" v-help="'How many questions the creature can ask or answer.'" dense outlined @applied="syncLanguagesToString" />
                 </div>
                 <div class="row items-center q-gutter-x-xs no-wrap">
                   <swap-buttons field="languagesList" :idx="idx" flat dense />
@@ -2979,7 +2979,7 @@
                 <div class="col-12 col-sm-6">
                   <q-input
                     v-model="getDeadConfig(lang).note"
-                    label="Note"
+                    label="Note" v-help="'Free text shown with this entry.'"
                     dense
                     outlined
                     placeholder="e.g. requires 10-minute ritual"
@@ -3010,7 +3010,7 @@
                 <div class="col-10 col-sm-3">
                   <q-input
                     v-model="lang.note"
-                    label="Note"
+                    label="Note" v-help="'Free text shown with this entry.'"
                     dense
                     outlined
                     placeholder="e.g. with allies"
@@ -3052,7 +3052,7 @@
           <div v-if="showManualLangEdit" class="q-mt-xs">
             <q-input
               v-model="monster.languages"
-              label="Raw Languages String"
+              label="Raw Languages String" v-help="'Edit the languages line as plain text.'"
               outlined
               dense
             />

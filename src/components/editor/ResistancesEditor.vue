@@ -22,7 +22,7 @@
               dark
               dense
               size="xs"
-              label="Auto-Sort Concise First"
+              label="Auto-Sort Concise First" v-help="'List short entries before long ones.'"
               class="text-caption text-grey-4"
             >
               <q-tooltip>When checked, automatically sorts shorter/concise resistances first and complex conditions last. When unchecked, strictly preserves your authored order.</q-tooltip>
@@ -32,7 +32,7 @@
               dark
               dense
               size="xs"
-              label="Auto-Split on Line Overflow"
+              label="Auto-Split on Line Overflow" v-help="'Break the defenses line automatically when it is too long.'"
               class="text-caption text-grey-4"
             >
               <q-tooltip>Automatically splits Damage and Conditions into separate dedicated rows if the text exceeds the line</q-tooltip>
@@ -48,7 +48,7 @@
               dense
               size="xs"
               color="negative"
-              label="Split Vulnerabilities Row"
+              label="Split Vulnerabilities Row" v-help="'Show vulnerabilities on their own lines.'"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Vulnerabilities and dedicated row for Condition Vulnerabilities</q-tooltip>
@@ -61,7 +61,7 @@
               dense
               size="xs"
               color="warning"
-              label="Split Resistances Row"
+              label="Split Resistances Row" v-help="'Show resistances on their own lines.'"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Resistances and dedicated row for Condition Resistances</q-tooltip>
@@ -74,7 +74,7 @@
               dense
               size="xs"
               color="secondary"
-              label="Split Immunities Row"
+              label="Split Immunities Row" v-help="'Show immunities on their own lines.'"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Immunities and dedicated row for Condition Immunities</q-tooltip>
@@ -123,7 +123,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Damage Vulnerability to Add"
+            label="Select or Type Damage Vulnerability to Add" v-help="'Vulnerability doubles damage of this type.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('vulnerabilities', val)"
@@ -180,7 +180,7 @@
                 map-options
                 use-input
                 new-value-mode="add-unique"
-                label="Save Modifier & Outcome"
+                label="Save Modifier & Outcome" v-help="'Save bonus or penalty and its result.'"
                 dense
                 outlined
                 clearable
@@ -210,7 +210,7 @@
                 :options="conditionDurationOptions"
                 emit-value
                 map-options
-                label="Duration"
+                label="Duration" v-help="'How long the effect lasts.'"
                 dense
                 outlined
                 clearable
@@ -265,7 +265,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Condition Vulnerability to Add"
+            label="Select or Type Condition Vulnerability to Add" v-help="'Disadvantage on saves against this condition.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('conditionVulnerabilities', val)"
@@ -358,7 +358,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Damage Resistance to Add"
+            label="Select or Type Damage Resistance to Add" v-help="'Resistance halves damage of this type.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('resistances', val)"
@@ -414,7 +414,7 @@
                 map-options
                 use-input
                 new-value-mode="add-unique"
-                label="Save Modifier & Outcome"
+                label="Save Modifier & Outcome" v-help="'Save bonus or penalty and its result.'"
                 dense
                 outlined
                 clearable
@@ -430,7 +430,7 @@
                 :options="benefitOptions"
                 use-input
                 new-value-mode="add-unique"
-                label="Triggered Benefit / Reaction"
+                label="Triggered Benefit / Reaction" v-help="'What the creature gains when the trigger happens.'"
                 dense
                 outlined
                 clearable
@@ -443,7 +443,7 @@
                 :options="benefitTriggerOptions"
                 emit-value
                 map-options
-                label="Trigger"
+                label="Trigger" v-help="'What sets off this defensive effect.'"
                 dense
                 outlined
                 @update:model-value="syncDefenses"
@@ -483,7 +483,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Condition Resistance to Add"
+            label="Select or Type Condition Resistance to Add" v-help="'Advantage on saves against this condition.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('conditionResistances', val)"
@@ -534,7 +534,7 @@
                 :options="unifiedSaveOutcomeOptions"
                 emit-value
                 map-options
-                label="Save Outcome & Defense Mode"
+                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
                 dense
                 outlined
                 clearable
@@ -575,7 +575,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Damage Immunity to Add"
+            label="Select or Type Damage Immunity to Add" v-help="'Immunity: the creature takes no damage of this type.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('immunities', val)"
@@ -629,7 +629,7 @@
                 :options="unifiedSaveOutcomeOptions"
                 emit-value
                 map-options
-                label="Save Outcome & Defense Mode"
+                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
                 dense
                 outlined
                 clearable
@@ -645,7 +645,7 @@
                 :options="benefitOptions"
                 use-input
                 new-value-mode="add-unique"
-                label="Triggered Benefit / Reaction"
+                label="Triggered Benefit / Reaction" v-help="'What the creature gains when the trigger happens.'"
                 dense
                 outlined
                 clearable
@@ -658,7 +658,7 @@
                 :options="benefitTriggerOptions"
                 emit-value
                 map-options
-                label="Trigger"
+                label="Trigger" v-help="'What sets off this defensive effect.'"
                 dense
                 outlined
                 @update:model-value="syncDefenses"
@@ -698,7 +698,7 @@
             use-input
             input-debounce="0"
             new-value-mode="add-unique"
-            label="Select or Type Condition Immunity to Add"
+            label="Select or Type Condition Immunity to Add" v-help="'The creature cannot be affected by this condition.'"
             dense
             outlined
             @update:model-value="(val) => addDefenseItem('conditions', val)"
@@ -749,7 +749,7 @@
                 :options="unifiedSaveOutcomeOptions"
                 emit-value
                 map-options
-                label="Save Outcome & Defense Mode"
+                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
                 dense
                 outlined
                 clearable

@@ -88,7 +88,7 @@
                   use-input
                   fill-input
                   hide-selected
-                  label="Override"
+                  label="Override" v-help="'Type a fixed save bonus instead of the computed one.'"
                   new-value-mode="add-unique"
                   @input-value="(val) => (monster.saves[stat].overrideValue = validateNumber(val, 0))"
                   @update:model-value="(val) => (monster.saves[stat].overrideValue = validateNumber(val, 0))"
@@ -99,7 +99,7 @@
                   dense
                   outlined
                   v-model="monster.saves[stat].condition"
-                  label="Condition / Trigger"
+                  label="Condition / Trigger" v-help="'When the save bonus or advantage applies, e.g. “against being frightened”.'"
                   placeholder="e.g. vs spells, vs poison"
                   clearable
                 />

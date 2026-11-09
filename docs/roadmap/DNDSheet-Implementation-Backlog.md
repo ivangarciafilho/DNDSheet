@@ -681,9 +681,9 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A13.0** Pre-flight: export a control inventory (file, control, label, has tooltip?) — the coverage baseline (≈ 17 %) · S — measured 70 / 559 controls with a `<q-tooltip>` = 12.5 % (static, `test/inventory.mjs`) (199)
 - [ ] **A13.1** `components/kit/CatalogSelect.vue` (+ component tests: order law, custom first, search, keyboard, headers) · L
 - [ ] **A13.2** Enumeration catalogs: sizes, creature types, alignments, damage types, conditions, languages, senses, skills, tools, schools, spell levels, recharge, roles · L
-- [ ] **A13.3** `components/kit/HelpTip.vue`, `v-help` directive, generalised delegated host (from A5) · M — progress (201): `v-help` directive (`src/boot/help.ts`: native tooltip + `aria-description`) adopted on 15 Senses controls; coverage 12.5 % → 15.2 %. Left: `HelpTip.vue` icon component, delegated host
+- [x] **A13.3** `components/kit/HelpTip.vue`, `v-help` directive, generalised delegated host (from A5) · M — `v-help` (201) and `HelpTip.vue` focusable icon (202); the sheet keeps its delegated `statblock-help` host — progress (201): `v-help` directive (`src/boot/help.ts`: native tooltip + `aria-description`) adopted on 15 Senses controls; coverage 12.5 % → 15.2 %. Left: `HelpTip.vue` icon component, delegated host
 - [ ] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M
-- [ ] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M
+- [x] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M — `test/audit-help.mjs`, floor `test/help-floor.txt` = 35 %, `npm run audit:help` (202)
 - [ ] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M
 - [x] **A13.8** Verify BS-40 under CR-154: delegated help, print and global `.statblock` selectors target the sole rendered sheet; no inline composer preview DOM; record the decision (*added A7*) · S — decision: one sheet. Only `WebRenderer.vue` renders `.statblock`; fuzz Step 46 asserts no `[data-composer-preview]`/attack/multiattack preview DOM; help smoke and the print probe target `#render .statblock` (199)
 - [ ] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S
@@ -720,8 +720,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R5 | UX-01…03 | A13, A12 | 3–4 d | 10 files · +900 / −600 |
 
 - [ ] **A15.1** `ClassCastingEditor`, `SpellcastingEditor`, `AtWillCastingEditor`: kit adoption, tips, fit · L
-- [ ] **A15.2** `SkillsEditor`, `SavesEditor`: kit adoption, tips, fit · M
-- [ ] **A15.3** `SensesEditor`, `SpeedsEditor`, `ResistancesEditor`, `InventoryEditor`: kit adoption, tips, fit · M
+- [ ] **A15.2** `SkillsEditor`, `SavesEditor`: kit adoption, tips, fit · M — tips done (202); fit pass left
+- [ ] **A15.3** `SensesEditor`, `SpeedsEditor`, `ResistancesEditor`, `InventoryEditor`: kit adoption, tips, fit · M — tips on Senses, Speeds, Resistances (201–202); Inventory tips and fit left
 - [ ] **A15.4** Audit: help coverage and overflow for these panels · S
 - [ ] **A15.5** Keyboard pass · S
 - [ ] **A15.6** Close: commit `casting, checks, senses and defenses panels adopt the interaction kit` · S

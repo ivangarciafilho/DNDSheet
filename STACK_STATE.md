@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build201 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build202 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build202 (2026-11-08)**: `HelpTip.vue`; `npm run audit:help` with a 35 % floor; 163 `v-help` tips across Skills, Saves, Speeds, Resistances and Basics; help coverage 15.2 % → 35.6 %. Fast build: production builds and core tests only. Release candidate `rc-2.4.3-build-202-help-coverage`.
 
 - **Build201 (2026-11-08)**: first-run storage notice (Pages d4); localisable spell headings (A12.10 a3); `v-help` directive on 15 Senses controls (A13.3 progress, coverage 15.2 %). Fast build at the user's request: production builds only, no browser gate run. Release candidate `rc-2.4.3-build-201-storage-hint-help-directive`.
 
