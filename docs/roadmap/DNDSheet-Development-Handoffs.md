@@ -1239,3 +1239,13 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 | **Delivered Scope** | (1) Streamlined trait text wrapping directly beneath `.sb-head` (`x = 0`); (2) A4 layer normal blend occlusion + SVG `<feColorMatrix>` luminance-to-alpha (`grayscaleAsAlpha`) for opaque PNG/JPGs; (3) Interactive `GradientOverlayController.vue` with draggable color keys, double-click `%` stop editing, and draggable SVG falloff curve overlay (`gradient-curve.ts`); (4) `RadialOffsetController.vue` & `DualKnobCropSlider.vue` with X/Y values inside horizontal/vertical slider knobs, double-click inline editing, and parallel `Crop X` / `Crop Y` sliders; (5) Physical attacks (`Slam`) compact Row 1 (`name | scope | mechanics`) and spell-like traits/actions (`Exorcise`) hierarchical 3-row plate (`[Usage] Name, School/Level (Components) | Duration` on Row 1, `Scope | Mechanics` on Row 2, `Outcomes` on Row 3); (6) Indented `↳` rider rows for Speed (`splitSpeedRiderRows` + `Hide`), HP (`splitHpRiderRows` with separate `Bloodied`, `Temp HP`, `Regeneration`, `Death Prevention`, `DT`, `DR`), and AC (`splitAcRiderRows` with 1 row per rider); (7) Target count + noun grammar (`1 target which you can see 10 ft.`) + `FormulaField.vue` blur commit; (8) Category and item fold/unfold in `ActionsEditor.vue`. |
 | **Verification** | Core unit tests: **361/361 passing** (`npm test`, including `test/core/Build183Features.test.ts`); Quasar production build (`npx quasar build` exit 0); 50-step live browser CDP fuzz suite (`node test/exhaustive-ui-fuzz.js` 50/50 green, 0 console/runtime errors). |
 | **Live Evaluation** | Served at `http://localhost:8080/#/` and archived in `.codex-temp/release-candidates/rc-2.4.3-build-183-radial-crop-knobs-curved-gradient-bar-and-hierarchical-plates/spa`. |
+
+
+## Handoff — after Build 208 (2026-11-08)
+
+- **Branch** `build185-repairs` at `d2c418e`; tags `rc-2.4.3-build-204…208-*`; gh-pages at `d35c659` (live).
+- **Mode change:** Builds 204–208 were no-tests. **Next agent starts in safe mode** with Backlog H1 (gate + vue-tsc) — read `DNDSheet-GoHorse-Audit-204-208.md` first.
+- **RC folders:** last one is RC203; `make-rc.mjs` failed on 204 and was skipped after. Port 9106 still serves RC203. Fix in H10.
+- **Work tree trap:** Pages output is `dist-pages/` (not `dist-pages/spa/`). Publishing `spa/` ships an empty site.
+- **New modules:** `core/domain/random-table.ts`, `core/domain/outcome-graph.ts`, `components/editor/RandomTablesEditor.vue`.
+- **Workload:** 115 done / 113 open top-level (unchanged since Build203), plus 12 new H items → 115 / 125.

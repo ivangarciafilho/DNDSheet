@@ -1219,3 +1219,23 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - [x] **B183.7** Target count and noun rendering across structured/legacy attacks and actions (`scopePhrase` fallback to `target`/`targets`, `normalizeTargeting` empty-string guard, `FormulaField.vue` blur/input commit and target count presets, `reactionChainView` object formatting) (`src/core/domain/ability-grammar.ts`, `src/components/kit/FormulaField.vue`, `src/core/domain/reaction-composer.ts`).
 - [x] **B183.8** Category-level and card-level fold/unfold controls in `ActionsEditor.vue` using `v-show` to preserve `<composer-chain>` DOM hierarchy (`src/components/editor/ActionsEditor.vue`).
 - [x] **B183.9** Unit test suite (`test/core/Build183Features.test.ts`, 361/361 passing) and full 50-step live browser E2E verification (`node test/exhaustive-ui-fuzz.js`).
+
+
+## Build 204–208 grooming — go-horse debt and safe-mode restart (H series)
+
+Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-series feature. Each closes only with its proof named.
+
+- [ ] **H1** Run `npm run gate` + `vue-tsc --noEmit` on `d2c418e`; record failures in Handoffs · S · proof: gate log
+- [ ] **H2** Declare `id/recipient/refs/presentation` on the outcome projection type; remove `as any`/`unknown` casts in WebRenderer and RandomTablesEditor · S · proof: vue-tsc clean
+- [ ] **H3** Outcome phrase design: one owner (`outcomePhrase`), recipient folded into the trigger lead (“On a failed save, each creature in the area takes …”), refs rendered as authored prose; delete `outcomeProse` duplicate · M · proof: goldens + new unit cases (no double colon)
+- [ ] **H4** Escape or sanitize recipient/ref text in the sector `v-html` path · S · proof: unit test with `<script>` recipient
+- [ ] **H5** `randomTables` into the monster schema: defaults, migration step, JSON import/export, undo snapshot, database studio round-trip; drop the computed side effect · M · proof: save/reload + import/export smoke
+- [ ] **H6** Random tables: i18n keys, NaN-safe From/To, theme + print styles, A4 layer registration, legacy text migration via `parseLegacyTable` · M · proof: 12-theme + print screenshots, migration test
+- [ ] **H7** Outcome editor: memoise `validateOutcomes` once per list, disambiguate “Builds on” labels (index + trigger), regenerate ids on duplicate · S · proof: unit test on duplicate path
+- [ ] **H8** Layout `vertical/horizontal` honoured on the non-sector path too · S · proof: render snapshot
+- [ ] **H9** Rewrite the 250 generated tips into purpose-led copy (why, not what) per editor; verify the 8 repaired compound tags render; keep the floor at 70 only after rewrite · L · proof: `audit:help` + copy review list
+- [ ] **H10** Publish guard: one `tools/publish.mjs` that builds SPA + Pages, asserts `dist-pages/index.html` and `/DNDSheet/` base, fixes `make-rc.mjs` args, creates the RC folder and refuses to push an empty tree · S · proof: dry run + RC 208 folder
+- [ ] **H11** Close A11.5 (tests + goldens) then A11.9 (depends on A11.5 + H5/H6) · M
+- [ ] **H12** Workstation hygiene: stop stray `node` processes; keep one temp tree per build · XS
+
+**Why the task count stalled at 115/113 in Builds 204–208:** every touched task is L-sized and its close criteria require tests; no-tests mode can move code but cannot close tasks. Safe mode resumes with H1.
