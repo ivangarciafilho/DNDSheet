@@ -30,6 +30,14 @@ import type { Monster as DomainMonster } from 'src/core/domain/types'
 import type { LairAction } from 'src/core/domain/types'
 import { listJoin } from './list-join'
 
+// Outcome sector helpers (A11.5): recipient and reference text is author input, so it is escaped before entering v-html.
+const escapeSectorHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+const sectorRefs = (o: { refs?: string[] }, all: Array<{ id?: string; trigger: string }>) => {
+  const names = (o.refs ?? []).map((r) => all.find((x) => x.id === r && x !== o)?.trigger).filter((x): x is string => !!x)
+  return names.length ? ` (builds on the ${escapeSectorHtml(names.join(' and ').toLowerCase())} result)` : ''
+}
+
+
 export type MonsterContext =
   | MonsterTrait
   | Monster['spellcasting']
@@ -662,7 +670,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
     const scopeText = scopePhrase(ability, renderContext)
     const scope = scopeText ? [boldNumbers(scopeText)] : []
-    const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length))
+    const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length) || (o.presentation && o.presentation !== 'inline'))
     let effectsStr = ''
     if (hasSectors) {
       const sectorsHtml = ability.outcomes.map(o => {
@@ -673,7 +681,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         if (o.diceTable && o.diceTable.length) {
           tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
         }
-        return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient ? ', ' + o.recipient : ''}:</i> ${effectsText}${riderText}${(o.refs || []).length ? ' (builds on ' + (o.refs || []).map((r: string) => ability.outcomes.find((x) => x.id === r)?.trigger).filter(Boolean).join(' and ') + ')' : ''}${tableHtml}</div>`
+        return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient?.trim() ? ', ' + escapeSectorHtml(o.recipient.trim()) : ''}:</i> ${effectsText}${riderText}${sectorRefs(o, ability.outcomes)}${tableHtml}</div>`
       }).join('')
       effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
     } else {
@@ -896,7 +904,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
-        const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length))
+        const hasSectors = Array.isArray(ability.outcomes) && ability.outcomes.some(o => (o.layoutSector && o.layoutSector !== 'all') || o.targetFilter || (o.diceTable && o.diceTable.length) || (o.presentation && o.presentation !== 'inline'))
         let effectsStr = ''
         if (hasSectors) {
           const sectorsHtml = ability.outcomes.map(o => {
@@ -907,7 +915,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
             if (o.diceTable && o.diceTable.length) {
               tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
             }
-            return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient ? ', ' + o.recipient : ''}:</i> ${effectsText}${riderText}${(o.refs || []).length ? ' (builds on ' + (o.refs || []).map((r: string) => ability.outcomes.find((x) => x.id === r)?.trigger).filter(Boolean).join(' and ') + ')' : ''}${tableHtml}</div>`
+            return `<div class="outcome-sector outcome-${o.presentation || 'inline'}" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}${o.recipient?.trim() ? ', ' + escapeSectorHtml(o.recipient.trim()) : ''}:</i> ${effectsText}${riderText}${sectorRefs(o, ability.outcomes)}${tableHtml}</div>`
           }).join('')
           effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
         } else {

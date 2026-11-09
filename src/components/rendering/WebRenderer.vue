@@ -928,15 +928,15 @@
         ></li>
       </ul>
     </div>
-    <div v-for="rt in ((monster as any).randomTables || [])" :key="rt.id" class="random-table">
-          <h3 class="section">{{ rt.title || 'Random table' }}</h3>
-          <table class="random-table-grid" style="width:100%;border-collapse:collapse">
-            <thead><tr><th style="text-align:left">{{ rt.dice }}</th><th style="text-align:left">Result</th></tr></thead>
+    <div v-for="rt in randomTables" :key="rt.id" class="random-table">
+          <h3 class="section">{{ rt.title || $t('editor.randomTables.defaultTitle') }}</h3>
+          <table class="random-table-grid">
+            <thead><tr><th>{{ rt.dice }}</th><th>{{ $t('editor.randomTables.result') }}</th></tr></thead>
             <tbody>
-              <tr v-for="row in [...rt.rows].sort((a: any, b: any) => a.min - b.min)" :key="row.id">
-                <td style="white-space:nowrap;padding-right:.6em">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td>{{ row.text }}</td>
+              <tr v-for="row in rt.sortedRows" :key="row.id">
+                <td class="random-table-range">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td>{{ row.text }}</td>
               </tr>
-              <tr v-if="rt.fallback"><td>otherwise</td><td>{{ rt.fallback }}</td></tr>
+              <tr v-if="rt.fallback"><td class="random-table-range">{{ $t('editor.randomTables.otherwise') }}</td><td>{{ rt.fallback }}</td></tr>
             </tbody>
           </table>
         </div>
@@ -2032,6 +2032,11 @@ export default defineComponent({
       sanitizeWebString(textRenderer.regionalEffectPreamble.value)
     )
 
+    // A11.9: sorted copies so the template never mutates stored rows.
+    const randomTables = computed(() =>
+      (monster.randomTables ?? []).map((rt) => ({ ...rt, sortedRows: [...rt.rows].sort((a, b) => a.min - b.min) }))
+    )
+
     const regionalEffects = computed(() =>
       textRenderer.regionalEffects.value.map((re) => sanitizeWebString(re))
     )
@@ -2241,6 +2246,7 @@ export default defineComponent({
       lairActions,
       regionalEffectPreamble,
       regionalEffects,
+      randomTables,
       columns,
       inventory,
       blockStyle,
@@ -2306,6 +2312,10 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.random-table-grid { width: 100%; border-collapse: collapse; }
+.random-table-grid th { text-align: left; }
+.random-table-range { white-space: nowrap; padding-right: 0.6em; }
+
 /* i don't know why scoped doesn't work but this does */
 .statblock b {
   font-family: ff-scala-sans-pro;

@@ -3534,7 +3534,7 @@ async function runFuzz() {
   console.log('\n--- Step 49: Studio-only editor, reaction templates and reversible section resets ---')
   const step49=await evalInPage(`async()=>{
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),app=document.querySelector('#q-app').__vue_app__,pinia=app.config.globalProperties.$pinia,monster=pinia._s.get('monster'),templates=pinia._s.get('templates'),t=app.config.globalProperties.$t;
-    const retired=['Traits','Attacks','Multiattack','Reactions','Legendary Actions','Mythic Actions','Lair Actions'],panels=[...document.querySelectorAll('#editor > .q-list > .q-expansion-item')],labels=panels.map(el=>el.querySelector('.q-item__label')?.textContent.trim()),retirement=retired.every(label=>!labels.includes(label)),villainKept=labels.includes('Villain & Bloodied Actions'),panelCount=panels.length;
+    const retired=['Traits','Attacks','Multiattack','Reactions','Legendary Actions','Mythic Actions','Lair Actions'],panels=[...document.querySelectorAll('#editor > .q-list > .q-expansion-item')],labels=panels.map(el=>el.querySelector('.q-item__label')?.textContent.trim()),retirement=retired.every(label=>!labels.includes(label)),villainKept=labels.includes('Villain & Bloodied Actions')&&labels.includes('Random Tables'),panelCount=panels.length;
     monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'retire-reaction',name:'Saved response',description:'Keep response.',trigger:'When threatened',limitedUse:{count:2,rate:'DAWN'}});
     monster.addAction();monster.addLegendaryAction(monster.actions.at(-1).id,2);monster.addMythicAction(monster.actions.at(-1).id);monster.addLairAction();await wait(200);
     const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(150);
@@ -3546,7 +3546,7 @@ async function runFuzz() {
     return {retirement,villainKept,panelCount,templateSaved,templateApplied,problems};
   }`)
   console.log('Step 49 result:',JSON.stringify(step49,null,2))
-  if(!step49.retirement||!step49.villainKept||step49.panelCount!==14||!step49.templateSaved||!step49.templateApplied||step49.problems.length)throw new Error('Step 49 failed: '+JSON.stringify(step49))
+  if(!step49.retirement||!step49.villainKept||step49.panelCount!==15||!step49.templateSaved||!step49.templateApplied||step49.problems.length)throw new Error('Step 49 failed: '+JSON.stringify(step49))
 
   console.log('\n--- Step 50: Structured attack bonuses and target agreement share screen/export policy ---')
   const step50=await evalInPage(`async()=>{

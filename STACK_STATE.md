@@ -1,6 +1,10 @@
 # Local DNDSheet Stack State
 
-> Current: Build203 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build209 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build209 (2026-11-08), safe mode restored**: full gate 9/9 PASS for the first time since Build200. Fixed a live Build208 bug (outcome recipient rendered as a bare `:`, references as “builds on the  result”); escaped author text in outcome HTML; random tables are now part of the saved monster (defaults, load-time normaliser, store actions; reset no longer keeps the previous monster's tables); editor and statblock strings translated; fuzz Step 49 expects 15 panels (Random Tables). New tests: `OutcomeClauses.test.ts`, `RandomTable.test.ts` (core 396/396). Release candidate `rc-2.4.3-build-209-safe-mode-repairs`.
+
+- **Builds 204–208 (2026-11-08), no-tests mode at the owner's request**: help sweep to 72.6 %, random tables (domain, editor, statblock, Homebrewery), outcome clause ids/recipients/references/layout. Audited in `docs/roadmap/DNDSheet-GoHorse-Audit-204-208.md`; debt tracked as Backlog H1–H16. No RC folders were cut for 204–208.
 
 - **Build203 (2026-11-08)**: A12.5 (class spell lists include custom and subclass spells, labelled); 64 tips on class casting, A4 studio and composer settings; help coverage 42.4 %, floor 40 %. Fast build. Release candidate `rc-2.4.3-build-203-subclass-spells-and-tips`.
 

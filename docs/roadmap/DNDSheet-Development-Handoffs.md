@@ -1249,3 +1249,13 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Work tree trap:** Pages output is `dist-pages/` (not `dist-pages/spa/`). Publishing `spa/` ships an empty site.
 - **New modules:** `core/domain/random-table.ts`, `core/domain/outcome-graph.ts`, `components/editor/RandomTablesEditor.vue`.
 - **Workload:** 115 done / 113 open top-level (unchanged since Build203), plus 12 new H items → 115 / 125.
+
+## Handoff — after Build 209 (2026-11-08), safe mode
+
+- **Branch** `build185-repairs`; tag `rc-2.4.3-build-209-safe-mode-repairs`; RC folder under `.codex-temp/release-candidates/`; port 9106 serves RC209.
+- **Gate:** `npm run gate` 9/9 PASS on the committed tree. Typecheck is *not* in the gate: run `npx vue-tsc --noEmit --ignoreDeprecations 6.0`; the baseline is 682 errors (per file identical to Build203). Any count above the baseline per file is a regression until H14 lands a real gate step.
+- **Edits on Windows:** never patch TypeScript with PowerShell double-quoted strings — `${...}` is expanded by PowerShell and silently deletes template-literal code (root cause of the Build208 bug). Use a Node script with exact anchors that asserts each anchor matches once and keeps CRLF.
+- **Fuzz invariants that move with features:** Step 49 counts top-level editor panels (now 15). Adding a panel means updating that count *and* its label check in the same build.
+- **RC script:** `make-rc.mjs <dist/spa> <rcDir> <path-to-json>` — the third argument is a file path, not JSON text.
+- **Next, in order:** H5 smoke (save/reload/import/export/undo for random tables) → H6 rest (themes, print, A4 layer, legacy migration) → H13 → H10 publish script → H11 (close A11.5, then A11.9) → H9 tip rewrite → H14/H15 typecheck baseline.
+- **Workload:** 121 done / 123 open top-level.

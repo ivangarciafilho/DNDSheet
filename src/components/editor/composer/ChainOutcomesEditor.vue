@@ -220,7 +220,7 @@
 </template>
 
 <script lang="ts">
-import { newOutcomeId, triggerLead, validateOutcomes } from 'src/core/domain/outcome-graph'
+import { newOutcomeId, triggerLead, validateOutcomes, type OutcomeIssue } from 'src/core/domain/outcome-graph'
 import { computed, defineComponent, PropType } from 'vue'
 import { DAMAGE_TYPES, OUTCOME_TRIGGERS } from 'src/core/domain/action-composer'
 import type { AbilityOutcome, ActionEffect, EffectClause, OutcomeDiceTableRow } from 'src/core/domain/types'
@@ -240,6 +240,15 @@ export default defineComponent({
     const outcomes = computed(() => props.modelValue as AbilityOutcome[])
     const effects = computed(() => props.modelValue as ActionEffect[])
     const emitOutcomes = (next: AbilityOutcome[]) => emit('update:modelValue', next)
+    // One validation pass per outcome list; the template reads per-clause issues from this map.
+    const outcomeIssues = computed(() => {
+      const byId = new Map<string, OutcomeIssue[]>()
+      for (const issue of validateOutcomes(outcomes.value)) {
+        if (issue.kind === 'empty' || !issue.outcomeId) continue
+        byId.set(issue.outcomeId, [...(byId.get(issue.outcomeId) ?? []), issue])
+      }
+      return byId
+    })
     const emitEffects = (next: ActionEffect[]) => emit('update:modelValue', next)
 
     const setOutcome = (index: number, change: Partial<AbilityOutcome>) =>
@@ -308,8 +317,8 @@ export default defineComponent({
       addDiceRow,
       updateDiceRow,
       removeDiceRow,
-      refOptions: (index: number) => outcomes.value.filter((o, i) => i !== index && o.id).map((o) => ({ label: triggerLead(o.trigger), value: o.id as string })),
-      issuesFor: (o: AbilityOutcome) => validateOutcomes(outcomes.value).filter((x) => x.outcomeId === o.id && x.kind !== 'empty'),
+      refOptions: (index: number) => outcomes.value.flatMap((o, i) => (i !== index && o.id ? [{ label: `${i + 1}. ${triggerLead(o.trigger)}`, value: o.id }] : [])),
+      issuesFor: (o: AbilityOutcome) => (o.id ? outcomeIssues.value.get(o.id) ?? [] : []),
       setLegacy,
       addLegacy,
       removeLegacy,

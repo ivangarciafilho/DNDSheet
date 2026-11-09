@@ -510,6 +510,8 @@ const effectText = (effect: AbilityOutcome['effects'][number], context: AbilityR
   return ''
 }
 
+const escapeOutcomeHtml = (text: string) => text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+
 export function outcomePhrase(
   ability: AbilityProjection,
   context: AbilityRenderContext = {},
@@ -520,15 +522,19 @@ export function outcomePhrase(
     const effects = outcome.effects.map((effect) => effectText(effect, context)).filter(Boolean).map(ensurePeriod)
     const parts = [...effects]
     if (outcome.rider?.trim()) parts.push(outcome.rider.trim())
-    const refLeads = (outcome.refs ?? []).map((r) => ability.outcomes.find((o) => o.id === r)?.trigger).filter((x): x is string => !!x)
-    if (refLeads.length) parts.push(`(builds on the  result)`)
-    if (outcome.recipient) parts.unshift(`:`)
+    const refLabels = (outcome.refs ?? [])
+      .map((r) => ability.outcomes.find((o) => o.id === r && o !== outcome)?.trigger)
+      .filter((x): x is string => !!x)
+      .map((x) => triggerLabel(x, 'text2024').toLowerCase())
+    if (refLabels.length) parts.push(`(builds on the ${refLabels.join(' and ')} result)`)
     if (outcome.diceTable && outcome.diceTable.length) {
       const rows = outcome.diceTable.map((r) => `${r.roll}: ${r.effect}`).join('; ')
       parts.push(`(${rows})`)
     }
     const filterPrefix = outcome.targetFilter?.trim() ? `[${outcome.targetFilter.trim()}] ` : ''
-    const label = markLabel(`${filterPrefix}${triggerLabel(outcome.trigger, mode)}:`, markup)
+    const recipient = outcome.recipient?.trim() ? `, ${outcome.recipient.trim()}` : ''
+    const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`
+    const label = markLabel(markup === 'html' ? escapeOutcomeHtml(lead) : lead, markup)
     return parts.length ? `${label} ${ensurePeriod(parts.join(' '))}` : label
   })
 }

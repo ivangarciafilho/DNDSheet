@@ -1,3 +1,4 @@
+import { normalizeRandomTables } from '../domain/random-table.ts'
 import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts'
 
 export const CURRENT_MONSTER_VERSION = 11
@@ -498,6 +499,9 @@ export function migrateMonsterSchema(raw: any): Monster {
     if (trait.isConditional === undefined) trait.isConditional = false
     if (!trait.conditionalTrigger) trait.conditionalTrigger = ''
   }
+
+  // A11.9: optional field, normalised on every load so hand-edited or partial JSON cannot break the editor.
+  monster.randomTables = normalizeRandomTables(monster.randomTables)
 
   return monster as Monster
 }

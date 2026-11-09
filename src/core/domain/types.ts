@@ -1,3 +1,4 @@
+import type { RandomTable } from './random-table'
 import type { ComposableInitiativeRider } from './initiative-composer'
 
 export interface MonsterSenseItem {
@@ -1060,6 +1061,8 @@ export interface Monster {
   lairActions: LairAction[]
   regionalEffects: { id: string; description: string }[]
   regionalEffectDescription: string
+  /** A11.9 declarative random-outcome tables. Optional so older saves and fixtures stay valid. */
+  randomTables?: RandomTable[]
   inventory: string
   autoEstimateDefenseCr: boolean
   acConfig?: MonsterAcConfig
@@ -1486,6 +1489,7 @@ export function defaultMonster(): Monster {
     lairActions: [],
     regionalEffects: [],
     regionalEffectDescription: '',
+    randomTables: [],
     inventory: '',
     autoEstimateDefenseCr: true,
     portrait: {

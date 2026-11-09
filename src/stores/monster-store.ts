@@ -1,3 +1,4 @@
+import { nextRandomTableRow } from 'src/core/domain/random-table'
 import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { validate } from 'jsonschema'
 import { sortBy, union } from 'lodash'
@@ -248,6 +249,7 @@ export const useMonsterStore = defineStore('monster', {
       lairActions: [],
       regionalEffects: [],
       regionalEffectDescription: '',
+      randomTables: [],
       inventory: '',
       autoEstimateDefenseCr: true,
       portrait: {
@@ -1503,6 +1505,23 @@ export const useMonsterStore = defineStore('monster', {
           this.lairActions.splice(idx, 1)
         })
       }
+    },
+    addRandomTable() {
+      const id = uuidv4()
+      if (!Array.isArray(this.randomTables)) this.randomTables = []
+      this.randomTables.push({ id, title: '', dice: '1d6', rows: [{ id: uuidv4(), min: 1, max: 6, text: '' }] })
+    },
+    deleteRandomTable(tableId: string) {
+      const idx = (this.randomTables ?? []).findIndex((t) => t.id === tableId)
+      if (idx !== -1) this.randomTables!.splice(idx, 1)
+    },
+    addRandomTableRow(tableId: string) {
+      const table = (this.randomTables ?? []).find((t) => t.id === tableId)
+      if (table) table.rows.push(nextRandomTableRow(table, uuidv4()))
+    },
+    deleteRandomTableRow(tableId: string, rowId: string) {
+      const table = (this.randomTables ?? []).find((t) => t.id === tableId)
+      if (table) table.rows = table.rows.filter((r) => r.id !== rowId)
     },
     addRegionalEffect() {
       this.regionalEffects.push({

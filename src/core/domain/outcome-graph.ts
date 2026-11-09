@@ -46,13 +46,3 @@ export function validateOutcomes(outcomes: AbilityOutcome[]): OutcomeIssue[] {
   for (const id of ids.keys()) if (!state.get(id)) visit(id, [])
   return issues
 }
-
-/** Plain prose for one clause, used by text export and previews. */
-export function outcomeProse(o: AbilityOutcome, all: AbilityOutcome[] = []): string {
-  const effects = (o.effects ?? []).map((e) => (e.kind === 'damage' && e.formula ? `${e.formula}${e.damageType ? ` ${e.damageType}` : ''} damage` : (e.text ?? '').trim())).filter(Boolean)
-  const refs = (o.refs ?? []).map((r) => all.find((x) => x.id === r)).filter(Boolean).map((x) => triggerLead(x!.trigger).replace(/^On /, 'on '))
-  let s = `${triggerLead(o.trigger)}${o.recipient ? `, ${o.recipient}` : ''}: ${effects.join(' plus ') || '—'}`
-  if (refs.length) s += ` (as ${refs.join(' and ')})`
-  if (o.rider) s += `. ${o.rider.trim()}`
-  return s.replace(/\.?$/, '.')
-}

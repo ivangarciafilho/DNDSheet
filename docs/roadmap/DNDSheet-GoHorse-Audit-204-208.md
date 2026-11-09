@@ -48,3 +48,11 @@ gh-pages: `7cd71fb` publish was **empty for minutes** (only `.nojekyll`) — fix
 3. Re-run Step 51 goldens; if they drift, fix the phrase (item 2) instead of regenerating.
 4. Repair `make-rc.mjs` invocation, create RC 208, point 9106 at it.
 5. Only then pick up H-items below, in order.
+
+## Follow-up — Build209 findings the audit missed
+
+- **The worst defect was not on the list.** Build208's `outcomePhrase` edit was written through a PowerShell double-quoted string, so `${outcome.recipient...}` and `${refLeads...}` were expanded to empty strings. Every outcome with a recipient printed a bare `:` and every reference printed “builds on the  result”. The build still passed because the result is valid TypeScript. Caught by the new `OutcomeClauses` tests (4 of 6 fail on Build208).
+- **Reset leak.** Without a store default, Pinia's `$reset` patches over the old state and keeps keys the fresh state lacks, so a new monster could inherit the previous monster's random tables. Fixed by adding the default.
+- **A real gate regression.** Fuzz Step 49 asserts exactly 14 editor panels; the Random Tables panel made 15. The no-tests builds could not see it.
+- **Not a regression.** vue-tsc's 682 errors are identical per file to Build203; the go-horse code added none.
+- **Normaliser edge case found by test:** `Number(null)` is 0, so a missing `max` became 0; empty values now fall back.

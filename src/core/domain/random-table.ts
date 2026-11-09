@@ -1,6 +1,6 @@
 // A11.9 declarative random-outcome tables: stable ids, dice validation, coverage diagnostics, prose/table output.
 export interface RandomTableRow { id: string; min: number; max: number; text: string }
-export interface RandomTable { id: string; dice: string; rows: RandomTableRow[]; fallback?: string }
+export interface RandomTable { id: string; title?: string; dice: string; rows: RandomTableRow[]; fallback?: string }
 export interface TableDiagnostic { kind: 'dice' | 'gap' | 'overlap' | 'empty' | 'range'; message: string; rowIds?: string[] }
 
 const DICE = /^\s*(\d*)d(\d+)\s*([+-]\s*\d+)?\s*$/i;
@@ -62,4 +62,46 @@ export function parseLegacyTable(id: string, dice: string, text: string): Random
     if (m) rows.push({ id: `${id}-r${rows.length + 1}`, min: Number(m[1]), max: Number(m[2] ?? m[1]), text: m[3].trim() });
   }
   return { id, dice, rows };
+}
+
+const finiteInt = (value: unknown, fallback: number) => {
+  if (value === null || value === undefined || value === '') return fallback
+  const n = typeof value === 'number' ? value : Number(value)
+  return Number.isFinite(n) ? Math.trunc(n) : fallback
+}
+const text = (value: unknown) => (typeof value === 'string' ? value : '')
+
+/** Coerces stored tables into a valid shape: arrays, string fields, integer ranges, unique ids. */
+export function normalizeRandomTables(raw: unknown): RandomTable[] {
+  if (!Array.isArray(raw)) return []
+  const seen = new Set<string>()
+  const uniq = (id: unknown, fallback: string) => {
+    const base = text(id) || fallback
+    let out = base
+    let i = 2
+    while (seen.has(out)) out = `${base}-${i++}`
+    seen.add(out)
+    return out
+  }
+  return raw.filter((t) => t && typeof t === 'object').map((t, ti) => {
+    const table = t as Record<string, unknown>
+    const id = uniq(table.id, `rt-${ti + 1}`)
+    const rows = (Array.isArray(table.rows) ? table.rows : []).filter((r) => r && typeof r === 'object').map((r, ri) => {
+      const row = r as Record<string, unknown>
+      const min = finiteInt(row.min, 1)
+      return { id: uniq(row.id, `${id}-r${ri + 1}`), min, max: finiteInt(row.max, min), text: text(row.text) }
+    })
+    const out: RandomTable = { id, title: text(table.title), dice: text(table.dice) || '1d6', rows }
+    if (text(table.fallback)) out.fallback = text(table.fallback)
+    return out
+  })
+}
+
+/** The row an author most likely wants next: one past the highest end, clamped to the dice maximum. */
+export function nextRandomTableRow(table: RandomTable, id: string): RandomTableRow {
+  const ends = table.rows.map((r) => r.max).filter(Number.isFinite)
+  const last = ends.length ? Math.max(...ends) : 0
+  const top = diceRange(table.dice)?.max ?? last + 1
+  const min = Math.min(last + 1, top)
+  return { id, min, max: min, text: '' }
 }
