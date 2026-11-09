@@ -3,7 +3,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, provide } from 'vue'
+import { defineComponent, onMounted, provide } from 'vue'
+import { useQuasar } from 'quasar'
 import { useTextRenderer } from './components/rendering/useTextRenderer'
 import { useMonsterStore } from './stores/monster-store'
 
@@ -17,6 +18,23 @@ export default defineComponent({
     // on load validation
     const monsterStore = useMonsterStore()
     monsterStore.validate()
+
+    // Saved work lives in this browser for this address only (each port or domain has its own storage).
+    const $q = useQuasar()
+    const HINT_KEY = 'dndsheet.storageHintSeen'
+    onMounted(() => {
+      let seen = true
+      try { seen = localStorage.getItem(HINT_KEY) === '1' } catch { /* storage blocked: skip the hint */ }
+      if (seen) return
+      $q.notify({
+        message: `Your monsters are saved in this browser for ${window.location.host} only. To bring work from another address or device, export it there as JSON and use Import here.`,
+        timeout: 0,
+        multiLine: true,
+        color: 'grey-9',
+        icon: 'info',
+        actions: [{ label: 'Got it', color: 'amber', handler: () => { try { localStorage.setItem(HINT_KEY, '1') } catch { /* ignore */ } } }],
+      })
+    })
   },
 })
 </script>

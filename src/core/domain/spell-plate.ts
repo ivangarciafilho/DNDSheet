@@ -185,16 +185,19 @@ export interface SpellLevelHeadingInput extends LevelResourceInput {
   level: number
   levelCadence?: string
   bonusAction?: boolean
+  /** Localised words; English defaults keep the web plate and exports identical. */
+  labels?: { cantrips?: string; level?: string; bonusAction?: string }
 }
 
 /** Plain-text spell level heading in the web plate's order: "(4/Long Rest), Level 1 (Bonus Action):". */
 export function spellLevelHeading(input: SpellLevelHeadingInput): string {
-  if (input.level === 0) return 'Cantrips (at will):'
+  const words = { cantrips: 'Cantrips (at will)', level: 'Level', bonusAction: 'Bonus Action', ...input.labels }
+  if (input.level === 0) return `${words.cantrips}:`
   const ctx = resourceContext(input)
   const { slotCount, cadence } = levelResource(input.level, input.levelCadence, ctx)
   // Pact slots are shared, so their count is stated once, on the pact level.
   const lead = !ctx.isPact || input.level === ctx.maxPactLevel ? spellLevelLead(slotCount, cadence) : ''
-  return `${lead}Level ${input.level}${input.bonusAction ? ' (Bonus Action)' : ''}:`
+  return `${lead}${words.level} ${input.level}${input.bonusAction ? ` (${words.bonusAction})` : ''}:`
 }
 
 export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {

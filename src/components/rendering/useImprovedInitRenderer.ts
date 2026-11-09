@@ -245,7 +245,7 @@ export function useImprovedInitRenderer() {
       const cantrips = monster.knownSpellsOfLevel(0)
 
       if (cantrips.length > 0)
-        renderedRows.push(`${spellLevelHeading({ level: 0 })} ${cantrips.join(', ')}`)
+        renderedRows.push(`${spellLevelHeading({ level: 0, labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} ${cantrips.join(', ')}`)
 
       renderer.classSpellcastingSlots.value.forEach((slot) => {
         renderedRows.push(`${slot.renderedLabel} ${slot.renderedSpells}`)

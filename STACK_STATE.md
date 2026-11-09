@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build200 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build201 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build201 (2026-11-08)**: first-run storage notice (Pages d4); localisable spell headings (A12.10 a3); `v-help` directive on 15 Senses controls (A13.3 progress, coverage 15.2 %). Fast build at the user's request: production builds only, no browser gate run. Release candidate `rc-2.4.3-build-201-storage-hint-help-directive`.
 
 - **Build200 (2026-11-08)**: A11.1 closed (53 number inputs classified in the inventory); caster level, class levels and sense observation minutes migrated to `FormulaField`; inventory labels read from the input's own element. Release candidate `rc-2.4.3-build-200-number-input-classification`.
 

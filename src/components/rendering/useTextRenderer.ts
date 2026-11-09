@@ -1567,6 +1567,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           customRefreshRate: sc?.customRefreshRate,
           levelCadence: sc?.levelCadenceMap?.[s.level],
           bonusAction: Boolean(sc?.bonusActionLevelMap?.[s.level]),
+          labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') },
         }),
         renderedSpells: s.spells.join(', '),
       }

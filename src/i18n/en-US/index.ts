@@ -194,6 +194,8 @@ export default {
         cantrip: 'Cantrip',
         cantrips: 'Cantrips',
         cantripLabel: 'Cantrips (at will)',
+        levelWord: 'Level',
+        bonusActionWord: 'Bonus Action',
         showSlots: 'Show Slots',
         hideSlots: 'Hide Slots',
         classOnlyOn: 'Class Filter On',

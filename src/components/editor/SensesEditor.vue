@@ -64,6 +64,7 @@
                 dense
                 outlined
                 label="Range"
+                  v-help="'How far the sense reaches, in the unit chosen next to it.'"
                 style="width: 105px;"
                 new-value-mode="add-unique"
                 @input-value="(val) => (sense.range = validateNumber(val, 0))"
@@ -75,6 +76,7 @@
                 dense
                 outlined
                 label="Unit"
+                  v-help="'Feet for most senses; miles for very long ranges such as Life Sense.'"
                 style="width: 85px;"
               />
             </div>
@@ -101,6 +103,7 @@
                 v-model="sense.blindBeyond"
                 dense
                 label="Blind beyond it (Grimlock / Grell)"
+                  v-help="'The creature is blind past this range, like a grimlock relying on blindsight.'"
                 color="teal"
                 class="text-caption"
               />
@@ -110,6 +113,7 @@
                 v-model="sense.acrossPlanes"
                 dense
                 label="Across Material & Ethereal planes"
+                  v-help="'The sense also works into the Ethereal Plane, as with Ethereal Sight.'"
                 color="indigo"
                 class="text-caption"
               />
@@ -122,6 +126,7 @@
                   v-model="sense.echolocation"
                   dense
                   label="Echolocation / Can't while deafened (Bat)"
+                  v-help="'Blindsight from echolocation: it does not work while the creature is deafened.'"
                   color="teal"
                   class="text-caption"
                 />
@@ -135,6 +140,7 @@
                   v-model="sense.devilsSight"
                   dense
                   label="Ignore Magical Darkness (Devil's Sight)"
+                  v-help="'Sees normally in magical and nonmagical darkness within range.'"
                   color="purple"
                   class="text-caption"
                 />
@@ -148,6 +154,7 @@
                   dense
                   outlined
                   label="Light Impairment"
+                  v-help="'Sunlight or bright-light sensitivity that blinds or hinders the creature.'"
                 />
               </div>
             </template>
@@ -163,6 +170,7 @@
                   dense
                   outlined
                   label="Sentience Detection Scope"
+                  v-help="'What the sense detects: any thinking creature or only some kinds.'"
                 />
               </div>
             </template>
@@ -178,6 +186,7 @@
                   dense
                   outlined
                   label="Detection Mode"
+                  v-help="'Presence only, or exact location of what it senses.'"
                 />
               </div>
               <div class="col-12 col-sm-8">
@@ -190,6 +199,7 @@
                   dense
                   outlined
                   label="Target Creature Types / Triggers"
+                  v-help="'Creature types the sense reveals, such as celestials, fiends and undead.'"
                 />
               </div>
               <div class="col-12 col-sm-6">
@@ -202,6 +212,7 @@
                   dense
                   outlined
                   label="Gathered Info (Know Your Enemy / Analytical Sense)"
+                  v-help="'Facts the creature learns about a target it studies.'"
                 />
               </div>
               <div class="col-12 col-sm-3">
@@ -213,6 +224,7 @@
                   dense
                   outlined
                   label="Info Precision"
+                  v-help="'How exact the learned facts are: rough, relative or exact.'"
                 />
               </div>
               <div class="col-12 col-sm-3">
@@ -224,6 +236,7 @@
                   dense
                   outlined
                   label="Observation Requirement"
+                  v-help="'Whether the creature must watch the target first, and how.'"
                 />
               </div>
               <div v-if="sense.observationRequirement && sense.observationRequirement !== 'none'" class="col-6 col-sm-2">
@@ -239,6 +252,7 @@
                   v-model="sense.requiresStudyAction"
                   dense
                   label="Requires Study action"
+                  v-help="'The creature must take the Study action to use this sense.'"
                   color="amber"
                   class="text-caption"
                 />
@@ -265,6 +279,7 @@
                 dense
                 outlined
                 label="Condition / Custom Trigger"
+                  v-help="'Any extra condition, written as it should read on the sheet.'"
                 placeholder="e.g. while submerged, stone contact only"
               />
             </div>
