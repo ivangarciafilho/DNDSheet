@@ -4,7 +4,7 @@
 - Ruling: finish shared outcome data-loss/formula/escaping/container repairs, then land the existing H15/H14 compiler safeguard before widening A11.5. Full A11.5/H11 remains open.
 - Compiler provenance: unchanged211 and213 both683 diagnostics with pinned TS6.0.3/vue-tsc3.3.14, no normalized differences. Historical682 is not relabeled as a clean baseline. Keep app dependencies separate.
 - Delegated disjoint writes: outcome core/web; compiler tooling; browser regression. Root owns integration, documentation, release and evidence. One browser fuzz at a time, no active-gate source edits.
-- Final gate10/10 passed on unchanged inputs:410 core,55 scenarios on SPA/Pages; H15 closes, combined118 complete/119 open. H14 guard is partial; H11 remains open. Publish/live receipt follows in Build214 report.
+- Final gate10/10 passed on unchanged inputs:410 core,55 scenarios on SPA/Pages; H15 closes, combined118 complete/119 open. H14 guard is partial; H11 remains open. Source5ca9379/Pages e1ab48d/tag pushed, live footer214/index+entry parity verified;97 RC checksums copied and verified in central archive. Build214 report/receipt records publication.
 
 # DNDSheet session checkpoint - 2026-10-30
 

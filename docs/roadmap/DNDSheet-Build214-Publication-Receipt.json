@@ -1,0 +1,42 @@
+{
+  "source": "5ca93792ff88110d731666ea4584bdcf6b6c1780",
+  "pages": "e1ab48dd42222d4d485b8075e54660e57ab1e627",
+  "indexMatches": true,
+  "assets": [
+    {
+      "asset": "assets/index.81b7035a.js",
+      "sha256": "182480e895480c9563c2c8fe835d54000f350eb2cbbee7480a2ff41905b181b7",
+      "matches": true
+    },
+    {
+      "asset": "assets/index.b2f66a81.css",
+      "sha256": "2faf02c05883fee113ac1f8eb218e111a38a9af6a397d8af2790035352bb2aff",
+      "matches": true
+    }
+  ],
+  "candidateChecksums": 97,
+  "workload": {
+    "before": {
+      "done": 117,
+      "open": 120
+    },
+    "after": {
+      "done": 118,
+      "open": 119
+    },
+    "closed": [
+      "H15"
+    ],
+    "newTaskIds": 0
+  },
+  "gate": {
+    "steps": 10,
+    "coreTests": 410,
+    "browserScenariosPerTarget": 55,
+    "typeDiagnostics": 613,
+    "newTypeDiagnostics": 0,
+    "resolvedBaselineDiagnostics": 70
+  },
+  "visibleFooter": "v2.4.3 build 214",
+  "pagesBuildStatus": "built"
+}

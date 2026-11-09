@@ -51,3 +51,10 @@ Before: canonical219 IDs106 complete/113 open; recovery18 IDs11 complete/7 open;
 | Combined (237) |117 /120|118 /119|+1 /−1|
 
 New scope IDs0. H14 remains open: its safeguard is delivered, its debt burn-down is not. H11/A11.5/A11.9 remain open. Core400→410 (+10); exhaustive browser54→55 (+1 per SPA/Pages); gate9→10 named steps. H15 is the accepted closure; the publication receipt binds the candidate to its remote release.
+
+
+## Publication receipt
+
+Release source `5ca93792ff88110d731666ea4584bdcf6b6c1780`; Pages `e1ab48dd42222d4d485b8075e54660e57ab1e627`; tag `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`. Both branches and tag pushed. GitHub reports the exact Pages commit built; the official UI footer reads `v2.4.3 build 214`. The served index and JS/CSS entry assets are byte-identical to tested `dist-pages`. Frozen candidate97 checksums reverified, with a verified central archive copy. See `DNDSheet-Build214-Publication-Receipt.json`.
+
+The following documentation-only receipt commit does not alter the tested application source, tag or frozen candidate. The review tab remains available at https://ivangarciafilho.github.io/DNDSheet/?build=214#/.
