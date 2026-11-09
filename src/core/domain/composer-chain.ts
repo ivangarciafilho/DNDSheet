@@ -8,7 +8,6 @@ import type {
   AttackReach,
   AttackSource,
   DndStat,
-  EffectClause,
   MonsterAction,
   RangeSpec,
 } from './types.ts'
@@ -347,21 +346,6 @@ function areaValue(input: unknown): AbilityArea | undefined {
   return area
 }
 
-function outcomeValue(input: unknown): AbilityOutcome | undefined {
-  if (!isRecord(input) || !trimmed(input.trigger)) return undefined
-  const effects = (Array.isArray(input.effects) ? input.effects : []).filter(isRecord).flatMap((effect): EffectClause[] => {
-    if (effect.kind === 'damage' && trimmed(effect.formula)) {
-      const clause: EffectClause = { kind: 'damage', formula: trimmed(effect.formula) }
-      if (trimmed(effect.damageType)) clause.damageType = trimmed(effect.damageType)
-      return [clause]
-    }
-    return trimmed(effect.text) ? [{ kind: 'text', text: trimmed(effect.text) }] : []
-  })
-  const outcome: AbilityOutcome = { trigger: trimmed(input.trigger), effects }
-  if (trimmed(input.rider)) outcome.rider = trimmed(input.rider)
-  return outcome
-}
-
 const withTargeting = (action: Partial<MonsterAction>, change: (targeting: AbilityTargeting) => void): Partial<MonsterAction> => {
   const next: AbilityTargeting = { ...targetingOf(action) }
   change(next)
@@ -444,7 +428,8 @@ export function cellPatch(action: Partial<MonsterAction>, cellId: string, value:
     case 'legacy-area-distance':
       return { areaDistance: text || undefined }
     case 'outcomes': {
-      const outcomes = (Array.isArray(value) ? value : []).map(outcomeValue).filter((outcome): outcome is AbilityOutcome => !!outcome)
+      if (!Array.isArray(value)) return {} // Invalid callers cannot erase authored outcomes.\n      // Validation is separate: never discard IDs, references, layout, tables or extension fields on Apply.
+      const outcomes = cloneData(value) as AbilityOutcome[]
       return { outcomes: outcomes.length ? outcomes : undefined }
     }
     case 'legacy-effects': {
@@ -495,6 +480,7 @@ export function validateCell(cellId: string, value: unknown): string {
       return distance.ok && !(typeof distance.value === 'number' && distance.value <= 0) ? '' : DISTANCE_ERROR
     }
     case 'outcomes': {
+      if (!Array.isArray(value)) return 'Replace the invalid outcome list before applying'
       for (const outcome of Array.isArray(value) ? value : []) {
         if (!isRecord(outcome) || !trimmed(outcome.trigger)) return 'Every outcome needs a trigger'
         for (const effect of Array.isArray(outcome.effects) ? outcome.effects : []) {

@@ -1,3 +1,7 @@
+## Build225 outcome hardening
+
+Draft identities, move/copy/delete, identity repair and full outcome metadata on Apply are implemented. Shared prose/HTML accepts malformed optional legacy fields safely. Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Publication/live verification follows. Stable multi-container ownership, typed predicates and complete random-table integration remain deferred under A11.5/A11.9.
+
 # Feature matrix — Build222 verification packet
 
 This matrix describes implemented behavior, not completion of an entire roadmap track. Final release evidence is recorded in the Build222 report and publication receipt.

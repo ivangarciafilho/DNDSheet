@@ -4,6 +4,8 @@
 
 DNDSheet is a Vue 3 / Quasar editor for D&D monster stat blocks, with a separate character reference sheet. This fork builds on [Falindrith's 5e Monster Maker](https://github.com/ebshimizu/5e-monster-maker).
 
+Build225 hardens outcome editing: move/copy/delete, explicit identity repair, complete metadata retention on Apply and safe table/prose rendering. See the [delivery evidence and remaining scope](docs/roadmap/DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md).
+
 ## What is available
 
 - One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities.

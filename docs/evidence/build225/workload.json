@@ -1,0 +1,52 @@
+{
+  "closed": [],
+  "newIds": 0,
+  "implementationItemsCompleted": 12,
+  "normalized": {
+    "total": 268,
+    "before": {
+      "complete": 174,
+      "open": 94
+    },
+    "after": {
+      "complete": 174,
+      "open": 94
+    },
+    "delta": {
+      "complete": 0,
+      "open": 0
+    }
+  },
+  "raw": {
+    "total": 277,
+    "before": {
+      "complete": 183,
+      "open": 94
+    },
+    "after": {
+      "complete": 183,
+      "open": 94
+    }
+  },
+  "upstreamReconciliation": {
+    "previousNormalizedTotal": 256,
+    "upstreamNewCheckedIds": 12,
+    "upstreamClaimedComplete": 164,
+    "measuredComplete": 174,
+    "measuredOpen": 94
+  },
+  "core": {
+    "before": 486,
+    "after": 504,
+    "delta": 18
+  },
+  "browserStepsPerTarget": {
+    "before": 58,
+    "after": 58,
+    "delta": 0
+  },
+  "outcomeLifecycleBrowserChecks": 19,
+  "themeCases": 60,
+  "contrastSamples": 120,
+  "fitViews": 10
+}

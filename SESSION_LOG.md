@@ -1,3 +1,7 @@
+## Build225 validated — 2026-11-09
+
+Twelve outcome lifecycle/projection implementation items completed in the isolated Build225 clone. Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Publication/live verification follows. A11.5/A11.9/H11 remain open: normalized174 complete/94 open, unchanged. Browser regression covers19 lifecycle/transaction/reload checks using an isolated temporary profile. Complete Apply metadata retention fixes a data-loss defect in the previous adapter. See docs/roadmap/DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md.
+
 ## Build222 verified — 2026-11-09
 
 - Remote refreshed through Build221 source964f645. Interrupted work preserved in stash, then applied to the current base. Build219 archive96 checksums verified; current published candidate remains intact.

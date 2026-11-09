@@ -170,6 +170,7 @@
 </template>
 
 <script lang="ts">
+import { stabilizeOutcomeIds } from 'src/core/domain/outcome-identities'
 import { computed, defineComponent, PropType, ref } from 'vue'
 import TraitCadenceEditor from './TraitCadenceEditor.vue'
 import ActionUsageEditor from './ActionUsageEditor.vue'
@@ -393,7 +394,7 @@ export default defineComponent({
           draft.value = isRecord(value) ? { unit: 'ft', origin: '', distance: '', ...value } : { shape: '', unit: 'ft', origin: '', distance: '' }
           break
         case 'outcomes':
-          draft.value = Array.isArray(value) && value.length ? value : [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '', damageType: '' }] }]
+          draft.value = stabilizeOutcomeIds(value === undefined || value === null || Array.isArray(value) && !value.length ? [{ trigger: 'hit', effects: [{ kind: 'damage', formula: '', damageType: '' }] }] : value, listId)
           break
         case 'effects':
         case 'multi':

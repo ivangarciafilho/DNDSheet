@@ -1,4 +1,18 @@
-## Current verified delivery — Build222 (2026-11-09)
+## Current validated delivery — Build225 (2026-11-09)
+
+Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
+
+[Build225 scope, integration findings and ordered continuation](DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md). Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Publication/live verification follows.
+
+### Outcome editing contract after remote224 integration
+
+- Saved records and temporary editor drafts are separate. Preparing identities, normalizing presentation or diagnosing malformed imports must not write through into saved data.
+- Stable string IDs identify results; reorder preserves them. Ambiguous or non-string IDs cannot be guessed into valid reference targets. Explicit repair changes one occurrence and retains authored references for review.
+- Apply retains the complete validated outcome record, including extension fields. Display projections may coerce optional legacy text safely; they must never replace the persistence representation.
+- Single-result duplication preserves authored targets; deletion keeps dependents and requires confirmation if referenced. Missing references remain visible diagnostics.
+- Region models and random-table links from upstream223/224 are retained. Domain helpers do not imply completed editor controls, migration, print or every export adapter.
+
+## Historical verified delivery — Build222 (2026-11-09)
 
 Completed **ten existing tasks**: H22, A17.1, A17.3, A17.4, A13.6, B10.1, B10.2, A17.6, A17.7 and B10.3. Character AC/speed now disclose recorded provenance or explicit estimates; identity/equipment names remain reference-only. Reusable fixtures, AST prerequisite replay, portable browser discovery, computed theme contrast, fit diagnostics and evidence-based documentation support the next model work.
 

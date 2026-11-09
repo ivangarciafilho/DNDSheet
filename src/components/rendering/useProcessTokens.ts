@@ -1212,7 +1212,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const tableTags: string[] = []
     let tableMarker = 'DNDSHEET_OUTCOME_TABLE_'
     while (input.includes(tableMarker)) tableMarker += '_'
-    input = input.replace(/<(table class="outcome-dice-table"|\/?(?:table|thead|tbody|tr|th|td)|th scope="col")>/gi, (tag) => `${tableMarker}${tableTags.push(tag) - 1};`)
+    input = input.replace(/<(table class="outcome-dice-table"|\/?(?:table|caption|thead|tbody|tr|th|td)|th scope="col")>/gi, (tag) => `${tableMarker}${tableTags.push(tag) - 1};`)
     // allowed tags are: bold, italic, underline, br, div, span, svg, path
     input = input.replace(/>/gi, '&gt;')
     input = input.replace(/</gi, '&lt;')

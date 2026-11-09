@@ -1,4 +1,16 @@
-## Current verified delivery — Build 223 (2026-11-09)
+## Current validated delivery — Build225 (2026-11-09)
+
+Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
+
+[Build225 scope, integration findings and ordered continuation](DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md). Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Publication/live verification follows.
+
+### Resume contract for the next loop
+
+Current integrated base4adb4be includes remote223/224 and post-release migration tests. Local outcome lifecycle work was preserved in a named stash before fast-forwarding. Do not replay that stash again after this integration; its retained copy is a recovery artifact.
+
+Finish A11.5 by tracing container/region commands through UI → draft → commit → saved JSON → all render/export adapters. The previous commit adapter discarded IDs/refs/layout/tables even though the child editor displayed them; test the entire chain. Keep bare trigger labels, numeric zero, malformed sibling records and unknown extension data in the preservation fixtures. Then complete A11.9's explicit-roll-only interaction and print/adapter evidence, followed by H9 and H14. The exact counts at the top supersede unsupported historical headlines.
+
+## Historical verified delivery — Build 223 (2026-11-09)
 
 Delivered **Build 223** with 22 actionable engineering tasks across 5 domains, closing **A11.5** (items a, b, and c) and advancing H11: Action Description Region typed model (`ActionDescriptionRegion`), hard cap of 4 regions per container (`MAX_REGIONS_PER_CONTAINER = 4`), continuous dice roll range parsing and table overlap/gap diagnostics (`diagnoseDiceTable`), audience and plane sub-region filtering, semantic HTML/prose region exports with XSS escaping, HP rider grammar normalization ("Gains X Temporary Hit Points while not Bloodied"), speed traversal preset grammar, speed badge trailing period stripping (preventing `., ` collisions), HTML-tag aware punctuation cleaning (preventing `14. (` and `14/+4. (`), universal senses spacing normalization (eliminated unspaced `60ft` -> `60 ft.`), and expanded 2024 core rules conditions glossary (`grappled`, `prone`, `incapacitated`, `restrained`, `invisible`).
 

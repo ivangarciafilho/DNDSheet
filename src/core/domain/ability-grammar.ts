@@ -1,4 +1,6 @@
 import { formatSignedModifier } from './number-grammar.ts'
+import { normalizeOutcomeData } from './outcome-data.ts'
+import type { RandomTable } from './random-table.ts'
 import { descriptionContainersText } from './description-containers.ts'
 import type { AbilityArea, AbilityOutcome, AbilityTargeting, AttackReach, AttackSource, DndStat, MonsterAction } from './types.ts'
 import { evaluateFormula } from './formula.ts'
@@ -21,6 +23,7 @@ export interface AbilityProjection {
 export interface AbilityRenderContext {
   attackBonus?: number
   saveDc?: number
+  randomTables?: RandomTable[]
   formulaContext?: FormulaContext
 }
 
@@ -257,30 +260,7 @@ const normalizeTargeting = (input: unknown): AbilityTargeting | undefined => {
   return Object.keys(result).length ? result : undefined
 }
 
-const normalizeOutcomes = (input: unknown): AbilityOutcome[] => {
-  if (!Array.isArray(input)) return []
-  return input.filter((outcome): outcome is Record<string, unknown> =>
-    isRecord(outcome) && typeof outcome.trigger === 'string' && !!outcome.trigger.trim()
-  ).map((outcome) => ({
-    trigger: String(outcome.trigger).trim(),
-    effects: Array.isArray(outcome.effects)
-      ? outcome.effects.filter(isRecord).map((effect) => ({
-        kind: effect.kind === 'damage' ? 'damage' : effect.kind === 'text' ? 'text' : undefined,
-        text: typeof effect.text === 'string' ? effect.text : undefined,
-        formula: typeof effect.formula === 'string' ? effect.formula : undefined,
-        damageType: typeof effect.damageType === 'string' ? effect.damageType : undefined,
-      }))
-      : [],
-    targetFilter: typeof outcome.targetFilter === 'string' ? outcome.targetFilter : undefined,
-    layoutSector: typeof outcome.layoutSector === 'string' ? outcome.layoutSector : undefined,
-    diceTable: Array.isArray(outcome.diceTable) ? outcome.diceTable.filter(isRecord).filter((row) => typeof row.roll === 'string' && typeof row.effect === 'string').map((row) => ({ roll: String(row.roll), effect: String(row.effect) })) : undefined,
-    rider: typeof outcome.rider === 'string' ? outcome.rider : undefined,
-    id: typeof outcome.id === 'string' ? outcome.id : undefined,
-    recipient: typeof outcome.recipient === 'string' && outcome.recipient.trim() ? outcome.recipient.trim() : undefined,
-    refs: Array.isArray(outcome.refs) ? outcome.refs.filter((r): r is string => typeof r === 'string') : undefined,
-    presentation: outcome.presentation === 'vertical' || outcome.presentation === 'horizontal' ? outcome.presentation : undefined,
-  }))
-}
+const normalizeOutcomes = normalizeOutcomeData
 
 export function inferAbility(action: Partial<MonsterAction>): AbilityProjection {
   const validStat = action.stat && action.stat !== 'none' && Object.prototype.hasOwnProperty.call(ABILITY_NAMES, action.stat)
@@ -503,6 +483,7 @@ const ensurePeriod = (text: string): string => {
 
 const triggerLabel = (trigger: string, mode: 'screen' | 'text2024'): string => {
   const clean = trigger.trim().replace(/^on\s+/i, '')
+  if (!clean) return 'Effect'
   const known = ['hit', 'failure', 'success', 'end of turn']
   const matched = known.find((item) => item.toLowerCase() === clean.toLowerCase())
   const label = matched ? matched.replace(/\b\w/g, (letter) => letter.toUpperCase()) : clean
@@ -530,14 +511,18 @@ export function outcomePhrase(
   ability: AbilityProjection,
   context: AbilityRenderContext = {},
   mode: 'screen' | 'text2024' = 'screen',
-  markup: AbilityMarkup = 'text'
+  markup: AbilityMarkup = 'text',
+  preserveEmptySlots = false
 ): string[] {
-  return ability.outcomes.map((outcome) => {
+  const lines = ability.outcomes.map((outcome) => {
     const effects = outcome.effects.map((effect) => effectText(effect, context)).filter(Boolean).map(ensurePeriod)
     const parts = [...effects]
     if (outcome.rider?.trim()) parts.push(outcome.rider.trim())
     const refLabels = (outcome.refs ?? [])
-      .map((r) => ability.outcomes.find((o) => o.id === r && o !== outcome)?.trigger)
+      .map((r) => {
+        const matches = ability.outcomes.filter((candidate) => candidate.id === r)
+        return matches.length === 1 && matches[0] !== outcome ? matches[0].trigger : undefined
+      })
       .filter((x): x is string => !!x)
       .map((x) => triggerLabel(x, 'text2024').toLowerCase())
     if (refLabels.length) {
@@ -550,12 +535,14 @@ export function outcomePhrase(
       const rows = outcome.diceTable.map((r) => `${r.roll}: ${r.effect}`).join('; ')
       parts.push(`(${rows})`)
     }
+    if (!parts.length && !outcome.trigger.trim()) return ''
     const filterPrefix = outcome.targetFilter?.trim() ? `[${outcome.targetFilter.trim()}] ` : ''
     const recipient = outcome.recipient?.trim() ? `, ${outcome.recipient.trim()}` : ''
     const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`.replace(/\s+:/g, ':')
     const label = markLabel(markup === 'html' ? escapeOutcomeHtml(lead) : lead, markup)
     return parts.length ? `${label} ${markup === 'html' ? escapeOutcomeHtml(ensurePeriod(parts.join(' '))) : ensurePeriod(parts.join(' '))}` : label
   })
+  return preserveEmptySlots ? lines : lines.filter(Boolean)
 }
 
 const formatText2024Range = (ability: AbilityProjection, context: AbilityRenderContext): string => {

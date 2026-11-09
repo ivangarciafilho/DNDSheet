@@ -226,3 +226,7 @@ test('weapon provenance is an authored catalog cell with validated non-destructi
   assert.deepEqual(cellPatch(input, 'weapon-ability', ''), { weaponAttackAbility: undefined })
   assert.ok(!chainView('action', action({ attackSource: 'spell' })).flatMap(row => row.cells).some(cell => cell.id === 'weapon-ability'))
 })
+
+test('outcome Apply preserves identity, references, table/layout and extension data without sharing the draft',()=>{
+ const outcomes=[{id:'result',trigger:'hit',recipient:'Each ally',refs:['missing'],targetFilter:'Allies',presentation:'vertical',layoutSector:'row_1',diceTable:[{roll:'1',effect:'Recover'}],effects:[{kind:'text',text:'Retain',extra:{nested:true}}],extension:{value:7}}];const next=cellPatch(action(),'outcomes',outcomes);assert.deepEqual(next.outcomes,outcomes);assert.notEqual(next.outcomes,outcomes);assert.notEqual(next.outcomes?.[0],outcomes[0]);assert.notEqual((next.outcomes?.[0] as unknown as {extension:unknown}).extension,outcomes[0].extension);assert.match(validateCell('outcomes','legacy data'),/invalid outcome list/);assert.deepEqual(cellPatch(action(),'outcomes','legacy data'),{})
+})

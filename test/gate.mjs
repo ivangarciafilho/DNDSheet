@@ -66,7 +66,7 @@ if (await run('build', 'npx quasar build')) {
   const spa = await serve('dist/spa', 9230, '')
   const url = 'http://localhost:9230/index.html#/'
   await run('fuzz', 'node test/exhaustive-ui-fuzz.js', { DNDSHEET_E2E_URL: url })
-  await run('help', 'node test/statblock-help-browser-smoke.js && node --experimental-strip-types test/release-matrix-browser-smoke.js && node tools/qa/overflow-probe.js', { DNDSHEET_E2E_URL: url })
+  await run('help', 'node test/outcome-lifecycle-browser-smoke.js && node test/statblock-help-browser-smoke.js && node --experimental-strip-types test/release-matrix-browser-smoke.js && node tools/qa/overflow-probe.js', { DNDSHEET_E2E_URL: url })
   await run('spell', 'node test/spell-plate-browser-smoke.js', { DNDSHEET_E2E_URL: url })
   spa.close()
 }
