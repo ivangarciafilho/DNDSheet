@@ -34,6 +34,7 @@ export function cleanPunctuation(text: string): string {
     // Remove space before punctuation marks first: "On Success : " -> "On Success: ", "Turn. , " -> "Turn., "
     .replace(/\s+([,:;.])/g, '$1')
     // Replace composite punctuation collisions, preserving "ft.,"
+    .replace(/(?<!\bft)\.\s*,/gi, ', ')
     .replace(/(?<!\bft)\.,/gi, ',')
     .replace(/;,/g, ';')
     .replace(/,\./g, '.')
@@ -41,8 +42,8 @@ export function cleanPunctuation(text: string): string {
     // Replace consecutive duplicate commas/semicolons
     .replace(/,{2,}/g, ',')
     .replace(/;{2,}/g, ';')
-    // Remove comma or period immediately before opening parenthesis: "14, (" -> "14 (" or "14. (" -> "14 ("
-    .replace(/[,.]\s*\(/g, ' (')
+    // Remove comma or period immediately before opening parenthesis (even across closing HTML tags like </strong> or </span>)
+    .replace(/([,.])((?:\s*<\/[^>]+>)*\s*\()/g, '$2')
     // Collapse double parentheses: "((1/Day))" -> "(1/Day)"
     .replace(/\(\(\s*([^()]+)\s*\)\)/g, '($1)')
     // Clean trailing punctuation before closing bracket: "(10ft, )" -> "(10ft)"

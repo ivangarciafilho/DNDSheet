@@ -583,7 +583,7 @@
             <span>Rendered Vital: <b class="text-cyan-3">{{ formatSpeedRiderPreview(rider) }}</b></span>
             <div class="row items-center q-gutter-x-xs flex-wrap">
               <q-btn v-help="'+ BA in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ BA" @click="appendToken(rider, 'as a Bonus Action')" />
-              <q-btn v-help="'+ Temp HP in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 of Temporary Hit Points')" />
+              <q-btn v-help="'+ Temp HP in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 Temporary Hit Points')" />
               <q-btn v-help="'+ Obscured in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Obscured" @click="appendToken(rider, 'Creatures 5ft of you are lightly obscured')" />
               <q-btn v-help="'+ Adv Saves in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Adv Saves" @click="appendToken(rider, 'Until End Of Turn: Advantage on Strength, and Dexterity Saving Throws')" />
               <q-btn v-help="'+ Teleport Visited in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Teleport Visited" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space visited this turn')" />

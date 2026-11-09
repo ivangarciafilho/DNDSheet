@@ -50,6 +50,11 @@ export const STATBLOCK_HELP = Object.freeze({
   disengage: 'Taking the Disengage action prevents your movement from provoking Opportunity Attacks for the rest of your turn.',
   dodge: 'Taking the Dodge action imposes Disadvantage on attack rolls against you and gives you Advantage on Dexterity saving throws.',
   cover: 'Cover provides bonuses to AC and Dexterity saving throws: Half Cover (+2), Three-Quarters Cover (+5), and Total Cover (cannot be targeted directly).',
+  grappled: 'A Grappled creature’s Speed is 0, it has Disadvantage on attack rolls against targets other than the grappler, and the grappler has Advantage on attacks against it.',
+  prone: 'A Prone creature must crawl or spend movement to stand up; attacks against it from within 5 ft. have Advantage, while ranged attacks have Disadvantage.',
+  incapacitated: 'An Incapacitated creature can’t take Actions or Reactions, and its Concentration is broken.',
+  restrained: 'A Restrained creature’s Speed is 0, attack rolls against it have Advantage, its attack rolls have Disadvantage, and it has Disadvantage on Dexterity saving throws.',
+  invisible: 'An Invisible creature is impossible to see without special senses, has Advantage on attack rolls, and attacks against it have Disadvantage.',
 } as const)
 
 export type StatblockHelpKey = keyof typeof STATBLOCK_HELP

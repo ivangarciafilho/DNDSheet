@@ -799,7 +799,7 @@ export function formatMinimalistRegen(
   const isTempHp = type === 'temp_hp' || type === 'absorb_temp_hp'
   if (condMod === 'not_bloodied' || regen.triggerCondition === 'not_bloodied') {
     return isTempHp
-      ? `Gains ${amt} of Temporary Hit Points while not Bloodied`
+      ? `Gains ${amt} Temporary Hit Points while not Bloodied`
       : `Regains ${amt} hit points while not Bloodied`
   }
   if (condMod === 'head_not_severed' || (note && (note.toLowerCase().includes('head is not severed') || note.toLowerCase().includes('head not severed')))) {

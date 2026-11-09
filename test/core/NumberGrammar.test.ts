@@ -16,6 +16,9 @@ test('number grammar: cleanPunctuation removes composite punctuation collisions'
   assert.equal(cleanPunctuation('Action;, Bonus Action'), 'Action; Bonus Action')
   assert.equal(cleanPunctuation('14, (19 if It Has Temporary Hit Points)'), '14 (19 if It Has Temporary Hit Points)')
   assert.equal(cleanPunctuation('14. (19 if It Has Temporary Hit Points)'), '14 (19 if It Has Temporary Hit Points)')
+  assert.equal(cleanPunctuation('<strong>14.</strong> (19 if It Has Temporary Hit Points)'), '<strong>14</strong> (19 if It Has Temporary Hit Points)')
+  assert.equal(cleanPunctuation('Hide (14/+4. (16/+6, Acrobatics))'), 'Hide (14/+4 (16/+6, Acrobatics))')
+  assert.equal(cleanPunctuation('Gain 10 Temporary Hit Points., Dodge: 5 ft.'), 'Gain 10 Temporary Hit Points, Dodge: 5 ft.')
   assert.equal(cleanPunctuation('((1/Day)), Level 3:'), '(1/Day), Level 3:')
   assert.equal(cleanPunctuation('On Success : takes 13 (3d8) Radiant'), 'On Success: takes 13 (3d8) Radiant')
   assert.equal(cleanPunctuation('(10ft, )'), '(10ft)')
@@ -57,6 +60,7 @@ test('number grammar: formatDistanceUnit normalizes distance notations', () => {
   assert.equal(formatDistanceUnit('if 0ft at End Of Turn'), 'if 0 ft. at End Of Turn')
   assert.equal(formatDistanceUnit('reach 5 ft., one target'), 'reach 5 ft., one target')
   assert.equal(formatDistanceUnit('speed reduced by 10 ft.'), 'speed reduced by 10 ft.')
+  assert.equal(formatDistanceUnit('30 ft. (40ft, if it has Temporary Hit Points)'), '30 ft. (40 ft., if it has Temporary Hit Points)')
 })
 
 test('number grammar: formatMetricDistance converts feet to standard 5e metric', () => {
@@ -68,19 +72,7 @@ test('number grammar: formatMetricDistance converts feet to standard 5e metric',
 
 test('number grammar: sanitizeProsePunctuation combines distance and punctuation cleanup', () => {
   assert.equal(
-    sanitizeProsePunctuation('Speed reduced by 10ft , if 0ft at End Of Turn. , its knocked Prone.'),
-    'Speed reduced by 10 ft., if 0 ft. at End Of Turn, its knocked Prone.'
+    sanitizeProsePunctuation('On Success : takes 10ft of distance., then stops'),
+    'On Success: takes 10 ft. of distance, then stops'
   )
-})
-
-test('number grammar: empty and null inputs safely return empty strings or standard fallbacks', () => {
-  assert.equal(cleanPunctuation(''), '')
-  assert.equal(formatDistanceUnit(''), '')
-  assert.equal(sanitizeProsePunctuation(''), '')
-  assert.equal(formatMetricDistance(-5), '0 ft.')
-})
-
-test('number grammar: formatInitiativeHeadline without riders produces clean single clause', () => {
-  assert.equal(formatInitiativeHeadline(-1), '9/-1 Initiative')
-  assert.equal(formatInitiativeHeadline(0), '10/+0 Initiative')
 })

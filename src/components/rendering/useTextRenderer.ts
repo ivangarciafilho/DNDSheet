@@ -12,6 +12,7 @@ import {
   DynamicValueContext,
 } from 'src/core/domain/defense-and-traits-utils'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
+import { cleanPunctuation, formatDistanceUnit } from 'src/core/domain/number-grammar'
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed } from 'vue'
@@ -167,7 +168,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return badges
     }
 
-    const baseAc = `${numHtml(monster.AC)}${rawAcType !== '' ? ` (${rawAcType})` : ''}`
+    const baseAc = cleanPunctuation(`${numHtml(monster.AC)}${rawAcType !== '' ? ` (${formatDistanceUnit(rawAcType)})` : ''}`)
     const badges: string[] = [baseAc]
 
     const inv = monster.extendedHp?.invulnerability
@@ -607,14 +608,15 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (!trav) return []
     const riders: string[] = []
 
+    const sanitizeRiderText = (txt: string) => cleanPunctuation(formatDistanceUnit(txt.replace(/(?<!\bft)\.+$/i, '').trim()))
     if (trav.bonusActionDash) {
-      riders.push(trav.dashRider?.trim() ? `Dash: ${trav.dashRider.trim()}` : 'Bonus Action Dash')
+      riders.push(trav.dashRider?.trim() ? `Dash: ${sanitizeRiderText(trav.dashRider)}` : 'Bonus Action Dash')
     }
     if (trav.bonusActionDodge) {
-      riders.push(trav.dodgeRider?.trim() ? `Dodge: ${trav.dodgeRider.trim()}` : 'Bonus Action Dodge')
+      riders.push(trav.dodgeRider?.trim() ? `Dodge: ${sanitizeRiderText(trav.dodgeRider)}` : 'Bonus Action Dodge')
     }
     if (trav.bonusActionDisengage) {
-      riders.push(trav.disengageRider?.trim() ? `Disengage: ${trav.disengageRider.trim()}` : 'Bonus Action Disengage')
+      riders.push(trav.disengageRider?.trim() ? `Disengage: ${sanitizeRiderText(trav.disengageRider)}` : 'Bonus Action Disengage')
     }
     if ((trav as any).bonusActionHide) {
       riders.push((trav as any).hideRider?.trim() ? `Hide: ${(trav as any).hideRider.trim()}` : 'Bonus Action Hide')
@@ -1190,13 +1192,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       let modeStr = 'location of Intelligent creatures'
       if (mode === 'presence_intelligent') modeStr = 'presence of Intelligent creatures'
       else if (mode === 'telepathy_creatures') modeStr = 'of creatures it can use its Telepathy'
-      return `sense sentience (${rangeStr || '60ft'}, ${modeStr}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `sense sentience (${rangeStr || '60 ft.'}, ${modeStr}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'darkvision') {
       if (omitScope) {
         return `darkvision${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
       }
-      return `darkvision (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `darkvision (${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'blindsight' || lowerName === 'blindsense' || lowerName === 'echolocation') {
       if (lowerName === 'echolocation' && !notes.includes("can't while deafened")) {
@@ -1205,7 +1207,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (omitScope) {
         return `blindsight${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
       }
-      return `blindsight (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `blindsight (${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'life sense') {
       const modeStr = formatDetectionMode(item.detectionMode || 'presence')
@@ -1225,7 +1227,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (omitScope) {
         return `${modeStr} of ${targets}${notes.length > 0 ? `, ${notes.join(', ')}` : ''}`
       }
-      return `divine sense (${modeStr} of ${targets}, within ${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `divine sense (${modeStr} of ${targets}, within ${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
 
     if (item.webSense) notes.push('while touching web, knows location of creatures on same web')
@@ -1237,7 +1239,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return `${lowerName} (${rangeStr ? `${rangeStr}, ` : ''}${notes.join(', ')})`
     }
     if (lowerName === 'ethereal sight') {
-      return `${lowerName} (${rangeStr || '60ft'})`
+      return `${lowerName} (${rangeStr || '60 ft.'})`
     }
     if (rangeStr) {
       return `${lowerName} ${rangeStr}`
@@ -1264,7 +1266,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         const range = planarGroup[0].range
         const allSameRange = planarGroup.every((it) => it.range === range && (it.rangeUnit || 'ft') === rangeUnit)
         if (allSameRange) {
-          const rangeStr = `${range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}`
+          const rangeStr = `${range} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}`
           const commonPrefix = `${rangeStr} across Material and Ethereal Planes`
           const parts = planarGroup.map((item) => formatSingleSenseItem(item, true)).filter(Boolean)
           items.push(`${commonPrefix}: ${parts.join(', ')}`)
@@ -1296,7 +1298,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const senses = computed(() => {
-    return sensesBadges.value.join(', ')
+    return sensesBadges.value.map((s) => formatDistanceUnit(s)).join(', ')
   })
 
   const languagesBadges = computed(() => {
@@ -1624,7 +1626,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
         const scores = formatGroupRow(row)
         const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
-        const formattedScores = scores.startsWith('(') ? scores : `(${scores})`
+        const formattedScores = cleanPunctuation(scores.startsWith('(') ? scores : `(${scores})`)
         if (options.web !== false) {
           return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
         }

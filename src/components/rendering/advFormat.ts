@@ -18,7 +18,8 @@ export function escapeHtml(value: unknown): string {
 }
 
 export function numHtml(value: string | number): string {
-  return `<strong class="dnd-num">${value}</strong>`
+  const clean = typeof value === 'string' ? value.replace(/[.,;:]+$/, '') : value
+  return `<strong class="dnd-num">${clean}</strong>`
 }
 
 export function advHtml(inner: string, advantage?: boolean, disadvantage?: boolean, tip?: string): string {

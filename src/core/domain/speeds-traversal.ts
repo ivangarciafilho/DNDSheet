@@ -3,10 +3,10 @@
  *
  * Implements compoundable speed and traversal modifiers and movement action riders:
  * - Dash can Shove as a Bonus Action
- * - Dash or Disengage: Teleport as a Bonus Action up to 10ft of a point you can see / familiar to you
- * - Dash or Disengage: Creatures 5ft of you take 1d8 fire damage
- * - Once per round: when a creature enters 5ft of you, it takes 1d10 fire damage
- * - Once per round per creature: when a creature leaves 5ft of you, it takes 1d10 fire damage
+ * - Dash or Disengage: Teleport as a Bonus Action up to 10 ft. of a point you can see / familiar to you
+ * - Dash or Disengage: Creatures 5 ft. of you take 1d8 fire damage
+ * - Once per round: when a creature enters 5 ft. of you, it takes 1d10 fire damage
+ * - Once per round per creature: when a creature leaves 5 ft. of you, it takes 1d10 fire damage
  * - Teleport to a point visited this turn
  * - Dodge or Disengage, can Hide as a Bonus Action
  * - Disengage, shift to the Ethereal Plane
@@ -35,17 +35,17 @@ export const SPEED_ACTION_RIDER_PRESETS: Array<{
 }> = [
   {
     id: 'disengage-temp-hp',
-    label: 'Disengage: Gain 10 of Temporary Hit Points',
+    label: 'Disengage: Gain 10 Temporary Hit Points',
     action: 'Disengage',
     actionType: 'Action',
-    rider: 'Gain 10 of Temporary Hit Points',
+    rider: 'Gain 10 Temporary Hit Points',
   },
   {
     id: 'dodge-lightly-obscured',
-    label: 'Dodge: Creatures 5ft of you are lightly obscured',
+    label: 'Dodge: Creatures 5 ft. of you are lightly obscured',
     action: 'Dodge',
     actionType: 'Action',
-    rider: 'Creatures 5ft of you are lightly obscured',
+    rider: 'Creatures 5 ft. of you are lightly obscured',
   },
   {
     id: 'dash-adv-str-dex-saves',
@@ -69,11 +69,11 @@ export const SPEED_ACTION_RIDER_PRESETS: Array<{
     rider: 'At end of turn: Teleports to unoccupied space familiar to you',
   },
   {
-    id: 'disengage-teleport-10ft-see',
-    label: 'Disengage: Teleport up to 10ft to a point you can see',
+    id: 'disengage-teleport-10 ft.-see',
+    label: 'Disengage: Teleport up to 10 ft. to a point you can see',
     action: 'Disengage',
     actionType: 'Action',
-    rider: 'Teleport up to 10ft to a point you can see',
+    rider: 'Teleport up to 10 ft. to a point you can see',
   },
   {
     id: 'dash-shove-ba',
@@ -84,38 +84,38 @@ export const SPEED_ACTION_RIDER_PRESETS: Array<{
   },
   {
     id: 'dash-disengage-teleport-see',
-    label: 'Dash or Disengage: Teleport 10ft (point you can see)',
+    label: 'Dash or Disengage: Teleport 10 ft. (point you can see)',
     action: 'Dash, or Disengage',
     actionType: 'Bonus Action',
-    rider: 'Teleport as a Bonus Action up to 10ft of a point you can see',
+    rider: 'Teleport as a Bonus Action up to 10 ft. of a point you can see',
   },
   {
     id: 'dash-disengage-teleport-familiar',
-    label: 'Dash or Disengage: Teleport 10ft (point familiar to you)',
+    label: 'Dash or Disengage: Teleport 10 ft. (point familiar to you)',
     action: 'Dash, or Disengage',
     actionType: 'Bonus Action',
-    rider: 'Teleport as a Bonus Action up to 10ft of a point familiar to you',
+    rider: 'Teleport as a Bonus Action up to 10 ft. of a point familiar to you',
   },
   {
     id: 'dash-disengage-fire',
-    label: 'Dash or Disengage: 5ft Damage Aura (1d8 fire)',
+    label: 'Dash or Disengage: 5 ft. Damage Aura (1d8 fire)',
     action: 'Dash, or Disengage',
     actionType: 'Free',
-    rider: 'Creatures 5ft of you takes 1d8 of fire damage',
+    rider: 'Creatures 5 ft. of you takes 1d8 of fire damage',
   },
   {
     id: 'once-per-round-enter-fire',
-    label: 'Once per round: Creature enters 5ft takes 1d10 Fire',
+    label: 'Once per round: Creature enters 5 ft. takes 1d10 Fire',
     action: 'Once per round',
     actionType: 'Reaction',
-    rider: 'when a creature enters 5ft of you, it takes 1d10 fire damage',
+    rider: 'when a creature enters 5 ft. of you, it takes 1d10 fire damage',
   },
   {
     id: 'once-per-round-leave-fire',
-    label: 'Once per round per creature: Creature leaves 5ft takes 1d10 Fire',
+    label: 'Once per round per creature: Creature leaves 5 ft. takes 1d10 Fire',
     action: 'Once per round per creature',
     actionType: 'Reaction',
-    rider: 'when a creature leaves 5ft of you, it takes 1d10 fire damage',
+    rider: 'when a creature leaves 5 ft. of you, it takes 1d10 fire damage',
   },
   {
     id: 'teleport-visited-turn',

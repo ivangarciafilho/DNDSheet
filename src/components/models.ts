@@ -586,6 +586,19 @@ export interface DndLimitedUse {
   rate: string
 }
 
+export interface ActionDescriptionRegion {
+  id: string
+  title?: string
+  kind: 'text' | 'table'
+  audience?: 'all' | 'target' | 'creatures' | 'caster'
+  plane?: string
+  text?: string
+  table?: {
+    headers: string[]
+    rows: string[][]
+  }
+}
+
 export interface ActionDescriptionContainer {
   id: string
   kind: 'text' | 'table'
@@ -595,6 +608,7 @@ export interface ActionDescriptionContainer {
     headers: string[]
     rows: string[][]
   }
+  regions?: ActionDescriptionRegion[]
 }
 
 export interface MonsterTrait {
