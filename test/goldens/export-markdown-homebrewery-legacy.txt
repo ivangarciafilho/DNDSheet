@@ -12,10 +12,7 @@ ___
 >|:---:|:---:|:---:|:---:|:---:|:---:|
 >|10 (+0)|10 (+0)|10 (+0)|18 (+4)|10 (+0)|10 (+0)|
 >___
-> - **Saving Throws** 
-> - **Senses** 
 > - **Passive Checks** Search: 10/+0; Study: 14/+4; Influence: 10/+0; Hide (Bonus Action): 10/+0
-> - **Languages** 
 > - **Challenge** 9 (5,000 XP, PB +4)
 >___
 > ### Actions

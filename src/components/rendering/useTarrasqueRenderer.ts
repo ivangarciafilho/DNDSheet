@@ -97,13 +97,14 @@ export function useTarrasqueRenderer() {
     }
 
     // immunities, resistances, senses, languages
-    tio.damage_vulnerabilities = renderer.vulnerabilities.value
-    tio.damage_resistances = renderer.resistances.value
-    tio.damage_immunities = renderer.immunities.value
-    tio.condition_immunities = renderer.conditions.value
-    tio.senses = renderer.senses.value
+    // Header values carry web chrome (number pills, advantage marks); Tarrasque wants plain text.
+    tio.damage_vulnerabilities = stripTags(renderer.vulnerabilities.value)
+    tio.damage_resistances = stripTags(renderer.resistances.value)
+    tio.damage_immunities = stripTags(renderer.immunities.value)
+    tio.condition_immunities = stripTags(renderer.conditions.value)
+    tio.senses = stripTags(renderer.senses.value)
 
-    tio.languages = renderer.languages.value
+    tio.languages = stripTags(renderer.languages.value)
     tio.challenge_rating = CR[monster.CR].cr
 
     // traits
@@ -183,7 +184,7 @@ export function useTarrasqueRenderer() {
 
     // legendary actions
     if (monster.legendaryActions.actions.length > 0) {
-      tio.legendary_desc = renderer.legendaryPreamble.value
+      tio.legendary_desc = stripTags(renderer.legendaryPreamble.value)
 
       tio.legendary_actions = []
       for (const a of monster.legendaryActions.actions) {

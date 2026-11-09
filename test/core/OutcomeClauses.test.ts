@@ -57,3 +57,39 @@ test('withStableIds keeps existing ids and fills missing ones uniquely', () => {
   assert.strictEqual(out[0].id, 'keep')
   assert.ok(out[1].id && out[2].id && out[1].id !== out[2].id)
 })
+
+import { text2024 } from '../../src/core/domain/ability-grammar.ts'
+
+const breath = (presentation?: 'inline' | 'vertical' | 'horizontal'): Partial<MonsterAction> => ({
+  name: 'Fire Breath', id: 'fb', description: '', deliveryType: 'Save',
+  outcomes: [
+    { id: 'fail', trigger: 'failure', recipient: 'each creature in the cone', presentation, effects: [{ kind: 'text', text: 'It takes fire damage' }] },
+    { id: 'ok', trigger: 'success', refs: ['fail'], presentation, effects: [{ kind: 'text', text: 'Half as much damage' }] },
+  ],
+})
+
+test('2024 text export carries recipients and references as prose', () => {
+  const text = text2024(breath())
+  assert.match(text, /Failure, each creature in the cone: It takes fire damage\./)
+  assert.match(text, /Success: Half as much damage \(builds on the failure result\)\./)
+  assert.doesNotMatch(text, /::|builds on the {2}result|undefined/)
+})
+
+test('2024 html export escapes recipients', () => {
+  const action = breath(); action.outcomes![0].recipient = 'a <b>bold</b> foe'
+  const html = text2024(action, {}, { markup: 'html' })
+  assert.ok(html.includes('a &lt;b&gt;bold&lt;/b&gt; foe'), html)
+})
+
+test('presentation never changes the mechanics text', () => {
+  const inline = text2024(breath('inline'))
+  assert.strictEqual(text2024(breath('vertical')), inline)
+  assert.strictEqual(text2024(breath('horizontal')), inline)
+  assert.strictEqual(text2024(breath(undefined)), inline)
+})
+
+test('custom triggers keep their authored label', () => {
+  const lines = outcomePhrase(inferAbility(action([{ id: 'x', trigger: 'Failed by 5 or more', recipient: 'the target', effects: [{ kind: 'text', text: 'It is Stunned' }] }])))
+  assert.match(lines[0], /^On Failed by 5 or more, the target: It is Stunned\.$/)
+})
+

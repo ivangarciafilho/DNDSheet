@@ -530,7 +530,12 @@ export function outcomePhrase(
       .map((r) => ability.outcomes.find((o) => o.id === r && o !== outcome)?.trigger)
       .filter((x): x is string => !!x)
       .map((x) => triggerLabel(x, 'text2024').toLowerCase())
-    if (refLabels.length) parts.push(`(builds on the ${refLabels.join(' and ')} result)`)
+    if (refLabels.length) {
+      // The reference belongs to the sentence it qualifies, so it goes before that sentence's full stop.
+      const note = `(builds on the ${refLabels.join(' and ')} result)`
+      if (parts.length) parts[parts.length - 1] = `${parts[parts.length - 1].replace(/\.$/, '')} ${note}`
+      else parts.push(note)
+    }
     if (outcome.diceTable && outcome.diceTable.length) {
       const rows = outcome.diceTable.map((r) => `${r.roll}: ${r.effect}`).join('; ')
       parts.push(`(${rows})`)

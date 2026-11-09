@@ -240,7 +240,7 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     }
 
     // Header values carry web chrome (number pills, advantage marks); they cross the same boundary.
-    const saves = `**${t('monster.saves')}** :: ${mdFormatter(renderer.saves.value)}`
+    const saves = renderer.saves.value.trim() ? `\n**${t('monster.saves')}** :: ${mdFormatter(renderer.saves.value)}` : ''
     const skills =
       monster.skills.length === 0
         ? ''
@@ -312,10 +312,7 @@ ___
     } (${s.CON.bonus})|${s.INT.score} (${s.INT.bonus})|${s.WIS.score} (${
       s.WIS.bonus
     })|${s.CHA.score} (${s.CHA.bonus})|
-___
-${saves !== '' ? saves : ''}${skills}${renderer.tools.value ? `\n**Tools** :: ${mdFormatter(renderer.tools.value)}` : ''}${vuln}${resist}${immune}${condition}
-**${t('editor.senses.label')}** :: ${mdFormatter(renderer.senses.value)}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${mdFormatter(renderer.actionPassives.value)}` : ''}
-**${t('monster.languages')}** :: ${mdFormatter(renderer.languages.value)}
+___${saves}${skills}${renderer.tools.value ? `\n**Tools** :: ${mdFormatter(renderer.tools.value)}` : ''}${vuln}${resist}${immune}${condition}${renderer.senses.value.trim() ? `\n**${t('editor.senses.label')}** :: ${mdFormatter(renderer.senses.value)}` : ''}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${mdFormatter(renderer.actionPassives.value)}` : ''}${renderer.languages.value.trim() ? `\n**${t('monster.languages')}** :: ${mdFormatter(renderer.languages.value)}` : ''}
 **${t('monster.challenge')}** :: ${mdFormatter(renderer.cr.value)}
 ___
 ${traits}${mythicTrait}### ${t(

@@ -1298,3 +1298,11 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Publishing is one command now:** after `npm run gate` passes in the build tree, commit, then `node tools/publish.mjs --build N --slug short-name --base <previous commit> --push`. It refuses stale, empty or wrong-root output. `tools/make-rc.mjs` is now in the repo (no more temp-folder copy).
 - **Fuzz Step 38** waits for its panels and buttons; a missing one fails with its name.
 - **Next, in order:** H6 rest (A4 layer) → H11 (close A11.5, then A11.9) → H9 tips → H14/H15 typecheck → H16 (owner).
+
+## Handoff — after Build 215 (2026-11-09)
+
+- **One tree:** `%TEMP%\dnd-tip` is the only build tree (all `dnd-b2xx` trees removed). Re-create it from the branch tip with `git archive`, link `node_modules` to the main checkout, then run `npm run typecheck:setup` before `npm run gate`.
+- **Never overlap runs.** Check `Get-CimInstance Win32_Process` for `gate.mjs`/`exhaustive-ui-fuzz` before starting one.
+- **Interruption safety:** commit unverified work to `refs/wip/current` (not a branch) in `F:\AI_Resources\DNDSheet`; replace it with the real commit once the gate passes.
+- **Two writers:** Builds 212–214 were landed by another session while this one was paused. Always `git ls-remote` before building on a remembered tip.
+- **Next, in order:** A11.5 remainder per the Build214 note (container ownership, typed predicates) → A11.9 → H9 tips → H14 baseline burn-down → B4.7/B4 rest of the export boundary → H16 (owner).

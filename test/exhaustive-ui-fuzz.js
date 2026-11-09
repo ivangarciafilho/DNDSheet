@@ -140,7 +140,9 @@ async function runFuzz() {
       returnByValue: true,
     })
     if (res.result?.exceptionDetails) {
-      throw new Error(`Eval error: ${res.result.exceptionDetails.text || res.result.exceptionDetails.exception?.description}`)
+      // Prefer the exception itself: `text` is often just "Uncaught", which hides the cause.
+      const details = res.result.exceptionDetails
+      throw new Error(`Eval error: ${details.exception?.description || details.exception?.value || details.text} (line ${details.lineNumber}, column ${details.columnNumber})`)
     }
     return res.result?.result?.value
   }

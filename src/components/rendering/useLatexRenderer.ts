@@ -6,7 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
-import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import { creatureTypeLine, escapeLatexText, splitEntryLead } from 'src/core/domain/export-markup'
 
 // one change to the LaTeX renderer is that I'm dropping the \DndDice command
 // if you're exporting from here you can selectively replace that where you need it, the
@@ -99,7 +99,7 @@ export function useLatexRenderer() {
       })
 
       renderedAttacks.push(`\\DndMonsterAttack[
-      name=${attack.name},
+      name=${escapeLatexText(attack.name)},
       distance=${distance},
       type=${type},
       mod=${renderBonus(monster.attackModifier(attack.id))},
@@ -235,13 +235,13 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
     const saves = renderer.saves.value
 
     return `\\begin{DndMonster}[${twoCol ? 'width=\\textwidth + 8pt' : ''}]{${
-      monster.name
+      escapeLatexText(monster.name)
     }}
   ${twoCol ? '\\begin{multicols}{2}' : ''}
-  \\DndMonsterType{${creatureTypeLine(monster.size, monster.type, monster.alignment)}}
+  \\DndMonsterType{${escapeLatexText(creatureTypeLine(monster.size, monster.type, monster.alignment))}}
   \\DndMonsterBasics[
     armor-class = {${monster.AC}${
-      monster.ACType === '' ? '' : ` (${monster.ACType})`
+      monster.ACType === '' ? '' : ` (${escapeLatexText(monster.ACType)})`
     }},
     hit-points = {\\DndDice{${monster.HP.HD}d${monster.HP.type}${renderBonus(
       monster.HP.modifier

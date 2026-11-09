@@ -35,6 +35,9 @@ const escapeText = (text: string, format: TextExportFormat): string =>
     ? text.replace(/[\\{}$&%#_~^<>]/g, (char) => LATEX_ESCAPES[char])
     : text.replace(/[\\`*_[\]<>]/g, (char) => `\\${char}`)
 
+/** Plain authored text (names, AC type, creature type) placed straight into LaTeX macro arguments. */
+export const escapeLatexText = (text: string): string => escapeText(text ?? '', 'latex')
+
 type Emphasis = 'bold' | 'italic' | 'underline'
 
 const EMPHASIS: Readonly<Record<string, Emphasis>> = { b: 'bold', strong: 'bold', i: 'italic', em: 'italic', u: 'underline' }
