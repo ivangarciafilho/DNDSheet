@@ -1,4 +1,14 @@
-### Current verified delivery — Build 220 (2026-11-09)
+### Current verified delivery — Build 221 (2026-11-09)
+
+Delivered **Build 221** with 22 actionable engineering tasks across 5 domains: Attack & Action Bonus Typography & Grammar (+0 signed attack roll bonuses, automated target noun fallbacks), Action Prose & Outcome Grammar Sanitization (colon leading whitespace elimination, distance unit normalization, composite punctuation stripping), Skill Action Group Parentheses & Notation Cleanup (elimination of nested double parens in Search/Hide), Speed Locomotion & Senses Distance Typography, and Documentation & Provenance Ledger.
+
+Final frozen-source gate **10/10**: **454 core tests (+1)**, **57 exhaustive scenarios on SPA and Pages**, help 12 themes and spell 5 themes; zero browser errors. Pinned baseline verified at exactly 613 diagnostics, 0 new diagnostics against the approved baseline. Base: `ed91feb`. Release tag: `rc-2.4.3-build-221-attack-sign-and-prose-grammar`. Prior release candidates and protected files preserved.
+
+Workload (unique IDs): **256 total; 156 complete / 100 open (+2 / -2)**.
+
+[Build 221 evidence and groomed continuation](DNDSheet-Build221-Attack-Sign-and-Prose-Grammar.md). Next: **A11.5 stable container/region ownership and typed validation → A11.9 random-result integration → H9 purpose-led help → H14 per-file debt**.
+
+### Historical verified delivery — Build 220 (2026-11-09)
 
 Delivered **Build 220** with 22 actionable engineering tasks across 5 domains: Domain Engine (Number & Distance Grammar, Punctuation Sanitization), WCAG Accessibility & 2024 Rule Glossary (`bloodied`, `temporary-hit-points`, `disengage`, `dodge`, `cover`), High-Contrast Spell Components & School Contrast Tokens (`#6a1b9a` / `#ce93d8`, WCAG AA 4.5:1), A4 Layer Studio Live Page Overflow Diagnostics Meter & 1-Click Quick Controls, and Typography & Trait Outcome Defensive Hygiene.
 

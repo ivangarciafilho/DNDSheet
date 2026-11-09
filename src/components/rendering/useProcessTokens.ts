@@ -1,3 +1,4 @@
+import { sanitizeProsePunctuation } from 'src/core/domain/number-grammar'
 import { outcomesHtml } from 'src/core/domain/outcome-rendering'
 import { descriptionContainersHtml } from 'src/core/domain/description-containers'
 import { structuredAttackBonus } from 'src/core/domain/structured-attack'
@@ -655,7 +656,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const scope = scopeText ? [boldNumbers(scopeText)] : []
     const effectsStr = outcomesHtml(ability, renderContext)
     const containersStr = formatDescriptionContainers(context.descriptionContainers)
-    let desc = processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim()
+    let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim())
 
     if (context.stat && context.stat !== 'none') {
       desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
@@ -808,7 +809,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const effectsStr = Array.isArray(context?.effects) && context.effects.length > 0
         ? context.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
         : ''
-      let desc = processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim()
+      let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim())
 
       // Strip redundant leading saving throw or attack preamble if already shown in composite header cells
       if (context.stat && context.stat !== 'none') {

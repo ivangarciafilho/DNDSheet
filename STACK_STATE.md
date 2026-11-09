@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build 220, 22 tasks delivered across 5 domains (Number/Distance Grammar, 2024 Glossary, High-Contrast Spell Components, A4 Overflow Diagnostics, Typography Hygiene); gate 10/10, 453 core tests (+11), 57 scenarios per SPA/Pages. Normalized workload 152/104 -> 154/102 across 256 IDs. Base 95a6ab6; published to gh-pages and build185-repairs; live footer 220.
+> Current: Build 221, 22 tasks delivered across 5 domains (Attack Sign Normalization, Prose Punctuation & Action Grammar); gate 10/10, 454 core tests (+1), 57 scenarios per SPA/Pages. Normalized workload 154/102 -> 156/100 across 256 IDs. Base ed91feb; published to gh-pages and build185-repairs; live footer 221.
+
+- **Build 221 (2026-11-09)**: 22 tasks across 5 domains — signed attack bonus enforcement (0 -> +0 in ability grammar and composer chain), automatic target noun fallback on relative clauses (`which you can see` -> `1 target which you can see`), elimination of nested double parentheses in action-oriented passives (`Search (8/-2, 10/+0, Perception)`), action prose punctuation sanitization (`On Success:`, `10 ft.`, `0 ft.`), senses/speed distance normalization. Core tests 454/454 passed. Pinned baseline verified at 613 diagnostics, 0 new diagnostics. Gate 10/10 passed.
 
 - **Build 220 (2026-11-09)**: 22 tasks across 5 domains — canonical distance formatting (`formatDistanceUnit`, `formatMetricDistance`), composite punctuation cleaner (`cleanPunctuation`, `sanitizeProsePunctuation`), WCAG AA high-contrast spell components (`#6a1b9a` / `#ce93d8`) and school cells, 2024 glossary additions (`bloodied`, `temporary-hit-points`, `disengage`, `dodge`, `cover`), A4 Studio reactive page overflow budget meter and 1-click quick controls, defensive spell slot fallbacks. Core tests 453/453 passed. Pinned baseline verified at 613 diagnostics, 0 new diagnostics. Gate 10/10 passed.
 

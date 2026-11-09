@@ -981,7 +981,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
     if (!row.base) return parts.join('; ')
     const baseHtml = numHtml(`${row.base.passive}/${renderBonus(row.base.bonus)}`)
-    return parts.length > 0 ? `${baseHtml}, (${parts.join('; ')})` : baseHtml
+    return parts.length > 0 ? `${baseHtml}, ${parts.join('; ')}` : baseHtml
   }
 
   const actionPassivesGroups = computed(() => {
