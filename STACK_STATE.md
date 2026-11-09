@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build209 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build210 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build210 (2026-11-08)**: H5 closed — fuzz Step 52 proves random tables survive reset, undo, export and reload; table styled from theme tokens on all 12 themes and in print; all 7 async studio lookups in the fuzz poll instead of failing (Step 45 class). Gate 9/9, fuzz 52/52. Release candidate `rc-2.4.3-build-210-random-table-proofs`.
 
 - **Build209 (2026-11-08), safe mode restored**: full gate 9/9 PASS for the first time since Build200. Fixed a live Build208 bug (outcome recipient rendered as a bare `:`, references as “builds on the  result”); escaped author text in outcome HTML; random tables are now part of the saved monster (defaults, load-time normaliser, store actions; reset no longer keeps the previous monster's tables); editor and statblock strings translated; fuzz Step 49 expects 15 panels (Random Tables). New tests: `OutcomeClauses.test.ts`, `RandomTable.test.ts` (core 396/396). Release candidate `rc-2.4.3-build-209-safe-mode-repairs`.
 

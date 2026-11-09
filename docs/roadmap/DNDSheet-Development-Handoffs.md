@@ -1259,3 +1259,10 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **RC script:** `make-rc.mjs <dist/spa> <rcDir> <path-to-json>` — the third argument is a file path, not JSON text.
 - **Next, in order:** H5 smoke (save/reload/import/export/undo for random tables) → H6 rest (themes, print, A4 layer, legacy migration) → H13 → H10 publish script → H11 (close A11.5, then A11.9) → H9 tip rewrite → H14/H15 typecheck baseline.
 - **Workload:** 121 done / 123 open top-level.
+
+## Handoff — after Build 210 (2026-11-08)
+
+- **Gate:** 9/9 PASS; fuzz now has **52** steps (Step 52: random tables through reset, undo, export, reload and 12 themes).
+- **Never run two fuzz instances at once** on the build machine: Step 38 failed under parallel load (H17).
+- **Random tables** are styled only through theme tokens (`--sb-*`) in `statblock-grammar.scss`; do not add colours in components.
+- **Next, in order:** H17 → H18 → H6 rest (A4 layer) → H10 publish script → H11 (close A11.5 then A11.9) → H9 tips → H14/H15.

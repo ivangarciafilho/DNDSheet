@@ -2312,9 +2312,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
-.random-table-grid { width: 100%; border-collapse: collapse; }
-.random-table-grid th { text-align: left; }
-.random-table-range { white-space: nowrap; padding-right: 0.6em; }
 
 /* i don't know why scoped doesn't work but this does */
 .statblock b {

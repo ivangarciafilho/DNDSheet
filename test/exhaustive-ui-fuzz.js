@@ -3049,7 +3049,7 @@ async function runFuzz() {
     action.crAnnotation={...action.crAnnotation,include:true,automatic:false,maxDamage:42};monster.addLegendaryAction(action.id,2);
     monster.addMultiattack();const combo=monster.multiattacks[monster.multiattacks.length-1];combo.actions=[action.id];combo.id='a7-transition-combo';
     await new Promise(resolve=>setTimeout(resolve,250));
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');
     if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await new Promise(resolve=>setTimeout(resolve,120));
     [...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim()))?.click();
     for(let attempt=0;attempt<40&&!document.querySelector('[data-composer-chain="a7-transition-proof"]');attempt++)await new Promise(resolve=>setTimeout(resolve,50));
@@ -3359,7 +3359,7 @@ async function runFuzz() {
     monster.addNewAttack();const attack=monster.attacks[monster.attacks.length-1];attack.id='a8-attack-proof';attack.name='Studio Spear';attack.distance='BOTH';attack.range={reach:5,standard:20,long:60};attack.extension='preserved';
     monster.addAdditionalDamage(attack.id);attack.additionalDamage[0].id='extra-proof';attack.additionalDamage[0].note='while burning';
     monster.addLegendaryAction(attack.id,2);monster.addMythicAction(attack.id);monster.multiattacks.push({id:'attack-ref-proof',name:'Attack references',attacks:[attack.id,attack.id],actions:[],description:''});
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');
     if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(350);
     const tabs=[...studio.querySelectorAll('button')],tab=tabs.find(el=>/^Attacks/.test(el.textContent.trim()));tab.click();await wait(300);
     const problems=[];const chain=()=>document.querySelector('[data-attack-composer="a8-attack-proof"]');
@@ -3410,7 +3410,7 @@ async function runFuzz() {
     monster.addAction();const roar=monster.actions.at(-1);roar.id='ma-roar';roar.name='Reference Roar';roar.description='A ringing roar.';
     monster.multiattacks=[{id:'ma-proof',attacks:[claw.id,bite.id,claw.id],actions:[roar.id],extension:'keep'},{id:'ma-dangling',attacks:['lost-attack'],actions:['lost-action']}];
     monster.multiattackOptions={useCustomRenderer:false,customMultiattackRenderer:'',postscript:''};
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(300);
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(300);
     [...studio.querySelectorAll('button')].find(el=>/^Multiattack/.test(el.textContent.trim())).click();await wait(250);
     const root=()=>document.querySelector('[data-multiattack-composer]'),option=id=>root().querySelector('[data-multiattack-option="'+id+'"]'),group=()=>monster.multiattacks.find(g=>g.id==='ma-proof'),problems=[];
     const click=async(scope,label)=>{if(!scope)throw new Error('Missing scope: '+label);const button=[...scope.querySelectorAll('button,[role="checkbox"],[role="switch"],.q-toggle')].find(el=>el.getAttribute('aria-label')===label||el.textContent.trim()===label||el.querySelector('.block,.q-toggle__label')?.textContent.trim()===label);if(!button){problems.push('missing control '+label);return;}button.focus();button.click();await wait(160);};
@@ -3444,7 +3444,7 @@ async function runFuzz() {
   step45.empty=await evalInPage(`async()=>{
     const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
     monster.$patch({multiattacks:[],attacks:[],actions:[],traits:[],reactions:[],lairActions:[]});await wait(150);
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(180);
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(180);
     [...studio.querySelectorAll('button')].find(el=>/^Multiattack/.test(el.textContent.trim())).click();await wait(180);const empty=document.querySelector('[data-multiattack-composer]').textContent.includes('No multiattack options yet.');
     const button=[...document.querySelector('[data-multiattack-composer]').querySelectorAll('button')].find(el=>el.textContent.includes('Add multiattack option'));button.click();await wait(180);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(180);
     return empty&&!!document.querySelector('[data-multiattack-option]')&&!studio.textContent.includes('No entries in category:');
@@ -3459,7 +3459,7 @@ async function runFuzz() {
     monster.addTrait();const trait=monster.traits.at(-1);Object.assign(trait,{id:'cadence-trait',name:'Cadence Trait',description:'Regains power.',limitedUse:{count:1,rate:'SHORT_REST'},rechargeTiming:'',rechargeTagOverride:'',rechargeCount:undefined});
     monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'cadence-reaction',name:'Cadence Reaction',description:'Responds to danger.',trigger:'When threatened',limitedUse:{count:1,rate:'SHORT_REST'}});
     monster.addNewAttack();monster.attacks.at(-1).name='Single Surface Attack';await wait(180);
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(200);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(200);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(200);
     const chain=()=>document.querySelector('[data-composer-chain="cadence-witness"]'),role=(chain().closest('.rounded-borders')||chain().parentElement).querySelector('.q-select');
     const plainRole=!role.querySelector('.q-badge')&&!role.querySelector('.q-field__native button')&&role.textContent.includes('Action');
     role.click();await wait(150);const categories=[...document.querySelectorAll('.q-menu [role="option"]')].map(el=>el.textContent.trim());const categoryOptions=categories.includes('Action')&&categories.includes('Bonus Action')&&categories.includes('Reaction');
@@ -3537,7 +3537,7 @@ async function runFuzz() {
     const retired=['Traits','Attacks','Multiattack','Reactions','Legendary Actions','Mythic Actions','Lair Actions'],panels=[...document.querySelectorAll('#editor > .q-list > .q-expansion-item')],labels=panels.map(el=>el.querySelector('.q-item__label')?.textContent.trim()),retirement=retired.every(label=>!labels.includes(label)),villainKept=labels.includes('Villain & Bloodied Actions')&&labels.includes('Random Tables'),panelCount=panels.length;
     monster.addReaction();const reaction=monster.reactions.at(-1);Object.assign(reaction,{id:'retire-reaction',name:'Saved response',description:'Keep response.',trigger:'When threatened',limitedUse:{count:2,rate:'DAWN'}});
     monster.addAction();monster.addLegendaryAction(monster.actions.at(-1).id,2);monster.addMythicAction(monster.actions.at(-1).id);monster.addLairAction();await wait(200);
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(150);
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(150);
     const save=document.querySelector('[data-save-reaction-template="retire-reaction"]');if(!save)throw new Error('Studio reaction template control missing');save.click();await wait(150);const input=document.querySelector('.q-dialog input');input.value='Retirement response';input.dispatchEvent(new Event('input',{bubbles:true}));await wait(100);[...document.querySelectorAll('.q-dialog button')].find(el=>el.textContent.trim().toLowerCase()==='save').click();await wait(150);
     let tpl=templates;for(let i=0;i<60&&!tpl;i++){await wait(50);tpl=pinia._s.get('templates')}if(!tpl)throw new Error('templates store never registered');const saved=tpl.customTemplates['Retirement response'],templateSaved=saved?.type==='Reaction'&&saved.trigger===reaction.trigger&&saved.limitedUse.count===2&&saved.description===reaction.description&&!saved.id;const originalId=reaction.id;tpl.applyTemplate('Retirement response');const copy=monster.reactions.at(-1),templateApplied=copy.id!==originalId&&copy.trigger===reaction.trigger&&copy.limitedUse.rate==='DAWN';
     const cases=[['legendary','preamble','presets.legendaryActions'],['mythic','triggerDescription','presets.mythicDescription'],['mythic','preamble','presets.mythicPreamble'],['lair','preamble','presets.lair']],problems=[];
@@ -3555,7 +3555,7 @@ async function runFuzz() {
     for(const [id,name,source,reach,bonus] of [['auto-bow','Automatic Bow','weapon','ranged',undefined],['auto-blade','Automatic Blade','weapon','melee',undefined],['auto-spell','Automatic Spell','spell','ranged',undefined],['zero-bonus','Zero Bonus','weapon','ranged',0]]){monster.addAction();Object.assign(monster.actions.at(-1),{id,name,attackSource:source,attackReach:reach,attackBonus:bonus,targeting:{count:3,countMode:'up_to',kind:'creature'},description:'Preserve authored prose.'});}
     const problems=[];let projections=0;const expected=[['auto-bow',monster.proficiency+2],['auto-blade',monster.proficiency+4],['auto-spell',9],['zero-bonus',0]];
     for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(160);for(const [id,bonus] of expected){const entry=window.__sheetEntry(id),text=entry?.textContent||'',sign=bonus>0?'+':'',phrase=template==='modern'?'Attack '+sign+bonus:'Attack Roll: '+sign+bonus;if(!text.includes(phrase)||!text.includes(template==='modern'?'up to 3 creatures':'up to three creatures'))problems.push(style+'/'+template+'/'+id+': '+text);projections++;}}
-    const studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(120);const chip=document.querySelector('[data-composer-chain="auto-bow"] [data-chain-cell="attack-bonus"]');const chipMatches=chip?.textContent.includes('+'+(monster.proficiency+2));
+    let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(120);const chip=document.querySelector('[data-composer-chain="auto-bow"] [data-chain-cell="attack-bonus"]');const chipMatches=chip?.textContent.includes('+'+(monster.proficiency+2));
     monster.stats.DEX=20;editor.visualTemplate='modern';await wait(150);const live=window.__sheetEntry('auto-bow').textContent.includes('Attack +'+(monster.proficiency+5))&&window.__sheetEntry('zero-bonus').textContent.includes('Attack 0');
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:bonus-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
     try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=(await captured.at(-1).text()).replace(/[*}]/g,'');if(!text.includes('Attack Roll: +'+(monster.proficiency+5))||!text.includes('Attack Roll: +9')||!text.includes('Attack Roll: 0')||!text.includes('up to three creatures'))problems.push(label+': shared bonus/target output');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
@@ -3597,6 +3597,56 @@ async function runFuzz() {
   for(const label of EXPORT_LABELS.slice(0,2))if(!String(step51[label]).includes('(4/Long Rest), Level 1:'))mismatches.push(label+': spell heading not in the web order')
   console.log('Step 51 result:',update?'goldens written':JSON.stringify(mismatches))
   if(mismatches.length)throw new Error('Step 51 failed: '+mismatches.join(' | '))
+
+  console.log('\n--- Step 52: Random tables persist through reset, undo, export and reload ---')
+  const step52=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),history=pinia._s.get('history'),problems=[];
+    monster.$reset();monster.name='Table Fixture';
+    monster.randomTables=[{id:'leak',title:'Leak',dice:'1d4',rows:[]}];monster.$reset();await wait(150);
+    const resetClears=Array.isArray(monster.randomTables)&&monster.randomTables.length===0;
+    let panel;for(let attempt=0;attempt<40&&!panel;attempt++){panel=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Random Tables');if(!panel)await wait(50);}
+    if(!panel)return {problems:['Random Tables panel did not render']};
+    if(!panel.classList.contains('q-expansion-item--expanded'))panel.querySelector('.q-item').click();await wait(250);
+    const addTable=[...panel.querySelectorAll('button')].find(el=>el.textContent.trim().endsWith('Add table'));if(!addTable)return {problems:['missing Add table button']};
+    addTable.click();await wait(200);
+    const table=monster.randomTables[0];if(!table)return {problems:['Add table did not create a table']};
+    table.title='Wild Surge';table.dice='1d6';table.rows[0].max=2;table.rows[0].text='Fire blooms';await wait(150);
+    const gapShown=panel.textContent.includes('No row covers 3–6');
+    const addRow=[...panel.querySelectorAll('button')].find(el=>el.textContent.trim().endsWith('Row'));addRow.click();await wait(150);
+    const row2=table.rows[1];const rowContinues=!!row2&&row2.min===3&&row2.max===3;if(row2){row2.max=6;row2.text='Frost creeps';}await wait(150);
+    const gapCleared=!panel.textContent.includes('No row covers');
+    const fromInput=[...panel.querySelectorAll('input[type=number]')][0];fromInput.value='';fromInput.dispatchEvent(new Event('input',{bubbles:true}));await wait(150);
+    const nanSafe=Number.isFinite(table.rows[0].min)&&table.rows[0].min===1;
+    const sheet=document.querySelector('#render .random-table');
+    const rendered=!!sheet&&sheet.textContent.includes('Wild Surge')&&sheet.textContent.includes('3–6')&&sheet.textContent.includes('Frost creeps');
+    const editorStore=pinia._s.get('editor'),priorTheme=editorStore.visualTheme,unthemed=[];
+    for(const theme of ['wotc','printer','lovecraft_golden','lovecraft_silver','lovecraft_toxic','lovecraft_spooky','lovecraft_galactic','lovecraft_fathomless','dwarves_forge','dwarves_aetherpunk','art_nouveau','art_deco']){
+      editorStore.visualTheme=theme;await wait(150);
+      const block=document.querySelector('#render .statblock'),th=document.querySelector('#render .random-table-grid th');
+      if(!block||!th){unthemed.push(theme+': missing');continue;}
+      const want=getComputedStyle(block).getPropertyValue('--sb-head-bg').trim(),got=getComputedStyle(th).backgroundColor;
+      const probe=document.createElement('span');probe.style.color=want;document.body.appendChild(probe);const expected=getComputedStyle(probe).color;probe.remove();
+      if(!want||got==='rgba(0, 0, 0, 0)'||got!==expected.replace('rgb(','rgb(')&&!got.startsWith(expected.slice(0,-1)))unthemed.push(theme+': '+got+' vs '+expected);
+    }
+    editorStore.visualTheme=priorTheme;await wait(150);const themed=unthemed.length===0;if(!themed)problems.push(...unthemed);
+    history.pushSnapshot('Before table delete');const before=JSON.stringify(monster.randomTables);
+    monster.deleteRandomTable(table.id);await wait(100);const deleted=monster.randomTables.length===0;
+    history.undo();await wait(200);const undone=JSON.stringify(monster.randomTables)===before;
+    const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click,texts={};
+    URL.createObjectURL=blob=>{captured.push(blob);return 'blob:tables';};HTMLAnchorElement.prototype.click=function(){};
+    try{for(const label of ['Export Markdown (Homebrewery v3)','Export JSON (5emm format)']){
+      [...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(250);
+      const item=[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label);const count=captured.length;item?.click();await wait(250);
+      texts[label]=captured.length>count?await captured.at(-1).text():'';
+    }}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    const markdown=texts['Export Markdown (Homebrewery v3)'].includes('### Wild Surge')&&texts['Export Markdown (Homebrewery v3)'].includes('| 3–6 | Frost creeps |');
+    let json=false;try{json=JSON.parse(texts['Export JSON (5emm format)']).randomTables?.[0]?.rows?.length===2;}catch(e){problems.push('5emm export is not JSON')}
+    return {problems,resetClears,gapShown,rowContinues,gapCleared,nanSafe,rendered,themed,deleted,undone,markdown,json};
+  }`)
+  await sendCdp('Page.reload');await pause(1500)
+  step52.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');const t=monster.randomTables?.[0];return !!t&&t.title==='Wild Surge'&&t.rows.length===2&&t.rows[1].text==='Frost creeps';}`)
+  console.log('Step 52 result:',JSON.stringify(step52,null,2))
+  if(step52.problems.length||!['resetClears','gapShown','rowContinues','gapCleared','nanSafe','rendered','themed','deleted','undone','markdown','json','persisted'].every(key=>step52[key]===true))throw new Error('Step 52 failed: '+JSON.stringify(step52))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3613,7 +3663,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 51 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 52 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

@@ -737,6 +737,36 @@
   }
 }
 
+/* A11.9 random tables: theme tokens (--sb-*) so all 12 themes and print share one rule set. */
+.statblock .random-table-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0;
+  font-size: 0.9em;
+
+  th, td {
+    border: 1px solid var(--sb-rule, rgba(122, 31, 18, 0.35));
+    padding: 2px 6px;
+    vertical-align: top;
+  }
+  th {
+    background: var(--sb-head-bg, #7a200d);
+    color: var(--sb-head-ink, #fff8ec);
+    font-weight: 700;
+    text-align: left;
+  }
+  tbody tr:nth-child(even) td { background: var(--sb-stripe, transparent); }
+  .random-table-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
+}
+
+@media print {
+  .statblock .random-table { break-inside: avoid; }
+  .statblock .random-table-grid th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
 /* Total Elimination of Pill Borders around AC, HP, Speed, Defenses, Senses, Languages, Passives & Spells */
 #render .statblock,
 .composer-preview .statblock,
