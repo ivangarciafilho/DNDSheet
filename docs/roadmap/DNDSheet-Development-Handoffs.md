@@ -1266,3 +1266,9 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Never run two fuzz instances at once** on the build machine: Step 38 failed under parallel load (H17).
 - **Random tables** are styled only through theme tokens (`--sb-*`) in `statblock-grammar.scss`; do not add colours in components.
 - **Next, in order:** H17 → H18 → H6 rest (A4 layer) → H10 publish script → H11 (close A11.5 then A11.9) → H9 tips → H14/H15.
+
+## Handoff — after Build 211 (2026-11-08)
+
+- **Publishing is one command now:** after `npm run gate` passes in the build tree, commit, then `node tools/publish.mjs --build N --slug short-name --base <previous commit> --push`. It refuses stale, empty or wrong-root output. `tools/make-rc.mjs` is now in the repo (no more temp-folder copy).
+- **Fuzz Step 38** waits for its panels and buttons; a missing one fails with its name.
+- **Next, in order:** H6 rest (A4 layer) → H11 (close A11.5, then A11.9) → H9 tips → H14/H15 typecheck → H16 (owner).

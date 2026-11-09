@@ -2995,14 +2995,15 @@ async function runFuzz() {
     };
     const modern = await compare('modern'); const classic = await compare('classic'); editor.visualTemplate = 'modern'; await wait();
     const panel = role => document.querySelector('[data-role-header="'+role+'"]');
-    const openPanel = async role => { panel(role).querySelector('.q-item').click(); await wait(); };
+    const until = async (find, label) => { for (let attempt = 0; attempt < 40; attempt++) { const found = find(); if (found) return found; await new Promise(resolve => setTimeout(resolve, 50)); } throw new Error('Step 38: ' + label + ' did not render'); };
+    const openPanel = async role => { (await until(() => panel(role)?.querySelector('.q-item'), role + ' panel')).click(); await wait(); };
     const input = async (role, field, value) => {
       const wrapper=panel(role).querySelector('[data-header-field="'+field+'"]'),formula=wrapper.querySelector('.formula-field');
       if(formula&&!formula.querySelector('.formula-field__draft')){formula.querySelector('.q-field__control').click();await wait();[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')).click();await wait();}
       const el=wrapper.querySelector('input');el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));await wait();
       if(formula){const apply=[...formula.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply');if(apply&&!apply.disabled){apply.click();await wait();}}
     };
-    const button = async (role, label) => { [...panel(role).querySelectorAll('button')].find(el=>el.textContent.trim()===label).click(); await wait(); };
+    const button = async (role, label) => { (await until(() => panel(role) && [...panel(role).querySelectorAll('button')].find(el=>el.textContent.trim()===label), role + ' button ' + label)).click(); await wait(); };
     const prose = async (role, field, value) => { const el=panel(role).querySelector('[data-header-field="'+field+'"] .q-editor__content'); el.innerHTML=value; el.dispatchEvent(new Event('input',{bubbles:true})); await wait(); };
     await openPanel('lair'); await input('lair','initiative','-1');
     const invalid = !!panel('lair').querySelector('[role="alert"], .q-field--error') && [...panel('lair').querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply section settings').disabled;
