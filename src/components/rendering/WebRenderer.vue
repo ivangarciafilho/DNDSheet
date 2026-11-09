@@ -1091,6 +1091,7 @@ import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
+import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
@@ -1851,9 +1852,8 @@ export default defineComponent({
       const score = 10 + (init.mod || 0)
       const modSign = (init.mod || 0) >= 0 ? '+' : ''
       const modStr = `${score}/${modSign}${init.mod || 0} initiative`
-      let advDisadv = ''
-      if (init.advantage) advDisadv = 'with Advantage'
-      else if (init.disadvantage) advDisadv = 'at Disadvantage'
+      const rollMode = effectiveAdvantage(init.advantage, init.disadvantage)
+      const advDisadv = rollMode === 'advantage' ? 'with Advantage' : rollMode === 'disadvantage' ? 'at Disadvantage' : ''
 
       let spellTrigger = ''
       const cfg = monster.initiativeConfig

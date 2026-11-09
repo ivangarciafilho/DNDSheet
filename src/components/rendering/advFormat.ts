@@ -27,7 +27,7 @@ export function advHtml(inner: string, advantage?: boolean, disadvantage?: boole
   const cls = mode === 'advantage' ? 'dnd-adv' : 'dnd-disadv'
   const title = tip ?? (mode === 'advantage' ? 'Advantage' : 'Disadvantage')
   // non-breaking space keeps the glyph on the same line as the value it marks
-  return `<span class="${cls}" title="${escapeHtml(title)}">${inner}\u00a0<span class="dnd-adv-glyph" aria-hidden="true">${ADV_GLYPH[mode]}</span></span>`
+  return `<span class="${cls}" title="${escapeHtml(title)}">${inner}\u00a0<span class="dnd-adv-glyph" role="img" aria-label="${mode === 'advantage' ? 'Advantage' : 'Disadvantage'}">${ADV_GLYPH[mode]}</span></span>`
 }
 
 /** Drops markup produced by the helpers above for plain-text targets. */

@@ -3648,6 +3648,32 @@ async function runFuzz() {
   step52.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');const t=monster.randomTables?.[0];return !!t&&t.title==='Wild Surge'&&t.rows.length===2&&t.rows[1].text==='Frost creeps';}`)
   console.log('Step 52 result:',JSON.stringify(step52,null,2))
   if(step52.problems.length||!['resetClears','gapShown','rowContinues','gapCleared','nanSafe','rendered','themed','deleted','undone','markdown','json','persisted'].every(key=>step52[key]===true))throw new Error('Step 52 failed: '+JSON.stringify(step52))
+  console.log('\n--- Step 53: Recovered initiative cancellation and accessible roll glyphs ---')
+  const step53 = await evalInPage(`async()=>{
+    const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+    const monster=pinia._s.get('monster'),editor=pinia._s.get('editor'),problems=[];
+    const prior={style:editor.style,template:editor.visualTemplate,compact:monster.compactNameplate,config:JSON.parse(JSON.stringify(monster.initiativeConfig))};
+    let checks=0;
+    try {
+      for(const style of ['2014','2024'])for(const template of ['modern','classic'])for(const compact of [false,true])for(const [advantage,disadvantage,mode] of [[true,false,'advantage'],[false,true,'disadvantage'],[true,true,'none'],[false,false,'none']]){
+        editor.style=style;editor.visualTemplate=template;monster.compactNameplate=compact;
+        monster.initiativeConfig={...monster.initiativeConfig,advantage,disadvantage};
+        let matched=false;
+        for(let attempt=0;attempt<30;attempt++){
+          await new Promise(resolve=>setTimeout(resolve,40));
+          const cell=document.querySelector(compact?'#render .compact-col.init':'#render .top-plate-init-cell.init-cell');
+          if(!cell)continue;
+          const text=cell.textContent||'',glyph=cell.querySelector('.dnd-adv-glyph');
+          matched=compact ? (mode==='none'?!/with Advantage|at Disadvantage/.test(text):text.includes(mode==='advantage'?'with Advantage':'at Disadvantage')) : (mode==='none'?!glyph:!!glyph&&glyph.getAttribute('role')==='img'&&glyph.getAttribute('aria-label')===(mode==='advantage'?'Advantage':'Disadvantage'));
+          if(matched)break;
+        }
+        checks++;if(!matched)problems.push([style,template,compact,mode].join('/'));
+      }
+    } finally {editor.style=prior.style;editor.visualTemplate=prior.template;monster.compactNameplate=prior.compact;monster.initiativeConfig=prior.config;}
+    return {checks,problems};
+  }`)
+  console.log('Step 53 result:',JSON.stringify(step53))
+  if(step53.checks!==32||step53.problems.length)throw new Error('Step 53 failed: '+JSON.stringify(step53))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3664,7 +3690,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 52 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 53 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

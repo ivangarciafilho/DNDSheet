@@ -1,0 +1,436 @@
+{
+  "protectedCheckout": "F:\\AI_Resources\\DNDSheet",
+  "protectedHead": "1869921",
+  "baseline": "a7cc729",
+  "officialBase": "f45bd66",
+  "preservedFiles": [
+    {
+      "path": "src/components/editor/DatabaseStudio.vue",
+      "sha256": "7ca99ab42797e5bf35948a559ed17e1049dcfc6c9237929d9087055fbe8da240",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/widgets/GradientOverlayController.vue",
+      "sha256": "a73555e93595783a4802567e82533077e8d43fa44f30ab22662036c868d7d156",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/ac-defense-composer.ts",
+      "sha256": "9c42b189fcca863454c40106c9983c9f0845b102c4dec7c0ebf2b0f6a7f04ae9",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/entry-bindings.ts",
+      "sha256": "d1cb5c15bd5e5d9376f0b1c18e2bfc53b38c76b612889207dc0026b6f2595b56",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/gradient-curve.ts",
+      "sha256": "8b621f079e04427687669209a93aaeaa5679bd77b2a19f730e528eb963d649f5",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/hp-defense-composer.ts",
+      "sha256": "87616d4d25617927984515e7a389d31886b2c6f6092d3159ae2a276e50327e77",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/initiative-composer.ts",
+      "sha256": "1ac3bb90fda4138feffc2a1592186e52d5ebeb963c9cb10bfdb5243f5c11e3b0",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/species-and-heuristics.ts",
+      "sha256": "c6df8b3d3bb6e62ddfe814c934a032ca115a3e4b8bef99fc2c982f919846ed94",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/speeds-traversal.ts",
+      "sha256": "92e53b49070c365b57a605c18a67559c40a55d1d17d0ebe4b694861ec44ddc39",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/structured-studio-action.ts",
+      "sha256": "1953eaf699eeee900b4d1fca422c879d668fca30d3a450e703ec9a03a4c32f54",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/capture-candidate180.js",
+      "sha256": "9355fcf4f02b3b4d5e4e26b304e6a0bc695038f29b17b9e615d8ee8245cee742",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/capture-candidate181-layers.js",
+      "sha256": "14425c8923b9aa6bf73337cf0e71c1e8001186698e9210f37f750bb7dfd060d0",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/capture-candidate181.js",
+      "sha256": "0960e92411eac8e660e4832438004be2b1362f3e42d057d4c2573afbb80ca22f",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/capture-candidate182.js",
+      "sha256": "d09104a1cb882f96f092b812be2ae35f40220d2e9507203e4f0bb336ea7c5a4b",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/Build183Features.test.ts",
+      "sha256": "f38df21d5fb1ee3ef69e4de857ca5429ca19481aff160ef2a03feb91fcdd19f2",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/EntryBindings.test.ts",
+      "sha256": "65940ed10fa29e8a3eb09f24e1bff4551b16b07c916efbe9e670e5c0ae96fcb8",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/InitiativeComposer.test.ts",
+      "sha256": "190854738f739fbeae7ca0b67fe6190960ca91f84515ad2bd69752cfb32dee39",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/ModularComposers.test.ts",
+      "sha256": "7b6584967feeaf313e0b9ab1eae88570e57994eeb3139746c1f9b11d6c11e718",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/SpeciesAndHeuristics.test.ts",
+      "sha256": "2103c0f1a86baebdd3b4785db49218674555932e45ce41e1f9535e2652782e16",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/SpeedsTraversal.test.ts",
+      "sha256": "170ed6820bca6233fe46827327cde03302c9c881581f8654d3ad800d68e0ea92",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/debug-statblock.js",
+      "sha256": "78eaae635ffcb931f81c1be60312e168be9728a033bfb2add9eb8add3c9bdcd0",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/inspect-dom.js",
+      "sha256": "340385a41311896a67444a0d7231c3dc1a36fca1e93322ddcaf94f850b1ea847",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/inspect-statblock.js",
+      "sha256": "8b86c6d7c2a6b5b8a855ef18ac28ed2d69f521d2077a550f7c0cb7ca34d52ed8",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/test-clip.js",
+      "sha256": "eae28715836a4decf53f9ab3c9696400a538b4085284a1ec0eb81b9b40f6066e",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/verify-candidate182-dom.js",
+      "sha256": "1187b0a1cbc69881724d3eced88208149d74db8dfb83252877085c6a8823f32d",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "STACK_STATE.md",
+      "sha256": "b285af6830ee8a0a41f5c0296af291a7c4ee95778059accdfe15fb27d6b6fb8d",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "build.json",
+      "sha256": "f3c60d87ed6de2fffa407175dbe18a8cd08159efb6c497fb86d89a2702196a54",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "docs/roadmap/DNDSheet-Development-Handoffs.md",
+      "sha256": "883274e99a568c1f7efe41230963fbc515526a61c18dcce2901ba4d9aaef8d8b",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "docs/roadmap/DNDSheet-Implementation-Backlog.md",
+      "sha256": "a5f05671b80dc5fa43a78ff7a7660625cd0250368941b85080a5d92202e6f731",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "docs/roadmap/DNDSheet-Professional-Product-and-Architecture-Spec.md",
+      "sha256": "fce6a82e9af649759fa419ee5fc70ab2de5028f4f74aa6d13b82a7b50f2fe46b",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/LockToggleButton.vue",
+      "sha256": "5677b53ede56dc5ef2f3b52b81783dc30d43cbdcddd3de9a7c2836b6f2df49ea",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/A4LayerStudio.vue",
+      "sha256": "85540da566d988f52f15ee06415248e64d3b2b436120a6ab8ff14e717ac36d80",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/ActionsEditor.vue",
+      "sha256": "bc6741a0d0fca9aeaa395ac0c43777194a551dcdbceabfe936af08a02fa5c147",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/AtWillCastingEditor.vue",
+      "sha256": "4b0941a8b78f28b7aeec9137ffc95b4d3360bad6358144020f6862858d26ce6b",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/BasicsEditor.vue",
+      "sha256": "71da659b7e1ce05fa6f01bfe572f5e28b508b60dfbfc5b27af623739669c1016",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/ClassCastingEditor.vue",
+      "sha256": "a0a5da2faed92303f861c8c3bdbd733cd4d88e57425f1d6af65d37abe3c6016f",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/CrAnnotationCard.vue",
+      "sha256": "d28a93a668f4a817d9caa64f081f01f000bcffe6ed3f580ab3a48a0f1567f700",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/ResistancesEditor.vue",
+      "sha256": "0d1973eb019b06726729fbab71b941ab6becab5730d0daca2db2c3389c0739c9",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/SkillsEditor.vue",
+      "sha256": "8d922a2b2d430319391acbd2c3c1ce4a91f35d64311a59a0552117b0780bf465",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/SpeedsEditor.vue",
+      "sha256": "f7a4a0767ba44fdcd7402a84064bb29c74cca02a69d46d13ccbca54f5ebc6fad",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/SpellcastingEditor.vue",
+      "sha256": "373d34a9f59f10da249ec35e036deab23079810658f03e81c67fc31a3431b062",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/composer/ChainCell.vue",
+      "sha256": "c949db4d73c0bb38d76d0647cb688f8a7e971a9f87b5a93575b23fbeba9c44c5",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/composer/ChainOutcomesEditor.vue",
+      "sha256": "db9fc8e1ac6c4aeaf8fa269516bc893b7fc9b3da742d1a66819402fcc4da9358",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/composer/ComposerChain.vue",
+      "sha256": "82caf551752559861118311231cfbf016ceb1bb3aba6b562a7ee7986db98ac88",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/composer/RoleHeaderEditor.vue",
+      "sha256": "39d8b7867c07da9290159d23e2d3ea470bdf5c4cd73538f30a6920e2dd401096",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/widgets/DualKnobCropSlider.vue",
+      "sha256": "81543fd33033bcfd0bca4f9d6a4234260f26c6c579b0896dad3232581a5b96f1",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/editor/widgets/RadialOffsetController.vue",
+      "sha256": "06285989ba68443a520d99fb596b989d715c352e06bd63baa0eab4f01014bd7f",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/kit/FormulaField.vue",
+      "sha256": "797f542b10ce424ed429a9f515463999b6f7219a952d115bedefae6e93442e9b",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/kit/useBindings.ts",
+      "sha256": "684e3070d777831cd8416125ccd9a299d3ae0e2fff3a17a3efec90ab27beaa16",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/models.ts",
+      "sha256": "72023833b2fdf8e7399f7f214573fb7035fbe1bdfb334816ccd5ddb3140b6cb0",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/rendering/WebRenderer.vue",
+      "sha256": "d1eaf461fd9618f3492d53ade26c235f29797e209c4d3e932418d5185c9b2b41",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/rendering/useProcessTokens.ts",
+      "sha256": "1428ffa64cfe743ddcd3ae1e0fd61bf6bede1673286baf908d66d10f71a7a9ac",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/components/rendering/useTextRenderer.ts",
+      "sha256": "174d441f56092d983ea9a44eaf7ecb88b1aa81e8827f543b462e5acb864c9a3c",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/ability-grammar.ts",
+      "sha256": "a3a51d294373a95f2da8f68b4bb22017269872a5c15a4682c8737a01a0a765b2",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/action-composer.ts",
+      "sha256": "95a7d1725fde3a3555ed359f08c5389cf52a55206ceb251b8f6f83ee56128409",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/action-templates.ts",
+      "sha256": "9bb70bc6297952f849af61d67e6035f276086a7c17516af63c538dea0a387df7",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/cadence.ts",
+      "sha256": "fcdd44047c38ff83e97263274379743d01720bfc2958be4a4649fee87d5a3583",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/catalogs/cadence.ts",
+      "sha256": "7649ec45a9b2030ab1848c4a8cde61aea0ef8318ab58a1c34c113c067227fb01",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/composer-chain.ts",
+      "sha256": "fcacd352cd5d3c5f301d1c4a4142cc17d3b4177c8a14281196c1305d2ec3dbf4",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/defense-and-traits-utils.ts",
+      "sha256": "3419e2ef5350ba3fd350de973e86af0429e1864f392bbaeb32dd2e772a131d05",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/reaction-composer.ts",
+      "sha256": "c22304f60519bb241717064743409aa6c629c60fa05f2525cb135d12a46b271e",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/role-transition.ts",
+      "sha256": "ab411ec5a9f5bdfcfd028c1649972746543eee5d7a6fd16ce180e51cdf6b67e0",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/spell-plate.ts",
+      "sha256": "5294cdc27c9a6071d63addfb2bd75cdf4d180e5e8e44f55ab177ee4b113f4821",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/structured-attack.ts",
+      "sha256": "25f9ad22b4be7e9aeeb3b16a10ad4bca79b4cffea8d3ff2a42cd9d68ad4b6cde",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/domain/types.ts",
+      "sha256": "ec83e2dc2bb5803842d293ae1475b39141a7202424f9663b958f21b88685da5e",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/usecases/AutoSyncSpellcasting.ts",
+      "sha256": "4e1f3df9ae0737b6a533e9c7ac3fd68982db2772fc90b265bebe827c4cf106b6",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/usecases/CalculateCr.ts",
+      "sha256": "b58dc6fd859c0ee498cf7d586d902feaca28a5872a6f9c1f410788df3347a28d",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/core/usecases/ExportStatblock.ts",
+      "sha256": "7687af800b533634a9af6d483c995349930a7d076117d44aa34a338c9a95b545",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/css/app.scss",
+      "sha256": "477db34d4605c28dd81a96ede6b1cf10e225fa9a086718047e6c03e2a968c429",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/css/statblock-grammar.scss",
+      "sha256": "48af49ef4e834687553adc7642a0f51b37ec166cf1f9d25858e6b2b6e1b081ed",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/pages/MonsterBuilder.vue",
+      "sha256": "7217e75b6bceaa35e0f251abfe7887f28933463c182665e3b2cb0aad5227f0d2",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/stores/editor-store.ts",
+      "sha256": "151d61434aca8f36aa17f07fd6359c39f45e5f6ffc7d1373b7630dbf9c68cab6",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/stores/history-store.ts",
+      "sha256": "399b0c47a3033dae4a68e2d9736264a27e9408403f98c03aa9d23ff15c2c6f94",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "src/stores/monster-store.ts",
+      "sha256": "0b883ddbec1bd092f6ce0a6748e363d2920be2f716cfb749a2670a7c2e1c286e",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/bindings-browser-smoke.mjs",
+      "sha256": "10387be5c10700bc0773ddcfb08a8b4a95092869994093e3941d1273789f0e49",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/AbilityGrammar.test.ts",
+      "sha256": "23e0a1edb8cf33f6588851ba6497aa2b6b553828d10fb2a3e4ef9cae4b813914",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/ActionComposer.test.ts",
+      "sha256": "647aea8722f096b70ddc9a78220edc53030cd184c1884d6af26843a2a92149dd",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/AutoSyncSpellcasting.test.ts",
+      "sha256": "5d46caac7c89c806aba20841df47be4b2c94575cdc7aed9e978970b2e7971198",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/ComposerChain.test.ts",
+      "sha256": "3a5af80dac9b3cd663ec2673e450f49ae499720ef1809d7a406a78b10c6bd9cb",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/ExportStatblock.test.ts",
+      "sha256": "73c125e3aac695fdfd5a2a711652a12aabf56575bedb7adb51aa1db905f3e1ee",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/SpellPlate.test.ts",
+      "sha256": "0ad921c72d12df43a779335023a444c81114e9cbdce4fc3ed1bb6ffbfdcbe27d",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/core/StructuredAttack.test.ts",
+      "sha256": "cd2a0d3fcf7f1435c79d2c7f1be63f4e037d4d47b5b43019b65ac30366e52dfa",
+      "baselineEquivalentIgnoringCRLF": true
+    },
+    {
+      "path": "test/exhaustive-ui-fuzz.js",
+      "sha256": "f43090ec6d6e59e958f0b8bf5c72356ee2b54caac633a9b7dd1678387ef0d84d",
+      "baselineEquivalentIgnoringCRLF": true
+    }
+  ],
+  "build138Checkout": "clean; historical commit already ancestor",
+  "sidebranch": "a13-9-sheet-density",
+  "recoveredDocs": [
+    "163",
+    "164",
+    "165",
+    "166"
+  ],
+  "lostBehavior": [
+    "named advantage glyphs",
+    "initiative advantage/disadvantage cancellation"
+  ],
+  "noSourceOverlayNeeded": true
+}

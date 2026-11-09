@@ -1747,12 +1747,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const init = monster.initiative
     const cfg = monster.initiativeConfig
     const modStr = `${init.mod >= 0 ? '+' : ''}${init.mod}`
-    let primaryModPill = numHtml(modStr)
-    if (init.advantage) {
-      primaryModPill = advHtml(numHtml(modStr), true, false)
-    } else if (init.disadvantage) {
-      primaryModPill = advHtml(numHtml(modStr), false, true)
-    }
+    const primaryModPill = advHtml(numHtml(modStr), init.advantage, init.disadvantage)
 
     const qualifiers: string[] = []
     const extraCells: string[] = []
@@ -1840,12 +1835,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const initiative = computed(() => {
     const init = monster.initiative
     const modStr = `${init.mod >= 0 ? '+' : ''}${init.mod}`
-    let modPill = numHtml(modStr)
-    if (init.advantage) {
-      modPill = advHtml(numHtml(modStr), true, false)
-    } else if (init.disadvantage) {
-      modPill = advHtml(numHtml(modStr), false, true)
-    }
+    const modPill = advHtml(numHtml(modStr), init.advantage, init.disadvantage)
     const badges: string[] = []
     if (init.cantBeSurprised) badges.push("can't be surprised")
 

@@ -2,7 +2,11 @@
 
 Formerly "5e Monster Maker"
 
-Live site: https://ebshimizu.github.io/5emm/
+Live DNDSheet release candidate: https://ivangarciafilho.github.io/DNDSheet/
+
+Release source: https://github.com/ivangarciafilho/DNDSheet/tree/build185-repairs
+
+Upstream project: https://github.com/ebshimizu/5e-monster-maker
 
 A monster stat block builder for the 5th edition of Dungeons and Dragons.
 
