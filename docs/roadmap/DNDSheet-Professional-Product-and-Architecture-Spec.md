@@ -2,7 +2,7 @@
 
 ## Current verified delivery — Build213 (2026-11-09)
 
-Candidate `rc-2.4.3-build-213-table-import-and-a4-print`, based on `2363765`. **H6 closed**: transactional Paste rows, global row-ID reservation, statblock-owned A4 tables, accessible headers and inspected portrait/landscape print output. Shared print fixes remove the editor splitter/clipping and notification UI; landscape now selects its actual paper orientation. Final gate9/9:400 core;54 browser scenarios on both SPA and Pages. Prior candidates and protected checkout retained.
+Release source `e55215f`; Pages `09f9945`; tag `rc-2.4.3-build-213-table-import-and-a4-print`, based on `2363765`. Official live footer213 and entry-asset parity verified. **H6 closed**: transactional Paste rows, global row-ID reservation, statblock-owned A4 tables, accessible headers and inspected portrait/landscape print output. Shared print fixes remove the editor splitter/clipping and notification UI; landscape now selects its actual paper orientation. Final gate9/9:400 core;54 browser scenarios on both SPA and Pages. Prior candidates and protected checkout retained.
 
 [Build213 delivery, evidence and groomed continuation](DNDSheet-Build213-Table-Import-and-A4-Print.md) records the acceptance ruling and boundaries. Next: **H11 (A11.5 → A11.9) → H9 → H15/H14**. H13 requires three consecutive unchanged-source gates; only one final qualifying run is supplied here. H12 and owner-decision H16 remain open. Typecheck is outside the nine-step gate.
 

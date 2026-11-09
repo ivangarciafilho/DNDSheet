@@ -1,0 +1,33 @@
+{
+  "source": "e55215f29b8459445f805bb9ba828fe64301df6f",
+  "pages": "09f9945f075d6168286d75f2feb6c5e8bded2b69",
+  "indexMatches": true,
+  "assets": [
+    {
+      "asset": "assets/index.d7daeffc.js",
+      "sha256": "408c334ec37bd303dab40b49e40eea20aa950454f0b56304d8d45464906d6e02",
+      "matches": true
+    },
+    {
+      "asset": "assets/index.b2f66a81.css",
+      "sha256": "2faf02c05883fee113ac1f8eb218e111a38a9af6a397d8af2790035352bb2aff",
+      "matches": true
+    }
+  ],
+  "visibleFooter": "v2.4.3 build 213",
+  "candidateChecksums": 97,
+  "workload": {
+    "before": {
+      "done": 116,
+      "open": 121
+    },
+    "after": {
+      "done": 117,
+      "open": 120
+    },
+    "closed": [
+      "H6"
+    ],
+    "newTaskIds": 0
+  }
+}

@@ -47,3 +47,10 @@ New scope IDs:0. Closed:H6. Tests:396→400 core (+4);53→54 browser scenarios 
 ## Preservation and execution
 
 Build212 and the protected dirty checkout are retained. Work took place in `F:/AI_Resources/DNDSheet/.codex-temp/build213`, with one writer and one fuzz process. Publish only from this tree using an explicit `--repo`; Pages output is the root of `dist-pages`, not a nested spa folder. The official evaluation link remains https://ivangarciafilho.github.io/DNDSheet/.
+
+
+## Publication receipt
+
+Source `e55215f29b8459445f805bb9ba828fe64301df6f`; Pages `09f9945f075d6168286d75f2feb6c5e8bded2b69`. Both branches and the Build213 candidate tag were pushed. Official live footer reads `v2.4.3 build 213`; served index and JS/CSS entry assets match tested Pages output. Frozen candidate97 checksum entries reverified, with a copy in the central local candidate archive. Publication receipt is adjacent as `DNDSheet-Build213-Publication-Receipt.json`.
+
+The following receipt/documentation commit does not alter the tested application source or frozen candidate.
