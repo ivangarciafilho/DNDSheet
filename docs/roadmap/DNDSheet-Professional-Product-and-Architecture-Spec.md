@@ -1,6 +1,14 @@
 # DNDSheet — Product & Architecture Specification
 
-## Build199 status — specification versus shipped code (2026-11-08)
+## Current verified release — Build212 (2026-11-09)
+
+Build212 release source `fb73b1a` on `build185-repairs`; Pages `7aff988`; tag `rc-2.4.3-build-212-recovery-and-release-sync`. Live footer212 verified. Recovery restored initiative cancellation/accessibility and four historical records; all 83 protected files remain unchanged. Final gate: 396 core tests, 53 browser steps on SPA and Pages, nine steps passed. Typecheck is outside this gate.
+
+Read [Build212 recovery and documentation reconciliation](DNDSheet-Build212-Recovery-and-Documentation-Sync.md) for the complete evidence, document conflicts and fine-grained continuation. Current delivery order: **H6 → H11 (A11.5 then A11.9) → H9 → H15/H14**. H13's three-run proof and H12 remain open; H16 needs its recorded owner decision. Preserve existing source/pool, species/provenance, binding and print acceptance requirements.
+
+Accounting: 219 unique canonical A/B task IDs, 106 checked / 113 open; separate H ledger10 checked /8 open. These document counts do not revalidate every closure. Build212 claims **zero new whole-task closures**. Historical snapshots below retain their original counts and are superseded for current status and priority.
+
+## Historical Build199 status — specification versus shipped code (2026-11-08)
 
 The CR-154 and CR-158 requirements remain the contract; Builds 162–184 implemented parts of them without recording acceptance. Status per requirement owner (details and remaining proofs in Backlog §Build185):
 

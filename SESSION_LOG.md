@@ -1,5 +1,11 @@
 # DNDSheet session checkpoint - 2026-10-30
 
+## Current checkpoint — Build212 (2026-11-09)
+
+Recovery committed/pushed as `fb73b1a`; Pages `7aff988`; official site displays212. Final nine-step gate passed (396 core;53 browser steps on SPA and Pages). All16 Markdown documents reviewed and current canonical entry points synchronized. See `docs/roadmap/DNDSheet-Build212-Recovery-and-Documentation-Sync.md`. Resume H6, then H11, H9, H15/H14; keep remaining gates explicit. Protected dirty checkout and prior candidates unchanged.
+
+The following Build157–161 records are historical checkpoints, including headings originally marked CURRENT.
+
 ## CURRENT: Build159 binding foundation
 
 Code2b45cff/tag rc-2.4.3-build-159-binding-foundation;eval http://localhost:9124/candidate159/index.html#/. Frozen15997hashes;protected15897verified. Existingserver/versionedassetpath;no process changes. Same9124storage,actualUI MyNewMonster+VeilofRadiance+build159;main-origin data untouched. Buildsuccessors outside servedoutput.
