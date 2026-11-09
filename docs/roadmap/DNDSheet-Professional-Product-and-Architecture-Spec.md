@@ -1,8 +1,8 @@
-## Current validated delivery — Build225 (2026-11-09)
+## Current published delivery — Build225 (2026-11-09)
 
 Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
 
-[Build225 scope, integration findings and ordered continuation](DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md). Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Publication/live verification follows.
+[Build225 scope, integration findings and ordered continuation](DNDSheet-Build225-Outcome-Lifecycle-and-Safe-Projections.md). Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshed base486)**; **58 exhaustive browser steps on SPA and Pages**; **19 outcome lifecycle/Apply/Cancel/reload checks**;60 fixture/theme cases,120 representative AC contrast samples and10 fit views. No browser exceptions. Type guard613 existing diagnostics/0new; debt remains. Published source 84edd95b4cf946b82aa844fa15a0303a9a06476e; Pages 08bda4e9183b6658a0aeee6ea86925555f25ac10; tag rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections. GitHub Pages reports built. Live footer225 and index/entry JavaScript/CSS/MonsterBuilder byte parity verified. Prior223/224 archives preserved; candidate225 archived with all96 checksums verified.
 
 ### Outcome editing contract after remote224 integration
 

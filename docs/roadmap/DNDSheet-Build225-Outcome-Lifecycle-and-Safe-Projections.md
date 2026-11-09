@@ -46,3 +46,7 @@ Final frozen-source gate **10/10** passed: **504 core tests (+18 versus refreshe
 4. A11.5: full action/trait/reaction/attack adapter goldens and theme/print proof before closing the parent ID. The current lifecycle work is a prerequisite, not a replacement for those contracts.
 5. A11.9: connect stable dice-row/range IDs and the existing random-table validator to the container model; gap/overlap/dice-expression checks, authored fallback and explicit-roll-only behavior.
 6. H9: purpose-led help for the actual controls and consequences, then H14 per-file type debt. Keep current publication/evidence guards mandatory.
+
+## Published release
+
+Published source 84edd95b4cf946b82aa844fa15a0303a9a06476e; Pages 08bda4e9183b6658a0aeee6ea86925555f25ac10; tag rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections. GitHub Pages reports built. Live footer225 and index/entry JavaScript/CSS/MonsterBuilder byte parity verified. Prior223/224 archives preserved; candidate225 archived with all96 checksums verified. [Publication receipt](../evidence/build225/publication-receipt.json).

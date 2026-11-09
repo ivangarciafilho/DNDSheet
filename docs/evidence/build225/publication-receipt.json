@@ -1,0 +1,151 @@
+{
+  "build": 225,
+  "url": "https://ivangarciafilho.github.io/DNDSheet/?build=225#/",
+  "releaseSource": "84edd95b4cf946b82aa844fa15a0303a9a06476e",
+  "base": "4adb4be6b88e9f9f28fd0bd814cd4cf3a08f6cc2",
+  "pagesCommit": "08bda4e9183b6658a0aeee6ea86925555f25ac10",
+  "tag": "rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections",
+  "gate": {
+    "ok": true,
+    "inputFingerprint": "713e750d7f64c2d3ecea3d0758b01cc4f070faf7a5c29de28fbb887541021c33",
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 27
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 182
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 35
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 180
+      }
+    ]
+  },
+  "live": {
+    "status": "built",
+    "indexSha256": "b06b9051b430db1bf385ecb5e06f80e10eeef36d66b8674b43319cd7f19ce98e",
+    "assets": [
+      {
+        "path": "/DNDSheet/assets/index.106e471d.js",
+        "sha256": "3f7d7a78731c154ef933d5acfe84f95bfa659962d3f165e1ee56e6971eb2b491"
+      },
+      {
+        "path": "/DNDSheet/assets/index.45d3a1af.css",
+        "sha256": "4d702c9c13955df4bf29b963aa7616072517275331ecc9bf0a869e6c1d967a81"
+      },
+      {
+        "path": "/DNDSheet/assets/MonsterBuilder.d788ca5b.js",
+        "sha256": "6129c05c418889b338ce82556a2628aed7bb8318fcb5e3e23d761e3caed4e3e3"
+      }
+    ],
+    "footer": "v2.4.3 build 225",
+    "footerVerification": "Read-only Codex in-app browser accessibility inspection"
+  },
+  "candidate": {
+    "path": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections",
+    "verifiedEntries": 96
+  },
+  "workload": {
+    "closed": [],
+    "newIds": 0,
+    "implementationItemsCompleted": 12,
+    "normalized": {
+      "total": 268,
+      "before": {
+        "complete": 174,
+        "open": 94
+      },
+      "after": {
+        "complete": 174,
+        "open": 94
+      },
+      "delta": {
+        "complete": 0,
+        "open": 0
+      }
+    },
+    "raw": {
+      "total": 277,
+      "before": {
+        "complete": 183,
+        "open": 94
+      },
+      "after": {
+        "complete": 183,
+        "open": 94
+      }
+    },
+    "upstreamReconciliation": {
+      "previousNormalizedTotal": 256,
+      "upstreamNewCheckedIds": 12,
+      "upstreamClaimedComplete": 164,
+      "measuredComplete": 174,
+      "measuredOpen": 94
+    },
+    "core": {
+      "before": 486,
+      "after": 504,
+      "delta": 18
+    },
+    "browserStepsPerTarget": {
+      "before": 58,
+      "after": 58,
+      "delta": 0
+    },
+    "outcomeLifecycleBrowserChecks": 19,
+    "themeCases": 60,
+    "contrastSamples": 120,
+    "fitViews": 10
+  },
+  "verifiedAt": "2026-11-09T23:04:48.125Z"
+}
