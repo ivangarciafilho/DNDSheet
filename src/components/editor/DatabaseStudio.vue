@@ -28,7 +28,7 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input
+            <q-input v-help="'Enter variable key for the database studio.'"
               v-model="newVarKey"
               dense
               outlined
@@ -38,7 +38,7 @@
               class="col-12 col-sm-4"
               @keyup.enter="addVariable"
             />
-            <q-input
+            <q-input v-help="'Enter value / formula for the database studio.'"
               v-model="newVarVal"
               dense
               outlined
@@ -49,7 +49,7 @@
               @keyup.enter="addVariable"
             />
             <div class="col-12 col-sm-2">
-              <q-btn
+              <q-btn v-help="'Add in the database studio.'"
                 dense
                 color="purple-5"
                 icon="add"
@@ -110,7 +110,7 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input
+            <q-input v-help="'Enter macro identifier for the database studio.'"
               v-model="newMacroKey"
               dense
               outlined
@@ -120,7 +120,7 @@
               class="col-12 col-sm-4"
               @keyup.enter="addMacro"
             />
-            <q-input
+            <q-input v-help="'Enter expansion phrase / effect for the database studio.'"
               v-model="newMacroVal"
               dense
               outlined
@@ -131,7 +131,7 @@
               @keyup.enter="addMacro"
             />
             <div class="col-12 col-sm-2">
-              <q-btn
+              <q-btn v-help="'Add in the database studio.'"
                 dense
                 color="purple-5"
                 icon="add"
@@ -194,7 +194,7 @@
           </div>
 
           <div class="row q-gutter-x-sm items-center q-mb-md">
-            <q-input
+            <q-input v-help="'Enter preset name for the database studio.'"
               v-model="newPresetName"
               dense
               outlined
@@ -203,7 +203,7 @@
               placeholder="e.g. Celestial Archon Lineage"
               class="col"
             />
-            <q-btn
+            <q-btn v-help="'Save Current Monster as Preset in the database studio.'"
               dense
               color="amber-9"
               icon="bookmark_add"
@@ -227,7 +227,7 @@
                 </div>
               </div>
               <div class="row items-center q-gutter-x-xs">
-                <q-btn
+                <q-btn v-help="'Apply in the database studio.'"
                   dense
                   size="sm"
                   color="primary"
@@ -259,14 +259,14 @@
           </div>
 
           <div class="row q-gutter-sm items-center q-mb-md">
-            <q-btn
+            <q-btn v-help="'Export Database JSON in the database studio.'"
               dense
               color="positive"
               icon="download"
               label="Export Database JSON"
               @click="exportDatabase"
             />
-            <q-btn
+            <q-btn v-help="'Import Database JSON in the database studio.'"
               dense
               outline
               color="cyan-3"
@@ -283,7 +283,7 @@
             />
           </div>
 
-          <q-input
+          <q-input v-help="'Enter database json payload for the database studio.'"
             v-model="databaseJsonPreview"
             type="textarea"
             rows="6"

@@ -13,18 +13,18 @@
         <q-card-section class="q-gutter-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-md-6">
-              <q-input v-model="actor.name" label="Character Name" dense outlined />
+              <q-input v-help="'Enter character name for the character editor.'" v-model="actor.name" label="Character Name" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.class" label="Class" dense outlined />
+              <q-input v-help="'Enter class for the character editor.'" v-model="actor.class" label="Class" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.subclass" label="Subclass" dense outlined />
+              <q-input v-help="'Enter subclass for the character editor.'" v-model="actor.subclass" label="Subclass" dense outlined />
             </div>
           </div>
           <div class="row q-col-gutter-sm">
             <div class="col-4 col-md-2">
-              <q-input
+              <q-input v-help="'Enter level for the character editor.'"
                 v-model.number="actor.level"
                 type="number"
                 min="1"
@@ -35,13 +35,13 @@
               />
             </div>
             <div class="col-8 col-md-4">
-              <q-input v-model="actor.race" label="Species / Race" dense outlined />
+              <q-input v-help="'Enter species / race for the character editor.'" v-model="actor.race" label="Species / Race" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.background" label="Background" dense outlined />
+              <q-input v-help="'Enter background for the character editor.'" v-model="actor.background" label="Background" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.alignment" label="Alignment" dense outlined />
+              <q-input v-help="'Enter alignment for the character editor.'" v-model="actor.alignment" label="Alignment" dense outlined />
             </div>
           </div>
 
@@ -50,7 +50,7 @@
             <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Hero Portrait & Avatar</div>
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose portrait position for the character editor.'"
                   v-model="portrait.position"
                   :options="portraitPositions"
                   emit-value
@@ -61,7 +61,7 @@
                 />
               </div>
               <div class="col-12 col-sm-8">
-                <q-input
+                <q-input v-help="'Enter image url or data uri for the character editor.'"
                   v-model="portrait.url"
                   label="Image URL or Data URI"
                   dense
@@ -86,7 +86,7 @@
                 </q-file>
               </div>
               <div class="col-12 col-sm-4">
-                <q-input
+                <q-input v-help="'Enter caption / title for the character editor.'"
                   v-model="portrait.caption"
                   label="Caption / Title"
                   dense
@@ -249,7 +249,7 @@
         <q-card-section>
           <div class="row q-col-gutter-sm">
             <div class="col-4">
-              <q-input
+              <q-input v-help="'Enter current hp for the character editor.'"
                 v-model.number="actor.hp.current"
                 type="number"
                 label="Current HP"
@@ -258,7 +258,7 @@
               />
             </div>
             <div class="col-4">
-              <q-input
+              <q-input v-help="'Enter max hp for the character editor.'"
                 v-model.number="actor.hp.max"
                 type="number"
                 label="Max HP"
@@ -267,7 +267,7 @@
               />
             </div>
             <div class="col-4">
-              <q-input
+              <q-input v-help="'Enter temp hp for the character editor.'"
                 v-model.number="actor.hp.temp"
                 type="number"
                 label="Temp HP"
@@ -278,7 +278,7 @@
           </div>
           <div class="row q-col-gutter-sm q-mt-xs">
             <div class="col-4">
-              <q-input
+              <q-input v-help="'Enter total hit dice for the character editor.'"
                 v-model.number="actor.hitDice.total"
                 type="number"
                 label="Total Hit Dice"
@@ -287,7 +287,7 @@
               />
             </div>
             <div class="col-4">
-              <q-input
+              <q-input v-help="'Enter spent hit dice for the character editor.'"
                 v-model.number="actor.hitDice.spent"
                 type="number"
                 label="Spent Hit Dice"
@@ -296,7 +296,7 @@
               />
             </div>
             <div class="col-4">
-              <q-select
+              <q-select v-help="'Choose hit die type (d) for the character editor.'"
                 v-model.number="actor.hitDice.die"
                 :options="[6, 8, 10, 12]"
                 label="Hit Die Type (d)"
@@ -357,7 +357,7 @@
           <!-- Spellcasting Ability & Calculated Metrics -->
           <div class="row q-col-gutter-sm items-center q-mb-md">
             <div class="col-12 col-sm-4">
-              <q-select
+              <q-select v-help="'Choose spellcasting ability for the character editor.'"
                 v-model="spellcastingAbility"
                 :options="castingAbilityOptions"
                 emit-value
@@ -393,7 +393,7 @@
                 <div class="text-caption text-weight-bold text-grey-4">Lvl {{ lvl }}</div>
                 <div class="row q-col-gutter-xs q-mt-xs">
                   <div class="col-6">
-                    <q-input
+                    <q-input v-help="'Enter cur for the character editor.'"
                       v-model.number="actor.spellSlots.current[lvl - 1]"
                       type="number"
                       min="0"
@@ -403,7 +403,7 @@
                     />
                   </div>
                   <div class="col-6">
-                    <q-input
+                    <q-input v-help="'Enter max for the character editor.'"
                       v-model.number="actor.spellSlots.max[lvl - 1]"
                       type="number"
                       min="0"
@@ -420,7 +420,7 @@
           <!-- Spells List -->
           <div class="row items-center justify-between q-mb-xs">
             <span class="text-caption text-weight-bold text-teal-3">Prepared & Known Spells</span>
-            <q-btn
+            <q-btn v-help="'Add Spell in the character editor.'"
               size="sm"
               color="primary"
               icon="add"
@@ -451,10 +451,10 @@
                 </q-checkbox>
               </div>
               <div class="col-5">
-                <q-input v-model="sp.name" label="Spell Name" dense outlined />
+                <q-input v-help="'Enter spell name for the character editor.'" v-model="sp.name" label="Spell Name" dense outlined />
               </div>
               <div class="col-3">
-                <q-select
+                <q-select v-help="'Choose level for the character editor.'"
                   v-model.number="sp.level"
                   :options="spellLevelOptions"
                   emit-value
@@ -465,7 +465,7 @@
                 />
               </div>
               <div class="col-3">
-                <q-input v-model="sp.notes" label="Notes (e.g. Conc, 1 Action)" dense outlined />
+                <q-input v-help="'Enter notes (e.g. conc, 1 action) for the character editor.'" v-model="sp.notes" label="Notes (e.g. Conc, 1 Action)" dense outlined />
               </div>
               <div class="col-auto text-right">
                 <q-btn
@@ -495,7 +495,7 @@
       <q-card>
         <q-card-section class="q-gutter-y-sm">
           <div class="row justify-end">
-            <q-btn
+            <q-btn v-help="'Add Feature in the character editor.'"
               size="sm"
               color="primary"
               icon="add"
@@ -511,10 +511,10 @@
           >
             <div class="row q-col-gutter-xs items-center">
               <div class="col-6">
-                <q-input v-model="feat.name" label="Feature Name" dense outlined />
+                <q-input v-help="'Enter feature name for the character editor.'" v-model="feat.name" label="Feature Name" dense outlined />
               </div>
               <div class="col-5">
-                <q-input v-model="feat.source" label="Source" dense outlined />
+                <q-input v-help="'Enter source for the character editor.'" v-model="feat.source" label="Source" dense outlined />
               </div>
               <div class="col-1 text-right">
                 <q-btn
@@ -528,7 +528,7 @@
                 />
               </div>
             </div>
-            <q-input
+            <q-input v-help="'Enter description for the character editor.'"
               v-model="feat.description"
               type="textarea"
               rows="2"
@@ -558,7 +558,7 @@
               Max Carry: <span class="text-weight-bold">{{ actor.stats.STR * 15 }} lb</span>
               <span v-if="totalCarriedWeight > actor.stats.STR * 5" class="text-warning q-ml-xs">(Encumbered)</span>
             </div>
-            <q-btn
+            <q-btn v-help="'Add Item in the character editor.'"
               size="sm"
               color="primary"
               icon="add"
@@ -573,10 +573,10 @@
             style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
           >
             <div class="col-5">
-              <q-input v-model="item.name" label="Item Name" dense outlined />
+              <q-input v-help="'Enter item name for the character editor.'" v-model="item.name" label="Item Name" dense outlined />
             </div>
             <div class="col-2">
-              <q-input
+              <q-input v-help="'Enter qty for the character editor.'"
                 v-model.number="item.quantity"
                 type="number"
                 label="Qty"
@@ -585,7 +585,7 @@
               />
             </div>
             <div class="col-2">
-              <q-input
+              <q-input v-help="'Enter weight (lb) for the character editor.'"
                 v-model.number="item.weight"
                 type="number"
                 label="Weight (lb)"
@@ -594,7 +594,7 @@
               />
             </div>
             <div class="col-2">
-              <q-checkbox v-model="item.equipped" label="Eqp" dense size="xs" />
+              <q-checkbox v-help="'Tick to include eqp for the character editor.'" v-model="item.equipped" label="Eqp" dense size="xs" />
             </div>
             <div class="col-1 text-right">
               <q-btn

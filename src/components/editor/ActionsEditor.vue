@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <q-checkbox v-if="selectedCategory === 'trait' || selectedCategory === 'all'" v-model="monster.alphaTraits" dark dense label="Sort traits alphabetically on the sheet" data-studio-trait-sort class="q-mb-sm" />
+      <q-checkbox v-help="'Tick to include sort traits alphabetically on the sheet for the actions editor.'" v-if="selectedCategory === 'trait' || selectedCategory === 'all'" v-model="monster.alphaTraits" dark dense label="Sort traits alphabetically on the sheet" data-studio-trait-sort class="q-mb-sm" />
 
       <action-associations v-for="role in visibleAssociationRoles" :key="role" :role="role" />
 
@@ -97,7 +97,7 @@
           <span>Showing <b>{{ filteredEntries.length }}</b> entries</span>
         </div>
         <div class="row items-center q-gutter-x-xs">
-          <q-btn
+          <q-btn v-help="'Collapse All in the actions editor.'"
             dense
             flat
             size="xs"
@@ -107,7 +107,7 @@
             no-caps
             @click="collapseAllEntries"
           />
-          <q-btn
+          <q-btn v-help="'Expand All in the actions editor.'"
             dense
             flat
             size="xs"
@@ -155,7 +155,7 @@
             </div>
 
             <div class="row items-center q-gutter-x-xs" @click.stop>
-              <q-btn
+              <q-btn v-help="'Fold Cards in the actions editor.'"
                 dense
                 flat
                 size="xs"
@@ -167,7 +167,7 @@
               >
                 <q-tooltip>Collapse all individual entry cards inside {{ catGroup.label }}</q-tooltip>
               </q-btn>
-              <q-btn
+              <q-btn v-help="'Unfold Cards in the actions editor.'"
                 dense
                 flat
                 size="xs"
@@ -205,7 +205,7 @@
             <!-- Far-Left Role Selector -->
             <div class="col-12 col-sm-3 col-md-2">
               <span v-if="item.rawAttack" class="q-pa-sm">Attack</span>
-              <q-select
+              <q-select v-help="'Choose role for the actions editor.'"
                 v-else
                 :model-value="item.role"
                 :options="roleOptions"
@@ -330,7 +330,7 @@
                 Additional Description Containers &amp; Tables ({{ (item.descriptionContainers || []).length }})
               </span>
               <div class="row items-center q-gutter-x-xs">
-                <q-btn
+                <q-btn v-help="'+ Text Block in the actions editor.'"
                   flat
                   dense
                   no-caps
@@ -340,7 +340,7 @@
                   label="+ Text Block"
                   @click="addTextContainer(item)"
                 />
-                <q-btn
+                <q-btn v-help="'+ Dice Table in the actions editor.'"
                   flat
                   dense
                   no-caps
@@ -356,7 +356,7 @@
             <div v-for="(container, cIdx) in (item.descriptionContainers || [])" :key="container.id || cIdx" class="q-pa-xs q-my-xs rounded-borders bg-grey-9">
               <div class="row q-col-gutter-xs items-center q-mb-xs">
                 <div class="col-12 col-sm-4">
-                  <q-input
+                  <q-input v-help="'Enter outcome target / clause for the actions editor.'"
                     v-model="container.outcomeTarget"
                     dense
                     outlined
@@ -387,7 +387,7 @@
 
               <!-- Text block container -->
               <div v-if="container.kind === 'text'">
-                <q-input
+                <q-input v-help="'Enter container text / rider for the actions editor.'"
                   v-model="container.text"
                   type="textarea"
                   rows="2"
@@ -404,7 +404,7 @@
               <div v-else-if="container.kind === 'table' && container.table" class="column q-gutter-y-xs q-pa-xs">
                 <div class="row q-col-gutter-xs items-center">
                   <div class="col-12 col-sm-6">
-                    <q-input
+                    <q-input v-help="'Enter headers (comma separated) for the actions editor.'"
                       :model-value="container.table.headers.join(', ')"
                       dense
                       outlined
@@ -417,7 +417,7 @@
                     />
                   </div>
                   <div class="col-auto">
-                    <q-btn flat dense no-caps size="xs" icon="add" label="Add Row" @click="addTableRow(container, item)" />
+                    <q-btn v-help="'Add Row in the actions editor.'" flat dense no-caps size="xs" icon="add" label="Add Row" @click="addTableRow(container, item)" />
                   </div>
                 </div>
                 <div v-for="(row, rIdx) in container.table.rows" :key="rIdx" class="row q-col-gutter-xs items-center q-my-xs">

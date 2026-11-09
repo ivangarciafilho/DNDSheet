@@ -133,7 +133,7 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn
+                <q-btn v-help="'⏫ in the skills editor.'"
                   dense
                   round
                   size="sm"
@@ -143,7 +143,7 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn
+                <q-btn v-help="'⏬ in the skills editor.'"
                   dense
                   round
                   size="sm"
@@ -320,7 +320,7 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn
+                <q-btn v-help="'⏫ in the skills editor.'"
                   dense
                   round
                   size="sm"
@@ -330,7 +330,7 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn
+                <q-btn v-help="'⏬ in the skills editor.'"
                   dense
                   round
                   size="sm"
@@ -460,9 +460,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Ethereal (60ft)" @click="appendRiderTag('search', '60ft across Ethereal and Material Planes')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Undead/Fiends" @click="appendRiderTag('search', 'Sense Undead and Fiends')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('search', 'DC 15 check')" />
+                  <q-btn v-help="'+ Ethereal (60ft) in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Ethereal (60ft)" @click="appendRiderTag('search', '60ft across Ethereal and Material Planes')" />
+                  <q-btn v-help="'+ Undead/Fiends in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Undead/Fiends" @click="appendRiderTag('search', 'Sense Undead and Fiends')" />
+                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('search', 'DC 15 check')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('search')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -593,9 +593,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Touch" @click="appendRiderTag('study', 'Touch: Learn target alignment')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Resistances" @click="appendRiderTag('study', 'Learn vulnerabilities, resistances, immunities')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('study', 'DC 15 check')" />
+                  <q-btn v-help="'+ Touch in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Touch" @click="appendRiderTag('study', 'Touch: Learn target alignment')" />
+                  <q-btn v-help="'+ Resistances in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Resistances" @click="appendRiderTag('study', 'Learn vulnerabilities, resistances, immunities')" />
+                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('study', 'DC 15 check')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('study')" :key="`study-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -726,9 +726,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('influence', 'DC 15 Charisma check')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Must Hear" @click="appendRiderTag('influence', 'Creature must hear and understand')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ 30ft" @click="appendRiderTag('influence', 'within 30ft')" />
+                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('influence', 'DC 15 Charisma check')" />
+                  <q-btn v-help="'+ Must Hear in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Must Hear" @click="appendRiderTag('influence', 'Creature must hear and understand')" />
+                  <q-btn v-help="'+ 30ft in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ 30ft" @click="appendRiderTag('influence', 'within 30ft')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('influence')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -859,9 +859,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Light Obscurement" @click="appendRiderTag('hide', 'Must have light obscurement or 3/4 cover')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ While Observed" @click="appendRiderTag('hide', 'Can hide while observed in dim light')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Invisible" @click="appendRiderTag('hide', 'Become invisible until start of next turn')" />
+                  <q-btn v-help="'+ Light Obscurement in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Light Obscurement" @click="appendRiderTag('hide', 'Must have light obscurement or 3/4 cover')" />
+                  <q-btn v-help="'+ While Observed in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ While Observed" @click="appendRiderTag('hide', 'Can hide while observed in dim light')" />
+                  <q-btn v-help="'+ Invisible in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Invisible" @click="appendRiderTag('hide', 'Become invisible until start of next turn')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('hide')" :key="`hide-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -992,9 +992,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ 1 min" @click="appendRiderTag('tools', 'in 1 minute')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ Bonus Action" @click="appendRiderTag('tools', 'as a bonus action')" />
-                  <q-btn dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('tools', 'DC 15 tool check')" />
+                  <q-btn v-help="'+ 1 min in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ 1 min" @click="appendRiderTag('tools', 'in 1 minute')" />
+                  <q-btn v-help="'+ Bonus Action in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Bonus Action" @click="appendRiderTag('tools', 'as a bonus action')" />
+                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('tools', 'DC 15 tool check')" />
                 </div>
               </div>
               <div v-if="monster.tools && monster.tools.length > 0" class="row q-gutter-xs q-mt-xs">

@@ -170,7 +170,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-help="'Tick to include nonmagical for the resistances editor.'" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <q-select
@@ -192,7 +192,7 @@
           <!-- Acquired Condition when taking Vulnerability Damage & Duration -->
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-5">
-              <q-select
+              <q-select v-help="'Choose acquired negative condition for the resistances editor.'"
                 v-model="item.acquiredCondition"
                 :options="acquiredConditionOptions"
                 use-input
@@ -232,7 +232,7 @@
               </q-select>
             </div>
             <div class="col-12 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter note (e.g. while frozen) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. while frozen)"
                 dense
@@ -311,7 +311,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-7">
-              <q-select
+              <q-select v-help="'Choose compelled action / weakness for the resistances editor.'"
                 v-model="item.acquiredCondition"
                 :options="conditionVulnerabilityActionOptions"
                 use-input
@@ -325,7 +325,7 @@
               />
             </div>
             <div class="col-12 col-sm-5">
-              <q-input
+              <q-input v-help="'Enter note / duration for the resistances editor.'"
                 v-model="item.note"
                 label="Note / Duration"
                 dense
@@ -404,7 +404,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-help="'Tick to include nonmagical for the resistances editor.'" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <q-select
@@ -450,7 +450,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter note (e.g. silvered) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. silvered)"
                 dense
@@ -542,7 +542,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter note / details for the resistances editor.'"
                 v-model="item.note"
                 label="Note / Details"
                 dense
@@ -621,7 +621,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-help="'Tick to include nonmagical for the resistances editor.'" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <q-select
@@ -665,7 +665,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter note (e.g. adamantine) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. adamantine)"
                 dense
@@ -757,7 +757,7 @@
               />
             </div>
             <div class="col-12 col-sm-6">
-              <q-input
+              <q-input v-help="'Enter note (e.g. against charm spells) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. against charm spells)"
                 dense

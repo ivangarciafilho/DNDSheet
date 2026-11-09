@@ -240,7 +240,7 @@
                   :key="clsEntry.id || cIdx"
                   class="row q-col-gutter-xs items-center q-pa-xs rounded-borders bg-grey-9"
                 >
-                  <q-select
+                  <q-select v-help="'Choose class for the class casting editor.'"
                     v-model="clsEntry.className"
                     :options="SrdCastingClassOptions"
                     emit-value
@@ -324,7 +324,7 @@
                             label="Add Spell to Class" v-help="'Add a spell to this class’s list.'"
                             class="col"
                           />
-                          <q-btn
+                          <q-btn v-help="'Add in the class casting editor.'"
                             dense
                             color="purple-4"
                             icon="add"
@@ -462,7 +462,7 @@
               </div>
 
               <div v-if="monster.spellcasting.cantripSwitch" class="col-6 col-sm-2">
-                <q-select
+                <q-select v-help="'Choose per for the class casting editor.'"
                   v-model="monster.spellcasting.cantripSwitchInterval"
                   :options="['Short Rest', 'Long Rest', 'Dawn', 'Dusk']"
                   label="Per"
@@ -479,7 +479,7 @@
           <div class="col-12 q-pa-xs q-mb-xs">
             <div class="q-pa-xs rounded-borders bg-grey-10 text-white" style="border: 1px dashed rgba(236, 72, 153, 0.6);">
               <div class="row items-center justify-between q-mb-xs">
-                <q-checkbox
+                <q-checkbox v-help="'Tick to include metamagic studio (sorcery points &amp; enhancements) for the class casting editor.'"
                   v-model="metamagicEnabled"
                   label="Metamagic Studio (Sorcery Points &amp; Enhancements)"
                   dense
@@ -666,7 +666,7 @@
                 <q-card class="bg-grey-10 text-white q-pa-sm">
                   <!-- Spell Selector Filtered to this Level -->
                   <div class="q-mb-xs">
-                    <q-select
+                    <q-select v-help="'Choose select or search spells to assign... for the class casting editor.'"
                       :model-value="monster.knownSpellsOfLevel(level)"
                       :options="spellOptionsByLevel(level, classFilter ? monster.spellcasting.class : undefined, monster.spellcasting.subclass)"
                       multiple

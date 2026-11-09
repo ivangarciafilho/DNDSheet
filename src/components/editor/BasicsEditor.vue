@@ -20,7 +20,7 @@
       >
         <div class="q-pa-sm">
           <div class="row q-col-gutter-xs items-center">
-            <q-select
+            <q-select v-help="'Choose portrait position for the basics editor.'"
               v-model="portrait.position"
               :options="portraitPositions"
               emit-value
@@ -56,7 +56,7 @@
               </q-file>
             </div>
             <div class="col-12 col-sm-3">
-              <q-input
+              <q-input v-help="'Enter width (px) for the basics editor.'"
                 v-model.number="portrait.width"
                 type="number"
                 label="Width (px)"
@@ -67,7 +67,7 @@
               />
             </div>
             <div class="col-12 col-sm-3">
-              <q-input
+              <q-input v-help="'Enter caption / artist for the basics editor.'"
                 v-model="portrait.caption"
                 label="Caption / Artist"
                 dense
@@ -94,7 +94,7 @@
                   />
                 </div>
                 <div class="col-auto">
-                  <q-input
+                  <q-input v-help="'Enter % for the basics editor.'"
                     v-model.number="editorStore.a4PictureOcclusion"
                     type="number"
                     min="0"
@@ -127,7 +127,7 @@
                   />
                 </div>
                 <div class="col-auto">
-                  <q-input
+                  <q-input v-help="'Enter % for the basics editor.'"
                     v-model.number="editorStore.a4StatblockOpacity"
                     type="number"
                     min="0"
@@ -146,7 +146,7 @@
           </div>
 
           <div class="row items-center justify-between q-mt-xs">
-            <q-btn
+            <q-btn v-help="'A4 Composition Layer Studio (Parchments, Artwork & Watercolor Masks) in the basics editor.'"
               outline
               dense
               no-caps
@@ -318,7 +318,7 @@
           dense
           @filter="typeFilter"
         />
-        <q-input
+        <q-input v-help="'Enter subtype tag for the basics editor.'"
           v-model="monster.subtype"
           label="Subtype Tag"
           class="col-6 col-sm-2"
@@ -508,7 +508,7 @@
 
           <!-- 2. Ability Bonus -->
           <div class="col-12 col-sm-4">
-            <q-select
+            <q-select v-help="'Choose ability bonus for the basics editor.'"
               v-model="acConfig.abilityBonus"
               :options="acAbilityBonusOptions"
               emit-value
@@ -536,7 +536,7 @@
 
           <!-- 3. Defense Item -->
           <div class="col-12 col-sm-4">
-            <q-select
+            <q-select v-help="'Choose defense item for the basics editor.'"
               v-model="acConfig.defenseItem"
               :options="acDefenseItemOptions"
               emit-value
@@ -566,7 +566,7 @@
         <div class="row q-col-gutter-xs items-center q-mt-xs">
           <!-- 4. Temporary Bonus -->
           <div class="col-12 col-sm-6">
-            <q-select
+            <q-select v-help="'Choose temporary / reaction ac for the basics editor.'"
               v-model="acConfig.temporary"
               :options="acTemporaryOptions"
               emit-value
@@ -680,7 +680,7 @@
         <!-- 6b. Versus Attack Types -->
         <div v-if="acConfig.conditionMode === 'attack_type' || acConfig.conditionMode === 'ranged_attacks'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12">
-            <q-select
+            <q-select v-help="'Choose attack types (e.g. ranged attacks, spell attacks) for the basics editor.'"
               v-model="acConfig.conditionAttackTypes"
               :options="attackTypeOptions"
               multiple
@@ -696,7 +696,7 @@
         <!-- 6c. Versus Damage Types -->
         <div v-if="acConfig.conditionMode === 'versus_damage_types' || acConfig.conditionMode === 'damage_type'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12">
-            <q-select
+            <q-select v-help="'Choose trigger damage types (e.g. lightning, thunder, force) for the basics editor.'"
               v-model="acConfig.conditionDamageTypes"
               :options="damageTypeOptions"
               multiple
@@ -713,7 +713,7 @@
         <div v-if="acConfig.conditionMode === 'attacker_save'" class="col-12 q-mt-xs">
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-4">
-              <q-select
+              <q-select v-help="'Choose save trigger phrasing for the basics editor.'"
                 v-model="acConfig.saveVerb"
                 :options="[
                   { label: 'must Succeed (Standard)', value: 'must_succeed' },
@@ -778,7 +778,7 @@
               <formula-field path="acConfig.onSaveFailureDamageAmount" label="Fail Dmg" dense outlined @applied="onAcCompositorChanged" />
             </div>
             <div v-if="acConfig.onSaveFailure === 'takes_damage' || acConfig.onSaveFailure === 'damage_attacker'" class="col-6 col-sm-2">
-              <q-select
+              <q-select v-help="'Choose fail type for the basics editor.'"
                 v-model="acConfig.onSaveFailureDamageType"
                 :options="damageTypeOptions"
                 dense
@@ -809,7 +809,7 @@
               <formula-field path="acConfig.onSaveSuccessDamageAmount" label="Succ Dmg" dense outlined @applied="onAcCompositorChanged" />
             </div>
             <div v-if="acConfig.onSaveSuccess === 'takes_damage' || acConfig.onSaveSuccess === 'damage_attacker'" class="col-6 col-sm-2">
-              <q-select
+              <q-select v-help="'Choose succ type for the basics editor.'"
                 v-model="acConfig.onSaveSuccessDamageType"
                 :options="damageTypeOptions"
                 dense
@@ -824,7 +824,7 @@
         <!-- 6e. Took Damage Since Timeframe -->
         <div v-if="acConfig.conditionMode === 'took_damage_since'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-6">
-            <q-select
+            <q-select v-help="'Choose damage type taken for the basics editor.'"
               v-model="acConfig.tookDamageType"
               :options="damageTypeOptions"
               dense
@@ -862,7 +862,7 @@
         <!-- 6g. Custom Defensive Condition -->
         <div v-if="acConfig.conditionMode === 'custom'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12">
-            <q-input
+            <q-input v-help="'Enter custom defensive condition for the basics editor.'"
               v-model="acConfig.customCondition"
               dense
               outlined
@@ -876,7 +876,7 @@
         <!-- 6h. Decoupled On Miss & When Hit Logic + Contextual Split Riders Toggle -->
         <div class="row items-center justify-between q-mt-xs q-px-xs">
           <span class="text-caption text-cyan-3 text-weight-bold">Decoupled AC Riders (On Miss / When Hit)</span>
-          <q-toggle
+          <q-toggle v-help="'Turn on or off ↳ split ac riders into sub-rows for the basics editor.'"
             v-model="monster.splitAcRiderRows"
             dark
             dense
@@ -891,7 +891,7 @@
         </div>
         <div class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-6">
-            <q-select
+            <q-select v-help="'Choose on miss effect (decoupled) for the basics editor.'"
               v-model="acConfig.onMiss"
               :options="onMissOptions"
               emit-value
@@ -903,7 +903,7 @@
             />
           </div>
           <div class="col-12 col-sm-6">
-            <q-select
+            <q-select v-help="'Choose when hit effect (decoupled) for the basics editor.'"
               v-model="acConfig.onHit"
               :options="onHitOptions"
               emit-value
@@ -1077,7 +1077,7 @@
               </q-select>
             </div>
             <div class="col-12 col-sm-2">
-              <q-select
+              <q-select v-help="'Choose secondary mode for the basics editor.'"
                 v-model="initiativeConfig.statMode"
                 :options="statModeOptions"
                 emit-value
@@ -1144,7 +1144,7 @@
           <!-- Special Initiative Trigger / Spell Cast Rule -->
           <div class="row q-col-gutter-sm items-center">
             <div class="col-12 col-sm-6">
-              <q-select
+              <q-select v-help="'Choose special initiative trigger / spell rule for the basics editor.'"
                 v-model="initiativeConfig.specialTrigger"
                 :options="initiativeTriggerOptions"
                 emit-value
@@ -1169,7 +1169,7 @@
               </q-select>
             </div>
             <div v-if="initiativeConfig.specialTrigger === 'cast_custom'" class="col-12 col-sm-6">
-              <q-input
+              <q-input v-help="'Enter spell name to cast on lowest dice for the basics editor.'"
                 v-model="initiativeConfig.specialTriggerSpell"
                 dense
                 outlined
@@ -1178,7 +1178,7 @@
               />
             </div>
             <div v-else-if="initiativeConfig.specialTrigger === 'custom'" class="col-12 col-sm-6">
-              <q-input
+              <q-input v-help="'Enter custom initiative note for the basics editor.'"
                 v-model="initiativeConfig.customEffectNote"
                 dense
                 outlined
@@ -1220,7 +1220,7 @@
             <!-- Composer Row: Precondition, Target Types, Roll Effect, Action -->
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-3">
-                <q-select
+                <q-select v-help="'Choose roll precondition for the basics editor.'"
                   v-model="newRiderAdvMode"
                   :options="initiativeAdvModeOptions"
                   emit-value
@@ -1232,7 +1232,7 @@
               </div>
 
               <div class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose target creature types for the basics editor.'"
                   v-model="newRiderCreatureTypes"
                   :options="creatureTypeOptions"
                   multiple
@@ -1245,7 +1245,7 @@
               </div>
 
               <div v-if="newRiderCreatureTypes && newRiderCreatureTypes.length > 0" class="col-12 col-sm-2">
-                <q-select
+                <q-select v-help="'Choose target roll effect for the basics editor.'"
                   v-model="newRiderRollEffect"
                   :options="[
                     { label: 'Disadvantage', value: 'disadvantage' },
@@ -1260,7 +1260,7 @@
               </div>
 
               <div :class="newRiderCreatureTypes && newRiderCreatureTypes.length > 0 ? 'col-12 col-sm-3' : 'col-12 col-sm-5'">
-                <q-select
+                <q-select v-help="'Choose composable action for the basics editor.'"
                   v-model="newRiderActionType"
                   :options="initiativeActionTypeOptions"
                   emit-value
@@ -1304,7 +1304,7 @@
                 />
               </div>
               <div v-else-if="newRiderActionType === 'move_distance'" class="col-12 col-sm-6">
-                <q-input
+                <q-input v-help="'Enter distance (e.g. 10ft) for the basics editor.'"
                   v-model="newRiderMoveDistance"
                   dense
                   outlined
@@ -1313,7 +1313,7 @@
                 />
               </div>
               <div v-else-if="newRiderActionType === 'custom'" class="col-12 col-sm-6">
-                <q-input
+                <q-input v-help="'Enter custom action text for the basics editor.'"
                   v-model="newRiderCustomText"
                   dense
                   outlined
@@ -1323,7 +1323,7 @@
               </div>
 
               <div class="col-12 col-sm-3 q-ml-auto text-right">
-                <q-btn
+                <q-btn v-help="'Add Rider in the basics editor.'"
                   color="purple"
                   icon="add"
                   label="Add Rider"
@@ -1428,7 +1428,7 @@
                 🩸 Bloodied & Phase Thresholds
               </div>
               <div class="row items-center q-gutter-x-sm">
-                <q-toggle
+                <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
                   v-model="monster.splitHpRiderRows"
                   dark
                   dense
@@ -1478,7 +1478,7 @@
                 </q-select>
               </div>
               <div v-if="extendedHp.bloodiedSource === 'dice'" class="col-12 col-sm-6">
-                <q-input
+                <q-input v-help="'Enter bloodied dice formula for the basics editor.'"
                   v-model="extendedHp.bloodiedDice"
                   dense
                   outlined
@@ -1536,7 +1536,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-4">
-                  <q-select
+                  <q-select v-help="'Choose threshold source for the basics editor.'"
                     v-model="phaseCfg.source"
                     :options="dynamicSourceOptions"
                     emit-value
@@ -1603,7 +1603,7 @@
                 🛡️ Damage Threshold (DT — Ignores hits below threshold)
               </div>
               <div class="row items-center q-gutter-x-sm">
-                <q-toggle
+                <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
                   v-model="monster.splitHpRiderRows"
                   dark
                   dense
@@ -1622,7 +1622,7 @@
             </div>
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose threshold value source for the basics editor.'"
                   v-model="extendedHp.damageThresholdSource"
                   :options="dtDrSourceOptions"
                   emit-value
@@ -1647,7 +1647,7 @@
                 </q-select>
               </div>
               <div v-if="extendedHp.damageThresholdSource === 'dice'" class="col-12 col-sm-4">
-                <q-input
+                <q-input v-help="'Enter threshold dice formula for the basics editor.'"
                   v-model="extendedHp.damageThresholdDice"
                   dense
                   outlined
@@ -1657,7 +1657,7 @@
               </div>
               <div v-else-if="!extendedHp.damageThresholdSource || extendedHp.damageThresholdSource === 'flat' || extendedHp.damageThresholdSource === 'none'" class="col-12 col-sm-4">
                 <formula-field path="extendedHp.damageThreshold" label="Damage Threshold Value" v-help="'Damage of a single hit below this number is ignored (damage threshold).'" dense outlined />
-                <q-btn v-if="extendedHp.damageThreshold != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageThreshold')" />
+                <q-btn v-help="'Clear value in the basics editor.'" v-if="extendedHp.damageThreshold != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageThreshold')" />
               </div>
               <div v-else class="col-12 col-sm-4">
                 <div class="q-pa-xs rounded-borders text-caption text-blue-3 text-weight-bold" style="background: rgba(255,255,255,0.05); height: 40px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);">
@@ -1699,7 +1699,7 @@
                 ⚔️ Damage Reduction (DR — Subtracts from incoming damage)
               </div>
               <div class="row items-center q-gutter-x-sm">
-                <q-toggle
+                <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
                   v-model="monster.splitHpRiderRows"
                   dark
                   dense
@@ -1718,7 +1718,7 @@
             </div>
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose reduction value source for the basics editor.'"
                   v-model="extendedHp.damageReductionSource"
                   :options="dtDrSourceOptions"
                   emit-value
@@ -1743,7 +1743,7 @@
                 </q-select>
               </div>
               <div v-if="extendedHp.damageReductionSource === 'dice'" class="col-12 col-sm-4">
-                <q-input
+                <q-input v-help="'Enter reduction dice formula for the basics editor.'"
                   v-model="extendedHp.damageReductionDice"
                   dense
                   outlined
@@ -1753,7 +1753,7 @@
               </div>
               <div v-else-if="!extendedHp.damageReductionSource || extendedHp.damageReductionSource === 'flat' || extendedHp.damageReductionSource === 'none'" class="col-12 col-sm-4">
                 <formula-field path="extendedHp.damageReduction" label="Damage Reduction Value" v-help="'Damage subtracted from each hit.'" dense outlined />
-                <q-btn v-if="extendedHp.damageReduction != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageReduction')" />
+                <q-btn v-help="'Clear value in the basics editor.'" v-if="extendedHp.damageReduction != null" flat dense size="sm" icon="restart_alt" label="Clear value" @click="clearHpThreshold('damageReduction')" />
               </div>
               <div v-else class="col-12 col-sm-4">
                 <div class="q-pa-xs rounded-borders text-caption text-teal-3 text-weight-bold" style="background: rgba(255,255,255,0.05); height: 40px; display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.1);">
@@ -1798,7 +1798,7 @@
                 💚 Regeneration & Temporary Hit Points Module
               </div>
               <div class="row items-center q-gutter-x-xs">
-                <q-toggle
+                <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
                   v-model="monster.splitHpRiderRows"
                   dark
                   dense
@@ -1818,7 +1818,7 @@
                 >
                   {{ regenPreview }}
                 </q-badge>
-                <q-btn
+                <q-btn v-help="'Disable in the basics editor.'"
                   v-if="extendedHp.regeneration.enabled"
                   flat
                   dense
@@ -1943,7 +1943,7 @@
                   />
                 </div>
                 <div v-else class="col-12 col-sm-4">
-                  <q-select
+                  <q-select v-help="'Choose disrupted by damage type(s) for the basics editor.'"
                     v-model="extendedHp.regeneration.disruptedByTypes"
                     :options="damageTypeOptions"
                     multiple
@@ -1972,7 +1972,7 @@
               <!-- Special Heuristic Conditions Row -->
               <div class="row q-col-gutter-sm items-center q-mt-xs">
                 <div class="col-12 col-sm-6">
-                  <q-select
+                  <q-select v-help="'Choose special condition / trigger heuristic for the basics editor.'"
                     v-model="extendedHp.regeneration.conditionModifier"
                     :options="regenConditionModifierOptions"
                     emit-value
@@ -2008,7 +2008,7 @@
                   />
                 </div>
                 <div v-else class="col-12 col-sm-6">
-                  <q-input
+                  <q-input v-help="'Enter custom disruption / condition note for the basics editor.'"
                     v-model="extendedHp.regeneration.disruptedByNote"
                     dense
                     outlined
@@ -2031,7 +2031,7 @@
                 👑 Mortality & Death Prevention (Mortal / Immortal / Undead Fortitude)
               </div>
               <div class="row items-center q-gutter-x-sm">
-                <q-toggle
+                <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
                   v-model="monster.splitHpRiderRows"
                   dark
                   dense
@@ -2056,7 +2056,7 @@
 
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose mortality / trait template for the basics editor.'"
                   v-model="deathPrevention.name"
                   :options="deathPreventionTemplates"
                   label="Mortality / Trait Template"
@@ -2068,7 +2068,7 @@
                 />
               </div>
               <div v-if="deathPrevention.name && deathPrevention.name !== 'Mortal'" class="col-12 col-sm-4">
-                <q-select
+                <q-select v-help="'Choose immortality / survival rule for the basics editor.'"
                   v-model="deathPrevention.dcRule"
                   :options="deathPreventionRuleOptions"
                   emit-value
@@ -2120,7 +2120,7 @@
               <!-- Return to Life HP Source & Saving Throw Configuration -->
               <div v-else-if="!deathPrevention.hideHp" class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-4">
-                  <q-select
+                  <q-select v-help="'Choose returns to life with hp source for the basics editor.'"
                     v-model="deathPrevention.returnHpSource"
                     :options="returnHpSourceOptions"
                     emit-value
@@ -2148,7 +2148,7 @@
                   <formula-field path="extendedHp.deathPrevention.returnHpValue" label="Return HP Value" v-help="'Hit points the creature has when it returns to life.'" dense outlined @applied="(val) => { deathPrevention.returnHpAmount = val }" />
                 </div>
                 <div v-else-if="deathPrevention.returnHpSource === 'dice' || deathPrevention.returnHpSource?.startsWith('dice_')" class="col-12 col-sm-3">
-                  <q-input
+                  <q-input v-help="'Enter return hp dice formula for the basics editor.'"
                     v-model="deathPrevention.returnHpDice"
                     dense
                     outlined
@@ -2209,7 +2209,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-3">
-                  <q-select
+                  <q-select v-help="'Choose target filter for the basics editor.'"
                     v-model="deathPrevention.deathBurstTargetFilter"
                     :options="['Creatures', 'Undeads, and Fiends', 'Hostile Creatures', 'Allies']"
                     dense
@@ -2227,7 +2227,7 @@
               <!-- Exceptions & Custom Note -->
               <div class="row q-col-gutter-sm items-center">
                 <div class="col-12 col-sm-6">
-                  <q-select
+                  <q-select v-help="'Choose exceptions (damage types / conditions that prevent revival) for the basics editor.'"
                     v-model="deathPrevention.exceptions"
                     :options="deathExceptionOptions"
                     multiple
@@ -2240,7 +2240,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <q-input v-help="'Enter custom exception / condition note for the basics editor.'"
                     v-model="deathPrevention.customNote"
                     label="Custom Exception / Condition Note"
                     dense
@@ -2397,7 +2397,7 @@
                 <!-- Transmission & Reach Modifiers -->
                 <div class="row q-col-gutter-xs items-center">
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include broadcast to all creatures in range for the basics editor.'"
                       v-model="lang.broadcast"
                       label="Broadcast to all creatures in range"
                       dense
@@ -2405,7 +2405,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include one-way only (target cannot reply) for the basics editor.'"
                       v-model="lang.noReply"
                       label="One-way only (target cannot reply)"
                       dense
@@ -2413,7 +2413,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include only simple ideas and concepts for the basics editor.'"
                       v-model="lang.simpleConceptsOnly"
                       label="Only simple ideas and concepts"
                       dense
@@ -2421,7 +2421,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include across ethereal & material planes for the basics editor.'"
                       v-model="lang.acrossPlanes"
                       label="Across ethereal & material planes"
                       dense
@@ -2429,7 +2429,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include multiverse wide reach for the basics editor.'"
                       v-model="lang.multiverseWide"
                       label="Multiverse wide reach"
                       dense
@@ -2437,7 +2437,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include telepathic awareness (perceives unseen minds) for the basics editor.'"
                       v-model="lang.telepathicAwareness"
                       label="Telepathic Awareness (perceives unseen minds)"
                       dense
@@ -2445,7 +2445,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include senses sentient creatures in range (intellect devourer pattern) for the basics editor.'"
                       v-model="lang.sensesSentient"
                       label="Senses sentient creatures in range (Intellect Devourer pattern)"
                       dense
@@ -2453,7 +2453,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include locates exact location of sentient creatures (intellect devourer pattern) for the basics editor.'"
                       v-model="lang.locatesSentient"
                       label="Locates exact location of sentient creatures (Intellect Devourer pattern)"
                       dense
@@ -2461,7 +2461,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-checkbox
+                    <q-checkbox v-help="'Tick to include eavesdrops telepathic conversations in range (flumph pattern) for the basics editor.'"
                       v-model="lang.telepathicEavesdrop"
                       label="Eavesdrops telepathic conversations in range (Flumph pattern)"
                       dense
@@ -2469,7 +2469,7 @@
                     />
                   </div>
                   <div class="col-12 col-sm-6">
-                    <q-select
+                    <q-select v-help="'Choose target concentration filter for the basics editor.'"
                       v-model="lang.creatureConcentrationFilter"
                       :options="concentrationFilterOptions"
                       emit-value
@@ -2495,7 +2495,7 @@
                 >
                   <div class="row q-col-gutter-xs items-center q-pt-xs">
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include learns greatest desires for the basics editor.'"
                         v-model="lang.learnDesires"
                         label="Learns greatest desires"
                         dense
@@ -2503,7 +2503,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include reads surface / active thoughts for the basics editor.'"
                         v-model="lang.readThoughts"
                         label="Reads surface / active thoughts"
                         dense
@@ -2511,7 +2511,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include senses emotions & turmoil for the basics editor.'"
                         v-model="lang.senseEmotions"
                         label="Senses emotions & turmoil"
                         dense
@@ -2519,7 +2519,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include senses moral/ethical alignment for the basics editor.'"
                         v-model="lang.senseAlignment"
                         label="Senses moral/ethical alignment"
                         dense
@@ -2527,7 +2527,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include senses tactical intentions for the basics editor.'"
                         v-model="lang.senseIntentions"
                         label="Senses tactical intentions"
                         dense
@@ -2535,7 +2535,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include detects truth & deception for the basics editor.'"
                         v-model="lang.detectSincerity"
                         label="Detects truth & deception"
                         dense
@@ -2543,7 +2543,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include accesses deep memories for the basics editor.'"
                         v-model="lang.accessMemories"
                         label="Accesses deep memories"
                         dense
@@ -2553,7 +2553,7 @@
 
                     <!-- Unified Telepathy Saving Throw Gate -->
                     <div class="col-12 q-mt-xs">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include requires saving throw to resist mental probing or sensory connection for the basics editor.'"
                         v-model="lang.requiresSave"
                         label="Requires saving throw to resist mental probing or sensory connection"
                         dense
@@ -2582,7 +2582,7 @@
                         />
                       </div>
                       <div class="col-12 col-sm-4">
-                        <q-select
+                        <q-select v-help="'Choose target awareness for the basics editor.'"
                           v-model="lang.saveAwareness"
                           :options="[
                             { label: 'Unaware on Failure', value: 'unaware_on_fail' },
@@ -2614,7 +2614,7 @@
                 >
                   <div class="row q-col-gutter-xs items-center q-pt-xs">
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include shares own senses (sight/hearing) for the basics editor.'"
                         v-model="lang.shareOwnSenses"
                         label="Shares own senses (sight/hearing)"
                         dense
@@ -2622,7 +2622,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include perceives through creature’s senses for the basics editor.'"
                         v-model="lang.probeCreatureSenses"
                         label="Perceives through creature's senses"
                         dense
@@ -2630,7 +2630,7 @@
                       />
                     </div>
                     <div class="col-12 col-sm-6">
-                      <q-checkbox
+                      <q-checkbox v-help="'Tick to include disrupted when creature takes psychic damage for the basics editor.'"
                         v-model="lang.disruptedByPsychicDamage"
                         label="Disrupted when creature takes psychic damage"
                         dense
@@ -2665,7 +2665,7 @@
                 </q-expansion-item>
 
                 <div class="col-12 q-mt-xs">
-                  <q-input
+                  <q-input v-help="'Enter additional note for the basics editor.'"
                     v-model="lang.note"
                     label="Additional Note"
                     dense
@@ -2705,7 +2705,7 @@
 
               <div class="row q-col-gutter-xs items-center text-caption q-mt-xs">
                 <div class="col-12 col-sm-4">
-                  <q-input
+                  <q-input v-help="'Enter dc (calm / cease aggression) for the basics editor.'"
                     v-model="getAnimalHandling(lang).peacefulOutcome"
                     label="DC (Calm / Cease Aggression)"
                     dense
@@ -2715,7 +2715,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-4">
-                  <q-input
+                  <q-input v-help="'Enter dc+5 (basic commands) for the basics editor.'"
                     v-model="getAnimalHandling(lang).commandOutcome"
                     label="DC+5 (Basic Commands)"
                     dense
@@ -2725,7 +2725,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-4">
-                  <q-input
+                  <q-input v-help="'Enter dc+10 (recruit / bond) for the basics editor.'"
                     v-model="getAnimalHandling(lang).recruitOutcome"
                     label="DC+10 (Recruit / Bond)"
                     dense
@@ -2735,7 +2735,7 @@
                   />
                 </div>
                 <div class="col-12 q-mt-xs">
-                  <q-input
+                  <q-input v-help="'Enter custom ruling note for the basics editor.'"
                     v-model="getAnimalHandling(lang).customNotes"
                     label="Custom Ruling Note"
                     dense
@@ -2771,7 +2771,7 @@
               </div>
               <div class="row q-col-gutter-xs items-center text-caption">
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include simple concepts, needs, and emotions only for the basics editor.'"
                     v-model="getAnimalsConfig(lang).simpleConceptsOnly"
                     label="Simple concepts, needs, and emotions only"
                     dense
@@ -2779,7 +2779,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include understands beasts but cannot speak for the basics editor.'"
                     v-model="lang.understandsOnly"
                     label="Understands beasts but cannot speak"
                     dense
@@ -2787,7 +2787,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <q-input v-help="'Enter specific subtypes for the basics editor.'"
                     v-model="getAnimalsConfig(lang).specificSubtype"
                     label="Specific Subtypes"
                     dense
@@ -2833,7 +2833,7 @@
               </div>
               <div class="row q-col-gutter-xs items-center text-caption">
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include question plants about events of past day for the basics editor.'"
                     v-model="getPlantsConfig(lang).canQuestionPastDay"
                     label="Question plants about events of past day"
                     dense
@@ -2841,7 +2841,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include negotiate difficult terrain for the basics editor.'"
                     v-model="getPlantsConfig(lang).difficultTerrainNegotiation"
                     label="Negotiate difficult terrain"
                     dense
@@ -2849,7 +2849,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include understands plants but cannot speak for the basics editor.'"
                     v-model="lang.understandsOnly"
                     label="Understands plants but cannot speak"
                     dense
@@ -2896,7 +2896,7 @@
               </div>
               <div class="row q-col-gutter-xs items-center text-caption">
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include issue mental commands to mindless undead for the basics editor.'"
                     v-model="getUndeadConfig(lang).commandMindless"
                     label="Issue mental commands to mindless undead"
                     dense
@@ -2904,7 +2904,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include understands undead languages but cannot speak for the basics editor.'"
                     v-model="lang.understandsOnly"
                     label="Understands undead languages but cannot speak"
                     dense
@@ -2951,7 +2951,7 @@
               </div>
               <div class="row q-col-gutter-xs items-center text-caption">
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include corpse must have a mouth for the basics editor.'"
                     v-model="getDeadConfig(lang).corpseMustHaveMouth"
                     label="Corpse must have a mouth"
                     dense
@@ -2959,7 +2959,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include answers may be brief, cryptic, or repetitive for the basics editor.'"
                     v-model="getDeadConfig(lang).answersCryptic"
                     label="Answers may be brief, cryptic, or repetitive"
                     dense
@@ -2967,7 +2967,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <q-input v-help="'Enter deceased within for the basics editor.'"
                     v-model="getDeadConfig(lang).deadWithinYears"
                     label="Deceased Within"
                     dense
@@ -2999,7 +2999,7 @@
                 </div>
 
                 <div class="col-12 col-sm-4">
-                  <q-checkbox
+                  <q-checkbox v-help="'Tick to include understands but cannot speak for the basics editor.'"
                     v-model="lang.understandsOnly"
                     label="Understands but cannot speak"
                     dense

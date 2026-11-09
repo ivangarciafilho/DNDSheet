@@ -2,7 +2,7 @@
   <q-layout view="hHh lpR fFf">
     <q-header id="main-nav" elevated height-hint="64">
       <q-toolbar>
-        <q-btn
+        <q-btn v-help="'Menu in the main layout.'"
           flat
           dense
           round

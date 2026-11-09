@@ -10,7 +10,7 @@
       <q-card-section class="q-pa-xs">
         <!-- Speeds Auto-Add Dropdown (No add button required) -->
         <div class="row items-center justify-between q-px-xs q-mb-xs">
-          <q-toggle
+          <q-toggle v-help="'Turn on or off disclose movement riders on indented sub-rows (1 row per rider) for the speeds editor.'"
             v-model="monster.splitSpeedRiderRows"
             dark
             dense
@@ -494,7 +494,7 @@
         </div>
 
         <div class="row items-center justify-between q-px-xs q-mb-xs">
-          <q-toggle
+          <q-toggle v-help="'Turn on or off disclose movement riders on indented sub-rows for the speeds editor.'"
             v-model="monster.splitSpeedRiderRows"
             dark
             dense
@@ -582,16 +582,16 @@
           <div class="row items-center justify-between q-mt-xs q-px-xs text-xs text-grey-4">
             <span>Rendered Vital: <b class="text-cyan-3">{{ formatSpeedRiderPreview(rider) }}</b></span>
             <div class="row items-center q-gutter-x-xs flex-wrap">
-              <q-btn dense flat size="xs" color="cyan-3" label="+ BA" @click="appendToken(rider, 'as a Bonus Action')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 of Temporary Hit Points')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Obscured" @click="appendToken(rider, 'Creatures 5ft of you are lightly obscured')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Adv Saves" @click="appendToken(rider, 'Until End Of Turn: Advantage on Strength, and Dexterity Saving Throws')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport Visited" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space visited this turn')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport Familiar" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space familiar to you')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Teleport 10ft See" @click="appendToken(rider, 'Teleport up to 10ft to a point you can see')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ 1d8 Fire" @click="appendToken(rider, 'takes 1d8 fire damage')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Shove" @click="appendToken(rider, 'can Shove')" />
-              <q-btn dense flat size="xs" color="cyan-3" label="+ Ethereal" @click="appendToken(rider, 'shift to the Ethereal Plane')" />
+              <q-btn v-help="'+ BA in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ BA" @click="appendToken(rider, 'as a Bonus Action')" />
+              <q-btn v-help="'+ Temp HP in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 of Temporary Hit Points')" />
+              <q-btn v-help="'+ Obscured in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Obscured" @click="appendToken(rider, 'Creatures 5ft of you are lightly obscured')" />
+              <q-btn v-help="'+ Adv Saves in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Adv Saves" @click="appendToken(rider, 'Until End Of Turn: Advantage on Strength, and Dexterity Saving Throws')" />
+              <q-btn v-help="'+ Teleport Visited in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Teleport Visited" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space visited this turn')" />
+              <q-btn v-help="'+ Teleport Familiar in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Teleport Familiar" @click="appendToken(rider, 'At end of turn: Teleports to unoccupied space familiar to you')" />
+              <q-btn v-help="'+ Teleport 10ft See in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Teleport 10ft See" @click="appendToken(rider, 'Teleport up to 10ft to a point you can see')" />
+              <q-btn v-help="'+ 1d8 Fire in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ 1d8 Fire" @click="appendToken(rider, 'takes 1d8 fire damage')" />
+              <q-btn v-help="'+ Shove in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Shove" @click="appendToken(rider, 'can Shove')" />
+              <q-btn v-help="'+ Ethereal in the speeds editor.'" dense flat size="xs" color="cyan-3" label="+ Ethereal" @click="appendToken(rider, 'shift to the Ethereal Plane')" />
             </div>
           </div>
         </div>

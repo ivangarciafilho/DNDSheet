@@ -15,7 +15,7 @@
           <div class="text-subtitle2 text-weight-bold text-warning">
             ⚡ Reactive Actions (Special Triggered Reactions)
           </div>
-          <q-btn
+          <q-btn v-help="'Add Reactive Action in the encounter dynamics editor.'"
             dense
             outline
             size="sm"
@@ -36,7 +36,7 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-4 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter action name for the encounter dynamics editor.'"
                 v-model="ra.name"
                 dense
                 outlined
@@ -45,7 +45,7 @@
               />
             </div>
             <div class="col-4 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter trigger condition for the encounter dynamics editor.'"
                 v-model="ra.trigger"
                 dense
                 outlined
@@ -54,7 +54,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <q-input
+              <q-input v-help="'Enter cost/limit for the encounter dynamics editor.'"
                 v-model="ra.cost"
                 dense
                 outlined
@@ -91,7 +91,7 @@
           <div class="text-subtitle2 text-weight-bold text-info">
             ⛓️ Combo Actions (Chained Strike Synergies)
           </div>
-          <q-btn
+          <q-btn v-help="'Add Combo Action in the encounter dynamics editor.'"
             dense
             outline
             size="sm"
@@ -112,7 +112,7 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-3 col-sm-3">
-              <q-input
+              <q-input v-help="'Enter combo name for the encounter dynamics editor.'"
                 v-model="ca.name"
                 dense
                 outlined
@@ -121,7 +121,7 @@
               />
             </div>
             <div class="col-3 col-sm-2">
-              <q-input
+              <q-input v-help="'Enter lead attack for the encounter dynamics editor.'"
                 v-model="ca.leadAction"
                 dense
                 outlined
@@ -130,7 +130,7 @@
               />
             </div>
             <div class="col-2 col-sm-3">
-              <q-input
+              <q-input v-help="'Enter followup strike for the encounter dynamics editor.'"
                 :model-value="ca.followUpAction || ca.followup"
                 dense
                 outlined
@@ -140,7 +140,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <q-input
+              <q-input v-help="'Enter condition for the encounter dynamics editor.'"
                 v-model="ca.condition"
                 dense
                 outlined
@@ -178,14 +178,14 @@
             <div class="text-subtitle2 text-weight-bold text-orange">
               ⏳ Runehammer Escalation Track
             </div>
-            <q-checkbox
+            <q-checkbox v-help="'Tick to include enabled for the encounter dynamics editor.'"
               v-model="monster.runehammerTrack.enabled"
               dense
               label="Enabled"
               color="orange"
             />
           </div>
-          <q-btn
+          <q-btn v-help="'Add Track Event in the encounter dynamics editor.'"
             v-if="monster.runehammerTrack.enabled"
             dense
             outline
@@ -199,7 +199,7 @@
         <div v-if="monster.runehammerTrack.enabled" class="q-gutter-y-xs q-mt-xs">
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-4">
-              <q-select
+              <q-select v-help="'Choose track die (timer / escalation) for the encounter dynamics editor.'"
                 :model-value="monster.runehammerTrack.timerDie || monster.runehammerTrack.die"
                 :options="runehammerDieOptions"
                 dense
@@ -209,7 +209,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input
+              <q-input v-help="'Enter starting / current count for the encounter dynamics editor.'"
                 v-model.number="monster.runehammerTrack.currentCount"
                 type="number"
                 dense
@@ -227,7 +227,7 @@
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);"
           >
             <div class="col-2 col-sm-2">
-              <q-input
+              <q-input v-help="'Enter round/count for the encounter dynamics editor.'"
                 v-model.number="ev.round"
                 type="number"
                 dense
@@ -236,7 +236,7 @@
               />
             </div>
             <div class="col-4 col-sm-3">
-              <q-input
+              <q-input v-help="'Enter event title for the encounter dynamics editor.'"
                 v-model="ev.name"
                 dense
                 outlined
@@ -245,7 +245,7 @@
               />
             </div>
             <div class="col-5 col-sm-6">
-              <q-input
+              <q-input v-help="'Enter mechanical effect for the encounter dynamics editor.'"
                 :model-value="ev.description || ev.effect"
                 dense
                 outlined
