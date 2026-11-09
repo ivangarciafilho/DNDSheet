@@ -1,0 +1,15 @@
+GOLDEN HERO
+Level 1 Champion Fighter (Human) • Soldier • Neutral Good
+----------------------------------------
+Armor Class: 12
+Hit Points: 12 / 12
+Speed: 30 ft.
+Proficiency Bonus: +2
+----------------------------------------
+STR 15 (+2) | DEX 14 (+2) | CON 13 (+1) | INT 10 (+0) | WIS 12 (+1) | CHA 8 (-1)
+----------------------------------------
+Hit Dice: 1 / 1d10
+Passive Perception: 11
+Saving Throws: STR -3, CON -4
+Skills: Athletics -3, Perception -4
+Spellcasting: Ability INT | Spell Save DC 10 | Spell Attack -4

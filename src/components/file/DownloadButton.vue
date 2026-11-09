@@ -111,7 +111,9 @@ export default defineComponent({
         'https://tinyurl.com/api-create.php?url=' + encodeURIComponent(url)
       )
 
-      const short = await data.text()
+      const short = (await data.text()).trim()
+      // An error page is not a link: only accept a real https URL from the shortener.
+      if (!data.ok || !/^https:\/\/\S+$/.test(short)) throw new Error(`shortener answered ${data.status}`)
       return short
     }
 
@@ -305,12 +307,13 @@ export default defineComponent({
           const short = await shorten(url)
           copy(short)
           $q.notify({
-            message: 'Copied Sharable Link to Clipboard',
+            message: t('io.link.copiedShort'),
+            caption: t('io.link.shortenerNotice'),
             type: 'positive',
           })
         } catch (e) {
           $q.notify({
-            message: 'Copied long link to Clipboard (unable to shorten)',
+            message: t('io.link.copiedLong'),
             type: 'warning',
           })
           console.log(e)

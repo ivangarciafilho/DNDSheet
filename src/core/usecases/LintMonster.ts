@@ -103,7 +103,7 @@ export function lintMonster(
       severity: 'WARNING',
       category: 'CR',
       message: `Selected CR is ${currentCrObj.cr}, but DMG calculated challenge rating is ${calcCrObj.cr} (${stepDelta} steps apart). Consider re-balancing or updating target CR.`,
-      fixable: true,
+      fixable: false, // autoFixMonster cannot repair CR drift; the Auto-Tune dialog proposes the changes
     })
   }
 
@@ -134,7 +134,7 @@ export function lintMonster(
         severity: 'WARNING',
         category: 'SPELLCASTING',
         message: `Monster is a Level ${monster.spellcasting.level} ${monster.spellcasting.class} with standard spells prepared, but has 0 spell slots assigned.`,
-        fixable: true,
+        fixable: false, // slot counts are an authoring choice made in the spellcasting editor
       })
     }
   }

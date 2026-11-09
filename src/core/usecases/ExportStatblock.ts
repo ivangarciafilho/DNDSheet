@@ -2,6 +2,7 @@ import { structuredAttackBonus } from '../domain/structured-attack.ts'
 import { actionRecharge } from '../domain/action-usage.ts'
 import { formatLimitedUses } from '../domain/cadence.ts'
 import { CR } from '../domain/cr-tables.ts'
+import { creatureTypeLine } from '../domain/export-markup.ts'
 import { avgHP, avgRoll, renderBonus, renderModifier, statModifier } from '../domain/math-utils.ts'
 import type { Monster, CharacterActor, DndStat } from '../domain/types.ts'
 import { abilityIdentity, hasStructuredAbility, inferAbility, text2024 } from '../domain/ability-grammar.ts'
@@ -63,7 +64,8 @@ export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '201
   const lines: string[] = []
   lines.push('___')
   lines.push(`## ${monster.nickname || monster.name}`)
-  lines.push(`*${monster.size} ${monster.type}, ${monster.alignment}*`)
+  // Shared with every other exporter: no dangling comma when alignment (or size/type) is empty.
+  lines.push(`*${creatureTypeLine(monster.size, monster.type, monster.alignment)}*`)
   lines.push('___')
   lines.push(`**Armor Class** ${monster.AC}${monster.ACType ? ` (${monster.ACType})` : ''}`)
   lines.push(`**Hit Points** ${hpTotal} (${bloodiedPrefix}${hpFormula}${hpExtended}${hpParagon})`)

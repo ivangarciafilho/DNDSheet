@@ -554,6 +554,11 @@ export default {
       'Warning: Multi-column PNG export in Firefox might include improperly spaced text. This issue is under investigation but a fix has not been identified yet. Your PNG has been exported, but if you notice overlapping text, user a Chromium browser instead (Chrome, Edge, etc.).',
   },
   io: {
+    link: {
+      copiedShort: 'Copied a short sharing link to the clipboard',
+      shortenerNotice: 'The link was shortened by tinyurl.com, which now stores a copy of this monster’s data.',
+      copiedLong: 'Copied the full sharing link to the clipboard (the shortener was unavailable)',
+    },
     error: {
       version: 'Load Failed: No Version Detected',
       validation: 'Load Failed: version {0} did not validate. Reasons: {1}',

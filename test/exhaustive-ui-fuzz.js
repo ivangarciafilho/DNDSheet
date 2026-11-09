@@ -3001,8 +3001,8 @@ async function runFuzz() {
     const until = async (find, label) => { for (let attempt = 0; attempt < 40; attempt++) { const found = find(); if (found) return found; await new Promise(resolve => setTimeout(resolve, 50)); } throw new Error('Step 38: ' + label + ' did not render'); };
     const openPanel = async role => { (await until(() => panel(role)?.querySelector('.q-item'), role + ' panel')).click(); await wait(); };
     const input = async (role, field, value) => {
-      const wrapper=panel(role).querySelector('[data-header-field="'+field+'"]'),formula=wrapper.querySelector('.formula-field');
-      if(formula&&!formula.querySelector('.formula-field__draft')){formula.querySelector('.q-field__control').click();await wait();[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')).click();await wait();}
+      const wrapper=await until(()=>panel(role)?.querySelector('[data-header-field="'+field+'"]'),role+' field '+field),formula=wrapper.querySelector('.formula-field');
+      if(formula&&!formula.querySelector('.formula-field__draft')){formula.querySelector('.q-field__control').click();await wait();(await until(()=>[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.includes('Custom formula')),'Custom formula menu item')).click();await wait();}
       const el=wrapper.querySelector('input');el.value=value;el.dispatchEvent(new Event('input',{bubbles:true}));await wait();
       if(formula){const apply=[...formula.querySelectorAll('button')].find(el=>el.textContent.trim()==='Apply');if(apply&&!apply.disabled){apply.click();await wait();}}
     };
@@ -3569,7 +3569,7 @@ async function runFuzz() {
   if(step50.problems.length||step50.projections!==16||step50.exports!==3||!step50.chipMatches||!step50.live||!step50.authored)throw new Error('Step 50 failed: '+JSON.stringify(step50))
 
   console.log('\n--- Step 51: Golden exports for the five text and JSON formats ---')
-  const EXPORT_LABELS=['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)','Export JSON (Tarrasque.io format)','Export JSON (Improved Initiative format)']
+  const EXPORT_LABELS=['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)','Export JSON (Tarrasque.io format)','Export JSON (Improved Initiative format)','Foundry VTT (Actor5e JSON)','Plain Text (.txt)','HTML Snippet (.html)']
   const step51=await evalInPage(`async()=>{
     const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor');
     monster.$reset();editor.style='2024';editor.visualTemplate='modern';editor.visualTheme='wotc';

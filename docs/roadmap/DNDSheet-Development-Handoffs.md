@@ -1314,3 +1314,11 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Gate fingerprint covers `tools/`:** adding a tool after the gate ran forces a re-run; docs are not covered.
 - **Exports:** see `docs/roadmap/DNDSheet-Export-Inventory.md` before touching any exporter; every file name now goes through `safeFileName`.
 - **Next, in order:** B4.12/B4.13 goldens → B4.14 notice → B7.6 → A11.5 remainder → A11.9 → H9 tips → H14 baseline.
+
+## Handoff — after Build 217 (2026-11-09)
+
+- **Inventories:** `docs/roadmap/DNDSheet-Domain-Inventories.md` (storage keys and writers, Auto-Tune field map, lint codes) and `DNDSheet-Export-Inventory.md` are the ground truth for B2, B3, B4 and B5; keep them in step with code.
+- **The storage adapters are dead code**; persistence is `pinia-plugin-persistedstate` only.
+- **Use full commit ids** in every script (`git rev-parse <short>` first); a short id became ambiguous and broke a control silently.
+- **Never run anything heavy while a fuzz runs**, not even `npm test`: Step 38 failed under that load.
+- **Next, in order:** B4.17 → B5.8 → B4.7 → B7.6 → A11.5 remainder → A11.9 → H9 → H14.

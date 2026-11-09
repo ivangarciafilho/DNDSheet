@@ -794,7 +794,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A17.5** Budgets: keystroke → preview, completion, select open, resolver pass (§15.4) · M
 - [ ] **A17.6** `npx quasar build` clean · S
 - [ ] **A17.7** Rewrite `STACK_STATE.md` and the README feature list from evidence (DEF-14, BS-03) · M
-- [ ] **A17.8** Profile macro rendering on a 5 000-character description (BS-15); screenshot storage policy (BS-37) · S
+- [x] **A17.8** Profile macro rendering on a 5 000-character description (BS-15); screenshot storage policy (BS-37) · S — done (217): `Build217.test.ts`: 0.18 ms per 5 000-character description (20 runs after warm-up), budget 16 ms. Screenshot policy: screenshots are evidence, never committed — they go to the scratch tree or `%TEMP%`, and reports cite them by path
 - [ ] **A17.9** Release: annotated local tag `v2.5.0-statblock`, release notes, docs ritual · S
 
 **Done when:** QA-001…006, SBG-005 (12 selectable themes), NFR-001 (Track A paths) proven; DEF-13, DEF-14 closed.
@@ -827,7 +827,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|
 | R7 | F-05 | B1 | 5–10 d |
 
-- [ ] **B2.1** Inventory lint codes, fixable flags and real operations; add Track A families: broken binding, prepared over limit, dangling multiattack reference, unknown macro (TASK-012) · M
+- [ ] **B2.1** Inventory lint codes, fixable flags and real operations; add Track A families: broken binding, prepared over limit, dangling multiattack reference, unknown macro (TASK-012) · M — progress (217): inventory §B2.1: 8 codes with severity, fixable flag and real repair; `CR_DRIFT` and `SPELL_SLOTS_EMPTY` claimed `fixable: true` with no repair — now `false`, guarded by a test with a control run (fails on Build216). Remaining: Track A lint families (broken binding, prepared over limit, dangling references beyond multiattack)
 - [ ] **B2.2** Issue-target registry: `fieldPath` → mounted control (scroll, expand, focus) (TASK-013) · L
 - [ ] **B2.3** Checks states (current/stale/failed/empty) and honest copy (TASK-014) · M
 - [ ] **B2.4** Repair preview → apply as one command and one undo (TASK-015) · L
@@ -841,7 +841,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|
 | R7 | F-06 | B1 | 3–7 d |
 
-- [ ] **B3.1** Map each recommendation to the fields it writes; confirm attack-bonus behaviour (TASK-017) · M
+- [x] **B3.1** Map each recommendation to the fields it writes; confirm attack-bonus behaviour (TASK-017) · M — done (217): `docs/roadmap/DNDSheet-Domain-Inventories.md` §B3.1 maps all six recommendations to the fields they write; `attacks.toHit` is advisory and writes nothing (confirmed), damage scaling changes dice count only
 - [ ] **B3.2** Transient `AutoTuneSession` with selection (TASK-018) · M
 - [ ] **B3.3** Before/after preview and stale guard (TASK-019) · M
 - [ ] **B3.4** Apply selected changes as one undoable command (TASK-020) · M
@@ -878,7 +878,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|
 | R9 | F-07 | B1 | 8–15 d |
 
-- [ ] **B5.1** Inventory Pinia keys, `dndsheet_monster_` LocalStorage, IndexedDB and all writers (TASK-026) · M
+- [x] **B5.1** Inventory Pinia keys, `dndsheet_monster_` LocalStorage, IndexedDB and all writers (TASK-026) · M — done (217): inventory §B5.1: six persisted Pinia keys, two legacy keys migrated once, one UI flag; `LocalStorageAdapter` and `IndexedDbStorageAdapter` are never instantiated (dead layer); persistence plugin swallows write errors (verified in v3.2.3 source)
 - [ ] **B5.2** Decision: startup backend selection, migration, quota, rollback (TASK-027) · M
 - [ ] **B5.3** Repository wiring and truthful save status (TASK-028) · L
 - [ ] **B5.4** Migrate sources one by one with verify-then-mark (TASK-029) · L
@@ -1269,15 +1269,21 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [ ] **H14** Type baseline: 682 vue-tsc errors (top: BasicsEditor 90, SkillsEditor 54, SpeedsEditor 49, useTextRenderer 49 — mostly store members missing from the store type). Add a `typecheck` gate step that fails on *new* errors against a committed baseline, then burn the baseline down per file · M · proof: gate step + baseline file — progress (214): pinned new-error comparison and named ten-step gate/publisher contract shipped; unchanged211/213 baseline reproduced as683 with zero normalized differences, current613 after explicit.ts import configuration. New TS2322 control rejected. Per-file debt burn-down remains open; do not refresh the baseline to absorb new errors.
 - [x] **H15** tsconfig: `moduleResolution=node10` and `baseUrl` are deprecated (TS5107/TS5101); move to `bundler` resolution or set `ignoreDeprecations` deliberately · S · proof: vue-tsc runs without the flag — done (214): isolated pinned TypeScript6.0.3/vue-tsc3.3.14 runs --noEmit without an ad-hoc deprecation flag; ignoreDeprecations6.0 is deliberate configuration, allowImportingTsExtensions supports Node core tests. Comparison reports613 existing diagnostics/0new/70resolved; not a clean-type claim.
 - [ ] **H16** Workstation: remove the stray `F:\AI_Resources\DNDSheet-RC\` folder created by the failed Build204 RC call (owner action; deletion needs the owner's go-ahead) · XS
-- [x] **H17** Fuzz Step 38 (lair/legendary/mythic panels) uses fixed 200 ms waits before `.click()`; it failed once when a second fuzz ran in parallel. Replace with polling lookups like the studio finder; never run two fuzz instances at once on the build machine · S · proof: gate under a parallel CPU load — done (211): Step 38 `openPanel`/`button` poll through `until()` and name the missing panel or button; gate 9/9
+- [x] **H17** Fuzz Step 38 (lair/legendary/mythic panels) uses fixed 200 ms waits before `.click()`; it failed once when a second fuzz ran in parallel. Replace with polling lookups like the studio finder; never run two fuzz instances at once on the build machine · S · proof: gate under a parallel CPU load — done (211): Step 38 `openPanel`/`button` poll through `until()` and name the missing panel or button; gate 9/9 — done (217): second Step 38 lookup set (`input()` field wrapper and “Custom formula” menu item) now polls; Build217 run under light parallel load exposed it
 - [x] **H18** Mutation control for Step 52: run the new fuzz against the Build208 bundle and confirm `resetClears` fails. The first attempt hung at Step 8 (AutoTune dialog) on the old bundle and was stopped; run Step 52 in isolation instead (add a `DNDSHEET_FUZZ_ONLY=52` switch) · S · proof: control log — done (211): headless-Chrome control against the Build208 bundle: `$reset` left 1 table (`resetClears:false`, no `randomTables` in `$state`); RC210 cleared it (`true`). Step 52 therefore catches the leak
 - [x] **H19** Fuzz harness reports the real page exception: `evalInPage` printed `exceptionDetails.text` (“Uncaught”) ahead of the exception; it now prints the description with line and column · XS — done (215): found the Build212 Step 52 cause (`SyntaxError … line 18, column 58`) in one run
 - [x] **H20** 2024 outcome prose put the reference note after the sentence's full stop (“Half as much damage. (builds on the failure result).”). The note now joins the sentence it qualifies · XS — done (215): `OutcomeClauses.test.ts` +4 (export prose, html escaping, presentation independence, custom trigger); failed on Build214, passes now
 - [x] **H21** Agent discipline (recorded after Build215): exactly one build tree (`%TEMP%\dnd-tip`), never two gate or fuzz runs at once (a second gate overlapped the first and mixed `.gate/` logs), `npm run typecheck:setup` once per new tree before the gate, and unverified work parked at `refs/wip/current` in the main repo until its gate passes · XS — done (216): followed through Build216: one tree, no overlapping gate/fuzz runs (a run was stopped by process tree before restarting), WIP parked at `refs/wip/current`
 - [x] **B4.11** Export file names come from author text; `Ogre: Elder/Chief?` produced an invalid Windows file name. `safeFileName` (`src/core/domain/file-name.ts`) strips characters no platform accepts, avoids reserved device names, keeps the suffix within 200 characters, and runs inside `download()` and the PNG path · S — done (216): `FileName.test.ts` (3 cases) + fuzz Step 56 reads the real download name
 - [x] **B4.15** `download()` never released its object URL (one leaked blob per export); it now revokes it on the next task · XS — done (216)
-- [ ] **B4.12** Goldens for Foundry JSON, plain text and HTML exports (inventory #7–#9) · S
-- [ ] **B4.13** Character exports (JSON, Markdown, text): goldens and a JSON round-trip test · S
-- [ ] **B4.14** Copy link sends the whole monster to a third-party URL shortener without telling the user; show a one-line notice or offer the long link only · S
+- [x] **B4.12** Goldens for Foundry JSON, plain text and HTML exports (inventory #7–#9) · S — done (217): Step 51 now pins eight formats: Foundry JSON, plain text and HTML goldens added after review; the plain-text golden exposed a dangling comma in `exportToMarkdown` (fixed with `creatureTypeLine`)
+- [x] **B4.13** Character exports (JSON, Markdown, text): goldens and a JSON round-trip test · S — done (217): `Build217.test.ts`: character Markdown and plain-text goldens (`test/goldens/character-*.txt`) and a lossless JSON test. There is no character JSON *import* path (B4.17)
+- [x] **B4.14** Copy link sends the whole monster to a third-party URL shortener without telling the user; show a one-line notice or offer the long link only · S — done (217): the copy-link notice names tinyurl.com and says it now stores the monster; the shortener reply must be an `https` URL with a 2xx status, otherwise the long link is copied instead of an error page. Verified by code review; no automated test drives the clipboard
 - [ ] **B7.6** Reduced motion done safely: scope a reduce rule to the app's own decorative transitions (never Quasar's menu/tooltip internals), and run the fuzz under explicit `Emulation.setEmulatedMedia` for both `no-preference` and `reduce` so results do not depend on the build machine's Windows setting · M
 - [ ] **H22** `tools/qa/run-step.mjs` cannot extract steps whose page code uses `${…}` interpolation (Step 35 is one); evaluate the step's template through the fuzz's own helpers instead · S
+- [x] **B2.6** Lint “fixable” honesty: the lint dialog showed “Auto-Fixable” and counted `CR_DRIFT` and `SPELL_SLOTS_EMPTY` on its Fix button although `autoFixMonster` repairs neither · XS — done (217): flags false, test asserts every fixable issue disappears after auto-fix
+- [x] **B4.16** `exportToMarkdown`/`exportToPlainText` printed “Medium humanoid, ” with an empty alignment (the Build196 fix never reached this exporter) · XS — done (217)
+- [ ] **B4.17** Character JSON can be exported but not imported; add an import path (validate, migrate, confirm overwrite) or drop the export · S
+- [ ] **B5.7** Decide whether the recovery reset in `ErrorCorrection.vue` should also clear `app.editor` and `app.combat` (owner decision) · XS
+- [ ] **B5.8** Surface failed saves: enable the persistence plugin's error hook (or wrap storage) and show a one-line warning when a write fails, e.g. on quota · S
+- [ ] **H23** Always use full commit ids in scripts and controls: `b33f33d` became ambiguous in this repo and silently broke a control run · XS
