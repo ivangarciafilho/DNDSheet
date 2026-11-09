@@ -298,7 +298,9 @@
             <div class="col-4">
               <q-select v-help="'Choose hit die type (d) for the character editor.'"
                 v-model.number="actor.hitDice.die"
-                :options="[6, 8, 10, 12]"
+                :options="[6, 8, 10, 12].map((faces) => ({ label: `d${faces}`, value: faces }))"
+                emit-value
+                map-options
                 label="Hit Die Type (d)"
                 dense
                 outlined

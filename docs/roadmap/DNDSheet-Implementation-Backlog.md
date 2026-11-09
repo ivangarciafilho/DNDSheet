@@ -639,14 +639,14 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R3 | AU-04 | A9 | 3–4 d | 7 files · +1 150 / −440 |
 
-- [ ] **A10.0** Pre-flight: locate the bottom strip (BS-21); confirm `QEditor` content element API (BS-28); inventory the 7 toolbar menus and `useTokens.ts` categories · S
+- [x] **A10.0** Pre-flight: locate the bottom strip (BS-21); confirm `QEditor` content element API (BS-28); inventory the 7 toolbar menus and `useTokens.ts` categories · S — done (216): the separate “Intellisense” strip (BS-21) is no longer rendered; only its logic remained (`allIntellisenseTokens`, `suggestedTokens`, `tokenSearch` in `MonsterTextEditor.vue`, unused by the template). Seven toolbar menus confirmed; QEditor content API unchanged
 - [ ] **A10.1** `MACRO_CATALOG` = `FORMULA_REFS` + `CONTEXT_TOKENS` (`{action.*}`, `{attack.*}`, `{spellcasting.*}`, `{multiattack.*}`) with tips and groups · M
 - [ ] **A10.2** `components/kit/useCompletion.ts`: triggers, token boundary, ranking, caret rect (contenteditable + input mirror) · L
 - [ ] **A10.3** `components/kit/CompletionMenu.vue`: listbox, ARIA combobox wiring, flip near viewport edge, keyboard · M
 - [ ] **A10.4** `MonsterTextEditor.vue`: integrate completion; insert with `insertText`; caret restore · M
 - [ ] **A10.5** Toolbar macro menus generated from the catalog (replace the 7 hand-written dropdowns) · M
 - [ ] **A10.6** `FormulaField` formula mode uses the same completion · S
-- [ ] **A10.7** Remove the bottom intellisense strip · S
+- [x] **A10.7** Remove the bottom intellisense strip · S — done (216): removed the dead strip logic and its hand-written 24-token list (a third token catalog beside `useTokens.ts` and `FORMULA_REFS`)
 - [ ] **A10.8** Tests (ranking, token boundary) + browser checks + close: commit `caret intellisense for macros and formulas; menus from one catalog` · M
 
 **Done when:** ITL-001…008 proven.
@@ -665,7 +665,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M — `test/inventory.mjs` classifies all 53 remaining number inputs in `DNDSheet-Control-Inventory.md`: 41 literal (presentation 23, character sheet 11, tracker 2, spell data 2, CR annotation 1, slot table 1), 7 composer drafts owned by composer apply, 6 blocked on identity migration (anatomy parts, paragon phases, language rows); none derived (200)
 - [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S — progress (200): the three migrated paths were already registered; the 6 blocked inputs need stable-id paths for `anatomy`, `paragonConfig.phaseConfigs` and legacy language rows first (field-types A9.2 note)
 - [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M — progress (200): `spellcasting.level`, `spellcasting.classes[id=*].level` and `sensesList[id=*].observationMinutes` now use `FormulaField` (side effects kept via `@applied`); remaining binding-capable inputs are blocked (see A11.2)
-- [ ] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S
+- [ ] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S — progress (216): audit: the only bare-integer option array left (`CharacterEditor` hit die `[6, 8, 10, 12]`) now shows d6…d12 labels with numeric values. The close commit still waits on A11.2/A11.3 (6 inputs blocked on stable ids)
 
 **Done when:** BND-009, BND-002 (global) proven.
 
@@ -768,7 +768,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A16.1** Actions Studio and composer chips: kit adoption and tips · M — tips on usage, cadence and display settings (203); chips left
 - [ ] **A16.2** `A4LayerStudio.vue` (fixed canvas exempt with scroll affordance, BS-35), `MainLayout.vue` toolbar tips · M — A4 studio tips (203); toolbar tips and scroll affordance left
 - [ ] **A16.3** Remaining panels (Regional, Anatomy, Encounter Dynamics, Villain if kept) · M
-- [ ] **A16.4** Splitter minimum widths (FIT-004) · S
+- [x] **A16.4** Splitter minimum widths (FIT-004) · S — done (216): both splitters get `:limits` = [320 px preview, screen − 360 px] from `$q.screen.width`; fuzz Step 56 checks the preview never drops under 320 px
 - [ ] **A16.5** `app.scss` cleanup: delete legacy `.action-composite-*`, `.zebra-stripe-text`, `.trait > div:first-of-type` and cascade blocks whose markup is gone; `!important` < 200 · L
 - [ ] **A16.6** Global audits: help coverage = 1.00, overflow = 0 · S
 - [ ] **A16.7** Close: commit `studio, layout and toolbar adopt the kit; legacy statblock css removed` · S
@@ -788,7 +788,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R6 | QA-01 | A4…A16 | 2–3 d | 12 files · +1 300 / −400 |
 
 - [ ] **A17.1** `test/fixtures/monsters/*.json` (Seraph, pact, full, innate, legacy actions) used by node tests and probes · M
-- [ ] **A17.2** Move QA helpers from `%TEMP%` to `tools/qa/` (shot, splice, fixture loader, overflow probe, doc check) · S
+- [x] **A17.2** Move QA helpers from `%TEMP%` to `tools/qa/` (shot, splice, fixture loader, overflow probe, doc check) · S — done (216): `tools/qa/` with `count-tasks.mjs` (now A/B/H), `edit-anchored.mjs`, `shots.mjs` (repo-relative paths), new `run-step.mjs` (one fuzz step in a fresh Chrome) and a README. Fixture loader and overflow probe live in the fuzz itself
 - [ ] **A17.3** Update `test/exhaustive-ui-fuzz.js` to the plate grammar and the unified studio; locate headless Chrome (BS-36) · L
 - [ ] **A17.4** Theme matrix: 12 selectable themes × fixture, computed contrast table (SBG-005) · M
 - [ ] **A17.5** Budgets: keystroke → preview, completion, select open, resolver pass (§15.4) · M
@@ -857,7 +857,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|
 | R8 | F-08 | B1, A6 | 5–10 d |
 
-- [ ] **B4.1** Inventory every export target: source, transforms, omissions, MIME, filename (TASK-021) · M
+- [x] **B4.1** Inventory every export target: source, transforms, omissions, MIME, filename (TASK-021) · M — done (216): `docs/roadmap/DNDSheet-Export-Inventory.md`: 17 targets (12 monster, 5 character) with source, transform, MIME, file name, omissions and golden coverage; gaps groomed as B4.12–B4.14
 - [ ] **B4.2** `ExportCapability` / `ExportResult` contract with source revision (TASK-022) · M
 - [ ] **B4.3** Fixtures across targets: Soul Barrage, Veil, spell plates, check rows (TASK-023) · M
 - [ ] **B4.4** Text targets use `text2024` and check-row text; HTML/PNG embed the grammar CSS (BS-11, BS-13) (TASK-024) · L
@@ -912,7 +912,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **B7.2** Section registry and sticky section strip with focus targets (TASK-045) · L
 - [ ] **B7.3** Narrow Editor / Stat block tabs (TASK-046) · M
 - [ ] **B7.4** Presets Screen · Ink saver · Art plate over existing settings (TASK-048) · M
-- [ ] **B7.5** Keyboard, 200 % zoom, reduced motion spot checks; close · S
+- [ ] **B7.5** Keyboard, 200 % zoom, reduced motion spot checks; close · S — progress (216): fuzz Step 56: no horizontal overflow at a 640 px (200 % zoom) layout, ≥ 10 editor controls take focus. Reduced motion **not** landed: this machine reports `prefers-reduced-motion: reduce` (Windows animations off), and a global 0.01 ms transition rule broke Quasar menu focus (Step 35) and tooltip scroll tracking (help smoke) — see B7.6
 
 **Done when:** UX-001, UX-002, UX-005, NFR-004 proven.
 
@@ -924,7 +924,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 - [ ] **B8.1** Provenance on the envelope; legacy = unknown (TASK-055) · M
 - [ ] **B8.2** `resolveRulesPolicy(document)` feeds ruleset-aware catalogs (metamagic, progressions) (TASK-056) · M
-- [ ] **B8.3** Tests: style/theme switches leave rules untouched; close · S
+- [x] **B8.3** Tests: style/theme switches leave rules untouched; close · S — done (216): fuzz Step 56 cycles 2 templates × 2 styles × 4 themes (16 switches) and asserts `monster.$state` is byte-identical afterwards
 
 **Done when:** DOM-004 proven.
 
@@ -1262,7 +1262,7 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [ ] **H9** Rewrite the 250 generated tips into purpose-led copy (why, not what) per editor; verify the 8 repaired compound tags render; keep the floor at 70 only after rewrite · L · proof: `audit:help` + copy review list
 - [x] **H10** Publish guard: one `tools/publish.mjs` that builds SPA + Pages, asserts `dist-pages/index.html` and `/DNDSheet/` base, fixes `make-rc.mjs` args, creates the RC folder and refuses to push an empty tree · S · proof: dry run + RC 208 folder — progress (209): `make-rc.mjs` failure was a usage error (3rd arg is a JSON *file*); RC folder is `DNDSheet/.codex-temp/release-candidates/`; RC209 cut correctly. Remaining: single `tools/publish.mjs` with empty-tree guard — done (211): `tools/publish.mjs` refuses unless `.gate/summary.json` is a 9/9 pass newer than every src/test/public file, `dist-pages/index.html` carries `/DNDSheet/assets/`, no `dist-pages/spa`, ≥ 20 files, and the git tree count matches disk; then cuts the RC (repo copy `tools/make-rc.mjs`), tags, commits gh-pages through a private index and pushes with `--push`. First used for Build211
 - [ ] **H11** Close A11.5 (tests + goldens) then A11.9 (depends on A11.5 + H5/H6) · M — progress (214): outcome metadata retention, formula-aware action/reaction sectors, actual safe table rendering, prose/container parity repairs and eight browser combinations. Still open: stable N-container/four-region ownership, typed predicates/result graph validation, full adapter/theming/print acceptance; A11.9 remains dependent.
-- [ ] **H12** Workstation hygiene: stop stray `node` processes; keep one temp tree per build · XS
+- [x] **H12** Workstation hygiene: stop stray `node` processes; keep one temp tree per build · XS — done (216): one build tree (`dnd-tip`), servers this agent starts (9120–9123) stopped after use; the long-running dev server on 4173 belongs to another session and is left alone
 
 **Why the task count stalled at 115/113 in Builds 204–208:** every touched task is L-sized and its close criteria require tests; no-tests mode can move code but cannot close tasks. Safe mode resumes with H1.
 - [x] **H13** Fuzz Step 45 opens the studio by exact label text right after Step 44; Build208 gate crashed once on `studio.classList` (studio not found) and passed on Build209. Make the lookup wait for the panel and report "missing studio" as a problem instead of a TypeError · S · proof: 3 consecutive gate runs — progress (210): all 7 async “Actions & Traits Studio” lookups now poll (Step 45 class fixed). New evidence: Step 38 failed once under parallel load (fixed 200 ms waits) and passed alone — see H17 — done (215): every gate since Build210 passed Step 45 (210, 211, 213, 214, 215); all 7 studio lookups poll
@@ -1273,4 +1273,11 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [x] **H18** Mutation control for Step 52: run the new fuzz against the Build208 bundle and confirm `resetClears` fails. The first attempt hung at Step 8 (AutoTune dialog) on the old bundle and was stopped; run Step 52 in isolation instead (add a `DNDSHEET_FUZZ_ONLY=52` switch) · S · proof: control log — done (211): headless-Chrome control against the Build208 bundle: `$reset` left 1 table (`resetClears:false`, no `randomTables` in `$state`); RC210 cleared it (`true`). Step 52 therefore catches the leak
 - [x] **H19** Fuzz harness reports the real page exception: `evalInPage` printed `exceptionDetails.text` (“Uncaught”) ahead of the exception; it now prints the description with line and column · XS — done (215): found the Build212 Step 52 cause (`SyntaxError … line 18, column 58`) in one run
 - [x] **H20** 2024 outcome prose put the reference note after the sentence's full stop (“Half as much damage. (builds on the failure result).”). The note now joins the sentence it qualifies · XS — done (215): `OutcomeClauses.test.ts` +4 (export prose, html escaping, presentation independence, custom trigger); failed on Build214, passes now
-- [ ] **H21** Agent discipline (recorded after Build215): exactly one build tree (`%TEMP%\dnd-tip`), never two gate or fuzz runs at once (a second gate overlapped the first and mixed `.gate/` logs), `npm run typecheck:setup` once per new tree before the gate, and unverified work parked at `refs/wip/current` in the main repo until its gate passes · XS
+- [x] **H21** Agent discipline (recorded after Build215): exactly one build tree (`%TEMP%\dnd-tip`), never two gate or fuzz runs at once (a second gate overlapped the first and mixed `.gate/` logs), `npm run typecheck:setup` once per new tree before the gate, and unverified work parked at `refs/wip/current` in the main repo until its gate passes · XS — done (216): followed through Build216: one tree, no overlapping gate/fuzz runs (a run was stopped by process tree before restarting), WIP parked at `refs/wip/current`
+- [x] **B4.11** Export file names come from author text; `Ogre: Elder/Chief?` produced an invalid Windows file name. `safeFileName` (`src/core/domain/file-name.ts`) strips characters no platform accepts, avoids reserved device names, keeps the suffix within 200 characters, and runs inside `download()` and the PNG path · S — done (216): `FileName.test.ts` (3 cases) + fuzz Step 56 reads the real download name
+- [x] **B4.15** `download()` never released its object URL (one leaked blob per export); it now revokes it on the next task · XS — done (216)
+- [ ] **B4.12** Goldens for Foundry JSON, plain text and HTML exports (inventory #7–#9) · S
+- [ ] **B4.13** Character exports (JSON, Markdown, text): goldens and a JSON round-trip test · S
+- [ ] **B4.14** Copy link sends the whole monster to a third-party URL shortener without telling the user; show a one-line notice or offer the long link only · S
+- [ ] **B7.6** Reduced motion done safely: scope a reduce rule to the app's own decorative transitions (never Quasar's menu/tooltip internals), and run the fuzz under explicit `Emulation.setEmulatedMedia` for both `no-preference` and `reduce` so results do not depend on the build machine's Windows setting · M
+- [ ] **H22** `tools/qa/run-step.mjs` cannot extract steps whose page code uses `${…}` interpolation (Step 35 is one); evaluate the step's template through the fuzz's own helpers instead · S

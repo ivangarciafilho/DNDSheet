@@ -3774,6 +3774,35 @@ async function runFuzz() {
   delete step55.authored
   console.log('Step 55 result:',JSON.stringify(step55))
   if(step55.problems.length||step55.checks!==8||!step55.projectionPreserves||!step55.undone||!step55.persisted)throw new Error('Step 55 failed: '+JSON.stringify(step55))
+
+  console.log('\n--- Step 56: Presentation switches leave rules untouched; zoom, focus, splitter and file names ---')
+  const step56=await evalInPage(`async()=>{
+    const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,monster=pinia._s.get('monster'),editor=pinia._s.get('editor'),problems=[];
+    monster.$reset();monster.name='Ogre: Elder/Chief?';monster.setCR(5);await wait(200);
+    const before=JSON.stringify(monster.$state);let switches=0;
+    for(const template of ['modern','classic'])for(const style of ['2014','2024'])for(const theme of ['wotc','printer','lovecraft_golden','art_deco']){editor.visualTemplate=template;editor.style=style;editor.visualTheme=theme;await wait(60);switches++;}
+    editor.visualTemplate='modern';editor.style='2024';editor.visualTheme='wotc';await wait(200);
+    const rulesUntouched=JSON.stringify(monster.$state)===before;if(!rulesUntouched)problems.push('presentation switch changed monster state');
+    const names=[],nativeAnchor=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){names.push(this.download);};
+    try{[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(250);
+      [...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()==='Export JSON (5emm format)')?.click();await wait(250);}finally{HTMLAnchorElement.prototype.click=nativeAnchor;}
+    const safeName=names.at(-1)==='Ogre- Elder-Chief.5emm.json';if(!safeName)problems.push('file name '+JSON.stringify(names));
+    const splitter=document.querySelector('#splitter');const after=splitter?.querySelector(':scope > .q-splitter__after');
+    const splitterOk=!!after&&after.getBoundingClientRect().width>=319;if(!splitterOk)problems.push('preview narrower than 320 px');
+    return {problems,switches,rulesUntouched,safeName,splitterOk};
+  }`)
+  // Reduced motion is not asserted: the build machine itself reports prefers-reduced-motion: reduce, and a global
+  // 0.01 ms transition rule broke Quasar's menu focus hand-off (Step 35) and tooltip scroll tracking (help smoke). See B7.5.
+  // 200 % zoom on a 1280 px window is a 640 px layout viewport.
+  await sendCdp('Emulation.setDeviceMetricsOverride',{width:640,height:900,deviceScaleFactor:2,mobile:false});await pause(400)
+  step56.zoomNoOverflow=await evalInPage(`()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1`)
+  await sendCdp('Emulation.clearDeviceMetricsOverride');await pause(300)
+  step56.keyboard=await evalInPage(`async()=>{document.activeElement?.blur();document.body.focus();const seen=new Set();for(let i=0;i<40;i++){const ev=new KeyboardEvent('keydown',{key:'Tab',bubbles:true});document.dispatchEvent(ev);}
+    const focusables=[...document.querySelectorAll('#editor input, #editor button, #editor [tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
+    for(const el of focusables.slice(0,25)){el.focus();if(document.activeElement===el)seen.add(el);}
+    return seen.size>=Math.min(10,focusables.length)&&focusables.length>0;}`)
+  console.log('Step 56 result:',JSON.stringify(step56,null,2))
+  if(step56.problems.length||!['rulesUntouched','safeName','splitterOk','zoomNoOverflow','keyboard'].every(key=>step56[key]===true))throw new Error('Step 56 failed: '+JSON.stringify(step56))
   consoleErrors.forEach((e) => console.error(e))
 
   console.log('RUNTIME EXCEPTIONS DETECTED:', runtimeExceptions.length)
@@ -3790,7 +3819,7 @@ async function runFuzz() {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
   }
 
-  console.log('ALL 55 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
+  console.log('ALL 56 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
 runFuzz().catch((e) => {

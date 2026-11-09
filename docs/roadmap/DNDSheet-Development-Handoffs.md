@@ -1306,3 +1306,11 @@ Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-16
 - **Interruption safety:** commit unverified work to `refs/wip/current` (not a branch) in `F:\AI_Resources\DNDSheet`; replace it with the real commit once the gate passes.
 - **Two writers:** Builds 212–214 were landed by another session while this one was paused. Always `git ls-remote` before building on a remembered tip.
 - **Next, in order:** A11.5 remainder per the Build214 note (container ownership, typed predicates) → A11.9 → H9 tips → H14 baseline burn-down → B4.7/B4 rest of the export boundary → H16 (owner).
+
+## Handoff — after Build 216 (2026-11-09)
+
+- **The build machine runs with Windows animation effects off**, so headless Chrome reports `prefers-reduced-motion: reduce` in every fuzz and smoke run. A global reduce rule broke Quasar focus and tooltip tracking; it was removed (B7.6 tracks the safe version).
+- **QA tools are in the repo:** `tools/qa/` (see its README). Count the workload with `node tools/qa/count-tasks.mjs`.
+- **Gate fingerprint covers `tools/`:** adding a tool after the gate ran forces a re-run; docs are not covered.
+- **Exports:** see `docs/roadmap/DNDSheet-Export-Inventory.md` before touching any exporter; every file name now goes through `safeFileName`.
+- **Next, in order:** B4.12/B4.13 goldens → B4.14 notice → B7.6 → A11.5 remainder → A11.9 → H9 tips → H14 baseline.

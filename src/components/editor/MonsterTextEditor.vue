@@ -241,7 +241,6 @@ export default defineComponent({
     const deliveryTokenRef = ref<QBtnDropdown | null>(null)
     const conditionTokenRef = ref<QBtnDropdown | null>(null)
 
-    const tokenSearch = ref('')
     const tokens = useTokens()
     const { processTokens: renderTokens } = useProcessTokens()
 
@@ -312,47 +311,6 @@ export default defineComponent({
       }
     }
 
-    const allIntellisenseTokens = computed(() => [
-      { label: 'Monster Name', token: '{NAME}' },
-      { label: 'STR Modifier', token: '{STR_MOD}' },
-      { label: 'DEX Modifier', token: '{DEX_MOD}' },
-      { label: 'CON Modifier', token: '{CON_MOD}' },
-      { label: 'INT Modifier', token: '{INT_MOD}' },
-      { label: 'WIS Modifier', token: '{WIS_MOD}' },
-      { label: 'CHA Modifier', token: '{CHA_MOD}' },
-      { label: 'Save DC (STR)', token: '{DC:STR}' },
-      { label: 'Save DC (DEX)', token: '{DC:DEX}' },
-      { label: 'Save DC (CON)', token: '{DC:CON}' },
-      { label: 'Save DC (INT)', token: '{DC:INT}' },
-      { label: 'Save DC (WIS)', token: '{DC:WIS}' },
-      { label: 'Save DC (CHA)', token: '{DC:CHA}' },
-      { label: 'Attack Mod (STR)', token: '{A:STR}' },
-      { label: 'Attack Mod (DEX)', token: '{A:DEX}' },
-      { label: 'Proficiency Bonus', token: '{PROF}' },
-      { label: 'Cantrip Tier', token: '{CANTRIP_TIER}' },
-      { label: 'Scaling Tier', token: '{TIER}' },
-      { label: '1d10 + CHA Damage', token: '{1d10 + CHA_MOD}' },
-      { label: '2d6 + STR Damage', token: '{2d6 + STR_MOD}' },
-      { label: '1d8 + DEX Damage', token: '{1d8 + DEX_MOD}' },
-      { label: '2d8 + CON Damage', token: '{2d8 + CON_MOD}' },
-      { label: 'Armor Class', token: '{AC}' },
-      { label: 'Hit Points', token: '{HP}' },
-    ])
-
-    const suggestedTokens = computed(() => {
-      const q = tokenSearch.value.trim().toLowerCase().replace(/^\{/, '').replace(/\}$/, '')
-      const list = allIntellisenseTokens.value.map((t) => ({
-        ...t,
-        preview: resolveTokenPreview(t.token),
-      }))
-      if (!q) {
-        return list.slice(0, 7)
-      }
-      return list
-        .filter((t) => t.token.toLowerCase().includes(q) || t.label.toLowerCase().includes(q))
-        .slice(0, 10)
-    })
-
     const contextTokens = computed(() => {
       if (props.tokenCategory === 'trait') {
         return tokens.traitTokens.value
@@ -393,9 +351,6 @@ export default defineComponent({
       deliveryTokenRef,
       conditionTokenRef,
       editorRef,
-      tokenSearch,
-      allIntellisenseTokens,
-      suggestedTokens,
       resolveTokenPreview,
       add,
       ...tokens,

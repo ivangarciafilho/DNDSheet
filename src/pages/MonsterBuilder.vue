@@ -7,6 +7,7 @@
       v-model="splitterModel"
       reverse
       unit="px"
+      :limits="splitterLimits"
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
@@ -29,6 +30,7 @@
       v-model="splitterModel"
       reverse
       unit="px"
+      :limits="splitterLimits"
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
@@ -65,7 +67,8 @@
 
 <script lang="ts">
 import { useMonsterStore } from 'src/stores/monster-store'
-import { defineComponent, ref, watch } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import BasicsEditor from 'src/components/editor/BasicsEditor.vue'
 import A4LayerStudio from 'src/components/editor/A4LayerStudio.vue'
 import WebRenderer from 'src/components/rendering/WebRenderer.vue'
@@ -114,6 +117,9 @@ export default defineComponent({
     const monster = useMonsterStore()
     const editorStore = useEditorStore()
     const splitterModel = ref(editorStore.statBlockColumns === 1 ? 500 : 800)
+    // FIT-004: the preview (after panel, px) never drops below 320 px and the editor keeps at least 360 px.
+    const $q = useQuasar()
+    const splitterLimits = computed(() => [320, Math.max(320, $q.screen.width - 360)])
 
     // automatically resize on column change
     watch(
@@ -131,6 +137,7 @@ export default defineComponent({
 
     return {
       splitterModel,
+      splitterLimits,
       monster,
       editorStore,
     }

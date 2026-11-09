@@ -71,6 +71,7 @@ import { useMonsterStore } from '../../stores/monster-store'
 import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { download, saveJson } from './download'
+import { safeFileName } from 'src/core/domain/file-name'
 import copy from 'copy-to-clipboard'
 import { useLatexRenderer } from '../rendering/useLatexRenderer'
 import { useTarrasqueRenderer } from '../rendering/useTarrasqueRenderer'
@@ -280,7 +281,7 @@ export default defineComponent({
           .then((result) => {
             const blobUrl = URL.createObjectURL(result)
             const link = document.createElement('a')
-            link.download = `${targetName}.png`
+            link.download = safeFileName(targetName, '.png')
             link.href = blobUrl
             link.click()
           })

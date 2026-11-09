@@ -4,6 +4,8 @@
 
 > Historical Build213 delivery: Build213, source `e55215f`, Pages `09f9945` (live footer verified), tag `rc-2.4.3-build-213-table-import-and-a4-print`. H6 closed; use the Build213 entry in Development Handoffs. Production link: https://ivangarciafilho.github.io/DNDSheet/.
 
+- **Build216 (2026-11-09)**: 10 items — safe export file names (B4.11) and released download blobs (B4.15); export inventory (B4.1); dead intellisense-strip logic removed (A10.0, A10.7); splitter minimum widths (A16.4); presentation switches proven not to touch rules (B8.3); `tools/qa/` (A17.2); H12, H21. Fuzz Step 56. Reduced-motion rule tried and reverted (machine reports reduce; see B7.6). Release candidate `rc-2.4.3-build-216-export-names-and-qa-tools`.
+
 - **Build215 (2026-11-09)**: export boundary B4.6, B4.8, B4.9, B4.10 closed (LaTeX escaping of raw names, plain-text Tarrasque headers, no empty header lines, `.5emm.json` round-trip test); outcome “builds on” note inside its sentence (H20); fuzz shows real page exceptions (H19); H13 closed. Goldens: 3 empty lines removed per Markdown format, empty Improved Initiative language dropped. Release candidate `rc-2.4.3-build-215-export-boundary`.
 
 - **Build213 (2026-11-09)**: transactional table-text import and A4 print closeout; actual landscape page size, full-width/unclipped print, no notification UI, named/scoped tables. Gate9/9,400 core,54 browser steps per SPA/Pages; four inspected PDFs. Workload116/121→117/120 across237 tracked IDs; H6 closes, no new scope.
