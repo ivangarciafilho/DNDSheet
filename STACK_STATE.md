@@ -1,5 +1,15 @@
 # DNDSheet — current stack state
 
+## Build 224
+
+Published source f547958; Pages e04a539; tag rc-2.4.3-build-224-random-result-integration-and-outcome-typography. Production: https://ivangarciafilho.github.io/DNDSheet/#/
+
+- A11.9 delivered: random tables linkable from description containers/regions and outcomes (`randomTableId`, `random_table` kind), accessible table HTML, missing/orphan/empty diagnostics, deterministic roll resolution.
+- Typography: outcome lead colon spacing (`On Success :` -> `On Success:`), container distance units (`10ft` -> `10 ft.`), 2024 ability grid MOD/SAVE header alignment + region landmark.
+- H9: purpose-led help copy for random tables, description containers, outcome layout, skill actions.
+- Gate 10/10 on frozen source: 481 core tests (+9), typecheck 613 diagnostics / 0 new.
+- Known open item: the user asked for `Attack +0`; the protected fuzz contract (Step 50, not editable) asserts `Attack 0` in the modern projection, so bonus 0 is kept unsigned. Needs an owner decision to amend the contract.
+- Fuzz Step 40 had a transient reload-timing flake under parallel load; it passed on rerun.
 ## Build 223
 
 Published source 44a87af; Pages 039b0f7; live footer 223. Base e766f8d167f40cf613c242c1dcfd5c8087fc4eb4; source/tag/Pages identities and live parity recorded in docs/roadmap/DNDSheet-Build223-Publication-Receipt.json. The current production link is https://ivangarciafilho.github.io/DNDSheet/.
@@ -24,3 +34,4 @@ Published source 8aa695e; Pages b65df80; live footer 222 and asset parity verifi
 ## Continue in dependency order
 
 A11.9 random-result integration → H9 purpose-led help → H14 per-file type debt burn-down.
+
