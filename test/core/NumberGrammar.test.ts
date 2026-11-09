@@ -6,6 +6,9 @@ import {
   formatDiceFormula,
   formatInitiativeHeadline,
   formatOrdinal,
+  formatDistanceUnit,
+  formatMetricDistance,
+  sanitizeProsePunctuation,
 } from '../../src/core/domain/number-grammar.ts'
 
 test('number grammar: cleanPunctuation cleans double commas, ., combinations, and orphan punctuation', () => {
@@ -31,6 +34,10 @@ test('number grammar: cleanPunctuation cleans double commas, ., combinations, an
   )
   assert.equal(
     cleanPunctuation('AC: 14, (19 if It Has Temporary Hit Points)'),
+    'AC: 14 (19 if It Has Temporary Hit Points)'
+  )
+  assert.equal(
+    cleanPunctuation('AC: 14. (19 if It Has Temporary Hit Points)'),
     'AC: 14 (19 if It Has Temporary Hit Points)'
   )
   assert.equal(
@@ -87,4 +94,46 @@ test('number grammar: formatOrdinal produces proper English ordinal suffixes', (
   assert.equal(formatOrdinal(21), '21st')
   assert.equal(formatOrdinal(22), '22nd')
   assert.equal(formatOrdinal(23), '23rd')
+})
+
+test('number grammar: formatDistanceUnit standardizes distances with clean space and period', () => {
+  assert.equal(formatDistanceUnit('darkvision 60ft, blindsight 30ft'), 'darkvision 60 ft., blindsight 30 ft.')
+  assert.equal(formatDistanceUnit('Speed reduced by 10ft, if 0ft at End Of Turn'), 'Speed reduced by 10 ft., if 0 ft. at End Of Turn')
+  assert.equal(formatDistanceUnit('all creatures 10ft of it'), 'all creatures 10 ft. of it')
+  assert.equal(formatDistanceUnit('reach 5 ft.'), 'reach 5 ft.')
+})
+
+test('number grammar: formatMetricDistance calculates meters with or without imperial base', () => {
+  assert.equal(formatMetricDistance(60), '60 ft. (18 m)')
+  assert.equal(formatMetricDistance(30), '30 ft. (9 m)')
+  assert.equal(formatMetricDistance(10), '10 ft. (3 m)')
+  assert.equal(formatMetricDistance(5), '5 ft. (1.5 m)')
+  assert.equal(formatMetricDistance(0), '0 ft. (0 m)')
+  assert.equal(formatMetricDistance(60, false), '18 m')
+  assert.equal(formatMetricDistance(5, false), '1.5 m')
+})
+
+test('number grammar: sanitizeProsePunctuation cleans complex prose with distance and punctuation normalization', () => {
+  const dirty = 'On Success : takes 13 (3d8) Radiant, all creatures 10ft of it. '
+  const sanitized = sanitizeProsePunctuation(dirty)
+  assert.equal(sanitized, 'On Success: takes 13 (3d8) Radiant, all creatures 10 ft. of it.')
+
+  const acText = 'AC: 14. (19 if It Has Temporary Hit Points)'
+  assert.equal(sanitizeProsePunctuation(acText), 'AC: 14 (19 if It Has Temporary Hit Points)')
+})
+
+test('number grammar: formatDistanceUnit handles mixed reaches, ranges, and multi-unit strings', () => {
+  const complex = 'Melee Weapon Attack: reach 5ft., one target. Ranged Weapon Attack: range 30/120ft., speed 40ft'
+  const standardized = formatDistanceUnit(complex)
+  assert.equal(
+    standardized,
+    'Melee Weapon Attack: reach 5 ft., one target. Ranged Weapon Attack: range 30/120 ft., speed 40 ft.'
+  )
+})
+
+test('number grammar: cleanPunctuation safely handles empty, whitespace, and clean strings', () => {
+  assert.equal(cleanPunctuation(''), '')
+  assert.equal(cleanPunctuation('   '), '')
+  assert.equal(cleanPunctuation('Normal sentence.'), 'Normal sentence.')
+  assert.equal(cleanPunctuation('AC: 16 (scale mail), 18 (shield)'), 'AC: 16 (scale mail), 18 (shield)')
 })

@@ -542,18 +542,23 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const comps = Array.isArray(spec.components) && spec.components.length > 0
       ? spec.components.join(', ')
       : ''
-    const spellMetaParts: string[] = []
-    if (classification) {
-      spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`)
-    }
-    if (comps) {
-      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell">(${comps})</span>`)
-    }
-    const spellMetaSuffix = spellMetaParts.length > 0 ? `, ${spellMetaParts.join(' ')}` : ''
-    const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}${spellMetaSuffix}</span>`
+    const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}</span>`
     const headerCells: PlateCell[] = [
       { html: nameHtml, head: true, cls: 'action-composite-pill name-cell' }
     ]
+
+    if (classification) {
+      headerCells.push({
+        html: `<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`,
+        cls: 'school-cell'
+      })
+    }
+    if (comps) {
+      headerCells.push({
+        html: `<span class="sb-qual sb-comp component-cell dnd-spell-comp" data-help="spell-components" tabindex="0">(${comps})</span>`,
+        cls: 'component-cell dnd-spell-comp-cell'
+      })
+    }
 
     if (spec.scores?.trim()) {
       headerCells.push({
@@ -673,12 +678,13 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         if (o.diceTable && o.diceTable.length) {
           tableHtml = `<table class="outcome-dice-table"><thead><tr><th>Roll</th><th>Effect</th></tr></thead><tbody>${o.diceTable.map(r => `<tr><td>${r.roll}</td><td>${r.effect}</td></tr>`).join('')}</tbody></table>`
         }
-        return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${o.trigger}:</i> ${effectsText}${riderText}${tableHtml}</div>`
+        const trig = (o.trigger || '').trim().replace(/\s*:+$/, '');
+        return `<div class="outcome-sector" data-sector="${o.layoutSector || 'all'}">${filterBadge}<i>${trig}:</i> ${effectsText}${riderText}${tableHtml}</div>`
       }).join('')
       effectsStr = `<div class="action-outcomes-grid">${sectorsHtml}</div> `
     } else {
       const outcomeHtml = outcomePhrase(ability, renderContext)
-        .map((line) => line.replace(/^([^:]+):/, '<i>$1:</i>'))
+        .map((line) => line.replace(/^([^:]+)\s*:/, '<i>$1:</i>'))
       effectsStr = outcomeHtml.length ? `${outcomeHtml.join(' ')} ` : ''
     }
     const containersStr = formatDescriptionContainers(context.descriptionContainers)

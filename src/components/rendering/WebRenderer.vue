@@ -177,11 +177,14 @@
       <div class="row items-center q-gutter-xs">
         <template v-if="editorStore?.a4PreviewMode">
           <q-badge
-            :color="a4PageOverflowPx > 0 ? 'amber-9' : 'positive'"
+            :color="a4PageOverflowPx > 0 ? 'negative' : (editorStore.a4PageMeasuredHeight / a4TargetHeightPx >= 0.85 ? 'amber-8' : 'positive')"
             class="text-weight-bold q-pa-xs"
           >
-            <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : 'check_circle'" class="q-mr-xs" />
-            {{ a4PageOverflowPx > 0 ? `Overflow (+${a4PageOverflowPx}px)` : 'Fits 1 A4 Page' }}
+            <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : (editorStore.a4PageMeasuredHeight / a4TargetHeightPx >= 0.85 ? 'info' : 'check_circle')" class="q-mr-xs" />
+            {{ a4PageOverflowPx > 0 ? `Overflow (+${a4PageOverflowPx}px)` : (editorStore.a4PageMeasuredHeight / a4TargetHeightPx >= 0.85 ? `Near Cap (${Math.round((editorStore.a4PageMeasuredHeight / a4TargetHeightPx) * 100)}%)` : 'Fits 1 A4 Page') }}
+            <q-tooltip>
+              {{ a4PageOverflowPx > 0 ? `Sheet height exceeds A4 printable limit by ${a4PageOverflowPx}px. Use 2 Columns, Landscape, or Compact.` : `Sheet fits A4 ${editorStore.a4Orientation} page capacity.` }}
+            </q-tooltip>
           </q-badge>
 
           <q-btn
@@ -725,7 +728,7 @@
               class="spell-inline-item"
             >
               <span class="spell-name">{{ spell.name }}</span>
-              <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+              <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
               <span v-if="spellIndex < group.spells.length - 1" class="spell-sep">, </span>
             </span>
           </div>
@@ -779,7 +782,7 @@
                 class="spell-inline-item q-ml-xs"
               >
                 <span class="spell-name">{{ spell.name }}</span>
-                <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+                <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -813,7 +816,7 @@
                 class="spell-inline-item q-ml-xs"
               >
                 <span class="spell-name">{{ spell.name }}</span>
-                <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+                <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -1654,6 +1657,7 @@ export default defineComponent({
       const actualHeight = a4PageRef.value.scrollHeight || 0
       const targetHeight = a4TargetHeightPx.value
       a4PageOverflowPx.value = Math.max(0, actualHeight - targetHeight)
+      editorStore.a4PageMeasuredHeight = actualHeight
     }
 
     onMounted(() => {
@@ -1665,6 +1669,7 @@ export default defineComponent({
         () => editorStore.a4Orientation,
         () => editorStore.a4Layout,
         () => editorStore.a4CompactDensity,
+        () => editorStore.statBlockColumns,
         () => editorStore.a4PreviewMode,
       ],
       () => {
@@ -2086,7 +2091,7 @@ export default defineComponent({
     )
 
     const sanitizedAcBadges = computed(() =>
-      (textRenderer.acBadges?.value || []).map((c) => sanitizeWebString(c))
+      (textRenderer.acBadges?.value || []).map((c) => sanitizeWebString(c).replace(/[.,;]\s*$/, '').trim())
     )
 
     const sanitizedHpBadges = computed(() =>

@@ -31,3 +31,16 @@ test('statblock help: usage copy selects the die from the displayed recharge ran
   assert.equal(statblockUsageHelpKey('3/Day'), 'uses-per-day')
   assert.equal(statblockUsageHelpKey(''), '')
 })
+
+test('statblock help: 2024 revision glossary entries are present and explain rules clearly', () => {
+  const revisionKeys = ['bloodied', 'temporary-hit-points', 'disengage', 'dodge', 'cover'] as const
+  for (const key of revisionKeys) {
+    const text = statblockHelpText(key)
+    assert.ok(text.length > 20, `${key} must have comprehensive help text`)
+    assert.doesNotMatch(text, /<[^>]+>/, `${key} help must be plain text`)
+  }
+  assert.match(statblockHelpText('bloodied'), /half its hit point maximum/i)
+  assert.match(statblockHelpText('temporary-hit-points'), /buffer against damage/i)
+  assert.match(statblockHelpText('disengage'), /Opportunity Attacks/i)
+  assert.match(statblockHelpText('dodge'), /Disadvantage.*Advantage/i)
+})

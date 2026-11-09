@@ -1,5 +1,40 @@
 # Local DNDSheet Stack State
 
+- **DNDSheet - Master Release Candidate v2.4.3-RC (Build 187): Spell Components, A4 Print Overflow Diagnostics, 2024 Glossary & Typographic Hygiene (100% COMPLETE & GREEN - 383/383 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-09)**:
+  * **What changed**:
+    * **Domain Engine: Number, Distance & Punctuation Grammar (`src/core/domain/number-grammar.ts`)**:
+      * Engineered `formatDistanceUnit(text)`: Normalizes distance units (`10ft`, `60ft`, `0ft`) into standard canonical 5e spacing with terminal dot (`10 ft.`, `60 ft.`, `0 ft.`).
+      * Engineered `formatMetricDistance(feet)`: Formats standard 5e metric equivalents (e.g. `60 ft. (18 m)`).
+      * Engineered `sanitizeProsePunctuation(text)`: Composite prose sanitizer combining distance units and clean punctuation.
+      * Updated `cleanPunctuation(text)` to strip stray periods immediately preceding opening parenthesis (`AC: 14. (` -> `AC: 14 (`).
+      * Expanded unit tests in `test/core/NumberGrammar.test.ts` to 10/10 passing tests.
+    * **WCAG Accessibility & 2024 Rule Glossary Expansion (`src/components/rendering/statblock-help.ts`)**:
+      * Added 5 new authoritative glossary definitions: `bloodied`, `temporary-hit-points`, `disengage`, `dodge`, and `cover`.
+      * Created dedicated unit test suite in `test/core/StatblockHelp.test.ts` (5/5 passing tests).
+    * **Spell Component & School Badge Highlighting (`src/css/statblock-grammar.scss`, `WebRenderer.vue`, `useProcessTokens.ts`)**:
+      * Styled `.spell-tag-badge`, `.dnd-spell-comp`, and `.sb-qual.sb-comp` with rich violet/purple (`#6a1b9a` on light, `#ce93d8` on dark).
+      * Enhanced `buildPlateEntry` in `useProcessTokens.ts` to surface school and spell components as distinct high-contrast plate header cells matching visual requirements.
+      * Tagged inline spell items in `WebRenderer.vue` with `.dnd-spell-comp`.
+      * Preserved strict Step 47 ordering and single-count V, S components invariant.
+    * **A4 Studio Page Budget & Live Print Diagnostics HUD (`src/stores/editor-store.ts`, `A4LayerStudio.vue`, `WebRenderer.vue`)**:
+      * Added `a4PageMeasuredHeight` to `useEditorStore`.
+      * Bound reactive height tracking and live budget meter to `WebRenderer.vue` toolbar and `A4LayerStudio.vue`.
+      * Added 1-click layout controls in `A4LayerStudio.vue` (`Orientation`, `Columns`, `Compact Density`, `Reset Layout`).
+      * Live page capacity budget indicator (`Optimal`, `Near Capacity`, `Overflow (+X px)`).
+    * **Trait, Action & Senses Typography Hygiene (`useTextRenderer.ts`, `useProcessTokens.ts`, `WebRenderer.vue`, `monster-store.ts`)**:
+      * Standardized senses ranges to `60 ft.` instead of compact `60ft` across `formatSingleSenseItem`.
+      * Sanitized outcome triggers in `useProcessTokens.ts` eliminating spaces before colons (`On Success:` instead of `On Success :`).
+      * Updated `sanitizedAcBadges` in `WebRenderer.vue` to strip trailing period/comma before riders.
+      * Added defensive spellcasting slots fallback (`monster.spellcasting?.slots || []`) preventing runtime errors on partial or custom configurations.
+    * **Release Candidate Increment**:
+      * Incremented `build.json` to `{"build":"187"}`.
+      * Created immutable release candidate ledger `.codex-temp/release-candidates/rc-2.4.3-build-187-spell-components-a4-overflow-and-typographic-grammar/` with `release-candidate.json` and `SHA256SUMS.txt` (429 files).
+  * **Verification & Test Proof**:
+    * **Core Unit Tests (`npm test`)**: **383 / 383 passed (100% green)** across 52 test suites (+6 new tests over Build 186).
+    * **In-Browser Live CDP Fuzz Suite (`node test/exhaustive-ui-fuzz.js`)**: All **50 consecutive phases passed with 0 console errors and 0 runtime exceptions**.
+    * **Production Build (`npx quasar build`)**: Compiled cleanly to `dist/spa` with **exit code 0**.
+    * **Visual Proof Verification**: Captured high-resolution screenshot `candidate187-spell-components-a4-overflow.png`.
+    * **PWA Server**: Live on port 8080 (`http://localhost:8080/#/`).
 - **DNDSheet - Master Release Candidate v2.4.3-RC (Build 186): Number Grammar, Initiative Typography, Metamagic Punctuation, Cascade Flush Padding & Typographic Elegance (100% COMPLETE & GREEN - 377/377 Core Unit Tests, 50/50 Live Browser CDP Fuzz Steps Passed with 0 Errors, Quasar Build Exit Code 0) - `DNDSheet` (2026-11-09)**:
   * **What changed**:
     * **Domain Engine: Number & Punctuation Grammar (`src/core/domain/number-grammar.ts`)**:

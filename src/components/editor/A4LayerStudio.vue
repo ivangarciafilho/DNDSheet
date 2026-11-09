@@ -119,6 +119,81 @@
         </div>
       </div>
 
+      <!-- Live Page Capacity Budget & Print Optimization HUD Bar -->
+      <div class="q-mb-sm q-pa-xs bg-grey-9 rounded-borders" style="border: 1px solid rgba(255, 255, 255, 0.15);">
+        <div class="row items-center justify-between no-wrap q-px-xs">
+          <div class="text-caption text-weight-bold flex items-center">
+            <q-icon name="print" class="q-mr-xs" size="16px" :color="a4CapacityColor" />
+            <span>A4 Page Budget:</span>
+            <q-badge :color="a4CapacityColor" class="q-ml-xs text-weight-bolder">
+              {{ a4CapacityLabel }}
+            </q-badge>
+          </div>
+          <div class="text-caption text-grey-4">
+            {{ a4MeasuredHeight }} / {{ a4MaxHeight }}px
+          </div>
+        </div>
+        <q-linear-progress
+          :value="Math.min(1, a4CapacityRatio)"
+          :color="a4CapacityColor"
+          track-color="grey-8"
+          rounded
+          size="6px"
+          class="q-mt-xs q-mb-xs"
+        />
+        <!-- 1-Click Layout Optimization Controls -->
+        <div class="row items-center justify-between q-gutter-x-xs q-mt-xs">
+          <q-btn
+            dense
+            size="xs"
+            outline
+            color="primary"
+            :icon="editorStore.a4Orientation === 'portrait' ? 'crop_portrait' : 'crop_landscape'"
+            :label="editorStore.a4Orientation === 'portrait' ? 'Portrait' : 'Landscape'"
+            no-caps
+            @click="toggleOrientation"
+          >
+            <q-tooltip>Toggle 1-Click Orientation (Portrait 1123px vs Landscape 794px)</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            size="xs"
+            outline
+            color="secondary"
+            :icon="editorStore.statBlockColumns > 1 ? 'view_column' : 'view_stream'"
+            :label="editorStore.statBlockColumns > 1 ? '2 Columns' : '1 Column'"
+            no-caps
+            @click="toggleColumns"
+          >
+            <q-tooltip>Toggle 1-Column vs 2-Column Multi-Column Balance</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            size="xs"
+            :outline="!editorStore.a4CompactDensity"
+            color="teal-4"
+            icon="compress"
+            :label="editorStore.a4CompactDensity ? 'Compact' : 'Normal'"
+            no-caps
+            @click="editorStore.a4CompactDensity = !editorStore.a4CompactDensity"
+          >
+            <q-tooltip>Toggle Compact Density (reduces margins and line height)</q-tooltip>
+          </q-btn>
+          <q-btn
+            dense
+            size="xs"
+            flat
+            color="grey-4"
+            icon="restart_alt"
+            label="Reset"
+            no-caps
+            @click="resetA4Layout"
+          >
+            <q-tooltip>Reset Orientation, Columns, and Density to Standard</q-tooltip>
+          </q-btn>
+        </div>
+      </div>
+
       <!-- Expandable Add Custom Layer Form (Direct inline, no popups) -->
       <q-slide-transition>
         <div v-show="showAddLayerForm" class="q-mb-md q-pa-sm bg-grey-9 rounded-borders" style="border: 1px dashed #a855f7;">
@@ -1446,7 +1521,48 @@ export default defineComponent({
       portraitUrlModel.value = val
     }
 
+    const a4MaxHeight = computed(() => editorStore.a4Orientation === 'landscape' ? 794 : 1123)
+    const a4MeasuredHeight = computed(() => editorStore.a4PageMeasuredHeight || 0)
+    const a4CapacityRatio = computed(() => {
+      if (!a4MaxHeight.value) return 0
+      return a4MeasuredHeight.value / a4MaxHeight.value
+    })
+    const a4CapacityColor = computed(() => {
+      if (a4MeasuredHeight.value > a4MaxHeight.value) return 'negative'
+      if (a4CapacityRatio.value >= 0.85) return 'amber-8'
+      return 'positive'
+    })
+    const a4CapacityLabel = computed(() => {
+      if (a4MeasuredHeight.value > a4MaxHeight.value) {
+        return `Overflow (+${a4MeasuredHeight.value - a4MaxHeight.value}px)`
+      }
+      const pct = Math.round(a4CapacityRatio.value * 100)
+      if (pct >= 85) return `Near Capacity (${pct}%)`
+      return `Optimal (${pct || 0}%)`
+    })
+
+    const toggleOrientation = () => {
+      editorStore.a4Orientation = editorStore.a4Orientation === 'portrait' ? 'landscape' : 'portrait'
+    }
+    const toggleColumns = () => {
+      editorStore.statBlockColumns = editorStore.statBlockColumns > 1 ? 1 : 2
+    }
+    const resetA4Layout = () => {
+      editorStore.a4Orientation = 'portrait'
+      editorStore.statBlockColumns = 1
+      editorStore.a4CompactDensity = false
+      editorStore.a4Layout = 'auto'
+    }
+
     return {
+      a4MaxHeight,
+      a4MeasuredHeight,
+      a4CapacityRatio,
+      a4CapacityColor,
+      a4CapacityLabel,
+      toggleOrientation,
+      toggleColumns,
+      resetA4Layout,
       editorStore,
       monsterStore,
       displayLayers,

@@ -578,14 +578,28 @@
     }
   }
 
-  .sb-plate .spell-tag-badge {
-    display: inline;
+  .sb-plate .spell-tag-badge,
+  .dnd-spell-comp,
+  .sb-qual.sb-comp {
+    display: inline-block;
     margin-inline-start: 0.25em;
-    color: inherit;
+    color: #6a1b9a !important;
     font-size: 0.78em;
     font-style: normal;
     font-weight: 700;
-    white-space: normal;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+  }
+
+  :is(.theme-dark, .theme-lovecraft, .theme-dwarves, .body--dark) :is(.spell-tag-badge, .dnd-spell-comp, .sb-qual.sb-comp) {
+    color: #ce93d8 !important;
+  }
+
+  .sb-cell.component-cell,
+  .sb-cell.dnd-spell-comp-cell {
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    white-space: nowrap !important;
   }
 
   .sb-plate .spell-tag-badge::before,

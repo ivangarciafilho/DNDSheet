@@ -4022,3 +4022,8 @@ The first provisional browser attempts were rejected,not counted as successful e
 
 Evaluate http://localhost:9124/candidate161/index.html#/. Tag `rc-2.4.3-build-161-live-bindings`;new161 and protected160 each97verified hashes. Index/entry assets match across localhost/IPv4/IPv6. Existing server unchanged. In-app verification shows Build161 with the configured My New Monster/Veil of Radiance sample retained;headless test witnesses never replaced that origin data. No broader outcome/casting/species implementation is claimed. Resume the grouped A9.7 migration packet above.
 
+
+
+## Release History
+
+- **v2.4.3 (Build 187)**: Spell Component Badges, A4 Print Capacity Diagnostics, 2024 Glossary Expansion & Typographic Hygiene (`rc-2.4.3-build-187-spell-components-a4-overflow-and-typographic-grammar`, 383/383 core tests green, 50/50 live CDP fuzz steps green, Quasar build exit code 0).

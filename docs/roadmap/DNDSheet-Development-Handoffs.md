@@ -1,5 +1,22 @@
 # DNDSheet — Development Handoffs
 
+## Handoff 2026-11-09: Build 187 (Master Release Candidate v2.4.3-RC)
+
+- **Branch**: `statblock-overhaul`
+- **Release Tag**: `rc-2.4.3-build-187-spell-components-a4-overflow-and-typographic-grammar`
+- **Delivered Architectural Enhancements**:
+  - Domain Engine: `formatDistanceUnit`, `formatMetricDistance`, and `sanitizeProsePunctuation` in `src/core/domain/number-grammar.ts`. Unit test suite expanded to 10/10 green.
+  - WCAG Accessibility & 2024 Glossary: `bloodied`, `temporary-hit-points`, `disengage`, `dodge`, and `cover` added to `src/components/rendering/statblock-help.ts`. Test suite expanded to 5/5 green.
+  - High-Contrast Spell Components & School Plates: Styled `.dnd-spell-comp`, `.spell-tag-badge`, and `.sb-qual.sb-comp` with rich violet/purple (`#6a1b9a` / `#ce93d8`). Upgraded `buildPlateEntry` in `useProcessTokens.ts`.
+  - A4 Live Print Capacity Diagnostics: Added `a4PageMeasuredHeight` to `editorStore`, live budget meter and 1-click layout controls in `A4LayerStudio.vue` and `WebRenderer.vue`.
+  - Typography & Trait Hygiene: Standardized senses distance units (`60 ft.`), cleaned trigger colons (`On Success:`), and implemented defensive spellcasting fallback.
+- **Verification Ledgers**:
+  - Core tests: 383/383 green (100% across 52 test suites).
+  - In-browser live CDP fuzz: 50/50 steps green with 0 console errors and 0 runtime exceptions.
+  - Quasar SPA production build: Exit code 0.
+  - Immutable release candidate: `.codex-temp/release-candidates/rc-2.4.3-build-187-spell-components-a4-overflow-and-typographic-grammar/` (429 files in `SHA256SUMS.txt`).
+
+---
 ## Build 186 closing packet — Number Grammar, Initiative Typography, Metamagic Punctuation, Cascade Flush Padding & Typographic Elegance
 
 - **Release Candidate**: `rc-2.4.3-build-186-number-grammar-initiative-typography-and-metamagic-punctuation`

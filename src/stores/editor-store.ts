@@ -92,6 +92,7 @@ export const useEditorStore = defineStore({
       a4PortraitCropCenterX: 0, // pre-crop radial center X (-100 to 100)
       a4PortraitCropCenterY: 0, // pre-crop radial center Y (-100 to 100)
       a4Layers: [] as A4CompositionLayer[],
+      a4PageMeasuredHeight: 0, // live measured pixel height of rendered A4 sheet
     }
   },
   persist: {

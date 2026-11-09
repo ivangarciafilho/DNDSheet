@@ -1,5 +1,37 @@
 # DNDSheet — Implementation Backlog
 
+## Build 187 Delivery Summary (2026-11-09)
+
+- **Release Candidate**: `rc-2.4.3-build-187-spell-components-a4-overflow-and-typographic-grammar`
+- **Build**: `187` (previous `rc-2.4.3-build-186-number-grammar-initiative-typography-and-metamagic-punctuation`, `rc-2.4.3-build-185-...`, `rc-2.4.3-build-184-...`, and `rc-2.4.3-build-183-...` preserved untouched)
+- **Features Shipped**:
+  1. **Domain Engine: Number, Distance & Punctuation Grammar (`src/core/domain/number-grammar.ts`)**:
+     - Engineered `formatDistanceUnit(text)`: Normalizes distance units (e.g. `10ft`, `60ft`, `0ft`) into standard canonical 5e spacing with terminal dot (`10 ft.`, `60 ft.`, `0 ft.`).
+     - Engineered `formatMetricDistance(feet)`: Formats standard 5e metric equivalents (e.g. `60 ft. (18 m)`).
+     - Engineered `sanitizeProsePunctuation(text)`: Composite prose sanitizer combining distance units and clean punctuation.
+     - Updated `cleanPunctuation(text)` to strip stray periods immediately preceding opening parenthesis (`AC: 14. (` -> `AC: 14 (`).
+     - Expanded unit tests in `test/core/NumberGrammar.test.ts` to 10/10 passing tests.
+  2. **WCAG Accessibility & 2024 Rule Glossary Expansion (`src/components/rendering/statblock-help.ts`)**:
+     - Added 5 new authoritative glossary definitions: `bloodied`, `temporary-hit-points`, `disengage`, `dodge`, and `cover`.
+     - Created dedicated unit test suite in `test/core/StatblockHelp.test.ts` (5/5 passing tests).
+  3. **Spell Component & School Badge Highlighting (`src/css/statblock-grammar.scss`, `WebRenderer.vue`, `useProcessTokens.ts`)**:
+     - Styled `.spell-tag-badge`, `.dnd-spell-comp`, and `.sb-qual.sb-comp` with rich violet/purple (`#6a1b9a` on light, `#ce93d8` on dark).
+     - Enhanced `buildPlateEntry` in `useProcessTokens.ts` to surface school and spell components as distinct high-contrast plate header cells matching visual requirements.
+     - Tagged inline spell items in `WebRenderer.vue` with `.dnd-spell-comp`.
+     - Preserved strict Step 47 ordering and single-count V, S components invariant.
+  4. **A4 Studio Page Budget & Live Print Diagnostics HUD (`src/stores/editor-store.ts`, `A4LayerStudio.vue`, `WebRenderer.vue`)**:
+     - Added `a4PageMeasuredHeight` to `useEditorStore`.
+     - Bound reactive height tracking and live budget meter to `WebRenderer.vue` toolbar and `A4LayerStudio.vue`.
+     - Added 1-click layout controls in `A4LayerStudio.vue` (`Orientation`, `Columns`, `Compact Density`, `Reset Layout`).
+     - Live page capacity budget indicator (`Optimal`, `Near Capacity`, `Overflow (+X px)`).
+  5. **Trait, Action & Senses Typography Hygiene (`useTextRenderer.ts`, `useProcessTokens.ts`, `WebRenderer.vue`, `monster-store.ts`)**:
+     - Standardized senses ranges to `60 ft.` instead of compact `60ft` across `formatSingleSenseItem`.
+     - Sanitized outcome triggers in `useProcessTokens.ts` eliminating spaces before colons (`On Success:` instead of `On Success :`).
+     - Updated `sanitizedAcBadges` in `WebRenderer.vue` to strip trailing period/comma before riders.
+     - Added defensive spellcasting slots fallback (`monster.spellcasting?.slots || []`) preventing runtime errors on partial or custom configurations.
+- **Verification**: 383/383 core unit tests passed (100% green across 52 test suites, +6 tests over Build 186), all 50/50 live CDP browser fuzz steps passed with 0 console errors and 0 runtime exceptions, clean Quasar production build (exit code 0).
+
+---
 ## Build 186 Delivery Summary (2026-11-09)
 
 - **Release Candidate**: `rc-2.4.3-build-186-number-grammar-initiative-typography-and-metamagic-punctuation`

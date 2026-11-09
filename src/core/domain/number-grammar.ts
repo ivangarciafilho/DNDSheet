@@ -28,8 +28,8 @@ export function cleanPunctuation(text: string): string {
     .replace(/,{2,}/g, ',')
     // Remove space before punctuation marks: "On Success : " -> "On Success: "
     .replace(/\s+([,:;.?!])/g, '$1')
-    // Remove comma immediately preceding opening parenthesis: "AC: 14, (19..." -> "AC: 14 (19..."
-    .replace(/,\s*\(/g, ' (')
+    // Remove comma or period immediately preceding opening parenthesis: "AC: 14. (19..." -> "AC: 14 (19..."
+    .replace(/[.,]\s*\(/g, ' (')
     // Replace double nested parentheses wrapping the same token: "((1/Day))" -> "(1/Day)"
     .replace(/\(\s*\(([^()]+)\)\s*\)/g, '($1)')
     // Remove comma or semicolon right before closing parenthesis: "(10ft, )" -> "(10ft)"
@@ -39,6 +39,48 @@ export function cleanPunctuation(text: string): string {
     // Normalize spaces around commas
     .replace(/\s*,\s*/g, ', ')
     .trim()
+}
+
+/**
+ * Standardizes distance units in text:
+ * Converts `10ft`, `60ft`, `0ft` into `10 ft.`, `60 ft.`, `0 ft.`.
+ */
+export function formatDistanceUnit(text: string): string {
+  if (!text) return ''
+  return text
+    // Standardize digits followed by ft or feet with or without dot into `\d+ ft.`
+    .replace(/\b(\d+)\s*(?:ft\.?|feet)\b/gi, '$1 ft.')
+    // Standardize trailing/adjacent double dots
+    .replace(/\bft\.\.+/gi, 'ft.')
+}
+
+/**
+ * Formats a distance in feet with an optional metric meter equivalent.
+ * D&D 5e standard metric conversion: 5 ft. = 1.5 m (0.3m per foot).
+ *
+ * @example
+ * formatMetricDistance(60) // "60 ft. (18 m)"
+ * formatMetricDistance(60, false) // "18 m"
+ */
+export function formatMetricDistance(feet: number, includeImperial = true): string {
+  const f = Math.max(0, Math.trunc(feet))
+  const meters = Math.round((f * 0.3) * 10) / 10
+  const metersStr = Number.isInteger(meters) ? `${meters} m` : `${meters.toFixed(1)} m`
+  if (!includeImperial) return metersStr
+  return `${f} ft. (${metersStr})`
+}
+
+/**
+ * Deep prose punctuation sanitizer:
+ * - Cleans spaces before colons and outcome triggers
+ * - Strips double punctuation and orphan delimiters
+ * - Normalizes distance units (e.g. `10ft` -> `10 ft.`)
+ * - Removes period before opening parentheses
+ */
+export function sanitizeProsePunctuation(text: string): string {
+  if (!text) return ''
+  const formattedUnits = formatDistanceUnit(text)
+  return cleanPunctuation(formattedUnits)
 }
 
 /**

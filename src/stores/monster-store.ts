@@ -544,7 +544,7 @@ export const useMonsterStore = defineStore('monster', {
       slots: number
       spells: string[]
     }[] {
-      const slots = this.spellcasting.slots
+      const slots = this.spellcasting?.slots || []
       const ret = []
       for (const idx in slots) {
         if (slots[idx] > 0) {

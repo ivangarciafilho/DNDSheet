@@ -1133,7 +1133,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const formatSingleSenseItem = (item: any, omitScope = false): string => {
     const rangeUnit = item.rangeUnit || 'ft'
-    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}` : ''
+    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range}${rangeUnit === 'ft' ? ' ft.' : ` ${rangeUnit}`}` : ''
     const notes: string[] = []
 
     // Universal modifiers
@@ -1187,13 +1187,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       let modeStr = 'location of Intelligent creatures'
       if (mode === 'presence_intelligent') modeStr = 'presence of Intelligent creatures'
       else if (mode === 'telepathy_creatures') modeStr = 'of creatures it can use its Telepathy'
-      return `sense sentience (${rangeStr || '60ft'}, ${modeStr}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `sense sentience (${rangeStr || '60 ft.'}, ${modeStr}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'darkvision') {
       if (omitScope) {
         return `darkvision${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
       }
-      return `darkvision (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `darkvision (${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'blindsight' || lowerName === 'blindsense' || lowerName === 'echolocation') {
       if (lowerName === 'echolocation' && !notes.includes("can't while deafened")) {
@@ -1202,7 +1202,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (omitScope) {
         return `blindsight${notes.length > 0 ? ` (${notes.join(', ')})` : ''}`
       }
-      return `blindsight (${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `blindsight (${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
     if (lowerName === 'life sense') {
       const modeStr = formatDetectionMode(item.detectionMode || 'presence')
@@ -1222,7 +1222,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (omitScope) {
         return `${modeStr} of ${targets}${notes.length > 0 ? `, ${notes.join(', ')}` : ''}`
       }
-      return `divine sense (${modeStr} of ${targets}, within ${rangeStr || '60ft'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
+      return `divine sense (${modeStr} of ${targets}, within ${rangeStr || '60 ft.'}${notes.length > 0 ? `, ${notes.join(', ')}` : ''})`
     }
 
     if (item.webSense) notes.push('while touching web, knows location of creatures on same web')
@@ -1234,7 +1234,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return `${lowerName} (${rangeStr ? `${rangeStr}, ` : ''}${notes.join(', ')})`
     }
     if (lowerName === 'ethereal sight') {
-      return `${lowerName} (${rangeStr || '60ft'})`
+      return `${lowerName} (${rangeStr || '60 ft.'})`
     }
     if (rangeStr) {
       return `${lowerName} ${rangeStr}`
@@ -1261,7 +1261,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         const range = planarGroup[0].range
         const allSameRange = planarGroup.every((it) => it.range === range && (it.rangeUnit || 'ft') === rangeUnit)
         if (allSameRange) {
-          const rangeStr = `${range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}`
+          const rangeStr = `${range}${rangeUnit === 'ft' ? ' ft.' : ` ${rangeUnit}`}`
           const commonPrefix = `${rangeStr} across Material and Ethereal Planes`
           const parts = planarGroup.map((item) => formatSingleSenseItem(item, true)).filter(Boolean)
           items.push(`${commonPrefix}: ${parts.join(', ')}`)
@@ -1532,7 +1532,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const classSpellcastingWarlockLabel = computed(() => {
     // find the highest level slot and note the quantity
     // this is such a weird way to write this
-    const slots = monster.spellcasting.slots
+    const slots = monster.spellcasting?.slots || []
     for (let idx = 8; idx >= 0; idx--) {
       if (slots[idx] > 0) {
         return t('editor.spellcasting.slot.warlockSlots', [
