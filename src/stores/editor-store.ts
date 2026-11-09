@@ -77,6 +77,7 @@ export const useEditorStore = defineStore({
       a4Layout: 'auto' as A4Layout,
       a4Zoom: 100 as number | 'fit',
       a4CompactDensity: false,
+    a4PageMeasuredHeight: 0,
       a4PictureOcclusion: 0, // 0 = 0% side-by-side, 50 = 50% occlusion, 100 = 100% full coverage
       a4StatblockOpacity: 100, // 0 to 100% background opacity
       a4StatblockOffsetX: 0, // horizontal offset in px

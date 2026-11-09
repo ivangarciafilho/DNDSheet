@@ -721,7 +721,7 @@
               class="spell-inline-item"
             >
               <span class="spell-name">{{ spell.name }}</span>
-              <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+              <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
               <span v-if="spellIndex < group.spells.length - 1" class="spell-sep">, </span>
             </span>
           </div>
@@ -773,7 +773,7 @@
                 class="spell-inline-item q-ml-xs"
               >
                 <span class="spell-name">{{ spell.name }}</span>
-                <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+                <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -807,7 +807,7 @@
                 class="spell-inline-item q-ml-xs"
               >
                 <span class="spell-name">{{ spell.name }}</span>
-                <span v-if="spell.tags" class="spell-tag-badge" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
+                <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -1282,7 +1282,21 @@ export default defineComponent({
       }
 
       if (scale === 1.0) {
-        return {
+        
+    const updateMeasuredHeight = () => {
+      nextTick(() => {
+        const el = document.querySelector('#render .statblock-wrapper') || document.querySelector('#render .statblock')
+        if (el && editorStore) {
+          editorStore.a4PageMeasuredHeight = Math.round(el.getBoundingClientRect().height)
+        }
+      })
+    }
+    watch(() => editorStore?.a4PreviewMode, updateMeasuredHeight)
+    watch(() => editorStore?.statBlockColumns, updateMeasuredHeight)
+    watch(() => editorStore?.a4CompactDensity, updateMeasuredHeight)
+    onMounted(updateMeasuredHeight)
+
+    return {
           width: `${baseWidth}px`,
         }
       }

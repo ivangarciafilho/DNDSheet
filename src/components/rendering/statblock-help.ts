@@ -45,6 +45,11 @@ export const STATBLOCK_HELP = Object.freeze({
   'bonus-action': 'A Bonus Action is a separate action type with a limited use each turn.',
   'legendary-action': 'Legendary Actions are additional options used outside the creature’s own turn.',
   'entry-name': 'This heading identifies the trait, action, or feature described by the plate.',
+  bloodied: 'A creature is Bloodied when its current Hit Points are at or below half its Hit Point maximum (2024 Rules Revision).',
+  'temporary-hit-points': 'Temporary Hit Points act as a buffer against damage; they do not stack, cannot be healed, and are lost before regular Hit Points.',
+  disengage: 'Taking the Disengage action prevents your movement from provoking Opportunity Attacks for the rest of your turn.',
+  dodge: 'Taking the Dodge action imposes Disadvantage on attack rolls against you and gives you Advantage on Dexterity saving throws.',
+  cover: 'Cover provides bonuses to AC and Dexterity saving throws: Half Cover (+2), Three-Quarters Cover (+5), and Total Cover (cannot be targeted directly).',
 } as const)
 
 export type StatblockHelpKey = keyof typeof STATBLOCK_HELP

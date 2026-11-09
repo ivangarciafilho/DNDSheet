@@ -538,7 +538,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`)
     }
     if (comps) {
-      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell">(${comps})</span>`)
+      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell dnd-spell-comp" data-help="spell-components" tabindex="0">(${comps})</span>`)
     }
     const spellMetaSuffix = spellMetaParts.length > 0 ? `, ${spellMetaParts.join(' ')}` : ''
     const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}${spellMetaSuffix}</span>`

@@ -1029,6 +1029,37 @@ export default defineComponent({
     }
   },
   setup() {
+    const a4MeasuredPx = computed(() => editorStore.a4PageMeasuredHeight || 0)
+    const a4TargetPx = computed(() => editorStore.a4Orientation === 'landscape' ? 794 : 1123)
+    const a4OverflowPx = computed(() => Math.max(0, a4MeasuredPx.value - a4TargetPx.value))
+    const a4CapacityRatio = computed(() => a4TargetPx.value > 0 ? (a4MeasuredPx.value / a4TargetPx.value) : 0)
+    const a4StatusLabel = computed(() => {
+      if (a4OverflowPx.value > 0) return `Overflow (+${a4OverflowPx.value}px)`
+      if (a4CapacityRatio.value > 0.9) return `Near Capacity (${Math.round((1 - a4CapacityRatio.value) * a4TargetPx.value)}px left)`
+      return 'Optimal Capacity'
+    })
+
+    const toggleOrientation = () => {
+      editorStore.a4Orientation = editorStore.a4Orientation === 'portrait' ? 'landscape' : 'portrait'
+    }
+
+    const toggleColumns = () => {
+      editorStore.statBlockColumns = editorStore.statBlockColumns === 2 ? 1 : 2
+    }
+
+    const resetA4Layout = () => {
+      editorStore.a4Orientation = 'portrait'
+      editorStore.statBlockColumns = 1
+      editorStore.a4CompactDensity = false
+      editorStore.a4StatblockScaleX = 100
+      editorStore.a4StatblockScaleY = 100
+      editorStore.a4StatblockOffsetX = 0
+      editorStore.a4StatblockOffsetY = 0
+      editorStore.a4PortraitOffsetX = 0
+      editorStore.a4PortraitOffsetY = 0
+      editorStore.a4PortraitScale = 100
+    }
+
     const editorStore = useEditorStore()
     const monsterStore = useMonsterStore()
 
@@ -1429,6 +1460,15 @@ export default defineComponent({
     }
 
     return {
+      a4MeasuredPx,
+      a4TargetPx,
+      a4OverflowPx,
+      a4CapacityRatio,
+      a4StatusLabel,
+      toggleOrientation,
+      toggleColumns,
+      resetA4Layout,
+      
       appAsset,
       editorStore,
       monsterStore,

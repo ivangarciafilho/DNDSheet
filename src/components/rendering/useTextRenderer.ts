@@ -1136,7 +1136,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const formatSingleSenseItem = (item: any, omitScope = false): string => {
     const rangeUnit = item.rangeUnit || 'ft'
-    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range}${rangeUnit === 'ft' ? 'ft' : ` ${rangeUnit}`}` : ''
+    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}` : ''
     const notes: string[] = []
 
     // Universal modifiers
@@ -1535,7 +1535,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const classSpellcastingWarlockLabel = computed(() => {
     // find the highest level slot and note the quantity
     // this is such a weird way to write this
-    const slots = monster.spellcasting.slots
+    const slots = monster.spellcasting?.slots || []
     for (let idx = 8; idx >= 0; idx--) {
       if (slots[idx] > 0) {
         return t('editor.spellcasting.slot.warlockSlots', [

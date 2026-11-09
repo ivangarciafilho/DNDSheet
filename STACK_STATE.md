@@ -1,6 +1,10 @@
 # Local DNDSheet Stack State
 
-> Current: Build219, B4.7/B4.20 complete; gate10/10,442 core tests,57 scenarios per SPA/Pages. Normalized workload150/106 →152/104 across256 IDs. Published source64066d6, Pages d28f171; live footer219 and tested asset parity verified. Frozen RC96 checksums verified. A11.5 →A11.9 →H9 →H14 remain next. H13 retains its215 closure.
+> Current: Build 220, 22 tasks delivered across 5 domains (Number/Distance Grammar, 2024 Glossary, High-Contrast Spell Components, A4 Overflow Diagnostics, Typography Hygiene); gate 10/10, 453 core tests (+11), 57 scenarios per SPA/Pages. Normalized workload 152/104 -> 154/102 across 256 IDs. Base 95a6ab6; published to gh-pages and build185-repairs; live footer 220.
+
+- **Build 220 (2026-11-09)**: 22 tasks across 5 domains — canonical distance formatting (`formatDistanceUnit`, `formatMetricDistance`), composite punctuation cleaner (`cleanPunctuation`, `sanitizeProsePunctuation`), WCAG AA high-contrast spell components (`#6a1b9a` / `#ce93d8`) and school cells, 2024 glossary additions (`bloodied`, `temporary-hit-points`, `disengage`, `dodge`, `cover`), A4 Studio reactive page overflow budget meter and 1-click quick controls, defensive spell slot fallbacks. Core tests 453/453 passed. Pinned baseline verified at 613 diagnostics, 0 new diagnostics. Gate 10/10 passed.
+
+- **Build 219 (2026-11-09)**: Complete Tarrasque export prose (B4.20, B4.7); 20 acceptance items; gate 10/10, 442 core tests, 57 scenarios per SPA/Pages. Release candidate `rc-2.4.3-build-219-tarrasque-prose-and-mechanics`. Base `ac4bdaea5998e80df81d19285cc21465da16dcd3`. Published source 64066d6; Pages d28f171.
 
 > Historical Build214: Build214, source `5ca9379`, Pages `e1ab48d` (live footer214 and entry parity verified); tag `rc-2.4.3-build-214-outcome-pipeline-and-type-guard`. Gate10/10,410 core,55 browser scenarios per SPA/Pages. H15 closed; H14 guard delivered with613 existing diagnostics, debt open. H11 model/export gaps remain open. See current Development Handoffs and Build214 report. Publication receipt records remote source/Pages/live parity.
 

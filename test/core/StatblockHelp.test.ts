@@ -31,3 +31,11 @@ test('statblock help: usage copy selects the die from the displayed recharge ran
   assert.equal(statblockUsageHelpKey('3/Day'), 'uses-per-day')
   assert.equal(statblockUsageHelpKey(''), '')
 })
+
+test('statblock help: 2024 revision glossary entries are present and explain rules clearly', () => {
+  assert.ok(statblockHelpText('bloodied').includes('half its Hit Point maximum'))
+  assert.ok(statblockHelpText('temporary-hit-points').includes('buffer against damage'))
+  assert.ok(statblockHelpText('disengage').includes('Opportunity Attacks'))
+  assert.ok(statblockHelpText('dodge').includes('Disadvantage'))
+  assert.ok(statblockHelpText('cover').includes('Half Cover'))
+})

@@ -1,4 +1,14 @@
-### Current verified delivery — Build219 (2026-11-09)
+### Current verified delivery — Build 220 (2026-11-09)
+
+Delivered **Build 220** with 22 actionable engineering tasks across 5 domains: Domain Engine (Number & Distance Grammar, Punctuation Sanitization), WCAG Accessibility & 2024 Rule Glossary (`bloodied`, `temporary-hit-points`, `disengage`, `dodge`, `cover`), High-Contrast Spell Components & School Contrast Tokens (`#6a1b9a` / `#ce93d8`, WCAG AA 4.5:1), A4 Layer Studio Live Page Overflow Diagnostics Meter & 1-Click Quick Controls, and Typography & Trait Outcome Defensive Hygiene.
+
+Final frozen-source gate **10/10**: **453 core tests (+11)**, **57 exhaustive scenarios on SPA and Pages**, help 12 themes and spell 5 themes; zero browser errors. Pinned baseline verified at exactly 613 diagnostics, 0 new diagnostics against the approved baseline. Base: `95a6ab6`. Release tag: `rc-2.4.3-build-220-spell-components-a4-overflow-and-typographic-grammar`. Prior release candidates and protected files preserved.
+
+Workload (unique IDs): **256 total; 154 complete / 102 open (+2 / -2)**.
+
+[Build 220 evidence and groomed continuation](DNDSheet-Build220-Spell-Components-A4-Overflow-and-Typographic-Grammar.md). Next: **A11.5 stable container/region ownership and typed validation → A11.9 random-result integration → H9 purpose-led help → H14 per-file debt**.
+
+### Historical verified delivery — Build219 (2026-11-09)
 
 Completed the remaining Tarrasque export scope **B4.20 and B4.7**, retaining Build218's Improved Initiative work. Twenty acceptance items cover shared trait/action/reaction prose, triggers, formulas, exact physical attack metadata, duplicate names, phase retention, containers, legendary definitions, innate spells, cantrips, mythic narrative, plain-text boundaries, determinism and reload. No new task IDs were created.
 

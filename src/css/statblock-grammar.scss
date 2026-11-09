@@ -566,14 +566,34 @@
     }
   }
 
-  .sb-plate .spell-tag-badge {
-    display: inline;
+  .sb-plate .spell-tag-badge,
+  .spell-tag-badge.dnd-spell-comp,
+  .dnd-spell-comp,
+  .sb-qual.sb-comp {
+    display: inline-block;
     margin-inline-start: 0.25em;
-    color: inherit;
-    font-size: 0.78em;
+    color: #6a1b9a !important;
+    font-size: 0.82em;
     font-style: normal;
     font-weight: 700;
-    white-space: normal;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  body.body--dark {
+    .sb-plate .spell-tag-badge,
+    .spell-tag-badge.dnd-spell-comp,
+    .dnd-spell-comp,
+    .sb-qual.sb-comp {
+      color: #ce93d8 !important;
+    }
+  }
+
+  .sb-qual.school-cell {
+    font-style: italic;
+    font-weight: 600;
+    opacity: 0.95;
+    margin-right: 2px;
   }
 
   .sb-plate .spell-tag-badge::before,
