@@ -1,0 +1,43 @@
+{
+  "source": "c3f4ac3",
+  "pages": "dd5f869",
+  "tag": "rc-2.4.3-build-221-attack-sign-and-prose-grammar",
+  "base": "ed91feb",
+  "indexMatches": true,
+  "assets": [
+    {
+      "asset": "assets/index.83ffc052.js",
+      "sha256": "14ab8936d81ded12288028906172bd4b4d149fdd4440fa90ab9c4ace8ab22b26",
+      "matches": true
+    },
+    {
+      "asset": "assets/index.650da80f.css",
+      "sha256": "b23f600a20ae6cde5e3199a7f102a5a7a9e538c1651d889d3b59a04ccc48b33b",
+      "matches": true
+    }
+  ],
+  "candidateChecksums": 96,
+  "workload": {
+    "before": {
+      "done": 154,
+      "open": 102
+    },
+    "after": {
+      "done": 156,
+      "open": 100
+    },
+    "closed": [
+      "Build 221 Acceptance Packet - 22 Tasks"
+    ],
+    "newTaskIds": 0
+  },
+  "gate": {
+    "steps": 10,
+    "coreTests": 453,
+    "browserScenariosPerTarget": 57,
+    "typeDiagnostics": 613,
+    "newTypeDiagnostics": 0
+  },
+  "visibleFooter": "v2.4.3 build 221",
+  "pagesBuildStatus": "built"
+}
