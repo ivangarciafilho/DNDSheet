@@ -44,3 +44,8 @@ Final frozen-source gate10/10 passed:469 core,58 scenarios per SPA/Pages,60 fixt
 Return to A11.5's eight-step ownership/migration/typed-predicate packet from Build219, then A11.9. The reusable fixtures and stable diagnostic runner now support those model changes. Keep H9, H14 and per-panel fit/keyboard requirements explicit. Do not substitute more theme samples for missing mechanics or migration proof.
 
 Visual review after the first passing gate found full provenance notes wrapping into narrow vital cells. The final refinement moves them into a shared source block, keeps compact Recorded/Estimate labels in each cell, and gives the vital values consistent dark ink. Step58 now asserts the value styling and source-block presence. The first passing gate is superseded by the final post-refinement frozen-source gate; do not publish its older fingerprint.
+
+
+## Published release
+
+Source `8aa695ef9a3b6fe8c14001fc2f6e07262574af68`; Pages `b65df80ed33df0257e36d1ff0fa32e459f5edc66`; tag `rc-2.4.3-build-222-character-truth-and-release-proofs`. GitHub Pages reports built. Live footer222 and index/entry JavaScript/CSS/MonsterBuilder byte parity verified. Candidate archived centrally with all96 checksums verified. [Publication receipt](../evidence/build222/publication-receipt.json).

@@ -2,7 +2,7 @@
 
 ## Build222
 
-Base964f645fe5352b8cd7c9f8908a6ebd9cbd12133e; source/tag/Pages identities and live parity are recorded in docs/evidence/build222/publication-receipt.json. The current production link is https://ivangarciafilho.github.io/DNDSheet/.
+Published source8aa695e; Pages b65df80; live footer222 and asset parity verified. Base964f645fe5352b8cd7c9f8908a6ebd9cbd12133e; source/tag/Pages identities and live parity are recorded in docs/evidence/build222/publication-receipt.json. The current production link is https://ivangarciafilho.github.io/DNDSheet/.
 
 - Vue3 / Quasar / Pinia, monster studio and separate character reference sheet.
 - Character AC/speed: recorded totals with source notes, or labelled estimates. Class/species/equipment names do not establish rules.
