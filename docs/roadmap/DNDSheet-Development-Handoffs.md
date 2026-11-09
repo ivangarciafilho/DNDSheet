@@ -5,7 +5,7 @@
 📍 *Handoffs › Start here* — **Everything below this section is history. Read this, run the gate, take the first open slice.**
 
 **Where the code is.**
-- Branch `build185-repairs` at Build202 (see `STACK_STATE.md` for the commit) on https://github.com/ivangarciafilho/DNDSheet (default branch). Tag `rc-2.4.3-build-199-inventories-and-flake-fixes`.
+- Branch `build185-repairs` at Build203 (see `STACK_STATE.md` for the commit) on https://github.com/ivangarciafilho/DNDSheet (default branch). Tag `rc-2.4.3-build-199-inventories-and-flake-fixes`.
 - Live app: https://ivangarciafilho.github.io/DNDSheet/ (branch `gh-pages`, same commit built with `PUBLIC_PATH=/DNDSheet/`).
 - Release candidates: `.codex-temp/release-candidates/rc-2.4.3-build-NNN-*` (runnable `spa`, `release-candidate.json` with the gate summary, `SHA256SUMS.txt`). Local servers: 9106 → Build199, 9100 → Build185.
 - `statblock-overhaul` (`F:\AI_Resources\DNDSheet`, `1869921` + 84 uncommitted paths) equals the Build184 baseline `a7cc729`; it is another agent's checkout. Do not write there.
@@ -25,7 +25,7 @@
 | # | Slice | Input / note |
 |---|---|---|
 | 1 | **A11.2–A11.4** (A11.1 done in Build200: 53 inputs classified, 3 migrated) — add stable-id paths for `anatomy`, `paragonConfig.phaseConfigs` and language rows, register and migrate the 6 blocked inputs, then audit option arrays | `DNDSheet-Control-Inventory.md` (regenerate with `node test/inventory.mjs docs/roadmap/DNDSheet-Control-Inventory.md`) |
-| 2 | **A13.3–A13.5** finish the kit (`HelpTip.vue`, delegated host), `help.ts` keys, `audit:help` floor; adopt `v-help` panel by panel | kit and audit done (Build202); coverage 199 / 559 = 35.6 %, floor 35 %; next: composer, ClassCasting, Inventory, A4 studio tips |
+| 2 | **A13.3–A13.5** finish the kit (`HelpTip.vue`, delegated host), `help.ts` keys, `audit:help` floor; adopt `v-help` panel by panel | kit and audit done (Build202); coverage 237 / 559 = 42.4 %, floor 40 % (Build203); next: chips, toolbar, Inventory, Spells editor tips |
 | 3 | **A12.10 d** print proof (a3 done in Build201: heading words in i18n) | |
 | 4 | **A13.9 f2** PDF/pixel print proof with a bloodied fixture | print probe currently checks 0 bloodied numbers |
 | 5 | ~~Pages d4~~ done in Build201 | first-run notice in `App.vue` |

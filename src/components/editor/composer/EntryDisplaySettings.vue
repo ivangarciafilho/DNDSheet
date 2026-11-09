@@ -1,14 +1,14 @@
 <template>
-  <q-expansion-item v-if="entry" dense label="Display and CR settings" icon="tune" class="q-mt-sm" :data-entry-settings="entryId">
+  <q-expansion-item v-if="entry" dense label="Display and CR settings" v-help="'How this entry prints and whether it counts toward CR.'" icon="tune" class="q-mt-sm" :data-entry-settings="entryId">
     <div class="row q-col-gutter-sm q-pa-sm">
       <template v-if="field === 'actions'">
-        <q-select :model-value="action?.stagePool ?? 'all'" :options="phaseOptions" emit-value map-options dense outlined dark label="Phase / pool" data-entry-phase class="col-12 col-sm-6" @update:model-value="value => update('stagePool', value)" />
-        <q-checkbox :model-value="action?.customPreamble" dark dense label="Description supplies its own heading" data-entry-custom-heading class="col-12 col-sm-6" @update:model-value="value => update('customPreamble', value)" />
+        <q-select :model-value="action?.stagePool ?? 'all'" :options="phaseOptions" emit-value map-options dense outlined dark label="Phase / pool" v-help="'Paragon stage in which this entry is available.'" data-entry-phase class="col-12 col-sm-6" @update:model-value="value => update('stagePool', value)" />
+        <q-checkbox :model-value="action?.customPreamble" dark dense label="Description supplies its own heading" v-help="'Do not print the name; the description already starts with it.'" data-entry-custom-heading class="col-12 col-sm-6" @update:model-value="value => update('customPreamble', value)" />
         <div v-if="action?.customPreamble" class="col-12 text-caption">Your description prints without an automatic name or cadence heading.</div>
       </template>
       <div class="col-12">
         <cr-annotation-card v-if="entry.crAnnotation" :key="`${entryId}:${index}`" :field="field" :index="index" />
-        <q-btn v-if="!entry.crAnnotation?.automatic" outline no-caps label="Calculate automatic CR" data-entry-auto-cr @click="initializeCr">
+        <q-btn v-if="!entry.crAnnotation?.automatic" outline no-caps label="Calculate automatic CR" v-help="'Count this entry in the estimated challenge rating.'" data-entry-auto-cr @click="initializeCr">
           <q-tooltip>Calculate estimates from the description. Inclusion in estimated CR is kept.</q-tooltip>
         </q-btn>
       </div>

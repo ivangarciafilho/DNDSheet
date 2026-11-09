@@ -660,7 +660,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [ ] **A12.2** `computeSpellMetrics(spellcasting, ruleset)` → `SpellMetricResult` (`ok/unavailable/error`) + tests · M
 - [x] **A12.3** Persist subclasses: `spellcasting.subclass?` and `classes[].subclass`; replace the component-local ref · S — store-backed computed since Builds 175–176; spell-plate smoke proves `spellcasting.subclass` survives reload (197)
 - [ ] **A12.4** `ClassCastingEditor.vue`: subclass picker for every class; counters per §8.4; expanded spells auto-add/remove as an explicit plan; cadence pickers from `CADENCE_LABELS` (Long Rest everywhere); error state replaces 3/4/1 defaults · L
-- [ ] **A12.5** Candidate filtering by class and subclass; custom spells allowed and labelled custom · M
+- [x] **A12.5** Candidate filtering by class and subclass; custom spells allowed and labelled custom · M — class lists always include custom spells ("(custom)") and the subclass's own spells ("(subclass)"); `catalogs/subclass-spells.ts` holds the SRD 5.2 Fiend, Life and Devotion lists (203)
 - [x] **A12.6** Ruleset-aware metamagic costs in editor and plate · S — plate since Build176 (`metamagicCost`, tested); editor option labels show the 2014/2024 cost, stored value stays the name (197)
 - [ ] **A12.7** Tests + browser (reload, Fiend Patron, over-limit, metric failure) + close: commit `spellcasting: persisted subclasses, honest counters, subclass spells always prepared` · M
 
@@ -739,8 +739,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R5 | UX-01…03 | A13, A8 | 3–4 d | 12 files · +900 / −1 400 |
 
-- [ ] **A16.1** Actions Studio and composer chips: kit adoption and tips · M
-- [ ] **A16.2** `A4LayerStudio.vue` (fixed canvas exempt with scroll affordance, BS-35), `MainLayout.vue` toolbar tips · M
+- [ ] **A16.1** Actions Studio and composer chips: kit adoption and tips · M — tips on usage, cadence and display settings (203); chips left
+- [ ] **A16.2** `A4LayerStudio.vue` (fixed canvas exempt with scroll affordance, BS-35), `MainLayout.vue` toolbar tips · M — A4 studio tips (203); toolbar tips and scroll affordance left
 - [ ] **A16.3** Remaining panels (Regional, Anatomy, Encounter Dynamics, Villain if kept) · M
 - [ ] **A16.4** Splitter minimum widths (FIT-004) · S
 - [ ] **A16.5** `app.scss` cleanup: delete legacy `.action-composite-*`, `.zebra-stripe-text`, `.trait > div:first-of-type` and cascade blocks whose markup is gone; `!important` < 200 · L

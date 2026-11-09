@@ -23,7 +23,7 @@
             :options="filteredPrimarySubclasses"
             @filter="filterPrimarySubclasses"
             input-debounce="0"
-            label="Subclass"
+            label="Subclass" v-help="'Subclass, e.g. Evocation or Fiend; it can add always-prepared spells.'"
             new-value-mode="add-unique"
             use-input
             clearable
@@ -44,7 +44,7 @@
           <q-select
             v-model="monster.spellcasting.stat"
             :options="['INT', 'WIS', 'CHA', 'CON', 'STR', 'DEX']"
-            label="Casting Stat"
+            label="Casting Stat" v-help="'Ability used for spell save DC and spell attacks.'"
             class="col-6 col-sm-2 q-pa-xs"
             @update:model-value="updateSpellcastingSlots(monster.spellcasting.level)"
           >
@@ -54,7 +54,7 @@
           <formula-field
             v-if="monster.spellcasting.save.override"
             path="spellcasting.save.overrideValue"
-            label="Save DC"
+            label="Save DC" v-help="'Spell save DC: 8 + proficiency bonus + spellcasting ability modifier.'"
             class="col-6 col-sm-2 q-pa-xs"
           >
             <template #append>
@@ -72,8 +72,8 @@
             </template>
             <q-tooltip class="text-caption">Spell save DC (auto-computed from stat + proficiency, or manual)</q-tooltip>
           </formula-field>
-          <q-input v-else :model-value="monster.spellSave" label="Save DC" readonly class="col-6 col-sm-2 q-pa-xs">
-            <template #append><q-btn flat dense icon="lock_open" aria-label="Enable manual spell save DC" @click="monster.spellcasting.save.override = true"><q-tooltip>Enable a typed value or live formula.</q-tooltip></q-btn></template>
+          <q-input v-else :model-value="monster.spellSave" label="Save DC" v-help="'Spell save DC: 8 + proficiency bonus + spellcasting ability modifier.'" readonly class="col-6 col-sm-2 q-pa-xs">
+            <template #append><q-btn flat dense icon="lock_open" aria-label="Enable manual spell save DC" v-help="'Type the spell save DC instead of 8 + proficiency + ability modifier.'" @click="monster.spellcasting.save.override = true"><q-tooltip>Enable a typed value or live formula.</q-tooltip></q-btn></template>
           </q-input>
 
           <q-input
@@ -151,7 +151,7 @@
                   :options="resourceTypeOptions"
                   emit-value
                   map-options
-                  label="Resource Mode"
+                  label="Resource Mode" v-help="'Spell slots, spell points, pact slots or focus.'"
                   dense
                   outlined
                   dark
@@ -166,7 +166,7 @@
                   :options="refreshRateOptions"
                   emit-value
                   map-options
-                  label="Refresh Cadence"
+                  label="Refresh Cadence" v-help="'When spell slots come back: long rest, short rest, or another cadence.'"
                   dense
                   outlined
                   dark
@@ -181,7 +181,7 @@
                   :options="displayTitleModeOptions"
                   emit-value
                   map-options
-                  label="Title Disclosure"
+                  label="Title Disclosure" v-help="'How the spellcasting heading names the caster.'"
                   dense
                   outlined
                   dark
@@ -193,7 +193,7 @@
               <div class="col-12 col-sm-3 flex items-center">
                 <q-checkbox
                   v-model="monster.spellcasting.bypassSlotLevelFilter"
-                  label="Bypass Max Slot Level"
+                  label="Bypass Max Slot Level" v-help="'Allow spells above the highest slot level this class can cast.'"
                   dense
                   color="purple-4"
                   class="text-caption text-weight-bold"
@@ -205,7 +205,7 @@
               <div class="col-12 col-sm-3 flex items-center">
                 <q-checkbox
                   v-model="monster.spellcasting.splitHighCadence"
-                  label="Split Restricted Cadences"
+                  label="Split Restricted Cadences" v-help="'Show spells with their own uses per day on separate lines.'"
                   dense
                   color="amber-4"
                   class="text-caption text-weight-bold"
@@ -222,7 +222,7 @@
               <div class="row items-center justify-between q-mb-xs">
                 <q-checkbox
                   v-model="multiclassEnabled"
-                  label="Multiclass Spellcasting (Combined Slot Progression &amp; Subclasses)"
+                  label="Multiclass Spellcasting (Combined Slot Progression &amp; Subclasses)" v-help="'Combine spell slots across classes using the multiclass spellcaster table.'"
                   dense
                   color="purple-4"
                   class="text-weight-bold text-caption text-purple-3"
@@ -257,7 +257,7 @@
                     :options="extraSubclassOptions[clsEntry.className] || getSubclassesFor(clsEntry.className)"
                     @filter="(val, update) => filterExtraSubclasses(clsEntry.className, val, update)"
                     input-debounce="0"
-                    label="Subclass"
+                    label="Subclass" v-help="'Subclass, e.g. Evocation or Fiend; it can add always-prepared spells.'"
                     new-value-mode="add-unique"
                     use-input
                     clearable
@@ -269,7 +269,7 @@
                   />
                   <formula-field
                     :path="`spellcasting.classes[id=${encodeURIComponent(clsEntry.id)}].level`"
-                    label="Level"
+                    label="Level" v-help="'Class level for this caster.'"
                     dense
                     outlined
                     class="col-6 col-sm-2"
@@ -278,7 +278,7 @@
                   <q-select
                     v-model="clsEntry.stat"
                     :options="['INT', 'WIS', 'CHA', 'CON', 'STR', 'DEX']"
-                    label="Stat"
+                    label="Stat" v-help="'Spellcasting ability.'"
                     dense
                     outlined
                     dark
@@ -313,7 +313,7 @@
                         <div class="row q-gutter-x-xs items-center q-mb-xs">
                           <q-select
                             v-model="newSpellForClass[clsEntry.id || cIdx]"
-                            :options="spellOptionsForClass(clsEntry.className)"
+                            :options="spellOptionsForClass(clsEntry.className, clsEntry.subclass)"
                             use-input
                             fill-input
                             hide-selected
@@ -321,7 +321,7 @@
                             dense
                             outlined
                             dark
-                            label="Add Spell to Class"
+                            label="Add Spell to Class" v-help="'Add a spell to this class’s list.'"
                             class="col"
                           />
                           <q-btn
@@ -397,7 +397,7 @@
                     size="sm"
                     color="purple-3"
                     icon="add"
-                    label="Add Class"
+                    label="Add Class" v-help="'Add another spellcasting class for a multiclass caster.'"
                     no-caps
                     class="text-weight-bold"
                     @click="addExtraClass"
@@ -426,8 +426,8 @@
           <div class="col-12 q-pa-xs q-mb-xs">
             <div class="row q-col-gutter-xs items-center q-pa-xs rounded-borders bg-grey-9 text-white" style="border: 1px solid rgba(255, 255, 255, 0.12);">
               <div class="col-12 col-sm-3">
-                <formula-field path="spellcasting.preparedCountOverride" label="Prepared Spells Count">
-                  <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" @click="resetPreparedCount"><q-tooltip>Use the class calculation.</q-tooltip></q-btn></template>
+                <formula-field path="spellcasting.preparedCountOverride" label="Prepared Spells Count" v-help="'How many spells the caster has prepared.'">
+                  <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" v-help="'Compute prepared spells from class, level and ability.'" @click="resetPreparedCount"><q-tooltip>Use the class calculation.</q-tooltip></q-btn></template>
                 </formula-field>
               </div>
 
@@ -435,7 +435,7 @@
                 <q-select
                   v-model="monster.spellcasting.preparedInterval"
                   :options="['Long Rest', 'Short Rest', 'Dawn', 'Dusk', 'Midnight', 'Downtime']"
-                  label="Prepared Interval"
+                  label="Prepared Interval" v-help="'When the caster can change prepared spells.'"
                   dense
                   outlined
                   dark
@@ -448,7 +448,7 @@
               <div class="col-12 col-sm-2 flex items-center">
                 <q-checkbox
                   v-model="monster.spellcasting.cantripSwitch"
-                  label="Switch Cantrips"
+                  label="Switch Cantrips" v-help="'Change which cantrips are known.'"
                   dense
                   color="purple-4"
                   class="text-caption text-weight-bold"
@@ -458,7 +458,7 @@
               </div>
 
               <div v-if="monster.spellcasting.cantripSwitch" class="col-6 col-sm-2">
-                <formula-field path="spellcasting.cantripSwitchCount" label="Count" />
+                <formula-field path="spellcasting.cantripSwitchCount" label="Count" v-help="'Number of uses.'" />
               </div>
 
               <div v-if="monster.spellcasting.cantripSwitch" class="col-6 col-sm-2">
@@ -494,13 +494,13 @@
 
               <div v-if="metamagicEnabled && monster.spellcasting.metamagic" class="row q-col-gutter-xs items-center q-mt-xs">
                 <div class="col-12 col-sm-3">
-                  <formula-field path="spellcasting.metamagic.sorceryPoints" label="Sorcery Points" />
+                  <formula-field path="spellcasting.metamagic.sorceryPoints" label="Sorcery Points" v-help="'Points spent on metamagic and flexible casting.'" />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
                     v-model="monster.spellcasting.metamagic.refreshRate"
                     :options="['Long Rest', 'Short Rest', 'Dawn', 'Dusk', 'Midnight']"
-                    label="Points Refresh"
+                    label="Points Refresh" v-help="'When sorcery points come back.'"
                     dense
                     outlined
                     dark
@@ -515,7 +515,7 @@
                     emit-value
                     map-options
                     use-chips
-                    label="Active Metamagic Techniques"
+                    label="Active Metamagic Techniques" v-help="'Metamagic options the sorcerer knows; costs follow the selected rules edition.'"
                     dense
                     outlined
                     dark
@@ -668,7 +668,7 @@
                   <div class="q-mb-xs">
                     <q-select
                       :model-value="monster.knownSpellsOfLevel(level)"
-                      :options="spellOptionsByLevel(level, classFilter ? monster.spellcasting.class : undefined)"
+                      :options="spellOptionsByLevel(level, classFilter ? monster.spellcasting.class : undefined, monster.spellcasting.subclass)"
                       multiple
                       use-chips
                       emit-value
@@ -759,6 +759,7 @@ import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
+import { subclassSpells } from 'src/core/domain/catalogs/subclass-spells'
 import { ref, computed, watch } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import FormulaField from '../kit/FormulaField.vue'
@@ -1119,11 +1120,16 @@ export default defineComponent({
     }
 
     const newSpellForClass = ref<Record<string, any>>({})
-    const spellOptionsForClass = (className?: string) => {
+    // A12.5: a class list always includes custom spells and the subclass's own spells, labelled as such.
+    const markSubclass = (opts: SpellOption[], subclass?: string) => {
+      const own = subclassSpells(subclass)
+      return opts.map((s) => own.includes(s.value) && !s.custom ? { ...s, label: `${s.value} (subclass)` } : s)
+    }
+    const inClassList = (s: SpellOption, className: string, subclass?: string) =>
+      !!s.custom || subclassSpells(subclass).includes(s.value) || (s.class || []).some((c: string) => c.toLowerCase() === className.toLowerCase())
+    const spellOptionsForClass = (className?: string, subclass?: string) => {
       if (!className) return spells.allSpellOptions
-      const filtered = spells.allSpellOptions.filter((s) =>
-        s.class && s.class.some((c: string) => c.toLowerCase() === className.toLowerCase())
-      )
+      const filtered = markSubclass(spells.allSpellOptions.filter((s) => inClassList(s, className, subclass)), subclass)
       return filtered.length > 0 ? filtered : spells.allSpellOptions
     }
     const addSpellToClass = (clsEntry: any, index: number) => {
@@ -1143,13 +1149,9 @@ export default defineComponent({
       }
     }
 
-    const spellOptionsByLevel = (level: number, className?: string) => {
+    const spellOptionsByLevel = (level: number, className?: string, subclass?: string) => {
       let list = spells.allSpellOptions.filter((s) => s.level === level)
-      if (className) {
-        list = list.filter((s) =>
-          s.class.find((c) => c.toLowerCase() === className.toLowerCase())
-        )
-      }
+      if (className) list = markSubclass(list.filter((s) => inClassList(s, className, subclass)), subclass)
       return list
     }
 

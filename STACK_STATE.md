@@ -1,6 +1,8 @@
 # Local DNDSheet Stack State
 
-> Current: Build202 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+> Current: Build203 on `build185-repairs`, live at https://ivangarciafilho.github.io/DNDSheet/. Next steps and workflow: `docs/roadmap/DNDSheet-Development-Handoffs.md` §Start here.
+
+- **Build203 (2026-11-08)**: A12.5 (class spell lists include custom and subclass spells, labelled); 64 tips on class casting, A4 studio and composer settings; help coverage 42.4 %, floor 40 %. Fast build. Release candidate `rc-2.4.3-build-203-subclass-spells-and-tips`.
 
 - **Build202 (2026-11-08)**: `HelpTip.vue`; `npm run audit:help` with a 35 % floor; 163 `v-help` tips across Skills, Saves, Speeds, Resistances and Basics; help coverage 15.2 % → 35.6 %. Fast build: production builds and core tests only. Release candidate `rc-2.4.3-build-202-help-coverage`.
 

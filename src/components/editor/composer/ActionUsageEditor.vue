@@ -9,11 +9,11 @@
       </select>
     </label>
     <div v-if="modelValue.mode === 'recharge'" class="row q-col-gutter-xs">
-      <q-input class="col-6" :model-value="modelValue.min" type="number" min="1" max="100" dark outlined dense label="First result" data-usage-min @update:model-value="value => update('min', value ?? '')" />
-      <q-input class="col-6" :model-value="modelValue.max" type="number" min="1" max="100" dark outlined dense label="Last result" data-usage-max @update:model-value="value => update('max', value ?? '')" />
+      <q-input class="col-6" :model-value="modelValue.min" type="number" min="1" max="100" dark outlined dense label="First result" v-help="'Lowest d6 roll that recharges the ability (Recharge 5–6 starts at 5).'" data-usage-min @update:model-value="value => update('min', value ?? '')" />
+      <q-input class="col-6" :model-value="modelValue.max" type="number" min="1" max="100" dark outlined dense label="Last result" v-help="'Highest d6 roll that recharges the ability (usually 6).'" data-usage-max @update:model-value="value => update('max', value ?? '')" />
     </div>
     <template v-else-if="modelValue.mode === 'limited'">
-      <q-input :model-value="modelValue.count" type="number" min="1" max="999" dark outlined dense label="Uses" data-usage-count @update:model-value="value => update('count', value ?? '')" />
+      <q-input :model-value="modelValue.count" type="number" min="1" max="999" dark outlined dense label="Uses" v-help="'How many times it can be used before it needs to recover.'" data-usage-count @update:model-value="value => update('count', value ?? '')" />
       <label>Refresh rate
         <select :value="modelValue.rate" data-usage-rate @change="update('rate', ($event.target as HTMLSelectElement).value)">
           <optgroup v-for="group in rateGroups" :key="group.label" :label="group.label"><option v-for="rate in group.options" :key="rate.value" :value="rate.value" :title="rate.help">{{ rate.label }}</option></optgroup>
@@ -21,7 +21,7 @@
       </label>
       <p class="text-caption q-mb-none">{{ selectedHelp }}</p>
     </template>
-    <q-input v-else-if="modelValue.mode === 'custom'" :model-value="modelValue.custom" dark outlined dense label="Custom recharge text" data-usage-custom @update:model-value="value => update('custom', value ?? '')" />
+    <q-input v-else-if="modelValue.mode === 'custom'" :model-value="modelValue.custom" dark outlined dense label="Custom recharge text" v-help="'Wording printed instead of the standard recharge tag.'" data-usage-custom @update:model-value="value => update('custom', value ?? '')" />
     <p class="text-caption q-mb-none">Apply replaces recharge and limited-use settings. Other entry data is kept.</p>
   </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
   <div class="trait-cadence column q-gutter-y-sm">
     <div class="row q-col-gutter-sm">
-      <q-input :model-value="modelValue.limitedUse.count" type="number" min="0" max="999" dense outlined dark autofocus label="Limited uses" class="col-5" @update:model-value="(value) => updateUses('count', value ?? '')" />
+      <q-input :model-value="modelValue.limitedUse.count" type="number" min="0" max="999" dense outlined dark autofocus label="Limited uses" v-help="'Number of uses before it recovers.'" class="col-5" @update:model-value="(value) => updateUses('count', value ?? '')" />
       <label class="col-7 trait-cadence__label">Recovery rate
         <select :value="modelValue.limitedUse.rate" class="trait-cadence__select" @change="updateUses('rate', ($event.target as HTMLSelectElement).value)">
           <optgroup v-for="group in rateGroups" :key="group.label" :label="group.label"><option v-for="option in group.options" :key="option.value" :value="option.value" :title="option.help">{{ option.label }}</option></optgroup>
@@ -14,8 +14,8 @@
         <option v-for="option in timingOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
       </select>
     </label>
-    <q-input :model-value="modelValue.rechargeCount" type="number" min="0" max="999" dense outlined dark label="Recharge count override" hint="Leave blank to use the limited-use count" @update:model-value="(value) => update('rechargeCount', value ?? '')" />
-    <q-input :model-value="modelValue.rechargeTagOverride" dense outlined dark label="Printed tag override" hint="Replaces the generated tag, including any conditional text" @update:model-value="(value) => update('rechargeTagOverride', String(value ?? ''))" />
+    <q-input :model-value="modelValue.rechargeCount" type="number" min="0" max="999" dense outlined dark label="Recharge count override" v-help="'Number shown in the recharge tag instead of the computed one.'" hint="Leave blank to use the limited-use count" @update:model-value="(value) => update('rechargeCount', value ?? '')" />
+    <q-input :model-value="modelValue.rechargeTagOverride" dense outlined dark label="Printed tag override" v-help="'Text printed in place of the usage tag.'" hint="Replaces the generated tag, including any conditional text" @update:model-value="(value) => update('rechargeTagOverride', String(value ?? ''))" />
     <p class="text-caption q-ma-none">Clear removes uses and cadence overrides. Conditional grouping stays in Trait display settings.</p>
   </div>
 </template>

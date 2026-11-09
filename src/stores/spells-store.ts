@@ -10,6 +10,8 @@ export interface SpellOption {
   level: number
   class: string[]
   classDisplay: string
+  /** User-defined spell, not from the SRD list. */
+  custom?: boolean
 }
 
 export const useSpellsStore = defineStore('spells', {
@@ -35,9 +37,11 @@ export const useSpellsStore = defineStore('spells', {
         // in the lifted out computed value. i should do that
         const classes = s.class.join(', ')
 
+        const custom = s.name in state.customSpells
         return {
           value: s.name,
-          label: s.name,
+          label: custom ? `${s.name} (custom)` : s.name,
+          custom,
           level: s.level,
           levelDisplay:
             s.level === 0 ? 'Cantrip' : `${N2W.toOrdinal(s.level)} Level`,

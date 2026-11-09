@@ -26,7 +26,7 @@
             outline
             color="amber-4"
             icon="auto_awesome"
-            label="Homebrew Presets"
+            label="Homebrew Presets" v-help="'Ready-made parchment backgrounds and masks.'"
             no-caps
             size="sm"
           >
@@ -111,7 +111,7 @@
             dense
             color="purple-7"
             icon="add"
-            label="Add Layer"
+            label="Add Layer" v-help="'Add an image or colour layer to the A4 page.'"
             no-caps
             size="sm"
             @click="showAddLayerForm = !showAddLayerForm"
@@ -149,14 +149,14 @@
                 dense
                 outlined
                 dark
-                label="Layer Name"
+                label="Layer Name" v-help="'Name shown in the layer list.'"
                 placeholder="e.g. Stained Parchment"
               />
             </div>
             <div class="col-12 col-sm-5">
               <q-file
                 v-model="newLayerFile"
-                label="Upload local texture (PNG/JPG)"
+                label="Upload local texture (PNG/JPG)" v-help="'Upload a background texture from this device.'"
                 dense
                 outlined
                 dark
@@ -174,7 +174,7 @@
                 dense
                 outlined
                 dark
-                label="Or Image URL / Data URI"
+                label="Or Image URL / Data URI" v-help="'Web address or embedded image for this layer.'"
                 placeholder="/homebrew/backgrounds/Yellowed parchment background.jpg"
               />
             </div>
@@ -187,14 +187,14 @@
                 dense
                 outlined
                 dark
-                label="Blend Mode"
+                label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
               />
             </div>
             <div class="col-6 col-sm-3 q-mt-xs text-right">
               <q-btn
                 color="purple-7"
                 icon="check"
-                label="Create Layer"
+                label="Create Layer" v-help="'Create the layer with these settings.'"
                 no-caps
                 class="full-width"
                 :disable="!newLayerUrl && !newLayerFile"
@@ -394,7 +394,7 @@
                       dense
                       outlined
                       dark
-                      label="Blend Mode"
+                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-9">
@@ -422,7 +422,7 @@
                           dense
                           outlined
                           dark
-                          label="Opacity (%)"
+                          label="Opacity (%)" v-help="'How see-through the layer is.'"
                           style="width: 85px;"
                         />
                       </div>
@@ -437,7 +437,7 @@
                       :min="-300"
                       :max="300"
                       :step="2"
-                      label="Statblock Position Gizmo"
+                      label="Statblock Position Gizmo" v-help="'Drag to place the stat block on the page.'"
                       unit="px"
                       color="amber"
                       icon="open_with"
@@ -472,7 +472,7 @@
                               dense
                               outlined
                               dark
-                              label="Width %"
+                              label="Width %" v-help="'Layer width as a share of the page.'"
                               style="width: 80px;"
                             />
                           </div>
@@ -504,7 +504,7 @@
                               dense
                               outlined
                               dark
-                              label="Height %"
+                              label="Height %" v-help="'Layer height as a share of the page.'"
                               style="width: 80px;"
                             />
                           </div>
@@ -522,7 +522,7 @@
                   <div class="col-12 col-sm-6 q-mb-xs">
                     <q-file
                       v-model="portraitFileInput"
-                      label="Upload Creature Portrait Image"
+                      label="Upload Creature Portrait Image" v-help="'Upload a portrait from this device; it stays in the browser.'"
                       dense
                       outlined
                       dark
@@ -561,14 +561,14 @@
                       dense
                       outlined
                       dark
-                      label="Layout Position"
+                      label="Layout Position" v-help="'Where the portrait sits relative to the stat block.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
                     <q-input
                       v-model.number="portraitWidthModel"
                       type="number"
-                      label="Base Width (px)"
+                      label="Base Width (px)" v-help="'Portrait width before scaling.'"
                       dense
                       outlined
                       dark
@@ -579,7 +579,7 @@
                   <div class="col-12 col-sm-4">
                     <q-input
                       v-model="portraitCaptionModel"
-                      label="Caption / Artist Credit"
+                      label="Caption / Artist Credit" v-help="'Credit shown under the image.'"
                       dense
                       outlined
                       dark
@@ -595,7 +595,7 @@
                       dense
                       outlined
                       dark
-                      label="Blend Mode"
+                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-4">
@@ -695,7 +695,7 @@
                   <div class="col-12 row items-center q-gutter-x-md q-my-xs">
                     <q-checkbox
                       v-model="layer.grayscaleAsAlpha"
-                      label="Use Grayscale as Alpha (Luminance Mask)"
+                      label="Use Grayscale as Alpha (Luminance Mask)" v-help="'Use the image brightness as transparency.'"
                       dark
                       dense
                       color="cyan-4"
@@ -706,7 +706,7 @@
                     <q-checkbox
                       v-if="layer.grayscaleAsAlpha"
                       v-model="layer.grayscaleInvert"
-                      label="Invert Luminance"
+                      label="Invert Luminance" v-help="'Swap light and dark in the mask.'"
                       dark
                       dense
                       color="cyan-4"
@@ -756,7 +756,7 @@
                       dense
                       outlined
                       dark
-                      label="Blend Mode"
+                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
@@ -868,7 +868,7 @@
                       dense
                       outlined
                       dark
-                      label="Watercolor Edge Mask"
+                      label="Watercolor Edge Mask" v-help="'Fade the layer edges like watercolour.'"
                     >
                       <template #prepend>
                         <q-icon name="brush" color="purple-3" />
@@ -880,7 +880,7 @@
                   <div class="col-12 row items-center q-gutter-x-md q-my-xs">
                     <q-checkbox
                       v-model="layer.grayscaleAsAlpha"
-                      label="Use Grayscale as Alpha (Luminance Mask)"
+                      label="Use Grayscale as Alpha (Luminance Mask)" v-help="'Use the image brightness as transparency.'"
                       dark
                       dense
                       color="purple-4"
@@ -891,7 +891,7 @@
                     <q-checkbox
                       v-if="layer.grayscaleAsAlpha"
                       v-model="layer.grayscaleInvert"
-                      label="Invert Luminance"
+                      label="Invert Luminance" v-help="'Swap light and dark in the mask.'"
                       dark
                       dense
                       color="purple-4"
@@ -915,7 +915,7 @@
                     <div class="row items-center justify-between no-wrap">
                       <q-toggle
                         v-model="layer.showTextOverlay"
-                        label="Enable Layer Text Overlay (Header/Footer)"
+                        label="Enable Layer Text Overlay (Header/Footer)" v-help="'Print text on this layer, such as a header or footer.'"
                         color="amber-7"
                         dense
                         dark
@@ -926,7 +926,7 @@
                       <div class="col-12 col-sm-6">
                         <q-input
                           v-model="layer.overlayText"
-                          label="Overlay Text (Header/Footer/Notes)"
+                          label="Overlay Text (Header/Footer/Notes)" v-help="'Text printed on the layer.'"
                           dense
                           outlined
                           dark
@@ -937,7 +937,7 @@
                         <q-select
                           v-model="layer.overlayTextAlign"
                           :options="['left', 'center', 'right']"
-                          label="Text Align"
+                          label="Text Align" v-help="'Left, centre or right text alignment.'"
                           dense
                           outlined
                           dark
@@ -967,7 +967,7 @@
                         <q-input
                           v-model.number="layer.overlayTextOffsetX"
                           type="number"
-                          label="Offset X (px)"
+                          label="Offset X (px)" v-help="'Move the layer left or right.'"
                           dense
                           outlined
                           dark
@@ -978,7 +978,7 @@
                         <q-input
                           v-model.number="layer.overlayTextOffsetY"
                           type="number"
-                          label="Offset Y (px)"
+                          label="Offset Y (px)" v-help="'Move the layer up or down.'"
                           dense
                           outlined
                           dark
@@ -989,7 +989,7 @@
                         <q-input
                           v-model.number="layer.overlayTextFontSize"
                           type="number"
-                          label="Font Size (pt)"
+                          label="Font Size (pt)" v-help="'Text size in points.'"
                           dense
                           outlined
                           dark
