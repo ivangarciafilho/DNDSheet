@@ -1,0 +1,43 @@
+{
+  "source": "e92a9298e3b5ca5021e05be8ff7cb4d515a0c863",
+  "pages": "d4de442a75de8fdfba08c7a4c6d65e3d7b4778b2",
+  "tag": "rc-2.4.3-build-220-spell-components-a4-overflow-and-typographic-grammar",
+  "base": "95a6ab6494fae0384c0b628602506d6025eba442",
+  "indexMatches": true,
+  "assets": [
+    {
+      "asset": "assets/index.a82711a3.js",
+      "sha256": "a04617f7260310babb33b7f973ba4d0579a6a15352811d9bab14a33432539b81",
+      "matches": true
+    },
+    {
+      "asset": "assets/index.650da80f.css",
+      "sha256": "b23f600a20ae6cde5e3199a7f102a5a7a9e538c1651d889d3b59a04ccc48b33b",
+      "matches": true
+    }
+  ],
+  "candidateChecksums": 96,
+  "workload": {
+    "before": {
+      "done": 152,
+      "open": 104
+    },
+    "after": {
+      "done": 154,
+      "open": 102
+    },
+    "closed": [
+      "Build 220 Acceptance Packet - 22 Tasks"
+    ],
+    "newTaskIds": 0
+  },
+  "gate": {
+    "steps": 10,
+    "coreTests": 453,
+    "browserScenariosPerTarget": 57,
+    "typeDiagnostics": 613,
+    "newTypeDiagnostics": 0
+  },
+  "visibleFooter": "v2.4.3 build 220",
+  "pagesBuildStatus": "built"
+}
