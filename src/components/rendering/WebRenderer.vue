@@ -928,7 +928,19 @@
         ></li>
       </ul>
     </div>
-    <div v-if="monster.regionalEffects.length > 0" class="regional-effects">
+    <div v-for="rt in ((monster as any).randomTables || [])" :key="rt.id" class="random-table">
+          <h3 class="section">{{ rt.title || 'Random table' }}</h3>
+          <table class="random-table-grid" style="width:100%;border-collapse:collapse">
+            <thead><tr><th style="text-align:left">{{ rt.dice }}</th><th style="text-align:left">Result</th></tr></thead>
+            <tbody>
+              <tr v-for="row in [...rt.rows].sort((a: any, b: any) => a.min - b.min)" :key="row.id">
+                <td style="white-space:nowrap;padding-right:.6em">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td>{{ row.text }}</td>
+              </tr>
+              <tr v-if="rt.fallback"><td>otherwise</td><td>{{ rt.fallback }}</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div v-if="monster.regionalEffects.length > 0" class="regional-effects">
       <h3 class="section">{{ $t('editor.regional.label') }}</h3>
       <div class="preamble" v-html="regionalEffectPreamble"></div>
       <ul>

@@ -1,3 +1,4 @@
+import { tableToMarkdown, type RandomTable } from 'src/core/domain/random-table'
 // this file is a mess
 // the autoformatter is allowed to run here it's just ugly af
 // due to the whitespace sensitivity of markdown
@@ -289,6 +290,7 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     const paragon = getParagonPools()
     const lair = getLairActions()
     const regional = getRegionalEffects()
+    const randomTables = ((monster as unknown as { randomTables?: RandomTable[] }).randomTables ?? []).map((rt) => `\n### ${(rt as RandomTable & { title?: string }).title || 'Random table'}\n${tableToMarkdown(rt)}\n`).join('')
     const inventory = getInventory()
 
     return `{{monster,frame${twoCol ? ',wide' : ''}
@@ -322,7 +324,7 @@ ${traits}${mythicTrait}### ${t(
       monster.spellcasting.standard.length === 0 ? '' : `${spellcasting}`
     }${
       monster.spellcasting.atWill.length === 0 ? '' : `${innate}`
-    }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${inventory}
+    }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${randomTables}${inventory}
 }}`
   }
 

@@ -47,6 +47,7 @@
             <actions-editor />
             <villain-actions-editor />
             <regional-effects-editor />
+            <random-tables-editor />
             <anatomy-editor />
             <encounter-dynamics-editor />
           </q-list>
@@ -79,6 +80,7 @@ import VillainActionsEditor from 'src/components/editor/VillainActionsEditor.vue
 import AnatomyEditor from 'src/components/editor/AnatomyEditor.vue'
 import EncounterDynamicsEditor from 'src/components/editor/EncounterDynamicsEditor.vue'
 import RegionalEffectsEditor from 'src/components/editor/RegionalEffectsEditor.vue'
+import RandomTablesEditor from 'src/components/editor/RandomTablesEditor.vue'
 import InventoryEditor from 'src/components/editor/InventoryEditor.vue'
 import DatabaseStudio from 'src/components/editor/DatabaseStudio.vue'
 import CharacterEditor from 'src/components/character/CharacterEditor.vue'
@@ -104,6 +106,7 @@ export default defineComponent({
     EncounterDynamicsEditor,
         RegionalEffectsEditor,
     InventoryEditor,
+    RandomTablesEditor,
     CharacterEditor,
     CharacterSheet,
   },

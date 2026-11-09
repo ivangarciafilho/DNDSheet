@@ -896,6 +896,8 @@ export interface Monster {
     truesight: number
   }
   sensesNotes: string
+  /** A11.9 declarative random-outcome tables. */
+  randomTables?: import('src/core/domain/random-table').RandomTable[]
   passivePerception: {
     override: boolean
     overrideValue: number | null
