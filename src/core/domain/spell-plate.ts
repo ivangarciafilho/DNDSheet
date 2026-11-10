@@ -22,6 +22,7 @@ export interface SpellPlateInput {
   className?: string
   level: number
   resourceType?: 'slots' | 'points' | 'focus' | 'pact' | string
+  pactPool?: boolean
   resourceValue?: number
   refreshRate?: string
   customRefreshRate?: string
@@ -139,7 +140,7 @@ const spellView = (spell: SpellPlateSpellInput): SpellPlateSpell => ({
 function resourceSummary(input: SpellPlateInput, slots: number[]): string {
   const resourceType = input.resourceType || 'slots'
   const className = input.className?.toLowerCase() ?? ''
-  const isPact = resourceType === 'pact' || className === 'warlock'
+  const isPact = input.pactPool ?? (resourceType === 'pact' || className === 'warlock')
   const refresh = cadenceLabel(input.customRefreshRate || input.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
   const highest = slots.reduce((last, count, index) => count > 0 ? index + 1 : last, 0)
   const total = slots.reduce((sum, count) => sum + count, 0)
@@ -157,17 +158,27 @@ function resourceSummary(input: SpellPlateInput, slots: number[]): string {
 
 /** Builds a display-only spellcasting model; it does not mutate the monster or infer missing slots. */
 interface LevelResourceInput {
+  contribution?: { mode?: string; target?: string }
   slots?: number[]
+  pactPool?: boolean
   resourceType?: string
   className?: string
   refreshRate?: string
   customRefreshRate?: string
 }
 
+/** One default for editor controls, row headings and exception badges. */
+export function spellRowRecovery(level: number, explicit: string | undefined, source: LevelResourceInput = {}): string {
+  if (explicit?.trim()) return explicit
+  if (level === 0) return 'at_will'
+  const pact = source.pactPool ?? (source.contribution?.mode === 'custom' ? source.contribution.target === 'pact' : source.resourceType === 'pact' || source.className?.toLowerCase() === 'warlock')
+  return source.customRefreshRate || source.refreshRate || (pact ? 'short_rest' : 'long_rest')
+}
+
 /** Pact detection, default refresh and pact level: one rule for the web plate and every text export. */
 function resourceContext(input: LevelResourceInput) {
   const slots = normalizedSlots(input.slots)
-  const isPact = input.resourceType === 'pact' || input.className?.toLowerCase() === 'warlock'
+  const isPact = input.pactPool ?? (input.resourceType === 'pact' || input.className?.toLowerCase() === 'warlock')
   const defaultCadence = cadenceLabel(input.customRefreshRate || input.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
   const maxPactLevel = slots.reduce((last, count, index) => count > 0 ? index + 1 : last, 0)
   return { slots, isPact, defaultCadence, maxPactLevel }
@@ -206,7 +217,7 @@ export function spellLevelHeading(input: SpellLevelHeadingInput): string {
   // Pact slots are shared, so their count is stated once, on the pact level.
   const lead = !ctx.isPact || input.level === ctx.maxPactLevel
     ? spellLevelLead(slotCount, cadence)
-    : input.levelCadence ? spellLevelLead(undefined, cadence) : ''
+    : spellLevelLead(undefined, cadence)
   return `${lead}${words.level} ${input.level}${input.bonusAction ? ` (${words.bonusAction})` : ''}:`
 }
 

@@ -1,3 +1,7 @@
+## Build227 verified implementation packet
+
+16 implementation acceptance items; normalized ledger remains174 complete/94open; no whole-ID closures. Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Publication verification follows.
+
 ## Build226 published — 2026-11-10
 
 Published source 2114f6ba40a31d680eebc7683c39ba91ffd50e92; Pages 61fee11f1772b95983d33233ff9a3e15a30db069; tag rc-2.4.3-build-226-emergency-editor-and-spellcasting. GitHub Pages reports built. Live index, entry JavaScript, CSS and MonsterBuilder bytes match the tested Pages output. Candidate226 archived and all96 checksums verified; prior223–225 archives preserved. Original modified tracked files remain unchanged. [Publication receipt](../evidence/build226/publication-receipt.json).

@@ -1,3 +1,13 @@
+## Build227 validated candidate — composition and casting (2026-11-10)
+
+**Final validation passed; publication pending.** The isolated Build227 candidate starts from remote `4128dde`; Build226 remains the published reference until the new frozen candidate passes its release gates. The original checkout, sample and prior candidates remain protected. This newest section governs current execution; the Build226 publication sections below are historical evidence.
+
+[Build227 packet, acceptance boundaries and groomed continuation](DNDSheet-Build227-Composition-and-Casting-Candidate.md) records sixteen bounded implementation acceptance items: repaired source-owned additional containers across roles, Role first in the compositor, richer authored mechanic/presentation controls, shared cadence projection and compact spell rows, inferred multiclass state, enriched source-local filtered choices, honest capacities and explicitly configured custom resource-pool contributions. Native spell learning remains separate from custom pool contribution. Native/manual slot arrays remain authoritative, and each source keeps its explicit row recovery cadence. Numeric presentation excludes usage/recharge paths without consumer support.
+
+**Workload is unchanged: 268 normalized IDs, 174 complete / 94 open; whole-ID delta 0, added IDs 0. Raw ledger 277 IDs, 183 complete / 94 open.** Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Publication verification follows.
+
+The existing catalog lacks complete authoritative duration/casting-time metadata and complete subclass/species always-prepared grants. Capacity labels remain Legacy 2014 base-class references; authored Points/Focus/custom pool settings do not claim third-party rules automation. Continue A11.5 → A11.9 → H9/H14, with casting-source/pool identity and ruleset-aware capacity/grant work tracked separately under A12.8–A12.9. No parent ID is closed by partial emergency acceptance.
+
 ## Build226 published release candidate — emergency editor and spellcasting packet (2026-11-10)
 
 **Published and verified.** Build226 supersedes Build225 on GitHub Pages; the Build225 candidate remains preserved. Work resumes from its receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca` in the isolated Build226 clone; the protected original checkout and existing sample remain separate. The newest section governs current execution; older release headings below are historical.

@@ -1,0 +1,1145 @@
+{
+  "scope": "AC head and body computed foreground/nearest painted background; not a full accessibility audit",
+  "rows": [
+    {
+      "theme": "wotc",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        }
+      ]
+    },
+    {
+      "theme": "printer",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_golden",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_silver",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_toxic",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_spooky",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_galactic",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_fathomless",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_forge",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_aetherpunk",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        }
+      ]
+    },
+    {
+      "theme": "art_nouveau",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        }
+      ]
+    },
+    {
+      "theme": "art_deco",
+      "fixture": "seraph",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        }
+      ]
+    },
+    {
+      "theme": "wotc",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        }
+      ]
+    },
+    {
+      "theme": "printer",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_golden",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_silver",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_toxic",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_spooky",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_galactic",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_fathomless",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_forge",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_aetherpunk",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        }
+      ]
+    },
+    {
+      "theme": "art_nouveau",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        }
+      ]
+    },
+    {
+      "theme": "art_deco",
+      "fixture": "pact",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        }
+      ]
+    },
+    {
+      "theme": "wotc",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        }
+      ]
+    },
+    {
+      "theme": "printer",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_golden",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_silver",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_toxic",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_spooky",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_galactic",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_fathomless",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_forge",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_aetherpunk",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        }
+      ]
+    },
+    {
+      "theme": "art_nouveau",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        }
+      ]
+    },
+    {
+      "theme": "art_deco",
+      "fixture": "full",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        }
+      ]
+    },
+    {
+      "theme": "wotc",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        }
+      ]
+    },
+    {
+      "theme": "printer",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_golden",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_silver",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_toxic",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_spooky",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_galactic",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_fathomless",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_forge",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_aetherpunk",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        }
+      ]
+    },
+    {
+      "theme": "art_nouveau",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        }
+      ]
+    },
+    {
+      "theme": "art_deco",
+      "fixture": "innate",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        }
+      ]
+    },
+    {
+      "theme": "wotc",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(253, 241, 220)",
+          "ratio": 12.112948795674155
+        }
+      ]
+    },
+    {
+      "theme": "printer",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(255, 255, 255)",
+          "ratio": 13.536102715914812
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_golden",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(230, 237, 243)",
+          "background": "rgb(12, 15, 18)",
+          "ratio": 16.264795767726287
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_silver",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(241, 245, 249)",
+          "background": "rgb(15, 23, 42)",
+          "ratio": 16.295987899750777
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_toxic",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 253, 245)",
+          "background": "rgb(5, 27, 17)",
+          "ratio": 17.019425691397462
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_spooky",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 245, 255)",
+          "background": "rgb(20, 11, 30)",
+          "ratio": 17.84974551343097
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_galactic",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(9, 9, 25)",
+          "ratio": 18.85100796206823
+        }
+      ]
+    },
+    {
+      "theme": "lovecraft_fathomless",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(236, 254, 255)",
+          "background": "rgb(3, 19, 30)",
+          "ratio": 18.09273391275092
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_forge",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(250, 250, 249)",
+          "background": "rgb(28, 25, 23)",
+          "ratio": 16.744631340033816
+        }
+      ]
+    },
+    {
+      "theme": "dwarves_aetherpunk",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(240, 253, 244)",
+          "background": "rgb(24, 21, 18)",
+          "ratio": 17.371686476517723
+        }
+      ]
+    },
+    {
+      "theme": "art_nouveau",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(88, 24, 13)",
+          "background": "rgb(245, 245, 236)",
+          "ratio": 12.346655948988833
+        }
+      ]
+    },
+    {
+      "theme": "art_deco",
+      "fixture": "legacy-actions",
+      "nameVisible": true,
+      "samples": [
+        {
+          "selector": ".ac > .dnd-cascade-title",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        },
+        {
+          "selector": ".ac > .dnd-cascade-badges-wrap",
+          "foreground": "rgb(248, 250, 252)",
+          "background": "rgb(11, 15, 25)",
+          "ratio": 18.303168456436335
+        }
+      ]
+    }
+  ]
+}

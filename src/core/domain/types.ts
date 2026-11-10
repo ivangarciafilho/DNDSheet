@@ -1,3 +1,4 @@
+import type { CastingContribution } from '../usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from './skill-passive-state.ts'
 import type { RandomTable } from './random-table'
 import type { ComposableInitiativeRider } from './initiative-composer'
@@ -750,6 +751,7 @@ export interface MonsterAction {
 }
 
 export interface LairAction {
+  descriptionContainers?: ActionDescriptionContainer[]
   id: string
   description: string
   crAnnotation: MonsterCrAnnotation
@@ -839,6 +841,7 @@ export interface LegendaryAction {
 }
 
 export interface MonsterReaction {
+  descriptionContainers?: ActionDescriptionContainer[]
   name: string
   id: string
   description: string
@@ -1042,7 +1045,9 @@ export interface Monster {
     splitHighCadence?: boolean
     restrictedCadences?: string[]
     spellCadenceMap?: Record<string, string>
+    contribution?: CastingContribution
     classes?: Array<{
+      contribution?: CastingContribution
       id: string
       className: string
       subclass?: string

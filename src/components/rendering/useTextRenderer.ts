@@ -1,3 +1,7 @@
+import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
+import { aggregateSpellcastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
+import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
+import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
   formatDefenseItem,
@@ -50,13 +54,18 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 import { describePools } from 'src/core/domain/paragon-pools'
-import { spellLevelHeading, spellCadenceDiffers } from 'src/core/domain/spell-plate'
+import { spellLevelHeading, spellCadenceDiffers, spellRowRecovery } from 'src/core/domain/spell-plate'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
 export function useTextRenderer(options: { web?: boolean } = {}) {
   const monster = useMonsterStore()
   const editorStore = useEditorStore()
+  const formattedNumeric = (path: string, text: string | number): string => {
+    const presentation = options.web !== false ? monster.bindings?.[path]?.presentation : undefined
+    return presentation ? formatNumericPresentation(text, presentation) : String(text)
+  }
+  const numericHtml = (path: string, text: string | number): string => numHtml(formattedNumeric(path, text))
   const { t } = useI18n()
   const {
     processAction,
@@ -80,6 +89,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return monster.statsWithModifiers.map((s) => {
       return {
         ...s,
+        renderedScore: formattedNumeric(`stats.${s.stat}`, s.score),
         renderedModifier: renderBonus(statModifier(s.score)),
       }
     })
@@ -160,7 +170,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const splitAc = Boolean((monster as any).splitAcRiderRows)
     const rawAcType = monster.ACType ? monster.ACType.trim() : ''
     if (splitAc && rawAcType) {
-      const badges: string[] = [numHtml(monster.AC)]
+      const badges: string[] = [numericHtml('AC', monster.AC)]
       const parts = rawAcType.split(/\s*[;,]\s*/).filter(Boolean)
       for (const p of parts) badges.push(p)
       const inv = monster.extendedHp?.invulnerability
@@ -171,7 +181,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return badges
     }
 
-    const baseAc = cleanPunctuation(`${numHtml(monster.AC)}${rawAcType !== '' ? ` (${formatDistanceUnit(rawAcType)})` : ''}`)
+    const baseAc = cleanPunctuation(`${numericHtml('AC', monster.AC)}${rawAcType !== '' ? ` (${formatDistanceUnit(rawAcType)})` : ''}`)
     const badges: string[] = [baseAc]
 
     const inv = monster.extendedHp?.invulnerability
@@ -193,7 +203,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const hasExplicitOverride = ext.bloodiedOverride != null && Number(ext.bloodiedOverride) > 0
     if (!src && !ext.showBloodied && !hasExplicitOverride) return null
     if (hasExplicitOverride && (!src || src === 'flat')) {
-      return `${ext.bloodiedOverride}`
+      return formattedNumeric('extendedHp.bloodiedOverride', ext.bloodiedOverride ?? '')
     }
     const effectiveSrc = !src || src === 'none' ? 'half_hp' : src
     return resolveDynamicNumericSource(
@@ -230,7 +240,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     )
 
     // 1. Primary HP & Hit Dice (Merged cleanly, or split Bloodied into its own rider row when splitHpRiderRows is enabled)
-    const dicePart = `<span class="dnd-hp-hd">(${monster.HP.HD}d${monster.HP.type}${hpModifier.value})</span>`
+    const dicePart = `<span class="dnd-hp-hd">(${formattedNumeric('HP.HD', monster.HP.HD)}d${formattedNumeric('HP.type', monster.HP.type)}${hpModifier.value ? formattedNumeric('HP.modifier', hpModifier.value) : ''})</span>`
     if (!isParagon && bloodiedValue.value != null) {
       if ((monster as any).splitHpRiderRows) {
         badges.push(`${numHtml(monster.avgHp)} ${dicePart}`)
@@ -276,7 +286,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       } else {
         const pools = describePools(poolCount, monster.paragonConfig?.poolHp)
         if (pools?.kind === 'uniform') {
-          normalPhases.push(`${numHtml(pools.count)} Pools of ${numHtml(pools.hp)} HP`)
+          normalPhases.push(`${numericHtml('paragonConfig.poolCount', pools.count)} Pools of ${numHtml(pools.hp)} HP`)
         } else if (pools?.kind === 'list') {
           pools.pools.forEach((pool) => normalPhases.push(`${numHtml(pool.hp)} (${pool.label})`))
         } else {
@@ -306,7 +316,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         ext.regeneration.displayMode === 'both' ||
         !ext.regeneration.displayMode)
     ) {
-      const minRegen = formatMinimalistRegen(ext.regeneration, dynCtx.value)
+      const minRegen = formatMinimalistRegen(ext.regeneration, dynCtx.value, (field, value) => formattedNumeric(`extendedHp.regeneration.${field}`, value))
       if (minRegen) {
         badges.push(minRegen)
       }
@@ -320,7 +330,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       else if (thp.trigger === 'bloodied') trigStr = ' when bloodied'
       else if (thp.trigger === 'short_rest') trigStr = ' on short rest'
       else if (thp.trigger === 'long_rest') trigStr = ' on long rest'
-      badges.push(`+${thp.amount} temp HP${trigStr}`)
+      badges.push(`+${formattedNumeric('extendedHp.tempHp.amount', thp.amount)} temp HP${trigStr}`)
     }
 
     // 4. Minimalist Direct Death Prevention (No redundant "Immortal" wrapper)
@@ -349,7 +359,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageThresholdDisruption)
-      badges.push(`DT ${dtStr}${dStr ? ` (disrupted by ${dStr})` : ''}`)
+      badges.push(`DT ${formattedNumeric('extendedHp.damageThreshold', dtStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`)
     }
 
     // 6. Damage Reduction (DR)
@@ -364,7 +374,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageReductionDisruption)
-      badges.push(`DR ${drStr}${dStr ? ` (disrupted by ${dStr})` : ''}`)
+      badges.push(`DR ${formattedNumeric('extendedHp.damageReduction', drStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`)
     }
 
     // 7. Invulnerability in HP
@@ -405,7 +415,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         ? renderBonus(save.overrideValue)
         : renderBonus(saveModifierForStat(monster, stat as keyof typeof monster.saves))
 
-      return advHtml(`${stat} ${numHtml(modStr)}${condHtml(cond)}`, hasAdv, hasDisadv)
+      return advHtml(`${stat} ${numericHtml(`saves.${stat}.overrideValue`, modStr)}${condHtml(cond)}`, hasAdv, hasDisadv)
     })
 
     return allSaves.filter((s) => s !== '').join(', ')
@@ -420,6 +430,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       {
         stat: DndStat
         score: number
+        renderedScore: string
         modifier: number
         renderedModifier: string
         renderedSave: string
@@ -438,10 +449,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         : renderBonus(
             saveModifierForStat(monster, s.stat as keyof typeof monster.saves)
           )
-      const saveHtml = advHtml(`${numHtml(baseSave)}${condHtml(cond)}`, hasAdv, hasDisadv)
+      const saveHtml = advHtml(`${numericHtml(`saves.${s.stat}.overrideValue`, baseSave)}${condHtml(cond)}`, hasAdv, hasDisadv)
 
       data[s.stat] = {
         ...s,
+        renderedScore: formattedNumeric(`stats.${s.stat}`, s.score),
         renderedModifier: renderBonus(statModifier(s.score)),
         renderedSave: saveHtml,
       }
@@ -478,7 +490,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const note = noteBits.length > 0 ? ` (${noteBits.join(', ')})` : ''
       const type =
         s.type != null && s.type.toLowerCase() === 'walk' ? '' : `${s.type} `
-      return `${capitalize(type)}${s.speed} ft.${note}`
+      return `${capitalize(type)}${formattedNumeric(`speeds[id=${encodeURIComponent(s.id)}].speed`, s.speed)} ft.${note}`
     })
 
     if (trav) {
@@ -561,7 +573,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       }
     }
 
-    return parts.join('; ')
+    return options.web === false ? mechanicPlainText(parts.join('; ')) : parts.join('; ')
   })
 
   const speedBaseBadges = computed(() => {
@@ -984,7 +996,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const formatGroupRow = (row: SkillGroupRow): string => {
     const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
-    if (!row.base) return parts.join('; ')
+    if (!row.base) return options.web === false ? mechanicPlainText(parts.join('; ')) : parts.join('; ')
     const baseHtml = numHtml(`${row.base.passive}/${renderBonus(row.base.bonus)}`)
     return parts.length > 0 ? `${baseHtml}, ${parts.join('; ')}` : baseHtml
   }
@@ -1147,7 +1159,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const formatSingleSenseItem = (item: any, omitScope = false): string => {
     const rangeUnit = item.rangeUnit || 'ft'
-    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${item.range} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}` : ''
+    const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${formattedNumeric(`sensesList[id=${encodeURIComponent(item.id)}].range`, item.range)} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}` : ''
     const notes: string[] = []
 
     // Universal modifiers
@@ -1182,7 +1194,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (item.observationRequirement && item.observationRequirement !== 'none') {
         const mins = item.observationMinutes ?? 1
         const mode = item.observationRequirement === 'both' ? 'observing or fighting' : item.observationRequirement
-        obsStr = ` after ${mins} min${mins === 1 ? '' : 's'} of ${mode}`
+        obsStr = ` after ${formattedNumeric(`sensesList[id=${encodeURIComponent(item.id)}].observationMinutes`, mins)} min${mins === 1 ? '' : 's'} of ${mode}`
       }
       const studyStr = item.requiresStudyAction ? ' (requires Study action)' : ''
       notes.push(`learns ${precisionStr} ${joinedInfo}${obsStr}${studyStr}`)
@@ -1273,7 +1285,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       if (planarGroup.length > 1) {
         const rangeUnit = planarGroup[0].rangeUnit || 'ft'
         const range = planarGroup[0].range
-        const allSameRange = planarGroup.every((it) => it.range === range && (it.rangeUnit || 'ft') === rangeUnit)
+        const allSameRange = planarGroup.every((it) => it.range === range && (it.rangeUnit || 'ft') === rangeUnit && !monster.bindings?.[`sensesList[id=${encodeURIComponent(it.id)}].range`]?.presentation)
         if (allSameRange) {
           const rangeStr = `${range} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}`
           const commonPrefix = `${rangeStr} across Material and Ethereal Planes`
@@ -1318,7 +1330,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
     if (Array.isArray(monster.languagesList) && monster.languagesList.length > 0) {
       for (const item of monster.languagesList) {
-        const formatted = formatLanguageItem(item)
+        const formatted = formatLanguageItem(item, (field, value) => formattedNumeric(`languagesList[id=${encodeURIComponent(item.id)}].${field}`, value))
         if (formatted) badges.push(formatted)
       }
       return badges
@@ -1335,7 +1347,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       (Array.isArray(monster.languagesList) && monster.languagesList.length > 0) ||
       monster.specialCommunicationArchetype
     ) {
-      return formatLanguagesList(monster.languagesList, monster.specialCommunicationArchetype)
+      return formatLanguagesList(monster.languagesList, monster.specialCommunicationArchetype, (item, field, value) => formattedNumeric(`languagesList[id=${encodeURIComponent(item.id)}].${field}`, value))
     }
     return monster.languages ?? ''
   })
@@ -1472,7 +1484,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return list
   })
 
-  const filterByStagePool = <T extends { stagePool?: string }>(items: T[]): T[] => {
+  const filterByStagePool = <T extends { stagePool?: string | number }>(items: T[]): T[] => {
     const isParagon = Boolean(monster.paragonConfig?.enabled || (monster.paragonConfig?.poolCount && monster.paragonConfig.poolCount > 1))
     if (!isParagon) return items
     const active = monster.paragonConfig?.activePoolFilter
@@ -1536,7 +1548,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const classSpellcastingPreamble = computed(() => {
-    return processClassSpellcasting(monster.spellcasting, monster)
+    const preamble = processClassSpellcasting(monster.spellcasting, monster)
+    const resources = castingResourceSummary(monster.spellcasting, monster.stats, monster.proficiency)
+    return resources ? preamble + ' ' + resources + '.' : preamble
   })
 
   const innateSpellcastingPreamble = computed(() => {
@@ -1563,9 +1577,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const classSpellcastingSlots = computed(() => {
     const sc = monster.spellcasting
+    const combined = sc.classes?.length || sc.contribution?.mode === 'custom' ? aggregateSpellcastingSources(sc, monster.stats, monster.proficiency) : undefined
+    const primaryPool = castingResourceView({ ...sc, className: sc.class }, combined)
     // Selection owns disclosure; a spell point/focus row must not disappear for having no slot count.
     const spellsBySlot = Array.from({ length: 9 }, (_, index) => ({
-      level: index + 1, slots: sc?.slots?.[index] || 0,
+      level: index + 1, slots: primaryPool.slots?.[index] || 0,
       spells: monster.knownSpellsOfLevel(index + 1),
     }))
     // Same heading as the web plate (spellLevelHeading); the old label put the cadence after the colon.
@@ -1579,25 +1595,26 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return {
         ...s, spells,
         renderedLabel: spellLevelHeading({
-          level: s.level, slots: sc?.slots, resourceType: sc?.resourceType, className: sc?.class,
+          level: s.level, slots: primaryPool.slots, resourceType: primaryPool.resourceType, className: sc?.class, pactPool: primaryPool.pactPool,
           refreshRate: sc?.refreshRate, customRefreshRate: sc?.customRefreshRate, levelCadence,
           bonusAction: Boolean(sc?.bonusActionLevelMap?.[s.level]),
           labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') },
         }),
-        renderedSpells: renderSpells(spells, sc?.spellCadenceMap, levelCadence === 'hidden' ? '' : cadenceLabel(levelCadence || sc?.customRefreshRate || sc?.refreshRate || (sc?.class === 'Warlock' ? 'short_rest' : 'long_rest'))),
+        renderedSpells: renderSpells(spells, sc?.spellCadenceMap, spellRowRecovery(s.level, levelCadence, { ...sc, className: sc.class, pactPool: primaryPool.pactPool })),
       }
     }).filter((row) => row.spells.length)
     const secondary = (sc?.classes || []).flatMap((source) => Array.from({ length: 10 }, (_, level) => {
       const spells = monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name))
       const cadence = source.levelCadences?.[level]
+      const pool = castingResourceView(source, combined)
       return {
-        level, slots: source.slots?.[level - 1] || 0, spells,
+        level, slots: pool.slots?.[level - 1] || 0, spells,
         renderedLabel: [source.className, source.subclass].filter(Boolean).join(' · ') + ' · ' + spellLevelHeading({
-          level, slots: source.slots || (source.className === 'Warlock' || ['pact', 'focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
-          className: source.className, resourceType: source.resourceType, refreshRate: source.refreshRate,
+          level, slots: pool.slots || (source.className === 'Warlock' || ['pact', 'focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
+          className: source.className, resourceType: pool.resourceType, pactPool: pool.pactPool, refreshRate: source.refreshRate,
           levelCadence: cadence, bonusAction: Boolean(source.levelBonusAction?.[level]),
         }),
-        renderedSpells: renderSpells(spells, source.spellCadenceMap, cadence === 'hidden' ? '' : cadenceLabel(cadence || (level === 0 ? 'at_will' : source.refreshRate || (source.className === 'Warlock' ? 'short_rest' : 'long_rest')))),
+        renderedSpells: renderSpells(spells, source.spellCadenceMap, spellRowRecovery(level, cadence, { ...source, pactPool: pool.pactPool })),
       }
     }).filter((row) => row.spells.length))
     return [...primary, ...secondary]

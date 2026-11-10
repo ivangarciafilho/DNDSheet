@@ -18,7 +18,7 @@ test('cantrips, hidden cadence and a custom refresh', () => {
 test('pact magic shows the shared slot lead only on the pact level', () => {
   const pact = [0, 0, 2, 0, 0, 0, 0, 0, 0]
   assert.equal(spellLevelHeading({ level: 3, slots: pact, className: 'Warlock' }), '(2/Short Rest), Level 3:')
-  assert.equal(spellLevelHeading({ level: 1, slots: pact, className: 'Warlock' }), 'Level 1:')
+  assert.equal(spellLevelHeading({ level: 1, slots: pact, className: 'Warlock' }), '(Short Rest), Level 1:')
 })
 
 test('the helper and the web plate composition never diverge', () => {
@@ -30,7 +30,7 @@ test('the helper and the web plate composition never diverge', () => {
       spellLevels: [1, 2, 3].map((level) => ({ level, spells: [{ name: 'Test Spell' }] })),
     } as Parameters<typeof buildSpellPlate>[0])
     for (const row of plate.levels) {
-      const lead = !plate.isPact || row.level === plate.maxPactLevel ? spellLevelLead(row.slotCount, row.cadence) : ''
+      const lead = !plate.isPact || row.level === plate.maxPactLevel ? spellLevelLead(row.slotCount, row.cadence) : spellLevelLead(undefined, row.cadence)
       const web = `${lead}Level ${row.level}${row.bonusAction ? ' (Bonus Action)' : ''}:`
       assert.equal(spellLevelHeading({ level: row.level, slots, className, levelCadence: levelCadenceMap[row.level as 2] }), web, `${className} level ${row.level}`)
     }

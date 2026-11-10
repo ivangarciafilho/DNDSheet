@@ -1,0 +1,848 @@
+Launching headless Chrome on port 9223...
+(node:51600) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/exhaustive-ui-fuzz.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Target found: http://localhost:9231/DNDSheet/index.html#/
+Waiting for Quasar #q-app mount...
+App ready state: true
+
+--- Step 1: Initial Render Parity Verification ---
+Step 1 result: {
+  success: true,
+  name: 'My New Monster',
+  type: 'MediumhumanoidUnaligned',
+  ac: 'AC10',
+  htmlLen: 7779
+}
+
+--- Step 2: Fuzzing Basics Editor (Name, AC, HP, Stats, CR) ---
+Step 2 result: {
+  success: true,
+  renderedName: 'Ancient Red Wyrm',
+  renderedType: 'Gargantuandragonchaotic evil',
+  renderedAc: 'AC19 (natural armor)',
+  hpText: 'HP4 (1d8)'
+}
+
+--- Step 3: Fuzzing Dirty / In-Progress Typing (Empty string, NaN, Edge values) ---
+Step 3 result: { success: true, hasRender: true, renderedName: 'Elder Shadow Dragon' }
+
+--- Step 4: Adding Attacks with Advanced Token Formulas ---
+Step 4 result: {
+  success: true,
+  attackCount: 1,
+  latestAttack: 'Bite of Annihilation. Melee Attack Roll: +17 to hit, reach 5 ft.. Hit: 32 (4d10 + 10) piercing damage, or 43 (6d10 + 10) force damage if the target is prone plus 14 (4d6) fire damage plus fire. '
+}
+
+--- Step 5: Adding Traits, Actions, Reactions, Multiattacks, Spellcasting ---
+Step 5 result: { success: true, traitCount: 1, actionCount: 1, hasMultiattack: true }
+
+--- Step 6: Toggling 2014 Classic / 2024 Revised Ruleset ---
+Step 6 result: {
+  success: true,
+  switched2024Ok: true,
+  switched2014Ok: true,
+  currentClasses: 'statblock mm2024 theme-wotc'
+}
+
+--- Step 7: CR Calculation Engine & Footer Reactive Output ---
+Step 7 result: {
+  hasFooter: true,
+  footerSnippet: 'Estimated CR12Offensive CR14Defensive CR10 57 ( 9 CR) +17 ( +5 CR) 0 ( +5 CR) 190 (CR 8) shield20 ( +2 CR) 2Open Gaming License 1.0 | v2.4.3 build 227 | Created by Falindrith |'
+}
+
+--- Step 8: AutoTune CR Dialog In-Page UI Test ---
+Step 8 result: { success: true, dialogFound: true, title: 'CR Auto-Tuner' }
+
+--- Step 9: Monster Lint Dialog In-Page UI Test ---
+Step 9 result: {
+  success: true,
+  dialogFound: true,
+  title: 'Statblock Health & Linter'
+}
+
+--- Step 10: Multi-Format Export Dropdown In-Page UI Test ---
+Step 10 result: {
+  success: true,
+  menuItemsFound: [
+    'Export JSON (5emm format)',
+    'Export Markdown (Homebrewery v3)',
+    'Export JSON (Improved Initiative format)',
+    'Export LaTeX (rpgtex)',
+    'Export JSON (Tarrasque.io format)',
+    'Export Markdown (Homebrewery Legacy)',
+    'Foundry VTT (Actor5e JSON)',
+    'Plain Text (.txt)',
+    'HTML Snippet (.html)',
+    'Save as PNG',
+    'Copy Markdown to Clipboard (Homebrewery v3)',
+    'Copy 5emm Link (tinyurl)'
+  ]
+}
+
+--- Step 11: Undo / Redo Lifecycle In-Page UI Test ---
+Step 11 result: {
+  success: true,
+  initialName: 'Ancient Red Wyrm',
+  undoneName: 'Ancient Red Wyrm',
+  redoneName: 'Mythic Hydra of Theros'
+}
+
+--- Step 12: AI Statblock Ingestion Studio UI Test ---
+Step 12 result: {
+  success: true,
+  ingestedName: 'Infernal Cinder Dragon',
+  ingestedCr: 15,
+  dialogWasOpen: true,
+  dialogTextSnippet: 'auto_awesomeAI Statblock Ingest Studioclose Paste any raw text or markdown containing a statblock ge'
+}
+
+--- Step 13: Combat Tracker HUD Integration UI Test ---
+Step 13 result: {
+  success: true,
+  combatantCount: 1,
+  damageApplied: 10,
+  hasPoison: true
+}
+
+--- Step 14: Hero / Character Sheet Mode Switcher Test ---
+Step 14 result: {
+  success: true,
+  charEditorFound: true,
+  charSheetFound: true,
+  hasCharExport: true,
+  charMenuItems: [
+    'Export Character JSON (.json)',
+    'Export Character Markdown (.md)',
+    'Export Character Plain Text (.txt)',
+    'Save Sheet as PNG',
+    'Copy Character Markdown'
+  ],
+  restoredMonsterSplitter: true
+}
+
+--- Step 15: Extended Features In-Page DOM Verification (Portrait, Extended HP, Detailed Modifiers, Action Passives, Trait Sections) ---
+Step 15 result: {
+  success: true,
+  portraitFound: true,
+  caption: 'Ancient Gargoyle Paragon',
+  hasBloodied: true,
+  hasThreshold: true,
+  hasReduction: true,
+  hasRegenTrait: true,
+  hasPassives: true,
+  hasLightningAbsorption: true,
+  hasFireAdvantage: true,
+  hasConsolidatedTag: true
+}
+
+--- Step 16: Hero Character Sheet Deep Features Verification (Saves, Skills, Spell Slots, Spells, Portrait) ---
+Step 16 result: {
+  success: true,
+  hasName: true,
+  hasWizard: true,
+  hasArcana: true,
+  hasFireball: true,
+  hasSpellSlots: true,
+  hasPortrait: true
+}
+
+--- Step 17: Multi-Route Navigation Sweep (/spells, /templates, /reset, /) ---
+Step 17 result: {
+  success: true,
+  hasSpellsTable: true,
+  hasTemplatesTable: true,
+  hasResetCard: true,
+  hasHomeSplitter: true
+}
+
+--- Step 18: Incoherence Fixes & Deep Verification (Tools, Save Badges, Speeds Traversal, Telepathy Matrix, Sub-Sections) ---
+Step 18 result: {
+  success: false,
+  hasAdvBadge: true,
+  hasDisadvBadge: true,
+  hasCharmCond: true,
+  hasToolsLine: true,
+  hasTraversalDifficult: false,
+  hasTraversalCunning: false,
+  hasTelepathyMatrix: true,
+  hasRechargeSubSection: true,
+  hasConditionalSubSection: true
+}
+
+--- Step 19: Advanced Modular Editors, Defense Modifiers & Special Languages Deep Verification ---
+Step 19 result: {
+  success: true,
+  hasVulnCond: true,
+  hasResAbsorb: true,
+  hasImmBenefit: true,
+  hasTelepathySave: true,
+  hasAnimalsLang: true,
+  hasHandleAnimals: true,
+  hasPassiveCond: true
+}
+
+--- Step 20: Right-Aligned Badges, Passive Scores Advantage Math, 6-Category Defenses, Archetype Communication & Paragon Boss Pools UI Test ---
+Step 20 result: {
+  success: false,
+  hasRightAdvBadge: false,
+  passivePerceptionVal: 22,
+  expectedPassive: 22,
+  passiveMathCorrect: true,
+  hasDmgVuln: true,
+  hasCondVuln: true,
+  hasDmgRes: true,
+  hasCondRes: true,
+  hasDmgImm: true,
+  hasCondImm: true,
+  hasFirbolg: true,
+  hasParagonHp: true,
+  hasStageAction: true,
+  hpText: 'HP225 (18d12+108); 3 Pools of 80 HP; [ 55 | [Bloodied] ]; +15/turn (radiant); Undead Fortitude (radiant or critical hit); DT 12; DR 4'
+}
+
+--- Step 21: Dynamic Telepathy Prose, Clean Handle Animals Syntax, Amorphous Speeds & Initiative Badge UI Test ---
+Step 21 result: {
+  success: false,
+  hasDynamicTelepathy: true,
+  hasCleanHandleAnimals: true,
+  hasHover: true,
+  hasAmorphous1Inch: true,
+  hasShuntDamage: true,
+  hasAmphibious: false,
+  hasInitAdvBadge: false,
+  initPassiveMath: true,
+  initMod: 6,
+  initPassive: 21
+}
+
+--- Step 22: Modern Modular Visual Theme, Senses Physiology Matrix & Top-Right CR Badge UI Test ---
+Step 22 result: {
+  success: true,
+  hasTopCrCluster: true,
+  hasBlindsightPhysiology: true,
+  hasDevilsSight: true,
+  hasWebSense: true,
+  hasModernModularClass: true
+}
+
+--- Step 23: Invulnerability, Dynamic Value Sources, Cascading Hierarchy, Analytical Senses & Inline Legendary Actions UI Test ---
+Step 23 result: {
+  success: true,
+  hasAcInvuln: true,
+  noRawEnumInHp: true,
+  hasCascadingPanels: true,
+  hasAnalyticalSense: true,
+  hasStandaloneLegendary: true,
+  hasPhaseCellInAction: true
+}
+
+--- Step 24: Unified 2-Row Cellular Top Plate (CR|PB|XP|Name|Initiative), Inline Defense Headers, Decoupled N-Condition Invulnerability & Per-Line Zebra Stripes UI Test ---
+Step 24 result: {
+  success: true,
+  hasUnifiedTopPlate: true,
+  hasInitInTopPlate: true,
+  hasUnifiedDefensePanels: true,
+  noRedundantSavesPanel: true,
+  hasCombinedInvulnerability: true,
+  hasZebraStripes: true
+}
+--- Step 25: Multi-Phase Initiative (>3 + Lair), Adv/Disadv Grammar, Cascading Bloodied Phases, Consolidated Skills/Tools/Passives & 15-Timeframe Regen ---
+Step 25 result: {
+  success: true,
+  numberRole: {
+    cellsWithoutNumber: 0,
+    initNums: [ '+6', '+12', '+15', '+18', '+22', '20' ],
+    hpNumCount: 5,
+    fontDrift: [],
+    retired: 0,
+    matrix: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object]
+    ],
+    hasMatrix: true,
+    pools: {
+      text: 'HP225 (18d12+108); 3 Pools of 120 HP; +15/end of a turn (acid or fire); Returns ',
+      hasPhrase: true,
+      numbered: true,
+      untouched: true,
+      stageInputFound: true,
+      materialised: true
+    }
+  },
+  initCellsCount: 6,
+  initHasWrappedAdvPill: true,
+  hasBloodiedStageBadges: true,
+  bloodiedBadgeText: '[ 56 (Stage 3) | 28 (Stage 4, Final) | [Bloodied] ]',
+  hasSingleBloodiedTag: true,
+  hasConsolidatedScopes: true,
+  hasRegenDisruption: true,
+  breakdown: {
+    hasStudy: true,
+    hasInfluence: true,
+    hasSearch: true,
+    hasHide: true,
+    hasNoRedundantSkillsRow: true,
+    hasTools: true,
+    hasSleight: true,
+    hasPoisoner: true
+  },
+  skillsSnippet: "iercing damage plus 7 (2d6) fire damage plus fire.Search(12/+2, 27/+12, Perception ▲▲)Study(13/+3)Influence(14/+4, 17/+7, Animal Handling; 19/+9, Performance)Hide(11/+1)Use Tool(17/+7, Herbalism Kit)Stage 2 Cataclysmic QuakeShatters the ground.Bonus ActionsHide(21/+6, Sleight of Hand ▲▲)Use Tool(23/+8, Poisoner's Kit ▲▲)Legendary ActionsInfernal Cinder Dragon can take 3 legendary actions, choosing from the options below. Only one legendary action"
+}
+
+--- Step 26: Classic WotC Parchment Modern Modular Theme & 1:1 A4 Sheet Print Simulation UI Test ---
+Step 26 result: {
+  success: true,
+  hasModernModularWotc: true,
+  hasA4Viewport: true,
+  hasA4PageSheet: true,
+  hasA4Portrait: true,
+  hasA4Header: true,
+  hasA4Footer: true,
+  hasA4Landscape: true,
+  hasA4Compact: true,
+  hasNormalRestored: true
+}
+
+--- Step 27: AC Submodule Attacker Save Permutations Live Reactive DOM Test ---
+Step 27 result: {
+  success: true,
+  hasTarget1: true,
+  hasTarget2: true,
+  hasTarget3: true,
+  snippet1: 'ACAttacker must Succeed on a Wisdom Saving Throw DC 30, On Failure Knocks Prone, On Success Takes 13',
+  snippet3: 'ACAttacker Must Succeed on a Wisdom Saving Throw DC 30 to Hit'
+}
+
+--- Step 28: Minimalist Death Prevention Prose Targets Live DOM Test ---
+Step 28 result: {
+  success: true,
+  hasTarget1: true,
+  hasTarget2: true,
+  snippet1: 'HP225 (18d12+108); 112 (Stage 1) | 112 (Stage 2); [ 56 (Stage 3) | 28 (Stage 4, Final) | [Bloodied] ]; +15/end of a turn',
+  snippet2: 'HP225 (18d12+108); 112 (Stage 1) | 112 (Stage 2); [ 56 (Stage 3) | 28 (Stage 4, Final) | [Bloodied] ]; +15/end of a turn'
+}
+
+--- Step 29: A4 Layer Studio Transforms & Simulation Flush Badges Live DOM Test ---
+Step 29 result: {
+  success: true,
+  hasStatblockTransform: true,
+  hasPortraitTransform: true,
+  hasLayerTransform: true,
+  isFlush: true,
+  statblockTransform: 'translate(12px, 24px) scale(1.05, 0.95)',
+  portraitTransform: 'translate(-10px, 15px) scale(1.1)',
+  layerTransform: 'translate(5px, -5px) scale(1.05)',
+  panelPaddingLeft: '0px'
+}
+
+--- Step 30: Inline A4 Layer Studio, Spellcasting Restoration & Passives Reactivity Live DOM Test ---
+Step 30 result: {
+  success: true,
+  hasInlineStudio: true,
+  hasInnateSpellcasting: true,
+  hasStandardSpellcasting: true,
+  hasSearchBonusAction: true,
+  hasStudyBonusAction: true,
+  hasSmellCondition: true,
+  layersCount: 4
+}
+
+--- Step 31: Dynamic Reference Dropdown Compositor & Formula Engine Live DOM Test ---
+Step 31 result: {
+  success: true,
+  hasSpeeds: true,
+  hasSaveOverride: true,
+  hasSkillOverride: true,
+  hasAcAttackerSave: true,
+  hasDt: true,
+  hasDr: true
+}
+
+--- Step 32: Auto-Proficient Skills, Multiclass Spellcasting, Spell Tags & Compound Actions ---
+Step 32 result: {
+  success: true,
+  isAutoProficient: true,
+  hasRedundantPreamble: false,
+  hasSpellTags: true,
+  hasCompoundAction: true,
+  hasStructuredAction: true,
+  isStudioAtTop: true,
+  templateCancelPreserves: true,
+  templateApplied: true,
+  templateAppliedDetails: {
+    name: 'Holy Javelin',
+    attackReach: 'ranged',
+    distance: 120,
+    bonusAction: false,
+    id: 'a6-soul-barrage',
+    recharge: '',
+    dialogStillOpen: false
+  }
+}
+
+--- PHASE 33: A4 Studio Radial/Dual-Knob Cropping, Far-Left Recharge, Defense Consolidation & Spell Cadence Badges ---
+
+--- Step 33: Unified composition and phase presentation ---
+Step 33 result: {
+  success: true,
+  radialGizmosCount: 7,
+  dualKnobSlidersCount: 6,
+  hasRightPortrait: true,
+  hasLeftPortrait: true,
+  hasFarLeftRecharge: true,
+  hasDefenses: true,
+  hasCasterSourceTitle: true,
+  hasResourcePill: true,
+  hasCadenceBadge: true
+}
+
+--- Step 34: Structured abilities render their mechanics in every template and section ---
+Step 34 result: {
+  success: true,
+  checks: {
+    classicLegendary: true,
+    classicMythic: true,
+    classicTemplatedAction: true,
+    modernLegendary: true,
+    modernMythic: true
+  }
+}
+
+--- Step 35: Composer chain edits plate cells by keyboard; edits the authoritative stat block ---
+Step 35 result: {
+  "setup": {
+    "ready": true,
+    "rows": [
+      "head",
+      "mechanics",
+      "scope",
+      "outcomes"
+    ],
+    "attack": "Ranged Spell Attack"
+  },
+  "opened": {
+    "open": true,
+    "onOption": true,
+    "option": "Ranged Spell Attackcheck"
+  },
+  "picked": {
+    "reach": "melee_or_ranged",
+    "source": "spell",
+    "menus": 0,
+    "focusBack": true
+  },
+  "escaped": {
+    "menus": 0,
+    "focusBack": true
+  },
+  "parity": {
+    "count": 2,
+    "modern": {
+      "same": true,
+      "text": "Holy Javelin, 2nd Level Evocation (V, S)Melee or Ranged Spell Attack +92 creatures which you can see range 120 ft.On Hit: 11 (2d10) Radiant "
+    },
+    "classic": {
+      "same": true,
+      "text": "Holy Javelin (V, S). 2nd Level Evocation. Melee or Ranged Attack Roll: +9, range 120 ft., two creatures which you can see. Hit: 11 (2d10) Ra"
+    }
+  },
+  "responsive": {
+    "width": 291,
+    "scrollWidth": 291,
+    "rowDirection": "column"
+  },
+  "success": true,
+  "typeParity": {
+    "total": 56,
+    "failing": 0,
+    "failures": []
+  }
+}
+
+--- Step 36: Reaction chain edits its typed trigger and updates the rendered reaction ---
+Step 36 result: {
+  "setup": {
+    "ready": true,
+    "rows": [
+      "head",
+      "mechanics",
+      "scope",
+      "outcomes"
+    ],
+    "cells": [
+      "usage",
+      "name",
+      "components",
+      "discipline",
+      "tier",
+      "duration",
+      "trigger",
+      "attack",
+      "save-ability",
+      "target-count",
+      "target-kind",
+      "target-qualifier",
+      "target-range",
+      "target-area",
+      "target-planes",
+      "outcomes"
+    ],
+    "trigger": "When a creature moves within 10 ft.",
+    "focusReady": true
+  },
+  "edit": {
+    "applied": true,
+    "trigger": "When a creature moves within 15 ft.",
+    "menuClosed": true,
+    "focusReturned": true
+  },
+  "parity": {
+    "hasTrigger": true,
+    "sheetRendered": true,
+    "rendererText": "3/Day Tail SwipeTrigger: When a creature moves within 15 ft.The monster makes a tail attack."
+  },
+  "success": true
+}
+
+--- Step 37: Trait cadence drafts, display settings, renderer parity and persistence ---
+Step 37 result: {
+  "setup": {
+    "mounted": true,
+    "cells": [
+      "trait-usage",
+      "name",
+      "components",
+      "discipline",
+      "tier",
+      "duration",
+      "attack",
+      "save-ability",
+      "target-count",
+      "target-kind",
+      "target-qualifier",
+      "target-range",
+      "target-area",
+      "target-planes",
+      "outcomes"
+    ]
+  },
+  "cancel": {
+    "ready": true,
+    "invalid": true,
+    "unchanged": true,
+    "focusBack": true
+  },
+  "apply": {
+    "ready": true,
+    "count": 3,
+    "timing": "DAY",
+    "rechargeCount": 3,
+    "description": "Regains 5 hit points.",
+    "crIntact": true,
+    "focusBack": true
+  },
+  "parity": {
+    "modern": true,
+    "classic": true,
+    "grouped": true,
+    "heading": true,
+    "liveText": true,
+    "customPreview": true
+  },
+  "responsive": {
+    "width": 291,
+    "scrollWidth": 291,
+    "menuWidth": 185,
+    "menuScrollWidth": 185,
+    "viewport": 375
+  },
+  "legacyCr": true,
+  "persisted": true,
+  "success": true
+}
+
+--- Step 38: Lair adapter and typed legendary/mythic/lair section context ---
+Step 38 result: {
+  "mounted": true,
+  "readOnly": true,
+  "proseEdited": true,
+  "modern": true,
+  "classic": true,
+  "invalid": true,
+  "canceled": true,
+  "defaultPreamble": true,
+  "customPreamble": true,
+  "legendary": true,
+  "mythic": true,
+  "tuningPreserved": true,
+  "narrow": {
+    "width": 313,
+    "scrollWidth": 313
+  },
+  "persisted": true,
+  "success": true
+}
+
+--- Step 39: Reviewed role changes preserve data and references ---
+Step 39 result: {
+  "moveReviewed": true,
+  "canceledMove": true,
+  "moveIntact": true,
+  "copyReviewed": true,
+  "canceledCopy": true,
+  "copyIntact": true,
+  "retained": true,
+  "cleanup": true,
+  "copyKept": true
+}
+
+--- Step 40: A v8-labelled save opened from disk keeps every authored field, plate order and seven-role sheet facts ---
+Step 40 result: {
+  "loaded": true,
+  "saveVersion": 11,
+  "lost": [],
+  "unmatched": [],
+  "reactionHead": "usage,name,components,discipline,tier,duration",
+  "persisted": true,
+  "success": true
+}
+
+--- Step 41: Markdown, Homebrewery, LaTeX and Improved Initiative exports print every role as prose, never web markup ---
+Step 41 result: {
+  "problems": [],
+  "unchanged": true,
+  "sizes": {
+    "modern:markdown": 2781,
+    "modern:homebrewery": 2752,
+    "modern:latex": 3443,
+    "modern:improvedInitiative": 2620,
+    "classic:markdown": 2781,
+    "classic:homebrewery": 2752,
+    "classic:latex": 3443,
+    "classic:improvedInitiative": 2620
+  },
+  "success": true
+}
+
+--- Step 42: Action usage edits real cadence with validation, cancel, clear and persistence ---
+Step 42 result: {
+  "correctDraft": true,
+  "invalid": true,
+  "canceled": true,
+  "limited": true,
+  "recharge": true,
+  "custom": true,
+  "cleared": true,
+  "preserved": true,
+  "narrow": true,
+  "persisted": true
+}
+
+--- Step 43: Classic metadata and complete targeting match modern facts and text exports ---
+Step 43 result: {
+  "problems": [],
+  "comparisons": 16,
+  "exports": 6,
+  "unchanged": true,
+  "cantrip": true,
+  "persisted": true
+}
+
+--- Step 44: Attack studio edits existing models without losing ranges, damage or references ---
+Step 44 result: {
+  "problems": [],
+  "canceled": true,
+  "invalid": true,
+  "comparisons": 4,
+  "custom": true,
+  "intact": true,
+  "refs": true,
+  "specialOnly": true,
+  "narrow": true,
+  "persisted": true,
+  "cleaned": true
+}
+
+--- Step 45: Multiattack references preserve occurrences, missing targets and shared rendering ---
+Step 45 result: {
+  "problems": [],
+  "missing": true,
+  "repaired": true,
+  "removed": true,
+  "moved": true,
+  "renamed": true,
+  "comparisons": 4,
+  "seeded": true,
+  "custom": true,
+  "retained": true,
+  "added": true,
+  "exports": 3,
+  "intact": true,
+  "narrow": true,
+  "persisted": true,
+  "cleaned": true,
+  "empty": true
+}
+
+--- Step 46: One rendered sheet, plain role selection and shared cadence vocabulary ---
+Step 46 result: {
+  "plainRole": true,
+  "categoryOptions": true,
+  "canceledRole": true,
+  "retainedUnknown": true,
+  "vocabulary": true,
+  "grouped": true,
+  "bloodied": true,
+  "interval": true,
+  "singleSurface": true,
+  "problems": [],
+  "projections": 6,
+  "exports": 3,
+  "kept": true,
+  "persisted": true
+}
+
+--- Step 47: Shared cadence, identity/components and classification heading order ---
+Step 47 result: {
+  "problems": [],
+  "comparisons": 16,
+  "exports": 3,
+  "cantrip": true,
+  "unchanged": true
+}
+
+--- Step 48: Studio display, CR and non-destructive memberships ---
+Step 48 result: {
+  "savedPhase": true,
+  "phase": true,
+  "ownHeading": true,
+  "cr": true,
+  "automaticParity": true,
+  "crAfterReorder": true,
+  "lairCr": true,
+  "sorting": true,
+  "added": true,
+  "costEdited": true,
+  "removedOnlyMembership": true,
+  "warning": true,
+  "repaired": true,
+  "retirementComplete": true,
+  "descriptionKept": true,
+  "persisted": true
+}
+
+--- Step 49: Studio-only editor, reaction templates and reversible section resets ---
+Step 49 result: {
+  "retirement": true,
+  "villainKept": true,
+  "panelCount": 15,
+  "templateSaved": true,
+  "templateApplied": true,
+  "problems": []
+}
+
+--- Step 50: Structured attack bonuses and target agreement share screen/export policy ---
+Step 50 result: {
+  "problems": [],
+  "projections": 16,
+  "exports": 3,
+  "chipMatches": true,
+  "live": true,
+  "authored": true
+}
+
+--- Step 51: Golden exports for the five text and JSON formats ---
+Step 51 result: []
+
+--- Step 52: Random tables persist through reset, undo, export and reload ---
+Step 52 result: {
+  "problems": [],
+  "resetClears": true,
+  "gapShown": true,
+  "rowContinues": true,
+  "gapCleared": true,
+  "nanSafe": true,
+  "rendered": true,
+  "themed": true,
+  "deleted": true,
+  "undone": true,
+  "markdown": true,
+  "json": true,
+  "persisted": true
+}
+
+--- Step 53: Recovered initiative cancellation and accessible roll glyphs ---
+Step 53 result: {"checks":32,"problems":[]}
+
+--- Step 54: Transactional table paste and statblock-owned A4 tables ---
+Step 54 result: {"previewSafe":true,"cancelled":true,"blocked":true,"applied":true,"rejected":true,"single":true,"named":true,"moved":true,"hidden":true,"ordered":true,"after":"[{\"id\":\"paste\",\"title\":\"Wild Surge\",\"dice\":\"1d6\",\"fallback\":\"Calm\",\"rows\":[{\"id\":\"stable\",\"min\":1,\"max\":2,\"text\":\"Fire\"},{\"id\":\"paste-import-2\",\"min\":3,\"max\":6,\"text\":\"Frost\"}]}]"}
+
+--- Step 55: Outcome sectors retain resolved mechanics, safe author text and containers ---
+Step 55 result: {"problems":[],"checks":8,"projectionPreserves":true,"undone":true,"persisted":true}
+
+--- Step 56: Presentation switches leave rules untouched; motion, zoom, focus, splitter and file names ---
+Step 56 result: {
+  "problems": [],
+  "switches": 16,
+  "rulesUntouched": true,
+  "safeName": true,
+  "splitterOk": true,
+  "reducedMotion": true,
+  "zoomNoOverflow": true,
+  "keyboard": true
+}
+
+--- Step 57: Tarrasque exports complete prose without losing numeric mechanics ---
+Step 57 result: {"structuredTrait":true,"legacyTrait":true,"attackProse":true,"legendaryPhysical":true,"numericMetadata":true,"structuredAction":true,"bonusOnce":true,"reaction":true,"customPreamble":true,"duplicateNames":true,"offPhase":true,"containers":true,"cantrip":true,"mythic":true,"plainBoundary":true,"templateInvariant":true,"legendary":true,"innate":true,"header":true,"repeat":true,"noMutation":true,"reload":true}
+
+--- Step 58: Character vitals disclose estimates and preserve recorded provenance ---
+Step 58 result: {"defaults":true,"recorded":true,"readable":true,"reload":true}
+RUNTIME EXCEPTIONS DETECTED: 0
+======================================================
+
+ALL 58 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!
+(node:31104) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-skills-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "suite": "Emergency skills routing",
+  "checks": {
+    "defaultOn": true,
+    "placementRemoved": true,
+    "medicineInSearch": true,
+    "actionRouting": true,
+    "bonusRouting": true,
+    "uncheckedHeader": true,
+    "retainedDetails": true,
+    "repeatToggle": true,
+    "headerText": "SearchBonus Action13/+3, 23/+5, Medicine (Emergency stabilization) ▲▲",
+    "checkboxOff": true,
+    "medicineRetained": true,
+    "bonusCostRetained": true
+  }
+}
+(node:59012) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-spellcasting-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Emergency spellcasting browser checks: {"cantripBonus":true,"rowCadence":true,"duplicateBadgeSuppression":true,"divergentBadges":true,"italicNames":true,"sourceSubclassFilter":true,"sourceIsolation":true,"sourceSettings":true,"manualFocus":true,"implicitMulticlass":true,"disabledLevels":true,"sourceCapacity":true,"customContribution":true,"reload":true}
+(node:37396) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-rich-mechanics-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Emergency rich mechanics browser checks: {"sharedRows":true,"draftIsolation":true,"rendered":true,"savedFormatting":true,"extension":true,"reload":true}
+(node:51856) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-containers-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Additional container browser checks: {"actionRoleFirst":true,"actionBothPersist":true,"actionStableIds":true,"actionRendered":true,"traitRoleFirst":true,"traitBothPersist":true,"traitStableIds":true,"traitRendered":true,"reactionRoleFirst":true,"reactionBothPersist":true,"reactionStableIds":true,"reactionRendered":true,"lairRoleFirst":true,"lairBothPersist":true,"lairStableIds":true,"lairRendered":true,"reload":true}
+(node:26632) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-numeric-presentation-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Numeric and catalog mechanic presentation browser checks: {"numericStyled":true,"plainCalculation":true,"numericMetadata":true,"richRider":true,"riderRendered":true,"reload":true}

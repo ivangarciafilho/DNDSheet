@@ -1,3 +1,4 @@
+import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 
 /**
@@ -45,5 +46,5 @@ export function htmlToText(html: string): string {
 
 export function condHtml(condition?: string): string {
   const text = (condition ?? '').trim()
-  return text ? ` <span class="dnd-badge-cond">(${escapeHtml(text)})</span>` : ''
+  return text ? ` <span class="dnd-badge-cond">(${mechanicRichHtml(text)})</span>` : ''
 }

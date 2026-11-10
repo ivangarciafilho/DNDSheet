@@ -1,3 +1,4 @@
+import type { NumericPresentation } from './numeric-presentation.ts'
 import type { DndStat } from './types.ts'
 
 /**
@@ -892,7 +893,7 @@ export function evaluateFormula(src: string, ctx: FormulaContext, opts: { style?
 /* Bindings: what an editor number field stores                        */
 /* ------------------------------------------------------------------ */
 
-export type NumericBinding = { mode: 'literal'; value: number } | { mode: 'ref'; ref: string } | { mode: 'formula'; expr: string }
+export type NumericBinding = ({ mode: 'literal'; value: number } | { mode: 'ref'; ref: string } | { mode: 'formula'; expr: string }) & { presentation?: NumericPresentation }
 
 /** Legacy fields hold plain numbers; new fields hold bindings. Both resolve here. */
 export type NumericInput = NumericBinding | number | string | null | undefined

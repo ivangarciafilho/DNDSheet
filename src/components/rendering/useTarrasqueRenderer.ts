@@ -24,7 +24,7 @@ export function useTarrasqueRenderer() {
   const monster = useMonsterStore()
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
-  const { processTokens, processTrait, processAction, processAttack, processReaction, processLegendaryAction } = useProcessTokens({ web: false })
+  const { processTokens, processTrait, processAction, processAttack, processReaction, processLegendaryAction, processLairAction } = useProcessTokens({ web: false })
   const { t } = useI18n()
 
   // Tarrasque.io also uses JSON so we'll corral the 5emm monster data into tarrasque's format
@@ -98,6 +98,9 @@ export function useTarrasqueRenderer() {
     tio.special_abilities = monster.traits.map((trait) =>
       tarrasqueEntry(processTrait(trait, monster), trait.name, trait.crAnnotation?.maxModifier ?? 0)
     )
+    for (const lair of monster.lairActions || []) {
+      tio.special_abilities.push({ name: 'Lair Action', desc: tarrasqueText(processLairAction(lair, monster)), attack_bonus: 0 })
+    }
 
     // The existing target contract merges bonus actions into actions and retains
     // physical attack fields. Only their description now comes from shared prose.

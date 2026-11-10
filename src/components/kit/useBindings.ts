@@ -41,6 +41,8 @@ export function useBindings(path: Ref<string>, draftModel?: Ref<object | undefin
   }
   const apply = (candidate: NumericBinding): boolean => {
     try {
+      // Rebinding changes the calculation, not the user's display choice.
+      if (!Object.prototype.hasOwnProperty.call(candidate, 'presentation') && binding.value?.presentation) candidate = { ...candidate, presentation: { ...binding.value.presentation } }
       if (draftModel?.value) {
         const result = setMonsterBinding(draftModel.value, path.value, candidate)
         Object.assign(draftModel.value, result.model)

@@ -282,7 +282,7 @@ export function descriptionContainersHtml(
       const parts: string[] = []
       const targetLabel = plain(container.outcomeTarget).replace(/[:\s]+$/, '').trim()
       const prefix = targetLabel
-        ? `<i>${escapeOutcomeHtml(targetLabel)}:</i> `
+        ? `<i>${mechanicRichHtml(targetLabel)}:</i> `
         : ''
 
       let hasMain = false

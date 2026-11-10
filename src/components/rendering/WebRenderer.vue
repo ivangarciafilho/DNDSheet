@@ -434,13 +434,13 @@
         <div class="dnd-cascade-badges-wrap">
           <template v-if="(monster?.splitSpeedRiderRows || monster.speedTraversal?.splitRiderRows) && speedRiderBadges.length > 0">
             <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'sp-base-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
               <span v-if="spIdx < speedBaseBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
           <template v-else>
             <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
               <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
@@ -453,7 +453,7 @@
           class="dnd-vitals-indented-subrow"
         >
           <span class="dnd-subrow-bullet">↳</span>
-          <span class="dnd-subrow-content">{{ spRider }}</span>
+          <span class="dnd-subrow-content" v-html="mechanicRichHtml(spRider)"></span>
         </div>
       </template>
 
@@ -495,13 +495,13 @@
           <div class="stat one">
             {{ statsAndSavesByKey.STR?.stat?.toLowerCase() ?? 'str' }}
           </div>
-          <div class="score one">{{ statsAndSavesByKey.STR?.score ?? 10 }}</div>
+          <div class="score one" v-html="statsAndSavesByKey.STR?.renderedScore ?? '10'"></div>
           <div class="mod one">{{ statsAndSavesByKey.STR?.renderedModifier ?? '+0' }}</div>
           <div class="save one" v-html="statsAndSavesByKey.STR?.renderedSave ?? '+0'"></div>
           <div class="stat two">
             {{ statsAndSavesByKey.INT?.stat?.toLowerCase() ?? 'int' }}
           </div>
-          <div class="score two">{{ statsAndSavesByKey.INT?.score ?? 10 }}</div>
+          <div class="score two" v-html="statsAndSavesByKey.INT?.renderedScore ?? '10'"></div>
           <div class="mod two">{{ statsAndSavesByKey.INT?.renderedModifier ?? '+0' }}</div>
           <div class="save two" v-html="statsAndSavesByKey.INT?.renderedSave ?? '+0'"></div>
         </div>
@@ -511,13 +511,13 @@
           <div class="stat one">
             {{ statsAndSavesByKey.DEX?.stat?.toLowerCase() ?? 'dex' }}
           </div>
-          <div class="score one">{{ statsAndSavesByKey.DEX?.score ?? 10 }}</div>
+          <div class="score one" v-html="statsAndSavesByKey.DEX?.renderedScore ?? '10'"></div>
           <div class="mod one">{{ statsAndSavesByKey.DEX?.renderedModifier ?? '+0' }}</div>
           <div class="save one" v-html="statsAndSavesByKey.DEX?.renderedSave ?? '+0'"></div>
           <div class="stat two">
             {{ statsAndSavesByKey.WIS?.stat?.toLowerCase() ?? 'wis' }}
           </div>
-          <div class="score two">{{ statsAndSavesByKey.WIS?.score ?? 10 }}</div>
+          <div class="score two" v-html="statsAndSavesByKey.WIS?.renderedScore ?? '10'"></div>
           <div class="mod two">{{ statsAndSavesByKey.WIS?.renderedModifier ?? '+0' }}</div>
           <div class="save two" v-html="statsAndSavesByKey.WIS?.renderedSave ?? '+0'"></div>
         </div>
@@ -527,13 +527,13 @@
           <div class="stat one">
             {{ statsAndSavesByKey.CON?.stat?.toLowerCase() ?? 'con' }}
           </div>
-          <div class="score one">{{ statsAndSavesByKey.CON?.score ?? 10 }}</div>
+          <div class="score one" v-html="statsAndSavesByKey.CON?.renderedScore ?? '10'"></div>
           <div class="mod one">{{ statsAndSavesByKey.CON?.renderedModifier ?? '+0' }}</div>
           <div class="save one" v-html="statsAndSavesByKey.CON?.renderedSave ?? '+0'"></div>
           <div class="stat two">
             {{ statsAndSavesByKey.CHA?.stat?.toLowerCase() ?? 'cha' }}
           </div>
-          <div class="score two">{{ statsAndSavesByKey.CHA?.score ?? 10 }}</div>
+          <div class="score two" v-html="statsAndSavesByKey.CHA?.renderedScore ?? '10'"></div>
           <div class="mod two">{{ statsAndSavesByKey.CHA?.renderedModifier ?? '+0' }}</div>
           <div class="save two" v-html="statsAndSavesByKey.CHA?.renderedSave ?? '+0'"></div>
         </div>
@@ -569,13 +569,13 @@
         <div class="dnd-cascade-badges-wrap">
           <template v-if="monster.splitSpeedRiderRows && speedRiderBadges.length > 0">
             <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'speed-base-14-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
               <span v-if="spIdx < speedBaseBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
           <template v-else>
             <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-              <span class="dnd-cascade-badge">{{ spBadge }}</span>
+              <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
               <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
             </template>
           </template>
@@ -590,7 +590,7 @@
         >
           <span class="dnd-subrow-bullet" aria-hidden="true">↳</span>
           <div class="dnd-cascade-badges-wrap">
-            <span class="dnd-cascade-badge">{{ riderBadge }}</span>
+            <span class="dnd-cascade-badge" v-html="mechanicRichHtml(riderBadge)"></span>
           </div>
         </div>
       </template>
@@ -598,7 +598,7 @@
         <div v-for="stat in stats" :key="stat.stat" class="stat-container">
           <div class="stat-name">{{ stat.stat }}</div>
           <div class="stat">
-            <div class="score">{{ stat.score }}</div>
+            <div class="score" v-html="stat.renderedScore"></div>
             <div class="modifier">({{ stat.renderedModifier }})</div>
           </div>
         </div>
@@ -1078,6 +1078,7 @@
 </template>
 
 <script lang="ts">
+import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useTextRenderer } from './useTextRenderer'
@@ -1092,6 +1093,8 @@ import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statModifier } from 'src/core/domain/math-utils'
+import { aggregateSpellcastingSources, spellcastingRuleClass } from 'src/core/usecases/AutoSyncSpellcasting'
+import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { statblockHelpText } from './statblock-help'
 
 export default defineComponent({
@@ -1901,6 +1904,8 @@ export default defineComponent({
           bonusAction: Boolean(bonusActionLevelMap?.[spellLevel]),
         }
       })
+      const combined = sc?.classes?.length || sc?.contribution?.mode === 'custom' ? aggregateSpellcastingSources(sc, monster.stats, monster.proficiency) : undefined
+      const primaryPool = castingResourceView({ ...sc, className }, combined)
       const primary = buildSpellPlate({
         title: renderedSpellcastingTitle.value,
         stat,
@@ -1908,11 +1913,11 @@ export default defineComponent({
         attack: monster.spellAttackModifier,
         className,
         level,
-        resourceType: sc?.resourceType || 'slots',
-        resourceValue: sc?.resourceType === 'focus' ? level : pointValue,
+        resourceType: primaryPool.resourceType, pactPool: primaryPool.pactPool,
+        resourceValue: primaryPool.resourceValue ?? (sc?.resourceType === 'focus' ? level : pointValue),
         refreshRate: sc?.refreshRate,
         customRefreshRate: sc?.customRefreshRate,
-        slots: sc?.slots,
+        slots: primaryPool.slots,
         preparedCount: sc?.preparedCountOverride ?? (metrics.preparedSpells || knownLeveled),
         preparedInterval: sc?.preparedInterval,
         levelCadenceMap,
@@ -1925,21 +1930,27 @@ export default defineComponent({
         edition: editorStore.style === '2014' ? '2014' : '2024',
         spellLevels,
       })
-      const additions = (sc?.classes || []).filter((source) => source.id !== 'primary').map((source) => ({
+      const additions = (sc?.classes || []).filter((source) => source.id !== 'primary').map((source) => { const pool = castingResourceView(source, combined); return ({
         id: source.id,
         label: [source.className, source.subclass].filter(Boolean).join(' · '),
         plate: buildSpellPlate({
           title: source.className, stat: source.stat, save: monster.spellSave, attack: monster.spellAttackModifier,
-          className: source.className, level: source.level, resourceType: source.resourceType,
-          resourceValue: source.resourceValue, refreshRate: source.refreshRate,
-          slots: source.slots || (source.resourceType === 'pact' || source.className === 'Warlock' || ['focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
+          className: source.className, level: source.level, resourceType: pool.resourceType, pactPool: pool.pactPool,
+          resourceValue: pool.resourceValue, refreshRate: source.refreshRate,
+          slots: pool.slots || (source.resourceType === 'pact' || source.className === 'Warlock' || ['focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
           spellLevels: Array.from({ length: 10 }, (_, level) => ({
             level, cadence: source.levelCadences?.[level], bonusAction: Boolean(source.levelBonusAction?.[level]),
             spells: monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name)).map((name: string) => ({ name, tags: getSpellTagString(name), cadence: source.spellCadenceMap?.[name] })),
           })),
         }),
-      }))
-      return consolidateSpellPlates(primary, additions)
+      })})
+      const consolidated = consolidateSpellPlates(primary, additions)
+      const summary = castingResourceSummary(sc, monster.stats, monster.proficiency)
+      if (summary && !['points', 'focus'].includes(sc.resourceType || '')) {
+        const manual = additions.filter(entry => { const source = sc.classes?.find(item => item.id === entry.id); return source && source.contribution?.mode !== 'custom' && (!spellcastingRuleClass(source.className) || ['points','focus'].includes(source.resourceType || '')) }).map(entry => entry.label + ': ' + entry.plate.resource).filter(text => !text.endsWith(': '))
+        consolidated.resource = [summary, ...manual].join(' · ')
+      }
+      return consolidated
     })
 
     const innateSpellPlate = computed(() => {
@@ -2185,6 +2196,7 @@ export default defineComponent({
 
     return {
       renderRoot,
+      mechanicRichHtml,
       helpTipElement,
       activeHelpTip,
       helpTipStyle,

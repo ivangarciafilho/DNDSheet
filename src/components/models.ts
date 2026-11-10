@@ -1,3 +1,4 @@
+import type { CastingContribution } from '../core/usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from '../core/domain/skill-passive-state'
 import type { AbilityOutcome, AbilityTargeting, AttackReach, AttackSource } from '../core/domain/types'
 
@@ -689,6 +690,7 @@ export interface MonsterAction {
 }
 
 export interface LairAction {
+  descriptionContainers?: ActionDescriptionContainer[]
   id: string
   description: string
   crAnnotation: MonsterCrAnnotation
@@ -779,6 +781,7 @@ export interface LegendaryAction {
 }
 
 export interface MonsterReaction {
+  descriptionContainers?: ActionDescriptionContainer[]
   name: string
   id: string
   description: string
@@ -981,7 +984,9 @@ export interface Monster {
     preparedCountOverride?: number
     preparedInterval?: string
     customRefreshRate?: string
+    contribution?: CastingContribution
     classes?: Array<{
+      contribution?: CastingContribution
       id: string
       className: string
       subclass?: string

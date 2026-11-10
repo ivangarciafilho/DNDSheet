@@ -25,6 +25,8 @@ export interface AbilityRenderContext {
   attackBonus?: number
   saveDc?: number
   randomTables?: RandomTable[]
+  /** HTML surfaces alone supply this semantic numeric-field formatter. */
+  formatValue?: (field: string, text: string) => string
   formulaContext?: FormulaContext
 }
 
@@ -298,7 +300,7 @@ export function inferAbility(action: Partial<MonsterAction>): AbilityProjection 
   }
 }
 
-const valueText = (input: number | string, context: AbilityRenderContext = {}, style: FormulaStyle = 'number'): string => {
+const plainValueText = (input: number | string, context: AbilityRenderContext = {}, style: FormulaStyle = 'number'): string => {
   if (typeof input === 'number') return Number.isFinite(input) ? formatNumber(input, style) : ''
   const source = String(input ?? '').trim()
   if (style === 'bonus' && /^-?\d+$/.test(source)) {
@@ -314,6 +316,11 @@ const valueText = (input: number | string, context: AbilityRenderContext = {}, s
     }
   }
   return result.text
+}
+
+const valueText = (input: number | string, context: AbilityRenderContext = {}, style: FormulaStyle = 'number', field?: string): string => {
+  const text = plainValueText(input, context, style)
+  return field && context.formatValue ? context.formatValue(field, text) : text
 }
 
 function formatNumber(value: number, style: FormulaStyle): string {
@@ -383,8 +390,8 @@ const normalizeKind = (kind: string, count: { text: string; number?: number } | 
 }
 
 const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: AbilityRenderContext): string => {
-  const value = valueText(distance, context)
-  return `${value} ${unit === 'ft' ? 'ft.' : Number(value) === 1 ? 'mile' : 'miles'}`.trim()
+  const value = valueText(distance, context, 'number', 'targeting.range.distance')
+  return `${value} ${unit === 'ft' ? 'ft.' : Number(plainValueText(distance, context)) === 1 ? 'mile' : 'miles'}`.trim()
 }
 
 export const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: AbilityRenderContext = {}): string => {
@@ -397,7 +404,7 @@ export const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, conte
 
 export const areaPhrase = (area: AbilityArea, context: AbilityRenderContext = {}): string => {
   const distance = area.distance !== undefined
-    ? `${valueText(area.distance, context)}-${area.unit === 'mi' ? 'mile' : 'foot'} `
+    ? `${valueText(area.distance, context, 'number', 'targeting.area.distance')}-${area.unit === 'mi' ? 'mile' : 'foot'} `
     : ''
   const origin = area.origin?.trim() ? ` originating from ${area.origin.trim()}` : ''
   return `in a ${distance}${area.shape.trim()}${origin}`.trim()
@@ -426,7 +433,7 @@ export function scopePhrase(
   }
   const kind = normalizeKind(rawKind, count)
   const countText = count
-    ? `${targeting.countMode === 'up_to' ? 'up to ' : ''}${formatCount(count, mode === 'text2024')}`
+    ? `${targeting.countMode === 'up_to' ? 'up to ' : ''}${context.formatValue ? context.formatValue('targeting.count', formatCount(count, mode === 'text2024')) : formatCount(count, mode === 'text2024')}`
     : ''
   const pieces = [countText, kind].filter(Boolean)
   let subject = pieces.join(' ')
@@ -451,12 +458,12 @@ export function mechanicsPhrase(ability: AbilityProjection, context: AbilityRend
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
     const hasCount = ability.attackCount !== undefined && String(ability.attackCount).trim() !== ''
     const numCount = Number(ability.attackCount)
-    const countStr = hasCount ? `${ability.attackCount} ` : ''
+    const countStr = hasCount ? `${valueText(ability.attackCount!, context, 'number', 'attackCount')} ` : ''
     const isPlural = hasCount && (isNaN(numCount) || numCount > 1)
     const attackWord = isPlural ? 'Attacks' : 'Attack'
     const bonus = context.attackBonus ?? ability.attackBonus
     const bonusPrefix = isPlural ? ' of ' : ' '
-    const bonusText = bonus === undefined ? '' : `${bonusPrefix}${valueText(bonus, context, 'bonus')}`
+    const bonusText = bonus === undefined ? '' : `${bonusPrefix}${valueText(bonus, context, 'bonus', 'attackBonus')}`
 
     const glyph = ability.attackRollModifier === 'advantage'
       ? '▲▲'
@@ -471,7 +478,7 @@ export function mechanicsPhrase(ability: AbilityProjection, context: AbilityRend
   }
   if (ability.saveAbility) {
     const dc = context.saveDc ?? ability.saveDc
-    if (dc !== undefined) phrases.push(`${statName(ability.saveAbility)} Save ${valueText(dc, context)}`)
+    if (dc !== undefined) phrases.push(`${statName(ability.saveAbility)} Save ${valueText(dc, context, 'number', 'save.overrideValue')}`)
   }
   return phrases
 }
@@ -568,7 +575,7 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
 
   if (ability.attackSource) {
     const reach = ability.attackReach ? `${REACH_LABELS[ability.attackReach]} ` : ''
-    const bonus = attackBonus === undefined ? '' : ` ${valueText(attackBonus, context, 'bonus')}`
+    const bonus = attackBonus === undefined ? '' : ` ${valueText(attackBonus, context, 'bonus', 'attackBonus')}`
     const count = (action.attackCount && Number(action.attackCount) > 1) ? Number(action.attackCount) : undefined
     const sourceLabel = ability.attackSource === 'spell' ? 'Spell' : 'Weapon'
     const rollMod = action.attackRollModifier === 'advantage' ? '▲▲ ' : action.attackRollModifier === 'disadvantage' ? '▼▼ ' : ''

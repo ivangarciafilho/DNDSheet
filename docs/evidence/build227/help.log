@@ -1,0 +1,62 @@
+(node:24268) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-skills-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "suite": "Emergency skills routing",
+  "checks": {
+    "defaultOn": true,
+    "placementRemoved": true,
+    "medicineInSearch": true,
+    "actionRouting": true,
+    "bonusRouting": true,
+    "uncheckedHeader": true,
+    "retainedDetails": true,
+    "repeatToggle": true,
+    "headerText": "SearchBonus Action13/+3, 23/+5, Medicine (Emergency stabilization) ▲▲",
+    "checkboxOff": true,
+    "medicineRetained": true,
+    "bonusCostRetained": true
+  }
+}
+(node:34520) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-spellcasting-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Emergency spellcasting browser checks: {"cantripBonus":true,"rowCadence":true,"duplicateBadgeSuppression":true,"divergentBadges":true,"italicNames":true,"sourceSubclassFilter":true,"sourceIsolation":true,"sourceSettings":true,"manualFocus":true,"implicitMulticlass":true,"disabledLevels":true,"sourceCapacity":true,"customContribution":true,"reload":true}
+(node:17844) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-rich-mechanics-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Emergency rich mechanics browser checks: {"sharedRows":true,"draftIsolation":true,"rendered":true,"savedFormatting":true,"extension":true,"reload":true}
+(node:18576) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-containers-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Additional container browser checks: {"actionRoleFirst":true,"actionBothPersist":true,"actionStableIds":true,"actionRendered":true,"traitRoleFirst":true,"traitBothPersist":true,"traitStableIds":true,"traitRendered":true,"reactionRoleFirst":true,"reactionBothPersist":true,"reactionStableIds":true,"reactionRendered":true,"lairRoleFirst":true,"lairBothPersist":true,"lairStableIds":true,"lairRendered":true,"reload":true}
+(node:17472) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/emergency-numeric-presentation-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Numeric and catalog mechanic presentation browser checks: {"numericStyled":true,"plainCalculation":true,"numericMetadata":true,"richRider":true,"riderRendered":true,"reload":true}
+(node:56392) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/outcome-lifecycle-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Outcome lifecycle browser checks: {"reorder":true,"draftIsolation":true,"cancel":true,"uniqueDuplicate":true,"semanticCaption":true,"copyMetadata":true,"deleteConfirmation":true,"keepOutcome":true,"noCascade":true,"referencesRetained":true,"rawRecordsVisible":true,"identityRepair":true,"repairCancel":true,"outerRecovery":true,"replacementDraft":true,"outerCancel":true,"legacyDraftId":true,"appliedIdentity":true,"reload":true}
+(node:58980) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/statblock-help-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Print probe: {"media":true,"count":13,"light":[],"reds":0,"notRed":[]}
+Statblock UI smoke passed: shared row grammar, 12 theme contrast probes, hover/focus help, viewport repositioning, Escape, detached-target cleanup
+(node:50196) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/test/release-matrix-browser-smoke.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Release matrix passed: 5 shared fixtures × 12 themes; 120 computed head/body contrast samples
+(node:556) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build227-work/tools/qa/overflow-probe.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build227-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Fit inventory: 10 views, 0 clipping observations; report .gate/fit.json

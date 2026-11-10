@@ -3,6 +3,7 @@
     <div v-for="row in chipRows" :key="row.row" class="composer-chain__row" :data-chain-row="row.row">
       <span class="composer-chain__label" aria-hidden="true">{{ rowLabels[row.row] }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="rowLabels[row.row]">
+        <slot v-if="row.row === 'head'" name="head-prefix" />
         <template v-for="cell in row.cells" :key="cell.id">
         <chain-cell
           v-if="specFor(cell.id).editable !== false"

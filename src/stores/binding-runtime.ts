@@ -1,6 +1,7 @@
 import { setMonsterBinding, clearMonsterBinding, resolveMonsterBindings, applyResolvedNumericValues } from '../core/domain/monster-bindings.ts'
 import type { BindingModel } from '../core/domain/monster-bindings.ts'
 import type { NumericBinding } from '../core/domain/formula.ts'
+import { normalizeNumericPresentation } from '../core/domain/numeric-presentation.ts'
 import { reactive } from 'vue'
 import type { PiniaPluginContext } from 'pinia'
 
@@ -39,7 +40,7 @@ interface BindingStore {
 export const monsterBindingActions = {
     setBinding(this: BindingStore, path: string, binding: NumericBinding) {
       let result = setMonsterBinding(this.$state, path, binding)
-      if (binding.mode === 'literal') {
+      if (binding.mode === 'literal' && Object.keys(normalizeNumericPresentation(binding.presentation)).length === 0) {
         const detached = clearMonsterBinding(result.model, path)
         result = { ...result, model: detached.model, changed: result.changed || detached.changed }
       }

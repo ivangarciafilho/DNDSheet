@@ -176,3 +176,48 @@ test('getSubclassesForClass - case-insensitive resolution across 5e classes', ()
   // Fallback on missing or undefined
   assert.ok(getSubclassesForClass(undefined).length > 0)
 })
+
+test('Custom contribution replaces Warlock pact progression with authored half-level slots', () => {
+ const own = calculateMulticlassSpellcasting([{className:'Wizard',level:5},{className:'Warlock',level:6}])
+ const pooled = calculateMulticlassSpellcasting([{className:'Wizard',level:5},{className:'Warlock',level:6,contribution:{mode:'custom',target:'slots',numerator:1,denominator:2}}])
+ assert.strictEqual(own.combinedCasterLevel,5)
+ assert.strictEqual(pooled.combinedCasterLevel,8)
+ assert.strictEqual(pooled.warlockSlots,undefined)
+ assert.strictEqual(pooled.totalCantripsKnown,own.totalCantripsKnown)
+ assert.strictEqual(pooled.totalPreparedSpells,own.totalPreparedSpells)
+})
+
+test('Custom contribution supports inverse pact pooling, spell points and authored focus', () => {
+ const pact=calculateMulticlassSpellcasting([{className:'Wizard',level:8,contribution:{mode:'custom',target:'pact',numerator:1,denominator:2}}])
+ assert.deepStrictEqual(pact.warlockSlots,getSpellSlotsForClass('Warlock',4))
+ const points=calculateMulticlassSpellcasting([{className:'Warlock',level:6,contribution:{mode:'custom',target:'points',numerator:1,denominator:2}}])
+ assert.strictEqual(points.customPoints,14)
+ assert.strictEqual(points.warlockSlots,undefined)
+ const focus=calculateMulticlassSpellcasting([{className:'Custom focus caster',level:7,contribution:{mode:'custom',target:'focus',numerator:1,denominator:2,focusPerLevel:3}}])
+ assert.strictEqual(focus.customFocus,9)
+ assert.strictEqual(focus.totalPreparedSpells,0)
+})
+
+test('Invalid contribution fractions cannot invent resources', () => {
+ for(const denominator of [0,-1,Infinity,NaN]) {
+  const result=calculateMulticlassSpellcasting([{className:'Wizard',level:10,contribution:{mode:'custom',target:'slots',numerator:1,denominator}}])
+  assert.ok(result.slots.every(value=>value===0))
+ }
+})
+
+test('Legacy enabled secondary caster is retained as an owned source through migration', () => {
+ const migrated=migrateMonsterSchema({saveVersion:11,spellcasting:{multiclass:{enabled:true,secondaryClass:'Cleric',secondaryLevel:3,secondaryStat:'WIS'}}})
+ assert.strictEqual(migrated.spellcasting.classes?.[0].className,'Cleric')
+ const again=migrateMonsterSchema(JSON.parse(JSON.stringify(migrated)))
+ assert.strictEqual(again.spellcasting.classes?.length,1)
+ assert.strictEqual(again.spellcasting.classes?.[0].id,'legacy-secondary-casting-source')
+})
+
+test('Shared source aggregate preserves explicit custom systems and ignores unsupported manual resources', async () => {
+ const {aggregateSpellcastingSources}=await import('../../src/core/usecases/AutoSyncSpellcasting.ts')
+ const result=aggregateSpellcastingSources({class:'Wizard',level:5,classes:[{className:'Focus adept',level:6,contribution:{mode:'custom',target:'focus',numerator:1,denominator:2,focusPerLevel:4}},{className:'Unspecified manual system',level:20}]})
+ assert.strictEqual(result?.combinedCasterLevel,5)
+ assert.strictEqual(result?.customFocus,12)
+ assert.strictEqual(result?.classes?.length,2)
+ assert.strictEqual(aggregateSpellcastingSources({class:'Unspecified manual system',level:20}),undefined)
+})

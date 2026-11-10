@@ -1,0 +1,43 @@
+{
+  "lair": true,
+  "plain": true,
+  "traversal": false,
+  "data": {
+    "name": "Export 227 witness",
+    "size": "Medium",
+    "type": "humanoid",
+    "subtype": "",
+    "alignment": "",
+    "armor_class": 10,
+    "armor_type": "",
+    "hit_points": 4,
+    "hit_dice": "1d8+0",
+    "speed": "30 ft. walk",
+    "speed_json": {
+      "walk": 30
+    },
+    "strength": 10,
+    "dexterity": 10,
+    "constitution": 10,
+    "intelligence": 10,
+    "wisdom": 10,
+    "charisma": 10,
+    "damage_vulnerabilities": "",
+    "damage_resistances": "",
+    "damage_immunities": "",
+    "condition_immunities": "",
+    "senses": "",
+    "languages": "",
+    "challenge_rating": "0",
+    "special_abilities": [
+      {
+        "name": "Lair Action",
+        "desc": "Base lair effect. Lair container witness",
+        "attack_bonus": 0
+      }
+    ],
+    "actions": [],
+    "group": "Custom (5e Monster Maker)"
+  },
+  "traversalBoundary": "Existing Tarrasque movement JSON omits traversal riders; complete adapter disclosure remains open"
+}

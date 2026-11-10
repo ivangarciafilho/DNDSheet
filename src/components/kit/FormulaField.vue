@@ -24,6 +24,7 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
       <q-tooltip class="formula-field__help"><strong>{{ binding ? 'Live binding' : 'Typed value' }}</strong><br>{{ resolved.trace }}<br>{{ binding ? 'Detach to keep the current value.' : 'Choose a reference to follow it, or type a number and press Enter.' }}</q-tooltip>
     </q-select>
     <q-btn v-if="binding" class="q-ml-xs q-mt-sm" flat dense size="sm" icon="link_off" :aria-label="`Detach ${label} binding`" @click="detach"><q-tooltip>Keep {{ value }} and stop following this source.</q-tooltip></q-btn>
+    <q-btn v-if="canFormat" flat dense size="sm" icon="format_bold" class="q-ml-xs q-mt-sm" :disable="disabled" :aria-label="`Format resolved ${label}`"><q-tooltip>Format the resolved value; the formula stays unchanged.</q-tooltip><q-menu><div class="q-pa-sm"><div class="text-caption q-mb-xs">Resolved value formatting</div><div class="row q-gutter-xs"><q-btn v-for="style in presentationOptions" :key="style.key" dense flat :icon="style.icon" :color="presentation[style.key] ? 'primary' : undefined" :aria-label="`${style.label} resolved ${label}`" :aria-pressed="!!presentation[style.key]" @click="togglePresentation(style.key)" /></div><div class="text-caption q-mt-xs">Applies to the displayed value, not the calculation.</div></div></q-menu></q-btn>
     <slot name="after" />
     </div>
     <div v-else class="formula-field__draft">
@@ -41,10 +42,19 @@ import { computed, ref, toRef, watch } from 'vue'
 import { FORMULA_GROUPS, FORMULA_REFS, resolveNumeric } from 'src/core/domain/formula'
 import { isReferenceAllowedForField } from 'src/core/domain/catalogs/field-types'
 import { useBindings } from './useBindings'
+import { normalizeNumericPresentation, supportsNumericPresentation } from 'src/core/domain/numeric-presentation'
+import type { NumericPresentation } from 'src/core/domain/numeric-presentation'
 
 const props = withDefaults(defineProps<{ path: string; label: string; dense?: boolean; outlined?: boolean; disable?: boolean; draftModel?: object }>(), { dense: true, outlined: true, disable: false, draftModel: undefined })
 const emit = defineEmits<{ (event: 'applied', value: number): void; (event: 'draft-state', pending: boolean): void }>()
-const { inspection, binding, value, source, context, resolved, error, draftError, toBinding, preview, apply, applyText, detach } = useBindings(toRef(props, 'path'), toRef(props, 'draftModel'))
+const { monster, inspection, binding, value, source, context, resolved, error, draftError, toBinding, preview, apply, applyText, detach } = useBindings(toRef(props, 'path'), toRef(props, 'draftModel'))
+const canFormat = computed(() => supportsNumericPresentation(props.path, props.draftModel ?? monster.$state))
+const presentation = computed(() => normalizeNumericPresentation(binding.value?.presentation))
+const presentationOptions = [{key:'bold',label:'Bold',icon:'format_bold'},{key:'italic',label:'Italic',icon:'format_italic'},{key:'underline',label:'Underline',icon:'format_underlined'},{key:'strike',label:'Strikethrough',icon:'strikethrough_s'}] as const
+const togglePresentation = (key: keyof NumericPresentation) => {
+  const current = binding.value ?? { mode: 'literal' as const, value: typeof value.value === 'number' ? value.value : 0 }
+  apply({ ...current, presentation: { ...presentation.value, [key]: !presentation.value[key] } })
+}
 const editing = ref(false), draft = ref(''), query = ref(''), previewText = ref(''), typedInput = ref('')
 // A containing transaction must not silently apply an earlier value while the
 // nested formula editor still holds an unfinished or invalid draft.

@@ -1,0 +1,1987 @@
+{
+  "verifiedAt": "2026-11-10T15:50:04.9184395Z",
+  "originalRoot": "F:/AI_Resources/DNDSheet",
+  "originalBaseline": "docs/evidence/build226/protected-original-hashes.json",
+  "originalTrackedFiles": 4,
+  "unchanged": true,
+  "originalFiles": [
+    {
+      "path": "build.json",
+      "sha256": "E02558058A5EF0A99B95A077CFD495576D4515F366705C75F038444A3CCA996E",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/domain/ability-grammar.ts",
+      "sha256": "9723A0BCD2901193864DBD6BE05FD96626407BEDA18D7FDE7904C784B0F618CD",
+      "unchanged": true
+    },
+    {
+      "path": "test/core/AbilityGrammar.test.ts",
+      "sha256": "08D33C8B742E5E55A31409490CAECDAB6E99DAC26DE599772691E41D0C734D04",
+      "unchanged": true
+    },
+    {
+      "path": "test/exhaustive-ui-fuzz.js",
+      "sha256": "355628364F02D32D1969B24FAC53BEFCE6D60C267113C08B3EE51E9C39520D93",
+      "unchanged": true
+    }
+  ],
+  "priorCandidates": [
+    {
+      "archive": "rc-2.4.3-build-223-description-containers-regions-and-grammar-hygiene",
+      "manifest": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-223-description-containers-regions-and-grammar-hygiene\\SHA256SUMS.txt",
+      "manifestSha256": "9abe526376a0664f07492e087660944e585a51d30ba756e417ca8dd9be0ee9dc",
+      "checksums": 96,
+      "unchanged": true,
+      "files": [
+        {
+          "path": "release-candidate.json",
+          "sha256": "bcfb52dd25180a21c0a1f739b461675ddafab49c073180133a7c592bead404a4",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.4a2c28fd.css",
+          "sha256": "212fc7e443a199079710116f29ba0c52d55f447bf69684ed6b3280c8fb45b1b6",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.6fc8eb3b.js",
+          "sha256": "2080d08b29fb8e2648cffaa312cfce9f90ac3789d9dbec255da651c98ceac480",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-3VYIPD3A.ff0fcaf4.js",
+          "sha256": "7dd884107064596f54cda9071f487ab12055bc35c447588116b396188a7a86cb",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-ANSXOGKI.d5559b78.js",
+          "sha256": "2146b0d4a0519f4de1df6bdf87724e9e9f8fa12834c3ca8c195e85c65e1fd4e9",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-T4JIPPZO.5067c253.js",
+          "sha256": "52e2a63ae4b78547b0387666c45bc1a5277750b8f36f22cf990b9b088b613553",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.0c58b548.js",
+          "sha256": "4a11b10817d17e4e315a2180ed3afe96fc79f37ac22448d2cf6f281ec2727f3f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.9461e3bf.js",
+          "sha256": "de27709879105927abbc4b3f3b5dce86067aaf0802bca0905f5febf1a38edbc3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorCorrection.a6e4b227.js",
+          "sha256": "c19abd3906199891c532e6d7f8ee885874aa7402f48d74e90f588b7ef58ca9fe",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorNotFound.e138e087.js",
+          "sha256": "9840df1d1086a228729fbdfdcfa46ff4d4a5201b005eb1bbef39611eb0cb8998",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.808443ae.ttf",
+          "sha256": "808443ae6c8204395add8543da8a90a60b9376fb0f87ed8e8ea37d109596d805",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.d7236a19.woff2",
+          "sha256": "d7236a19bf23cbb2027280e8f51dc99d6c45976a2ed60de73382b034b18a2b68",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.54cf6086.ttf",
+          "sha256": "54cf6086f7bb21f9d072ad494a19b4681fa516dd0a14cee52da01d3651a913a3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.e3456d12.woff2",
+          "sha256": "e3456d1283b9d75337a773dfd147bf908fd02c01b4bf48576d8603a69b13cbe5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.aa759986.woff2",
+          "sha256": "aa75998623a391e61c6901794ace832e3ecdd288b56d608f21bea0411acc0b8e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.d2f05935.ttf",
+          "sha256": "d2f0593540b0e33ba6de255a54f272d466e31144806956bea8cfdbf7edffc9bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.0ce9033c.woff2",
+          "sha256": "0ce9033c69dc714f5f45ef9bf17d55e4c46bcdfad6799a4e92b38e7781bf86bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.30f6abf6.ttf",
+          "sha256": "30f6abf6baa425825828793d6dfad1fb63765d0e5abaa7af6feafb9bfcece5a0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.fd84f88b.woff",
+          "sha256": "fd84f88b497040d4f7d5e8c9f8635aef8d3e706c0fa52e2b6facf14eee87e522",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.4a4dbc62.woff2",
+          "sha256": "4a4dbc62fa335e411b94a532be091c58c0c0c4fa731339f11722577d3cf6443b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/help.912b607c.js",
+          "sha256": "83de2e8597456ff0898f655d2ac04edff221d15dbadec3b2f2c7f6a1fb3c032f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/history-store.e50b17cd.js",
+          "sha256": "e00383ff6583c5f368dab53a3fae3ccf1b846be435aa373c02997b23d4f3b021",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/i18n.c306d19e.js",
+          "sha256": "7b9d716ebbda831d4e50e8498d94f8a5c2a175d5278dfc18fb591accdd8554be",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.3f91ff50.css",
+          "sha256": "e148e115c8a298f2e125412ae5647aaeedd6815ebe8408d924dd69ad538ba709",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.d1f46e5a.js",
+          "sha256": "7ac834c07a43774becd018e9906fd5ef9fd51f1b8e9672f6c8aea1832df9f833",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.6abe435f.woff",
+          "sha256": "6abe435f98d8429e1220d8e3766df57e4606158c37445cd6dbe784643c85642d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.2655782c.woff",
+          "sha256": "2655782ccb8a3ab5916ee467fef2decfa62d815fd752a7d7e41ceee65a74894a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.b396c4b4.woff",
+          "sha256": "b396c4b4614d0c2fb674d1cce39f243f27268026493bef3bd9a385ddce19b9a2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.c46b1797.woff",
+          "sha256": "c46b1797ee10238b5ec7ff4f583d7821c7e5acfee268bb55403f8138a50ec007",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.21d7671f.woff",
+          "sha256": "21d7671f97d73c08f148e0cb1c8c5f0861e42f5e17cbe46d43454e0f80d3911f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.1a33b99d.woff",
+          "sha256": "1a33b99d102550469c21667f8ec8d699ac4d24f0c87569b0c6d3100b1517e781",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ko-fi-icon.fe114719.png",
+          "sha256": "fe1147193507a27b96c571440065a8398b02847498a8df030877b52ed57e41d5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.39a81802.css",
+          "sha256": "ed2aaf27c79114696838d9b19fa12c72c6823399b94710753632f8a91e765b28",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.958cc4ad.js",
+          "sha256": "63ed0d93ae79364580949c935d18a809adc15d72b0b6c600b38bc73b20026667",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.633d596f.woff2",
+          "sha256": "633d596f7288835ff04eba1105f41cf6fe5c9ffed41f2cb20a3f00fb035c0c8b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.7f3afe9b.woff",
+          "sha256": "7f3afe9ba6aa0f1cbd867655d7b62f5dd544a7ff30665c59eaaa28086bf3e0dd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.5c743cc9.css",
+          "sha256": "676266174c518c3a71599580bf1a2282894063541923468062dc6ca863de6e6b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.7fc548d7.js",
+          "sha256": "6df96066f04665f4f8d6ec9686ddd01156a618f09a0d539a9a55f619f8e3008c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.0d2a1ddc.css",
+          "sha256": "0a22db39ef7e4601b87a5669ec72fcf94264e35d5b7325be259b5f07455c7bff",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.b48da157.js",
+          "sha256": "8e6ddef7085141a0e2a82930e04fbc70ed065a34798fd6aaffdb8b6aaf00b74e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/position-engine.0510e430.js",
+          "sha256": "8265e3de2fe5a4133f62f40f01144eca866fb3eb9c006915aff42457c4a15213",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLayout.399f63fd.js",
+          "sha256": "b1fcf7b942cfa8d25ce1c8c6c8dbe5b1cd7130c3d5c10aa77975d4b1d0fbf3bf",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLinearProgress.dc01a8d0.js",
+          "sha256": "76a5632257820e090379763c26ced2ccc93558180022bb328e36b1f6e8b3f918",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QResizeObserver.e0be1856.js",
+          "sha256": "f4ee802e0909df3da3a1ce47cdaf575e6c7898baf368efa04cb506240341cd7d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTable.0b284940.js",
+          "sha256": "45c9b23432e63764ed287d3846177be7a564e3617670a2186e2bb5646f3d4824",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTooltip.32bbcf4e.js",
+          "sha256": "9e58b49382eab6bab219ce66a5271231cdff64331c678f0c8dc4ecdcac7a3f57",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/rasterize-JS5G2XHH.67bd4cb1.js",
+          "sha256": "029dee3f9a6f83f22ba09dba79b34cb6033d553033f9b70f81ca4678da86c49f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.1cf2ee9d.css",
+          "sha256": "0a1c395eb0a067d555bc7d6c65d323654ddb9dddc9edbc381031d6614c75249a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.886c8d75.js",
+          "sha256": "bba3c8ddbb33c9a7e310f43ce425a59f726a38aabb81403f7f2d6dbfcd64b8be",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.4e0eda5c.css",
+          "sha256": "c2c1c5833a257f1d878ef9274f3fba147e368a2457d52f2134df98039dc6b568",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.85662977.js",
+          "sha256": "180fdddacf72a691cccd0aacee6d66f9d4903965f0e3c7656e5a0cb7e9b2be26",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/templates-store.40d99796.js",
+          "sha256": "8afa615068a192a652f4f51fbe28e3fac6b50a64d060dd1a84faea19c14a3e4a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.1d9850c9.js",
+          "sha256": "3c15614c44b487cab6e5ead221cb73e3ce70701c8c4026d497324ea7712d4cf3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.b30815ec.css",
+          "sha256": "a4fa4c07d1c341ecacb66689df84588f3e397edba3ca611e7e359132c4c894e5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toBlob.eab7e061.js",
+          "sha256": "8df54f95416c165cae6a5f068865fea9ec9e38d7ad66349e872fc2bfaff59b50",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toCanvas.0ae3adba.js",
+          "sha256": "3f25ce1a65806a69f2388271ae917f0343cd5d1b349864717f52300a99498960",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toImg.7a5dd24b.js",
+          "sha256": "a39af5f1d78cbfa946db02e02e9baf29c0ec2d7622f01568d026c0cd4c1792c4",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TouchPan.4416398b.js",
+          "sha256": "7251e50091fd5eefe8b0f1adb8c8c872861a7fa56e4fbebcbceb927b7e82262a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-dialog-plugin-component.416b1bad.js",
+          "sha256": "f35258c108d706b4161eb399a0106ba4fbd295c48efaf1ac3f31121ca8136a1b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-fullscreen.55280171.js",
+          "sha256": "a1cfc3a7c51d7bdd7fc562594655970a22b2a7b6d6768ca015abeb4bf1bcb7cb",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/useCr.39a78d1b.js",
+          "sha256": "60b75563528927deb56a53c1d1a98167175a1eaf243854f260e251de35e268ae",
+          "verified": true
+        },
+        {
+          "path": "spa/favicon.ico",
+          "sha256": "d99709698ff895ee30e4d481cd68da8f7ca4d5f68b017d17aa2a08f938ec71bb",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/LICENSE",
+          "sha256": "1fdd47d0526982b4e71694ca4faf1de06ef8957faec92e3d023a26d187ac9cd3",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/MrEaves.otf",
+          "sha256": "f81f41979226a806f19302c2f77c276e3e5566e28795723e2449e71041b6c0e5",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/ScalaSansCaps.otf",
+          "sha256": "a4ef6f1194385687207e990c9fcccfa058660702696b5b192fc2cf1c8f6dfbdd",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold Italic.otf",
+          "sha256": "9620dc70400141c43fec8038fe851a409a6ae2ef8a03280d4fd21fbc67fd3234",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold.otf",
+          "sha256": "ca76e34ac978171e4e6cf20063564a7fe49d0ea450a560efe99898eb5ced8451",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Italic.otf",
+          "sha256": "9b262ff5409df2421adf480a65be3172e1bbaac19caeae0c6887bb78a3dfa3c8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans.otf",
+          "sha256": "0a68ccdc3d3eaf1a46c79a090ede33da8b5037916abd31d5e663ff25e58930b8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts.css",
+          "sha256": "26e6ef2088dbdfc59f4472f1732542e735024003fa35fa7d8ea9b5cadeae87e4",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/PHB-background.png",
+          "sha256": "f0751a1bb2be713108c8b108f48a84932558b27d60ae3e5c65b257f0f7c7e185",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Silvered parchment background.jpg",
+          "sha256": "5b1d52e95f7368ad2b8ab3af0ed75cc38dc053ad2bb680612e072f8fd66858e0",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Yellowed parchment background.jpg",
+          "sha256": "cf32396d2ef1d2ba501d9c0b8f7d2101108dc0fd50c8e45f5f8ebf75422cd1c3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_bottom_01.png",
+          "sha256": "6eaf3fb96dc0b270896391a3bc9995e9019ae680ff34e8c1081e5c07acde5577",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_left_01.png",
+          "sha256": "dc0038ab94b056bb150d90a181a6aa92a1b586f0f6fa81a670c77beb156ea4e9",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_right_01.png",
+          "sha256": "09577fd2d996ff5c52d75381fd75ccdcb0570e3f9e37ee9391235d113bf7db8a",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_splash_center.png",
+          "sha256": "cb973aee1a6851a2f4a01469fa06a5b9a86c75ef894a1c5832f524ff079ca6f3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_top_01.png",
+          "sha256": "7175715de92267d5bdeea1e5e70d3948f9b1aa8c1448989bda93c4ec8e55c85d",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-120x120.png",
+          "sha256": "7185fbe24f33300ce0cbb9a7ff3f681e360a3e3c54c9809a960e4a2fb3c625e9",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-152x152.png",
+          "sha256": "4f53d09b9972c095ef502e1c621877f677056a879a262952b2e1ae134e944cfe",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-167x167.png",
+          "sha256": "fbbf6bd65e7d328f30e47e6f930d180fd3b8d8f651423588e7e51a959ee9fa76",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-180x180.png",
+          "sha256": "40dcb91fd0649883f715e06e5a9dd79a06fa32bdf79aece7d1d9ed040432c883",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-16x16.png",
+          "sha256": "df29c1147263c1a50529c6550b6ac1b36edbf36afae1d99cbdf173128e76fac5",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-32x32.png",
+          "sha256": "96119764ea8886370a0f29a66caca8e26ad598a634e792cc0f918ef5e5b64239",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-96x96.png",
+          "sha256": "d0f6cfe58174d551dbc303fccfbcfc8e396d434ab7e370b5c298f15a38f8eeb6",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-192x192.png",
+          "sha256": "df8c18e54e8baa6b0106e14feb6060c7e7041cc5d401de12fa18ed3d8fee8d19",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-256x256.png",
+          "sha256": "b6b6a99026b8ced1b9177aee8e0c44b0168d81a555d006bb94e8a2cdc62c76a2",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-384x384.png",
+          "sha256": "717a8e738c5ccb58895870cfc1214599ecf7d387c139de095343bb38f4bb9e07",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-512x512.png",
+          "sha256": "7a62be88b71fb909af35a53e10f4c3e5ef96209a3f50d09304a46bf74e8cb46b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/ms-icon-144x144.png",
+          "sha256": "c1fd2b0697c88999feca003b66a5efda5f2fb443eedbac77eb12f611e7159a7b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/safari-pinned-tab.svg",
+          "sha256": "be59a7983918d1464f7f72cd2849a1ab016a2ac2c65e81f2783e4a526de955a9",
+          "verified": true
+        },
+        {
+          "path": "spa/index.html",
+          "sha256": "05a1d1e5767076b47750938b1f010c8471f7fbd30106d9ba5f47cca37d091f82",
+          "verified": true
+        },
+        {
+          "path": "spa/manifest.json",
+          "sha256": "7480a93a04909366980d0def93d0d7d66d3d5c9c7f675731119d508214ad0f48",
+          "verified": true
+        },
+        {
+          "path": "spa/readme-image.jpeg",
+          "sha256": "d47a927e88bf42a6c513a7555b9fed27d63c801f97c252abc77546aeb1a77ff6",
+          "verified": true
+        }
+      ]
+    },
+    {
+      "archive": "rc-2.4.3-build-224-random-result-integration-and-outcome-typography",
+      "manifest": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-224-random-result-integration-and-outcome-typography\\SHA256SUMS.txt",
+      "manifestSha256": "805137eb9dc98911a1f87858d27aaba0b54151d99ef41bf958fea7d66e4f004c",
+      "checksums": 96,
+      "unchanged": true,
+      "files": [
+        {
+          "path": "release-candidate.json",
+          "sha256": "4d98748f58d6defb342c2ab9bc52a5e96a9f6d61b590cf1829963a4e1963a725",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.4a2c28fd.css",
+          "sha256": "212fc7e443a199079710116f29ba0c52d55f447bf69684ed6b3280c8fb45b1b6",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.d836a38b.js",
+          "sha256": "eb53bcf9d3ab57bf75c623fe854e09e24caf44bde3db9fb655b686544c2eea5f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-3VYIPD3A.fe7bc1bd.js",
+          "sha256": "e9aee87d6fa60693327b955190dbb3dd9426775cdf9f9fb5cde4b1adee70d73e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-ANSXOGKI.93f9f788.js",
+          "sha256": "1a73981c6e477054e5dda059bef06242d2273356b61c17522eccc2cda08627e0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-T4JIPPZO.ff68f9a4.js",
+          "sha256": "99c721428b0dcafe7d52b2b50617a0799e1e28240a311fafb64b60c3a3282984",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.29531d66.js",
+          "sha256": "56a63d1a645b7bda06904dce12c8aa9e9a285dec7946618a4eaeae7bdec785f5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.9461e3bf.js",
+          "sha256": "de27709879105927abbc4b3f3b5dce86067aaf0802bca0905f5febf1a38edbc3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorCorrection.57fcbe15.js",
+          "sha256": "d82c401344de19c6a00aa23b9aa4b6c23d666ff195e5bc88aaf0b9511af16668",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorNotFound.4abb5a70.js",
+          "sha256": "814b3c84ac279fdf1b699c1343029412a35d0c545c1fb3d4e5a5e64965cc0b5a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.808443ae.ttf",
+          "sha256": "808443ae6c8204395add8543da8a90a60b9376fb0f87ed8e8ea37d109596d805",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.d7236a19.woff2",
+          "sha256": "d7236a19bf23cbb2027280e8f51dc99d6c45976a2ed60de73382b034b18a2b68",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.54cf6086.ttf",
+          "sha256": "54cf6086f7bb21f9d072ad494a19b4681fa516dd0a14cee52da01d3651a913a3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.e3456d12.woff2",
+          "sha256": "e3456d1283b9d75337a773dfd147bf908fd02c01b4bf48576d8603a69b13cbe5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.aa759986.woff2",
+          "sha256": "aa75998623a391e61c6901794ace832e3ecdd288b56d608f21bea0411acc0b8e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.d2f05935.ttf",
+          "sha256": "d2f0593540b0e33ba6de255a54f272d466e31144806956bea8cfdbf7edffc9bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.0ce9033c.woff2",
+          "sha256": "0ce9033c69dc714f5f45ef9bf17d55e4c46bcdfad6799a4e92b38e7781bf86bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.30f6abf6.ttf",
+          "sha256": "30f6abf6baa425825828793d6dfad1fb63765d0e5abaa7af6feafb9bfcece5a0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.fd84f88b.woff",
+          "sha256": "fd84f88b497040d4f7d5e8c9f8635aef8d3e706c0fa52e2b6facf14eee87e522",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.4a4dbc62.woff2",
+          "sha256": "4a4dbc62fa335e411b94a532be091c58c0c0c4fa731339f11722577d3cf6443b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/help.b41307b6.js",
+          "sha256": "22203100cb52f6ff681e5390a5c19d89fba91ea5b749e25f7948b2751872ffe4",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/history-store.04235fb4.js",
+          "sha256": "08b770812909f60f11194da6589c1c1c56516a96e733a27d28d13421d197f9c3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/i18n.9ae8d0f8.js",
+          "sha256": "1a917c00a38833d1c58f2dac88da4ca32a109355525e945c9ec5e30f0d8ba170",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.3f91ff50.css",
+          "sha256": "e148e115c8a298f2e125412ae5647aaeedd6815ebe8408d924dd69ad538ba709",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.e4fc3381.js",
+          "sha256": "0ae20aafd1f61fc6f4984429e820c49a551c6d4d3f2ed38306c5dad76f400619",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.6abe435f.woff",
+          "sha256": "6abe435f98d8429e1220d8e3766df57e4606158c37445cd6dbe784643c85642d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.2655782c.woff",
+          "sha256": "2655782ccb8a3ab5916ee467fef2decfa62d815fd752a7d7e41ceee65a74894a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.b396c4b4.woff",
+          "sha256": "b396c4b4614d0c2fb674d1cce39f243f27268026493bef3bd9a385ddce19b9a2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.c46b1797.woff",
+          "sha256": "c46b1797ee10238b5ec7ff4f583d7821c7e5acfee268bb55403f8138a50ec007",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.21d7671f.woff",
+          "sha256": "21d7671f97d73c08f148e0cb1c8c5f0861e42f5e17cbe46d43454e0f80d3911f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.1a33b99d.woff",
+          "sha256": "1a33b99d102550469c21667f8ec8d699ac4d24f0c87569b0c6d3100b1517e781",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ko-fi-icon.fe114719.png",
+          "sha256": "fe1147193507a27b96c571440065a8398b02847498a8df030877b52ed57e41d5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.39a81802.css",
+          "sha256": "ed2aaf27c79114696838d9b19fa12c72c6823399b94710753632f8a91e765b28",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.bac91380.js",
+          "sha256": "3895bf484274d013291f8df0dda98b63cb676596963fa5792faafeddb79b0f9a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.633d596f.woff2",
+          "sha256": "633d596f7288835ff04eba1105f41cf6fe5c9ffed41f2cb20a3f00fb035c0c8b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.7f3afe9b.woff",
+          "sha256": "7f3afe9ba6aa0f1cbd867655d7b62f5dd544a7ff30665c59eaaa28086bf3e0dd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.3587a88d.js",
+          "sha256": "a726da08783ec01c8e7799a85b360be9054e846293282467a2fc37a0b573af01",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.35a30de8.css",
+          "sha256": "0a55248980450fb5419c8318d03d2fafccbdd1bb5cd4ae3ace0c4b0fade3878b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.0d2a1ddc.css",
+          "sha256": "0a22db39ef7e4601b87a5669ec72fcf94264e35d5b7325be259b5f07455c7bff",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.b7d22829.js",
+          "sha256": "fb207399f3eaf9e092bd008e9b38099413005dd6038ec97c5c4cc9f6405b07df",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/position-engine.5dffdd8a.js",
+          "sha256": "f094d65dbee93e99d538e224df03b8a92f170d0d8d2bfb7e71f953f1d639d5ff",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLayout.bd397ebf.js",
+          "sha256": "0da0c26a6ec9ecc26175af78898ce764efb669e7d32cbcdb6cd998b7623f792b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLinearProgress.286673fa.js",
+          "sha256": "c72eeae993a30c1f7e9c354fe7797b240e8c44672f39d6c5b86e4a93a235e5e8",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QResizeObserver.0497de2d.js",
+          "sha256": "a1933f927c8a09b55a8165066a5a93b58c15e9ca7fbff8a98fcf2248d07c1b1e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTable.c02e1122.js",
+          "sha256": "7bbb5282f0dddad0100cf1740bf87efd3174c2785fdf8403121f179ac009f0c4",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTooltip.676e1dc6.js",
+          "sha256": "54925496fd342c9936e1212fbb59c86bb16c49454a00e74edc35eb94ed05e3df",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/rasterize-JS5G2XHH.6ff68fb6.js",
+          "sha256": "1f41c3555b55d21c8e5027540c9504143416c3e9618253042742d8b1c71cff1e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.02106891.js",
+          "sha256": "cde2b4d2295bb4e9afe008b10a6e708cce5bf2eae34fa2d597ec57b7d960c2fe",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.1cf2ee9d.css",
+          "sha256": "0a1c395eb0a067d555bc7d6c65d323654ddb9dddc9edbc381031d6614c75249a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.4e0eda5c.css",
+          "sha256": "c2c1c5833a257f1d878ef9274f3fba147e368a2457d52f2134df98039dc6b568",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.59abd066.js",
+          "sha256": "a91eda7619a6f5dd8c998981572f98a996416fb22779e9758b4092f509fad5fa",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/templates-store.38a8de31.js",
+          "sha256": "5493ee3cf39a614f909ef2dde9d2e7a569ae58e3ea09d6c4ab35bd3ede0c3658",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.5609e85e.js",
+          "sha256": "4e735b6e0f408b78f5be11ded845bbf2b85cd07ab44034f7def1c65f8a78a77c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.b30815ec.css",
+          "sha256": "a4fa4c07d1c341ecacb66689df84588f3e397edba3ca611e7e359132c4c894e5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toBlob.d4bca5cf.js",
+          "sha256": "0189cc99389133d1d00da45ced4f17066dd824e31924e88bfb8b39f1c571cb9f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toCanvas.b9a1c716.js",
+          "sha256": "f0d9f54b1d477dc56451e2a628e72fea9ed7a28deff9b2474d37c4ffc118147f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toImg.34c73217.js",
+          "sha256": "432467a45266b3555cefcdbb50f30341a6d131e954716ee088378ed098712f21",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TouchPan.5fb7c990.js",
+          "sha256": "e4838e0f4375604f3c7c30e218b887a84fe71618fc14fe11e65004f3677c0111",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-dialog-plugin-component.2bbfe0ec.js",
+          "sha256": "f7121de2ebd51c54cf296037da7c4cab69b9396b4b737aff931942173fc78001",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-fullscreen.47000f9f.js",
+          "sha256": "f434901b5b037ce418d4433947dc0ccd56193a1bc3c0adc47e6745a94985fe9b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/useCr.c2b2b962.js",
+          "sha256": "3f2771277cb1abe9c39262d04f2c313624f71dedf7aced28f37d0b3233177a4f",
+          "verified": true
+        },
+        {
+          "path": "spa/favicon.ico",
+          "sha256": "d99709698ff895ee30e4d481cd68da8f7ca4d5f68b017d17aa2a08f938ec71bb",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/LICENSE",
+          "sha256": "1fdd47d0526982b4e71694ca4faf1de06ef8957faec92e3d023a26d187ac9cd3",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/MrEaves.otf",
+          "sha256": "f81f41979226a806f19302c2f77c276e3e5566e28795723e2449e71041b6c0e5",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/ScalaSansCaps.otf",
+          "sha256": "a4ef6f1194385687207e990c9fcccfa058660702696b5b192fc2cf1c8f6dfbdd",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold Italic.otf",
+          "sha256": "9620dc70400141c43fec8038fe851a409a6ae2ef8a03280d4fd21fbc67fd3234",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold.otf",
+          "sha256": "ca76e34ac978171e4e6cf20063564a7fe49d0ea450a560efe99898eb5ced8451",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Italic.otf",
+          "sha256": "9b262ff5409df2421adf480a65be3172e1bbaac19caeae0c6887bb78a3dfa3c8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans.otf",
+          "sha256": "0a68ccdc3d3eaf1a46c79a090ede33da8b5037916abd31d5e663ff25e58930b8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts.css",
+          "sha256": "26e6ef2088dbdfc59f4472f1732542e735024003fa35fa7d8ea9b5cadeae87e4",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/PHB-background.png",
+          "sha256": "f0751a1bb2be713108c8b108f48a84932558b27d60ae3e5c65b257f0f7c7e185",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Silvered parchment background.jpg",
+          "sha256": "5b1d52e95f7368ad2b8ab3af0ed75cc38dc053ad2bb680612e072f8fd66858e0",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Yellowed parchment background.jpg",
+          "sha256": "cf32396d2ef1d2ba501d9c0b8f7d2101108dc0fd50c8e45f5f8ebf75422cd1c3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_bottom_01.png",
+          "sha256": "6eaf3fb96dc0b270896391a3bc9995e9019ae680ff34e8c1081e5c07acde5577",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_left_01.png",
+          "sha256": "dc0038ab94b056bb150d90a181a6aa92a1b586f0f6fa81a670c77beb156ea4e9",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_right_01.png",
+          "sha256": "09577fd2d996ff5c52d75381fd75ccdcb0570e3f9e37ee9391235d113bf7db8a",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_splash_center.png",
+          "sha256": "cb973aee1a6851a2f4a01469fa06a5b9a86c75ef894a1c5832f524ff079ca6f3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_top_01.png",
+          "sha256": "7175715de92267d5bdeea1e5e70d3948f9b1aa8c1448989bda93c4ec8e55c85d",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-120x120.png",
+          "sha256": "7185fbe24f33300ce0cbb9a7ff3f681e360a3e3c54c9809a960e4a2fb3c625e9",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-152x152.png",
+          "sha256": "4f53d09b9972c095ef502e1c621877f677056a879a262952b2e1ae134e944cfe",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-167x167.png",
+          "sha256": "fbbf6bd65e7d328f30e47e6f930d180fd3b8d8f651423588e7e51a959ee9fa76",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-180x180.png",
+          "sha256": "40dcb91fd0649883f715e06e5a9dd79a06fa32bdf79aece7d1d9ed040432c883",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-16x16.png",
+          "sha256": "df29c1147263c1a50529c6550b6ac1b36edbf36afae1d99cbdf173128e76fac5",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-32x32.png",
+          "sha256": "96119764ea8886370a0f29a66caca8e26ad598a634e792cc0f918ef5e5b64239",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-96x96.png",
+          "sha256": "d0f6cfe58174d551dbc303fccfbcfc8e396d434ab7e370b5c298f15a38f8eeb6",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-192x192.png",
+          "sha256": "df8c18e54e8baa6b0106e14feb6060c7e7041cc5d401de12fa18ed3d8fee8d19",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-256x256.png",
+          "sha256": "b6b6a99026b8ced1b9177aee8e0c44b0168d81a555d006bb94e8a2cdc62c76a2",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-384x384.png",
+          "sha256": "717a8e738c5ccb58895870cfc1214599ecf7d387c139de095343bb38f4bb9e07",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-512x512.png",
+          "sha256": "7a62be88b71fb909af35a53e10f4c3e5ef96209a3f50d09304a46bf74e8cb46b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/ms-icon-144x144.png",
+          "sha256": "c1fd2b0697c88999feca003b66a5efda5f2fb443eedbac77eb12f611e7159a7b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/safari-pinned-tab.svg",
+          "sha256": "be59a7983918d1464f7f72cd2849a1ab016a2ac2c65e81f2783e4a526de955a9",
+          "verified": true
+        },
+        {
+          "path": "spa/index.html",
+          "sha256": "a5bf5226ed902768c7c098e1f62b39168185c11495e173279012c7c71aad9588",
+          "verified": true
+        },
+        {
+          "path": "spa/manifest.json",
+          "sha256": "7480a93a04909366980d0def93d0d7d66d3d5c9c7f675731119d508214ad0f48",
+          "verified": true
+        },
+        {
+          "path": "spa/readme-image.jpeg",
+          "sha256": "d47a927e88bf42a6c513a7555b9fed27d63c801f97c252abc77546aeb1a77ff6",
+          "verified": true
+        }
+      ]
+    },
+    {
+      "archive": "rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections",
+      "manifest": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections\\SHA256SUMS.txt",
+      "manifestSha256": "a1d9a5bd32664d240e858900654bc034a4207de52ee88d7ad90af78ff682a4bd",
+      "checksums": 96,
+      "unchanged": true,
+      "files": [
+        {
+          "path": "release-candidate.json",
+          "sha256": "f65bcd49e009787a55775d0e7957308f9ed9c504f617990f501b508e712f5ca0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.3e6b89b9.css",
+          "sha256": "85504c8d04e9a7c75317efc5d09dce1428af48dbeff8e9e333ad3c294c79f80c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.a5acd54e.js",
+          "sha256": "9e6b10747646aeca666e04cdc468d9b6017e175224a6b3740b6e2dfc1ca53655",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-3VYIPD3A.659022b8.js",
+          "sha256": "f9aa02aa307d457860bc93a52b6c8fe36bb5608b624e47a4e05948922f12f4a1",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-ANSXOGKI.27685b86.js",
+          "sha256": "e09db87fac7d6b3d8c4bd6fd4b615080a64ff5ddf1d10beac36d03ad37e3a914",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-T4JIPPZO.cc2b9956.js",
+          "sha256": "45538a1e5a4c6b2d9e3c8f5e512296281f3e130ef01764cf6d2dc4c046b86ad9",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.6aebb37e.js",
+          "sha256": "de9c97b943b9d8b7e7e31931cc0eebceeb8153cc9d1c816e809abba7dea85e05",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.9461e3bf.js",
+          "sha256": "de27709879105927abbc4b3f3b5dce86067aaf0802bca0905f5febf1a38edbc3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorCorrection.87957462.js",
+          "sha256": "516eae07118dc6a008932769b9a2f84caa376ce0149c883995e45f7de530f8b0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorNotFound.5d7db5c8.js",
+          "sha256": "3764460b3a848b948da4bdca64fcd3af9bd4513c5ee8811158e7f19ad331270c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.808443ae.ttf",
+          "sha256": "808443ae6c8204395add8543da8a90a60b9376fb0f87ed8e8ea37d109596d805",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.d7236a19.woff2",
+          "sha256": "d7236a19bf23cbb2027280e8f51dc99d6c45976a2ed60de73382b034b18a2b68",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.54cf6086.ttf",
+          "sha256": "54cf6086f7bb21f9d072ad494a19b4681fa516dd0a14cee52da01d3651a913a3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.e3456d12.woff2",
+          "sha256": "e3456d1283b9d75337a773dfd147bf908fd02c01b4bf48576d8603a69b13cbe5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.aa759986.woff2",
+          "sha256": "aa75998623a391e61c6901794ace832e3ecdd288b56d608f21bea0411acc0b8e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.d2f05935.ttf",
+          "sha256": "d2f0593540b0e33ba6de255a54f272d466e31144806956bea8cfdbf7edffc9bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.0ce9033c.woff2",
+          "sha256": "0ce9033c69dc714f5f45ef9bf17d55e4c46bcdfad6799a4e92b38e7781bf86bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.30f6abf6.ttf",
+          "sha256": "30f6abf6baa425825828793d6dfad1fb63765d0e5abaa7af6feafb9bfcece5a0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.fd84f88b.woff",
+          "sha256": "fd84f88b497040d4f7d5e8c9f8635aef8d3e706c0fa52e2b6facf14eee87e522",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.4a4dbc62.woff2",
+          "sha256": "4a4dbc62fa335e411b94a532be091c58c0c0c4fa731339f11722577d3cf6443b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/help.bf064911.js",
+          "sha256": "12ca4993d9f64de86b519c7e1a69a43cfacc4c23af3fb8dcd8a382022a936c60",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/history-store.81afd0b3.js",
+          "sha256": "5af3c2232efef12e67739422568a29a1f271b49b357b3e2abe147b102b1048a3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/i18n.92d21fe4.js",
+          "sha256": "e56c004a227fbb812e21e20b19b2542925c14db06fb8ba671709f2b5479798ed",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.3f91ff50.css",
+          "sha256": "e148e115c8a298f2e125412ae5647aaeedd6815ebe8408d924dd69ad538ba709",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.81a37f31.js",
+          "sha256": "893739027a9813facbcfdfceb45b010cf9495e7848248eae39fb88c1130f982c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.6abe435f.woff",
+          "sha256": "6abe435f98d8429e1220d8e3766df57e4606158c37445cd6dbe784643c85642d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.2655782c.woff",
+          "sha256": "2655782ccb8a3ab5916ee467fef2decfa62d815fd752a7d7e41ceee65a74894a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.b396c4b4.woff",
+          "sha256": "b396c4b4614d0c2fb674d1cce39f243f27268026493bef3bd9a385ddce19b9a2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.c46b1797.woff",
+          "sha256": "c46b1797ee10238b5ec7ff4f583d7821c7e5acfee268bb55403f8138a50ec007",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.21d7671f.woff",
+          "sha256": "21d7671f97d73c08f148e0cb1c8c5f0861e42f5e17cbe46d43454e0f80d3911f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.1a33b99d.woff",
+          "sha256": "1a33b99d102550469c21667f8ec8d699ac4d24f0c87569b0c6d3100b1517e781",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ko-fi-icon.fe114719.png",
+          "sha256": "fe1147193507a27b96c571440065a8398b02847498a8df030877b52ed57e41d5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.568ee0f3.js",
+          "sha256": "4d3778ebeea274151287e2463914ae468bed5dca4bceb60084803ac0e4a288ed",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.60ed0fcf.css",
+          "sha256": "555a15b31a88a7c969aaf073cce7a6c4b2fe5adb8008194e8468ba60a31c795d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.633d596f.woff2",
+          "sha256": "633d596f7288835ff04eba1105f41cf6fe5c9ffed41f2cb20a3f00fb035c0c8b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.7f3afe9b.woff",
+          "sha256": "7f3afe9ba6aa0f1cbd867655d7b62f5dd544a7ff30665c59eaaa28086bf3e0dd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.1411ec6f.js",
+          "sha256": "2c8a0b81c7d7242aea3de72a75916dfcf3ab15021651709385497b7cd8ebae49",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.e4a5415f.css",
+          "sha256": "41e3431bf6613ffa15b565201fef74590788c1f6288b9be5cd1feaa651a28ec4",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.0d2a1ddc.css",
+          "sha256": "0a22db39ef7e4601b87a5669ec72fcf94264e35d5b7325be259b5f07455c7bff",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.d918613a.js",
+          "sha256": "b15cad328ae0ee26a6f284ef7265e923067e42d820b3c0d90b4d16d3ab27e700",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/position-engine.25e1f5d0.js",
+          "sha256": "706c7f1e236ae65c77d792edbb2a81545b5808b81a20a99a9baf85ab6a96b421",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLayout.60879ec2.js",
+          "sha256": "5cad3e26e956eb0a77eff62e4f952c1b05079b6a9982cc35f713f49e684cc663",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLinearProgress.88f9f19e.js",
+          "sha256": "a2ceeb394052a6453d7323037b962463dcdb78138cc897d519fff376929ce33d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QResizeObserver.bfa480f7.js",
+          "sha256": "b918a7e8c20bba97d34b2cba2dc23814d6845d2560a05bb2793bb1d5b971c79b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTable.fff5c92a.js",
+          "sha256": "482a966792002aad74e55b4f240ee3b0ea59b423df7667b70ff8716824d9a3da",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTooltip.3042c503.js",
+          "sha256": "d39a01a6111f469d54caef47ff874c00555f5c0de8be52efff1d761f621acdfd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/rasterize-JS5G2XHH.fb7a0fec.js",
+          "sha256": "1ca1cf33a9922a04d797860800884f9547340948d34d5860ede19dac0bcc3139",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.2bb138c3.css",
+          "sha256": "449e5bcaee75e2e3390c014d7935dc35c7950109bfe32fd275b59b82bfc86e6d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.2c2cd659.js",
+          "sha256": "f06d2e863582d26047ffa972ea8da9727118e04dbfe10fd3746176b915cf0332",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.4e0eda5c.css",
+          "sha256": "c2c1c5833a257f1d878ef9274f3fba147e368a2457d52f2134df98039dc6b568",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.e123422e.js",
+          "sha256": "a10ca6af66d8be76227d042391368b1dd017163fdbb4a0bb015e89243ce41058",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/templates-store.8dd7ca1c.js",
+          "sha256": "014eccdda93f10b73c6192427ec58edb06d0a33f602dce9e01e0b15f17bde9ce",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.237ef570.js",
+          "sha256": "56e35eb83ef7cc5e38a51b113b3abda43bce21cb1fcd5b467066cfd3783d6243",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.2456c2aa.css",
+          "sha256": "6c58b207e1ea61feb14724fc83960aaba1df7ed076e24bde14578429eb55a31a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toBlob.21d708ba.js",
+          "sha256": "d84329b3397885dbabbd842a05d1c37636ca8048af4b9e63ec66b5bc46e20d7f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toCanvas.c910547c.js",
+          "sha256": "832848513d3f7492c9f32a713a3bf97853c624352996c6082b9b61f770cadd0b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toImg.2782f91c.js",
+          "sha256": "abfc371e3e2706a4e7274962e81306896a5374809436ee11f3bd1f8db0c44e91",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TouchPan.b7249d7f.js",
+          "sha256": "cecc137aef087ee9f49ce600f099ff36a281bcd8b95e2095eea01929e0949f3b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-dialog-plugin-component.fbbf7990.js",
+          "sha256": "c72b5cfb49ca298e9dd0afcc85cbaf04d546afa11793c31f396b366c74330fcf",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-fullscreen.712f78f1.js",
+          "sha256": "4a6126d17d1367fff07fb40579665d7938b757c5893e4d31d34dc1ca007e90b8",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/useCr.80bf022e.js",
+          "sha256": "f335c217efc9c01581b637fdd5fd9731e324ee8acc36a587ecaf169163d996d0",
+          "verified": true
+        },
+        {
+          "path": "spa/favicon.ico",
+          "sha256": "d99709698ff895ee30e4d481cd68da8f7ca4d5f68b017d17aa2a08f938ec71bb",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/LICENSE",
+          "sha256": "1fdd47d0526982b4e71694ca4faf1de06ef8957faec92e3d023a26d187ac9cd3",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/MrEaves.otf",
+          "sha256": "f81f41979226a806f19302c2f77c276e3e5566e28795723e2449e71041b6c0e5",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/ScalaSansCaps.otf",
+          "sha256": "a4ef6f1194385687207e990c9fcccfa058660702696b5b192fc2cf1c8f6dfbdd",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold Italic.otf",
+          "sha256": "9620dc70400141c43fec8038fe851a409a6ae2ef8a03280d4fd21fbc67fd3234",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold.otf",
+          "sha256": "ca76e34ac978171e4e6cf20063564a7fe49d0ea450a560efe99898eb5ced8451",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Italic.otf",
+          "sha256": "9b262ff5409df2421adf480a65be3172e1bbaac19caeae0c6887bb78a3dfa3c8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans.otf",
+          "sha256": "0a68ccdc3d3eaf1a46c79a090ede33da8b5037916abd31d5e663ff25e58930b8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts.css",
+          "sha256": "26e6ef2088dbdfc59f4472f1732542e735024003fa35fa7d8ea9b5cadeae87e4",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/PHB-background.png",
+          "sha256": "f0751a1bb2be713108c8b108f48a84932558b27d60ae3e5c65b257f0f7c7e185",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Silvered parchment background.jpg",
+          "sha256": "5b1d52e95f7368ad2b8ab3af0ed75cc38dc053ad2bb680612e072f8fd66858e0",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Yellowed parchment background.jpg",
+          "sha256": "cf32396d2ef1d2ba501d9c0b8f7d2101108dc0fd50c8e45f5f8ebf75422cd1c3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_bottom_01.png",
+          "sha256": "6eaf3fb96dc0b270896391a3bc9995e9019ae680ff34e8c1081e5c07acde5577",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_left_01.png",
+          "sha256": "dc0038ab94b056bb150d90a181a6aa92a1b586f0f6fa81a670c77beb156ea4e9",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_right_01.png",
+          "sha256": "09577fd2d996ff5c52d75381fd75ccdcb0570e3f9e37ee9391235d113bf7db8a",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_splash_center.png",
+          "sha256": "cb973aee1a6851a2f4a01469fa06a5b9a86c75ef894a1c5832f524ff079ca6f3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_top_01.png",
+          "sha256": "7175715de92267d5bdeea1e5e70d3948f9b1aa8c1448989bda93c4ec8e55c85d",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-120x120.png",
+          "sha256": "7185fbe24f33300ce0cbb9a7ff3f681e360a3e3c54c9809a960e4a2fb3c625e9",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-152x152.png",
+          "sha256": "4f53d09b9972c095ef502e1c621877f677056a879a262952b2e1ae134e944cfe",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-167x167.png",
+          "sha256": "fbbf6bd65e7d328f30e47e6f930d180fd3b8d8f651423588e7e51a959ee9fa76",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-180x180.png",
+          "sha256": "40dcb91fd0649883f715e06e5a9dd79a06fa32bdf79aece7d1d9ed040432c883",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-16x16.png",
+          "sha256": "df29c1147263c1a50529c6550b6ac1b36edbf36afae1d99cbdf173128e76fac5",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-32x32.png",
+          "sha256": "96119764ea8886370a0f29a66caca8e26ad598a634e792cc0f918ef5e5b64239",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-96x96.png",
+          "sha256": "d0f6cfe58174d551dbc303fccfbcfc8e396d434ab7e370b5c298f15a38f8eeb6",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-192x192.png",
+          "sha256": "df8c18e54e8baa6b0106e14feb6060c7e7041cc5d401de12fa18ed3d8fee8d19",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-256x256.png",
+          "sha256": "b6b6a99026b8ced1b9177aee8e0c44b0168d81a555d006bb94e8a2cdc62c76a2",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-384x384.png",
+          "sha256": "717a8e738c5ccb58895870cfc1214599ecf7d387c139de095343bb38f4bb9e07",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-512x512.png",
+          "sha256": "7a62be88b71fb909af35a53e10f4c3e5ef96209a3f50d09304a46bf74e8cb46b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/ms-icon-144x144.png",
+          "sha256": "c1fd2b0697c88999feca003b66a5efda5f2fb443eedbac77eb12f611e7159a7b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/safari-pinned-tab.svg",
+          "sha256": "be59a7983918d1464f7f72cd2849a1ab016a2ac2c65e81f2783e4a526de955a9",
+          "verified": true
+        },
+        {
+          "path": "spa/index.html",
+          "sha256": "36467aa666ec312e1c6cb27797bc618847631da41e6d5ddf85b673489420bbee",
+          "verified": true
+        },
+        {
+          "path": "spa/manifest.json",
+          "sha256": "7143ad5c435576d8aa91e5122992266d0e86ec62ba093e733d79d3263b9215b5",
+          "verified": true
+        },
+        {
+          "path": "spa/readme-image.jpeg",
+          "sha256": "d47a927e88bf42a6c513a7555b9fed27d63c801f97c252abc77546aeb1a77ff6",
+          "verified": true
+        }
+      ]
+    },
+    {
+      "archive": "rc-2.4.3-build-226-emergency-editor-and-spellcasting",
+      "manifest": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-226-emergency-editor-and-spellcasting\\SHA256SUMS.txt",
+      "manifestSha256": "716333babcc80ca483ebae3a3217d00dd4f6f0eed5451d55b3ee8efb98ed2055",
+      "checksums": 96,
+      "unchanged": true,
+      "files": [
+        {
+          "path": "release-candidate.json",
+          "sha256": "3689938cd7193fe39b426aaf9a3f47800ac18dc07f5d3b4fc433956574f8a2c8",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.3e6b89b9.css",
+          "sha256": "85504c8d04e9a7c75317efc5d09dce1428af48dbeff8e9e333ad3c294c79f80c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/AppDrawer.6cabb01a.js",
+          "sha256": "c737d90b13e67cec85e74373ac184bddfa5dea7576bb454150a9d395bf983120",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-3VYIPD3A.ed1a391f.js",
+          "sha256": "7e986320323c25299a70fd656d5b9b3f672bd6487fa790afc95f3c5ca18d351a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-ANSXOGKI.c2bcec79.js",
+          "sha256": "31d9a8a97c853c514039979fd9594428b800808d5c4a90b5cd8b7ecbc29e23af",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/chunk-T4JIPPZO.cf74f6a4.js",
+          "sha256": "066ffc32563bd39a7e7de7053edfb6efbc8320c61dbf95777629f16ff70eada2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.206f6880.js",
+          "sha256": "67a4c570d8a8754440fd80d0e4061a29bbc6627db1559161c8b084ffd93da61c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/download.9461e3bf.js",
+          "sha256": "de27709879105927abbc4b3f3b5dce86067aaf0802bca0905f5febf1a38edbc3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorCorrection.d6d0c2a0.js",
+          "sha256": "2b3caa16abdc4d13c89fac7da7de8a2a7ba480aebf39b2b55320a791d32b9c8e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ErrorNotFound.a1984a3d.js",
+          "sha256": "9e92b9ff57d1ea3d3e04b2783077c57b8d48f0e7de1bdbd91dc444a36151ccc1",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.808443ae.ttf",
+          "sha256": "808443ae6c8204395add8543da8a90a60b9376fb0f87ed8e8ea37d109596d805",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-brands-400.d7236a19.woff2",
+          "sha256": "d7236a19bf23cbb2027280e8f51dc99d6c45976a2ed60de73382b034b18a2b68",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.54cf6086.ttf",
+          "sha256": "54cf6086f7bb21f9d072ad494a19b4681fa516dd0a14cee52da01d3651a913a3",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-regular-400.e3456d12.woff2",
+          "sha256": "e3456d1283b9d75337a773dfd147bf908fd02c01b4bf48576d8603a69b13cbe5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.aa759986.woff2",
+          "sha256": "aa75998623a391e61c6901794ace832e3ecdd288b56d608f21bea0411acc0b8e",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-solid-900.d2f05935.ttf",
+          "sha256": "d2f0593540b0e33ba6de255a54f272d466e31144806956bea8cfdbf7edffc9bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.0ce9033c.woff2",
+          "sha256": "0ce9033c69dc714f5f45ef9bf17d55e4c46bcdfad6799a4e92b38e7781bf86bd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/fa-v4compatibility.30f6abf6.ttf",
+          "sha256": "30f6abf6baa425825828793d6dfad1fb63765d0e5abaa7af6feafb9bfcece5a0",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.fd84f88b.woff",
+          "sha256": "fd84f88b497040d4f7d5e8c9f8635aef8d3e706c0fa52e2b6facf14eee87e522",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.4a4dbc62.woff2",
+          "sha256": "4a4dbc62fa335e411b94a532be091c58c0c0c4fa731339f11722577d3cf6443b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/help.661313b5.js",
+          "sha256": "0e79946c6bad5c677b79a555988a3ca7e3197cc1f347f22acd17142b935aa4a1",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/history-store.64b43734.js",
+          "sha256": "5429e7f483b9992e0ab3f059872395f0fa4abf54440bacf08dd14ecbc78d8741",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/i18n.8c76ac2a.js",
+          "sha256": "3e7af07f935d22f9be73ba42a09426fc7fb51bf2aa31a4e95bb068434fabf599",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.825af67e.css",
+          "sha256": "7aa7f2bae71b317c85a50cf899bd9c28b5f591df352de6292adcce0373fccc43",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/index.9877dc2b.js",
+          "sha256": "a982af2ba225548ca030868789348320124107df8f152afdd5835b5884986e94",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuaabVmUiAw.6abe435f.woff",
+          "sha256": "6abe435f98d8429e1220d8e3766df57e4606158c37445cd6dbe784643c85642d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWub2bVmUiAw.2655782c.woff",
+          "sha256": "2655782ccb8a3ab5916ee467fef2decfa62d815fd752a7d7e41ceee65a74894a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbFmUiAw.b396c4b4.woff",
+          "sha256": "b396c4b4614d0c2fb674d1cce39f243f27268026493bef3bd9a385ddce19b9a2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbVmUiAw.c46b1797.woff",
+          "sha256": "c46b1797ee10238b5ec7ff4f583d7821c7e5acfee268bb55403f8138a50ec007",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjalmUiAw.21d7671f.woff",
+          "sha256": "21d7671f97d73c08f148e0cb1c8c5f0861e42f5e17cbe46d43454e0f80d3911f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuZtalmUiAw.1a33b99d.woff",
+          "sha256": "1a33b99d102550469c21667f8ec8d699ac4d24f0c87569b0c6d3100b1517e781",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/ko-fi-icon.fe114719.png",
+          "sha256": "fe1147193507a27b96c571440065a8398b02847498a8df030877b52ed57e41d5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.60ed0fcf.css",
+          "sha256": "555a15b31a88a7c969aaf073cce7a6c4b2fe5adb8008194e8468ba60a31c795d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MainLayout.a177f2e8.js",
+          "sha256": "cfa946549fce221efed230c76bdc7334f4f0ce9ea843892099c57dcfd1e7738a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.633d596f.woff2",
+          "sha256": "633d596f7288835ff04eba1105f41cf6fe5c9ffed41f2cb20a3f00fb035c0c8b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/materialdesignicons-webfont.7f3afe9b.woff",
+          "sha256": "7f3afe9ba6aa0f1cbd867655d7b62f5dd544a7ff30665c59eaaa28086bf3e0dd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.37a703ca.css",
+          "sha256": "a6162797dd5192cb66c70f2761aae8b19a3125fb05d5996fadacc7724433dc1b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/MonsterBuilder.543ac0dd.js",
+          "sha256": "d5c192d255e4b99e2895a6415d69e15468ea82bea88abfb04ae2b46f03237499",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.0a1b9956.js",
+          "sha256": "23831e1b003c2efd9c1c9a71a5d0a5f60f1fbb39a10c4211a97dc809c3329d1f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/NewSpellDialog.0d2a1ddc.css",
+          "sha256": "0a22db39ef7e4601b87a5669ec72fcf94264e35d5b7325be259b5f07455c7bff",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/position-engine.c29019ba.js",
+          "sha256": "0a5be210dd766d6cbf37e808a9f2daf29a4c2383a02a9ae8b000b9cf53e1d16c",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLayout.19b652c4.js",
+          "sha256": "97bf0569e5f2711fc97b993034afffa38486a2b7bb185ca92b1a33be7ae1dd15",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QLinearProgress.76bc1743.js",
+          "sha256": "6777fcddaa1130a891553565b4a32ea9b511b4a46df2fafcb02a47966c140d7f",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QResizeObserver.5c0cd161.js",
+          "sha256": "04adb25f104e66a64db6293090e9a6d408b5292e519e5a0539eead3c9136f1fd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTable.34ce92f1.js",
+          "sha256": "cdd359d946bcdfff9dfabfa7d19822a338265ca00a86ae37724472e64852c301",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/QTooltip.6b47cdae.js",
+          "sha256": "12c66bceb5bbead68568599f267832590869ab99fcdbbb0097bdda6e8b4b3fcb",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/rasterize-JS5G2XHH.8f496a0b.js",
+          "sha256": "c283d652a4799036f54117b5a69c70a37c022008fdce31edb7450fc510defff6",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.2bb138c3.css",
+          "sha256": "449e5bcaee75e2e3390c014d7935dc35c7950109bfe32fd275b59b82bfc86e6d",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/SpellsEditor.2f0d1286.js",
+          "sha256": "fd4054315e78a4fd409b374c64572d55b8770b63db9ca52e2c52763c123651c2",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.4e0eda5c.css",
+          "sha256": "c2c1c5833a257f1d878ef9274f3fba147e368a2457d52f2134df98039dc6b568",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplateEditorLayout.b9bdf7f5.js",
+          "sha256": "ef66b01fcb25f4cddca2c0bd0c316950b61b9288a546202d8f2b90d3e544ebf5",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/templates-store.e1623bb9.js",
+          "sha256": "3992a574d9338de521232e2722362062dd25ca56e6fdff1cde47e4db1241b9b8",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.2456c2aa.css",
+          "sha256": "6c58b207e1ea61feb14724fc83960aaba1df7ed076e24bde14578429eb55a31a",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TemplatesEditor.6cdb42bc.js",
+          "sha256": "32a60f96bd779a0267a0158eb6564bc567ab230711f937176d3d14800b5179e9",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toBlob.963fdb21.js",
+          "sha256": "a3e8e24cd27f7c1f97274a1e99c0d7fec762e407d43a1289a246d0cdd38c308b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toCanvas.d43939e9.js",
+          "sha256": "ce6b6778c91cbc5b0288660d06e1101f703f808eed00ec0f1361e4c4cee23284",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/toImg.d259a441.js",
+          "sha256": "a0399d057fee79e211e5d5749a9703531003098cffedb990f0e76f787c85ccdd",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/TouchPan.f052cc1b.js",
+          "sha256": "1f590b674c0cd0480ca06ab7609a6ee4fe3464853ad25b3f06fe2fa1baa948a7",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-dialog-plugin-component.0ac0fcc5.js",
+          "sha256": "29b7fdcd1340f8e56afdce5c7c747ad7d12403d691b2736c211ba9de47b48a9b",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/use-fullscreen.45125697.js",
+          "sha256": "e85db3c9b003fd78d5bae963a55965f64a052624393316efd5af8012f73c43fb",
+          "verified": true
+        },
+        {
+          "path": "spa/assets/useCr.c903ab7b.js",
+          "sha256": "26f0544eac1659d7b9839a6b35317c0f430c084573d2b418465609b2d3f0a954",
+          "verified": true
+        },
+        {
+          "path": "spa/favicon.ico",
+          "sha256": "d99709698ff895ee30e4d481cd68da8f7ca4d5f68b017d17aa2a08f938ec71bb",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/LICENSE",
+          "sha256": "1fdd47d0526982b4e71694ca4faf1de06ef8957faec92e3d023a26d187ac9cd3",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/MrEaves.otf",
+          "sha256": "f81f41979226a806f19302c2f77c276e3e5566e28795723e2449e71041b6c0e5",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/ScalaSansCaps.otf",
+          "sha256": "a4ef6f1194385687207e990c9fcccfa058660702696b5b192fc2cf1c8f6dfbdd",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold Italic.otf",
+          "sha256": "9620dc70400141c43fec8038fe851a409a6ae2ef8a03280d4fd21fbc67fd3234",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Bold.otf",
+          "sha256": "ca76e34ac978171e4e6cf20063564a7fe49d0ea450a560efe99898eb5ced8451",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans Italic.otf",
+          "sha256": "9b262ff5409df2421adf480a65be3172e1bbaac19caeae0c6887bb78a3dfa3c8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts/Scaly Sans/Scaly Sans.otf",
+          "sha256": "0a68ccdc3d3eaf1a46c79a090ede33da8b5037916abd31d5e663ff25e58930b8",
+          "verified": true
+        },
+        {
+          "path": "spa/fonts.css",
+          "sha256": "26e6ef2088dbdfc59f4472f1732542e735024003fa35fa7d8ea9b5cadeae87e4",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/PHB-background.png",
+          "sha256": "f0751a1bb2be713108c8b108f48a84932558b27d60ae3e5c65b257f0f7c7e185",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Silvered parchment background.jpg",
+          "sha256": "5b1d52e95f7368ad2b8ab3af0ed75cc38dc053ad2bb680612e072f8fd66858e0",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/backgrounds/Yellowed parchment background.jpg",
+          "sha256": "cf32396d2ef1d2ba501d9c0b8f7d2101108dc0fd50c8e45f5f8ebf75422cd1c3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_bottom_01.png",
+          "sha256": "6eaf3fb96dc0b270896391a3bc9995e9019ae680ff34e8c1081e5c07acde5577",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_left_01.png",
+          "sha256": "dc0038ab94b056bb150d90a181a6aa92a1b586f0f6fa81a670c77beb156ea4e9",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_right_01.png",
+          "sha256": "09577fd2d996ff5c52d75381fd75ccdcb0570e3f9e37ee9391235d113bf7db8a",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_splash_center.png",
+          "sha256": "cb973aee1a6851a2f4a01469fa06a5b9a86c75ef894a1c5832f524ff079ca6f3",
+          "verified": true
+        },
+        {
+          "path": "spa/homebrew/masks/watercolor_top_01.png",
+          "sha256": "7175715de92267d5bdeea1e5e70d3948f9b1aa8c1448989bda93c4ec8e55c85d",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-120x120.png",
+          "sha256": "7185fbe24f33300ce0cbb9a7ff3f681e360a3e3c54c9809a960e4a2fb3c625e9",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-152x152.png",
+          "sha256": "4f53d09b9972c095ef502e1c621877f677056a879a262952b2e1ae134e944cfe",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-167x167.png",
+          "sha256": "fbbf6bd65e7d328f30e47e6f930d180fd3b8d8f651423588e7e51a959ee9fa76",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/apple-icon-180x180.png",
+          "sha256": "40dcb91fd0649883f715e06e5a9dd79a06fa32bdf79aece7d1d9ed040432c883",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-16x16.png",
+          "sha256": "df29c1147263c1a50529c6550b6ac1b36edbf36afae1d99cbdf173128e76fac5",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-32x32.png",
+          "sha256": "96119764ea8886370a0f29a66caca8e26ad598a634e792cc0f918ef5e5b64239",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/favicon-96x96.png",
+          "sha256": "d0f6cfe58174d551dbc303fccfbcfc8e396d434ab7e370b5c298f15a38f8eeb6",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-128x128.png",
+          "sha256": "ce61a0d27e9167938ce2083e1391de1ee514b40d8a0f5c3602a7a04f449f6779",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-192x192.png",
+          "sha256": "df8c18e54e8baa6b0106e14feb6060c7e7041cc5d401de12fa18ed3d8fee8d19",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-256x256.png",
+          "sha256": "b6b6a99026b8ced1b9177aee8e0c44b0168d81a555d006bb94e8a2cdc62c76a2",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-384x384.png",
+          "sha256": "717a8e738c5ccb58895870cfc1214599ecf7d387c139de095343bb38f4bb9e07",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/icon-512x512.png",
+          "sha256": "7a62be88b71fb909af35a53e10f4c3e5ef96209a3f50d09304a46bf74e8cb46b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/ms-icon-144x144.png",
+          "sha256": "c1fd2b0697c88999feca003b66a5efda5f2fb443eedbac77eb12f611e7159a7b",
+          "verified": true
+        },
+        {
+          "path": "spa/icons/safari-pinned-tab.svg",
+          "sha256": "be59a7983918d1464f7f72cd2849a1ab016a2ac2c65e81f2783e4a526de955a9",
+          "verified": true
+        },
+        {
+          "path": "spa/index.html",
+          "sha256": "6669dccdf3b8face2ef62e7aaa05a1785e4967e3cd7d9559de6075a73a25c73f",
+          "verified": true
+        },
+        {
+          "path": "spa/manifest.json",
+          "sha256": "7143ad5c435576d8aa91e5122992266d0e86ec62ba093e733d79d3263b9215b5",
+          "verified": true
+        },
+        {
+          "path": "spa/readme-image.jpeg",
+          "sha256": "d47a927e88bf42a6c513a7555b9fed27d63c801f97c252abc77546aeb1a77ff6",
+          "verified": true
+        }
+      ]
+    }
+  ]
+}

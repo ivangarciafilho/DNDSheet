@@ -255,11 +255,46 @@ export function calculateSpellcastingMetrics(
   }
 }
 
+export interface CastingContribution {
+  mode: 'rules' | 'custom'
+  target: 'slots' | 'pact' | 'points' | 'focus'
+  focusPerLevel?: number
+  numerator: number
+  denominator: number
+}
+
 export interface ClassEntry {
+  resourceType?: string
+  slots?: number[]
+  contribution?: CastingContribution
   className: string
   subclass?: string
   level: number
   stat?: DndStat
+}
+
+export interface SpellcastingSourcesInput {
+ resourceType?: string
+ slots?: number[]
+ class?: string
+ subclass?: string
+ level?: number
+ stat?: DndStat
+ contribution?: CastingContribution
+ classes?: ClassEntry[]
+ multiclass?: { enabled?: boolean; secondaryClass?: string; secondaryLevel?: number; secondaryStat?: DndStat }
+}
+
+/** One source projection for editor, renderers and exports. Unknown manual sources do not invent slots. */
+export function spellcastingSourceEntries(source: SpellcastingSourcesInput): ClassEntry[] {
+ const entries: ClassEntry[] = [{ className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }, ...(source.classes || [])]
+ if (!(source.classes || []).length && source.multiclass?.enabled) entries.push({ className: source.multiclass.secondaryClass || 'Cleric', level: source.multiclass.secondaryLevel || 1, stat: source.multiclass.secondaryStat || 'WIS' })
+ return entries.filter(entry => entry.contribution?.mode === 'custom' || spellcastingRuleClass(entry.className, entry.subclass) !== undefined)
+}
+
+export function aggregateSpellcastingSources(source: SpellcastingSourcesInput, stats: Record<string, number> = {}, proficiency = 2): MulticlassCalculationResult | undefined {
+ const entries = spellcastingSourceEntries(source)
+ return entries.length ? calculateMulticlassSpellcasting(entries, stats, proficiency) : undefined
 }
 
 export interface PerClassBreakdown {
@@ -277,6 +312,10 @@ export interface MulticlassCalculationResult {
   combinedCasterLevel: number
   slots: number[]
   warlockSlots?: number[]
+  /** Actual shared Spellcasting pool; legacy slots may alias pact slots for older consumers. */
+  standardSlots: number[]
+  customPoints: number
+  customFocus: number
   primarySaveDc: number
   primarySpellAttack: number
   secondarySaveDc?: number
@@ -364,6 +403,8 @@ export function calculateMulticlassSpellcasting(
 
   let combinedLevelSum = 0
   let warlockLevel = 0
+  let customPointsLevel = 0
+  let customFocus = 0
   const breakdowns: PerClassBreakdown[] = []
 
   let totalPrepared = 0
@@ -382,7 +423,21 @@ export function calculateMulticlassSpellcasting(
     totalPrepared += metrics.preparedSpells
     totalCantrips += metrics.cantripsKnown
 
-    if (cls.toLowerCase() === 'warlock') {
+    if (entry.contribution?.mode === 'custom') {
+      const numerator = Number(entry.contribution.numerator)
+      const denominator = Number(entry.contribution.denominator)
+      const contribution = Number.isFinite(numerator) && Number.isFinite(denominator) && numerator >= 0 && denominator > 0
+        ? Math.min(20, Math.floor(lvl * numerator / denominator)) : 0
+      if (entry.contribution.target === 'pact') warlockLevel += contribution
+      else if (entry.contribution.target === 'points') customPointsLevel += contribution
+      else if (entry.contribution.target === 'focus') {
+        const rate = Number(entry.contribution.focusPerLevel)
+        customFocus += contribution * (Number.isFinite(rate) && rate >= 0 ? rate : 0)
+      }
+      else combinedLevelSum += contribution
+    } else if (['points', 'focus', 'at_will'].includes(entry.resourceType || '')) {
+      // Authored manual resources replace this source's native slot budget.
+    } else if (cls.toLowerCase() === 'warlock') {
       warlockLevel += lvl
     } else {
       combinedLevelSum += getContribution(rulesClass || cls, lvl)
@@ -431,6 +486,9 @@ export function calculateMulticlassSpellcasting(
     combinedCasterLevel: combinedLevelSum > 0 ? combinedLevel : warlockLevel,
     slots: combinedLevelSum > 0 ? slots : (warlockSlots || slots),
     warlockSlots,
+    standardSlots: slots,
+    customPoints: SPELL_POINTS_BY_LEVEL[Math.min(20, customPointsLevel)] || 0,
+    customFocus,
     primarySaveDc: primary.saveDc,
     primarySpellAttack: primary.spellAttack,
     secondarySaveDc: secondary?.saveDc,

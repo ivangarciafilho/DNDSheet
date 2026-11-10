@@ -313,7 +313,7 @@
 
             <!-- Cunning Action Riders -->
             <div v-if="speedTraversal.bonusActionDash" class="col-12 col-sm-6 col-md-4 q-mt-xs">
-              <q-select
+              <mechanic-select-editor
                 v-model="speedTraversal.dashRider"
                 :options="dashRiderPresets"
                 use-input
@@ -326,11 +326,11 @@
                 placeholder="e.g. Ignores Difficult Terrain"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dash action</q-tooltip>
-              </q-select>
+              </mechanic-select-editor>
             </div>
 
             <div v-if="speedTraversal.bonusActionDodge" class="col-12 col-sm-6 col-md-4 q-mt-xs">
-              <q-select
+              <mechanic-select-editor
                 v-model="speedTraversal.dodgeRider"
                 :options="dodgeRiderPresets"
                 use-input
@@ -343,11 +343,11 @@
                 placeholder="e.g. Adv on DEX saves"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dodge action</q-tooltip>
-              </q-select>
+              </mechanic-select-editor>
             </div>
 
             <div v-if="speedTraversal.bonusActionDisengage" class="col-12 col-sm-6 col-md-4 q-mt-xs">
-              <q-select
+              <mechanic-select-editor
                 v-model="speedTraversal.disengageRider"
                 :options="disengageRiderPresets"
                 use-input
@@ -360,11 +360,11 @@
                 placeholder="e.g. Change to the ethereal plane"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Disengage action</q-tooltip>
-              </q-select>
+              </mechanic-select-editor>
             </div>
 
             <div v-if="(speedTraversal as any).bonusActionHide" class="col-12 col-sm-6 col-md-4 q-mt-xs">
-              <q-select
+              <mechanic-select-editor
                 v-model="(speedTraversal as any).hideRider"
                 :options="disengageRiderPresets"
                 use-input
@@ -377,7 +377,7 @@
                 placeholder="e.g. Becomes Invisible until end of turn"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Hide action</q-tooltip>
-              </q-select>
+              </mechanic-select-editor>
             </div>
           </div>
 
@@ -602,6 +602,7 @@
 
 <script lang="ts">
 import MechanicTextEditor from './MechanicTextEditor.vue'
+import MechanicSelectEditor from './MechanicSelectEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent, ref } from 'vue'
 import { STANDARD_MOVEMENTS } from 'src/data/MOVEMENT'
@@ -617,7 +618,7 @@ import {
 
 export default defineComponent({
   name: 'SpeedsEditor',
-  components: { MechanicTextEditor, SwapButtons },
+  components: { MechanicSelectEditor, MechanicTextEditor, SwapButtons },
   setup() {
     const { t } = useI18n()
     const monster = useMonsterStore()

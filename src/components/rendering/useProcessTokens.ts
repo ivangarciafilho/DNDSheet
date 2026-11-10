@@ -1,3 +1,4 @@
+import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { sanitizeProsePunctuation } from 'src/core/domain/number-grammar'
 import { outcomesHtml } from 'src/core/domain/outcome-rendering'
 import { descriptionContainersHtml } from 'src/core/domain/description-containers'
@@ -150,6 +151,22 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     context: DndAttack,
     monster: ReturnType<typeof useMonsterStore>
   ) => {
+    const prefix = `attacks[id=${encodeURIComponent(context.id)}]`
+    const formatted = (field: string, text: string | number): string => {
+      const presentation = webProjection ? monster.bindings?.[`${prefix}.${field}`]?.presentation : undefined
+      return presentation ? formatNumericPresentation(text, presentation) : String(text)
+    }
+    // Resolve a dice expression first, then format its semantic components. HTML never enters the parser.
+    const diceDisplay = (field: string, count: number, die: number, modifier = 0): string => {
+      const raw = `{${count}d${die}${modifier === 0 ? '' : renderBonus(modifier)}}`
+      const style = webProjection && ['count','dice','modifier.overrideValue'].some(key => monster.bindings?.[`${prefix}.${field}.${key}`]?.presentation)
+      if (!style) return raw
+      const resolved = coreProcessTokens(raw, ((monster as unknown as { $state?: DomainMonster }).$state ?? monster) as unknown as DomainMonster)
+      const parts = /^(.*?) \((\d+)d(\d+)(.*?)\)$/.exec(resolved)
+      if (!parts) return formatted(field + '.count', resolved)
+      return `${parts[1]} (${formatted(field + '.count', parts[2])}d${formatted(field + '.dice', parts[3])}${parts[4] ? formatted(field + '.modifier.overrideValue', parts[4]) : ''})`
+    }
+    input = input.replace(/\{attack.save\}/gi, formatted('save', context.save ?? ''))
     // attack is a... complicated bit of rendering
     // attack distance
     const distance =
@@ -165,19 +182,19 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     // attack modifier
     input = input.replace(
       /\{attack.modifier\}/gi,
-      renderBonus(monster.attackModifier(context.id))
+      formatted('modifier.overrideValue', renderBonus(monster.attackModifier(context.id)))
     )
 
     // range
-    const meleeRange = t('editor.attack.meleeRange', [context.range.reach])
+    const meleeRange = t('editor.attack.meleeRange', [formatted('range.reach', context.range.reach)])
     const rangeRange = t('editor.attack.rangeRange', [
-      context.range.standard,
-      context.range.long,
+      formatted('range.standard', context.range.standard),
+      formatted('range.long', context.range.long),
     ])
     const bothRange = t('editor.attack.bothRange', [
-      context.range.reach,
-      context.range.standard,
-      context.range.long,
+      formatted('range.reach', context.range.reach),
+      formatted('range.standard', context.range.standard),
+      formatted('range.long', context.range.long),
     ])
 
     input = input.replace(
@@ -196,7 +213,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         `, ${t(
           'editor.attack.targets',
           {
-            count: safeToWords(context.targets),
+            count: formatted('targets', safeToWords(context.targets)),
           },
           context.targets
         )}`
@@ -207,12 +224,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
     // primary damage
     const damageModifier = monster.attackDamageModifier(context.id)
-    const modifier =
-      damageModifier < 0 ? `${damageModifier}` : `+${damageModifier}`
     const primary = t('editor.attack.damage', [
-      `{${context.damage.count}d${context.damage.dice}${
-        damageModifier === 0 ? '' : modifier
-      }} ${context.damage.type}`,
+      `${diceDisplay('damage', context.damage.count, context.damage.dice, damageModifier)} ${context.damage.type}`,
     ])
     input = input.replace(/\{attack.damage\}/gi, primary)
 
@@ -220,14 +233,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const conditionalDamageModifier = monster.conditionalDamageModifier(
       context.id
     )
-    const condMod =
-      conditionalDamageModifier < 0
-        ? `${conditionalDamageModifier}`
-        : `+${conditionalDamageModifier}`
     const conditional = t('editor.attack.damage', [
-      `{${context.alternateDamage.count}d${context.alternateDamage.dice}${
-        conditionalDamageModifier === 0 ? '' : condMod
-      }} ${context.alternateDamage.type}`,
+      `${diceDisplay('alternateDamage', context.alternateDamage.count, context.alternateDamage.dice, conditionalDamageModifier)} ${context.alternateDamage.type}`,
     ])
     input = input.replace(
       /\{attack.conditionalDamage\}/gi,
@@ -241,7 +248,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
     // additional damage
     const additional = context.additionalDamage.map((d) => {
-      const damage = `{${d.count}d${d.dice}} ${d.type}`
+      const damage = `${diceDisplay(`additionalDamage[id=${encodeURIComponent(d.id)}]`, d.count, d.dice)} ${d.type}`
 
       if (d.note !== '') {
         return `${t('editor.attack.damage', [damage])} ${d.note}`
@@ -641,7 +648,13 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const saveDc = context.stat && context.stat !== 'none'
       ? saveForAction(monster, context.stat, context.save)
       : undefined
-    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables } }
+    const collection = (['actions','traits','reactions'] as const).find(key => monster[key]?.some(entry => entry.id === context.id))
+    const prefix = collection && context.id ? `${collection}[id=${encodeURIComponent(context.id)}]` : undefined
+    const formatValue = webProjection && prefix ? (field: string, text: string) => {
+      const presentation = monster.bindings?.[`${prefix}.${field}`]?.presentation
+      return presentation ? formatNumericPresentation(text, presentation) : text
+    } : undefined
+    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables, formatValue } }
   }
 
   /** Modern Modular plate; `usage` is the recharge/uses chip, or the legendary cost. */
@@ -956,6 +969,11 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.useCustomRenderer) {
+      const prefix = `attacks[id=${encodeURIComponent(context.id)}]`
+      const formatted = (field: string, text: string | number) => {
+        const presentation = monster.bindings?.[`${prefix}.${field}`]?.presentation
+        return presentation ? formatNumericPresentation(text, presentation) : String(text)
+      }
       const kindLabel = context.kind === 'SPELL' ? 'Spell' : 'Weapon'
       const distStr =
         context.distance === 'MELEE'
@@ -967,11 +985,11 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
       const reach =
         context.distance === 'MELEE'
-          ? `Reach ${context.range.reach} ft.`
+          ? `Reach ${formatted('range.reach', context.range.reach)} ft.`
           : context.distance === 'RANGED'
-          ? `Range ${context.range.standard}/${context.range.long} ft.`
-          : `Reach ${context.range.reach} ft. or Range ${context.range.standard}/${context.range.long} ft.`
-      const targets = context.targets && context.targets > 1 ? `${context.targets} targets` : '1 target'
+          ? `Range ${formatted('range.standard', context.range.standard)}/${formatted('range.long', context.range.long)} ft.`
+          : `Reach ${formatted('range.reach', context.range.reach)} ft. or Range ${formatted('range.standard', context.range.standard)}/${formatted('range.long', context.range.long)} ft.`
+      const targets = `${formatted('targets', context.targets || 1)} ${context.targets > 1 ? 'targets' : 'target'}`
 
       // Build ONLY the Hit & description portion without repeating the attack/to-hit/reach/targets preamble
       const damageOnlyTemplate = '<i>Hit:</i> {attack.damage}{attack.conditionalDamage}{attack.additionalDamage}. {attack.description}'
@@ -981,7 +999,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         {
           stagePool: context?.stagePool,
           name: context.name,
-          mechanics: [`${distStr} <strong class="dnd-num">${renderBonus(toHit)}</strong>`],
+          mechanics: [`${distStr} <strong class="dnd-num">${formatted('modifier.overrideValue', renderBonus(toHit))}</strong>`],
           scope: [boldNumbers(`${reach}, ${targets}`)],
         },
         body
@@ -1185,7 +1203,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   }
 
   const processLairAction = (context: LairAction, monster: ReturnType<typeof useMonsterStore>, web = false): string => {
-    const description = processTokens(context.description, undefined, monster, 'none')
+    const description = processTokens(`${context.description || ''} ${formatDescriptionContainers(context.descriptionContainers, monster.randomTables)}`, undefined, monster, 'none')
     return web && editorStore.visualTemplate === 'modern'
       ? buildPlateEntry(monster, { name: 'Lair Action' }, description)
       : description

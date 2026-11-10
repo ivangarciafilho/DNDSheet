@@ -157,7 +157,7 @@ export function formatDefenseList(items: DamageDefenseItem[] | undefined): strin
 /**
  * Formats an individual language entry into standard D&D 5e wording.
  */
-export function formatLanguageItem(item: MonsterLanguageItem): string {
+export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (field: string, value: string | number) => string = (_field, value) => String(value)): string {
   if (!item || !item.name) return ''
   const name = item.name.trim()
   const lowerName = name.toLowerCase()
@@ -167,7 +167,7 @@ export function formatLanguageItem(item: MonsterLanguageItem): string {
     const ah = item.animalHandling || {}
     const dc = ah.dc ?? 10
     const outcomes: string[] = []
-    outcomes.push(`DC ${dc} ${ah.peacefulOutcome || 'calm/cease'}`)
+    outcomes.push(`DC ${formatValue('animalHandling.dc', dc)} ${ah.peacefulOutcome || 'calm/cease'}`)
     outcomes.push(`DC ${dc + 5} ${ah.commandOutcome || 'basic commands'}`)
     outcomes.push(`DC ${dc + 10} ${ah.recruitOutcome || 'aid/bond'}`)
     if (ah.customNotes?.trim()) {
@@ -230,7 +230,7 @@ export function formatLanguageItem(item: MonsterLanguageItem): string {
       return `understands languages of undead but can't speak`
     }
     const features: string[] = []
-    const range = cfg.telepathicRange && cfg.telepathicRange > 0 ? `${cfg.telepathicRange} ft.` : '60 ft.'
+    const range = cfg.telepathicRange && cfg.telepathicRange > 0 ? `${formatValue('undeadConfig.telepathicRange', cfg.telepathicRange)} ft.` : '60 ft.'
     if (cfg.commandMindless !== false) {
       features.push(`can issue mental commands to mindless undead within ${range}`)
     } else {
@@ -246,7 +246,7 @@ export function formatLanguageItem(item: MonsterLanguageItem): string {
   if (lowerName.startsWith('dead') || item.deadConfig) {
     const cfg = item.deadConfig || {}
     const maxQ = cfg.maxQuestions ?? 5
-    const bits: string[] = [`up to ${maxQ} questions`]
+    const bits: string[] = [`up to ${formatValue('deadConfig.maxQuestions', maxQ)} questions`]
     if (cfg.corpseMustHaveMouth !== false) {
       bits.push('corpse must have a mouth')
     }
@@ -264,7 +264,7 @@ export function formatLanguageItem(item: MonsterLanguageItem): string {
 
   // 6. Telepathy (Fluid Official 5e Rules Prose)
   if (item.telepathy || lowerName === 'telepathy') {
-    const range = item.telepathyRange && item.telepathyRange > 0 ? `${item.telepathyRange} ft.` : '120 ft.'
+    const range = item.telepathyRange && item.telepathyRange > 0 ? `${formatValue('telepathyRange', item.telepathyRange)} ft.` : '120 ft.'
 
     // Check if any advanced telepathy configuration exists
     const hasAdvanced =
@@ -451,7 +451,7 @@ export function formatLanguageItem(item: MonsterLanguageItem): string {
 /**
  * Formats a full languages list, grouping understands-only languages if appropriate.
  */
-export function formatLanguagesList(items: MonsterLanguageItem[] | undefined, archetype?: string): string {
+export function formatLanguagesList(items: MonsterLanguageItem[] | undefined, archetype?: string, formatValue?: (item: MonsterLanguageItem, field: string, value: string | number) => string): string {
   if ((!Array.isArray(items) || items.length === 0) && !archetype) return ''
   const spoken: string[] = []
   const understands: string[] = []
@@ -466,7 +466,7 @@ export function formatLanguagesList(items: MonsterLanguageItem[] | undefined, ar
   if (Array.isArray(items)) {
     for (const item of items) {
       if (!item.name) continue
-      const formatted = formatLanguageItem(item)
+      const formatted = formatLanguageItem(item, formatValue ? (field, value) => formatValue(item, field, value) : undefined)
       if (item.telepathy) {
         telepathy.push(formatted)
       } else if (
@@ -762,7 +762,8 @@ export function resolveDynamicNumericSource(
  */
 export function formatMinimalistRegen(
   regen: MonsterExtendedHp['regeneration'],
-  ctx?: DynamicValueContext
+  ctx?: DynamicValueContext,
+  formatValue: (field: string, value: string | number) => string = (_field, value) => String(value)
 ): string {
   if (!regen || !regen.enabled) return ''
   const type = regen.recoveryType || 'regen'
@@ -771,7 +772,7 @@ export function formatMinimalistRegen(
   if (valSrc === 'flat' && (regen.amount == null || Number(regen.amount) <= 0) && type !== 'absorb_hp' && type !== 'absorb_temp_hp') {
     return ''
   }
-  const amt = resolveDynamicNumericSource(valSrc, regen.amount ?? 10, regen.diceFormula, ctx)
+  const amt = formatValue('amount', resolveDynamicNumericSource(valSrc, regen.amount ?? 10, regen.diceFormula, ctx))
 
   const rawFreq = regen.frequency || regen.timeframe || ''
   const freq = rawFreq.toLowerCase()

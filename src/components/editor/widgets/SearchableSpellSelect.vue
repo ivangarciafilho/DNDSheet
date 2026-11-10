@@ -14,24 +14,7 @@
     @clear="$emit('clear')"
   >
     <template #option="scope">
-      <q-item v-bind="scope.itemProps">
-        <q-item-section>
-          <q-item-label>{{ scope.opt.label }}</q-item-label>
-          <q-item-label caption>{{ scope.opt.classDisplay }}</q-item-label>
-        </q-item-section>
-        <q-item-section side top>
-          <q-badge
-            color="purple-8"
-            :label="
-              scope.opt.level === 0
-                ? $t('editor.spellcasting.slot.cantrip')
-                : $t('editor.spellcasting.slot.level', {
-                    ordinal: spellLevels[scope.opt.level],
-                  })
-            "
-          />
-        </q-item-section>
-      </q-item>
+      <casting-spell-option :option="scope.opt" :item-props="scope.itemProps" />
     </template>
     <template #after>
       <slot name="after"></slot>
@@ -40,6 +23,7 @@
 </template>
 
 <script lang="ts">
+import CastingSpellOption from '../CastingSpellOption.vue'
 import { defineComponent, PropType } from '@vue/runtime-core'
 import { spellArrayFilter } from 'src/components/filters'
 import { useSpellLevels } from 'src/components/spell/useSpellLevels'
@@ -48,6 +32,7 @@ import { computed, ref } from 'vue'
 
 export default defineComponent({
   name: 'SearchableSpellSelect',
+  components: { CastingSpellOption },
   props: {
     modelValue: {
       type: Object as PropType<string[]>,

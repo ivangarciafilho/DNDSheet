@@ -1,0 +1,27 @@
+{
+  "raw": {
+    "total": 277,
+    "complete": 183,
+    "open": 94
+  },
+  "normalized": {
+    "total": 268,
+    "complete": 174,
+    "open": 94
+  },
+  "measuredAt": "2026-11-10T15:51:29.198Z",
+  "source": "docs/roadmap/DNDSheet-Implementation-Backlog.md",
+  "sourceSha256": "5830ea4086e5816ee8d0a9662b7ceb82efd00a5561e60c649defcd6d48c446f6",
+  "method": "Build226 counting policy: unique explicit line-start checkbox IDs with conflict checks; normalize by excluding historical B183 packet aliases.",
+  "excludedHistoricalAliases": [
+    "B183.1",
+    "B183.2",
+    "B183.3",
+    "B183.4",
+    "B183.5",
+    "B183.6",
+    "B183.7",
+    "B183.8",
+    "B183.9"
+  ]
+}

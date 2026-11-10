@@ -425,7 +425,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-5">
-              <q-select
+              <mechanic-select-editor
                 v-model="item.triggeredBenefit"
                 :options="benefitOptions"
                 use-input
@@ -640,7 +640,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-5">
-              <q-select
+              <mechanic-select-editor
                 v-model="item.triggeredBenefit"
                 :options="benefitOptions"
                 use-input
@@ -774,6 +774,7 @@
 
 <script lang="ts">
 import MechanicTextEditor from './MechanicTextEditor.vue'
+import MechanicSelectEditor from './MechanicSelectEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent } from 'vue'
 import { DamageDefenseItem, DefenseModifierMode } from '../models'
@@ -917,7 +918,7 @@ const BENEFIT_TRIGGER_OPTIONS = [
 
 export default defineComponent({
   name: 'ResistancesEditor',
-  components: { MechanicTextEditor, SwapButtons },
+  components: { MechanicSelectEditor, MechanicTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 

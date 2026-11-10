@@ -200,29 +200,8 @@
           class="rounded-borders bg-grey-9 text-white q-pa-xs shadow-1"
           style="border: 1px solid rgba(255, 255, 255, 0.12);"
         >
-          <!-- Top Row: Role Selector, Recharge/Cost, Name & Actions -->
+          <!-- Card identity and commands; composable role lives in the head row below. -->
           <div class="row q-col-gutter-xs items-center">
-            <!-- Far-Left Role Selector -->
-            <div class="col-12 col-sm-3 col-md-2">
-              <span v-if="item.rawAttack" class="q-pa-sm">Attack</span>
-              <q-select v-help="'Choose role for the actions editor.'"
-                v-else
-                :model-value="item.role"
-                :options="roleOptions"
-                emit-value
-                map-options
-                dense
-                outlined
-                dark
-                hide-bottom-space
-                options-dense
-                label="Role"
-                @update:model-value="(newRole: string) => changeItemRole(item, newRole)"
-              >
-                <q-tooltip class="text-caption">Change compatible action roles, or create a copy for a different entry model. Review before applying.</q-tooltip>
-              </q-select>
-            </div>
-
             <div class="col-auto">
               <q-btn
                 flat
@@ -305,7 +284,27 @@
             :role="chainRole(item)"
             :cost="item.cost || 1"
             @update:cost="(cost: number) => updateItemCost(item, cost)"
-          />
+          >
+            <template #head-prefix>
+              <q-select v-help="'Choose role for the actions editor.'"
+                data-composer-role
+                :model-value="item.role"
+                :options="roleOptions"
+                emit-value
+                map-options
+                dense
+                outlined
+                dark
+                hide-bottom-space
+                options-dense
+                label="Role"
+                style="min-width: 130px; max-width: 180px;"
+                @update:model-value="(newRole: string) => changeItemRole(item, newRole)"
+              >
+                <q-tooltip class="text-caption">Change compatible action roles, or create a copy for a different entry model. Review before applying.</q-tooltip>
+              </q-select>
+            </template>
+          </composer-chain>
 
           <attack-composer v-show="!isItemCollapsed(item.id)" v-if="item.rawAttack" :attack-id="item.id" />
 
@@ -324,7 +323,7 @@
           />
 
           <!-- Description Containers (Multi-Description Blocks & Outcome Tables) -->
-          <div v-show="!isItemCollapsed(item.id)" v-if="!item.rawAttack" class="q-mt-sm q-pa-xs rounded-borders bg-grey-10 text-white" style="border: 1px dashed rgba(255, 255, 255, 0.2);">
+          <div v-show="!isItemCollapsed(item.id)" v-if="!item.rawAttack" data-description-containers class="q-mt-sm q-pa-xs rounded-borders bg-grey-10 text-white" style="border: 1px dashed rgba(255, 255, 255, 0.2);">
             <div class="row items-center justify-between q-px-xs q-py-xs flex-wrap q-gutter-xs">
               <span class="text-caption text-amber-3 text-weight-bold">
                 Additional Description Containers &amp; Tables ({{ (item.descriptionContainers || []).length }})
@@ -337,6 +336,8 @@
                   size="xs"
                   color="cyan-3"
                   icon="notes"
+                  type="button"
+                  data-add-description="text"
                   label="+ Text Block"
                   @click="addTextContainer(item)"
                 />
@@ -347,6 +348,8 @@
                   size="xs"
                   color="amber-4"
                   icon="casino"
+                  type="button"
+                  data-add-description="table"
                   label="+ Dice Table"
                   @click="addTableContainer(item)"
                 />
@@ -356,7 +359,7 @@
             <div v-for="(container, cIdx) in (item.descriptionContainers || [])" :key="container.id || cIdx" class="q-pa-xs q-my-xs rounded-borders bg-grey-9">
               <div class="row q-col-gutter-xs items-center q-mb-xs">
                 <div class="col-12 col-sm-4">
-                  <q-input v-help="'Enter outcome target / clause for the actions editor.'"
+                  <mechanic-text-editor v-help="'Enter outcome target / clause for the actions editor.'"
                     v-model="container.outcomeTarget"
                     dense
                     outlined
@@ -411,23 +414,24 @@
                       dark
                       label="Headers (comma separated)"
                       @update:model-value="(val) => {
+                        if (!container.table) return
                         container.table.headers = String(val ?? '').split(',').map((s) => s.trim())
                         syncContainers(item)
                       }"
                     />
                   </div>
                   <div class="col-auto">
-                    <q-btn v-help="'Add Row in the actions editor.'" flat dense no-caps size="xs" icon="add" label="Add Row" @click="addTableRow(container, item)" />
+                    <q-btn v-help="'Add Row in the actions editor.'" flat dense no-caps size="xs" icon="add" type="button" data-add-description-row label="Add Row" @click="addTableRow(container, item)" />
                   </div>
                 </div>
                 <div v-for="(row, rIdx) in container.table.rows" :key="rIdx" class="row q-col-gutter-xs items-center q-my-xs">
                   <div v-for="(cell, cellIdx) in row" :key="cellIdx" class="col">
-                    <q-input
+                    <mechanic-text-editor
                       v-model="row[cellIdx]"
                       dense
                       outlined
                       dark
-                      :label="container.table.headers[cellIdx] || ('Col ' + (cellIdx + 1))"
+                      :label="container.table?.headers[cellIdx] || ('Col ' + (cellIdx + 1))"
                       @update:model-value="syncContainers(item)"
                     />
                   </div>
@@ -453,7 +457,7 @@ import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import { useQuasar } from 'quasar'
-import { MonsterAction, MonsterTrait, MonsterReaction, DndAttack } from '../models'
+import { MonsterAction, MonsterTrait, MonsterReaction, DndAttack, ActionDescriptionContainer, LairAction } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
@@ -481,10 +485,12 @@ export interface UnifiedEntry {
   recharge?: string
   cost?: number
   showAdvanced?: boolean
+  descriptionContainers?: ActionDescriptionContainer[]
   rawAttack?: DndAttack
   rawAction?: MonsterAction
   rawTrait?: MonsterTrait
   rawReaction?: MonsterReaction
+  rawLair?: LairAction
 }
 
 export default defineComponent({
@@ -545,6 +551,7 @@ export default defineComponent({
           description: tr.description || '',
           recharge: tr.limitedUse?.count ? `${tr.limitedUse.count}/${tr.limitedUse.rate}` : '',
           rawTrait: tr,
+          descriptionContainers: tr.descriptionContainers,
         })
       }
 
@@ -573,6 +580,7 @@ export default defineComponent({
           recharge: ac.recharge || (ac.limitedUse?.count ? `${ac.limitedUse.count}/${ac.limitedUse.rate}` : ''),
           cost,
           rawAction: ac,
+          descriptionContainers: ac.descriptionContainers,
         })
       }
 
@@ -585,6 +593,7 @@ export default defineComponent({
           description: rx.description || '',
           recharge: rx.limitedUse?.count ? `${rx.limitedUse.count}/${rx.limitedUse.rate}` : '',
           rawReaction: rx,
+          descriptionContainers: rx.descriptionContainers,
         })
       }
 
@@ -595,6 +604,8 @@ export default defineComponent({
           role: 'lair',
           name: 'Lair Action',
           description: lr.description || '',
+          rawLair: lr,
+          descriptionContainers: lr.descriptionContainers,
         })
       }
 
@@ -704,7 +715,7 @@ export default defineComponent({
       })
     }
     const addTextContainer = (item: UnifiedEntry) => {
-      const container: any = {
+      const container: ActionDescriptionContainer = {
         id: uuidv4(),
         kind: 'text',
         outcomeTarget: '',
@@ -716,7 +727,7 @@ export default defineComponent({
     }
 
     const addTableContainer = (item: UnifiedEntry) => {
-      const container: any = {
+      const container: ActionDescriptionContainer = {
         id: uuidv4(),
         kind: 'table',
         outcomeTarget: '',
@@ -755,7 +766,7 @@ export default defineComponent({
       syncContainers(item)
     }
 
-    const addTableRow = (container: any, item: UnifiedEntry) => {
+    const addTableRow = (container: ActionDescriptionContainer, item: UnifiedEntry) => {
       if (!container.table) return
       const colCount = Math.max(1, container.table.headers.length)
       const newRow = Array(colCount).fill('')
@@ -763,16 +774,17 @@ export default defineComponent({
       syncContainers(item)
     }
 
-    const removeTableRow = (container: any, rowIndex: number, item: UnifiedEntry) => {
+    const removeTableRow = (container: ActionDescriptionContainer, rowIndex: number, item: UnifiedEntry) => {
       if (!container.table) return
       container.table.rows.splice(rowIndex, 1)
       syncContainers(item)
     }
 
     const syncContainers = (item: UnifiedEntry) => {
+      if (item.rawLair) item.rawLair.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
       if (item.rawAction) item.rawAction.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
       if (item.rawTrait) item.rawTrait.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
-      if (item.rawReaction) (item.rawReaction as any).descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
+      if (item.rawReaction) item.rawReaction.descriptionContainers = item.descriptionContainers ? [...item.descriptionContainers] : []
     }
 
     const updateItemDescription = (item: UnifiedEntry, val: string) => {

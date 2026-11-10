@@ -234,6 +234,11 @@ export function migrateMonsterSchema(raw: any): Monster {
     } : undefined,
   }
 
+  // Preserve the legacy secondary source when the old enable flag is replaced by source count.
+  if (sc.multiclass?.enabled && !(sc.classes || []).length) {
+    monster.spellcasting.classes = [{ id: 'legacy-secondary-casting-source', className: sc.multiclass.secondaryClass || 'Cleric', level: sc.multiclass.secondaryLevel || 1, stat: sc.multiclass.secondaryStat || 'WIS', spells: [] }]
+  }
+
   // Normalize attacks
   for (const attack of monster.attacks || []) {
     if (attack.save === null || attack.save === undefined) attack.save = 0

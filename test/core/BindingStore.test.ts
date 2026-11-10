@@ -47,6 +47,19 @@ test('hydrated expressions resolve and invalid drafts preserve the store', () =>
   store.$dispose()
 })
 
+test('literal presentation survives production storage and hydration without changing arithmetic', () => {
+  const store = fixture()
+  store.setBinding('HP.HD', { mode: 'literal', value: 4, presentation: { italic: true } })
+  assert.equal(store.HP.HD, 4)
+  assert.deepEqual(store.bindings['HP.HD'], { mode: 'literal', value: 4, presentation: { italic: true } })
+  const reloaded = fixture(JSON.parse(JSON.stringify(store.bindings)))
+  assert.equal(reloaded.HP.HD, 4)
+  assert.equal(reloaded.bindings['HP.HD'].presentation.italic, true)
+  store.setBinding('HP.HD', { mode: 'literal', value: 4, presentation: { italic: false } })
+  assert.equal(store.bindings['HP.HD'], undefined)
+  store.$dispose(); reloaded.$dispose()
+})
+
 test('materialization preserves live collection record identity', () => {
   const store = fixture(), speed = store.speeds[0]
   store.setBinding('speeds[id=walk].speed', { mode: 'formula', expr: 'PB * 10' })

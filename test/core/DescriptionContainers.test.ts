@@ -164,3 +164,14 @@ test('description containers: descriptionContainersText and descriptionContainer
   assert.match(html, /Secondary Shockwave/)
   assert.match(html, /Audience: creatures/)
 })
+
+
+test('additional container clauses and table mechanics retain safe formatting with readable plain export', () => {
+  const containers: ActionDescriptionContainer[] = [{ id: 'table', kind: 'table', outcomeTarget: '<b>On Failure</b>', table: { headers: ['Roll', 'Effect'], rows: [['1', '<u>Wait</u> and <i>listen</i>']] } }]
+  const html = descriptionContainersHtml(containers)
+  assert.match(html, /<i><b>On Failure<\/b>:<\/i>/)
+  assert.match(html, /<u>Wait<\/u> and <i>listen<\/i>/)
+  assert.doesNotMatch(descriptionContainersText(containers), /<\/?(?:b|u|i)>/)
+  containers[0].outcomeTarget = '<b onclick="bad()">On Failure</b><script>bad()</script>'
+  assert.doesNotMatch(descriptionContainersHtml(containers), /onclick=|<script>/)
+})

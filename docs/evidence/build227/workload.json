@@ -1,0 +1,109 @@
+{
+  "closed": [],
+  "newIds": 0,
+  "implementationAcceptanceItems": 16,
+  "implementationAcceptanceStatus": "16 bounded acceptance changes verified in final gate; no parent closures",
+  "normalized": {
+    "total": 268,
+    "before": {
+      "complete": 174,
+      "open": 94
+    },
+    "after": {
+      "complete": 174,
+      "open": 94
+    },
+    "delta": {
+      "complete": 0,
+      "open": 0
+    }
+  },
+  "raw": {
+    "total": 277,
+    "before": {
+      "complete": 183,
+      "open": 94
+    },
+    "after": {
+      "complete": 183,
+      "open": 94
+    }
+  },
+  "core": {
+    "before": 540,
+    "after": 562,
+    "delta": 22
+  },
+  "validationStatus": "Final gate10/10; publication pending",
+  "publication": null,
+  "gateProgress": {
+    "complete": true,
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 11
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 17
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 29
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 177
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 76
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 223
+      }
+    ],
+    "typeLine": "Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624).",
+    "lint": {
+      "errors": 0,
+      "warnings": 2721
+    }
+  }
+}

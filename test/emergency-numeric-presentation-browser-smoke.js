@@ -1,0 +1,19 @@
+import assert from 'node:assert/strict'
+import { browserProbe } from '../tools/qa/browser-probe.mjs'
+await browserProbe(async({evaluate,send,delay})=>{
+ const result=await evaluate(`(async()=>{
+ const wait=ms=>new Promise(r=>setTimeout(r,ms)),until=async(fn,label)=>{for(let i=0;i<100;i++){const v=fn();if(v)return v;await wait(40)}throw Error('Timed out '+label)};
+ const p=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=p._s.get('monster'),e=p._s.get('editor');e.activeMode='monster';m.$reset();await wait(0);m.name='Numeric format witness';m.HP.HD=4;m.speedTraversal={...(m.speedTraversal||{}),bonusActionDash:true,dashRider:'Ignore difficult terrain'};await wait(150);
+ const expand=async(label)=>{const panel=await until(()=>[...document.querySelectorAll('.q-expansion-item')].find(x=>x.querySelector('.q-item__label')?.textContent.trim().includes(label)),label);if(!panel.classList.contains('q-expansion-item--expanded'))panel.querySelector('.q-item').click();await wait(80);return panel};
+ await expand('Basics');
+ // Health details can be nested; expand only panels containing hit point terminology.
+ for(let i=0;i<4&&!document.querySelector('[data-formula-field="HP.HD"] button[aria-label^="Format resolved"]');i++){for(const panel of [...document.querySelectorAll('.q-expansion-item')]){const text=panel.querySelector('.q-item__label')?.textContent||'';if(/Hit Points|HP|Health/i.test(text)&&!panel.classList.contains('q-expansion-item--expanded'))panel.querySelector('.q-item').click()}await wait(80)}
+ const field=await until(()=>document.querySelector('[data-formula-field="HP.HD"]'),'HD field');const format=await until(()=>field.querySelector('button[aria-label^="Format resolved"]'),'numeric format');format.click();
+ const italic=await until(()=>document.querySelector('button[aria-label^="Italic resolved"]'),'italic');italic.click();await wait(100);document.body.click();await wait(80);
+ const numericStyled=!!document.querySelector('#render .dnd-hp-hd em');const plainCalculation=m.bindings?.['HP.HD']?.mode==='literal'&&m.bindings['HP.HD'].value===4;const numericMetadata=m.bindings?.['HP.HD']?.presentation?.italic===true;
+ const speeds=await expand('Speeds');await expand('Traversal & Cunning Actions');const riderFormat=await until(()=>speeds.querySelector('button[aria-label="Format Dash Rider"]'),'rider format');riderFormat.click();const content=await until(()=>speeds.querySelector('.mechanic-select-editor .q-editor__content[contenteditable="true"]'),'rider editor');content.focus();const selection=window.getSelection(),range=document.createRange();range.selectNodeContents(content);selection.removeAllRanges();selection.addRange(range);document.dispatchEvent(new Event('selectionchange'));await wait(80);const bold=await until(()=>speeds.querySelector('.mechanic-select-editor [role="button"][aria-label="Bold"]'),'bold');bold.click();await wait(100);
+ const richRider=/<(?:b|strong)>/.test(m.speedTraversal.dashRider),riderRendered=[...document.querySelectorAll('#render b,#render strong')].some(x=>x.textContent==='Ignore difficult terrain');await wait(350);return{numericStyled,plainCalculation,numericMetadata,richRider,riderRendered};
+ })()`);assert.ok(Object.values(result).every(Boolean),JSON.stringify(result));
+ await send('Page.reload');await delay(500);
+ const reload=await evaluate(`(async()=>{for(let i=0;i<100;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');if(m?.name==='Numeric format witness')return m.bindings?.['HP.HD']?.presentation?.italic===true&&m.bindings['HP.HD'].value===4&&/<(?:b|strong)>/.test(m.speedTraversal?.dashRider);await new Promise(r=>setTimeout(r,40))}return false})()`);assert.equal(reload,true);console.log('Numeric and catalog mechanic presentation browser checks:',JSON.stringify({...result,reload}));
+},{port:9358})

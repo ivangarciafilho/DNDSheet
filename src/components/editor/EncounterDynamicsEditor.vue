@@ -45,7 +45,7 @@
               />
             </div>
             <div class="col-4 col-sm-4">
-              <q-input v-help="'Enter trigger condition for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="'Enter trigger condition for the encounter dynamics editor.'"
                 v-model="ra.trigger"
                 dense
                 outlined
@@ -54,7 +54,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <q-input v-help="'Enter cost/limit for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="'Enter cost/limit for the encounter dynamics editor.'"
                 v-model="ra.cost"
                 dense
                 outlined
@@ -140,7 +140,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <q-input v-help="'Enter condition for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="'Enter condition for the encounter dynamics editor.'"
                 v-model="ca.condition"
                 dense
                 outlined
@@ -245,7 +245,7 @@
               />
             </div>
             <div class="col-5 col-sm-6">
-              <q-input v-help="'Enter mechanical effect for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="'Enter mechanical effect for the encounter dynamics editor.'"
                 :model-value="ev.description || ev.effect"
                 dense
                 outlined
@@ -276,11 +276,12 @@
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import SwapButtons from './widgets/SwapButtons.vue'
 
 export default defineComponent({
   name: 'EncounterDynamicsEditor',
-  components: { MonsterTextEditor, SwapButtons },
+  components: { MechanicTextEditor, MonsterTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 
