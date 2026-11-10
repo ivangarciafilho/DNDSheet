@@ -8,6 +8,8 @@ Build225 hardens outcome editing: move/copy/delete, explicit identity repair, co
 
 Build226 improves skill routing and persistence, source-owned spell editing, cadence rendering, shared action-family controls and safe rich mechanic text. See the [scope, verification and remaining roadmap](docs/roadmap/DNDSheet-Build226-Emergency-Editor-and-Spellcasting.md).
 
+Build227 repairs additional-container ownership, brings Role into the compositor, adds safe numeric presentation and traversal formatting, and improves source-owned spell selection and explicit resource contributions. See the [verified scope and remaining work](docs/roadmap/DNDSheet-Build227-Composition-and-Casting-Candidate.md).
+
 ## What is available
 
 - One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities.

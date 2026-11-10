@@ -34,8 +34,12 @@
     "after": 562,
     "delta": 22
   },
-  "validationStatus": "Final gate10/10; publication pending",
-  "publication": null,
+  "validationStatus": "Final gate 10/10; live publication verified",
+  "publication": {
+    "source": "750b65868ac4a7d3cedef372cea797b83a789950",
+    "pagesCommit": "ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8",
+    "tag": "rc-2.4.3-build-227-composition-casting-and-presentation"
+  },
   "gateProgress": {
     "complete": true,
     "results": [

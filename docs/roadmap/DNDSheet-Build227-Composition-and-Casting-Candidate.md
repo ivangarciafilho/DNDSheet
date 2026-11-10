@@ -2,9 +2,9 @@
 
 ## Candidate state and preservation
 
-**Validated candidate; publication pending.** Work is isolated in `.codex-temp/build227-work`, based on current remote commit `4128dde`. Build226 remains the published reference until a newly validated candidate is deliberately published. The protected original checkout, configured user sample and existing release-candidate archives must remain intact.
+**Published and verified release candidate.** Work is isolated in `.codex-temp/build227-work`, based on Build226 receipt commit `4128dde`. Build227 is published; Build226 remains preserved for recovery. The protected original checkout, configured user sample and existing release-candidate archives remain intact.
 
-Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Publication verification follows.
+Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Published source 750b65868ac4a7d3cedef372cea797b83a789950; Pages ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8; tag rc-2.4.3-build-227-composition-casting-and-presentation. GitHub Pages reports built; live index and application asset bytes match the tested Pages output. Build227 archived with 96 verified checksums; previous223–226 candidates and original modified checkout remain intact. [Publication receipt](../evidence/build227/publication-receipt.json).
 
 ## Measured workload
 
@@ -64,7 +64,7 @@ Native saved/manual slot arrays remain authoritative. A computed consolidated re
 
 ## Dependency-ordered continuation and grooming
 
-1. Publish this frozen candidate and record live byte parity and the immutable release receipt; retain Build226 recovery material.
+1. Preserve this release's frozen evidence and Build226 recovery material while implementing the following bounded acceptance work.
 2. Continue **A11.5**: source-owned container/region transactions, stable identities, typed recipient/attitude/type/plane predicates, lossless versioned migration and adapter/theme/print proof. Keep the newly exposed projection-loss case in the regression fixtures.
 3. Complete dependent **A11.9** explicit-roll interaction and random-result adapter/print evidence; then purpose-led help under **H9** and per-file type debt under **H14**.
 4. Continue **A12.8–A12.9** with stable casting-source/pool identities and lossless migration before authoritative ruleset capacities/grants. Keep native learning, shared resources, source-local cadence and authored custom contribution as distinct concepts.
@@ -95,6 +95,12 @@ Continue existing roadmap IDs with these acceptance substeps, without adding dup
 
 ## Frozen release evidence
 
-Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Publication verification follows.
+Final frozen-source gate **10/10** passed: **562 core tests (+22 versus Build226)**, exhaustive SPA/Pages browser scenarios, container lifecycle, numeric presentation, source-owned spellcasting, rich mechanics, release matrix and fit checks. Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624). Lint: zero errors, 2721 warnings. Existing debt remains. Published source 750b65868ac4a7d3cedef372cea797b83a789950; Pages ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8; tag rc-2.4.3-build-227-composition-casting-and-presentation. GitHub Pages reports built; live index and application asset bytes match the tested Pages output. Build227 archived with 96 verified checksums; previous223–226 candidates and original modified checkout remain intact. [Publication receipt](../evidence/build227/publication-receipt.json).
 
 [Gate](../evidence/build227/summary.json), [workload](../evidence/build227/workload.json), [preservation](../evidence/build227/preservation-verification.json).
+
+## Publication
+
+Published source 750b65868ac4a7d3cedef372cea797b83a789950; Pages ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8; tag rc-2.4.3-build-227-composition-casting-and-presentation. GitHub Pages reports built; live index and application asset bytes match the tested Pages output. Build227 archived with 96 verified checksums; previous223–226 candidates and original modified checkout remain intact. [Publication receipt](../evidence/build227/publication-receipt.json).
+
+Fresh browser footer: `v2.4.3 build 227`.

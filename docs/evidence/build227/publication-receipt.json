@@ -1,0 +1,210 @@
+{
+  "build": 227,
+  "url": "https://ivangarciafilho.github.io/DNDSheet/?build=227#/",
+  "releaseSource": "750b65868ac4a7d3cedef372cea797b83a789950",
+  "base": "4128ddedfb6bffaebf85e0f89aef76638e7a1df2",
+  "pagesCommit": "ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8",
+  "tag": "rc-2.4.3-build-227-composition-casting-and-presentation",
+  "gate": {
+    "ok": true,
+    "inputFingerprint": "c0a56f97220fcf287f8abec6df1b16394614136354b8757fd4ff577abdce13aa",
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 11
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 17
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 29
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 177
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 76
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 223
+      }
+    ]
+  },
+  "live": {
+    "status": "built",
+    "indexSha256": "d693634600c83234769e92619b0756c96c6844408118006293c2be8189ddaff0",
+    "assets": [
+      {
+        "path": "/DNDSheet/assets/index.5f61abf7.js",
+        "sha256": "7943c05dc4240c145053f1e20cc2611ec52bb5805e056766320895605d4deccc"
+      },
+      {
+        "path": "/DNDSheet/assets/index.609c0b64.css",
+        "sha256": "04eab41b06f7a7c7f4ceb5dbb22de92d8af7d326eace699b9c60ae5813c60ffd"
+      },
+      {
+        "path": "/DNDSheet/assets/MonsterBuilder.a62bd545.js",
+        "sha256": "41c0816436fb6b479b34b18ec3dea9082d0b6fa6b590df09a9b2fd027f92452c"
+      }
+    ]
+  },
+  "candidate": {
+    "path": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-227-composition-casting-and-presentation",
+    "verifiedEntries": 96
+  },
+  "workload": {
+    "closed": [],
+    "newIds": 0,
+    "implementationAcceptanceItems": 16,
+    "implementationAcceptanceStatus": "16 bounded acceptance changes verified in final gate; no parent closures",
+    "normalized": {
+      "total": 268,
+      "before": {
+        "complete": 174,
+        "open": 94
+      },
+      "after": {
+        "complete": 174,
+        "open": 94
+      },
+      "delta": {
+        "complete": 0,
+        "open": 0
+      }
+    },
+    "raw": {
+      "total": 277,
+      "before": {
+        "complete": 183,
+        "open": 94
+      },
+      "after": {
+        "complete": 183,
+        "open": 94
+      }
+    },
+    "core": {
+      "before": 540,
+      "after": 562,
+      "delta": 22
+    },
+    "validationStatus": "Final gate 10/10; live publication verified",
+    "publication": {
+      "source": "750b65868ac4a7d3cedef372cea797b83a789950",
+      "pagesCommit": "ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8",
+      "tag": "rc-2.4.3-build-227-composition-casting-and-presentation"
+    },
+    "gateProgress": {
+      "complete": true,
+      "results": [
+        {
+          "step": "core",
+          "ok": true,
+          "code": 0,
+          "seconds": 4
+        },
+        {
+          "step": "lint",
+          "ok": true,
+          "code": 0,
+          "seconds": 11
+        },
+        {
+          "step": "typecheck",
+          "ok": true,
+          "code": 0,
+          "seconds": 17
+        },
+        {
+          "step": "build",
+          "ok": true,
+          "code": 0,
+          "seconds": 29
+        },
+        {
+          "step": "fuzz",
+          "ok": true,
+          "code": 0,
+          "seconds": 177
+        },
+        {
+          "step": "help",
+          "ok": true,
+          "code": 0,
+          "seconds": 76
+        },
+        {
+          "step": "spell",
+          "ok": true,
+          "code": 0,
+          "seconds": 9
+        },
+        {
+          "step": "pages-build",
+          "ok": true,
+          "code": 0,
+          "seconds": 43
+        },
+        {
+          "step": "pages-assets",
+          "ok": true,
+          "code": 0,
+          "seconds": 0
+        },
+        {
+          "step": "pages-fuzz",
+          "ok": true,
+          "code": 0,
+          "seconds": 223
+        }
+      ],
+      "typeLine": "Typecheck: 531 diagnostics; 0 new; 152 resolved (approved baseline 683, Build213 e19a624).",
+      "lint": {
+        "errors": 0,
+        "warnings": 2721
+      }
+    }
+  },
+  "verifiedAt": "2026-11-10T16:29:03.303Z"
+}
