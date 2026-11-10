@@ -1,0 +1,234 @@
+{
+  "build": 226,
+  "url": "https://ivangarciafilho.github.io/DNDSheet/?build=226#/",
+  "releaseSource": "2114f6ba40a31d680eebc7683c39ba91ffd50e92",
+  "base": "43315ceda1677446b1b289ad969b2207dc2067ca",
+  "pagesCommit": "61fee11f1772b95983d33233ff9a3e15a30db069",
+  "tag": "rc-2.4.3-build-226-emergency-editor-and-spellcasting",
+  "gate": {
+    "ok": true,
+    "inputFingerprint": "1aaefff7b571d41916ca884c5327f975eab6e78c77cd24170d133439768915a3",
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 28
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 44
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 187
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 62
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 211
+      }
+    ]
+  },
+  "live": {
+    "status": "built",
+    "indexSha256": "a3a742ce08349401291442ace7a1e2958e1341150af9933c93fd6d0e80e0861a",
+    "assets": [
+      {
+        "path": "/DNDSheet/assets/index.5c7280cc.js",
+        "sha256": "d702f6cf23ca8c317ace95920fb680d8048cb30b12d3b6476baef0fd0e509c9e"
+      },
+      {
+        "path": "/DNDSheet/assets/index.cf935def.css",
+        "sha256": "8b8eb9224b7340771c335a94694186561064fb159dc29fcbd0b288496a6f7470"
+      },
+      {
+        "path": "/DNDSheet/assets/MonsterBuilder.e16ab203.js",
+        "sha256": "f479bb9bb3fb915f6d1a02e40a6faa758ee9018eb50c4269df70960cc893e312"
+      }
+    ]
+  },
+  "candidate": {
+    "path": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-226-emergency-editor-and-spellcasting",
+    "verifiedEntries": 96
+  },
+  "workload": {
+    "closed": [],
+    "newIds": 0,
+    "implementationItemsCompleted": 18,
+    "normalized": {
+      "total": 268,
+      "before": {
+        "complete": 174,
+        "open": 94
+      },
+      "after": {
+        "complete": 174,
+        "open": 94
+      },
+      "delta": {
+        "complete": 0,
+        "open": 0
+      }
+    },
+    "raw": {
+      "total": 277,
+      "before": {
+        "complete": 183,
+        "open": 94
+      },
+      "after": {
+        "complete": 183,
+        "open": 94
+      }
+    },
+    "core": {
+      "before": 504,
+      "after": 540,
+      "delta": 36
+    },
+    "browserStepsPerTarget": {
+      "before": 58,
+      "after": 58,
+      "delta": 0
+    },
+    "outcomeLifecycleBrowserChecks": 19,
+    "themeCases": 60,
+    "contrastSamples": 120,
+    "fitViews": 10,
+    "focusedBrowserSuites": {
+      "status": "Passed on SPA and Pages in final gate",
+      "skills": {
+        "booleanChecks": 11
+      },
+      "spellcasting": {
+        "booleanChecks": 10
+      },
+      "richMechanics": {
+        "booleanChecks": 6
+      }
+    },
+    "validationStatus": "Final gate 10/10; live publication verified",
+    "gateProgress": {
+      "complete": true,
+      "core": 540,
+      "typecheck": {
+        "existing": 559,
+        "new": 0
+      },
+      "lint": {
+        "errors": 0,
+        "warnings": 2692
+      },
+      "results": [
+        {
+          "step": "core",
+          "ok": true,
+          "code": 0,
+          "seconds": 4
+        },
+        {
+          "step": "lint",
+          "ok": true,
+          "code": 0,
+          "seconds": 15
+        },
+        {
+          "step": "typecheck",
+          "ok": true,
+          "code": 0,
+          "seconds": 28
+        },
+        {
+          "step": "build",
+          "ok": true,
+          "code": 0,
+          "seconds": 44
+        },
+        {
+          "step": "fuzz",
+          "ok": true,
+          "code": 0,
+          "seconds": 187
+        },
+        {
+          "step": "help",
+          "ok": true,
+          "code": 0,
+          "seconds": 62
+        },
+        {
+          "step": "spell",
+          "ok": true,
+          "code": 0,
+          "seconds": 9
+        },
+        {
+          "step": "pages-build",
+          "ok": true,
+          "code": 0,
+          "seconds": 43
+        },
+        {
+          "step": "pages-assets",
+          "ok": true,
+          "code": 0,
+          "seconds": 0
+        },
+        {
+          "step": "pages-fuzz",
+          "ok": true,
+          "code": 0,
+          "seconds": 211
+        }
+      ]
+    },
+    "publication": {
+      "source": "2114f6ba40a31d680eebc7683c39ba91ffd50e92",
+      "pagesCommit": "61fee11f1772b95983d33233ff9a3e15a30db069",
+      "tag": "rc-2.4.3-build-226-emergency-editor-and-spellcasting"
+    }
+  },
+  "verifiedAt": "2026-11-10T11:14:32.988Z"
+}

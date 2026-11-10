@@ -54,7 +54,7 @@
       "booleanChecks": 6
     }
   },
-  "validationStatus": "Final gate 10/10; publication pending",
+  "validationStatus": "Final gate 10/10; live publication verified",
   "gateProgress": {
     "complete": true,
     "core": 540,
@@ -128,5 +128,10 @@
         "seconds": 211
       }
     ]
+  },
+  "publication": {
+    "source": "2114f6ba40a31d680eebc7683c39ba91ffd50e92",
+    "pagesCommit": "61fee11f1772b95983d33233ff9a3e15a30db069",
+    "tag": "rc-2.4.3-build-226-emergency-editor-and-spellcasting"
   }
 }

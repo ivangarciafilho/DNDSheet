@@ -1,8 +1,8 @@
-# Build226 — Emergency editor and spellcasting candidate
+# Build226 — Emergency editor and spellcasting release candidate
 
 ## State and workload
 
-Validated candidate based on Build225 receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca`. Build225 remains the verified published release until a new publication receipt is recorded. Work is isolated in `.codex-temp/build226-work`; the original checkout, existing release candidates and user sample are protected.
+Published release candidate based on Build225 receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca`. Build226 is published and verified; Build225 remains preserved for recovery. Work is isolated in `.codex-temp/build226-work`; the original checkout, existing release candidates and user sample are protected.
 
 Normalized ledger: **268 IDs, 174 complete / 94 open → 174 complete / 94 open**. Whole-ID delta **0**; added IDs **0**. Raw ledger: **277 IDs, 183 complete / 94 open**, unchanged. Implementation items below are separately measured acceptance changes, not new whole-task closures.
 
@@ -51,15 +51,20 @@ Preliminary development evidence: **540 core tests passed (+36 versus Build225's
 
 The compiler comparison now normalizes only TypeScript's exact `... N more ...` display token, whose count changes when a shape gains an optional member. File, diagnostic code, visible message/type text and diagnostic multiplicity remain compared. This avoids treating a compiler display-count change as a new diagnostic while retaining the new-error safeguard; it does not refresh the approved debt baseline or suppress visible errors.
 
-Final frozen-source gate **10/10** passed: **540 core tests (+36 versus Build225)**; **58 exhaustive browser scenarios on SPA and Pages**, plus the three emergency suites on each target (11 skill, 10 spellcasting and 6 rich-mechanic checks); 19 outcome lifecycle checks, 60 fixture/theme cases, 120 representative contrast samples and 10 fit views with no clipping observations. Zero runtime exceptions. Type guard: 559 existing diagnostics, zero new against the unchanged baseline; lint: zero errors, 2692 warnings. Existing debt remains. Publication/live verification follows.
+Final frozen-source gate **10/10** passed: **540 core tests (+36 versus Build225)**; **58 exhaustive browser scenarios on SPA and Pages**, plus the three emergency suites on each target (11 skill, 10 spellcasting and 6 rich-mechanic checks); 19 outcome lifecycle checks, 60 fixture/theme cases, 120 representative contrast samples and 10 fit views with no clipping observations. Zero runtime exceptions. Type guard: 559 existing diagnostics, zero new against the unchanged baseline; lint: zero errors, 2692 warnings. Existing debt remains. Published source 2114f6ba40a31d680eebc7683c39ba91ffd50e92; Pages 61fee11f1772b95983d33233ff9a3e15a30db069; tag rc-2.4.3-build-226-emergency-editor-and-spellcasting. GitHub Pages reports built. Live index, entry JavaScript, CSS and MonsterBuilder bytes match the tested Pages output. Candidate226 archived and all96 checksums verified; prior223–225 archives preserved. Original modified tracked files remain unchanged. [Publication receipt](../evidence/build226/publication-receipt.json).
 
 ## Groomed continuation
 
-1. Publish the final tested source; record the immutable candidate, live footer, byte parity and receipt.
-2. Resume A11.5: stable container/region ownership, typed recipient/attitude/type/plane predicates, lossless versioned migration and complete transaction/export/theme/print proof.
-3. Finish dependent A11.9 explicit-roll interaction and adapter/print evidence; then H9 and H14.
-4. Complete A12.8–A12.9 stable source/pool identities, migration, resource separation and ruleset-aware capacities/grants. This emergency packet advances authoring but does not close those architecture contracts.
+1. Resume A11.5: stable container/region ownership, typed recipient/attitude/type/plane predicates, lossless versioned migration and complete transaction/export/theme/print proof.
+2. Finish dependent A11.9 explicit-roll interaction and adapter/print evidence; then H9 and H14.
+3. Complete A12.8–A12.9 stable source/pool identities, migration, resource separation and ruleset-aware capacities/grants. This emergency packet advances authoring but does not close those architecture contracts.
 
 ## Evidence
 
 [Final gate](../evidence/build226/summary.json), [measured workload](../evidence/build226/workload.json), [ledger](../evidence/build226/ledger-measured.json), [prior archives](../evidence/build226/prior-archives.log). The original checkout's four modified tracked files have recorded hashes and remain protected.
+
+## Published release
+
+Published source 2114f6ba40a31d680eebc7683c39ba91ffd50e92; Pages 61fee11f1772b95983d33233ff9a3e15a30db069; tag rc-2.4.3-build-226-emergency-editor-and-spellcasting. GitHub Pages reports built. Live index, entry JavaScript, CSS and MonsterBuilder bytes match the tested Pages output. Candidate226 archived and all96 checksums verified; prior223–225 archives preserved. Original modified tracked files remain unchanged. [Publication receipt](../evidence/build226/publication-receipt.json).
+
+Live footer `v2.4.3 build 226` verified in a fresh browser profile.
