@@ -1,7 +1,6 @@
 import N2W from 'number-to-words'
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
 import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
@@ -14,7 +13,6 @@ import { creatureTypeLine, escapeLatexText, splitEntryLead } from 'src/core/doma
 // the LaTeX renderer is also more rigid than the other renderers, so formatting might not carry over.
 export function useLatexRenderer() {
   const monster = useMonsterStore()
-  const spellStore = useSpellsStore()
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
   const { latexFormatter, processTokens } = useProcessTokens({ web: false })
@@ -44,37 +42,11 @@ export function useLatexRenderer() {
   }
 
   const getStandard = () => {
-    const spellcasting = monster.spellcasting
-
-    const renderedRows = []
-    const cantrips = spellcasting.standard.filter((id) => {
-      return spellStore.allSpells[id].level === 0
-    })
-
-    if (cantrips.length > 0)
-      renderedRows.push(`\\DndMonsterSpellLevel{${cantrips.join(', ')}}`)
-
-    for (let i = 0; i < spellcasting.slots.length; i++) {
-      if (spellcasting.slots[i] > 0) {
-        const level = i + 1
-        const spells = spellcasting.standard.filter((id) => {
-          return spellStore.allSpells[id].level === level
-        })
-        if (spells.length === 0) continue
-
-        renderedRows.push(
-          `\\DndMonsterSpellLevel[${level}][${
-            spellcasting.slots[i]
-          }]{${spells.join(', ')}}`
-        )
-      }
-    }
-
-    return `${latexFormatter(renderer.classSpellcastingPreamble.value)}
-  \\begin{DndMonsterSpells}
-    ${renderedRows.join('\n    ')}
-  \\end{DndMonsterSpells}
-  `
+    const preamble = latexFormatter(renderer.classSpellcastingPreamble.value)
+    const rows = renderer.classSpellcastingSlots.value.map((row) =>
+      `\\par ${latexFormatter(`${row.renderedLabel} ${row.renderedSpells}`)}`
+    )
+    return [preamble, ...rows].join('\n  ')
   }
 
   // note that the latex formatter does not respect custom formatting
@@ -296,7 +268,7 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
   % Spellcasting
   ${monster.spellcasting.atWill.length > 0 ? getAtWill() : ''}
 
-  ${monster.spellcasting.standard.length > 0 ? getStandard() : ''}
+  ${renderer.classSpellcastingSlots.value.length > 0 ? getStandard() : ''}
 
   ${getBonusActions()}
 

@@ -1,7 +1,10 @@
-import { getSpellSlotsForClass, spellcastingRuleClass, calculateSpellcastingMetrics } from '../usecases/AutoSyncSpellcasting.ts'
-import { subclassSpells } from './catalogs/subclass-spells.ts'
+import { getSpellSlotsForClass, spellcastingRuleClass, sourceLearningMetrics } from '../usecases/AutoSyncSpellcasting.ts'
+import type { CastingContribution } from '../usecases/AutoSyncSpellcasting.ts'
+import { subclassSpells, subclassSpellGrants, legacySubclassSpells } from './catalogs/subclass-spells.ts'
 
 export interface CastingSourceSelection {
+ contribution?: CastingContribution
+ rulesEdition?: '2014' | '2024'
  className: string
  subclass?: string
  level: number
@@ -19,16 +22,34 @@ export function sourceSpellCeiling(source: CastingSourceSelection): number | und
  const slots=getSpellSlotsForClass(rulesClass,level)
  return slots.reduce((max,count,index)=>count>0?index+1:max,0)
 }
+/** Divine Soul broadens selection to the Cleric base list; affinity grants remain an authored choice.
+ * Publisher reference: https://www.dndbeyond.com/posts/1080-druid-201-a-guide-to-multiclassing
+ */
+export function sourceSpellClassLists(source: CastingSourceSelection): string[] {
+ const rule=spellcastingRuleClass(source.className,source.subclass)
+ if(!rule)return []
+ const lists=[rule==='third caster'?'wizard':rule]
+ if(rule==='sorcerer'&&/^divine\s+soul$/i.test((source.subclass||'').trim()))lists.push('cleric')
+ return lists
+}
 export function sourceSpellOptions<T extends CastingSpellOption>(options: readonly T[],source:CastingSourceSelection,level:number):T[] {
- const ceiling=sourceSpellCeiling(source), own=subclassSpells(source.subclass)
+ const ceiling=sourceSpellCeiling(source), own=source.rulesEdition === '2024' ? subclassSpellGrants(source.className,source.subclass,source.level) : legacySubclassSpells(source.className,source.subclass)
  const rulesClass=spellcastingRuleClass(source.className,source.subclass)
- const classList=rulesClass==='third caster'?'wizard':rulesClass
+ const classLists=sourceSpellClassLists(source)
  const recognized=rulesClass!==undefined
  return options.filter(option=>option.level===level && (source.bypassSlotFilter||ceiling===undefined||level===0||level<=ceiling) &&
-  (!recognized||option.custom||own.includes(option.value)||(option.class??[]).some(cls=>cls.toLowerCase()===classList)))
-  .map(option=>own.includes(option.value)&&!option.custom?{...option,label:`${option.label} (subclass)`}:option)
+  (!recognized||option.custom||own.includes(option.value)||(option.class??[]).some(cls=>classLists.includes(cls.toLowerCase()))))
+  .map(option=>own.includes(option.value)&&!option.custom?{...option,alwaysPrepared:source.rulesEdition==='2024',label:`${option.label} (${source.rulesEdition==='2024'?'always prepared':'subclass'})`}:option)
   .sort((a,b)=>a.label.localeCompare(b.label))
 }
+/** Derived grants never rewrite the authored source spell list. */
+export function sourceGrantedSpells(source: CastingSourceSelection): string[] {
+ return source.rulesEdition === '2024' ? subclassSpellGrants(source.className,source.subclass,source.level) : []
+}
+export function sourceEffectiveSpells(source: CastingSourceSelection): string[] {
+ return [...new Set([...(source.spells || []),...sourceGrantedSpells(source)])]
+}
+
 /** Existing assignments stay visible even after a class, subclass or level changes. */
 export function sourceAssignedAtLevel(options:readonly CastingSpellOption[],assigned:readonly string[],level:number):string[] {
  return assigned.filter(id=>(options.find(option=>option.value===id)?.level??0)===level)
@@ -39,10 +60,10 @@ export function replaceSourceLevelSpells(options:readonly CastingSpellOption[],a
 }
 
 /** The existing legacy base-class tables are reference capacities, not automatic subclass grants. */
-export function sourceCapacityReference(options: readonly CastingSpellOption[], source: CastingSourceSelection, abilityModifier = 0) {
+export function sourceCapacityReference(options: readonly CastingSpellOption[], source: CastingSourceSelection, abilityModifier = 0, combinedLevel?: number, sourceCount = combinedLevel === undefined ? 1 : 2) {
  const rule = spellcastingRuleClass(source.className, source.subclass)
  if (!rule) return undefined
- const metrics = calculateSpellcastingMetrics(source.className, source.level, abilityModifier, source.subclass)
+ const metrics = sourceLearningMetrics(source, abilityModifier, combinedLevel, sourceCount)
  let selectedCantrips = 0, selectedSpells = 0, unknownAssignments = 0
  for (const id of new Set(source.spells || [])) {
   const spell = options.find(option => option.value === id)
@@ -50,7 +71,10 @@ export function sourceCapacityReference(options: readonly CastingSpellOption[], 
   else if (spell.level === 0) selectedCantrips++
   else selectedSpells++
  }
- return { ...metrics, selectedCantrips, selectedSpells, unknownAssignments,
+ const grantedSpells = sourceGrantedSpells(source)
+ const selectedGrantedSpells = [...new Set(source.spells || [])].filter(id=>grantedSpells.includes(id))
+ return { ...metrics, selectedCantrips, selectedSpells, unknownAssignments, grantedSpells, selectedGrantedSpells, selectedBudgetSpells:Math.max(0,selectedSpells-selectedGrantedSpells.filter(id=>options.some(option=>option.value===id&&option.level>0)).length),
+  grantRules: source.rulesEdition === '2024' ? 'SRD 5.2 (2024)' : 'Legacy: subclass grants not inferred',
   selectionModel: ['bard','sorcerer','warlock','ranger','third caster'].includes(rule) ? 'known' : 'prepared',
   subclassCatalogSpells: subclassSpells(source.subclass) }
 }

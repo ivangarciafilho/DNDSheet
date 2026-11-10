@@ -10,15 +10,15 @@ test('exports read the web heading order: lead, then Level N, then colon', () =>
 })
 
 test('cantrips, hidden cadence and a custom refresh', () => {
-  assert.equal(spellLevelHeading({ level: 0, slots }), 'Cantrips (at will):')
-  assert.equal(spellLevelHeading({ level: 1, slots, levelCadence: 'hidden' }), '(4 slots), Level 1:')
+  assert.equal(spellLevelHeading({ level: 0, slots }), 'Cantrips:')
+  assert.equal(spellLevelHeading({ level: 1, slots, levelCadence: 'hidden' }), '(4), Level 1:')
   assert.equal(spellLevelHeading({ level: 3, slots, refreshRate: 'short_rest' }), '(2/Short Rest), Level 3:')
 })
 
 test('pact magic shows the shared slot lead only on the pact level', () => {
   const pact = [0, 0, 2, 0, 0, 0, 0, 0, 0]
   assert.equal(spellLevelHeading({ level: 3, slots: pact, className: 'Warlock' }), '(2/Short Rest), Level 3:')
-  assert.equal(spellLevelHeading({ level: 1, slots: pact, className: 'Warlock' }), '(Short Rest), Level 1:')
+  assert.equal(spellLevelHeading({ level: 1, slots: pact, className: 'Warlock' }), 'Level 1:')
 })
 
 test('the helper and the web plate composition never diverge', () => {
@@ -38,9 +38,16 @@ test('the helper and the web plate composition never diverge', () => {
 })
 
 test('explicit cantrip cadence and bonus casting time survive shared headings', () => {
-  assert.equal(spellLevelHeading({ level: 0, levelCadence: 'short_rest', bonusAction: true }), 'Cantrips (Short Rest) (Bonus Action):')
+  assert.equal(spellLevelHeading({ level: 0, levelCadence: 'short_rest', bonusAction: true }), 'Cantrips (Bonus Action):')
   assert.equal(spellLevelHeading({ level: 0, levelCadence: 'hidden', bonusAction: true }), 'Cantrips (Bonus Action):')
 })
 test('explicit lower pact row cadence is visible without repeating its shared slots', () => {
-  assert.equal(spellLevelHeading({ level: 1, slots: [0,0,2], className: 'Warlock', levelCadence: 'long_rest' }), '(Long Rest), Level 1:')
+  assert.equal(spellLevelHeading({ level: 1, slots: [0,0,2], className: 'Warlock', levelCadence: 'long_rest' }), 'Level 1:')
+})
+
+test('saved counted cadence supplies its own amount unless the author overrides or hides it', () => {
+  const row = { level: 3, slots: [4, 3, 3], levelCadence: '1_day' }
+  assert.equal(spellLevelHeading(row), '(1/Day), Level 3:')
+  assert.equal(spellLevelHeading({ ...row, amount: 2 }), '(2/Day), Level 3:')
+  assert.equal(spellLevelHeading({ ...row, amount: null }), 'Level 3:')
 })

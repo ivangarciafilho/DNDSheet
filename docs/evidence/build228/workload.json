@@ -1,0 +1,93 @@
+{
+  "normalized": {
+    "before": {
+      "total": 268,
+      "complete": 174,
+      "open": 94
+    },
+    "after": {
+      "total": 268,
+      "complete": 174,
+      "open": 94
+    },
+    "delta": {
+      "complete": 0,
+      "open": 0
+    }
+  },
+  "raw": {
+    "total": 277,
+    "complete": 183,
+    "open": 94
+  },
+  "core": {
+    "before": 562,
+    "after": 581,
+    "delta": 19
+  },
+  "validationStatus": "Final gate 10/10; publication pending",
+  "publication": null,
+  "implementationAcceptanceItems": 20,
+  "gate": [
+    {
+      "step": "core",
+      "ok": true,
+      "code": 0,
+      "seconds": 3
+    },
+    {
+      "step": "lint",
+      "ok": true,
+      "code": 0,
+      "seconds": 15
+    },
+    {
+      "step": "typecheck",
+      "ok": true,
+      "code": 0,
+      "seconds": 27
+    },
+    {
+      "step": "build",
+      "ok": true,
+      "code": 0,
+      "seconds": 43
+    },
+    {
+      "step": "fuzz",
+      "ok": true,
+      "code": 0,
+      "seconds": 185
+    },
+    {
+      "step": "help",
+      "ok": true,
+      "code": 0,
+      "seconds": 98
+    },
+    {
+      "step": "spell",
+      "ok": true,
+      "code": 0,
+      "seconds": 9
+    },
+    {
+      "step": "pages-build",
+      "ok": true,
+      "code": 0,
+      "seconds": 43
+    },
+    {
+      "step": "pages-assets",
+      "ok": true,
+      "code": 0,
+      "seconds": 0
+    },
+    {
+      "step": "pages-fuzz",
+      "ok": true,
+      "code": 0,
+      "seconds": 247
+    }
+  ]
+}

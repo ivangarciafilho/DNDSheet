@@ -111,6 +111,7 @@ try {
     monster.spellcasting.preparedCountOverride = 2
     monster.spellcasting.preparedInterval = 'long_rest'
     monster.spellcasting.levelCadenceMap = { 3: '1_day' }
+    monster.spellcasting.levelAmountMap = { 3: 1 }
     monster.spellcasting.spellCadenceMap = { Fireball: '1_day' }
     monster.spellcasting.metamagic = {
       enabled: true,
@@ -178,7 +179,7 @@ try {
     assert.match(check.text, /\(4\/Long Rest\), Level 1:\s*Magic Missile/)
     assert.match(check.text, /\(1\/Day\), Level 3:\s*Fireball/)
     assert.doesNotMatch(check.text, /\(3\/1\/Day\)/, 'a counted cadence must not be prefixed with the slot count')
-    assert.match(check.text, /14 Spell Slots through 5th level · regained on Long Rest/)
+    assert.match(check.text, /You have 14 spell slots through 5th level, regained on Long Rests/)
     assert.match(check.text, /2 prepared Wizard spells · Long Rest/)
     assert.match(check.text, /Heightened Spell: Give one target disadvantage on saves against the spell;/)
     assert.match(check.text, /Twinned Spell: Increase the spell’s effective level by one\./)
@@ -209,7 +210,7 @@ try {
     monster.spellcasting.subclass = 'Evocation'
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
   }`)
-  assert.match(await plateText(), /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden keeps only the slot count')
+  assert.match(await plateText(), /\(2\), Level 1:\s*Magic Missile/, 'Hidden keeps only the slot count')
   let persisted = false
   for (let attempt = 0; attempt < 50 && !persisted; attempt++) {
     persisted = await evaluate('() => { const raw = localStorage.getItem("app.monster") || ""; return raw.includes("hidden") && raw.includes("1_day") && raw.includes("[2,3,3,3,1") }')
@@ -222,7 +223,7 @@ try {
     await delay(250)
     reloaded = await plateText().catch(() => '')
   }
-  assert.match(reloaded, /\(2 slots\), Level 1:\s*Magic Missile/, 'Hidden cadence should survive reload')
+  assert.match(reloaded, /\(2\), Level 1:\s*Magic Missile/, 'Hidden cadence should survive reload')
   assert.match(reloaded, /\(1\/Day\), Level 3:\s*Fireball/, 'a counted cadence should survive reload')
   assert.doesNotMatch(reloaded, /\(2\/1\/Day\)|\(3\/1\/Day\)/, 'reload must not re-prefix the counted cadence')
   const subclassAfterReload = await evaluate('() => document.querySelector("#q-app").__vue_app__.config.globalProperties.$pinia._s.get("monster").spellcasting.subclass')

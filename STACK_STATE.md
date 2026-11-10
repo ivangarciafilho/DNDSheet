@@ -1,3 +1,7 @@
+## Build228 — spellcasting and print
+
+Frozen release gate **10/10** passed with **581 core tests (+19)**, exhaustive SPA and Pages browser scenarios, casting source lifecycle and learning checks, five spell themes, and A4 portrait and landscape PDF parity. Typecheck: 515 diagnostics; 0 new; 168 resolved (approved baseline 683, Build213 e19a624). Build227 and 480 files across five prior archives remain verified. Publication pending.
+
 ## Build227 published — 2026-11-10
 
 Published source 750b65868ac4a7d3cedef372cea797b83a789950; Pages ad8f8f4dcdd6dfed4b3eb2f82972eaf8c99c17c8; tag rc-2.4.3-build-227-composition-casting-and-presentation. GitHub Pages reports built; live index and application asset bytes match the tested Pages output. Build227 archived with 96 verified checksums; previous223–226 candidates and original modified checkout remain intact. [Publication receipt](../evidence/build227/publication-receipt.json).

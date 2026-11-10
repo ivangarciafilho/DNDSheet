@@ -1,3 +1,4 @@
+import { sourceEffectiveSpells } from 'src/core/domain/casting-source-selection'
 import { previewRandomTableImport, nextRandomTableRow } from 'src/core/domain/random-table'
 import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { validate } from 'jsonschema'
@@ -859,7 +860,8 @@ export const useMonsterStore = defineStore('monster', {
     },
     isSpellcaster: (state) => {
       return (
-        state.spellcasting.standard.length > 0 ||
+        (state.spellcasting.primarySourceEnabled !== false && sourceEffectiveSpells({className:state.spellcasting.class || '',subclass:state.spellcasting.subclass,level:state.spellcasting.level,rulesEdition:state.spellcasting.rulesEdition,spells:state.spellcasting.standard}).length > 0) ||
+        (state.spellcasting.classes || []).some(source => sourceEffectiveSpells(source).length > 0) ||
         state.spellcasting.atWill.length > 0
       )
     },

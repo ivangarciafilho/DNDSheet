@@ -7,7 +7,6 @@ import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
 import { tarrasqueDamageDice, tarrasqueEntry, tarrasqueText } from 'src/core/domain/tarrasque-export'
 import { structuredAttackBonus } from 'src/core/domain/structured-attack'
-import { spellLevelHeading, spellNameWithCadence } from 'src/core/domain/spell-plate'
 
 const statMap = {
   STR: 'strength',
@@ -46,9 +45,7 @@ export function useTarrasqueRenderer() {
     tio.hit_dice = `${monster.HP.HD}d${monster.HP.type}${renderBonus(
       monster.HP.modifier
     )}`
-    tio.speed = monster.speeds
-      .map((s) => `${s.speed} ft. ${s.type}${s.note === '' ? '' : s.note}`)
-      .join(', ')
+    tio.speed = tarrasqueText(renderer.speeds.value)
 
     tio.speed_json = {}
     monster.speeds.forEach((s) => {
@@ -153,15 +150,8 @@ export function useTarrasqueRenderer() {
     // this counts as a special ability
     // we're just gonna basically copy-pasta the markdown exporter for the description...
     const spellcasting = monster.spellcasting
-    if (spellcasting.standard.length > 0) {
-      const renderedRows = []
-      const cantrips = monster.knownSpellsOfLevel(0).filter((name: string) => monster.spellcasting?.standard?.includes(name)).map((name: string) => spellNameWithCadence(name, monster.spellcasting?.spellCadenceMap?.[name], monster.spellcasting?.levelCadenceMap?.[0] || 'at_will'))
-
-      if (cantrips.length > 0)
-        renderedRows.push(
-          `${spellLevelHeading({ level: 0, levelCadence: monster.spellcasting?.levelCadenceMap?.[0], bonusAction: Boolean(monster.spellcasting?.bonusActionLevelMap?.[0]), labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} ${cantrips.join(', ')}`
-        )
-
+    if (renderer.classSpellcastingSlots.value.length > 0) {
+      const renderedRows: string[] = []
       renderer.classSpellcastingSlots.value.forEach((slot) => {
         renderedRows.push(`${slot.renderedLabel} ${slot.renderedSpells}`)
       })
@@ -192,12 +182,12 @@ export function useTarrasqueRenderer() {
       })
     }
 
-    const spells = Array.from(monster.spellcasting.standard)
+    const spells = renderer.classSpellcastingSlots.value.flatMap(row => row.spells)
     for (const atWill of monster.spellcasting.atWill) {
       spells.push(...atWill.spells)
     }
 
-    if (spells.length > 0) tio.spellList = spells
+    if (spells.length > 0) tio.spellList = [...new Set(spells)]
 
     // Reaction prose includes its trigger, mechanics, outcomes and context tokens.
     if (monster.reactions.length > 0) {

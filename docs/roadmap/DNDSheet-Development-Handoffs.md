@@ -1,3 +1,11 @@
+## Build228 — spellcasting sources and A4 print
+
+Each class owns its settings and spell lists. Zero class sources are supported; combined caster level and independently configurable cantrip and known/prepared limits reach the statblock. The source-owned grammar, verified grants and same-sheet A4 print projection are shared across the documented adapters.
+
+Frozen release gate **10/10** passed with **581 core tests (+19)**, exhaustive SPA and Pages browser scenarios, casting source lifecycle and learning checks, five spell themes, and A4 portrait and landscape PDF parity. Typecheck: 515 diagnostics; 0 new; 168 resolved (approved baseline 683, Build213 e19a624). Build227 and 480 files across five prior archives remain verified. Publication pending.
+
+**Workload:** 268 normalized IDs, 174 complete / 94 open before and after; delta 0. This packet implements 20 bounded acceptance changes without closing the broader source migration and catalogue parents. See the [Build228 packet](DNDSheet-Build228-Spellcasting-and-Print.md). Continue A12.8/A12.9 catalogue and identity work, and extend print tests to oversized and multipage fixtures.
+
 ## Build227 published release candidate — composition and casting (2026-11-10)
 
 **Adapter follow-through:** the supplemental Lair/Tarrasque check passes container/plain-text retention. Existing Tarrasque movement output does not include traversal riders; finish that disclosure under A11.9/all-adapter acceptance. Build227 does not claim complete export parity.

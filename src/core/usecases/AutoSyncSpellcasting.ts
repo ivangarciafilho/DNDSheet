@@ -255,7 +255,16 @@ export function calculateSpellcastingMetrics(
   }
 }
 
+export interface CastingCapacityContribution {
+  /** Own class progression or the consolidated caster level; absent uses combined for stacked sources. */
+  mode: 'own' | 'combined'
+  /** Scales the resulting capacity count, never the class level or spell selection ceiling. */
+  numerator: number
+  denominator: number
+}
 export interface CastingContribution {
+  cantrips?: CastingCapacityContribution
+  spells?: CastingCapacityContribution
   mode: 'rules' | 'custom'
   target: 'slots' | 'pact' | 'points' | 'focus'
   focusPerLevel?: number
@@ -264,6 +273,7 @@ export interface CastingContribution {
 }
 
 export interface ClassEntry {
+  id?: string
   resourceType?: string
   slots?: number[]
   contribution?: CastingContribution
@@ -274,6 +284,7 @@ export interface ClassEntry {
 }
 
 export interface SpellcastingSourcesInput {
+ primarySourceEnabled?: boolean
  resourceType?: string
  slots?: number[]
  class?: string
@@ -286,15 +297,43 @@ export interface SpellcastingSourcesInput {
 }
 
 /** One source projection for editor, renderers and exports. Unknown manual sources do not invent slots. */
+export function allCastingSourceEntries(source: SpellcastingSourcesInput): ClassEntry[] {
+ const entries: ClassEntry[] = source.primarySourceEnabled === false ? [] : [{ id: 'primary', className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }]
+ entries.push(...(source.classes || []))
+ if (source.primarySourceEnabled !== false && !(source.classes || []).length && source.multiclass?.enabled) entries.push({ id: 'legacy-secondary', className: source.multiclass.secondaryClass || 'Cleric', level: source.multiclass.secondaryLevel || 1, stat: source.multiclass.secondaryStat || 'WIS' })
+ return entries
+}
+export const hasCastingSources = (source: SpellcastingSourcesInput): boolean => allCastingSourceEntries(source).length > 0
 export function spellcastingSourceEntries(source: SpellcastingSourcesInput): ClassEntry[] {
- const entries: ClassEntry[] = [{ className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }, ...(source.classes || [])]
- if (!(source.classes || []).length && source.multiclass?.enabled) entries.push({ className: source.multiclass.secondaryClass || 'Cleric', level: source.multiclass.secondaryLevel || 1, stat: source.multiclass.secondaryStat || 'WIS' })
- return entries.filter(entry => entry.contribution?.mode === 'custom' || spellcastingRuleClass(entry.className, entry.subclass) !== undefined)
+ return allCastingSourceEntries(source).filter(entry => entry.contribution?.mode === 'custom' || spellcastingRuleClass(entry.className, entry.subclass) !== undefined)
+}
+
+/** Learning capacities can use the shared level without changing source-owned spell eligibility. */
+export function sourceLearningMetrics(entry: ClassEntry, abilityModifier = 0, combinedLevel?: number, sourceCount = 1) {
+ const own = Math.max(0, Math.min(20, Math.trunc(Number(entry.level) || 0)))
+ const basis = (config?: CastingCapacityContribution) => config?.mode === 'own' || (!config?.mode && sourceCount <= 1) ? own : Math.min(20, Math.max(0, Math.trunc(Number(combinedLevel ?? own) || 0), config?.mode === 'combined' ? 0 : own))
+ const scale = (count: number, config?: CastingCapacityContribution) => {
+   if (!config) return count
+   const numerator = Number(config.numerator), denominator = Number(config.denominator)
+   return Number.isFinite(numerator) && Number.isFinite(denominator) && numerator >= 0 && denominator > 0 ? Math.floor(count * numerator / denominator) : 0
+ }
+ const cantripCapacityLevel = basis(entry.contribution?.cantrips), spellCapacityLevel = basis(entry.contribution?.spells)
+ const native = calculateSpellcastingMetrics(entry.className, own, abilityModifier, entry.subclass)
+ const cantripMetrics = calculateSpellcastingMetrics(entry.className, cantripCapacityLevel, abilityModifier, entry.subclass)
+ const spellMetrics = calculateSpellcastingMetrics(entry.className, spellCapacityLevel, abilityModifier, entry.subclass)
+ return { ...native, cantripCapacityLevel, spellCapacityLevel,
+  cantripsKnown: cantripCapacityLevel > 0 ? scale(cantripMetrics.cantripsKnown, entry.contribution?.cantrips) : 0,
+  preparedSpells: spellCapacityLevel > 0 ? scale(spellMetrics.preparedSpells, entry.contribution?.spells) : 0 }
 }
 
 export function aggregateSpellcastingSources(source: SpellcastingSourcesInput, stats: Record<string, number> = {}, proficiency = 2): MulticlassCalculationResult | undefined {
  const entries = spellcastingSourceEntries(source)
  return entries.length ? calculateMulticlassSpellcasting(entries, stats, proficiency) : undefined
+}
+
+export function castingLearningSummary(source: SpellcastingSourcesInput, stats: Record<string, number> = {}, proficiency = 2) {
+ const result = aggregateSpellcastingSources(source, stats, proficiency)
+ return {casterLevel: result?.combinedCasterLevel ?? 0, cantrips: result?.totalCantripsKnown ?? 0, spells: result?.totalPreparedSpells ?? 0, perClass: result?.classes ?? []}
 }
 
 export interface PerClassBreakdown {
@@ -306,6 +345,8 @@ export interface PerClassBreakdown {
   spellAttack: number
   cantripsKnown: number
   preparedSpells: number
+  cantripCapacityLevel?: number
+  spellCapacityLevel?: number
 }
 
 export interface MulticlassCalculationResult {
@@ -387,9 +428,6 @@ export function calculateMulticlassSpellcasting(
     }
   }
 
-  if (classEntries.length === 0) {
-    classEntries.push({ className: 'Wizard', level: 1 })
-  }
 
   // Contribution helper
   const getContribution = (cls: string, lvl: number) => {
@@ -405,6 +443,7 @@ export function calculateMulticlassSpellcasting(
   let warlockLevel = 0
   let customPointsLevel = 0
   let customFocus = 0
+  let customFocusLevel = 0
   const breakdowns: PerClassBreakdown[] = []
 
   let totalPrepared = 0
@@ -412,7 +451,7 @@ export function calculateMulticlassSpellcasting(
 
   for (const entry of classEntries) {
     const cls = entry.className || 'Wizard'
-    const lvl = Math.max(1, Math.min(20, entry.level || 1))
+    const lvl = Math.max(1, Math.min(20, Math.trunc(Number(entry.level) || 1)))
     const stat = entry.stat || getDefaultStatForClass(cls)
     const mod = statModifier(effectiveStats[stat] ?? 10)
     const saveDc = 8 + effectiveProf + mod
@@ -420,8 +459,6 @@ export function calculateMulticlassSpellcasting(
 
     const rulesClass = spellcastingRuleClass(cls, entry.subclass)
     const metrics = calculateSpellcastingMetrics(cls, lvl, mod, entry.subclass)
-    totalPrepared += metrics.preparedSpells
-    totalCantrips += metrics.cantripsKnown
 
     if (entry.contribution?.mode === 'custom') {
       const numerator = Number(entry.contribution.numerator)
@@ -431,6 +468,7 @@ export function calculateMulticlassSpellcasting(
       if (entry.contribution.target === 'pact') warlockLevel += contribution
       else if (entry.contribution.target === 'points') customPointsLevel += contribution
       else if (entry.contribution.target === 'focus') {
+        customFocusLevel += contribution
         const rate = Number(entry.contribution.focusPerLevel)
         customFocus += contribution * (Number.isFinite(rate) && rate >= 0 ? rate : 0)
       }
@@ -456,6 +494,15 @@ export function calculateMulticlassSpellcasting(
   }
 
   const combinedLevel = Math.max(1, Math.min(20, combinedLevelSum || (warlockLevel ? 1 : 1)))
+  const fallbackLevel = Math.max(0,...classEntries.map(entry => Math.max(0,Math.min(20,Math.trunc(Number(entry.level)||0)))))
+  const learningLevel = combinedLevelSum > 0 ? combinedLevel : Math.min(20, warlockLevel || customPointsLevel || customFocusLevel || fallbackLevel)
+  classEntries.forEach((entry, index) => {
+    const mod = statModifier(effectiveStats[entry.stat || getDefaultStatForClass(entry.className)] ?? 10)
+    const learning = sourceLearningMetrics(entry, mod, learningLevel, classEntries.length)
+    totalPrepared += learning.preparedSpells
+    totalCantrips += learning.cantripsKnown
+    Object.assign(breakdowns[index], {cantripsKnown: learning.cantripsKnown, preparedSpells: learning.preparedSpells, cantripCapacityLevel: learning.cantripCapacityLevel, spellCapacityLevel: learning.spellCapacityLevel})
+  })
   const slots = combinedLevelSum > 0 ? [...(FULL_CASTER_SLOTS[combinedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])] : [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
   let warlockSlots: number[] | undefined
@@ -483,7 +530,7 @@ export function calculateMulticlassSpellcasting(
   }
 
   return {
-    combinedCasterLevel: combinedLevelSum > 0 ? combinedLevel : warlockLevel,
+    combinedCasterLevel: learningLevel,
     slots: combinedLevelSum > 0 ? slots : (warlockSlots || slots),
     warlockSlots,
     standardSlots: slots,

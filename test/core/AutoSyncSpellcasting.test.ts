@@ -184,7 +184,8 @@ test('Custom contribution replaces Warlock pact progression with authored half-l
  assert.strictEqual(pooled.combinedCasterLevel,8)
  assert.strictEqual(pooled.warlockSlots,undefined)
  assert.strictEqual(pooled.totalCantripsKnown,own.totalCantripsKnown)
- assert.strictEqual(pooled.totalPreparedSpells,own.totalPreparedSpells)
+ assert.strictEqual(pooled.totalPreparedSpells,17)
+ assert.strictEqual(own.totalPreparedSpells,12) // The default combined rule does not reduce a higher native capacity.
 })
 
 test('Custom contribution supports inverse pact pooling, spell points and authored focus', () => {

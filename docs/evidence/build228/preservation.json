@@ -1,0 +1,46 @@
+{
+  "priorCandidates": [
+    {
+      "tag": "rc-2.4.3-build-223-description-containers-regions-and-grammar-hygiene",
+      "verified": 96
+    },
+    {
+      "tag": "rc-2.4.3-build-224-random-result-integration-and-outcome-typography",
+      "verified": 96
+    },
+    {
+      "tag": "rc-2.4.3-build-225-outcome-lifecycle-and-safe-projections",
+      "verified": 96
+    },
+    {
+      "tag": "rc-2.4.3-build-226-emergency-editor-and-spellcasting",
+      "verified": 96
+    },
+    {
+      "tag": "rc-2.4.3-build-227-composition-casting-and-presentation",
+      "verified": 96
+    }
+  ],
+  "original": [
+    {
+      "path": "build.json",
+      "sha256": "E02558058A5EF0A99B95A077CFD495576D4515F366705C75F038444A3CCA996E",
+      "unchanged": true
+    },
+    {
+      "path": "src/core/domain/ability-grammar.ts",
+      "sha256": "9723A0BCD2901193864DBD6BE05FD96626407BEDA18D7FDE7904C784B0F618CD",
+      "unchanged": true
+    },
+    {
+      "path": "test/core/AbilityGrammar.test.ts",
+      "sha256": "08D33C8B742E5E55A31409490CAECDAB6E99DAC26DE599772691E41D0C734D04",
+      "unchanged": true
+    },
+    {
+      "path": "test/exhaustive-ui-fuzz.js",
+      "sha256": "355628364F02D32D1969B24FAC53BEFCE6D60C267113C08B3EE51E9C39520D93",
+      "unchanged": true
+    }
+  ]
+}

@@ -47,16 +47,7 @@ export function useMd3Renderer() {
   }
 
   const getSpellcasting = () => {
-    const renderedRows = []
-    const cantrips = monster.knownSpellsOfLevel(0)
-
-    if (cantrips.length > 0)
-      renderedRows.push(
-        `${t('editor.spellcasting.slot.cantripLabel')}: *${cantrips.join(
-          ', '
-        )}*  `
-      )
-
+    const renderedRows: string[] = []
     renderer.classSpellcastingSlots.value.forEach((slot) => {
       renderedRows.push(`${slot.renderedLabel} *${slot.renderedSpells}*  `)
     })
@@ -318,7 +309,7 @@ ___
 ${traits}${mythicTrait}### ${t(
       'editor.action.label'
     )}${multi}${attacks}${actions}${
-      monster.spellcasting.standard.length === 0 ? '' : `${spellcasting}`
+      renderer.classSpellcastingSlots.value.length === 0 ? '' : `${spellcasting}`
     }${
       monster.spellcasting.atWill.length === 0 ? '' : `${innate}`
     }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${randomTables}${inventory}

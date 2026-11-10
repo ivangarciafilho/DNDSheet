@@ -1,7 +1,7 @@
 import { aggregateSpellcastingSources, spellcastingRuleClass } from '../usecases/AutoSyncSpellcasting.ts'
 import type { CastingContribution, MulticlassCalculationResult, SpellcastingSourcesInput } from '../usecases/AutoSyncSpellcasting.ts'
-import { ordinalLabel } from './spell-plate.ts'
-export interface ResourceSource { className?:string; class?:string; subclass?:string; resourceType?:string; resourceValue?:number; contribution?:CastingContribution; slots?:number[] }
+import { ordinalLabel, pactResourceSummary, spellRowRecovery } from './spell-plate.ts'
+export interface ResourceSource { className?:string; class?:string; subclass?:string; resourceType?:string; resourceValue?:number; contribution?:CastingContribution; slots?:number[]; refreshRate?:string; customRefreshRate?:string }
 /** Select the receiving pool without allowing a Warlock class label to override a custom route.
  * Saved native source slot arrays are authored overrides; an explicit custom route supersedes them. */
 export function castingResourceView(source:ResourceSource, combined:MulticlassCalculationResult|undefined) {
@@ -18,7 +18,8 @@ export function castingResourceView(source:ResourceSource, combined:MulticlassCa
 export function castingResourceSummary(source:SpellcastingSourcesInput,stats:Record<string,number>,proficiency:number):string|undefined {
  if(!(source.classes?.length||source.contribution?.mode==='custom'))return undefined
  const result=aggregateSpellcastingSources(source,stats,proficiency);if(!result)return undefined
- const entries: ResourceSource[] = [{...source,className:source.class}, ...(source.classes || [])]
+ const entries: ResourceSource[] = [...(source.primarySourceEnabled === false ? [] : [{...source,className:source.class}]), ...(source.classes || [])]
+ const pactRecovery = (entry: ResourceSource) => spellRowRecovery(1, undefined, { ...entry, pactPool: true })
  const overrides = entries.filter(entry => {
   if(entry.contribution?.mode === 'custom' || !Array.isArray(entry.slots) || ['points','focus','at_will'].includes(entry.resourceType || '')) return false
   const pact=entry.resourceType==='pact'||entry.className?.toLowerCase()==='warlock'
@@ -34,15 +35,19 @@ export function castingResourceSummary(source:SpellcastingSourcesInput,stats:Rec
    const total=values.reduce((sum,value)=>sum+value,0),highest=values.reduce((max,value,i)=>value?i+1:max,0)
    if(!total)return []
    const label=[entry.className||entry.class||'Spellcasting',entry.subclass].filter(Boolean).join(' / ')
-   return [label+': '+(pool.pactPool ? values[highest-1]+' '+ordinalLabel(highest)+'-level Pact Magic slots' : total+' Spell Slots through '+ordinalLabel(highest)+' level')]
+   return [label+': '+(pool.pactPool ? pactResourceSummary(values, pactRecovery(entry)) : total+' Spell Slots through '+ordinalLabel(highest)+' level')]
   })
   if(result.customPoints)sourceCounts.push(result.customPoints+' Custom Spell Points')
   if(result.customFocus)sourceCounts.push(result.customFocus+' Custom Focus Points')
   return sourceCounts.join('; ')||undefined
  }
  const parts:string[]=[]
- const slots=(values:number[],label:string)=>{const count=values.reduce((a,b)=>a+b,0),highest=values.reduce((max,n,i)=>n?i+1:max,0);if(count)parts.push(label==='Pact Magic'?'Pact Magic: '+values[highest-1]+' '+ordinalLabel(highest)+'-level slots':count+' Shared Spell Slots through '+ordinalLabel(highest)+' level')}
- slots(result.standardSlots,'Spell Slots');slots(result.warlockSlots||[],'Pact Magic')
+ const slots=(values:number[],label:string)=>{const count=values.reduce((a,b)=>a+b,0),highest=values.reduce((max,n,i)=>n?i+1:max,0);if(count)parts.push(count+' Shared Spell Slots through '+ordinalLabel(highest)+' level')}
+ slots(result.standardSlots,'Spell Slots')
+ const pactSources = entries.filter(entry => castingResourceView(entry, result).pactPool)
+ const recoveries = [...new Set(pactSources.map(pactRecovery))]
+ const pact = pactResourceSummary(result.warlockSlots || [], recoveries.length === 1 ? recoveries[0] : recoveries.length > 1 ? 'hidden' : undefined)
+ if (pact) parts.push(pact)
  if(result.customPoints)parts.push(result.customPoints+' Custom Spell Points')
  if(result.customFocus)parts.push(result.customFocus+' Custom Focus Points')
  return parts.join(' \u00b7 ')||undefined

@@ -5,6 +5,8 @@ export interface SpellPlateSpellInput {
   name: string
   tags?: string
   cadence?: string
+  amount?: number | null
+  bonusAction?: boolean
 }
 
 export interface SpellPlateLevelInput {
@@ -12,6 +14,7 @@ export interface SpellPlateLevelInput {
   spells: SpellPlateSpellInput[]
   cadence?: string
   bonusAction?: boolean
+  amount?: number | null
 }
 
 export interface SpellPlateInput {
@@ -30,6 +33,7 @@ export interface SpellPlateInput {
   preparedCount?: number
   preparedInterval?: string
   levelCadenceMap?: Record<number | string, string>
+  levelAmountMap?: Record<number | string, number | null>
   metamagic?: {
     enabled: boolean
     points?: number
@@ -44,12 +48,17 @@ export interface SpellPlateSpell {
   name: string
   tags: string
   cadence: string
+  amount?: number
+  bonusAction?: boolean
+  lead: string
+  actionLabel: string
 }
 
 export interface SpellPlateLevel {
   level: number
   ordinal: string
   slotCount?: number
+  amount?: number
   cadence: string
   bonusAction: boolean
   spells: SpellPlateSpell[]
@@ -106,19 +115,52 @@ export interface InnateSpellPlateModel {
   processedNotes: string
 }
 
-/**
- * Lead printed before "Level N": "(4/Long Rest), ". A cadence that already carries a count
- * ("1/Day") or is At Will stands alone; Hidden keeps only the slot count.
- */
-export function spellLevelLead(slotCount: number | undefined, cadence: string | undefined): string {
-  const text = (cadence ?? '').replace(/^Per\s+/i, '').trim()
-  const hidden = text.toLowerCase() === 'hidden'
-  const count = slotCount && slotCount > 0 ? slotCount : undefined
-  if (text && !hidden && (/^\d+\s*\//.test(text) || text.toLowerCase() === 'at will')) return `(${text}), `
-  if (count && text && !hidden) return `(${count}/${text}), `
-  if (count) return `(${count} slots), `
-  if (text && !hidden) return `(${text}), `
-  return ''
+/** A non-negative finite explicit amount; zero remains an authored fact. */
+export function spellAmount(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 ? Math.trunc(value) : undefined
+}
+
+/** Amount precedes cadence. No amount means no cadence label, including At Will. */
+export function spellLevelLead(amount: number | undefined, cadence: string | undefined): string {
+  const count = spellAmount(amount)
+  if (count === undefined || count === 0) return ''
+  const text = cadenceLabel((cadence ?? '').replace(/^Per\s+/i, '')).trim()
+  if (!text || /^hidden$/i.test(text)) return `(${count}), `
+  // Cadences such as 1/Day already contain their frequency; the explicit amount remains authoritative.
+  const recovery = text.replace(/^\d+\s*\/\s*/, '')
+  return `(${count}/${recovery}), `
+}
+
+/** Older saved cadence values such as 1_day already carry an explicit use count. */
+export function spellCadenceAmount(cadence?: string): number | undefined {
+  const counted = cadenceLabel(cadence).trim().match(/^(\d+)\s*\//)
+  return counted ? Number(counted[1]) : undefined
+}
+
+export interface SpellEntryPresentation {
+  amount?: number | null
+  cadence?: string
+  bonusAction?: boolean
+  rowAmount?: number | null
+  rowCadence?: string
+  rowBonusAction?: boolean
+}
+
+/** Cadence may inherit, but a displayed per-spell budget always requires an authored positive amount. */
+export function spellEntryLead(input: SpellEntryPresentation): string {
+  const ownAmount = input.amount === null ? undefined : spellAmount(input.amount) ?? spellCadenceAmount(input.cadence)
+  const rowAmount = spellAmount(input.rowAmount)
+  const amount = ownAmount
+  const differs = (ownAmount !== undefined && ownAmount !== rowAmount)
+    || spellCadenceDiffers(input.cadence, input.rowCadence)
+  if (!differs || amount === undefined || amount === 0) return ''
+  const cadenceDiffers = spellCadenceDiffers(input.cadence, input.rowCadence)
+  return spellLevelLead(amount, cadenceDiffers ? input.cadence : 'hidden')
+}
+
+/** Explicit false is meaningful: an Action spell may override a Bonus Action row. */
+export function spellEntryActionLabel(bonusAction?: boolean, rowBonusAction = false): string {
+  return bonusAction === undefined || bonusAction === rowBonusAction ? '' : bonusAction ? '(Bonus Action)' : '(Action)'
 }
 
 export const ordinalLabel = (value: number): string => {
@@ -131,11 +173,26 @@ export const ordinalLabel = (value: number): string => {
 const normalizedSlots = (slots?: number[]) =>
   Array.from({ length: 9 }, (_, index) => Math.max(0, Math.trunc(Number(slots?.[index]) || 0)))
 
-const spellView = (spell: SpellPlateSpellInput): SpellPlateSpell => ({
+const spellView = (spell: SpellPlateSpellInput, row: SpellEntryPresentation = {}): SpellPlateSpell => ({
   name: spell.name,
   tags: spell.tags?.trim() ?? '',
   cadence: cadenceLabel(spell.cadence),
+  amount: spellAmount(spell.amount),
+  bonusAction: spell.bonusAction,
+  lead: spellEntryLead({ ...row, ...spell }),
+  actionLabel: spellEntryActionLabel(spell.bonusAction, row.rowBonusAction),
 })
+
+/** One Pact sentence for consolidated summaries and per-source plates. */
+export function pactResourceSummary(slots: number[], recoveryCadence = 'short_rest'): string {
+  const values = normalizedSlots(slots)
+  const highest = values.reduce((last, count, index) => count > 0 ? index + 1 : last, 0)
+  if (!highest) return ''
+  const count = values[highest - 1]
+  if (recoveryCadence === 'hidden') return `You have ${count} spell slot${count === 1 ? '' : 's'} of ${ordinalLabel(highest)} level`
+  const cadence = (cadenceLabel(recoveryCadence) || 'Short Rest').replace(/\b(Short|Long) Rest$/i, '$1 Rests')
+  return `You have ${count} spell slot${count === 1 ? '' : 's'} of ${ordinalLabel(highest)} level, regained on ${cadence}`
+}
 
 function resourceSummary(input: SpellPlateInput, slots: number[]): string {
   const resourceType = input.resourceType || 'slots'
@@ -152,8 +209,9 @@ function resourceSummary(input: SpellPlateInput, slots: number[]): string {
     ? `${Math.max(0, Math.trunc(input.resourceValue as number))} Focus Points · regained on ${refresh}`
     : ''
   if (highest === 0 || total === 0) return ''
-  if (isPact) return `Pact Magic · ${slots[highest - 1]} ${ordinalLabel(highest)}-level slot${slots[highest - 1] === 1 ? '' : 's'} · regained on ${refresh}`
-  return `${total} Spell Slot${total === 1 ? '' : 's'} through ${ordinalLabel(highest)} level · regained on ${refresh}`
+  const recovery = refresh.replace(/\b(Short|Long) Rest$/i, '$1 Rests')
+  if (isPact) return pactResourceSummary(slots, refresh)
+  return `You have ${total} spell slot${total === 1 ? '' : 's'} through ${ordinalLabel(highest)} level, regained on ${recovery}`
 }
 
 /** Builds a display-only spellcasting model; it does not mutate the monster or infer missing slots. */
@@ -185,20 +243,23 @@ function resourceContext(input: LevelResourceInput) {
 }
 
 /** Slot count and "Per <cadence>" text a spell level row shows. */
-function levelResource(level: number, levelCadence: string | undefined, ctx: ReturnType<typeof resourceContext>) {
-  const isExplicitlyHidden = levelCadence === 'hidden'
+function levelResource(level: number, levelCadence: string | undefined, ctx: ReturnType<typeof resourceContext>, explicitAmount?: number | null) {
+  const isExplicitlyHidden = levelCadence?.trim().toLowerCase() === 'hidden'
   const customCadence = cadenceLabel(levelCadence)
   const rawCadence = isExplicitlyHidden ? '' : (customCadence || (level === 0 ? 'At Will' : ctx.defaultCadence))
   const slotCount = level === 0 ? undefined : (ctx.isPact ? ctx.slots[ctx.maxPactLevel - 1] : ctx.slots[level - 1])
+  const defaultAmount = level === 0 || (ctx.isPact && level !== ctx.maxPactLevel) ? undefined : slotCount && slotCount > 0 ? slotCount : undefined
+  const amount = explicitAmount === null ? undefined : spellAmount(explicitAmount) ?? spellCadenceAmount(levelCadence) ?? defaultAmount
   const cadence = isExplicitlyHidden || !rawCadence
     ? ''
     : (rawCadence === 'At Will' ? rawCadence : `Per ${rawCadence}`)
-  return { slotCount: slotCount && slotCount > 0 ? slotCount : undefined, cadence }
+  return { slotCount: slotCount && slotCount > 0 ? slotCount : undefined, amount, cadence }
 }
 
 export interface SpellLevelHeadingInput extends LevelResourceInput {
   level: number
   levelCadence?: string
+  amount?: number | null
   bonusAction?: boolean
   /** Localised words; English defaults keep the web plate and exports identical. */
   labels?: { cantrips?: string; level?: string; bonusAction?: string }
@@ -207,18 +268,11 @@ export interface SpellLevelHeadingInput extends LevelResourceInput {
 /** Plain-text spell level heading in the web plate's order: "(4/Long Rest), Level 1 (Bonus Action):". */
 export function spellLevelHeading(input: SpellLevelHeadingInput): string {
   const words = { cantrips: 'Cantrips (at will)', level: 'Level', bonusAction: 'Bonus Action', ...input.labels }
-  if (input.level === 0) {
-    const cadence = input.levelCadence === 'hidden' ? '' : cadenceLabel(input.levelCadence) || 'At Will'
-    const name = words.cantrips.replace(/\s*\(at will\)/i, '')
-    return `${name}${cadence ? ` (${cadence === 'At Will' ? 'at will' : cadence})` : ''}${input.bonusAction ? ` (${words.bonusAction})` : ''}:`
-  }
   const ctx = resourceContext(input)
-  const { slotCount, cadence } = levelResource(input.level, input.levelCadence, ctx)
-  // Pact slots are shared, so their count is stated once, on the pact level.
-  const lead = !ctx.isPact || input.level === ctx.maxPactLevel
-    ? spellLevelLead(slotCount, cadence)
-    : spellLevelLead(undefined, cadence)
-  return `${lead}${words.level} ${input.level}${input.bonusAction ? ` (${words.bonusAction})` : ''}:`
+  const { amount, cadence } = levelResource(input.level, input.levelCadence, ctx, input.amount)
+  const lead = spellLevelLead(amount, cadence)
+  const level = input.level === 0 ? words.cantrips.replace(/\s*\(at will\)/i, '') : `${words.level} ${input.level}`
+  return `${lead}${level}${input.bonusAction ? ` (${words.bonusAction})` : ''}:`
 }
 
 export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
@@ -228,7 +282,8 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
     .filter((row) => Number.isInteger(row.level) && row.level >= 0 && row.level <= 9 && row.spells.length > 0)
     .sort((a, b) => a.level - b.level)
     .map((row): SpellPlateLevel => {
-      const { slotCount, cadence: cadenceText } = levelResource(row.level, row.cadence ?? input.levelCadenceMap?.[row.level], ctx)
+      const rowAmount = row.amount !== undefined ? row.amount : input.levelAmountMap?.[row.level]
+      const { slotCount, amount, cadence: cadenceText } = levelResource(row.level, row.cadence ?? input.levelCadenceMap?.[row.level], ctx, rowAmount)
       const isRestrictedCadence = (cadence?: string): boolean => {
         if (!cadence) return false
         const c = cadence.trim().toLowerCase()
@@ -242,14 +297,15 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
         return aRestricted ? 1 : -1
       })
       return {
-        heading: spellLevelHeading({ ...input, level: row.level, levelCadence: row.cadence ?? input.levelCadenceMap?.[row.level], bonusAction: row.bonusAction }),
+        heading: spellLevelHeading({ ...input, level: row.level, levelCadence: row.cadence ?? input.levelCadenceMap?.[row.level], bonusAction: row.bonusAction, amount: rowAmount }),
         effectiveCadence: cadenceText.replace(/^Per\s+/i, ''),
         level: row.level,
         ordinal: ordinalLabel(row.level),
         slotCount,
+        amount,
         cadence: cadenceText,
         bonusAction: Boolean(row.bonusAction),
-        spells: sortedSpells.map(spellView),
+        spells: sortedSpells.map(spell => spellView(spell, { rowAmount: amount, rowCadence: cadenceText.replace(/^Per\s+/i, ''), rowBonusAction: Boolean(row.bonusAction) })),
       }
     })
 
@@ -294,7 +350,7 @@ export function buildInnateSpellPlate(input: InnateSpellPlateInput): InnateSpell
     attack: typeof input.attack === 'number' && input.attack >= 0 ? `+${input.attack}` : String(input.attack),
     groups: input.groups
       .filter((group) => group.spells.length > 0)
-      .map((group) => ({ label: group.label, spells: group.spells.map(spellView) })),
+      .map((group) => ({ label: group.label, spells: group.spells.map(spell => spellView(spell)) })),
     processedNotes: input.processedNotes ?? '',
   }
 }
@@ -319,6 +375,8 @@ export function consolidateSpellPlates(primary: SpellPlateModel, additions: Arra
 }
 
 /** Text adapters use the same exception rule as the web badge. */
-export function spellNameWithCadence(name: string, cadence?: string, rowCadence?: string): string {
-  return spellCadenceDiffers(cadence, rowCadence) ? `${name} [${cadenceLabel(cadence)}]` : name
+export function spellNameWithCadence(name: string, cadence?: string, rowCadence?: string, options: Omit<SpellEntryPresentation, 'cadence' | 'rowCadence'> = {}): string {
+  const lead = spellEntryLead({ ...options, cadence, rowCadence })
+  const action = spellEntryActionLabel(options.bonusAction, options.rowBonusAction)
+  return `${lead}${name}${action ? ` ${action}` : ''}`
 }

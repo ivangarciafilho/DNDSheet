@@ -1,3 +1,4 @@
+import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { sanitizeProsePunctuation } from 'src/core/domain/number-grammar'
 import { outcomesHtml } from 'src/core/domain/outcome-rendering'
@@ -106,6 +107,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     context: Monster['spellcasting'],
     monster: ReturnType<typeof useMonsterStore>
   ) => {
+    const ability = resolveCastingAbility(context, monster.stats, monster.proficiency)
     // level but ordinal
     input = input.replace(
       /\{spellcasting.ordinal\}/gi,
@@ -119,18 +121,18 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     )
 
     // spell save
-    input = input.replace(/\{spellcasting.save\}/gi, `DC ${monster.spellSave}`)
+    input = input.replace(/\{spellcasting.save\}/gi, `DC ${ability.save}`)
 
     // spell attack
     input = input.replace(
       /\{spellcasting.attack\}/gi,
-      renderBonus(monster.spellAttackModifier)
+      renderBonus(ability.attack)
     )
 
     // ability modifier
     input = input.replace(
       /\{spellcasting.ability\}/gi,
-      renderBonus(monster.spellAbilityModifier)
+      renderBonus(ability.modifier)
     )
 
     // class
@@ -1040,7 +1042,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     contextRef: MaybeRef<Monster['spellcasting']>,
     monster: ReturnType<typeof useMonsterStore>
   ) => {
-    const context = unref(contextRef)
+    const context = innateCastingContext(unref(contextRef))
 
     if (context.useCustomInnatePreamble) {
       return processTokens(

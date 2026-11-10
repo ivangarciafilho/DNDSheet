@@ -1,5 +1,7 @@
 import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
-import { aggregateSpellcastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
+import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
+import { buildCastingProjection } from 'src/core/domain/casting-projection'
+import { useSpellsStore } from 'src/stores/spells-store'
 import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
@@ -54,12 +56,13 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 import { describePools } from 'src/core/domain/paragon-pools'
-import { spellLevelHeading, spellCadenceDiffers, spellRowRecovery } from 'src/core/domain/spell-plate'
+import { spellNameWithCadence } from 'src/core/domain/spell-plate'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
 export function useTextRenderer(options: { web?: boolean } = {}) {
   const monster = useMonsterStore()
+  const castingSpells = useSpellsStore()
   const editorStore = useEditorStore()
   const formattedNumeric = (path: string, text: string | number): string => {
     const presentation = options.web !== false ? monster.bindings?.[path]?.presentation : undefined
@@ -1547,10 +1550,18 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
   })
 
+  const castingProjection = computed(() => buildCastingProjection(monster.spellcasting, {
+    stats: monster.stats, proficiency: monster.proficiency, save: monster.spellSave, attack: monster.spellAttackModifier,
+    edition: editorStore.style === '2014' ? '2014' : '2024', spellLevel: name => castingSpells.allSpells[name]?.level,
+  }))
   const classSpellcastingPreamble = computed(() => {
-    const preamble = processClassSpellcasting(monster.spellcasting, monster)
-    const resources = castingResourceSummary(monster.spellcasting, monster.stats, monster.proficiency)
-    return resources ? preamble + ' ' + resources + '.' : preamble
+    if (!hasCastingSources(monster.spellcasting)) return ''
+    const summary = castingLearningSummary(monster.spellcasting, monster.stats, monster.proficiency)
+    const preamble = processClassSpellcasting({ ...monster.spellcasting, level: summary.casterLevel || monster.spellcasting.level }, monster)
+    const sc = monster.spellcasting
+    if (!(sc.classes?.length || sc.contribution?.mode === 'custom' || sc.contribution?.cantrips || sc.contribution?.spells)) return preamble
+    const details = [castingProjection.value.resource, castingProjection.value.prepared, castingProjection.value.consolidatedSummary].filter(Boolean)
+    return details.length ? preamble.replace(/:\s*$/, '.') + ' ' + details.join('. ') + '.' : preamble
   })
 
   const innateSpellcastingPreamble = computed(() => {
@@ -1575,50 +1586,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return ''
   })
 
-  const classSpellcastingSlots = computed(() => {
-    const sc = monster.spellcasting
-    const combined = sc.classes?.length || sc.contribution?.mode === 'custom' ? aggregateSpellcastingSources(sc, monster.stats, monster.proficiency) : undefined
-    const primaryPool = castingResourceView({ ...sc, className: sc.class }, combined)
-    // Selection owns disclosure; a spell point/focus row must not disappear for having no slot count.
-    const spellsBySlot = Array.from({ length: 9 }, (_, index) => ({
-      level: index + 1, slots: primaryPool.slots?.[index] || 0,
-      spells: monster.knownSpellsOfLevel(index + 1),
-    }))
-    // Same heading as the web plate (spellLevelHeading); the old label put the cadence after the colon.
-    const renderSpells = (names: string[], cadences: Record<string, string> | undefined, rowCadence: string) => names.map((name) => {
-      const cadence = cadences?.[name]
-      return spellCadenceDiffers(cadence, rowCadence) ? `${name} [${cadenceLabel(cadence)}]` : name
-    }).join(', ')
-    const primary = spellsBySlot.map((s) => {
-      const levelCadence = sc?.levelCadenceMap?.[s.level]
-      const spells = s.spells.filter((name) => sc?.standard?.includes(name))
-      return {
-        ...s, spells,
-        renderedLabel: spellLevelHeading({
-          level: s.level, slots: primaryPool.slots, resourceType: primaryPool.resourceType, className: sc?.class, pactPool: primaryPool.pactPool,
-          refreshRate: sc?.refreshRate, customRefreshRate: sc?.customRefreshRate, levelCadence,
-          bonusAction: Boolean(sc?.bonusActionLevelMap?.[s.level]),
-          labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') },
-        }),
-        renderedSpells: renderSpells(spells, sc?.spellCadenceMap, spellRowRecovery(s.level, levelCadence, { ...sc, className: sc.class, pactPool: primaryPool.pactPool })),
-      }
-    }).filter((row) => row.spells.length)
-    const secondary = (sc?.classes || []).flatMap((source) => Array.from({ length: 10 }, (_, level) => {
-      const spells = monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name))
-      const cadence = source.levelCadences?.[level]
-      const pool = castingResourceView(source, combined)
-      return {
-        level, slots: pool.slots?.[level - 1] || 0, spells,
-        renderedLabel: [source.className, source.subclass].filter(Boolean).join(' · ') + ' · ' + spellLevelHeading({
-          level, slots: pool.slots || (source.className === 'Warlock' || ['pact', 'focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
-          className: source.className, resourceType: pool.resourceType, pactPool: pool.pactPool, refreshRate: source.refreshRate,
-          levelCadence: cadence, bonusAction: Boolean(source.levelBonusAction?.[level]),
-        }),
-        renderedSpells: renderSpells(spells, source.spellCadenceMap, spellRowRecovery(level, cadence, { ...source, pactPool: pool.pactPool })),
-      }
-    }).filter((row) => row.spells.length))
-    return [...primary, ...secondary]
-  })
+  const classSpellcastingSlots = computed(() => castingProjection.value.levels.map(row => ({
+    level: row.level, slots: row.amount || 0, spells: row.spells.map(spell => spell.name),
+    renderedLabel: row.heading,
+    renderedSpells: row.spells.map(spell => spell.lead + spell.name + (spell.actionLabel ? ' ' + spell.actionLabel : '')).join(', '),
+  })))
 
   const innateSpellcastingLists = computed(() => {
     return monster.spellcasting.atWill.map((s) => {

@@ -6,7 +6,6 @@ import { avgRoll, renderBonus, statModifier } from './mathRendering'
 import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
-import { spellLevelHeading, spellNameWithCadence } from 'src/core/domain/spell-plate'
 import slugify from 'slugify'
 
 const statMap = {
@@ -181,13 +180,8 @@ export function useImprovedInitRenderer() {
     // this counts as a special ability
     // we're just gonna basically copy-pasta the markdown exporter for the description...
     const spellcasting = monster.spellcasting
-    if (spellcasting.standard.length > 0) {
-      const renderedRows = []
-      const cantrips = monster.knownSpellsOfLevel(0).filter((name: string) => monster.spellcasting?.standard?.includes(name)).map((name: string) => spellNameWithCadence(name, monster.spellcasting?.spellCadenceMap?.[name], monster.spellcasting?.levelCadenceMap?.[0] || 'at_will'))
-
-      if (cantrips.length > 0)
-        renderedRows.push(`${spellLevelHeading({ level: 0, levelCadence: monster.spellcasting?.levelCadenceMap?.[0], bonusAction: Boolean(monster.spellcasting?.bonusActionLevelMap?.[0]), labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} ${cantrips.join(', ')}`)
-
+    if (renderer.classSpellcastingSlots.value.length > 0) {
+      const renderedRows: string[] = []
       renderer.classSpellcastingSlots.value.forEach((slot) => {
         renderedRows.push(`${slot.renderedLabel} ${slot.renderedSpells}`)
       })

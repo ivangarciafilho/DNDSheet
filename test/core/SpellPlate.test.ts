@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { CADENCE_LABELS, CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS, cadenceLabel } from '../../src/core/domain/catalogs/cadence.ts'
 import { METAMAGIC_OPTIONS, metamagicCost } from '../../src/core/domain/catalogs/metamagic.ts'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead, spellCadenceDiffers, consolidateSpellPlates, spellNameWithCadence } from '../../src/core/domain/spell-plate.ts'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead, spellCadenceDiffers, consolidateSpellPlates, spellNameWithCadence, spellEntryLead, spellEntryActionLabel, pactResourceSummary } from '../../src/core/domain/spell-plate.ts'
 
 const base = {
   title: 'Warlock',
@@ -40,7 +40,7 @@ test('spell plate: ordinals use teen exceptions and level rows stay sorted', () 
 
 test('spell plate: Pact Magic reports its highest slot pool without fabricating other levels', () => {
   const plate = buildSpellPlate(base)
-  assert.equal(plate.resource, 'Pact Magic · 4 5th-level slots · regained on Short Rest')
+  assert.equal(plate.resource, 'You have 4 spell slots of 5th level, regained on Short Rests')
   assert.equal(plate.levels.find((row) => row.level === 1)?.slotCount, 4)
   assert.equal(plate.levels.find((row) => row.level === 3)?.slotCount, 4)
   assert.equal(plate.levels[1].spells[0].cadence, 'Long Rest')
@@ -58,7 +58,7 @@ test('spell plate: full caster totals and per-level slot counts are distinct fro
       { level: 5, spells: [{ name: 'Wall of Force', tags: 'V, S, M', cadence: 'at_will' }], bonusAction: true },
     ],
   })
-  assert.equal(plate.resource, '14 Spell Slots through 5th level · regained on Long Rest')
+  assert.equal(plate.resource, 'You have 14 spell slots through 5th level, regained on Long Rests')
   assert.equal(plate.levels[0].slotCount, 4)
   assert.equal(plate.levels[1].slotCount, 1)
   assert.equal(plate.levels[1].bonusAction, true)
@@ -136,13 +136,13 @@ test('innate spell plate: keeps each recharge group separate and preserves proce
   assert.equal(plate.processedNotes, 'A processed rule note.')
 })
 
-test('spell level lead: a cadence that carries its own count is not prefixed with the slot count', () => {
+test('spell level lead: explicit amount leads cadence, while missing amount hides cadence', () => {
   assert.equal(spellLevelLead(4, 'Per Long Rest'), '(4/Long Rest), ')
-  assert.equal(spellLevelLead(3, 'Per 1/Day'), '(1/Day), ')
-  assert.equal(spellLevelLead(3, '2/Day'), '(2/Day), ')
-  assert.equal(spellLevelLead(2, 'At Will'), '(At Will), ')
-  assert.equal(spellLevelLead(3, 'Hidden'), '(3 slots), ')
-  assert.equal(spellLevelLead(undefined, 'Per Short Rest'), '(Short Rest), ')
+  assert.equal(spellLevelLead(3, 'Per 1/Day'), '(3/Day), ')
+  assert.equal(spellLevelLead(3, '2/Day'), '(3/Day), ')
+  assert.equal(spellLevelLead(2, 'At Will'), '(2/At Will), ')
+  assert.equal(spellLevelLead(3, 'Hidden'), '(3), ')
+  assert.equal(spellLevelLead(undefined, 'Per Short Rest'), '')
   assert.equal(spellLevelLead(undefined, 'Hidden'), '')
   assert.equal(spellLevelLead(undefined, ''), '')
 })
@@ -156,7 +156,7 @@ test('cadence tags compare the owning row rather than sibling majority', () => {
 test('row-local cadence has precedence over legacy level map and preserves spell overrides', () => {
   const plate = buildSpellPlate({ ...base, levelCadenceMap: { 1: 'short_rest' }, spellLevels: [{level: 1, cadence: 'long_rest', bonusAction: true, spells: [{ name: 'Shield', cadence: 'short_rest' }]}] })
   assert.equal(plate.levels[0].effectiveCadence, 'Long Rest')
-  assert.equal(plate.levels[0].heading, '(Long Rest), Level 1 (Bonus Action):')
+  assert.equal(plate.levels[0].heading, 'Level 1 (Bonus Action):')
   assert.equal(plate.levels[0].spells[0].cadence, 'Short Rest')
 })
 
@@ -167,7 +167,7 @@ test('consolidated trait retains local source row rules and explicit custom reso
   assert.equal(result.levels.length, 2)
   assert.equal(result.levels[0].effectiveCadence, 'Long Rest')
   assert.equal(result.levels[1].effectiveCadence, 'Short Rest')
-  assert.match(result.levels[1].heading, /Custom Focus.*Short Rest.*Bonus Action/)
+  assert.match(result.levels[1].heading, /Custom Focus.*Level 1.*Bonus Action/)
   assert.match(result.resource, /Custom Focus: 6 Focus Points.*Short Rest/)
   assert.equal(result.levels[1].slotCount, undefined)
   assert.equal(primary.levels[0].sourceId, undefined)
@@ -175,6 +175,48 @@ test('consolidated trait retains local source row rules and explicit custom reso
 
 test('text spell names retain explicit cantrip cadence exceptions without redundant badges', () => {
   assert.equal(spellNameWithCadence('Light', 'at_will', 'At Will'), 'Light')
-  assert.equal(spellNameWithCadence('Light', 'long_rest', 'at_will'), 'Light [Long Rest]')
+  assert.equal(spellNameWithCadence('Light', 'long_rest', 'at_will'), 'Light')
   assert.equal(spellNameWithCadence('Light', 'hidden', 'at_will'), 'Light')
+})
+
+
+test('spell row amount overrides preserve explicit zero and null without leaking cadence', () => {
+ const input={...base,slots:[0,0,2],levelAmountMap:{0:3,1:5,3:null},spellLevels:[{level:0,spells:[{name:'Light'}]},{level:1,amount:0,spells:[{name:'Shield'}]},{level:3,spells:[{name:'Counterspell'}]}]}
+ const rows=buildSpellPlate(input).levels
+ assert.equal(rows[0].heading,'(3/At Will), Cantrips:')
+ assert.equal(rows[1].amount,0);assert.equal(rows[1].heading,'Level 1:')
+ assert.equal(rows[2].amount,undefined);assert.equal(rows[2].heading,'Level 3:')
+ assert.equal(input.levelAmountMap[3],null)
+})
+
+test('per-spell cadence requires its own positive amount and never borrows the row budget', () => {
+ assert.equal(spellEntryLead({cadence:'short_rest',rowAmount:4,rowCadence:'long_rest'}),'')
+ assert.equal(spellEntryLead({amount:0,cadence:'short_rest',rowAmount:4,rowCadence:'long_rest'}),'')
+ assert.equal(spellEntryLead({amount:2,cadence:'short_rest',rowAmount:4,rowCadence:'long_rest'}),'(2/Short Rest), ')
+ assert.equal(spellEntryLead({amount:4,cadence:'long_rest',rowAmount:4,rowCadence:'Long Rest'}),'')
+ assert.equal(spellEntryLead({amount:2,rowAmount:4,rowCadence:'long_rest'}),'(2), ')
+ assert.equal(spellEntryLead({amount:2,cadence:'hidden',rowAmount:4,rowCadence:'long_rest'}),'(2), ')
+})
+
+test('per-spell casting time inherits the row and explicit false becomes an Action exception', () => {
+ assert.equal(spellEntryActionLabel(undefined,true),'')
+ assert.equal(spellEntryActionLabel(true,true),'')
+ assert.equal(spellEntryActionLabel(true,false),'(Bonus Action)')
+ assert.equal(spellEntryActionLabel(false,true),'(Action)')
+ assert.equal(spellNameWithCadence('Misty Step','short_rest','long_rest',{amount:2,rowAmount:4,bonusAction:true,rowBonusAction:false}),'(2/Short Rest), Misty Step (Bonus Action)')
+})
+
+test('spell plate computes shared spell lead and action metadata without mutating authored records', () => {
+ const input={...base,spellLevels:[{level:1,amount:4,cadence:'long_rest',bonusAction:true,spells:[{name:'Shield',amount:2,cadence:'short_rest',bonusAction:false}]}]}
+ const snapshot=JSON.stringify(input),row=buildSpellPlate(input).levels[0]
+ assert.equal(row.heading,'(4/Long Rest), Level 1 (Bonus Action):')
+ assert.equal(row.spells[0].lead,'(2/Short Rest), ');assert.equal(row.spells[0].actionLabel,'(Action)')
+ assert.equal(JSON.stringify(input),snapshot)
+})
+
+test('Pact resource sentence uses exact highest-level count and explicit recovery cadence', () => {
+ assert.equal(pactResourceSummary([0,0,0,0,3]),'You have 3 spell slots of 5th level, regained on Short Rests')
+ assert.equal(pactResourceSummary([0,1],'long_rest'),'You have 1 spell slot of 2nd level, regained on Long Rests')
+ assert.equal(pactResourceSummary([0,0], 'at_dawn'),'')
+ assert.equal(pactResourceSummary([2],'at_dawn'),'You have 2 spell slots of 1st level, regained on At Dawn')
 })

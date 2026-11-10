@@ -1038,15 +1038,36 @@ export interface Monster {
       secondarySaveDc?: number
       secondarySpellAttack?: number
     }
-    resourceType?: 'slots' | 'points' | 'focus' | 'pact'
+    resourceType?: 'slots' | 'points' | 'focus' | 'pact' | 'at_will'
     refreshRate?: 'long_rest' | 'short_rest' | 'downtime'
     displayTitleMode?: 'class_names' | 'caster_source' | 'split_levels'
     bypassSlotLevelFilter?: boolean
     splitHighCadence?: boolean
     restrictedCadences?: string[]
     spellCadenceMap?: Record<string, string>
+    rulesEdition?: '2014' | '2024'
+    alwaysAvailableOnly?: boolean
+    customRefreshRate?: string
+    preparedCountOverride?: number
+    preparedInterval?: string
+    metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate: string; options: string[] }
+    primarySourceEnabled?: boolean
+    innateStat?: DndStat
+    innateSave?: { override: boolean; overrideValue: number }
+    innateAttack?: { override: boolean; overrideValue: number }
+    innateModifier?: { override: boolean; overrideValue: number }
+    resourceValue?: number
+    levelCadenceMap?: Record<number, string>
+    bonusActionLevelMap?: Record<number, boolean>
+    levelAmountMap?: Record<string | number, number | null>
+    spellAmountMap?: Record<string, number | null>
+    spellBonusActionMap?: Record<string, boolean>
     contribution?: CastingContribution
     classes?: Array<{
+      rulesEdition?: '2014' | '2024'
+      levelAmounts?: Record<string | number, number | null>
+      spellAmounts?: Record<string, number | null>
+      spellBonusAction?: Record<string, boolean>
       contribution?: CastingContribution
       id: string
       className: string
@@ -1060,6 +1081,8 @@ export interface Monster {
       levelBonusAction?: Record<number, boolean>
       spellCadenceMap?: Record<string, string>
       actionType?: 'Action' | 'Bonus Action'
+      resourceValue?: number
+      refreshRate?: string
       resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
     }>
   }

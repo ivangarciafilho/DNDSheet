@@ -741,6 +741,7 @@
           <div v-if="spellPlate.resource" class="sb-cell sb-grow" data-help="spell-slots" tabindex="0">{{ spellPlate.resource }}</div>
           <div v-if="spellPlate.prepared" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.prepared }}</div>
         </div>
+        <div v-if="spellPlate.consolidatedSummary" class="sb-row"><div class="sb-cell sb-grow">{{ spellPlate.consolidatedSummary }}</div></div>
         <div v-if="spellPlate.metamagic" class="sb-row sb-spell-row sb-spell-metamagic-row" :class="{ 'sb-striped': isMetamagicRowStriped, 'is-striped': isMetamagicRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" style="border: none; padding: 2px 4px;" data-help="metamagic" tabindex="0">
             <strong>{{ spellPlate.metamagic.refresh }}:</strong> <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points.
@@ -768,9 +769,8 @@
                 :key="'spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <em class="spell-name">{{ spell.name }}</em>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label"> {{ spell.actionLabel }}</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
-                <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
             </div>
@@ -801,9 +801,8 @@
                 :key="'sec-spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <em class="spell-name">{{ spell.name }}</em>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label"> {{ spell.actionLabel }}</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
-                <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
             </div>
@@ -1081,19 +1080,22 @@
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useSpellsStore } from 'src/stores/spells-store'
+import { buildCastingProjection } from 'src/core/domain/casting-projection'
+import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
 import { useTextRenderer } from './useTextRenderer'
 import { useProcessTokens } from './useProcessTokens'
 import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead, spellCadenceDiffers, consolidateSpellPlates } from 'src/core/domain/spell-plate'
+import { buildInnateSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
-import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
+import { formatSpellcastingTitle } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statModifier } from 'src/core/domain/math-utils'
-import { aggregateSpellcastingSources, spellcastingRuleClass } from 'src/core/usecases/AutoSyncSpellcasting'
+import { castingLearningSummary, allCastingSourceEntries } from 'src/core/usecases/AutoSyncSpellcasting'
 import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { statblockHelpText } from './statblock-help'
 
@@ -1101,6 +1103,7 @@ export default defineComponent({
   name: 'WebRenderer',
   setup() {
     const monster = useMonsterStore()
+    const castingSpells = useSpellsStore()
     const editorStore = useEditorStore()
     const renderRoot = ref<HTMLElement | null>(null)
     const helpTipElement = ref<HTMLElement | null>(null)
@@ -1253,7 +1256,7 @@ export default defineComponent({
     const a4ViewportRef = ref<HTMLElement | null>(null)
 
     const a4TargetHeightPx = computed(() => {
-      return editorStore.a4Orientation === 'landscape' ? 794 : 1123
+      return editorStore.a4Orientation === 'landscape' ? (210 * 96 / 25.4) : (297 * 96 / 25.4)
     })
 
     const resolvedA4Layout = computed(() => {
@@ -1266,21 +1269,6 @@ export default defineComponent({
       return 'side_by_side'
     })
 
-    const a4ScaleStageStyle = computed<StyleValue>(() => {
-      const zoom = editorStore.a4Zoom
-      const baseWidth = editorStore.a4Orientation === 'landscape' ? 1123 : 794
-      const baseHeight = editorStore.a4Orientation === 'landscape' ? 794 : 1123
-
-      let scale = 1.0
-      if (typeof zoom === 'number') {
-        scale = zoom / 100
-      } else if (zoom === 'fit') {
-        const vpWidth = a4ViewportRef.value?.clientWidth || 794
-        scale = Math.min(1.0, Math.max(0.4, (vpWidth - 32) / baseWidth))
-      }
-
-      if (scale === 1.0) {
-        
     const updateMeasuredHeight = () => {
       nextTick(() => {
         const el = document.querySelector('#render .statblock-wrapper') || document.querySelector('#render .statblock')
@@ -1294,10 +1282,20 @@ export default defineComponent({
     watch(() => editorStore?.a4CompactDensity, updateMeasuredHeight)
     onMounted(updateMeasuredHeight)
 
-    return {
-          width: `${baseWidth}px`,
-        }
+    const a4ScaleStageStyle = computed<StyleValue>(() => {
+      const zoom = editorStore.a4Zoom
+      const baseWidth = editorStore.a4Orientation === 'landscape' ? (297 * 96 / 25.4) : (210 * 96 / 25.4)
+      const baseHeight = editorStore.a4Orientation === 'landscape' ? (210 * 96 / 25.4) : (297 * 96 / 25.4)
+
+      let scale = 1.0
+      if (typeof zoom === 'number') {
+        scale = zoom / 100
+      } else if (zoom === 'fit') {
+        const vpWidth = a4ViewportRef.value?.clientWidth || (210 * 96 / 25.4)
+        scale = Math.min(1.0, Math.max(0.4, (vpWidth - 32) / baseWidth))
       }
+
+      if (scale === 1.0) return { width: `${baseWidth}px` }
 
       return {
         width: `${baseWidth * scale}px`,
@@ -1695,7 +1693,9 @@ export default defineComponent({
       { deep: true }
     )
 
-    const printA4Sheet = () => {
+    const printA4Sheet = async () => {
+      await document.fonts?.ready
+      await Promise.allSettled(Array.from(a4PageRef.value?.querySelectorAll('img') || []).map(img => img.decode()))
       window.print()
     }
 
@@ -1716,13 +1716,13 @@ export default defineComponent({
     const renderedSpellcastingTitle = computed(() => {
       const sc = monster.spellcasting
       if (!sc) return 'Spellcasting'
-      const primaryClass = sc.class || 'Wizard'
-      const primaryLevel = sc.level || 1
-      const secondary = sc.classes?.[1]
+      const sources = allCastingSourceEntries(sc)
+      const learning = castingLearningSummary(sc, monster.stats, monster.proficiency)
+      const level = learning.casterLevel || sc.level || 1
+      if (sources.length > 1) return ordinalLabel(level) + ' Level Spellcaster'
       const mode = sc.displayTitleMode || 'class_names'
-      const title = formatSpellcastingTitle(primaryClass, primaryLevel, secondary?.className, secondary?.level, mode)
-      if (mode === 'caster_source') return `${ordinalLabel(primaryLevel)} Level ${title}`
-      return title.replace(/Level (\d+) /g, (_match: string, value: string) => `${ordinalLabel(Number(value))} Level `)
+      const title = formatSpellcastingTitle(sc.class || 'Spellcaster', level, undefined, undefined, mode)
+      return mode === 'caster_source' ? ordinalLabel(level) + ' Level ' + title : title.replace(/Level (\d+) /g, (_match: string, value: string) => ordinalLabel(Number(value)) + ' Level ')
     })
 
 
@@ -1747,9 +1747,6 @@ export default defineComponent({
           ]
       return configuredFilters.some((filter) => c.includes(filter))
     }
-
-    const shouldShowSpellCadence = (spell: { cadence?: string }, row: { effectiveCadence?: string }): boolean =>
-      spellCadenceDiffers(spell.cadence, row.effectiveCadence)
 
     const getPrimarySpells = (row: any) => {
       if (!monster.spellcasting?.splitHighCadence) return row.spells || []
@@ -1863,105 +1860,23 @@ export default defineComponent({
       return notes.length > 0 ? `<b>${modStr}</b>, ${notes.join(', ')}` : `<b>${modStr}</b>`
     })
 
-    const spellPlate = computed(() => {
-      const sc = monster.spellcasting
-      const className = sc?.class || 'Wizard'
-      const level = sc?.level || 1
-      const stat = sc?.stat || 'INT'
-      const knownCantrips = monster.knownSpellsOfLevel(0)
-      const knownLeveled = (sc?.standard || []).filter((name: string) => !knownCantrips.includes(name)).length
-      const metrics = calculateSpellcastingMetrics(className, level, statModifier(monster.stats[stat] ?? 10))
-      const levelCadenceMap = (sc as typeof sc & { levelCadenceMap?: Record<number, string> })?.levelCadenceMap
-      const bonusActionLevelMap = (sc as typeof sc & { bonusActionLevelMap?: Record<number, boolean> })?.bonusActionLevelMap
-      const metamagic = (sc as typeof sc & { metamagic?: { enabled: boolean; sorceryPoints?: number; refreshRate?: string; options?: string[] } })?.metamagic
-      const pointValue = sc?.resourceType === 'points' ? SPELL_POINTS_BY_LEVEL[level] : undefined
-      const isAlwaysAvailable = (cadence?: string) => {
-        if (!cadence) return true
-        const lower = cadence.toLowerCase().trim()
-        return lower === '' || lower === 'at_will' || lower === 'at will' || lower === 'always' || lower === 'none'
-      }
-      const filterOnlyAlways = Boolean((sc as typeof sc & { alwaysAvailableOnly?: boolean })?.alwaysAvailableOnly)
-      const spellLevels = Array.from({ length: 10 }, (_, spellLevel) => {
-        const rawSpells = monster.knownSpellsOfLevel(spellLevel).filter((name: string) => sc?.standard?.includes(name)).map((name: string) => ({
-          name,
-          tags: getSpellTagString(name),
-          cadence: sc?.spellCadenceMap?.[name],
-        }))
-        const filtered = filterOnlyAlways
-          ? rawSpells.filter((s) => isAlwaysAvailable(s.cadence))
-          : rawSpells
-        const spells = [...filtered].sort((a, b) => {
-          const aAlways = isAlwaysAvailable(a.cadence)
-          const bAlways = isAlwaysAvailable(b.cadence)
-          if (aAlways && !bAlways) return -1
-          if (!aAlways && bAlways) return 1
-          return 0
-        })
-        return {
-          level: spellLevel,
-          spells,
-          cadence: levelCadenceMap?.[spellLevel],
-          bonusAction: Boolean(bonusActionLevelMap?.[spellLevel]),
-        }
-      })
-      const combined = sc?.classes?.length || sc?.contribution?.mode === 'custom' ? aggregateSpellcastingSources(sc, monster.stats, monster.proficiency) : undefined
-      const primaryPool = castingResourceView({ ...sc, className }, combined)
-      const primary = buildSpellPlate({
-        title: renderedSpellcastingTitle.value,
-        stat,
-        save: monster.spellSave,
-        attack: monster.spellAttackModifier,
-        className,
-        level,
-        resourceType: primaryPool.resourceType, pactPool: primaryPool.pactPool,
-        resourceValue: primaryPool.resourceValue ?? (sc?.resourceType === 'focus' ? level : pointValue),
-        refreshRate: sc?.refreshRate,
-        customRefreshRate: sc?.customRefreshRate,
-        slots: primaryPool.slots,
-        preparedCount: sc?.preparedCountOverride ?? (metrics.preparedSpells || knownLeveled),
-        preparedInterval: sc?.preparedInterval,
-        levelCadenceMap,
-        metamagic: metamagic ? {
-          enabled: metamagic.enabled,
-          points: metamagic.sorceryPoints || level,
-          refreshRate: metamagic.refreshRate,
-          options: metamagic.options,
-        } : undefined,
-        edition: editorStore.style === '2014' ? '2014' : '2024',
-        spellLevels,
-      })
-      const additions = (sc?.classes || []).filter((source) => source.id !== 'primary').map((source) => { const pool = castingResourceView(source, combined); return ({
-        id: source.id,
-        label: [source.className, source.subclass].filter(Boolean).join(' · '),
-        plate: buildSpellPlate({
-          title: source.className, stat: source.stat, save: monster.spellSave, attack: monster.spellAttackModifier,
-          className: source.className, level: source.level, resourceType: pool.resourceType, pactPool: pool.pactPool,
-          resourceValue: pool.resourceValue, refreshRate: source.refreshRate,
-          slots: pool.slots || (source.resourceType === 'pact' || source.className === 'Warlock' || ['focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
-          spellLevels: Array.from({ length: 10 }, (_, level) => ({
-            level, cadence: source.levelCadences?.[level], bonusAction: Boolean(source.levelBonusAction?.[level]),
-            spells: monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name)).map((name: string) => ({ name, tags: getSpellTagString(name), cadence: source.spellCadenceMap?.[name] })),
-          })),
-        }),
-      })})
-      const consolidated = consolidateSpellPlates(primary, additions)
-      const summary = castingResourceSummary(sc, monster.stats, monster.proficiency)
-      if (summary && !['points', 'focus'].includes(sc.resourceType || '')) {
-        const manual = additions.filter(entry => { const source = sc.classes?.find(item => item.id === entry.id); return source && source.contribution?.mode !== 'custom' && (!spellcastingRuleClass(source.className) || ['points','focus'].includes(source.resourceType || '')) }).map(entry => entry.label + ': ' + entry.plate.resource).filter(text => !text.endsWith(': '))
-        consolidated.resource = [summary, ...manual].join(' · ')
-      }
-      return consolidated
-    })
+    const spellPlate = computed(() => buildCastingProjection(monster.spellcasting, {
+      stats: monster.stats, proficiency: monster.proficiency, save: monster.spellSave, attack: monster.spellAttackModifier,
+      title: renderedSpellcastingTitle.value, edition: editorStore.style === '2014' ? '2014' : '2024',
+      spellLevel: name => castingSpells.allSpells[name]?.level,
+      spellTags: getSpellTagString,
+    }))
 
     const innateSpellPlate = computed(() => {
-      const sc = monster.spellcasting
+      const sc = innateCastingContext(monster.spellcasting)
+      const ability = resolveCastingAbility(sc, monster.stats, monster.proficiency)
       const processedNotes = sc?.useCustomInnatePreamble
         ? sanitizedInnateSpellcastingPreamble.value
         : sanitizeWebString(sc?.atWillNotes || '')
       return buildInnateSpellPlate({
         stat: sc?.stat || 'INT',
-        save: monster.spellSave,
-        attack: monster.spellAttackModifier,
+        save: ability.save,
+        attack: ability.attack,
         groups: textRenderer.innateSpellcastingLists.value.map((group) => ({
           label: group.renderedLabel,
           spells: group.spells.map((name: string) => ({ name, tags: getSpellTagString(name) })),
@@ -2213,9 +2128,7 @@ export default defineComponent({
       crDisplay,
       ...textRenderer,
       cr,
-      spellPlate,
-      shouldShowSpellCadence,
-      spellLevelLead,
+      spellPlate,      spellLevelLead,
       hasAnySecondarySpells,
       shouldStripeVital,
       innateSpellPlate,
@@ -2256,6 +2169,7 @@ export default defineComponent({
       speedRiderBadges,
       cascadingDefenses,
       isDefenseStriped,
+      vitalsStripingMap,
       acStripe,
       hpStripe,
       speedStripe,

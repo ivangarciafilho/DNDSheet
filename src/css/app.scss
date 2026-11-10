@@ -1613,17 +1613,16 @@
   flex-direction: column;
   justify-content: space-between;
 
-  /* Portrait: 210mm x 297mm (1 : 1.4142) -> at 96 DPI: 794px x 1123px */
+  /* Use the same physical paper box in preview and print. */
   &.a4-portrait {
-    width: 794px;
-    min-height: 1123px;
+    width: 210mm;
+    min-height: 297mm;
     aspect-ratio: 210 / 297;
   }
 
-  /* Landscape: 297mm x 210mm (1.4142 : 1) -> at 96 DPI: 1123px x 794px */
   &.a4-landscape {
-    width: 1123px;
-    min-height: 794px;
+    width: 297mm;
+    min-height: 210mm;
     aspect-ratio: 297 / 210;
   }
 
@@ -1789,13 +1788,16 @@
     size: A4 portrait;
     margin: 8mm;
   }
+  @page dndsheet-portrait {
+    size: A4 portrait;
+    margin: 0;
+  }
   @page dndsheet-landscape {
     size: A4 landscape;
-    margin: 8mm;
+    margin: 0;
   }
-  body:has(.a4-page-sheet.a4-landscape) {
-    page: dndsheet-landscape;
-  }
+  body:has(.a4-page-sheet.a4-portrait) { page: dndsheet-portrait; }
+  body:has(.a4-page-sheet.a4-landscape) { page: dndsheet-landscape; }
   .q-notifications, .q-dialog, .q-menu, .q-tooltip {
     display: none !important;
   }
@@ -1807,6 +1809,11 @@
     min-height: 0 !important;
     overflow: visible !important;
   }
+  .q-page-container { padding: 0 !important; }
+  #render {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
   .q-header, .q-footer, .q-drawer, .a4-preview-toolbar, #editor, #char-editor, .q-splitter__separator {
     display: none !important;
   }
@@ -1817,14 +1824,14 @@
     margin: 0 !important;
   }
   .a4-scale-stage {
+    display: block !important;
     height: auto !important;
   }
   .a4-page-sheet {
+    /* Remove the preview backdrop/shadow; leave the composed sheet intact. */
     box-shadow: none !important;
-    border: none !important;
-    width: 100% !important;
-    min-height: auto !important;
-    padding: 0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .a4-page-overflow-marker {
     display: none !important;
@@ -1891,7 +1898,6 @@
   #splitter > .q-splitter__after, #char-splitter > .q-splitter__after { width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
   #splitter > .q-splitter__after > .q-pa-md, #char-splitter > .q-splitter__after > .q-pa-md { padding: 0 !important; }
   .a4-preview-viewport { display: block !important; overflow: visible !important; border: none !important; background: transparent !important; }
-  .a4-page-sheet { aspect-ratio: auto !important; }
 }
 
 /* B7.6: reduce motion only on the app's own transitions. A global rule broke Quasar's menu focus hand-off and
