@@ -10,6 +10,8 @@ Build226 improves skill routing and persistence, source-owned spell editing, cad
 
 Build227 repairs additional-container ownership, brings Role into the compositor, adds safe numeric presentation and traversal formatting, and improves source-owned spell selection and explicit resource contributions. See the [verified scope and remaining work](docs/roadmap/DNDSheet-Build227-Composition-and-Casting-Candidate.md).
 
+Build228 adds foldable and removable spellcasting sources, independent learning contributions, consistent spell reading order, and matching A4 print geometry. See the [release report](docs/roadmap/DNDSheet-Build228-Spellcasting-and-Print.md).
+
 ## What is available
 
 - One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities.

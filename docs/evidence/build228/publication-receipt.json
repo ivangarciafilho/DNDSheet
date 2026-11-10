@@ -1,0 +1,194 @@
+{
+  "build": 228,
+  "url": "https://ivangarciafilho.github.io/DNDSheet/?build=228#/",
+  "releaseSource": "ef9f9f59eeb350fcd324f871d68e995b117dd2e1",
+  "base": "1caab19ddbb8cc66d8b09d7d8d888db6e58617fa",
+  "pagesCommit": "3b079efb6aa4b2ce2843a30c8a63b4b426ab88d8",
+  "tag": "rc-2.4.3-build-228-spellcasting-sources-and-print",
+  "gate": {
+    "ok": true,
+    "inputFingerprint": "486bc9ea75e26c482689bb11c49baecb6a8e6a0e76017aa3e101022802091190",
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 3
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 27
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 185
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 98
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 247
+      }
+    ]
+  },
+  "live": {
+    "status": "built",
+    "indexSha256": "28a5d369ba052a7d93f974e299d0bf1857ea60499cc75cc6dd322d223e746508",
+    "assets": [
+      {
+        "path": "/DNDSheet/assets/index.af32ccc0.js",
+        "sha256": "5f095c02fef71f0b1a15e08c0aa19e9bf17f11c972aae9e7d040a2017719dc65"
+      },
+      {
+        "path": "/DNDSheet/assets/index.93e7649d.css",
+        "sha256": "30d4d46e9cf72befeaad8523daae290af3db82af0f41d68f73f902f57434b218"
+      },
+      {
+        "path": "/DNDSheet/assets/MonsterBuilder.8872f6c8.js",
+        "sha256": "0c0595bd4f67b48ce6580e9bf15de3637dc3a8cae748d790f60f156d6bcc8a98"
+      }
+    ]
+  },
+  "candidate": {
+    "path": "F:\\AI_Resources\\DNDSheet\\.codex-temp\\release-candidates\\rc-2.4.3-build-228-spellcasting-sources-and-print",
+    "verifiedEntries": 96
+  },
+  "workload": {
+    "normalized": {
+      "before": {
+        "total": 268,
+        "complete": 174,
+        "open": 94
+      },
+      "after": {
+        "total": 268,
+        "complete": 174,
+        "open": 94
+      },
+      "delta": {
+        "complete": 0,
+        "open": 0
+      }
+    },
+    "raw": {
+      "total": 277,
+      "complete": 183,
+      "open": 94
+    },
+    "core": {
+      "before": 562,
+      "after": 581,
+      "delta": 19
+    },
+    "validationStatus": "Final gate 10/10; live publication verified",
+    "publication": {
+      "source": "ef9f9f59eeb350fcd324f871d68e995b117dd2e1",
+      "pagesCommit": "3b079efb6aa4b2ce2843a30c8a63b4b426ab88d8",
+      "tag": "rc-2.4.3-build-228-spellcasting-sources-and-print"
+    },
+    "implementationAcceptanceItems": 20,
+    "gate": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 3
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 27
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 185
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 98
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 247
+      }
+    ]
+  },
+  "verifiedAt": "2026-11-10T22:30:32.353Z"
+}

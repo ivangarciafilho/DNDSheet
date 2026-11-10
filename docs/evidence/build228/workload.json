@@ -25,8 +25,12 @@
     "after": 581,
     "delta": 19
   },
-  "validationStatus": "Final gate 10/10; publication pending",
-  "publication": null,
+  "validationStatus": "Final gate 10/10; live publication verified",
+  "publication": {
+    "source": "ef9f9f59eeb350fcd324f871d68e995b117dd2e1",
+    "pagesCommit": "3b079efb6aa4b2ce2843a30c8a63b4b426ab88d8",
+    "tag": "rc-2.4.3-build-228-spellcasting-sources-and-print"
+  },
   "implementationAcceptanceItems": 20,
   "gate": [
     {

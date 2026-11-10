@@ -1,6 +1,6 @@
 ## Build228 — spellcasting and print
 
-Frozen release gate **10/10** passed with **581 core tests (+19)**, exhaustive SPA and Pages browser scenarios, casting source lifecycle and learning checks, five spell themes, and A4 portrait and landscape PDF parity. Typecheck: 515 diagnostics; 0 new; 168 resolved (approved baseline 683, Build213 e19a624). Build227 and 480 files across five prior archives remain verified. Publication pending.
+Frozen release gate **10/10** passed with **581 core tests (+19)**, exhaustive SPA and Pages browser scenarios, casting source lifecycle and learning checks, five spell themes, and A4 portrait and landscape PDF parity. Typecheck: 515 diagnostics; 0 new; 168 resolved (approved baseline 683, Build213 e19a624). Build227 and 480 files across five prior archives remain verified. Published and verified. Source `ef9f9f59eeb350fcd324f871d68e995b117dd2e1`, Pages `3b079efb6aa4b2ce2843a30c8a63b4b426ab88d8`, tag `rc-2.4.3-build-228-spellcasting-sources-and-print`. Live index and application assets match the tested Pages build. The fresh browser footer reads `v2.4.3 build 228`. All 96 archive checksums pass.
 
 ## Build227 published — 2026-11-10
 
