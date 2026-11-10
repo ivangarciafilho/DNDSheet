@@ -1,4 +1,21 @@
-## Current published delivery — Build225 (2026-11-09)
+## Build226 validated candidate — emergency editor and spellcasting packet (2026-11-10)
+
+**Candidate, not yet published.** Build225 remains the verified production release. Work resumes from its receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca` in the isolated Build226 clone; the protected original checkout and existing sample remain separate. The newest section governs current execution; older release headings below are historical.
+
+The candidate implements the emergency requests across shared skill routing, source-owned spell editing, row cadence/action economy, normal-weight italic spell names, a common action-family compositor and safe rich mechanic text. [Build226 packet and acceptance boundaries](DNDSheet-Build226-Emergency-Editor-and-Spellcasting.md) records eighteen implementation changes and the remaining verification/architecture work. **Normalized workload: 268 IDs, 174 complete / 94 open before and after; whole-ID delta 0.** Raw ledger: 277 IDs, 183 complete / 94 open. No new ledger IDs or parent-task closures are claimed.
+
+Final frozen-source gate **10/10** passed: **540 core tests (+36 versus Build225)**; **58 exhaustive browser scenarios on SPA and Pages**, plus the three emergency suites on each target (11 skill, 10 spellcasting and 6 rich-mechanic checks); 19 outcome lifecycle checks, 60 fixture/theme cases, 120 representative contrast samples and 10 fit views with no clipping observations. Zero runtime exceptions. Type guard: 559 existing diagnostics, zero new against the unchanged baseline; lint: zero errors, 2692 warnings. Existing debt remains. Publication/live verification follows.
+
+### Clarified emergency contracts
+
+- Skill activity membership is independent of action cost: keep the economy toggle and expose one default-on “Move To Action Group” checkbox. Respect explicit legacy placements until edited. Medicine belongs to Search. Passive overrides, conditions and riders are saved monster state, not transient editor properties.
+- A casting source owns its spell assignments, class/subclass filter, local cadence and local action economy. The final trait consolidates sources without assigning another source's spells or treating combined slots as a source's learning ceiling. Unknown/off-list saved selections remain recoverable.
+- Reference capacities identify their rules provenance. Legacy 2014 base-class estimates are not 2024 guarantees or automatic subclass grants. Custom Focus/Points resources are authored values; no unprovided Iron Kingdoms progression is inferred.
+- A row's cadence/casting time is the default for that row, including cantrips and lower pact rows. Only spell-specific exceptions receive cadence badges. Spell names are italic and normal weight; headings/cadence may be bold.
+- Action, Trait and Reaction share the same field compositor; Reaction adds a trigger. Existing collection adapters and reviewed cross-family copy remain compatibility boundaries. Copies retain mechanics, extension data and compatible numeric bindings.
+- Manually authored mechanic text accepts a compact rich-text toolbar through an attribute-free formatting allowlist. Web output preserves safe formatting; plain-text adapters produce readable prose. Formatting must survive Apply/reload and respect disabled/read-only fields.
+
+## Historical verified delivery — Build225 (2026-11-09)
 
 Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
 

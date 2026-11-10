@@ -1,4 +1,6 @@
-import { ROLE_CHAINS } from './action-composer.ts'
+import { actionRecharge, actionUsageDraft, actionUsagePatch, validateActionUsage } from './action-usage.ts'
+import { chainView, cellValue, cellPatch, validateCell } from './composer-chain.ts'
+import type { MonsterAction } from './types.ts'
 import type { ChainRowView } from './composer-chain.ts'
 import { computeTraitTag, TRAIT_RECHARGE_OPTIONS } from './defense-and-traits-utils.ts'
 import type { MonsterTrait } from './types.ts'
@@ -25,21 +27,15 @@ const validCount = (value: unknown): boolean => (typeof value === 'number' || ty
   String(value).trim() !== '' && Number.isInteger(Number(value)) && Number(value) >= 0 && Number(value) <= 999
 
 export function traitChainView(trait: MonsterTrait): ChainRowView[] {
-  const tag = computeTraitTag(trait)
-  return [{ row: 'head', cells: ROLE_CHAINS.trait.filter((spec) => spec.row === 'head').map((spec) => {
-    const text = spec.id === 'name' ? clean(trait.name) : tag
-    return {
-      id: spec.id, label: spec.label, row: spec.row, editor: spec.editor,
-      state: text ? 'set' as const : 'empty' as const,
-      text: text || spec.label, legacy: false,
-      ...(spec.id === 'name' && !text ? { invalid: 'Name is required' } : {}),
-    }
-  }) }]
+  const action = trait as unknown as Partial<MonsterAction>
+  const rows = chainView('action', action, { usage:computeTraitTag(trait) }).filter(row => row.row !== 'prose')
+  return rows.map(row => ({ ...row, cells:row.cells.map(cell => cell.id === 'usage' ? {...cell,id:'trait-usage',label:'Cadence',editor:'structured' as const} : cell) }))
 }
 
 export function traitCellValue(trait: MonsterTrait, cellId: string): unknown {
   if (cellId === 'name') return trait.name ?? ''
-  if (cellId !== 'trait-usage') return undefined
+  if (cellId !== 'trait-usage') return cellValue(trait as unknown as Partial<MonsterAction>, cellId)
+  if (!trait.rechargeTiming && !trait.rechargeTagOverride && actionRecharge(trait)) return actionUsageDraft(trait)
   const draft: TraitCadenceDraft = {
     limitedUse: { count: trait.limitedUse?.count ?? 0, rate: trait.limitedUse?.rate ?? 'DAY' },
     rechargeTiming: trait.rechargeTiming ?? '',
@@ -51,7 +47,9 @@ export function traitCellValue(trait: MonsterTrait, cellId: string): unknown {
 
 export function validateTraitCell(cellId: string, value: unknown): string {
   if (cellId === 'name') return clean(value) ? '' : 'Name is required'
-  if (cellId !== 'trait-usage' || value === '') return ''
+  if (cellId !== 'trait-usage') return validateCell(cellId,value)
+  if (record(value) && 'mode' in value) return validateActionUsage(value)
+  if (value === '') return ''
   if (!record(value) || !record(value.limitedUse) || !validCount(value.limitedUse.count)) return 'Use a whole count from 0 to 999'
   if (Number(value.limitedUse.count) > 0 && !clean(value.limitedUse.rate)) return 'Choose a recovery rate for limited uses'
   if (value.rechargeCount != null && value.rechargeCount !== '' && !validCount(value.rechargeCount)) return 'Use a whole recharge count from 0 to 999, or leave it blank'
@@ -62,14 +60,17 @@ export function validateTraitCell(cellId: string, value: unknown): string {
 export function traitCellPatch(trait: MonsterTrait, cellId: string, value: unknown): Partial<MonsterTrait> {
   if (validateTraitCell(cellId, value)) return {}
   if (cellId === 'name') return { name: clean(value) }
-  if (cellId !== 'trait-usage') return {}
+  if (cellId !== 'trait-usage') return cellPatch(trait as unknown as Partial<MonsterAction>,cellId,value) as unknown as Partial<MonsterTrait>
+  if (record(value) && 'mode' in value) return { ...actionUsagePatch(trait,value), rechargeTiming:'', rechargeCount:undefined, rechargeTagOverride:'' } as Partial<MonsterTrait>
   if (value === '') return {
+    ...actionUsagePatch(trait,{mode:'none'}),
     limitedUse: { ...trait.limitedUse, count: 0 }, rechargeTiming: '',
     rechargeCount: undefined, rechargeTagOverride: '',
   }
   const draft = value as TraitCadenceDraft
   const nextTiming = clean(draft.rechargeTiming)
   const patch: Partial<MonsterTrait> = {
+    ...actionUsagePatch(trait,{mode:'none'}),
     limitedUse: { ...trait.limitedUse, count: Number(draft.limitedUse.count), rate: clean(draft.limitedUse.rate) },
     rechargeTiming: nextTiming,
     rechargeCount: draft.rechargeCount == null || draft.rechargeCount === '' ? undefined : Number(draft.rechargeCount),

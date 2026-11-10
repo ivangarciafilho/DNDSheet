@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import { CADENCE_LABELS, CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS, cadenceLabel } from '../../src/core/domain/catalogs/cadence.ts'
 import { METAMAGIC_OPTIONS, metamagicCost } from '../../src/core/domain/catalogs/metamagic.ts'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from '../../src/core/domain/spell-plate.ts'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead, spellCadenceDiffers, consolidateSpellPlates, spellNameWithCadence } from '../../src/core/domain/spell-plate.ts'
 
 const base = {
   title: 'Warlock',
@@ -145,4 +145,36 @@ test('spell level lead: a cadence that carries its own count is not prefixed wit
   assert.equal(spellLevelLead(undefined, 'Per Short Rest'), '(Short Rest), ')
   assert.equal(spellLevelLead(undefined, 'Hidden'), '')
   assert.equal(spellLevelLead(undefined, ''), '')
+})
+test('cadence tags compare the owning row rather than sibling majority', () => {
+  assert.equal(spellCadenceDiffers('long_rest', 'Per Long Rest'), false)
+  assert.equal(spellCadenceDiffers('Long Rest', 'Short Rest'), true)
+  assert.equal(spellCadenceDiffers('hidden', 'Long Rest'), false)
+  assert.equal(spellCadenceDiffers(undefined, 'Long Rest'), false)
+  assert.equal(spellCadenceDiffers('long_rest', ''), true)
+})
+test('row-local cadence has precedence over legacy level map and preserves spell overrides', () => {
+  const plate = buildSpellPlate({ ...base, levelCadenceMap: { 1: 'short_rest' }, spellLevels: [{level: 1, cadence: 'long_rest', bonusAction: true, spells: [{ name: 'Shield', cadence: 'short_rest' }]}] })
+  assert.equal(plate.levels[0].effectiveCadence, 'Long Rest')
+  assert.equal(plate.levels[0].heading, '(Long Rest), Level 1 (Bonus Action):')
+  assert.equal(plate.levels[0].spells[0].cadence, 'Short Rest')
+})
+
+test('consolidated trait retains local source row rules and explicit custom resources', () => {
+  const primary = buildSpellPlate({ ...base, className: 'Wizard', resourceType: 'slots', slots: [4], spellLevels: [{level: 1, spells: [{name: 'Shield'}], cadence: 'long_rest'}] })
+  const extra = buildSpellPlate({ ...base, className: 'Custom Focus', resourceType: 'focus', resourceValue: 6, refreshRate: 'short_rest', slots: [], spellLevels: [{level: 1, spells: [{name: 'Shield', cadence: 'long_rest'}], cadence: 'short_rest', bonusAction: true}] })
+  const result = consolidateSpellPlates(primary, [{id: 'focus-1', label: 'Custom Focus', plate: extra}])
+  assert.equal(result.levels.length, 2)
+  assert.equal(result.levels[0].effectiveCadence, 'Long Rest')
+  assert.equal(result.levels[1].effectiveCadence, 'Short Rest')
+  assert.match(result.levels[1].heading, /Custom Focus.*Short Rest.*Bonus Action/)
+  assert.match(result.resource, /Custom Focus: 6 Focus Points.*Short Rest/)
+  assert.equal(result.levels[1].slotCount, undefined)
+  assert.equal(primary.levels[0].sourceId, undefined)
+})
+
+test('text spell names retain explicit cantrip cadence exceptions without redundant badges', () => {
+  assert.equal(spellNameWithCadence('Light', 'at_will', 'At Will'), 'Light')
+  assert.equal(spellNameWithCadence('Light', 'long_rest', 'at_will'), 'Light [Long Rest]')
+  assert.equal(spellNameWithCadence('Light', 'hidden', 'at_will'), 'Light')
 })

@@ -8,7 +8,7 @@ import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
-import { spellLevelHeading } from 'src/core/domain/spell-plate'
+import { spellLevelHeading, spellNameWithCadence } from 'src/core/domain/spell-plate'
 
 export function useMdRenderer() {
   const monster = useMonsterStore()
@@ -50,10 +50,10 @@ ${lists.join('\n')}`
 
   const getSpellcasting = () => {
     const renderedRows = []
-    const cantrips = monster.knownSpellsOfLevel(0)
+    const cantrips = monster.knownSpellsOfLevel(0).filter((name: string) => monster.spellcasting?.standard?.includes(name)).map((name: string) => spellNameWithCadence(name, monster.spellcasting?.spellCadenceMap?.[name], monster.spellcasting?.levelCadenceMap?.[0] || 'at_will'))
 
     if (cantrips.length > 0)
-      renderedRows.push(`> ${spellLevelHeading({ level: 0, labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} *${cantrips.join(', ')}*  `)
+      renderedRows.push(`> ${spellLevelHeading({ level: 0, levelCadence: monster.spellcasting?.levelCadenceMap?.[0], bonusAction: Boolean(monster.spellcasting?.bonusActionLevelMap?.[0]), labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') } })} *${cantrips.join(', ')}*  `)
 
     renderer.classSpellcastingSlots.value.forEach((slot) => {
       renderedRows.push(`> ${slot.renderedLabel} *${slot.renderedSpells}*  `)

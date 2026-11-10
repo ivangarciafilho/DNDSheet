@@ -232,7 +232,7 @@
               </q-select>
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter note (e.g. while frozen) for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note (e.g. while frozen) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. while frozen)"
                 dense
@@ -325,7 +325,7 @@
               />
             </div>
             <div class="col-12 col-sm-5">
-              <q-input v-help="'Enter note / duration for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note / duration for the resistances editor.'"
                 v-model="item.note"
                 label="Note / Duration"
                 dense
@@ -450,7 +450,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter note (e.g. silvered) for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note (e.g. silvered) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. silvered)"
                 dense
@@ -542,7 +542,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter note / details for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note / details for the resistances editor.'"
                 v-model="item.note"
                 label="Note / Details"
                 dense
@@ -665,7 +665,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter note (e.g. adamantine) for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note (e.g. adamantine) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. adamantine)"
                 dense
@@ -757,7 +757,7 @@
               />
             </div>
             <div class="col-12 col-sm-6">
-              <q-input v-help="'Enter note (e.g. against charm spells) for the resistances editor.'"
+              <mechanic-text-editor v-help="'Enter note (e.g. against charm spells) for the resistances editor.'"
                 v-model="item.note"
                 label="Note (e.g. against charm spells)"
                 dense
@@ -773,6 +773,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent } from 'vue'
 import { DamageDefenseItem, DefenseModifierMode } from '../models'
@@ -916,7 +917,7 @@ const BENEFIT_TRIGGER_OPTIONS = [
 
 export default defineComponent({
   name: 'ResistancesEditor',
-  components: { SwapButtons },
+  components: { MechanicTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 

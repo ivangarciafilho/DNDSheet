@@ -1,3 +1,4 @@
+import { mechanicRichHtml } from './mechanic-rich-text.ts'
 import { outcomePhrase } from './ability-grammar.ts'
 import type { AbilityProjection, AbilityRenderContext } from './ability-grammar.ts'
 import { normalizeOutcomeData } from './outcome-data.ts'
@@ -20,7 +21,7 @@ export function outcomesHtml(ability: AbilityProjection, context: AbilityRenderC
     const caption = `${outcome.trigger || 'Outcome'}${outcome.recipient ? `, ${outcome.recipient}` : ''} — roll effects`
     const tables = Array.isArray(context.randomTables) ? context.randomTables : []
     const linked = outcome.randomTableId ? tables.find(table => table && table.id === outcome.randomTableId) : undefined
-    const table = linked ? formatRandomTableAsHtml(linked) : outcome.diceTable?.length ? `<table class="outcome-dice-table"><caption>${escapeOutcomeHtml(caption)}</caption><thead><tr><th scope="col">Roll</th><th scope="col">Effect</th></tr></thead><tbody>${outcome.diceTable.map((row) => `<tr><td>${escapeOutcomeHtml(row.roll)}</td><td>${escapeOutcomeHtml(row.effect)}</td></tr>`).join('')}</tbody></table>` : ''
+    const table = linked ? formatRandomTableAsHtml(linked) : outcome.diceTable?.length ? `<table class="outcome-dice-table"><caption>${escapeOutcomeHtml(caption)}</caption><thead><tr><th scope="col">Roll</th><th scope="col">Effect</th></tr></thead><tbody>${outcome.diceTable.map((row) => `<tr><td>${escapeOutcomeHtml(row.roll)}</td><td>${mechanicRichHtml(row.effect)}</td></tr>`).join('')}</tbody></table>` : ''
     return `<div class="outcome-sector outcome-${outcome.presentation}" data-sector="${escapeOutcomeHtml(outcome.layoutSector || 'all')}">${prose}${table}</div>`
   }).join('')
   return `<div class="action-outcomes-grid">${clauses}</div> `

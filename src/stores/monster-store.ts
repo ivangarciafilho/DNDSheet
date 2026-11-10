@@ -217,6 +217,8 @@ export const useMonsterStore = defineStore('monster', {
           levelBonusAction?: Record<number, boolean>
           spellCadenceMap?: Record<string, string>
           actionType?: 'Action' | 'Bonus Action'
+          resourceValue?: number
+          refreshRate?: string
           resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
         }>,
       },
@@ -315,7 +317,8 @@ export const useMonsterStore = defineStore('monster', {
         },
       },
       detailedDamageModifiers: [],
-      actionOrientedPassives: {
+      passives: undefined,
+    actionOrientedPassives: {
         bonusActionSearch: false,
         bonusActionStudy: false,
         bonusActionHide: false,
@@ -389,7 +392,7 @@ export const useMonsterStore = defineStore('monster', {
         bloodiedPerPhase: [],
         phaseConfigs: [],
       },
-      toolsPlacement: 'header' as 'header' | 'action' | 'bonus_action' | 'legendary',
+      toolsPlacement: undefined as 'header' | 'action' | 'bonus_action' | 'legendary' | undefined,
       showXp: true,
       compactNameplate: false,
       customVariables: {} as Record<string, string | number>,

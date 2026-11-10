@@ -29,7 +29,7 @@ test('role copy rebases only compatible copied mechanics and detaches expression
   const result = roleTransition(monster, 'a/b', 'action', 'trait', 't x')
   assert.deepEqual(result.patch?.bindings?.['traits[id=t%20x].limitedUse.count'], formula)
   assert.deepEqual(result.patch?.bindings?.['traits[id=t%20x].crAnnotation.maxDamage'], formula)
-  assert.equal(result.patch?.bindings?.['traits[id=t%20x].attackBonus'], undefined)
+  assert.deepEqual(result.patch?.bindings?.['traits[id=t%20x].attackBonus'], formula)
   assert.notEqual(result.patch?.bindings?.['traits[id=t%20x].limitedUse.count'], formula)
   assert.equal(JSON.stringify(monster), before)
   const reaction = roleTransition(monster, 'a/b', 'action', 'reaction', 'r')

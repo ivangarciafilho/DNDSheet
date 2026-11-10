@@ -1,4 +1,24 @@
-## Current published delivery — Build225 (2026-11-09)
+## Build226 validated candidate — emergency editor and spellcasting packet (2026-11-10)
+
+**Candidate, not yet published.** Build225 remains the verified production release. Work resumes from its receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca` in the isolated Build226 clone; the protected original checkout and existing sample remain separate. The newest section governs current execution; older release headings below are historical.
+
+The candidate implements the emergency requests across shared skill routing, source-owned spell editing, row cadence/action economy, normal-weight italic spell names, a common action-family compositor and safe rich mechanic text. [Build226 packet and acceptance boundaries](DNDSheet-Build226-Emergency-Editor-and-Spellcasting.md) records eighteen implementation changes and the remaining verification/architecture work. **Normalized workload: 268 IDs, 174 complete / 94 open before and after; whole-ID delta 0.** Raw ledger: 277 IDs, 183 complete / 94 open. No new ledger IDs or parent-task closures are claimed.
+
+Final frozen-source gate **10/10** passed: **540 core tests (+36 versus Build225)**; **58 exhaustive browser scenarios on SPA and Pages**, plus the three emergency suites on each target (11 skill, 10 spellcasting and 6 rich-mechanic checks); 19 outcome lifecycle checks, 60 fixture/theme cases, 120 representative contrast samples and 10 fit views with no clipping observations. Zero runtime exceptions. Type guard: 559 existing diagnostics, zero new against the unchanged baseline; lint: zero errors, 2692 warnings. Existing debt remains. Publication/live verification follows.
+
+### Emergency packet ownership and remaining closure gates
+
+| Existing owner | Candidate implementation | Still required for parent closure |
+|---|---|---|
+| A11.7 | Default-on group checkbox, retained cost toggle, Medicine/Search mapping, complete shared skill-row projection and saved passive state | Remaining association, undo/redo and complete adapter acceptance |
+| A12.8–A12.9 / A12.1–A12.4 | Source-owned folded level pickers, class/subclass filtering, preserved unknown selections, local cadence/economy, provenance-labelled capacity reference and authored Focus/Points | Stable source/pool IDs and versioned migration; ruleset/catalog coverage and full multiclass/known/prepared/granted-spell proofs |
+| A12.10 | Cantrip/pact row overrides, exception-only cadence tags, italic normal-weight spell names and shared export heading behavior | Print and complete source-owned adapter acceptance |
+| A11.6 / A11.2–A11.3 | Shared action/trait/reaction field catalog; reaction trigger; complete cross-family copies and compatible formula bindings | Typed activation/availability predicates, phase/pool sets, all numeric consumers and lossless migration |
+| A11.5 / A11.8 / H9 | Safe rich mechanic authoring in outcomes, containers, traversal, skills and other freeform fields; plain projection boundary | Complete container lifecycle/predicate/print/export acceptance |
+
+These are implementation acceptance changes inside existing owners, not eighteen newly closed roadmap tasks. Retain the original A11.5/A11.9/H11 dependency chain after the emergency release. In particular, no broad source/pool migration, complete rules catalog, universal numeric-binding sweep or all-mechanics rich-text sweep is implied by this packet.
+
+## Historical verified delivery — Build225 (2026-11-09)
 
 Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
 

@@ -109,7 +109,7 @@ export default defineComponent({
     const valueFor = (cellId: string): unknown => {
       if (pooled.value && cellId === 'usage') return String(props.cost)
       if (action.value) return cellValue(action.value, cellId)
-      if (reaction.value) return reactionCellValue(reaction.value, cellId)
+      if (reaction.value) return cellId === 'usage' ? cellValue(reaction.value as unknown as Partial<import('src/core/domain/types').MonsterAction>,cellId) : reactionCellValue(reaction.value, cellId)
       if (trait.value) return traitCellValue(trait.value, cellId)
       return undefined
     }
@@ -119,15 +119,17 @@ export default defineComponent({
         : props.role === 'trait' ? (value: unknown) => validateTraitCell(cellId, value) : undefined
 
     const numericPathFor = (cellId: string): string | undefined => {
-      if (!action.value) return undefined
+      if (!activeEntry.value || lair.value) return undefined
+      const collection = trait.value ? 'traits' : reaction.value ? 'reactions' : 'actions'
       const suffix = cellId === 'attack-bonus' ? 'attackBonus' : cellId === 'save-dc' ? 'save.overrideValue' : undefined
-      return suffix ? `actions[id=${encodeURIComponent(action.value.id)}].${suffix}` : undefined
+      return suffix ? `${collection}[id=${encodeURIComponent(activeEntry.value.id)}].${suffix}` : undefined
     }
     const numericDraftModel = (cellId: string): object => {
       const candidate = JSON.parse(JSON.stringify(monster.$state))
       if (cellId === 'save-dc') {
-        const entry = candidate.actions.find((item: { id: string }) => item.id === props.actionId)
-        if (entry) entry.save.override = true
+        const collection = trait.value ? 'traits' : reaction.value ? 'reactions' : 'actions'
+        const entry = candidate[collection].find((item: { id: string }) => item.id === props.actionId)
+        if (entry) entry.save = { overrideValue:0,...entry.save,override:true }
       }
       return candidate
     }
@@ -152,6 +154,8 @@ export default defineComponent({
         if (current.crAnnotation) autoUpdateCr(current.description, current.crAnnotation, current)
         return
       }
+      const path = numericPathFor(cellId)
+      if(path) { const bindings={...monster.bindings}; if(binding)bindings[path]=binding;else delete bindings[path];monster.bindings=bindings }
       const currentReaction = reaction.value
       if (currentReaction) {
         const target = currentReaction as unknown as Record<string, unknown>

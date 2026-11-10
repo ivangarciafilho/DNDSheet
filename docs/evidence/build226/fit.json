@@ -1,0 +1,3749 @@
+{
+  "matrix": "5 physical widths × 1x/2x effective CSS viewport and raster density; this is not browser UI zoom automation",
+  "rows": [
+    {
+      "width": 640,
+      "zoom": 1,
+      "effectiveCssWidth": 640,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Inventoryformat_boldformat_italicformat_underlinedundoredoSave DCarrow_drop_down",
+          "overflow": 79
+        },
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Regional Effect Preambleformat_boldformat_italicformat_underlinedundoredoSave DC",
+          "overflow": 81
+        }
+      ],
+      "exemptions": [
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Nickname (overrides {NAME} if set)",
+          "overflow": 128,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Proficiency Bonus",
+          "overflow": 95,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Lair CR",
+          "overflow": 12,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subtype Tag",
+          "overflow": 64,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Alignment",
+          "overflow": 61,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Base AC Source",
+          "overflow": 76,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Current Flat AC",
+          "overflow": 77,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Ability Bonus",
+          "overflow": 58,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "None",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defense Item",
+          "overflow": 59,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "None",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Temporary / Reaction AC",
+          "overflow": 83,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Conditional AC Modifier",
+          "overflow": 75,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)",
+          "overflow": 277,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "On Miss Effect (Decoupled)",
+          "overflow": 116,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "When Hit Effect (Decoupled)",
+          "overflow": 122,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Language to Add",
+          "overflow": 58,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Speed (select or type to add)...",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Movement Type",
+          "overflow": 74,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "walk",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Speed",
+          "overflow": 39,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Note",
+          "overflow": 30,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Search Scope / Verbose Rider",
+          "overflow": 8,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Influence Scope / Verbose Rider",
+          "overflow": 22,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Use Tool Scope / Verbose Rider",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Sense (Modular 5e Physiology)",
+          "overflow": 64,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Vulnerability to Add",
+          "overflow": 130,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Vulnerability to Add",
+          "overflow": 138,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Resistance to Add",
+          "overflow": 122,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Resistance to Add",
+          "overflow": 130,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Immunity to Add",
+          "overflow": 111,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Immunity to Add",
+          "overflow": 119,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Class",
+          "overflow": 35,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subclass",
+          "overflow": 61,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Slot Casting Notes",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Innate Casting Notes",
+          "overflow": 45,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        }
+      ]
+    },
+    {
+      "width": 640,
+      "zoom": 2,
+      "effectiveCssWidth": 320,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Inventoryformat_boldformat_italicformat_underlinedundoredoSave DCarrow_drop_down",
+          "overflow": 78
+        },
+        {
+          "tag": "DIV",
+          "class": "q-expansion-item__content relative-position",
+          "text": "hubMaster Spellcasting Consolidation Engineauto_fix_high Combined Caster Level: ",
+          "overflow": 116
+        },
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Regional Effect Preambleformat_boldformat_italicformat_underlinedundoredoSave DC",
+          "overflow": 80
+        }
+      ],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Species / Lineage",
+          "overflow": 76,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "STR",
+          "overflow": 24,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "DEX",
+          "overflow": 24,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CON",
+          "overflow": 27,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "INT",
+          "overflow": 20,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "WIS",
+          "overflow": 23,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CHA",
+          "overflow": 27,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)",
+          "overflow": 276,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "When Hit Effect (Decoupled)",
+          "overflow": 6,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Language to Add",
+          "overflow": 57,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Speed (select or type to add)...",
+          "overflow": 61,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Search Scope / Verbose Rider",
+          "overflow": 7,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Influence Scope / Verbose Rider",
+          "overflow": 21,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Use Tool Scope / Verbose Rider",
+          "overflow": 18,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Sense (Modular 5e Physiology)",
+          "overflow": 63,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Vulnerability to Add",
+          "overflow": 129,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Vulnerability to Add",
+          "overflow": 137,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Resistance to Add",
+          "overflow": 121,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Resistance to Add",
+          "overflow": 129,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Immunity to Add",
+          "overflow": 110,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Immunity to Add",
+          "overflow": 118,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Caster Level",
+          "overflow": 58,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Casting Stat",
+          "overflow": 17,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Slot Casting Notes",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Spell Slots (Standard)",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Class Names (e.g. Level 9 Wizard)",
+          "overflow": 92,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Spells Count",
+          "overflow": 70,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Innate Casting Notes",
+          "overflow": 44,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        }
+      ]
+    },
+    {
+      "width": 960,
+      "zoom": 1,
+      "effectiveCssWidth": 960,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Medium",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "humanoid",
+          "overflow": 26,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subtype Tag",
+          "overflow": 11,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Species / Lineage",
+          "overflow": 59,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "STR",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "DEX",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CON",
+          "overflow": 13,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "INT",
+          "overflow": 6,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "WIS",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CHA",
+          "overflow": 13,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Caster Level",
+          "overflow": 74,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "1",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Casting Stat",
+          "overflow": 33,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Save DC",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Resource Mode",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Spell Slots (Standard)",
+          "overflow": 71,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Refresh Cadence",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Title Disclosure",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Class Names (e.g. Level 9 Wizard)",
+          "overflow": 149,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Spells Count",
+          "overflow": 127,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Interval",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 960,
+      "zoom": 2,
+      "effectiveCssWidth": 480,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)",
+          "overflow": 116,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "zoom": 1,
+      "effectiveCssWidth": 1280,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Caster Level",
+          "overflow": 4,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Class Names (e.g. Level 9 Wizard)",
+          "overflow": 69,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Spells Count",
+          "overflow": 47,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "zoom": 2,
+      "effectiveCssWidth": 640,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Inventoryformat_boldformat_italicformat_underlinedundoredoSave DCarrow_drop_down",
+          "overflow": 79
+        },
+        {
+          "tag": "DIV",
+          "class": "q-editor__toolbar row no-wrap scroll-x",
+          "text": "Regional Effect Preambleformat_boldformat_italicformat_underlinedundoredoSave DC",
+          "overflow": 81
+        }
+      ],
+      "exemptions": [
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Nickname (overrides {NAME} if set)",
+          "overflow": 128,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Proficiency Bonus",
+          "overflow": 95,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Lair CR",
+          "overflow": 12,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subtype Tag",
+          "overflow": 64,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Alignment",
+          "overflow": 61,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Base AC Source",
+          "overflow": 76,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Current Flat AC",
+          "overflow": 77,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Ability Bonus",
+          "overflow": 58,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "None",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defense Item",
+          "overflow": 59,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "None",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Temporary / Reaction AC",
+          "overflow": 83,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Conditional AC Modifier",
+          "overflow": 75,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)",
+          "overflow": 277,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "On Miss Effect (Decoupled)",
+          "overflow": 116,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "When Hit Effect (Decoupled)",
+          "overflow": 122,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Language to Add",
+          "overflow": 58,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Condition / Trigger",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Speed (select or type to add)...",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Movement Type",
+          "overflow": 74,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "walk",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Speed",
+          "overflow": 39,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Note",
+          "overflow": 30,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Search Scope / Verbose Rider",
+          "overflow": 8,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Influence Scope / Verbose Rider",
+          "overflow": 22,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 67,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Use Tool Scope / Verbose Rider",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Add Sense (Modular 5e Physiology)",
+          "overflow": 64,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Vulnerability to Add",
+          "overflow": 130,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Vulnerability to Add",
+          "overflow": 138,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Resistance to Add",
+          "overflow": 122,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Resistance to Add",
+          "overflow": 130,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Damage Immunity to Add",
+          "overflow": 111,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Select or Type Condition Immunity to Add",
+          "overflow": 119,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Class",
+          "overflow": 35,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subclass",
+          "overflow": 61,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Slot Casting Notes",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Innate Casting Notes",
+          "overflow": 45,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        }
+      ]
+    },
+    {
+      "width": 1600,
+      "zoom": 1,
+      "effectiveCssWidth": 1600,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 1600,
+      "zoom": 2,
+      "effectiveCssWidth": 800,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Nickname (overrides {NAME} if set)",
+          "overflow": 48,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Size",
+          "overflow": 13,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Medium",
+          "overflow": 42,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Type",
+          "overflow": 16,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "humanoid",
+          "overflow": 53,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subtype Tag",
+          "overflow": 38,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Species / Lineage",
+          "overflow": 99,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Alignment",
+          "overflow": 21,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Base AC Source",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Current Flat AC",
+          "overflow": 24,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Defensive Mechanic / Invulnerability Mode (37 Permutable Archetypes)",
+          "overflow": 117,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "On Miss Effect (Decoupled)",
+          "overflow": 36,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "When Hit Effect (Decoupled)",
+          "overflow": 42,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "HD Count",
+          "overflow": 25,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "HD Type",
+          "overflow": 17,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "HP Modifier",
+          "overflow": 40,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Mechanic text",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subclass",
+          "overflow": 21,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Casting Stat",
+          "overflow": 69,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "INT",
+          "overflow": 7,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Save DC",
+          "overflow": 50,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Resource Mode",
+          "overflow": 63,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Spell Slots (Standard)",
+          "overflow": 111,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Refresh Cadence",
+          "overflow": 72,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Long Rest",
+          "overflow": 37,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Title Disclosure",
+          "overflow": 62,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Class Names (e.g. Level 9 Wizard)",
+          "overflow": 189,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Interval",
+          "overflow": 72,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Long Rest",
+          "overflow": 37,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "zoom": 1,
+      "effectiveCssWidth": 1920,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    },
+    {
+      "width": 1920,
+      "zoom": 2,
+      "effectiveCssWidth": 960,
+      "panelCount": 15,
+      "issues": [],
+      "scrollable": [],
+      "exemptions": [
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 7,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Medium",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 50,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "humanoid",
+          "overflow": 26,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Subtype Tag",
+          "overflow": 11,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Species / Lineage",
+          "overflow": 59,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "STR",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "DEX",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CON",
+          "overflow": 13,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "INT",
+          "overflow": 6,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "WIS",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "CHA",
+          "overflow": 13,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "10",
+          "overflow": 5,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 93,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 32,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Caster Level",
+          "overflow": 74,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "1",
+          "overflow": 14,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Casting Stat",
+          "overflow": 33,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 21,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Save DC",
+          "overflow": 15,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Resource Mode",
+          "overflow": 10,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Spell Slots (Standard)",
+          "overflow": 71,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 134,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Refresh Cadence",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Title Disclosure",
+          "overflow": 9,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "SPAN",
+          "class": "ellipsis",
+          "text": "Class Names (e.g. Level 9 Wizard)",
+          "overflow": 149,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 211,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Spells Count",
+          "overflow": 127,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "DIV",
+          "class": "q-field__label no-pointer-events absolute ellipsis",
+          "text": "Prepared Interval",
+          "overflow": 19,
+          "reason": "Quasar field label/selection truncation; full field value remains available to assistive technology and the opened control"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 39,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        },
+        {
+          "tag": "INPUT",
+          "class": "q-select__focus-target",
+          "text": "",
+          "overflow": 61,
+          "reason": "Quasar zero-width keyboard focus helper"
+        }
+      ]
+    }
+  ],
+  "clipped": 0
+}

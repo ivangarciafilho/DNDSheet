@@ -1,3 +1,4 @@
+import type { SkillPassiveState } from './skill-passive-state.ts'
 import type { RandomTable } from './random-table'
 import type { ComposableInitiativeRider } from './initiative-composer'
 
@@ -599,6 +600,12 @@ export interface ActionOrientedPassives {
   bonusActionHide?: boolean
   bonusActionInfluence?: boolean
   bonusActionTools?: boolean
+  /** Explicit checkbox preference; absent preserves legacy placement or defaults to moving. */
+  searchMoveToActionGroup?: boolean
+  studyMoveToActionGroup?: boolean
+  influenceMoveToActionGroup?: boolean
+  hideMoveToActionGroup?: boolean
+  toolsMoveToActionGroup?: boolean
   searchPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
   studyPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
   hidePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
@@ -1086,6 +1093,8 @@ export interface Monster {
   portrait?: MonsterPortrait
   extendedHp?: MonsterExtendedHp
   detailedDamageModifiers?: DetailedDamageModifier[]
+  /** Canonical saved skill overrides; formerly an unpersisted editor property. */
+  passives?:SkillPassiveState
   actionOrientedPassives?: ActionOrientedPassives
   vulnerabilitiesList?: DamageDefenseItem[]
   conditionVulnerabilitiesList?: DamageDefenseItem[]
@@ -1527,6 +1536,7 @@ export function defaultMonster(): Monster {
       },
     },
     detailedDamageModifiers: [],
+    passives: undefined,
     actionOrientedPassives: {
       bonusActionSearch: false,
       bonusActionStudy: false,

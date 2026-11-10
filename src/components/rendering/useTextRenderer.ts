@@ -1,3 +1,4 @@
+import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
   formatDefenseItem,
   formatDefenseList,
@@ -38,8 +39,10 @@ import {
   normalizeSkillKey,
   passiveConfigKey,
   passiveScore,
+  skillGroupPlacement,
 } from 'src/core/domain/skill-action-groups'
 import type {
+  CombatSkillGroupId,
   SkillActionType,
   SkillCheckEntry,
   SkillCheckInput,
@@ -47,7 +50,7 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 import { describePools } from 'src/core/domain/paragon-pools'
-import { spellLevelHeading } from 'src/core/domain/spell-plate'
+import { spellLevelHeading, spellCadenceDiffers } from 'src/core/domain/spell-plate'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template
@@ -986,7 +989,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return parts.length > 0 ? `${baseHtml}, ${parts.join('; ')}` : baseHtml
   }
 
-  const actionPassivesGroups = computed(() => {
+  const combatSkillRows = computed(() => {
     const aop = monster.actionOrientedPassives as Record<string, any> | undefined
     const editorPassives = (monster as any).passives as Record<string, any> | undefined
     const passiveCfg = (key: string) => {
@@ -1062,9 +1065,15 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       },
     })
 
-    const placementFor = (groupId: string): string => {
-      return aop?.[groupId + 'Placement'] ?? editorPassives?.[groupId + 'Placement'] ?? (monster as any)[groupId + 'Placement'] ?? 'header'
-    }
+    return rows
+  })
+
+  const actionPassivesGroups = computed(() => {
+    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
+    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const rows = combatSkillRows.value
+    const placementFor = (groupId: CombatSkillGroupId, actionType: SkillActionType = 'Action') =>
+      skillGroupPlacement(groupId, actionType, editorPassives, aop, monster as unknown as Record<string, unknown>)
 
     const groups: {
       name: string
@@ -1074,7 +1083,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       badges: string[]
       tip: string
     }[] = rows
-      .filter((row) => placementFor(row.id) === 'header')
+      .filter((row) => placementFor(row.id, row.actionType) === 'header')
       .map((row) => {
         const html = formatGroupRow(row)
         return {
@@ -1089,10 +1098,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
     // Tools: same entry grammar as skills ("13, +3 Calligrapher's Supplies")
     if (placementFor('tools') === 'header' && Array.isArray(monster.tools) && monster.tools.length > 0) {
-      const defaultToolAction = (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+      const defaultToolAction = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
       for (const actionType of ['Action', 'Bonus Action'] as SkillActionType[]) {
         const entries = monster.tools
-          .filter((tool) => (tool.bonusAction ? 'Bonus Action' : defaultToolAction) === actionType)
+          .filter((tool) => (typeof tool.bonusAction === 'boolean' ? (tool.bonusAction ? 'Bonus Action' : 'Action') : defaultToolAction) === actionType)
           .map((tool) => {
             const bonus = tool.override
               ? tool.overrideValue
@@ -1553,27 +1562,45 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const classSpellcastingSlots = computed(() => {
-    const spellsBySlot = monster.spellsBySlot
-
     const sc = monster.spellcasting
+    // Selection owns disclosure; a spell point/focus row must not disappear for having no slot count.
+    const spellsBySlot = Array.from({ length: 9 }, (_, index) => ({
+      level: index + 1, slots: sc?.slots?.[index] || 0,
+      spells: monster.knownSpellsOfLevel(index + 1),
+    }))
     // Same heading as the web plate (spellLevelHeading); the old label put the cadence after the colon.
-    return spellsBySlot.map((s) => {
+    const renderSpells = (names: string[], cadences: Record<string, string> | undefined, rowCadence: string) => names.map((name) => {
+      const cadence = cadences?.[name]
+      return spellCadenceDiffers(cadence, rowCadence) ? `${name} [${cadenceLabel(cadence)}]` : name
+    }).join(', ')
+    const primary = spellsBySlot.map((s) => {
+      const levelCadence = sc?.levelCadenceMap?.[s.level]
+      const spells = s.spells.filter((name) => sc?.standard?.includes(name))
       return {
-        ...s,
+        ...s, spells,
         renderedLabel: spellLevelHeading({
-          level: s.level,
-          slots: sc?.slots,
-          resourceType: sc?.resourceType,
-          className: sc?.class,
-          refreshRate: sc?.refreshRate,
-          customRefreshRate: sc?.customRefreshRate,
-          levelCadence: sc?.levelCadenceMap?.[s.level],
+          level: s.level, slots: sc?.slots, resourceType: sc?.resourceType, className: sc?.class,
+          refreshRate: sc?.refreshRate, customRefreshRate: sc?.customRefreshRate, levelCadence,
           bonusAction: Boolean(sc?.bonusActionLevelMap?.[s.level]),
           labels: { cantrips: t('editor.spellcasting.slot.cantripLabel'), level: t('editor.spellcasting.slot.levelWord'), bonusAction: t('editor.spellcasting.slot.bonusActionWord') },
         }),
-        renderedSpells: s.spells.join(', '),
+        renderedSpells: renderSpells(spells, sc?.spellCadenceMap, levelCadence === 'hidden' ? '' : cadenceLabel(levelCadence || sc?.customRefreshRate || sc?.refreshRate || (sc?.class === 'Warlock' ? 'short_rest' : 'long_rest'))),
       }
-    })
+    }).filter((row) => row.spells.length)
+    const secondary = (sc?.classes || []).flatMap((source) => Array.from({ length: 10 }, (_, level) => {
+      const spells = monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name))
+      const cadence = source.levelCadences?.[level]
+      return {
+        level, slots: source.slots?.[level - 1] || 0, spells,
+        renderedLabel: [source.className, source.subclass].filter(Boolean).join(' · ') + ' · ' + spellLevelHeading({
+          level, slots: source.slots || (source.className === 'Warlock' || ['pact', 'focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
+          className: source.className, resourceType: source.resourceType, refreshRate: source.refreshRate,
+          levelCadence: cadence, bonusAction: Boolean(source.levelBonusAction?.[level]),
+        }),
+        renderedSpells: renderSpells(spells, source.spellCadenceMap, cadence === 'hidden' ? '' : cadenceLabel(cadence || (level === 0 ? 'at_will' : source.refreshRate || (source.className === 'Warlock' ? 'short_rest' : 'long_rest')))),
+      }
+    }).filter((row) => row.spells.length))
+    return [...primary, ...secondary]
   })
 
   const innateSpellcastingLists = computed(() => {
@@ -1596,32 +1623,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const relocatedCombatActions = (targetPlacement: 'action' | 'bonus_action' | 'legendary'): string[] => {
     const aop = monster.actionOrientedPassives as Record<string, any> | undefined
     const editorPassives = (monster as any).passives as Record<string, any> | undefined
-    const placementFor = (groupId: string): string => {
-      return aop?.[groupId + 'Placement'] ?? editorPassives?.[groupId + 'Placement'] ?? (monster as any)[groupId + 'Placement'] ?? 'header'
-    }
-    const groupType = (flag: unknown, editorType: unknown): SkillActionType =>
-      flag || editorType === 'Bonus Action' ? 'Bonus Action' : 'Action'
-    const inputs = (monster.skills ?? []).map((sk) => ({
-      key: normalizeSkillKey(sk.key),
-      label: skillLabel(sk.key, sk.skill?.label),
-      stat: ((sk.skill?.stat as DndStat) ?? ((SKILL as any)[sk.key]?.stat as DndStat)) ?? 'INT',
-      bonus: bonusForSkill(monster, sk),
-      advantage: Boolean(sk.advantage),
-      disadvantage: Boolean(sk.disadvantage),
-      condition: sk.condition?.trim() || sk.conditional?.trim() || '',
-    }))
-    const rows = computeSkillGroupLayout({
-      stats: monster.stats,
-      skills: inputs,
-      groupActionTypes: {
-        search: groupType(aop?.bonusActionSearch, editorPassives?.searchActionType),
-        study: groupType(aop?.bonusActionStudy, editorPassives?.studyActionType),
-        influence: groupType(aop?.bonusActionInfluence, editorPassives?.influenceActionType),
-        hide: groupType(aop?.bonusActionHide, editorPassives?.hideActionType),
-      },
-    })
+    const placementFor = (groupId: CombatSkillGroupId, actionType: SkillActionType = 'Action') =>
+      skillGroupPlacement(groupId, actionType, editorPassives, aop, monster as unknown as Record<string, unknown>)
+    const rows = combatSkillRows.value
     const actionResults = rows
-      .filter((row) => placementFor(row.id) === targetPlacement)
+      .filter((row) => placementFor(row.id, row.actionType) === targetPlacement)
       .map((row) => {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
         const scores = formatGroupRow(row)
@@ -1634,16 +1640,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       })
 
     // Tools relocation
-    const effectiveToolsPlacement = (): string => {
-      const p = placementFor('tools')
-      if (p === 'header') return 'header'
-      if (p === 'legendary') return 'legendary'
-      if (p === 'bonus_action' || (monster as any).toolsActionType === 'Bonus Action') return 'bonus_action'
-      return 'action'
-    }
-    const toolPlacement = effectiveToolsPlacement()
-    if (toolPlacement === targetPlacement && Array.isArray(monster.tools) && monster.tools.length > 0) {
-      const toolEntries = monster.tools.map((tool) => {
+    const defaultToolAction: SkillActionType = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+    const tools = (Array.isArray(monster.tools) ? monster.tools : []).filter(tool => {
+      const actionType = typeof tool.bonusAction === 'boolean' ? (tool.bonusAction ? 'Bonus Action' : 'Action') : defaultToolAction
+      return placementFor('tools', actionType) === targetPlacement
+    })
+    if (tools.length > 0) {
+      const toolEntries = tools.map((tool) => {
         const bonus = tool.override
           ? tool.overrideValue
           : statModifier(monster.stats[tool.stat] ?? 10) +

@@ -387,7 +387,7 @@
 
               <!-- Text block container -->
               <div v-if="container.kind === 'text'">
-                <q-input v-help="'Enter container text / rider for the actions editor.'"
+                <mechanic-text-editor v-help="'Enter container text / rider for the actions editor.'"
                   v-model="container.text"
                   type="textarea"
                   rows="2"
@@ -447,6 +447,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
@@ -489,6 +490,7 @@ export interface UnifiedEntry {
 export default defineComponent({
   name: 'ActionsEditor',
   components: {
+    MechanicTextEditor,
     MonsterTextEditor,
     SwapButtons,
     ComposerChain,

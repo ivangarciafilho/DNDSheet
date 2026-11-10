@@ -11,8 +11,11 @@ export function parseDiagnostics(output) {
   }
   return diagnostics
 }
+// Compiler display truncation counts describe omitted shape members, not the error itself.
+// Normalize this exact compiler token only; preserve all visible types and diagnostics.
+const normalizeTruncationCounts = message => message.replace(/\.\.\. \d+ more \.\.\./g, '... <count> more ...')
 export function compareDiagnostics(current, baseline) {
-  const key = diagnostic => JSON.stringify([diagnostic.file, diagnostic.code, diagnostic.message])
+  const key = diagnostic => JSON.stringify([diagnostic.file, diagnostic.code, normalizeTruncationCounts(diagnostic.message)])
   const remaining = new Map()
   for (const diagnostic of baseline) remaining.set(key(diagnostic), (remaining.get(key(diagnostic)) || 0) + 1)
   const added = []

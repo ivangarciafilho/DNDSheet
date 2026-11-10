@@ -1,3 +1,4 @@
+import type { SkillPassiveState } from '../core/domain/skill-passive-state'
 import type { AbilityOutcome, AbilityTargeting, AttackReach, AttackSource } from '../core/domain/types'
 
 export interface MonsterSenseItem {
@@ -369,6 +370,12 @@ export interface ActionOrientedPassives {
   bonusActionHide?: boolean
   bonusActionInfluence?: boolean
   bonusActionTools?: boolean
+  /** Explicit checkbox preference; absent preserves legacy placement or defaults to moving. */
+  searchMoveToActionGroup?: boolean
+  studyMoveToActionGroup?: boolean
+  influenceMoveToActionGroup?: boolean
+  hideMoveToActionGroup?: boolean
+  toolsMoveToActionGroup?: boolean
   searchPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
   studyPlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
   hidePlacement?: 'header' | 'action' | 'bonus_action' | 'legendary'
@@ -987,6 +994,8 @@ export interface Monster {
       levelBonusAction?: Record<number, boolean>
       spellCadenceMap?: Record<string, string>
       actionType?: 'Action' | 'Bonus Action'
+      resourceValue?: number
+      refreshRate?: string
       resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
     }>
   }
@@ -1023,6 +1032,8 @@ export interface Monster {
   portrait?: MonsterPortrait
   extendedHp?: MonsterExtendedHp
   detailedDamageModifiers?: DetailedDamageModifier[]
+  /** Canonical saved skill overrides; formerly an unpersisted editor property. */
+  passives?:SkillPassiveState
   actionOrientedPassives?: ActionOrientedPassives
   vulnerabilitiesList?: DamageDefenseItem[]
   conditionVulnerabilitiesList?: DamageDefenseItem[]

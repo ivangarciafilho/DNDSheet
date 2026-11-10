@@ -1,4 +1,5 @@
 // A11.9 declarative random-outcome tables: stable ids, dice validation, coverage diagnostics, prose/table output.
+import { mechanicRichHtml, mechanicPlainText } from './mechanic-rich-text.ts'
 export interface RandomTableRow { id: string; min: number; max: number; text: string }
 export interface RandomTable { id: string; title?: string; dice: string; rows: RandomTableRow[]; fallback?: string }
 export interface TableDiagnostic { kind: 'dice' | 'gap' | 'overlap' | 'empty' | 'range'; message: string; rowIds?: string[] }
@@ -43,14 +44,14 @@ export function lookupRoll(table: RandomTable, roll: number): string | null {
 const span = (r: RandomTableRow) => (r.min === r.max ? `${r.min}` : `${r.min}–${r.max}`);
 
 export function tableToProse(table: RandomTable): string {
-  const rows = [...table.rows].sort((a, b) => a.min - b.min).map((r) => `${span(r)}: ${r.text}`);
-  if (table.fallback) rows.push(`otherwise: ${table.fallback}`);
+  const rows = [...table.rows].sort((a, b) => a.min - b.min).map((r) => `${span(r)}: ${mechanicPlainText(r.text)}`);
+  if (table.fallback) rows.push(`otherwise: ${mechanicPlainText(table.fallback)}`);
   return `Roll ${table.dice}: ${rows.join('; ')}.`;
 }
 
 export function tableToMarkdown(table: RandomTable): string {
   const head = `| ${table.dice} | Result |\n|---|---|`;
-  const rows = [...table.rows].sort((a, b) => a.min - b.min).map((r) => `| ${span(r)} | ${r.text.replace(/\|/g, '\\|')} |`);
+  const rows = [...table.rows].sort((a, b) => a.min - b.min).map((r) => `| ${span(r)} | ${mechanicPlainText(r.text).replace(/\|/g, '\\|')} |`);
   return [head, ...rows].join('\n');
 }
 
@@ -144,9 +145,9 @@ export function formatRandomTableAsHtml(table: RandomTable): string {
   const head = `<thead><tr><th scope="col">${esc(table.dice)}</th><th scope="col">Effect</th></tr></thead>`
   const rows = [...table.rows]
     .sort((a, b) => a.min - b.min)
-    .map((r) => `<tr><td>${esc(span(r))}</td><td>${esc(r.text)}</td></tr>`)
+    .map((r) => `<tr><td>${esc(span(r))}</td><td>${mechanicRichHtml(r.text)}</td></tr>`)
   if (table.fallback) {
-    rows.push(`<tr><td><em>Otherwise</em></td><td>${esc(table.fallback)}</td></tr>`)
+    rows.push(`<tr><td><em>Otherwise</em></td><td>${mechanicRichHtml(table.fallback)}</td></tr>`)
   }
   const body = `<tbody>${rows.join('')}</tbody>`
   return `<div class="random-table-container" data-table-id="${esc(table.id)}">${titleHtml}<table class="outcome-dice-table random-table">${head}${body}</table></div>`

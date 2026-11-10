@@ -862,7 +862,7 @@
         <!-- 6g. Custom Defensive Condition -->
         <div v-if="acConfig.conditionMode === 'custom'" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12">
-            <q-input v-help="'Enter custom defensive condition for the basics editor.'"
+            <mechanic-text-editor v-help="'Enter custom defensive condition for the basics editor.'"
               v-model="acConfig.customCondition"
               dense
               outlined
@@ -1178,7 +1178,7 @@
               />
             </div>
             <div v-else-if="initiativeConfig.specialTrigger === 'custom'" class="col-12 col-sm-6">
-              <q-input v-help="'Enter custom initiative note for the basics editor.'"
+              <mechanic-text-editor v-help="'Enter custom initiative note for the basics editor.'"
                 v-model="initiativeConfig.customEffectNote"
                 dense
                 outlined
@@ -1313,7 +1313,7 @@
                 />
               </div>
               <div v-else-if="newRiderActionType === 'custom'" class="col-12 col-sm-6">
-                <q-input v-help="'Enter custom action text for the basics editor.'"
+                <mechanic-text-editor v-help="'Enter custom action text for the basics editor.'"
                   v-model="newRiderCustomText"
                   dense
                   outlined
@@ -1364,7 +1364,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="monster.paragonConfig.transitionEffect"
                     dense
                     outlined
@@ -2008,7 +2008,7 @@
                   />
                 </div>
                 <div v-else class="col-12 col-sm-6">
-                  <q-input v-help="'Enter custom disruption / condition note for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter custom disruption / condition note for the basics editor.'"
                     v-model="extendedHp.regeneration.disruptedByNote"
                     dense
                     outlined
@@ -2240,7 +2240,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input v-help="'Enter custom exception / condition note for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter custom exception / condition note for the basics editor.'"
                     v-model="deathPrevention.customNote"
                     label="Custom Exception / Condition Note"
                     dense
@@ -2665,7 +2665,7 @@
                 </q-expansion-item>
 
                 <div class="col-12 q-mt-xs">
-                  <q-input v-help="'Enter additional note for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter additional note for the basics editor.'"
                     v-model="lang.note"
                     label="Additional Note"
                     dense
@@ -2705,7 +2705,7 @@
 
               <div class="row q-col-gutter-xs items-center text-caption q-mt-xs">
                 <div class="col-12 col-sm-4">
-                  <q-input v-help="'Enter dc (calm / cease aggression) for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter dc (calm / cease aggression) for the basics editor.'"
                     v-model="getAnimalHandling(lang).peacefulOutcome"
                     label="DC (Calm / Cease Aggression)"
                     dense
@@ -2715,7 +2715,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-4">
-                  <q-input v-help="'Enter dc+5 (basic commands) for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter dc+5 (basic commands) for the basics editor.'"
                     v-model="getAnimalHandling(lang).commandOutcome"
                     label="DC+5 (Basic Commands)"
                     dense
@@ -2725,7 +2725,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-4">
-                  <q-input v-help="'Enter dc+10 (recruit / bond) for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter dc+10 (recruit / bond) for the basics editor.'"
                     v-model="getAnimalHandling(lang).recruitOutcome"
                     label="DC+10 (Recruit / Bond)"
                     dense
@@ -2735,7 +2735,7 @@
                   />
                 </div>
                 <div class="col-12 q-mt-xs">
-                  <q-input v-help="'Enter custom ruling note for the basics editor.'"
+                  <mechanic-text-editor v-help="'Enter custom ruling note for the basics editor.'"
                     v-model="getAnimalHandling(lang).customNotes"
                     label="Custom Ruling Note"
                     dense
@@ -2797,7 +2797,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="getAnimalsConfig(lang).note"
                     label="Note" v-help="'Free text shown with this entry.'"
                     dense
@@ -2857,7 +2857,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="getPlantsConfig(lang).note"
                     label="Note" v-help="'Free text shown with this entry.'"
                     dense
@@ -2912,7 +2912,7 @@
                   />
                 </div>
                 <div class="col-12">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="getUndeadConfig(lang).note"
                     label="Note" v-help="'Free text shown with this entry.'"
                     dense
@@ -2977,7 +2977,7 @@
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="getDeadConfig(lang).note"
                     label="Note" v-help="'Free text shown with this entry.'"
                     dense
@@ -3008,7 +3008,7 @@
                 </div>
 
                 <div class="col-10 col-sm-3">
-                  <q-input
+                  <mechanic-text-editor
                     v-model="lang.note"
                     label="Note" v-help="'Free text shown with this entry.'"
                     dense
@@ -3065,6 +3065,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { STANDARD_ALIGNMENT } from 'src/data/ALIGNMENT'
 import { CR_SELECT, LAIR_CR_SELECT } from 'src/data/CR'
 import { DICE_SELECT, DIE_LOOKUP } from 'src/data/DICE'
@@ -3173,7 +3174,7 @@ const DEATH_EXCEPTIONS = [
 
 export default defineComponent({
   name: 'BasicsEditor',
-  components: { LockToggleButton, SwapButtons, FormulaField },
+  components: { MechanicTextEditor, LockToggleButton, SwapButtons, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const editorStore = useEditorStore()

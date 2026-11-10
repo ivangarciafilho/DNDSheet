@@ -1,3 +1,4 @@
+import { actionRecharge } from './action-usage.ts'
 import { CADENCES, cadenceDefinition, formatLimitedUses } from './cadence.ts'
 import type { DamageDefenseItem, MonsterLanguageItem, MonsterExtendedHp, MonsterTrait, MonsterAcConfig } from './types.ts'
 import { buildFormulaContext, evaluateFormula, normalizeLegacyFormula } from './formula.ts'
@@ -555,6 +556,9 @@ export function computeTraitTag(trait: MonsterTrait): string {
   }
 
   const explicitTiming = trait.rechargeTiming || ''
+  // Role copies retain action recharge fields; explicit legacy Trait cadence still wins.
+  const sharedRecharge = !explicitTiming && actionRecharge(trait)
+  if (sharedRecharge) return /^recharge/i.test(sharedRecharge) ? sharedRecharge : `Recharge ${sharedRecharge}`
   const count = trait.rechargeCount ?? trait.limitedUse?.count ?? 0
   const timing = explicitTiming || (count > 0 && trait.limitedUse?.rate ? trait.limitedUse.rate.toUpperCase() : '')
   const trigger = trait.conditionalTrigger?.trim() || ''

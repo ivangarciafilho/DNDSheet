@@ -129,7 +129,7 @@
               />
             </div>
             <div class="col-3 col-sm-3">
-              <q-input
+              <mechanic-text-editor
                 v-model="ba.trigger"
                 dense
                 outlined
@@ -168,6 +168,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
@@ -175,7 +176,7 @@ import SwapButtons from './widgets/SwapButtons.vue'
 
 export default defineComponent({
   name: 'VillainActionsEditor',
-  components: { MonsterTextEditor, SwapButtons },
+  components: { MechanicTextEditor, MonsterTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 

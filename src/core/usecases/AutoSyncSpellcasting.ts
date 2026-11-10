@@ -134,9 +134,19 @@ export const CLASS_DEFAULT_STAT: Record<string, DndStat> = {
   Paladin: 'CHA',
 }
 
+/** Unknown systems remain authored sources; they never inherit Wizard progression. */
+export function spellcastingRuleClass(className: string, subclass = ''): string | undefined {
+  const name = (className || '').trim().toLowerCase()
+  const sub = subclass.toLowerCase()
+  if (['artificer','bard','cleric','druid','paladin','ranger','sorcerer','warlock','wizard'].includes(name)) return name
+  if ((name === 'fighter' && sub.includes('eldritch knight')) || (name === 'rogue' && sub.includes('arcane trickster')) || name.includes('eldritch knight') || name.includes('arcane trickster') || name === 'third caster') return 'third caster'
+  return undefined
+}
+
 export function getSpellSlotsForClass(className: string, level: number): number[] {
   const clampedLevel = Math.max(1, Math.min(20, level))
-  const lower = className.toLowerCase()
+  const lower = spellcastingRuleClass(className)
+  if (!lower) return Array(9).fill(0)
 
   if (lower === 'paladin' || lower === 'ranger') {
     return [...(HALF_CASTER_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
@@ -147,7 +157,7 @@ export function getSpellSlotsForClass(className: string, level: number): number[
   if (lower === 'artificer') {
     return [...(ARTIFICER_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
   }
-  if (lower.includes('eldritch') || lower.includes('trickster') || lower.includes('third')) {
+  if (lower === 'third caster' || lower.includes('third')) {
     return [...(THIRD_CASTER_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
   }
 
@@ -162,7 +172,7 @@ export interface SpellcastingMetrics {
   cantripsKnown: number
   preparedSpells: number
   highestSlot: number
-  casterType: 'full' | 'half' | 'third' | 'pact' | 'artificer'
+  casterType: 'full' | 'half' | 'third' | 'pact' | 'artificer' | 'custom'
 }
 
 /**
@@ -171,9 +181,11 @@ export interface SpellcastingMetrics {
 export function calculateSpellcastingMetrics(
   className: string,
   level: number,
-  statMod = 0
+  statMod = 0,
+  subclass = ''
 ): SpellcastingMetrics {
-  const lower = (className || 'Wizard').toLowerCase()
+  const lower = spellcastingRuleClass(className, subclass)
+  if (!lower) return { cantripsKnown: 0, preparedSpells: 0, highestSlot: 0, casterType: 'custom' }
   const lvl = Math.max(1, Math.min(20, level || 1))
 
   let cantripsKnown = 3
@@ -199,7 +211,8 @@ export function calculateSpellcastingMetrics(
     highestSlot = Math.min(5, Math.ceil(lvl / 2))
     casterType = 'pact'
   } else if (lower === 'cleric' || lower === 'druid') {
-    cantripsKnown = lvl >= 10 ? 5 : (lvl >= 4 ? 4 : 3)
+    const initialCantrips = lower === 'druid' ? 2 : 3
+    cantripsKnown = initialCantrips + (lvl >= 4 ? 1 : 0) + (lvl >= 10 ? 1 : 0)
     preparedSpells = Math.max(1, lvl + statMod)
     casterType = 'full'
   } else if (lower === 'paladin') {
@@ -218,9 +231,11 @@ export function calculateSpellcastingMetrics(
     preparedSpells = Math.max(1, Math.floor(lvl / 2) + statMod)
     highestSlot = Math.min(5, Math.ceil(lvl / 4))
     casterType = 'artificer'
-  } else if (lower.includes('eldritch') || lower.includes('trickster')) {
-    cantripsKnown = lvl >= 10 ? 3 : 2
-    highestSlot = Math.min(4, Math.ceil(lvl / 6))
+  } else if (lower === 'third caster') {
+    const trickster = (className + ' ' + subclass).toLowerCase().includes('trickster')
+    cantripsKnown = lvl < 3 ? 0 : (trickster ? 3 : 2) + (lvl >= 10 ? 1 : 0)
+    const thirdKnown = [0,0,3,4,4,4,5,6,6,7,8,8,9,10,10,11,11,11,12,13]
+    preparedSpells = thirdKnown[lvl - 1]
     casterType = 'third'
   } else {
     // Default Wizard
@@ -230,6 +245,8 @@ export function calculateSpellcastingMetrics(
     casterType = 'full'
   }
 
+  highestSlot = getSpellSlotsForClass(lower, lvl).reduce((maximum, count, index) => count > 0 ? index + 1 : maximum, 0)
+  if (lower === 'paladin' && lvl < 2) preparedSpells = 0
   return {
     cantripsKnown,
     preparedSpells,
@@ -341,8 +358,8 @@ export function calculateMulticlassSpellcasting(
     if (l === 'warlock') return 0 // Warlock pact magic stays separate
     if (l === 'paladin' || l === 'ranger') return Math.floor(lvl / 2)
     if (l === 'artificer') return Math.ceil(lvl / 2)
-    if (l.includes('eldritch') || l.includes('trickster')) return Math.floor(lvl / 3)
-    return lvl // Full caster
+    if (l === 'third caster') return Math.floor(lvl / 3)
+    return spellcastingRuleClass(cls) ? lvl : 0 // Custom systems never grant standard slots
   }
 
   let combinedLevelSum = 0
@@ -360,14 +377,15 @@ export function calculateMulticlassSpellcasting(
     const saveDc = 8 + effectiveProf + mod
     const spellAttack = effectiveProf + mod
 
-    const metrics = calculateSpellcastingMetrics(cls, lvl, mod)
+    const rulesClass = spellcastingRuleClass(cls, entry.subclass)
+    const metrics = calculateSpellcastingMetrics(cls, lvl, mod, entry.subclass)
     totalPrepared += metrics.preparedSpells
     totalCantrips += metrics.cantripsKnown
 
     if (cls.toLowerCase() === 'warlock') {
       warlockLevel += lvl
     } else {
-      combinedLevelSum += getContribution(cls, lvl)
+      combinedLevelSum += getContribution(rulesClass || cls, lvl)
     }
 
     breakdowns.push({

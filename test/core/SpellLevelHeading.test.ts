@@ -36,3 +36,11 @@ test('the helper and the web plate composition never diverge', () => {
     }
   }
 })
+
+test('explicit cantrip cadence and bonus casting time survive shared headings', () => {
+  assert.equal(spellLevelHeading({ level: 0, levelCadence: 'short_rest', bonusAction: true }), 'Cantrips (Short Rest) (Bonus Action):')
+  assert.equal(spellLevelHeading({ level: 0, levelCadence: 'hidden', bonusAction: true }), 'Cantrips (Bonus Action):')
+})
+test('explicit lower pact row cadence is visible without repeating its shared slots', () => {
+  assert.equal(spellLevelHeading({ level: 1, slots: [0,0,2], className: 'Warlock', levelCadence: 'long_rest' }), '(Long Rest), Level 1:')
+})

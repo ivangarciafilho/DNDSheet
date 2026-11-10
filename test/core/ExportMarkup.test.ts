@@ -66,3 +66,14 @@ test('export markup: a misnested lead still exports as the entry name', () => {
   assert.equal(exportMarkup(trait, 'latex'), '\\DndMonsterAction{Awakening (Recharges after a Long Rest)} At zero HP.')
   assert.equal(exportMarkup(trait, 'markdown'), '***Awakening (Recharges after a Long Rest).*** At zero HP.')
 })
+
+
+test('export markup: structured plain text removes number chrome and all supported authored formatting',()=>{
+ const html='<b><i>Radiance.</i></b> <strong class="dnd-num">12</strong> <em>radiant</em> damage.<div><u>Until dawn</u>, <s>not dusk</s>; H<sub>2</sub> and x<sup>3</sup>.</div>'
+ assert.equal(exportMarkup(html,'plain'),'Radiance. 12 radiant damage.\nUntil dawn, not dusk; H2 and x3.')
+ assert.doesNotMatch(exportMarkup(html,'plain'),/<[^>]+>|dnd-num|\*\*/)
+ assert.equal(exportMarkup('HP &lt; 10 and AC &gt; 5; &amp; retained','plain'),'HP < 10 and AC > 5; & retained')
+ assert.equal(exportMarkup('<b>Authored</b> <em>formatting</em>','markdown'),'**Authored** *formatting*')
+ assert.equal(exportMarkup('<strong class="dnd-num"><em>+7</em></strong> against <strong><em>fiends</em></strong>','plain'),'+7 against fiends')
+ assert.equal(exportMarkup('&lt;em&gt;literal&lt;/em&gt; &amp; 10 < 20 and 30 > 5','plain'),'<em>literal</em> & 10 < 20 and 30 > 5')
+})

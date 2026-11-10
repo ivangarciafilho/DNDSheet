@@ -174,7 +174,7 @@
                   />
                 </div>
                 <div :class="skill.override ? 'col-8' : 'col-12'">
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     :model-value="skill.condition || skill.conditional || ''"
@@ -370,7 +370,7 @@
                   />
                 </div>
                 <div :class="tool.override ? 'col-6' : 'col-9'">
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="tool.condition"
@@ -399,26 +399,19 @@
         </div>
 
         <div class="row q-col-gutter-xs">
-          <!-- SEARCH: Insight, Perception, Survival -->
+          <!-- SEARCH: Insight, Medicine, Perception, Survival -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-primary">🔍 Search Checks</span>
                 <div class="row items-center q-gutter-x-xs">
-                  <q-select
-                    v-model="passives.searchPlacement"
-                    :options="placementOptions"
-                    emit-value
-                    map-options
+                  <q-checkbox
+                    :model-value="movesToActionGroup('search')"
+                    v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
                     dense
-                    outlined
-                    dark
-                    options-dense
-                    style="min-width: 140px;"
-                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
-                  >
-                    <q-tooltip class="dnd-tip">Relocate Search to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
-                  </q-select>
+                    label="Move To Action Group"
+                    @update:model-value="setMoveToActionGroup('search', $event)"
+                  />
                   <q-btn-toggle
                     v-model="passives.searchActionType"
                     dense
@@ -437,12 +430,12 @@
                 </div>
               </div>
               <div class="q-mb-xs">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   dark
                   v-model="passives.riders.search"
-                  label="Search Scope / Verbose Rider" v-help="'Extra wording for the Search action (Perception, Investigation, Survival).'"
+                  label="Search Scope / Verbose Rider" v-help="'Extra wording for the Search action (Insight, Medicine, Perception, Survival).'"
                   placeholder="e.g. 60ft across Ethereal and Material Planes: Sense the Presence of Undeads..."
                 >
                   <template #append>
@@ -451,7 +444,7 @@
                     </q-btn>
                   </template>
                   <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
-                </q-input>
+                </mechanic-text-editor>
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
@@ -521,7 +514,7 @@
                   />
                 </div>
                 <div class="col-4" v-else>
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="getPassive(pKey).condition"
@@ -532,26 +525,19 @@
             </div>
           </div>
 
-          <!-- STUDY: Arcana, History, Investigation, Medicine, Nature, Religion -->
+          <!-- STUDY: Arcana, History, Investigation, Nature, Religion -->
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-info">📖 Study Checks</span>
                 <div class="row items-center q-gutter-x-xs">
-                  <q-select
-                    v-model="passives.studyPlacement"
-                    :options="placementOptions"
-                    emit-value
-                    map-options
+                  <q-checkbox
+                    :model-value="movesToActionGroup('study')"
+                    v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
                     dense
-                    outlined
-                    dark
-                    options-dense
-                    style="min-width: 140px;"
-                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
-                  >
-                    <q-tooltip class="dnd-tip">Relocate Study to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
-                  </q-select>
+                    label="Move To Action Group"
+                    @update:model-value="setMoveToActionGroup('study', $event)"
+                  />
                   <q-btn-toggle
                     v-model="passives.studyActionType"
                     dense
@@ -570,7 +556,7 @@
                 </div>
               </div>
               <div class="q-mb-xs">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   dark
@@ -584,7 +570,7 @@
                     </q-btn>
                   </template>
                   <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
-                </q-input>
+                </mechanic-text-editor>
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
@@ -654,7 +640,7 @@
                   />
                 </div>
                 <div class="col-4" v-else>
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="getPassive(pKey).condition"
@@ -671,20 +657,13 @@
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-amber-8">🗣️ Influence Checks</span>
                 <div class="row items-center q-gutter-x-xs">
-                  <q-select
-                    v-model="passives.influencePlacement"
-                    :options="placementOptions"
-                    emit-value
-                    map-options
+                  <q-checkbox
+                    :model-value="movesToActionGroup('influence')"
+                    v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
                     dense
-                    outlined
-                    dark
-                    options-dense
-                    style="min-width: 140px;"
-                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
-                  >
-                    <q-tooltip class="dnd-tip">Relocate Influence to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
-                  </q-select>
+                    label="Move To Action Group"
+                    @update:model-value="setMoveToActionGroup('influence', $event)"
+                  />
                   <q-btn-toggle
                     v-model="passives.influenceActionType"
                     dense
@@ -703,7 +682,7 @@
                 </div>
               </div>
               <div class="q-mb-xs">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   dark
@@ -717,7 +696,7 @@
                     </q-btn>
                   </template>
                   <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
-                </q-input>
+                </mechanic-text-editor>
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
@@ -787,7 +766,7 @@
                   />
                 </div>
                 <div class="col-4" v-else>
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="getPassive(pKey).condition"
@@ -804,20 +783,13 @@
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-deep-purple-4">🥷 Hide Checks</span>
                 <div class="row items-center q-gutter-x-xs">
-                  <q-select
-                    v-model="passives.hidePlacement"
-                    :options="placementOptions"
-                    emit-value
-                    map-options
+                  <q-checkbox
+                    :model-value="movesToActionGroup('hide')"
+                    v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
                     dense
-                    outlined
-                    dark
-                    options-dense
-                    style="min-width: 140px;"
-                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
-                  >
-                    <q-tooltip class="dnd-tip">Relocate Hide to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
-                  </q-select>
+                    label="Move To Action Group"
+                    @update:model-value="setMoveToActionGroup('hide', $event)"
+                  />
                   <q-btn-toggle
                     v-model="passives.hideActionType"
                     dense
@@ -836,7 +808,7 @@
                 </div>
               </div>
               <div class="q-mb-xs">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   dark
@@ -850,7 +822,7 @@
                     </q-btn>
                   </template>
                   <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
-                </q-input>
+                </mechanic-text-editor>
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
@@ -920,7 +892,7 @@
                   />
                 </div>
                 <div class="col-4" v-else>
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="getPassive(pKey).condition"
@@ -937,20 +909,13 @@
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-teal-4">🛠️ Use Tool Checks</span>
                 <div class="row items-center q-gutter-x-xs">
-                  <q-select
-                    v-model="passives.toolsPlacement"
-                    :options="placementOptions"
-                    emit-value
-                    map-options
+                  <q-checkbox
+                    :model-value="movesToActionGroup('tools')"
+                    v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
                     dense
-                    outlined
-                    dark
-                    options-dense
-                    style="min-width: 140px;"
-                    label="Placement" v-help="'Where this activity appears on the sheet: header, Actions, Bonus Actions or Legendary Actions.'"
-                  >
-                    <q-tooltip class="dnd-tip">Relocate Use Tool to Actions, Bonus Actions, or Legendary Actions sections.</q-tooltip>
-                  </q-select>
+                    label="Move To Action Group"
+                    @update:model-value="setMoveToActionGroup('tools', $event)"
+                  />
                   <q-btn-toggle
                     v-model="passives.toolsActionType"
                     dense
@@ -969,7 +934,7 @@
                 </div>
               </div>
               <div class="q-mb-xs">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   dark
@@ -983,7 +948,7 @@
                     </q-btn>
                   </template>
                   <q-tooltip class="dnd-tip">Rider or verbose scope description rendered on the second row of the action plate.</q-tooltip>
-                </q-input>
+                </mechanic-text-editor>
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
@@ -1021,9 +986,11 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
+import type { SkillPassiveState } from 'src/core/domain/skill-passive-state'
 import { SKILL } from 'src/data/SKILL'
-import { SKILL_ACTION_GROUPS, passiveConfigKey, skillActionGroupFor } from 'src/core/domain/skill-action-groups'
-import type { SkillActionGroupId } from 'src/core/domain/skill-action-groups'
+import { SKILL_ACTION_GROUPS, passiveConfigKey, skillActionGroupFor, skillGroupPlacement } from 'src/core/domain/skill-action-groups'
+import type { CombatSkillGroupId, SkillActionGroupId } from 'src/core/domain/skill-action-groups'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent, watch } from 'vue'
 import { bonusForSkill, statModifier } from '../rendering/mathRendering'
@@ -1121,7 +1088,7 @@ const SKILL_SCOPE_META: Record<string, { category: string; color: string; icon: 
 
 export default defineComponent({
   name: 'SkillsEditor',
-  components: { SwapButtons },
+  components: { MechanicTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 
@@ -1171,20 +1138,15 @@ export default defineComponent({
       monster.addTool(clean, defaultStat)
     }
 
-    const ensurePassives = () => {
+    const ensurePassives = (): SkillPassiveState & { riders: Record<string, string> } => {
       if (!monster.passives) {
         monster.passives = {
-          hideActionType: 'Bonus Action',
-          searchActionType: 'Action',
-          studyActionType: 'Action',
-          influenceActionType: 'Action',
-          toolsActionType: 'Action',
-          searchPlacement: 'header',
-          studyPlacement: 'header',
-          influencePlacement: 'header',
-          hidePlacement: 'header',
-          toolsPlacement: 'header',
-          riders: { search: '', study: '', influence: '', hide: '', tools: '' },
+          hideActionType: monster.actionOrientedPassives?.bonusActionHide ? 'Bonus Action' : 'Action',
+          searchActionType: monster.actionOrientedPassives?.bonusActionSearch ? 'Bonus Action' : 'Action',
+          studyActionType: monster.actionOrientedPassives?.bonusActionStudy ? 'Bonus Action' : 'Action',
+          influenceActionType: monster.actionOrientedPassives?.bonusActionInfluence ? 'Bonus Action' : 'Action',
+          toolsActionType: monster.actionOrientedPassives?.bonusActionTools || (monster as unknown as { toolsActionType?: string }).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action',
+          riders: { ...(monster.actionOrientedPassives?.riders || {}) },
           perception: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
           investigation: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
           insight: { override: false, overrideValue: null, advantage: false, disadvantage: false, condition: '' },
@@ -1202,7 +1164,7 @@ export default defineComponent({
         }
       }
       if (!monster.passives.riders) {
-        monster.passives.riders = { search: '', study: '', influence: '', hide: '', tools: '' }
+        monster.passives.riders = { ...(monster.actionOrientedPassives?.riders || {}) }
       }
       if (typeof monster.passives.riders.search !== 'string') monster.passives.riders.search = ''
       if (typeof monster.passives.riders.study !== 'string') monster.passives.riders.study = ''
@@ -1210,18 +1172,13 @@ export default defineComponent({
       if (typeof monster.passives.riders.hide !== 'string') monster.passives.riders.hide = ''
       if (typeof monster.passives.riders.tools !== 'string') monster.passives.riders.tools = ''
 
-      if (!monster.passives.searchPlacement) monster.passives.searchPlacement = 'header'
-      if (!monster.passives.studyPlacement) monster.passives.studyPlacement = 'header'
-      if (!monster.passives.influencePlacement) monster.passives.influencePlacement = 'header'
-      if (!monster.passives.hidePlacement) monster.passives.hidePlacement = 'header'
-      if (!monster.passives.toolsPlacement) monster.passives.toolsPlacement = 'header'
 
-      if (!monster.passives.searchActionType) monster.passives.searchActionType = 'Action'
-      if (!monster.passives.studyActionType) monster.passives.studyActionType = 'Action'
-      if (!monster.passives.influenceActionType) monster.passives.influenceActionType = 'Action'
-      if (!monster.passives.hideActionType) monster.passives.hideActionType = 'Action'
-      if (!monster.passives.toolsActionType) monster.passives.toolsActionType = 'Action'
-      return monster.passives
+      if (!monster.passives.searchActionType) monster.passives.searchActionType = monster.actionOrientedPassives?.bonusActionSearch ? 'Bonus Action' : 'Action'
+      if (!monster.passives.studyActionType) monster.passives.studyActionType = monster.actionOrientedPassives?.bonusActionStudy ? 'Bonus Action' : 'Action'
+      if (!monster.passives.influenceActionType) monster.passives.influenceActionType = monster.actionOrientedPassives?.bonusActionInfluence ? 'Bonus Action' : 'Action'
+      if (!monster.passives.hideActionType) monster.passives.hideActionType = monster.actionOrientedPassives?.bonusActionHide ? 'Bonus Action' : 'Action'
+      if (!monster.passives.toolsActionType) monster.passives.toolsActionType = monster.actionOrientedPassives?.bonusActionTools || (monster as unknown as { toolsActionType?: string }).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+      return monster.passives as SkillPassiveState & { riders: Record<string, string> }
     }
 
     const passives = computed(() => ensurePassives())
@@ -1245,16 +1202,23 @@ export default defineComponent({
           }
         }
         const aop = monster.actionOrientedPassives
-        aop.bonusActionSearch = p.searchActionType === 'Bonus Action'
-        aop.bonusActionStudy = p.studyActionType === 'Bonus Action'
-        aop.bonusActionHide = p.hideActionType === 'Bonus Action'
-        aop.bonusActionInfluence = p.influenceActionType === 'Bonus Action'
+        if (!aop) return
+        if (p.searchActionType === 'Action' || p.searchActionType === 'Bonus Action') aop.bonusActionSearch = p.searchActionType === 'Bonus Action'
+        if (p.studyActionType === 'Action' || p.studyActionType === 'Bonus Action') aop.bonusActionStudy = p.studyActionType === 'Bonus Action'
+        if (p.hideActionType === 'Action' || p.hideActionType === 'Bonus Action') aop.bonusActionHide = p.hideActionType === 'Bonus Action'
+        if (p.influenceActionType === 'Action' || p.influenceActionType === 'Bonus Action') aop.bonusActionInfluence = p.influenceActionType === 'Bonus Action'
+        if (p.toolsActionType === 'Action' || p.toolsActionType === 'Bonus Action') aop.bonusActionTools = p.toolsActionType === 'Bonus Action'
 
-        aop.searchPlacement = p.searchPlacement || 'header'
-        aop.studyPlacement = p.studyPlacement || 'header'
-        aop.influencePlacement = p.influencePlacement || 'header'
-        aop.hidePlacement = p.hidePlacement || 'header'
-        aop.toolsPlacement = p.toolsPlacement || 'header'
+        if (p.searchPlacement !== undefined) aop.searchPlacement = p.searchPlacement
+        if (typeof p.searchMoveToActionGroup === 'boolean') aop.searchMoveToActionGroup = p.searchMoveToActionGroup
+        if (p.studyPlacement !== undefined) aop.studyPlacement = p.studyPlacement
+        if (typeof p.studyMoveToActionGroup === 'boolean') aop.studyMoveToActionGroup = p.studyMoveToActionGroup
+        if (p.influencePlacement !== undefined) aop.influencePlacement = p.influencePlacement
+        if (typeof p.influenceMoveToActionGroup === 'boolean') aop.influenceMoveToActionGroup = p.influenceMoveToActionGroup
+        if (p.hidePlacement !== undefined) aop.hidePlacement = p.hidePlacement
+        if (typeof p.hideMoveToActionGroup === 'boolean') aop.hideMoveToActionGroup = p.hideMoveToActionGroup
+        if (p.toolsPlacement !== undefined) aop.toolsPlacement = p.toolsPlacement
+        if (typeof p.toolsMoveToActionGroup === 'boolean') aop.toolsMoveToActionGroup = p.toolsMoveToActionGroup
         aop.riders = { ...(p.riders || {}) }
 
         if (!aop.conditions) aop.conditions = {}
@@ -1375,12 +1339,13 @@ export default defineComponent({
       ]
     }
 
-    const placementOptions = [
-      { label: 'Vitals / Header', value: 'header' },
-      { label: 'Actions', value: 'action' },
-      { label: 'Bonus Actions', value: 'bonus_action' },
-      { label: 'Legendary Actions', value: 'legendary' },
-    ]
+    const movesToActionGroup = (group: CombatSkillGroupId): boolean => skillGroupPlacement(
+      group, passives.value[group + 'ActionType'] === 'Bonus Action' ? 'Bonus Action' : 'Action',
+      passives.value, monster.actionOrientedPassives as Record<string, unknown>, monster as unknown as Record<string, unknown>,
+    ) !== 'header'
+    const setMoveToActionGroup = (group: CombatSkillGroupId, enabled: boolean) => {
+      passives.value[group + 'MoveToActionGroup'] = enabled
+    }
 
     const riderPresets = {
       search: [
@@ -1435,7 +1400,8 @@ export default defineComponent({
       toolOptions: availableTools,
       onToolSelected,
       passives,
-      placementOptions,
+      movesToActionGroup,
+      setMoveToActionGroup,
       riderPresets,
       applyRiderPreset,
       appendRiderTag,

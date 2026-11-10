@@ -14,7 +14,7 @@
           <div v-for="row in table.rows" :key="row.id" class="row q-col-gutter-sm items-center q-mt-xs">
             <q-input v-help="$t('editor.randomTables.fromHelp')" :model-value="row.min" type="number" dense outlined :label="$t('editor.randomTables.from')" class="col-3 col-sm-2" @update:model-value="(v) => (row.min = toInt(v, row.min))" />
             <q-input v-help="$t('editor.randomTables.toHelp')" :model-value="row.max" type="number" dense outlined :label="$t('editor.randomTables.to')" class="col-3 col-sm-2" @update:model-value="(v) => (row.max = toInt(v, row.max))" />
-            <q-input v-model="row.text" v-help="$t('editor.randomTables.resultHelp')" dense outlined :label="$t('editor.randomTables.result')" class="col" />
+            <mechanic-text-editor v-model="row.text" v-help="$t('editor.randomTables.resultHelp')" dense outlined :label="$t('editor.randomTables.result')" class="col" />
             <div class="col-auto">
               <q-btn v-help="$t('editor.randomTables.deleteRowHelp')" flat dense round icon="close" :aria-label="$t('editor.randomTables.deleteRow')" @click="monster.deleteRandomTableRow(table.id, row.id)" />
             </div>
@@ -26,7 +26,7 @@
             <div class="col-auto">
               <q-btn v-help="$t('editor.randomTables.pasteHelp')" flat dense icon="content_paste" :label="$t('editor.randomTables.paste')" @click="beginImport(table.id)" />
             </div>
-            <q-input v-help="$t('editor.randomTables.fallbackHelp')" :model-value="table.fallback ?? ''" dense outlined :label="$t('editor.randomTables.fallback')" class="col" @update:model-value="(v) => setFallback(table, v)" />
+            <mechanic-text-editor v-help="$t('editor.randomTables.fallbackHelp')" :model-value="table.fallback ?? ''" dense outlined :label="$t('editor.randomTables.fallback')" class="col" @update:model-value="(v) => setFallback(table, v)" />
           </div>
           <div v-for="(d, i) in diagnoseTable(table)" :key="i" class="text-negative text-caption q-mt-xs" role="status">⚠ {{ d.message }}</div>
           <div class="text-caption q-mt-xs text-grey-7">{{ tableToProse(table) }}</div>
@@ -60,6 +60,7 @@
 </template>
 
 <script setup lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { computed, ref } from 'vue'
 import { useHistoryStore } from 'src/stores/history-store'
 import { useMonsterStore } from 'src/stores/monster-store'

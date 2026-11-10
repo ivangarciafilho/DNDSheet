@@ -117,7 +117,7 @@
               class="row items-center q-gutter-x-xs q-gutter-y-xs q-pa-xs rounded-borders bg-purple-10 text-white"
               style="border: 1px solid rgba(255, 255, 255, 0.15);"
             >
-              <span class="text-caption text-weight-bold text-amber-3 q-mr-xs">5e Auto-Calculated:</span>
+              <span class="text-caption text-weight-bold text-amber-3 q-mr-xs">{{ metrics ? 'Legacy base-class reference:' : 'Custom source:' }}</span>
               <q-badge color="purple-7" class="text-caption text-weight-bold">
                 Ability: {{ monster.spellcasting.stat }}
               </q-badge>
@@ -127,20 +127,22 @@
               <q-badge color="purple-7" class="text-caption text-weight-bold">
                 Spell Attack {{ monster.spellAttackModifier >= 0 ? `+${monster.spellAttackModifier}` : monster.spellAttackModifier }}
               </q-badge>
-              <q-badge color="cyan-8" class="text-caption text-weight-bold">
+              <q-badge v-if="metrics" color="cyan-8" class="text-caption text-weight-bold">
                 Known Cantrips: {{ metrics?.cantripsKnown ?? 0 }}
               </q-badge>
-              <q-badge color="blue-8" class="text-caption text-weight-bold">
-                Prepared Spells: {{ metrics?.preparedSpells ?? 0 }}
+              <q-badge v-if="metrics" color="blue-8" class="text-caption text-weight-bold">
+                Base {{ metrics?.selectionModel }} spells: {{ metrics?.preparedSpells }}
               </q-badge>
-              <q-badge color="amber-8" class="text-caption text-weight-bold">
+              <q-badge v-if="metrics" color="amber-8" class="text-caption text-weight-bold">
                 Highest Slot: Level {{ metrics?.highestSlot ?? 0 }}
               </q-badge>
-              <q-badge color="grey-8" class="text-caption text-capitalize">
+              <q-badge v-if="metrics" color="grey-8" class="text-caption text-capitalize">
                 {{ metrics?.casterType ?? 'full' }} Caster
               </q-badge>
             </div>
           </div>
+
+          <p class="col-12 text-caption text-cyan-3 q-px-xs" data-primary-capacity>{{ sourceGuidance(primarySource) }}</p>
 
           <!-- Quality of Life: Presentation & Resource Mode Controls -->
           <div class="col-12 q-pa-xs q-mb-xs">
@@ -243,6 +245,8 @@
                   <q-select v-help="'Choose class for the class casting editor.'"
                     v-model="clsEntry.className"
                     :options="SrdCastingClassOptions"
+                    use-input
+                    new-value-mode="add-unique"
                     emit-value
                     map-options
                     label="Class"
@@ -299,91 +303,24 @@
                     </q-btn>
                   </div>
 
-                  <!-- Class Exclusive Spells Management -->
-                  <div class="col-12 q-mt-xs">
-                    <q-expansion-item
-                      dense
-                      dense-toggle
-                      expand-separator
-                      icon="menu_book"
-                      :label="`${clsEntry.className || 'Class'} Stored Spells (${(clsEntry.spells || []).length})`"
-                      class="bg-grey-10 rounded-borders text-caption"
-                    >
-                      <div class="q-pa-xs">
-                        <div class="row q-gutter-x-xs items-center q-mb-xs">
-                          <q-select
-                            v-model="newSpellForClass[clsEntry.id || cIdx]"
-                            :options="spellOptionsForClass(clsEntry.className, clsEntry.subclass)"
-                            use-input
-                            fill-input
-                            hide-selected
-                            clearable
-                            dense
-                            outlined
-                            dark
-                            label="Add Spell to Class" v-help="'Add a spell to this class’s list.'"
-                            class="col"
-                          />
-                          <q-btn v-help="'Add in the class casting editor.'"
-                            dense
-                            color="purple-4"
-                            icon="add"
-                            label="Add"
-                            size="sm"
-                            :disable="!newSpellForClass[clsEntry.id || cIdx]"
-                            @click="addSpellToClass(clsEntry, cIdx)"
-                          />
+                  <div class="col-12 q-mt-xs" :data-casting-source="clsEntry.id">
+                    <div class="text-caption text-cyan-3">{{ sourceGuidance(clsEntry) }}</div>
+                    <div class="row q-col-gutter-xs q-my-xs">
+                      <q-select v-model="clsEntry.resourceType" :options="resourceTypeOptions" emit-value map-options dense outlined dark label="Source resource" class="col-6" />
+                      <q-select v-model="clsEntry.refreshRate" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" />
+                      <q-input v-if="clsEntry.resourceType === 'focus' || clsEntry.resourceType === 'points'" v-model.number="clsEntry.resourceValue" type="number" min="0" dense outlined dark label="Authored resource maximum" hint="Custom value; no external system rules are inferred." class="col-12" />
+                      <q-checkbox v-model="clsEntry.bypassSlotFilter" dark dense label="Allow spells above this source’s level" />
+                    </div>
+                    <q-expansion-item v-for="(ordinal, level) in spellLevels" :key="level" dense dense-toggle :label="sourceLevelLabel(clsEntry, level)" :data-source-level="level" class="bg-grey-10 q-mb-xs">
+                      <div class="q-pa-sm">
+                        <div class="row q-col-gutter-xs q-mb-sm">
+                          <q-select :model-value="clsEntry.levelCadences?.[level] || (Number(level) === 0 ? 'at_will' : clsEntry.refreshRate || 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Level recovery" class="col-8" @update:model-value="value => setSourceLevelCadence(clsEntry, Number(level), value)" />
+                          <q-checkbox :model-value="!!clsEntry.levelBonusAction?.[level]" dense dark label="Bonus action" class="col-4" @update:model-value="value => setSourceLevelBonus(clsEntry, Number(level), value)" />
                         </div>
-
-                        <div v-if="clsEntry.spells && clsEntry.spells.length" class="column q-gutter-y-xs">
-                          <div
-                            v-for="(spName, spIdx) in clsEntry.spells"
-                            :key="spName + spIdx"
-                            class="row items-center justify-between q-pa-xs bg-grey-9 rounded-borders"
-                          >
-                            <span class="text-weight-medium text-white">{{ spName }}</span>
-                            <div class="row items-center q-gutter-x-xs">
-                              <q-select
-                                :model-value="monster.spellcasting?.spellCadenceMap?.[spName] || 'At Will'"
-                                :options="cadenceOptions"
-                                dense
-                                borderless
-                                dark
-                                emit-value
-                                map-options
-                                options-dense
-                                style="width: 110px;"
-                                @update:model-value="(v) => setSpellCadence(spName, v)"
-                              >
-                                <q-tooltip class="text-caption">Spell recovery cadence</q-tooltip>
-                              </q-select>
-                              <q-btn
-                                dense
-                                flat
-                                round
-                                size="xs"
-                                :color="monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'amber-4' : 'grey-5'"
-                                :icon="monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'flash_on' : 'flash_off'"
-                                @click="toggleSpellBonusAction(spName)"
-                              >
-                                <q-tooltip class="dnd-tip">
-                                  {{ monster.spellcasting?.bonusActionSpellMap?.[spName] ? 'Cast as Bonus Action' : 'Cast as Action' }}
-                                </q-tooltip>
-                              </q-btn>
-                              <q-btn
-                                flat
-                                round
-                                dense
-                                size="xs"
-                                icon="close"
-                                color="negative"
-                                @click="removeSpellFromClass(clsEntry, spIdx)"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div v-else class="text-grey-5 text-center text-xs q-pa-xs">
-                          No exclusive spells stored yet for this class. Select a spell above to assign.
+                        <q-select :model-value="assignedSourceLevel(clsEntry, Number(level))" :options="optionsSourceLevel(clsEntry, Number(level))" multiple emit-value map-options use-chips dense outlined dark label="Spells owned by this source" @update:model-value="value => setSourceLevelSpells(clsEntry, Number(level), value)" />
+                        <div v-for="spellId in assignedSourceLevel(clsEntry, Number(level))" :key="spellId" class="row items-center q-col-gutter-xs q-mt-xs">
+                          <span class="col">{{ getSpellName(spellId) }}</span>
+                          <q-select :model-value="clsEntry.spellCadenceMap?.[spellId] || clsEntry.levelCadences?.[level] || (Number(level) === 0 ? 'at_will' : clsEntry.refreshRate || 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Spell recovery" class="col-6" @update:model-value="value => setSourceSpellCadence(clsEntry, spellId, value)" />
                         </div>
                       </div>
                     </q-expansion-item>
@@ -553,7 +490,7 @@
           <!-- Folded Per-Level Spell Slots & Spells Selection (Primary Architecture) -->
           <div class="col-12 q-pa-xs q-mt-sm">
             <div class="text-caption text-weight-bold text-purple-3 q-mb-xs flex items-center justify-between">
-              <span>Folded Level Thresholds &amp; Assigned Spells</span>
+              <span>{{ monster.spellcasting.class || 'Primary source' }}{{ primarySubclass ? ` · ${primarySubclass}` : '' }} · Owned spells by level</span>
               <div class="row items-center q-gutter-x-xs">
                 <q-btn
                   dense
@@ -586,7 +523,7 @@
                 expand-separator
                 header-class="bg-grey-9 text-white rounded-borders"
                 style="border: 1px solid rgba(255, 255, 255, 0.1);"
-                :default-opened="level === 0 || monster.knownSpellsOfLevel(level).length > 0 || (level > 0 && monster.spellcasting.slots[level - 1] > 0)"
+                :default-opened="level === 0 || primaryAssignedLevel(Number(level)).length > 0 || (level > 0 && monster.spellcasting.slots[level - 1] > 0)"
               >
                 <!-- Level Header -->
                 <template #header>
@@ -656,7 +593,7 @@
                     <!-- Spells Count Chip -->
                     <div class="row items-center">
                       <q-badge color="purple-7" class="text-caption text-weight-bold">
-                        {{ monster.knownSpellsOfLevel(level).length }} Spells
+                        {{ primaryAssignedLevel(Number(level)).length }} Spells
                       </q-badge>
                     </div>
                   </div>
@@ -667,7 +604,7 @@
                   <!-- Spell Selector Filtered to this Level -->
                   <div class="q-mb-xs">
                     <q-select v-help="'Choose select or search spells to assign... for the class casting editor.'"
-                      :model-value="monster.knownSpellsOfLevel(level)"
+                      :model-value="primaryAssignedLevel(Number(level))"
                       :options="spellOptionsByLevel(level, classFilter ? monster.spellcasting.class : undefined, monster.spellcasting.subclass)"
                       multiple
                       use-chips
@@ -678,7 +615,7 @@
                       hide-bottom-space
                       label="Select or search spells to assign..."
                       input-debounce="0"
-                      @update:model-value="(val: string[]) => monster.updateSpellsAtLevel(level, val)"
+                      @update:model-value="(val: string[]) => setPrimaryLevelSpells(Number(level), val)"
                     >
                       <template #option="scope">
                         <q-item v-bind="scope.itemProps" dense>
@@ -697,9 +634,9 @@
                   </div>
 
                   <!-- Assigned Spells Cards Grid -->
-                  <div v-if="monster.knownSpellsOfLevel(level).length > 0" class="row q-col-gutter-xs q-mt-xs">
+                  <div v-if="primaryAssignedLevel(Number(level)).length > 0" class="row q-col-gutter-xs q-mt-xs">
                     <div
-                      v-for="spellId in monster.knownSpellsOfLevel(level)"
+                      v-for="spellId in primaryAssignedLevel(Number(level))"
                       :key="spellId"
                       class="col-12 col-sm-6 col-md-4"
                     >
@@ -759,6 +696,7 @@ import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
+import { sourceSpellOptions, sourceSpellCeiling, sourceAssignedAtLevel, replaceSourceLevelSpells, sourceCapacityReference, type CastingSourceSelection } from 'src/core/domain/casting-source-selection'
 import { subclassSpells } from 'src/core/domain/catalogs/subclass-spells'
 import { ref, computed, watch } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
@@ -767,7 +705,6 @@ import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-
 import { useSpellLevels } from '../spell/useSpellLevels'
 import { validateNumber } from './numberInput'
 import {
-  calculateSpellcastingMetrics,
   calculateMulticlassSpellcasting,
   getDefaultStatForClass,
   getSpellSlotsForClass,
@@ -776,6 +713,7 @@ import {
   ClassEntry
 } from 'src/core/usecases/AutoSyncSpellcasting'
 import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
+import type { DndStat } from 'src/core/domain/types'
 import { statModifier } from 'src/core/domain/math-utils'
 import { CADENCE_OPTIONS, RESOURCE_REFRESH_OPTIONS } from 'src/core/domain/catalogs/cadence'
 import { METAMAGIC_OPTIONS, metamagicCost } from 'src/core/domain/catalogs/metamagic'
@@ -785,7 +723,7 @@ export default defineComponent({
   name: 'ClassCastingEditor',
   components: { MonsterTextEditor, FormulaField },
   setup() {
-    const classFilter = ref(false)
+    const classFilter = ref(true)
 
     const monster = useMonsterStore()
     const resetPreparedCount = () => {
@@ -859,25 +797,8 @@ export default defineComponent({
       return getSubclassesForClass(clsName || 'Wizard')
     }
 
-    const metrics = computed(() => {
-      try {
-        const stat = monster.spellcasting.stat || 'INT'
-        const mod = statModifier(monster.stats?.[stat] ?? 10)
-        return calculateSpellcastingMetrics(
-          monster.spellcasting.class || 'Wizard',
-          monster.spellcasting.level || 1,
-          mod
-        )
-      } catch {
-        return {
-          cantripsKnown: 3,
-          preparedSpells: 4,
-          highestSlot: 1,
-          casterType: 'full',
-          recommendedStat: 'INT'
-        }
-      }
-    })
+    const primarySource = computed(() => ({ className: monster.spellcasting.class || '', subclass: primarySubclass.value, level: monster.spellcasting.level, stat: monster.spellcasting.stat, spells: monster.spellcasting.standard }))
+    const metrics = computed(() => sourceCapacityReference(spells.allSpellOptions, primarySource.value, statModifier(monster.stats?.[monster.spellcasting.stat || 'INT'] ?? 10)))
 
     const { ordinalSpellLevels } = useSpellLevels()
     const spellLevels = ordinalSpellLevels
@@ -955,6 +876,10 @@ export default defineComponent({
       }
     })
 
+    const supportedClassEntries = (entries: ClassEntry[]) => entries.filter(entry => sourceSpellCeiling(entry) !== undefined).map(entry => {
+      const name = entry.className.toLowerCase()
+      return name === 'fighter' || name === 'rogue' ? { ...entry, className: entry.subclass || entry.className } : entry
+    })
     const multiclassResult = computed(() => {
       if (!monster.spellcasting.multiclass?.enabled) return null
       const classEntries: ClassEntry[] = [
@@ -973,8 +898,10 @@ export default defineComponent({
           stat: extra.stat,
         })
       }
+      const supported = supportedClassEntries(classEntries)
+      if (!supported.length) return null
       return calculateMulticlassSpellcasting(
-        classEntries,
+        supported,
         monster.stats,
         monster.proficiency
       )
@@ -1013,8 +940,10 @@ export default defineComponent({
             stat: extra.stat,
           })
         }
+        const supported = supportedClassEntries(classEntries)
+        if (!supported.length) return
         const multi = calculateMulticlassSpellcasting(
-          classEntries,
+          supported,
           monster.stats,
           monster.proficiency
         )
@@ -1023,7 +952,7 @@ export default defineComponent({
           monster.spellcasting.multiclass.secondarySaveDc = multi.secondarySaveDc
           monster.spellcasting.multiclass.secondarySpellAttack = multi.secondarySpellAttack
         }
-      } else if (monster.spellcasting.class) {
+      } else if (monster.spellcasting.class && sourceSpellCeiling({ className: monster.spellcasting.class, subclass: primarySubclass.value, level }) !== undefined) {
         monster.spellcasting.slots = getSpellSlotsForClass(monster.spellcasting.class, level)
       }
     }
@@ -1119,6 +1048,23 @@ export default defineComponent({
       monster.spellcasting.levelCadenceMap[lvl] = val
     }
 
+    const primaryAssignedLevel = (level: number) => sourceAssignedAtLevel(spells.allSpellOptions, monster.spellcasting.standard, level)
+    const setPrimaryLevelSpells = (level: number, values: string[]) => { monster.spellcasting.standard = replaceSourceLevelSpells(spells.allSpellOptions, monster.spellcasting.standard, level, values) }
+    type OwnedSource = NonNullable<typeof monster.spellcasting.classes>[number]
+    const assignedSourceLevel = (source: OwnedSource, level: number) => sourceAssignedAtLevel(spells.allSpellOptions, source.spells || [], level)
+    const optionsSourceLevel = (source: OwnedSource, level: number) => sourceSpellOptions(spells.allSpellOptions, source, level)
+    const sourceLevelLabel = (source: OwnedSource, level: number | string) => (Number(level) === 0 ? 'Cantrips' : 'Level ' + level) + ' · ' + assignedSourceLevel(source, Number(level)).length + ' assigned'
+    const sourceGuidance = (source: CastingSourceSelection & { stat?: DndStat }) => {
+      const maximum = sourceSpellCeiling(source)
+      const capacity = sourceCapacityReference(spells.allSpellOptions, source, statModifier(monster.stats?.[source.stat || 'INT'] ?? 10))
+      if (maximum === undefined || !capacity) return 'Custom source: assign spells and resource limits explicitly. No automatic ruleset capacity is assumed. ' + (source.spells || []).length + ' spells assigned.'
+      const expansion = capacity.subclassCatalogSpells.length ? capacity.subclassCatalogSpells.length + ' subclass catalog options expand selection; they are not automatically assigned or counted as granted spells.' : 'No subclass grants are inferred.'
+      return 'Legacy 2014 base-class reference: ' + capacity.cantripsKnown + ' cantrips known; ' + capacity.preparedSpells + ' spells ' + capacity.selectionModel + '. Selected: ' + capacity.selectedCantrips + ' cantrips, ' + capacity.selectedSpells + ' leveled spells' + (capacity.unknownAssignments ? ', ' + capacity.unknownAssignments + ' uncatalogued assignments' : '') + '. Own-class ceiling: level ' + maximum + '. ' + expansion + ' Shared multiclass slots do not expand this source’s learnable levels. Existing assignments are preserved.'
+    }
+    const setSourceLevelSpells = (source: OwnedSource, level: number, values: string[]) => { source.spells = replaceSourceLevelSpells(spells.allSpellOptions, source.spells || [], level, values) }
+    const setSourceLevelCadence = (source: OwnedSource, level: number, value: string) => { source.levelCadences = { ...source.levelCadences, [level]: value } }
+    const setSourceLevelBonus = (source: OwnedSource, level: number, value: boolean) => { source.levelBonusAction = { ...source.levelBonusAction, [level]: value } }
+    const setSourceSpellCadence = (source: OwnedSource, id: string, value: string) => { source.spellCadenceMap = { ...source.spellCadenceMap, [id]: value } }
     const newSpellForClass = ref<Record<string, any>>({})
     // A12.5: a class list always includes custom spells and the subclass's own spells, labelled as such.
     const markSubclass = (opts: SpellOption[], subclass?: string) => {
@@ -1130,7 +1076,7 @@ export default defineComponent({
     const spellOptionsForClass = (className?: string, subclass?: string) => {
       if (!className) return spells.allSpellOptions
       const filtered = markSubclass(spells.allSpellOptions.filter((s) => inClassList(s, className, subclass)), subclass)
-      return filtered.length > 0 ? filtered : spells.allSpellOptions
+      return filtered
     }
     const addSpellToClass = (clsEntry: any, index: number) => {
       const key = clsEntry.id || index
@@ -1150,12 +1096,16 @@ export default defineComponent({
     }
 
     const spellOptionsByLevel = (level: number, className?: string, subclass?: string) => {
-      let list = spells.allSpellOptions.filter((s) => s.level === level)
-      if (className) list = markSubclass(list.filter((s) => inClassList(s, className, subclass)), subclass)
-      return list
+      const source = { className: className || monster.spellcasting.class || '', subclass, level: monster.spellcasting.level, bypassSlotFilter: monster.spellcasting.bypassSlotLevelFilter }
+      if (!className) {
+        const ceiling = sourceSpellCeiling(source)
+        return spells.allSpellOptions.filter(s => s.level === Number(level) && (source.bypassSlotFilter || ceiling === undefined || Number(level) === 0 || Number(level) <= ceiling)).sort((a,b)=>a.label.localeCompare(b.label))
+      }
+      return sourceSpellOptions(spells.allSpellOptions, source, Number(level))
     }
 
     return {
+      primarySource, primaryAssignedLevel, setPrimaryLevelSpells, assignedSourceLevel, optionsSourceLevel, sourceLevelLabel, sourceGuidance, setSourceLevelSpells, setSourceLevelCadence, setSourceLevelBonus, setSourceSpellCadence,
       classFilter,
       monster,
       primarySubclass,

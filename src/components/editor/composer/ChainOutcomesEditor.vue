@@ -68,7 +68,7 @@
             />
           </div>
           <div class="col-12 q-mt-xs">
-            <q-input v-help="'Enter rider (optional condition/clause) for the chain outcomes editor.'"
+            <mechanic-text-editor v-help="'Enter rider (optional condition/clause) for the chain outcomes editor.'"
               :model-value="outcome.rider ?? ''"
               dense
               outlined
@@ -133,7 +133,7 @@
             </div>
           </template>
           <div v-else class="col">
-            <q-input v-help="'Enter effect for the chain outcomes editor.'"
+            <mechanic-text-editor v-help="'Enter effect for the chain outcomes editor.'"
               :model-value="effect.text ?? ''"
               dense
               outlined
@@ -167,7 +167,7 @@
               />
             </div>
             <div class="col">
-              <q-input v-help="'Enter outcome effect for the chain outcomes editor.'"
+              <mechanic-text-editor v-help="'Enter outcome effect for the chain outcomes editor.'"
                 :model-value="dRow.effect"
                 dense
                 outlined
@@ -230,7 +230,7 @@
           />
         </div>
         <div class="col">
-          <q-input v-help="'Enter effect for the chain outcomes editor.'"
+          <mechanic-text-editor v-help="'Enter effect for the chain outcomes editor.'"
             :model-value="effect.effect"
             dense
             outlined
@@ -249,6 +249,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from '../MechanicTextEditor.vue'
 import { outcomeOccurrences, repairOutcomeIdAt, moveOutcomeById, removeOutcomeById, duplicateOutcomeById, newOutcomeId, triggerLead, validateOutcomes, type OutcomeIssue } from 'src/core/domain/outcome-graph'
 import { computed, defineComponent, PropType, ref } from 'vue'
 import { normalizeOutcomeData } from 'src/core/domain/outcome-data'
@@ -259,6 +260,7 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainOutcomesEditor',
+  components: { MechanicTextEditor },
   props: {
     modelValue: { type: Array as PropType<unknown[]>, required: true },
     mode: { type: String as PropType<'outcomes' | 'effects'>, default: 'outcomes' },

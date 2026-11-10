@@ -1,0 +1,296 @@
+Launching headless Chrome on port 9223...
+(node:88184) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///F:/AI_Resources/DNDSheet/.codex-temp/build226-work/test/exhaustive-ui-fuzz.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to F:\AI_Resources\DNDSheet\.codex-temp\build226-work\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+Target found: http://localhost:9230/index.html#/
+Waiting for Quasar #q-app mount...
+App ready state: true
+
+--- Step 1: Initial Render Parity Verification ---
+Step 1 result: {
+  success: true,
+  name: 'My New Monster',
+  type: 'MediumhumanoidUnaligned',
+  ac: 'AC10',
+  htmlLen: 7779
+}
+
+--- Step 2: Fuzzing Basics Editor (Name, AC, HP, Stats, CR) ---
+Step 2 result: {
+  success: true,
+  renderedName: 'Ancient Red Wyrm',
+  renderedType: 'Gargantuandragonchaotic evil',
+  renderedAc: 'AC19 (natural armor)',
+  hpText: 'HP4 (1d8)'
+}
+
+--- Step 3: Fuzzing Dirty / In-Progress Typing (Empty string, NaN, Edge values) ---
+Step 3 result: { success: true, hasRender: true, renderedName: 'Elder Shadow Dragon' }
+
+--- Step 4: Adding Attacks with Advanced Token Formulas ---
+Step 4 result: {
+  success: true,
+  attackCount: 1,
+  latestAttack: 'Bite of Annihilation. Melee Attack Roll: +17 to hit, reach 5 ft.. Hit: 32 (4d10 + 10) piercing damage, or 43 (6d10 + 10) force damage if the target is prone plus 14 (4d6) fire damage plus fire. '
+}
+
+--- Step 5: Adding Traits, Actions, Reactions, Multiattacks, Spellcasting ---
+Step 5 result: { success: true, traitCount: 1, actionCount: 1, hasMultiattack: true }
+
+--- Step 6: Toggling 2014 Classic / 2024 Revised Ruleset ---
+Step 6 result: {
+  success: true,
+  switched2024Ok: true,
+  switched2014Ok: true,
+  currentClasses: 'statblock mm2024 theme-wotc'
+}
+
+--- Step 7: CR Calculation Engine & Footer Reactive Output ---
+Step 7 result: {
+  hasFooter: true,
+  footerSnippet: 'Estimated CR12Offensive CR14Defensive CR10 57 ( 9 CR) +17 ( +5 CR) 0 ( +5 CR) 190 (CR 8) shield20 ( +2 CR) 2Open Gaming License 1.0 | v2.4.3 build 226 | Created by Falindrith |'
+}
+
+--- Step 8: AutoTune CR Dialog In-Page UI Test ---
+Step 8 result: { success: true, dialogFound: true, title: 'CR Auto-Tuner' }
+
+--- Step 9: Monster Lint Dialog In-Page UI Test ---
+Step 9 result: {
+  success: true,
+  dialogFound: true,
+  title: 'Statblock Health & Linter'
+}
+
+--- Step 10: Multi-Format Export Dropdown In-Page UI Test ---
+Step 10 result: {
+  success: true,
+  menuItemsFound: [
+    'Export JSON (5emm format)',
+    'Export Markdown (Homebrewery v3)',
+    'Export JSON (Improved Initiative format)',
+    'Export LaTeX (rpgtex)',
+    'Export JSON (Tarrasque.io format)',
+    'Export Markdown (Homebrewery Legacy)',
+    'Foundry VTT (Actor5e JSON)',
+    'Plain Text (.txt)',
+    'HTML Snippet (.html)',
+    'Save as PNG',
+    'Copy Markdown to Clipboard (Homebrewery v3)',
+    'Copy 5emm Link (tinyurl)'
+  ]
+}
+
+--- Step 11: Undo / Redo Lifecycle In-Page UI Test ---
+Step 11 result: {
+  success: true,
+  initialName: 'Ancient Red Wyrm',
+  undoneName: 'Ancient Red Wyrm',
+  redoneName: 'Mythic Hydra of Theros'
+}
+
+--- Step 12: AI Statblock Ingestion Studio UI Test ---
+Step 12 result: {
+  success: true,
+  ingestedName: 'Infernal Cinder Dragon',
+  ingestedCr: 15,
+  dialogWasOpen: true,
+  dialogTextSnippet: 'auto_awesomeAI Statblock Ingest Studioclose Paste any raw text or markdown containing a statblock ge'
+}
+
+--- Step 13: Combat Tracker HUD Integration UI Test ---
+Step 13 result: {
+  success: true,
+  combatantCount: 1,
+  damageApplied: 10,
+  hasPoison: true
+}
+
+--- Step 14: Hero / Character Sheet Mode Switcher Test ---
+Step 14 result: {
+  success: true,
+  charEditorFound: true,
+  charSheetFound: true,
+  hasCharExport: true,
+  charMenuItems: [
+    'Export Character JSON (.json)',
+    'Export Character Markdown (.md)',
+    'Export Character Plain Text (.txt)',
+    'Save Sheet as PNG',
+    'Copy Character Markdown'
+  ],
+  restoredMonsterSplitter: true
+}
+
+--- Step 15: Extended Features In-Page DOM Verification (Portrait, Extended HP, Detailed Modifiers, Action Passives, Trait Sections) ---
+Step 15 result: {
+  success: true,
+  portraitFound: true,
+  caption: 'Ancient Gargoyle Paragon',
+  hasBloodied: true,
+  hasThreshold: true,
+  hasReduction: true,
+  hasRegenTrait: true,
+  hasPassives: true,
+  hasLightningAbsorption: true,
+  hasFireAdvantage: true,
+  hasConsolidatedTag: true
+}
+
+--- Step 16: Hero Character Sheet Deep Features Verification (Saves, Skills, Spell Slots, Spells, Portrait) ---
+Step 16 result: {
+  success: true,
+  hasName: true,
+  hasWizard: true,
+  hasArcana: true,
+  hasFireball: true,
+  hasSpellSlots: true,
+  hasPortrait: true
+}
+
+--- Step 17: Multi-Route Navigation Sweep (/spells, /templates, /reset, /) ---
+Step 17 result: {
+  success: true,
+  hasSpellsTable: true,
+  hasTemplatesTable: true,
+  hasResetCard: true,
+  hasHomeSplitter: true
+}
+
+--- Step 18: Incoherence Fixes & Deep Verification (Tools, Save Badges, Speeds Traversal, Telepathy Matrix, Sub-Sections) ---
+Step 18 result: {
+  success: false,
+  hasAdvBadge: true,
+  hasDisadvBadge: true,
+  hasCharmCond: true,
+  hasToolsLine: true,
+  hasTraversalDifficult: false,
+  hasTraversalCunning: false,
+  hasTelepathyMatrix: true,
+  hasRechargeSubSection: true,
+  hasConditionalSubSection: true
+}
+
+--- Step 19: Advanced Modular Editors, Defense Modifiers & Special Languages Deep Verification ---
+Step 19 result: {
+  success: true,
+  hasVulnCond: true,
+  hasResAbsorb: true,
+  hasImmBenefit: true,
+  hasTelepathySave: true,
+  hasAnimalsLang: true,
+  hasHandleAnimals: true,
+  hasPassiveCond: true
+}
+
+--- Step 20: Right-Aligned Badges, Passive Scores Advantage Math, 6-Category Defenses, Archetype Communication & Paragon Boss Pools UI Test ---
+Step 20 result: {
+  success: false,
+  hasRightAdvBadge: false,
+  passivePerceptionVal: 22,
+  expectedPassive: 22,
+  passiveMathCorrect: true,
+  hasDmgVuln: true,
+  hasCondVuln: true,
+  hasDmgRes: true,
+  hasCondRes: true,
+  hasDmgImm: true,
+  hasCondImm: true,
+  hasFirbolg: true,
+  hasParagonHp: true,
+  hasStageAction: true,
+  hpText: 'HP225 (18d12+108); 3 Pools of 80 HP; [ 55 | [Bloodied] ]; +15/turn (radiant); Undead Fortitude (radiant or critical hit); DT 12; DR 4'
+}
+
+--- Step 21: Dynamic Telepathy Prose, Clean Handle Animals Syntax, Amorphous Speeds & Initiative Badge UI Test ---
+Step 21 result: {
+  success: false,
+  hasDynamicTelepathy: true,
+  hasCleanHandleAnimals: true,
+  hasHover: true,
+  hasAmorphous1Inch: true,
+  hasShuntDamage: true,
+  hasAmphibious: false,
+  hasInitAdvBadge: false,
+  initPassiveMath: true,
+  initMod: 6,
+  initPassive: 21
+}
+
+--- Step 22: Modern Modular Visual Theme, Senses Physiology Matrix & Top-Right CR Badge UI Test ---
+Step 22 result: {
+  success: true,
+  hasTopCrCluster: true,
+  hasBlindsightPhysiology: true,
+  hasDevilsSight: true,
+  hasWebSense: true,
+  hasModernModularClass: true
+}
+
+--- Step 23: Invulnerability, Dynamic Value Sources, Cascading Hierarchy, Analytical Senses & Inline Legendary Actions UI Test ---
+Step 23 result: {
+  success: true,
+  hasAcInvuln: true,
+  noRawEnumInHp: true,
+  hasCascadingPanels: true,
+  hasAnalyticalSense: true,
+  hasStandaloneLegendary: true,
+  hasPhaseCellInAction: true
+}
+
+--- Step 24: Unified 2-Row Cellular Top Plate (CR|PB|XP|Name|Initiative), Inline Defense Headers, Decoupled N-Condition Invulnerability & Per-Line Zebra Stripes UI Test ---
+Step 24 result: {
+  success: true,
+  hasUnifiedTopPlate: true,
+  hasInitInTopPlate: true,
+  hasUnifiedDefensePanels: true,
+  noRedundantSavesPanel: true,
+  hasCombinedInvulnerability: true,
+  hasZebraStripes: true
+}
+--- Step 25: Multi-Phase Initiative (>3 + Lair), Adv/Disadv Grammar, Cascading Bloodied Phases, Consolidated Skills/Tools/Passives & 15-Timeframe Regen ---
+Step 25 result: {
+  success: false,
+  numberRole: {
+    cellsWithoutNumber: 0,
+    initNums: [ '+6', '+12', '+15', '+18', '+22', '20' ],
+    hpNumCount: 5,
+    fontDrift: [],
+    retired: 0,
+    matrix: [
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object],
+      [Object], [Object]
+    ],
+    hasMatrix: true,
+    pools: {
+      text: 'HP225 (18d12+108); 3 Pools of 120 HP; +15/end of a turn (acid or fire); Returns ',
+      hasPhrase: true,
+      numbered: true,
+      untouched: true,
+      stageInputFound: true,
+      materialised: true
+    }
+  },
+  initCellsCount: 6,
+  initHasWrappedAdvPill: true,
+  hasBloodiedStageBadges: true,
+  bloodiedBadgeText: '[ 56 (Stage 3) | 28 (Stage 4, Final) | [Bloodied] ]',
+  hasSingleBloodiedTag: true,
+  hasConsolidatedScopes: false,
+  hasRegenDisruption: true,
+  breakdown: {
+    hasStudy: true,
+    hasInfluence: true,
+    hasSearch: true,
+    hasHide: true,
+    hasNoRedundantSkillsRow: true,
+    hasTools: false,
+    hasSleight: true,
+    hasPoisoner: true
+  },
+  skillsSnippet: "iercing damage plus 7 (2d6) fire damage plus fire.Search(12/+2, 27/+12, Perception ▲▲)Study(13/+3)Influence(14/+4, 17/+7, Animal Handling; 19/+9, Performance)Hide(11/+1)Use Tool(17/+7, Herbalism Kit)Stage 2 Cataclysmic QuakeShatters the ground.Bonus ActionsHide(21/+6, Sleight of Hand ▲▲)Use Tool(23/+8, Poisoner's Kit ▲▲)Legendary ActionsInfernal Cinder Dragon can take 3 legendary actions, choosing from the options below. Only one legendary action"
+}
+Fatal fuzz test failure: Error: Step 25 failed: {"success":false,"numberRole":{"cellsWithoutNumber":0,"initNums":["+6","+12","+15","+18","+22","20"],"hpNumCount":5,"fontDrift":[],"retired":0,"matrix":[{"theme":"wotc","template":"modern","bare":0,"count":11,"drift":0,"retired":0},{"theme":"wotc","template":"classic","bare":0,"count":11,"drift":0,"retired":0},{"theme":"printer","template":"modern","bare":0,"count":11,"drift":0,"retired":0},{"theme":"printer","template":"classic","bare":0,"count":11,"drift":0,"retired":0},{"theme":"lovecraft_golden","template":"modern","bare":0,"count":11,"drift":0,"retired":0},{"theme":"lovecraft_golden","template":"classic","bare":0,"count":11,"drift":0,"retired":0},{"theme":"art_nouveau","template":"modern","bare":0,"count":11,"drift":0,"retired":0},{"theme":"art_nouveau","template":"classic","bare":0,"count":11,"drift":0,"retired":0}],"hasMatrix":true,"pools":{"text":"HP225 (18d12+108); 3 Pools of 120 HP; +15/end of a turn (acid or fire); Returns ","hasPhrase":true,"numbered":true,"untouched":true,"stageInputFound":true,"materialised":true}},"initCellsCount":6,"initHasWrappedAdvPill":true,"hasBloodiedStageBadges":true,"bloodiedBadgeText":"[ 56 (Stage 3) | 28 (Stage 4, Final) | [Bloodied] ]","hasSingleBloodiedTag":true,"hasConsolidatedScopes":false,"hasRegenDisruption":true,"breakdown":{"hasStudy":true,"hasInfluence":true,"hasSearch":true,"hasHide":true,"hasNoRedundantSkillsRow":true,"hasTools":false,"hasSleight":true,"hasPoisoner":true},"skillsSnippet":"iercing damage plus 7 (2d6) fire damage plus fire.Search(12/+2, 27/+12, Perception ▲▲)Study(13/+3)Influence(14/+4, 17/+7, Animal Handling; 19/+9, Performance)Hide(11/+1)Use Tool(17/+7, Herbalism Kit)Stage 2 Cataclysmic QuakeShatters the ground.Bonus ActionsHide(21/+6, Sleight of Hand ▲▲)Use Tool(23/+8, Poisoner's Kit ▲▲)Legendary ActionsInfernal Cinder Dragon can take 3 legendary actions, choosing from the options below. Only one legendary action"}
+    at runFuzz (file:///F:/AI_Resources/DNDSheet/.codex-temp/build226-work/test/exhaustive-ui-fuzz.js:1760:11)

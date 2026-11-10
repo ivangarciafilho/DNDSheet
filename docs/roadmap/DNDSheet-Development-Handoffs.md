@@ -1,4 +1,21 @@
-## Current published delivery — Build225 (2026-11-09)
+## Build226 validated candidate — emergency editor and spellcasting packet (2026-11-10)
+
+**Candidate, not yet published.** Build225 remains the verified production release. Work resumes from its receipt commit `43315ceda1677446b1b289ad969b2207dc2067ca` in the isolated Build226 clone; the protected original checkout and existing sample remain separate. The newest section governs current execution; older release headings below are historical.
+
+The candidate implements the emergency requests across shared skill routing, source-owned spell editing, row cadence/action economy, normal-weight italic spell names, a common action-family compositor and safe rich mechanic text. [Build226 packet and acceptance boundaries](DNDSheet-Build226-Emergency-Editor-and-Spellcasting.md) records eighteen implementation changes and the remaining verification/architecture work. **Normalized workload: 268 IDs, 174 complete / 94 open before and after; whole-ID delta 0.** Raw ledger: 277 IDs, 183 complete / 94 open. No new ledger IDs or parent-task closures are claimed.
+
+Final frozen-source gate **10/10** passed: **540 core tests (+36 versus Build225)**; **58 exhaustive browser scenarios on SPA and Pages**, plus the three emergency suites on each target (11 skill, 10 spellcasting and 6 rich-mechanic checks); 19 outcome lifecycle checks, 60 fixture/theme cases, 120 representative contrast samples and 10 fit views with no clipping observations. Zero runtime exceptions. Type guard: 559 existing diagnostics, zero new against the unchanged baseline; lint: zero errors, 2692 warnings. Existing debt remains. Publication/live verification follows.
+
+### Resume and release handoff for Build226
+
+1. Finish the focused skill reload, source-owned spell row and rich-text/shared-compositor browser checks against a freshly rebuilt candidate. A prior browser failure revealed unsaved passive editor state; the candidate adds canonical optional `passives` state. Verify the fix through automatic persistence, not a forced save.
+2. Verify trait/reaction numeric paths and cross-family copied formulas after changing their referenced input; preserve unknown extension fields and source assignments through JSON/reload.
+3. Inspect the changed UI and run the one prescribed Impeccable detector pass. Freeze source/tests/tools before the complete ten-step gate. Do not edit gate inputs while it runs; replace any superseded run with one complete fresh run.
+4. Record actual final counts and focused checks in the Build226 report. No pending claim may be promoted to verified without its evidence. Preserve Build225 archive checksums and the original sample before publishing.
+5. Refresh the official remote before committing. Publish only the tested candidate; record source, tag, Pages commit, live footer and asset byte parity in a receipt. Replace the candidate status at the top only after that proof exists.
+6. Continue A11.5 stable container/region ownership and typed predicates → A11.9 random-result interaction/adapter/print evidence → H9 purpose-led help → H14 per-file type debt. Casting-source IDs/pool migration and complete ruleset capacities remain separately open under A12.8–A12.9.
+
+## Historical verified delivery — Build225 (2026-11-09)
 
 Outcome lifecycle and safe projection packet: twelve implementation items within A11.5, including draft identities, immutable move/copy/delete, explicit repair, complete Apply metadata retention, iterative graph diagnostics and safe table/prose projection. **Whole-ID accounting remains 174 complete/94 open of268 normalized IDs; delta0/0.** No new IDs; raw183/94 of277. A11.5/A11.9/H11 remain open.
 

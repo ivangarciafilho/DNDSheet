@@ -1,3 +1,4 @@
+import { mechanicRichHtml, mechanicPlainText } from './mechanic-rich-text.ts'
 import type { ActionDescriptionContainer, ActionDescriptionRegion } from './types.ts'
 import type { RandomTable } from './random-table.ts'
 import { formatRandomTableAsHtml, tableToProse } from './random-table.ts'
@@ -266,7 +267,7 @@ export function descriptionContainersText(
     .join(' ')
 
   const sanitized = sanitizeProsePunctuation(text)
-  return html ? escapeOutcomeHtml(sanitized) : sanitized
+  return html ? mechanicRichHtml(sanitized) : mechanicPlainText(sanitized)
 }
 
 /**
@@ -295,10 +296,10 @@ export function descriptionContainersHtml(
       if (!hasMain) {
         if (container.kind === 'table' && container.table) {
           const headers = tableData(container.table).headers.map((header) => `<th scope="col">${escapeOutcomeHtml(header)}</th>`).join('')
-          const rows = tableData(container.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
+          const rows = tableData(container.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${mechanicRichHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
           parts.push(`${prefix}<table class="outcome-dice-table"><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table>`)
         } else if (plain(container.text).trim()) {
-          const formattedText = cleanPunctuation(formatDistanceUnit(escapeOutcomeHtml(plain(container.text))))
+          const formattedText = mechanicRichHtml(cleanPunctuation(formatDistanceUnit(plain(container.text))))
           parts.push(`${prefix}${formattedText}`)
         }
       }
@@ -323,10 +324,10 @@ export function descriptionContainersHtml(
             if (!regBody) {
               if (reg.kind === 'table' && reg.table) {
                 const rHeaders = tableData(reg.table).headers.map((h) => `<th scope="col">${escapeOutcomeHtml(h)}</th>`).join('')
-                const rRows = tableData(reg.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeOutcomeHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
+                const rRows = tableData(reg.table).rows.map((row) => `<tr>${row.map((cell) => `<td>${mechanicRichHtml(formatDistanceUnit(cell))}</td>`).join('')}</tr>`).join('')
                 regBody = `<table class="outcome-dice-table region-table"><thead><tr>${rHeaders}</tr></thead><tbody>${rRows}</tbody></table>`
               } else if (plain(reg.text).trim()) {
-                const cleanRegText = cleanPunctuation(formatDistanceUnit(escapeOutcomeHtml(plain(reg.text))))
+                const cleanRegText = mechanicRichHtml(cleanPunctuation(formatDistanceUnit(plain(reg.text))))
                 regBody = `<div class="region-text">${cleanRegText}</div>`
               }
             }

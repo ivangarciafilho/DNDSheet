@@ -9,8 +9,7 @@ import type { DndStat } from './types.ts'
  * differ from that base, so nothing is disclosed twice.
  *
  * Mapping notes (house mapping requested for this tool):
- * - 2024 PHB lists Insight, Medicine, Perception and Survival under Search.
- *   Here Medicine moves to Study; Insight stays under Search.
+ * - Search includes Insight, Medicine, Perception and Survival.
  * - 2024 PHB Hide is a Dexterity (Stealth) check. Here Hide also covers
  *   Acrobatics, Athletics and Sleight of Hand.
  * Change the table below to switch back to the strict RAW mapping.
@@ -41,7 +40,7 @@ export const SKILL_ACTION_GROUPS: readonly SkillActionGroupDef[] = [
     color: 'primary',
     icon: 'fa-solid fa-magnifying-glass',
     tip: 'Wisdom check to notice what is hidden: a concealed creature, tracks, a lie or a mood. Its passive score is the creature\'s passive Perception.',
-    skills: ['INSIGHT', 'PERCEPTION', 'SURVIVAL'],
+    skills: ['INSIGHT', 'MEDICINE', 'PERCEPTION', 'SURVIVAL'],
   },
   {
     id: 'study',
@@ -50,7 +49,7 @@ export const SKILL_ACTION_GROUPS: readonly SkillActionGroupDef[] = [
     color: 'info',
     icon: 'fa-solid fa-book-open',
     tip: 'Intelligence check to recall lore or examine a clue: magic, history, religion, nature, traps, ailments.',
-    skills: ['ARCANA', 'HISTORY', 'INVESTIGATION', 'MEDICINE', 'NATURE', 'RELIGION'],
+    skills: ['ARCANA', 'HISTORY', 'INVESTIGATION', 'NATURE', 'RELIGION'],
   },
   {
     id: 'influence',
@@ -274,4 +273,24 @@ export function mergeIdenticalEntries(entries: SkillCheckEntry[]): { entry: Skil
     else merged.push({ entry, labels: [entry.label] })
   }
   return merged
+}
+
+/** Saved legacy placements remain authoritative until the user explicitly changes the checkbox. */
+export type SkillGroupPlacement = 'header' | 'action' | 'bonus_action' | 'legendary'
+export type CombatSkillGroupId = SkillActionGroupId | 'tools' | 'skills'
+export function skillGroupPlacement(
+  group: CombatSkillGroupId,
+  actionType: SkillActionType,
+  ...sources: (Record<string, unknown> | undefined)[]
+): SkillGroupPlacement {
+  if (group === 'skills') return 'header'
+  for (const source of sources) {
+    const move = source?.[group + 'MoveToActionGroup']
+    if (typeof move === 'boolean') return move ? (actionType === 'Bonus Action' ? 'bonus_action' : 'action') : 'header'
+  }
+  for (const source of sources) {
+    const placement = source?.[group + 'Placement']
+    if (placement === 'header' || placement === 'action' || placement === 'bonus_action' || placement === 'legendary') return placement
+  }
+  return actionType === 'Bonus Action' ? 'bonus_action' : 'action'
 }

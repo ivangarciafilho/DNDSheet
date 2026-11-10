@@ -95,7 +95,7 @@
                 />
               </div>
               <div :class="saves[stat]?.override ? 'col-8' : 'col-12'">
-                <q-input
+                <mechanic-text-editor
                   dense
                   outlined
                   v-model="monster.saves[stat].condition"
@@ -113,6 +113,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent, computed } from 'vue'
 import { saveModifierForStat } from '../rendering/mathRendering'
@@ -121,6 +122,7 @@ import { DndStat } from 'src/core/domain/types'
 
 export default defineComponent({
   name: 'SavesEditor',
+  components: { MechanicTextEditor },
   setup() {
     const monster = useMonsterStore()
     const statList: DndStat[] = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']

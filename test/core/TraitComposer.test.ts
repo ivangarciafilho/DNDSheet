@@ -13,8 +13,8 @@ const trait = (): MonsterTrait => ({
 
 test('trait chain shows the renderer cadence before the name and preserves conditional text', () => {
   const rows = traitChainView(trait())
-  assert.deepEqual(rows.map((row) => row.row), ['head'])
-  assert.deepEqual(rows[0].cells.map((cell) => cell.id), ['trait-usage', 'name'])
+  assert.deepEqual(rows.map((row) => row.row), ['head','mechanics','scope','outcomes'])
+  assert.ok(['trait-usage','name','discipline','tier','components','duration'].every(id=>rows[0].cells.some(cell=>cell.id===id)))
   assert.equal(rows[0].cells[0].text, 'Recharges at Dawn; While submerged')
 })
 

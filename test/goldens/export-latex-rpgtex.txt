@@ -39,7 +39,11 @@
 
   
 
-  \DndMonsterAction{Force Lash} Each creature within 10 feet must make a DC 15 Strength saving throw.
+  \DndMonsterAction{Search (10/+0)}
+ \DndMonsterAction{Study (14/+4)}
+ \DndMonsterAction{Influence (10/+0)}
+ \DndMonsterAction{Hide (10/+0)}
+ \DndMonsterAction{Force Lash} Each creature within 10 feet must make a DC 15 Strength saving throw.
 
   % Spellcasting
   

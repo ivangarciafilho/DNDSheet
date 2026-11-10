@@ -1,4 +1,5 @@
 import { formatSignedModifier } from './number-grammar.ts'
+import { mechanicRichHtml, mechanicPlainText } from './mechanic-rich-text.ts'
 import { normalizeOutcomeData } from './outcome-data.ts'
 import type { RandomTable } from './random-table.ts'
 import { descriptionContainersText } from './description-containers.ts'
@@ -540,7 +541,7 @@ export function outcomePhrase(
     const recipient = outcome.recipient?.trim() ? `, ${outcome.recipient.trim()}` : ''
     const lead = `${filterPrefix}${triggerLabel(outcome.trigger, mode)}${recipient}:`.replace(/\s+:/g, ':')
     const label = markLabel(markup === 'html' ? escapeOutcomeHtml(lead) : lead, markup)
-    return parts.length ? `${label} ${markup === 'html' ? escapeOutcomeHtml(ensurePeriod(parts.join(' '))) : ensurePeriod(parts.join(' '))}` : label
+    return parts.length ? `${label} ${markup === 'html' ? mechanicRichHtml(ensurePeriod(parts.join(' '))) : ensurePeriod(mechanicPlainText(parts.join(' ')))}` : label
   })
   return preserveEmptySlots ? lines : lines.filter(Boolean)
 }

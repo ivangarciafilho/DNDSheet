@@ -35,7 +35,8 @@
       <form class="chain-editor" :aria-label="`Edit ${cell.label}`" @submit.prevent="apply" @keydown="holdEnter" @keyup="applyOnEnter">
         <div class="chain-editor__title">{{ cell.label }}</div>
 
-        <q-input v-if="kind === 'text'" v-model="draft" dense outlined dark autofocus :label="cell.label" :hint="hint" />
+        <mechanic-text-editor v-if="kind === 'text' && cell.id === 'trigger'" v-model="draft" dense outlined dark :label="cell.label" />
+        <q-input v-else-if="kind === 'text'" v-model="draft" dense outlined dark autofocus :label="cell.label" :hint="hint" />
 
         <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input
@@ -170,6 +171,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from '../MechanicTextEditor.vue'
 import { stabilizeOutcomeIds } from 'src/core/domain/outcome-identities'
 import { computed, defineComponent, PropType, ref } from 'vue'
 import TraitCadenceEditor from './TraitCadenceEditor.vue'
@@ -223,7 +225,7 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainCell',
-  components: { FormulaField, ChainOutcomesEditor, TraitCadenceEditor, ActionUsageEditor },
+  components: { MechanicTextEditor, FormulaField, ChainOutcomesEditor, TraitCadenceEditor, ActionUsageEditor },
   props: {
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
@@ -248,7 +250,7 @@ export default defineComponent({
     const optionList = ref<HTMLElement | null>(null)
 
     const kind = computed<EditorKind>(() => {
-      if (props.cell.id === 'usage' && isRecord(props.value) && 'mode' in props.value) return 'action-usage'
+      if (['usage','trait-usage'].includes(props.cell.id) && isRecord(props.value) && 'mode' in props.value) return 'action-usage'
       switch (props.cell.id) {
         case 'trait-usage': return 'trait-cadence'
         case 'target-count': return 'count'

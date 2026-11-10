@@ -1,0 +1,132 @@
+{
+  "closed": [],
+  "newIds": 0,
+  "implementationItemsCompleted": 18,
+  "normalized": {
+    "total": 268,
+    "before": {
+      "complete": 174,
+      "open": 94
+    },
+    "after": {
+      "complete": 174,
+      "open": 94
+    },
+    "delta": {
+      "complete": 0,
+      "open": 0
+    }
+  },
+  "raw": {
+    "total": 277,
+    "before": {
+      "complete": 183,
+      "open": 94
+    },
+    "after": {
+      "complete": 183,
+      "open": 94
+    }
+  },
+  "core": {
+    "before": 504,
+    "after": 540,
+    "delta": 36
+  },
+  "browserStepsPerTarget": {
+    "before": 58,
+    "after": 58,
+    "delta": 0
+  },
+  "outcomeLifecycleBrowserChecks": 19,
+  "themeCases": 60,
+  "contrastSamples": 120,
+  "fitViews": 10,
+  "focusedBrowserSuites": {
+    "status": "Passed on SPA and Pages in final gate",
+    "skills": {
+      "booleanChecks": 11
+    },
+    "spellcasting": {
+      "booleanChecks": 10
+    },
+    "richMechanics": {
+      "booleanChecks": 6
+    }
+  },
+  "validationStatus": "Final gate 10/10; publication pending",
+  "gateProgress": {
+    "complete": true,
+    "core": 540,
+    "typecheck": {
+      "existing": 559,
+      "new": 0
+    },
+    "lint": {
+      "errors": 0,
+      "warnings": 2692
+    },
+    "results": [
+      {
+        "step": "core",
+        "ok": true,
+        "code": 0,
+        "seconds": 4
+      },
+      {
+        "step": "lint",
+        "ok": true,
+        "code": 0,
+        "seconds": 15
+      },
+      {
+        "step": "typecheck",
+        "ok": true,
+        "code": 0,
+        "seconds": 28
+      },
+      {
+        "step": "build",
+        "ok": true,
+        "code": 0,
+        "seconds": 44
+      },
+      {
+        "step": "fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 187
+      },
+      {
+        "step": "help",
+        "ok": true,
+        "code": 0,
+        "seconds": 62
+      },
+      {
+        "step": "spell",
+        "ok": true,
+        "code": 0,
+        "seconds": 9
+      },
+      {
+        "step": "pages-build",
+        "ok": true,
+        "code": 0,
+        "seconds": 43
+      },
+      {
+        "step": "pages-assets",
+        "ok": true,
+        "code": 0,
+        "seconds": 0
+      },
+      {
+        "step": "pages-fuzz",
+        "ok": true,
+        "code": 0,
+        "seconds": 211
+      }
+    ]
+  }
+}

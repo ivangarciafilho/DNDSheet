@@ -7,15 +7,19 @@ import {
   normalizeSkillKey,
   passiveScore,
   skillActionGroupFor,
+  skillGroupPlacement,
 } from '../../src/core/domain/skill-action-groups.ts'
+
+import { defaultMonster } from '../../src/core/domain/types.ts'
+import { migrateMonsterSchema } from '../../src/core/usecases/MigrateMonsterSchema.ts'
 
 const stats = { STR: 8, DEX: 12, CON: 16, INT: 12, WIS: 16, CHA: 20 }
 
 test('every standard skill belongs to exactly one action group', () => {
   const all = SKILL_ACTION_GROUPS.flatMap((g) => g.skills)
   assert.strictEqual(new Set(all).size, all.length, 'a skill is listed twice')
-  for (const key of ['INSIGHT', 'PERCEPTION', 'SURVIVAL']) assert.strictEqual(skillActionGroupFor(key)?.id, 'search')
-  for (const key of ['ARCANA', 'HISTORY', 'INVESTIGATION', 'MEDICINE', 'NATURE', 'RELIGION']) assert.strictEqual(skillActionGroupFor(key)?.id, 'study')
+  for (const key of ['INSIGHT', 'MEDICINE', 'PERCEPTION', 'SURVIVAL']) assert.strictEqual(skillActionGroupFor(key)?.id, 'search')
+  for (const key of ['ARCANA', 'HISTORY', 'INVESTIGATION', 'NATURE', 'RELIGION']) assert.strictEqual(skillActionGroupFor(key)?.id, 'study')
   for (const key of ['ANIMAL_HANDLING', 'DECEPTION', 'INTIMIDATION', 'PERFORMANCE', 'PERSUASION']) assert.strictEqual(skillActionGroupFor(key)?.id, 'influence')
   for (const key of ['ACROBATICS', 'ATHLETICS', 'SLIGHT_OF_HAND', 'STEALTH']) assert.strictEqual(skillActionGroupFor(key)?.id, 'hide')
 })
@@ -54,9 +58,8 @@ test('trained skills are disclosed only inside their own group and never in a Sk
   })
   const byLabel = Object.fromEntries(rows.map((r) => [r.label, r]))
   assert.ok(!('Skills' in byLabel), 'no leftover Skills row')
-  assert.deepStrictEqual(byLabel.Search.entries.map((e) => [e.label, e.passive, e.bonus]), [['Insight', 15, 5]])
+  assert.deepStrictEqual(byLabel.Search.entries.map((e) => [e.label, e.passive, e.bonus]), [['Insight', 15, 5], ['Medicine', 15, 5]])
   assert.deepStrictEqual(byLabel.Study.entries.map((e) => [e.label, e.passive, e.bonus, e.advantage]), [
-    ['Medicine', 15, 5, false],
     ['Religion', 18, 3, true],
   ])
   assert.deepStrictEqual(byLabel.Influence.entries.map((e) => e.label), ['Persuasion'])
@@ -112,4 +115,69 @@ test('identical entries merge into one disclosure', () => {
   })
   const merged = mergeIdenticalEntries(rows[1].entries)
   assert.deepStrictEqual(merged.map((m) => m.labels), [['History', 'Investigation']])
+})
+
+
+test('new group placement defaults on and follows the row action economy', () => {
+  for (const group of ['search', 'study', 'influence', 'hide', 'tools'] as const) {
+    assert.equal(skillGroupPlacement(group, 'Action'), 'action')
+    assert.equal(skillGroupPlacement(group, 'Bonus Action'), 'bonus_action')
+    assert.equal(skillGroupPlacement(group, 'Action', { [group + 'MoveToActionGroup']: false }), 'header')
+  }
+  assert.equal(skillGroupPlacement('skills', 'Bonus Action'), 'header', 'unmapped custom skills stay visible as skill rows')
+})
+
+test('an explicit checkbox overrides a legacy placement and remains cost-driven after reload', () => {
+  const saved = { searchPlacement: 'header', searchMoveToActionGroup: true }
+  const reload = JSON.parse(JSON.stringify(saved))
+  assert.equal(skillGroupPlacement('search', 'Action', reload), 'action')
+  assert.equal(skillGroupPlacement('search', 'Bonus Action', reload), 'bonus_action')
+  assert.equal(skillGroupPlacement('search', 'Action', { searchMoveToActionGroup: false }, reload), 'header')
+  assert.deepEqual(saved, { searchPlacement: 'header', searchMoveToActionGroup: true })
+})
+
+test('explicit saved legacy placements are retained until checkbox interaction', () => {
+  for (const placement of ['header', 'action', 'bonus_action', 'legendary'] as const) {
+    const saved = { hidePlacement: placement }
+    assert.equal(skillGroupPlacement('hide', 'Bonus Action', undefined, JSON.parse(JSON.stringify(saved))), placement)
+  }
+  assert.equal(skillGroupPlacement('tools', 'Action', undefined, undefined, { toolsPlacement: 'header' }), 'header')
+})
+
+test('Medicine uses the Search economy while keeping its authored check and passive details', () => {
+  const rows = computeSkillGroupLayout({ stats, groupActionTypes: { search: 'Bonus Action', study: 'Action' }, skills: [
+    { key: 'MEDICINE', label: 'Medicine', stat: 'WIS', bonus: 5, passiveOverride: 21, advantage: true, condition: 'stabilizing an ally' },
+  ] })
+  const medicine = rows.find(row => row.entries.some(entry => entry.key === 'MEDICINE'))
+  assert.ok(medicine)
+  assert.equal(medicine.id, 'search')
+  assert.equal(medicine.actionType, 'Bonus Action')
+  assert.deepEqual(medicine.entries[0], { key: 'MEDICINE', label: 'Medicine', stat: 'WIS', passive: 21, bonus: 5, advantage: true, disadvantage: false, condition: 'stabilizing an ally' })
+  assert.equal(skillGroupPlacement(medicine.id, medicine.actionType), 'bonus_action')
+})
+
+test('moving a group routes each explicit skill economy without duplicating or losing entries', () => {
+  const rows = computeSkillGroupLayout({ stats, groupActionTypes: { search: 'Action' }, skills: [
+    { key: 'MEDICINE', label: 'Medicine', stat: 'WIS', bonus: 5, bonusAction: true },
+    { key: 'INSIGHT', label: 'Insight', stat: 'WIS', bonus: 7 },
+  ] }).filter(row => row.id === 'search')
+  assert.deepEqual(rows.map(row => [skillGroupPlacement(row.id, row.actionType, { searchMoveToActionGroup: true }), row.entries.map(entry => entry.key)]), [
+    ['action', ['INSIGHT']], ['bonus_action', ['MEDICINE']],
+  ])
+})
+
+
+test('save/import migration retains checkbox choices, legacy placement and group metadata', () => {
+  const original = defaultMonster()
+  original.actionOrientedPassives = {
+    searchMoveToActionGroup: true, studyMoveToActionGroup: false,
+    hidePlacement: 'legendary', bonusActionSearch: true,
+    riders: { search: 'Sense sentience' }, conditions: { medicine: 'stabilizing' },
+  }
+  const restored = migrateMonsterSchema(JSON.parse(JSON.stringify(original)))
+  assert.deepEqual(restored.actionOrientedPassives, original.actionOrientedPassives)
+  const config = restored.actionOrientedPassives as Record<string, unknown>
+  assert.equal(skillGroupPlacement('search', 'Bonus Action', config), 'bonus_action')
+  assert.equal(skillGroupPlacement('study', 'Action', config), 'header')
+  assert.equal(skillGroupPlacement('hide', 'Action', config), 'legendary')
 })

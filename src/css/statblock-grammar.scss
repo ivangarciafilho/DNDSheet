@@ -634,7 +634,8 @@
       display: inline;
     }
     .spell-name {
-      font-weight: 600;
+      font-weight: 400;
+      font-style: italic;
     }
     .spell-tag-badge {
       font-size: 0.8em;
@@ -1048,3 +1049,9 @@
     color: var(--sb-cell-ink) !important;
   }
 }
+/* Spell rows inherit body weight; emphasis is reserved for row headings. */
+#render .sb-plate .spell-inline-item,
+#render .sb-plate .spell-inline-item .spell-name,
+#render .sb-plate .spell-tag-badge,
+#render .sb-plate .spell-cadence-badge { font-weight: 400 !important; }
+#render .sb-plate .spell-name { font-style: italic; }

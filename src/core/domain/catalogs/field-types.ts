@@ -152,6 +152,15 @@ for (const name of ['rechargeMin', 'rechargeMax']) register(`${action}.${name}`,
 register(`${action}.targeting.count`, 'count', 'attack', optional)
 register(`${action}.targeting.range.distance`, 'distance', 'movement', { unit: 'record.targeting.range.unit' })
 register(`${action}.targeting.area.distance`, 'distance', 'movement', { ...optional, unit: 'record.targeting.area.unit' })
+for (const collection of ['traits','reactions']) {
+ const prefix=collection+'[id=*]'
+ register(prefix+'.attackBonus','bonus','attack',optional)
+ register(prefix+'.save.overrideValue','dc','save_dc',ov(prefix+'.save'))
+ register(prefix+'.targeting.count','count','attack',optional)
+ register(prefix+'.targeting.range.distance','distance','movement',{unit:'record.targeting.range.unit'})
+ register(prefix+'.targeting.area.distance','distance','movement',{...optional,unit:'record.targeting.area.unit'})
+ for(const name of ['rechargeMin','rechargeMax']) register(prefix+'.'+name,'count','challenge',{...optional,min:1,max:100})
+}
 for (const collection of ['traits', 'reactions']) register(`${collection}[id=*].limitedUse.count`, 'count', 'challenge', { min: 0, max: 999 })
 register('traits[id=*].rechargeCount', 'count', 'challenge', { ...optional, nullable: true, min: 0, max: 999 })
 for (const collection of ['traits', 'actions', 'lairActions']) {

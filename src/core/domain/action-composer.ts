@@ -139,33 +139,12 @@ const pooledActionChain: readonly ComposerCellSpec[] = actionChain.map((cell) =>
   cell.id === 'usage' ? { ...cell, label: 'Cost', editor: 'catalog', field: 'cost', options: LEGENDARY_COSTS } : cell
 )
 
-const traitChain: readonly ComposerCellSpec[] = [
-  { id: 'trait-usage', label: 'Cadence', row: 'head', editor: 'structured', field: 'limitedUse' },
-  { id: 'name', label: 'Name', row: 'head', editor: 'text', field: 'name' },
-  { id: 'description', label: 'Description', row: 'prose', editor: 'text' },
-]
-
+const traitChain: readonly ComposerCellSpec[] = actionChain.map(cell => cell.id === 'usage'
+ ? { ...cell, id:'trait-usage', label:'Cadence', editor:'structured' } : cell)
 const reactionChain: readonly ComposerCellSpec[] = [
-  { id: 'usage', label: 'Uses', row: 'head', editor: 'text' },
-  { id: 'discipline', label: 'Discipline', row: 'head', editor: 'catalog', field: 'school', options: DISCIPLINES },
-  { id: 'tier', label: 'Tier', row: 'head', editor: 'catalog', field: 'spellLevel', options: TIERS },
-  { id: 'name', label: 'Name', row: 'head', editor: 'text' },
-  { id: 'components', label: 'Components', row: 'head', editor: 'catalog', field: 'components', options: COMPONENT_TAGS, multiple: true },
-  { id: 'duration', label: 'Duration', row: 'head', editor: 'catalog', field: 'duration', options: DURATIONS, allowCustom: true },
-  { id: 'trigger', label: 'Trigger', row: 'mechanics', editor: 'text' },
-  { id: 'attack', label: 'Attack', row: 'mechanics', editor: 'catalog', field: 'attackSource' },
-  { id: 'weapon-ability', label: 'Weapon ability', row: 'mechanics', editor: 'catalog', field: 'weaponAttackAbility', options: WEAPON_ABILITY_RULES.map(rule => rule.label) },
-  { id: 'attack-bonus', label: 'Attack bonus', row: 'mechanics', editor: 'number', field: 'attackBonus' },
-  { id: 'save-ability', label: 'Save', row: 'mechanics', editor: 'catalog', field: 'stat', options: SAVE_ABILITIES },
-  { id: 'save-dc', label: 'Save DC', row: 'mechanics', editor: 'number', field: 'save' },
-  { id: 'target-count', label: 'Targets', row: 'scope', editor: 'structured', field: 'targeting.count' },
-  { id: 'target-kind', label: 'Target kind', row: 'scope', editor: 'catalog', field: 'targeting.kind', options: TARGET_KINDS, allowCustom: true },
-  { id: 'target-qualifier', label: 'Qualifier', row: 'scope', editor: 'catalog', field: 'targeting.qualifier', options: TARGET_QUALIFIERS, allowCustom: true },
-  { id: 'target-range', label: 'Range', row: 'scope', editor: 'structured', field: 'targeting.range' },
-  { id: 'target-area', label: 'Area', row: 'scope', editor: 'structured', field: 'targeting.area' },
-  { id: 'target-planes', label: 'Planes', row: 'scope', editor: 'catalog', field: 'targeting.planes', options: PLANES, multiple: true, allowCustom: true },
-  { id: 'outcomes', label: 'Outcomes', row: 'outcomes', editor: 'structured', field: 'outcomes' },
-  { id: 'description', label: 'Description', row: 'prose', editor: 'text' },
+ ...actionChain.filter(cell => cell.row === 'head'),
+ { id:'trigger',label:'Trigger',row:'mechanics',editor:'text',field:'trigger' },
+ ...actionChain.filter(cell => cell.row !== 'head'),
 ]
 
 const lairChain: readonly ComposerCellSpec[] = [

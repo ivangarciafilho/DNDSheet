@@ -92,7 +92,7 @@
                   />
                 </div>
                 <div class="col-9 col-sm-3">
-                  <q-input
+                  <mechanic-text-editor
                     dense
                     outlined
                     v-model="speed.note"
@@ -257,7 +257,7 @@
                 />
               </div>
               <div v-if="speedTraversal.aquaticBreathing === 'hold_breath'" class="col-12 col-sm-6">
-                <q-input
+                <mechanic-text-editor
                   v-model="speedTraversal.holdBreathDuration"
                   dense
                   outlined
@@ -435,7 +435,7 @@
 
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12">
-              <q-input
+              <mechanic-text-editor
                 dense
                 outlined
                 v-model="speedTraversal.note"
@@ -543,7 +543,7 @@
               />
             </div>
             <div class="col-6 col-sm-6">
-              <q-input
+              <mechanic-text-editor
                 v-model="rider.rider"
                 dense
                 outlined
@@ -564,7 +564,7 @@
                     <q-tooltip class="dnd-tip">Remove this movement rider</q-tooltip>
                   </q-btn>
                 </template>
-              </q-input>
+              </mechanic-text-editor>
             </div>
             <div class="col-12 col-sm-1 text-right">
               <q-btn
@@ -601,6 +601,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent, ref } from 'vue'
 import { STANDARD_MOVEMENTS } from 'src/data/MOVEMENT'
@@ -616,7 +617,7 @@ import {
 
 export default defineComponent({
   name: 'SpeedsEditor',
-  components: { SwapButtons },
+  components: { MechanicTextEditor, SwapButtons },
   setup() {
     const { t } = useI18n()
     const monster = useMonsterStore()

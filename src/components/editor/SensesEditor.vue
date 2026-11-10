@@ -274,7 +274,7 @@
 
             <!-- Note -->
             <div class="col-12 col-sm">
-              <q-input
+              <mechanic-text-editor
                 v-model="sense.note"
                 dense
                 outlined
@@ -291,6 +291,7 @@
 </template>
 
 <script lang="ts">
+import MechanicTextEditor from './MechanicTextEditor.vue'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { validateNumber } from './numberInput'
@@ -411,7 +412,7 @@ const SENSES_PRESETS: {
 
 export default defineComponent({
   name: 'SensesEditor',
-  components: { FormulaField },
+  components: { MechanicTextEditor, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const selectedSenseToAdd = ref<string | null>(null)

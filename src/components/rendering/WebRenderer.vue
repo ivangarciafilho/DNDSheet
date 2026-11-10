@@ -722,7 +722,7 @@
               :key="'innate-spell-' + groupIndex + '-' + spellIndex"
               class="spell-inline-item"
             >
-              <span class="spell-name">{{ spell.name }}</span>
+              <em class="spell-name">{{ spell.name }}</em>
               <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
               <span v-if="spellIndex < group.spells.length - 1" class="spell-sep">, </span>
             </span>
@@ -756,25 +756,19 @@
           <div class="sb-cell sb-spells-unified-cell sb-grow" style="border: none; padding: 0; width: 100%;">
             <div
               v-for="(row, rIdx) in primarySpellLevels"
-              :key="'spell-level-' + row.level"
+              :key="'spell-level-' + row.sourceId + '-' + row.level"
               class="spell-level-line"
               :class="{ 'is-striped': isPrimarySpellLineStriped(rIdx), 'sb-striped': true, 'zebra-stripe-text': shouldStripeSpellLine(row) }"
             >
               <strong class="sb-spell-head" :data-help="row.level === 0 ? 'cantrips' : 'spell-slots'" tabindex="0">
-                <template v-if="row.level === 0">
-                  Cantrips (at will):
-                </template>
-                <template v-else>
-                  <template v-if="!spellPlate.isPact || row.level === spellPlate.maxPactLevel">{{ spellLevelLead(row.slotCount, row.cadence) }}</template>
-                  Level {{ row.level }}<template v-if="row.bonusAction"> (Bonus Action)</template>:
-                </template>
+                {{ row.heading }}
               </strong>
               <span
                 v-for="(spell, spellIndex) in getPrimarySpells(row)"
                 :key="'spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span class="spell-name">{{ spell.name }}</span>
+                <em class="spell-name">{{ spell.name }}</em>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
@@ -795,20 +789,19 @@
             </div>
             <div
               v-for="(row, secIdx) in secondarySpellLevels"
-              :key="'sec-level-' + row.level"
+              :key="'sec-level-' + row.sourceId + '-' + row.level"
               class="spell-level-line"
               :class="{ 'is-striped': isSecondarySpellLineStriped(secIdx), 'sb-striped': true, 'zebra-stripe-text': shouldStripeSpellLine(row) }"
             >
               <strong class="sb-spell-head text-italic" tabindex="0">
-                <template v-if="row.level === 0">Cantrips:</template>
-                <template v-else>Level {{ row.level }}:</template>
+                {{ row.heading }}
               </strong>
               <span
                 v-for="(spell, spellIndex) in getSecondarySpells(row)"
                 :key="'sec-spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span class="spell-name">{{ spell.name }}</span>
+                <em class="spell-name">{{ spell.name }}</em>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="shouldShowSpellCadence(spell, row)" class="spell-cadence-badge" data-help="spell-cadence" tabindex="0"> [{{ spell.cadence }}]</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
@@ -1092,7 +1085,7 @@ import { useProcessTokens } from './useProcessTokens'
 import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
-import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
+import { buildInnateSpellPlate, buildSpellPlate, ordinalLabel, spellLevelLead, spellCadenceDiffers, consolidateSpellPlates } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
 import { formatSpellcastingTitle, calculateSpellcastingMetrics, SPELL_POINTS_BY_LEVEL } from 'src/core/usecases/AutoSyncSpellcasting'
@@ -1752,54 +1745,8 @@ export default defineComponent({
       return configuredFilters.some((filter) => c.includes(filter))
     }
 
-    const shouldShowSpellCadence = (
-      spell: { cadence?: string },
-      row: { level: number; cadence?: string; spells?: Array<{ cadence?: string }> }
-    ): boolean => {
-      if (!spell.cadence) return false
-      const spellCadence = spell.cadence.trim().toLowerCase()
-      if (spellCadence === 'hidden' || spellCadence === 'none' || spellCadence === '') return false
-
-      if (row.level === 0 && (spellCadence === 'at will' || spellCadence === 'at_will')) return false
-
-      const rowCadence = (row.cadence || '').toLowerCase()
-      const defaultCadence = spellPlate.value?.isPact ? 'short rest' : 'long rest'
-
-      if (rowCadence && rowCadence.includes(spellCadence)) {
-        return false
-      }
-
-      if (spellCadence === defaultCadence && (!rowCadence || rowCadence.includes(defaultCadence))) {
-        return false
-      }
-
-      const rowSpells = (row.spells || [])
-      if (rowSpells.length > 1) {
-        // Redundant cadence suppression: if all spells on this row share the same cadence, suppress individual badges
-        const allMatch = rowSpells.every((s) => (s.cadence || '').trim().toLowerCase() === spellCadence)
-        if (allMatch) return false
-
-        // Exception-only disclosure: compute majority cadence for the row
-        const cadenceCounts = new Map<string, number>()
-        for (const s of rowSpells) {
-          const sc = (s.cadence || '').trim().toLowerCase() || defaultCadence
-          cadenceCounts.set(sc, (cadenceCounts.get(sc) || 0) + 1)
-        }
-        let majorityCadence = defaultCadence
-        let maxCount = 0
-        for (const [cad, count] of cadenceCounts.entries()) {
-          if (count > maxCount) {
-            maxCount = count
-            majorityCadence = cad
-          }
-        }
-        if (spellCadence === majorityCadence && maxCount > 1) {
-          return false
-        }
-      }
-
-      return true
-    }
+    const shouldShowSpellCadence = (spell: { cadence?: string }, row: { effectiveCadence?: string }): boolean =>
+      spellCadenceDiffers(spell.cadence, row.effectiveCadence)
 
     const getPrimarySpells = (row: any) => {
       if (!monster.spellcasting?.splitHighCadence) return row.spells || []
@@ -1932,7 +1879,7 @@ export default defineComponent({
       }
       const filterOnlyAlways = Boolean((sc as typeof sc & { alwaysAvailableOnly?: boolean })?.alwaysAvailableOnly)
       const spellLevels = Array.from({ length: 10 }, (_, spellLevel) => {
-        const rawSpells = monster.knownSpellsOfLevel(spellLevel).map((name: string) => ({
+        const rawSpells = monster.knownSpellsOfLevel(spellLevel).filter((name: string) => sc?.standard?.includes(name)).map((name: string) => ({
           name,
           tags: getSpellTagString(name),
           cadence: sc?.spellCadenceMap?.[name],
@@ -1954,7 +1901,7 @@ export default defineComponent({
           bonusAction: Boolean(bonusActionLevelMap?.[spellLevel]),
         }
       })
-      return buildSpellPlate({
+      const primary = buildSpellPlate({
         title: renderedSpellcastingTitle.value,
         stat,
         save: monster.spellSave,
@@ -1978,6 +1925,21 @@ export default defineComponent({
         edition: editorStore.style === '2014' ? '2014' : '2024',
         spellLevels,
       })
+      const additions = (sc?.classes || []).filter((source) => source.id !== 'primary').map((source) => ({
+        id: source.id,
+        label: [source.className, source.subclass].filter(Boolean).join(' · '),
+        plate: buildSpellPlate({
+          title: source.className, stat: source.stat, save: monster.spellSave, attack: monster.spellAttackModifier,
+          className: source.className, level: source.level, resourceType: source.resourceType,
+          resourceValue: source.resourceValue, refreshRate: source.refreshRate,
+          slots: source.slots || (source.resourceType === 'pact' || source.className === 'Warlock' || ['focus', 'points', 'at_will'].includes(source.resourceType || '') ? [] : sc?.slots),
+          spellLevels: Array.from({ length: 10 }, (_, level) => ({
+            level, cadence: source.levelCadences?.[level], bonusAction: Boolean(source.levelBonusAction?.[level]),
+            spells: monster.knownSpellsOfLevel(level).filter((name: string) => source.spells?.includes(name)).map((name: string) => ({ name, tags: getSpellTagString(name), cadence: source.spellCadenceMap?.[name] })),
+          })),
+        }),
+      }))
+      return consolidateSpellPlates(primary, additions)
     })
 
     const innateSpellPlate = computed(() => {

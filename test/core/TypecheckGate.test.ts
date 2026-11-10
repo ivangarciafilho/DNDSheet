@@ -55,3 +55,15 @@ test('gate freshness covers tools and build metadata while excluding installed d
     fs.rmSync(root, { recursive: true, force: true })
   }
 })
+
+
+test('compiler omitted-member counts do not create diagnostic churn', () => {
+  const diagnostic = message => ({ file: 'src/a.ts', code: 'TS2339', message })
+  const before = [diagnostic("Property 'missing' does not exist on type '{ name: string; ... 73 more ...; macros?: Record<...> }'.")]
+  const after = [diagnostic("Property 'missing' does not exist on type '{ name: string; ... 74 more ...; macros?: Record<...> }'.")]
+  assert.deepEqual(compareDiagnostics(after, before), { added: [], resolved: 0 })
+  assert.equal(compareDiagnostics([...after, after[0]], before).added.length, 1)
+  assert.equal(compareDiagnostics([diagnostic(after[0].message.replace('name: string', 'name: number'))], before).added.length, 1)
+  assert.equal(compareDiagnostics([diagnostic(after[0].message.replace("'missing'", "'different'"))], before).added.length, 1)
+  assert.equal(compareDiagnostics([diagnostic('Expected 74 arguments')], [diagnostic('Expected 73 arguments')]).added.length, 1)
+})

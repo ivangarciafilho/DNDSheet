@@ -2,7 +2,7 @@
  * Export boundary: turns renderer HTML into Markdown or LaTeX text. Authored emphasis and paragraph
  * breaks cross it; web-only chrome (plates, number pills, help hooks) never does.
  */
-export type TextExportFormat = 'markdown' | 'latex'
+export type TextExportFormat = 'markdown' | 'latex' | 'plain'
 
 const ENTITIES: Readonly<Record<string, string>> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' }
 
@@ -31,7 +31,7 @@ const LATEX_ESCAPES: Readonly<Record<string, string>> = {
 }
 
 const escapeText = (text: string, format: TextExportFormat): string =>
-  format === 'latex'
+  format === 'plain' ? text : format === 'latex'
     ? text.replace(/[\\{}$&%#_~^<>]/g, (char) => LATEX_ESCAPES[char])
     : text.replace(/[\\`*_[\]<>]/g, (char) => `\\${char}`)
 
@@ -89,9 +89,9 @@ export function exportMarkup(input: string, format: TextExportFormat): string {
     } else if (emphasis) {
       // Classed emphasis is presentation (number pills, plate cells); only authored tags carry meaning.
       const chrome = /\bclass\s*=/i.test(attributes)
-      const mark = format === 'latex' ? `\\${LATEX_COMMANDS[emphasis]}{` : MARKDOWN_MARKS[emphasis]
+      const mark = format === 'latex' ? `\\${LATEX_COMMANDS[emphasis]}{` : format === 'markdown' ? MARKDOWN_MARKS[emphasis] : ''
       output += chrome ? '' : mark
-      open.push({ tag: name, close: chrome ? '' : format === 'latex' ? '}' : MARKDOWN_MARKS[emphasis] })
+      open.push({ tag: name, close: chrome ? '' : format === 'latex' ? '}' : format === 'markdown' ? MARKDOWN_MARKS[emphasis] : '' })
     } else if (BLOCK_TAGS.has(name)) {
       if (output && !output.endsWith('\n')) output += '\n'
       gap = false

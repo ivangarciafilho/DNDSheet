@@ -1212,7 +1212,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const tableTags: string[] = []
     let tableMarker = 'DNDSHEET_OUTCOME_TABLE_'
     while (input.includes(tableMarker)) tableMarker += '_'
-    input = input.replace(/<(table class="outcome-dice-table"|\/?(?:table|caption|thead|tbody|tr|th|td)|th scope="col")>/gi, (tag) => `${tableMarker}${tableTags.push(tag) - 1};`)
+    input = input.replace(/<(table class="outcome-dice-table"|\/?(?:table|caption|thead|tbody|tr|th|td|b|strong|i|em|u|s|strike|del|sub|sup|code|br|p|ul|ol|li)|th scope="col")>/gi, (tag) => `${tableMarker}${tableTags.push(tag) - 1};`)
     // allowed tags are: bold, italic, underline, br, div, span, svg, path
     input = input.replace(/>/gi, '&gt;')
     input = input.replace(/</gi, '&lt;')
@@ -1255,20 +1255,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     return input.replace(new RegExp(`${tableMarker}(\\d+);`, 'g'), (_match, index) => tableTags[Number(index)])
   }
 
-  const stripTags = (input: string) => {
-    const allowedTags = /<(\/?[b|i|u])>/gi
-    input = input.replace(allowedTags, () => {
-      return ''
-    })
-
-    // linebreak time
-    const linebreak = /<div><br><\/div>/gi
-    input = input.replace(linebreak, () => {
-      return '\n'
-    })
-
-    return input
-  }
+  // Structured plain-text exports share the semantic tag/entity boundary with Markdown and LaTeX.
+  const stripTags = (input: string) => exportMarkup(input, 'plain')
 
   const mdFormatter = (input: string, blockquote = true) => {
     const text = exportMarkup(input, 'markdown')

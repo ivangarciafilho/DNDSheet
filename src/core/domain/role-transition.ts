@@ -39,13 +39,13 @@ export function roleTransition(monster: Monster, id: string, source: ActionCompo
     patch.actions = monster.actions.map(item => item.id === id
       ? { ...item, bonusAction: target === 'bonus_action', legendaryOnly: target === 'legendary' || target === 'mythic' } : item)
   } else {
-    const common = { id: copyId, description: entry.description }
     const name = 'name' in entry ? entry.name : 'Lair Action'
     const uses = 'limitedUse' in entry ? clone(entry.limitedUse) : { count: 0, rate: 'DAY' }
     // A retained source and its copy must not both contribute the same CR estimates by default.
     const cr = { ...defaultCrAnnotation(), ...('crAnnotation' in entry ? clone(entry.crAnnotation) : {}), include: false }
+    const common = { ...clone(entry), id: copyId, description: entry.description, crAnnotation:cr }
     if (target === 'trait') patch.traits = [...monster.traits, { ...defaultTrait(copyId), ...common, name, limitedUse: uses, crAnnotation: cr }]
-    else if (target === 'reaction') patch.reactions = [...monster.reactions, { ...common, name, limitedUse: uses, trigger: '' }]
+    else if (target === 'reaction') patch.reactions = [...monster.reactions, { ...common, name, limitedUse: uses, trigger: 'trigger' in entry && typeof entry.trigger === 'string' ? entry.trigger : '' }]
     else if (target === 'lair') patch.lairActions = [...monster.lairActions, { ...common, crAnnotation: cr }]
     else patch.actions = [...monster.actions, { ...defaultAction(copyId), ...common, name, limitedUse: uses, crAnnotation: cr,
       bonusAction: target === 'bonus_action', legendaryOnly: target === 'legendary' || target === 'mythic' }]
@@ -53,7 +53,7 @@ export function roleTransition(monster: Monster, id: string, source: ActionCompo
   if (!move && monster.bindings) {
     const sourceCollection = source === 'trait' ? 'traits' : source === 'reaction' ? 'reactions' : source === 'lair' ? 'lairActions' : 'actions'
     const targetCollection = target === 'trait' ? 'traits' : target === 'reaction' ? 'reactions' : target === 'lair' ? 'lairActions' : 'actions'
-    patch.bindings = copyEntryBindings(monster.bindings, entryBindingPrefix(sourceCollection, id), entryBindingPrefix(targetCollection, copyId), ['limitedUse', 'crAnnotation'])
+    patch.bindings = copyEntryBindings(monster.bindings, entryBindingPrefix(sourceCollection, id), entryBindingPrefix(targetCollection, copyId), ['limitedUse','crAnnotation','attackBonus','save','targeting','rechargeMin','rechargeMax','rechargeCount'])
   }
   if (move || target === 'legendary') patch.legendaryActions = { ...monster.legendaryActions, actions: memberships(monster.legendaryActions.actions, target === 'legendary') }
   if (move || target === 'mythic') patch.mythicActions = { ...monster.mythicActions, actions: memberships(monster.mythicActions.actions, target === 'mythic') }
@@ -62,6 +62,6 @@ export function roleTransition(monster: Monster, id: string, source: ActionCompo
     message: 'Keeps this entry’s ID, position, mechanics, usage, CR settings and multiattack references. Its action/bonus flags and legendary/mythic memberships will change to the selected role. Section settings stay unchanged.',
   } : {
     kind: 'copy', title: `Create ${ROLE_NAMES[target]} copy?`, patch,
-    message: 'The original entry and all its references stay unchanged. The copy receives a new ID, description, name where supported, compatible limited uses and CR estimates. Other role-specific mechanics stay on the original; review the copy’s mechanics and any description macros before use. Copies start excluded from CR calculations where supported. Section settings stay unchanged.',
+    message: 'The original entry and all its references stay unchanged. The copy receives a new ID, description, name where supported, compatible limited uses and CR estimates. Shared mechanics, outcomes, metadata and custom fields are retained in the copy; review role-specific policies and any description macros before use. Copies start excluded from CR calculations where supported. Section settings stay unchanged.',
   }
 }
