@@ -1,6 +1,6 @@
 import type { Monster } from './types.ts'
 import { aggregateSpellcastingSources, sourceLearningMetrics, spellcastingRuleClass, SPELL_POINTS_BY_LEVEL } from '../usecases/AutoSyncSpellcasting.ts'
-import { buildSpellPlate, ordinalLabel, type SpellPlateLevel, type SpellPlateModel } from './spell-plate.ts'
+import { buildSpellPlate, ordinalLabel, spellRowRecovery, type SpellPlateLevel, type SpellPlateModel } from './spell-plate.ts'
 import { castingResourceView } from './casting-resource-view.ts'
 import { sourceEffectiveSpells, sourceSpellCeiling } from './casting-source-selection.ts'
 import { getSpellMetadata } from './spell-metadata.ts'
@@ -60,8 +60,14 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
   const resourceLines = new Set<string>()
   const rows = new Map<string, SpellPlateLevel>()
   const preparation = new Map<string, { cadence: string; spellList: string; count: number }>()
-  for (const source of sources) {
-    const pool = castingResourceView(source, aggregate)
+  const pools = sources.map(source => ({ source, pool: castingResourceView(source, aggregate) }))
+  const poolRecovery = ({ source, pool }: typeof pools[number]) => cadenceLabel(spellRowRecovery(1, undefined, { ...source, ...pool }))
+  for (const entry of pools) {
+    const { source, pool } = entry
+    const recovery = poolRecovery(entry)
+    const sharedResourceCadence = pools.some(other => other !== entry && other.pool.resourceType === pool.resourceType && poolRecovery(other) === recovery)
+      ? recovery
+      : undefined
     const ceiling = source.contribution?.highestSlot ? sourceSpellCeiling(source, effectiveLevel, sources.length) : undefined
     const slots = ceiling === undefined ? pool.slots : pool.slots?.map((amount, index) => index < ceiling ? amount : 0)
     const names = sourceEffectiveSpells(source, effectiveLevel, sources.length)
@@ -87,7 +93,7 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
       title, stat: source.stat, save, attack, className: source.className, level: source.level,
       resourceType: pool.resourceType, pactPool: pool.pactPool, slots,
       resourceValue: pool.resourceValue ?? (source.id === 'primary' ? source.resourceType === 'points' ? SPELL_POINTS_BY_LEVEL[source.level] : source.resourceType === 'focus' ? source.level : undefined : undefined),
-      refreshRate: source.refreshRate, customRefreshRate,
+      refreshRate: source.refreshRate, customRefreshRate, sharedResourceCadence,
       spellLevels: Array.from({ length: 10 }, (_, level) => ({
         level, amount: source.levelAmounts?.[level], cadence: source.levelCadences?.[level], bonusAction: Boolean(source.levelBonusAction?.[level]),
         spells: names.filter(name => (options.spellLevel(name) ?? 0) === level && (ceiling === undefined || level <= ceiling) && visible(source.spellCadenceMap?.[name])).map(name => {

@@ -245,12 +245,23 @@
           <template #append>
             <lock-toggle-button
               :locked="!monster.proficiencyOverride"
-              :lock-tooltip="$t('monster.proficiency.unlockFromCr')"
-              :unlock-tooltip="$t('monster.proficiency.lockToCr')"
+              lock-tooltip="Set proficiency manually"
+              unlock-tooltip="Use the selected proficiency scale"
               @click="monster.toggleProficiencyOverride"
             />
           </template>
         </formula-field>
+
+        <q-btn-toggle
+          :model-value="monster.proficiencyScale || 'monster'"
+          :options="[{ label: 'Monster (CR)', value: 'monster' }, { label: 'Character (HD)', value: 'character' }]"
+          :disable="monster.proficiencyOverride"
+          aria-label="Proficiency scale"
+          data-proficiency-scale
+          class="col-auto"
+          dense no-caps unelevated
+          @update:model-value="monster.setProficiencyScale"
+        />
 
         <q-select
           v-if="!monster.useCrDisplayOverride"

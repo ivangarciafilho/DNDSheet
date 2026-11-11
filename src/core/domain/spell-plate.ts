@@ -33,6 +33,7 @@ export interface SpellPlateInput {
   refreshRate?: string
   customRefreshRate?: string
   slots?: number[]
+  sharedResourceCadence?: string
   preparedCount?: number
   preparedInterval?: string
   levelCadenceMap?: Record<number | string, string>
@@ -286,6 +287,7 @@ export function spellLevelHeading(input: SpellLevelHeadingInput): string {
 export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
   const ctx = resourceContext(input)
   const { slots, isPact, maxPactLevel } = ctx
+  const resource = resourceSummary(input, slots)
   const levels = input.spellLevels
     .filter((row) => Number.isInteger(row.level) && row.level >= 0 && row.level <= 9 && row.spells.length > 0)
     .sort((a, b) => a.level - b.level)
@@ -304,8 +306,18 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
         if (aRestricted === bRestricted) return 0
         return aRestricted ? 1 : -1
       })
+      const effectiveCadence = cadenceText.replace(/^Per\s+/i, '')
+      const shared = row.level > 0 && Boolean(input.sharedResourceCadence && resource)
+      const matchesPool = shared && effectiveCadence === input.sharedResourceCadence
+      let heading = spellLevelHeading({ ...input, level: row.level, levelCadence: row.cadence ?? input.levelCadenceMap?.[row.level], bonusAction: row.bonusAction, amount: rowAmount })
+      if (matchesPool) {
+        const inheritedLead = spellLevelLead(amount, cadenceText)
+        heading = spellLevelLead(isPact ? spellAmount(rowAmount) : amount, 'hidden') + heading.slice(inheritedLead.length)
+      } else if (shared && effectiveCadence && !amount) {
+        heading = '(' + effectiveCadence + '), ' + heading
+      }
       return {
-        heading: spellLevelHeading({ ...input, level: row.level, levelCadence: row.cadence ?? input.levelCadenceMap?.[row.level], bonusAction: row.bonusAction, amount: rowAmount }),
+        heading,
         effectiveCadence: cadenceText.replace(/^Per\s+/i, ''),
         level: row.level,
         ordinal: ordinalLabel(row.level),
@@ -313,7 +325,7 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
         amount,
         cadence: cadenceText,
         bonusAction: Boolean(row.bonusAction),
-        spells: sortedSpells.map(spell => spellView(spell, { rowAmount: amount, rowCadence: cadenceText.replace(/^Per\s+/i, ''), rowBonusAction: Boolean(row.bonusAction) })),
+        spells: sortedSpells.map(spell => spellView({ ...spell, restrictionCadence: matchesPool && cadenceLabel(spell.restrictionCadence) === effectiveCadence ? undefined : spell.restrictionCadence }, { rowAmount: amount, rowCadence: cadenceText.replace(/^Per\s+/i, ''), rowBonusAction: Boolean(row.bonusAction) })),
       }
     })
 
@@ -339,7 +351,7 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
     stat: input.stat,
     save: String(input.save),
     attack: typeof input.attack === 'number' && input.attack >= 0 ? `+${input.attack}` : String(input.attack),
-    resource: resourceSummary(input, slots),
+    resource,
     prepared: input.preparedCount && input.preparedCount > 0
       ? `${Math.trunc(input.preparedCount)} prepared ${input.className || 'Caster'} spells · ${cadenceLabel(input.preparedInterval) || 'Long Rest'}`
       : '',

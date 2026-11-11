@@ -99,3 +99,9 @@ export function bonusForConditionalDamage(
   }
   return statModifier(monster.stats[attack.alternateDamage.modifier.stat])
 }
+
+/** Character advancement has five proficiency tiers from levels 1 through 20. */
+export function characterProficiency(level: number): number {
+  const boundedLevel = Math.max(1, Math.min(20, Number.isFinite(level) ? level : 1))
+  return Math.floor((boundedLevel - 1) / 4) + 2
+}

@@ -1,5 +1,5 @@
 import { CR, getCrByNumber, getCrByString, type CrTier } from '../domain/cr-tables.ts'
-import { renderBonus, statModifier } from '../domain/math-utils.ts'
+import { characterProficiency, renderBonus, statModifier } from '../domain/math-utils.ts'
 import type { Monster } from '../domain/types.ts'
 import { calculateCr } from './CalculateCr.ts'
 
@@ -49,7 +49,7 @@ export function generateAutoTunePlan(
   tuned.CR = targetTier.index
 
   // 2. Proficiency Bonus Tuning
-  if (monster.proficiency !== targetTier.proficiency) {
+  if (monster.proficiencyScale !== 'character' && monster.proficiency !== targetTier.proficiency) {
     recommendations.push({
       category: 'PROFICIENCY',
       field: 'proficiency',
@@ -97,6 +97,8 @@ export function generateAutoTunePlan(
     tuned.HP.modifier = newHpModifier
   }
 
+  if (tuned.proficiencyScale === 'character' && !tuned.proficiencyOverride) tuned.proficiency = characterProficiency(tuned.HP.HD)
+
   // 5. Offensive Tuning: Damage Per Round (DPR) Scaling
   const targetMidDpr = Math.max(1, (targetTier.dprMin + targetTier.dprMax) / 2)
   const currentDpr = Math.max(1, currentEval.damagePerRound)
@@ -139,6 +141,7 @@ export function generateAutoTunePlan(
       })
     }
   }
+
 
   return {
     originalCr: currentEval.estimatedCr.cr,

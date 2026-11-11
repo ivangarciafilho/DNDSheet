@@ -126,3 +126,23 @@ test('the statblock shows the selected preparation list and separates encounter 
   assert.deepEqual(spells.filter(spell => spell.restricted).map(spell => spell.name).sort(), ['Mending', 'Shield', 'Unseen Servant'])
   assert.equal(spells.find(spell => spell.name === 'Mending')?.castingTime, '1 minute')
 })
+
+test('shared Pact sources announce common recovery once and retain a different row cadence', () => {
+  const { spellcasting } = defaultMonster()
+  Object.assign(spellcasting, {
+    class: 'Warlock', level: 9, stat: 'CHA', resourceType: 'pact', refreshRate: 'short_rest',
+    slots: [0, 0, 0, 0, 3], standard: ['Hold Monster'],
+    classes: [{
+      id: 'wizard', className: 'Wizard', level: 9, stat: 'INT', resourceType: 'pact', refreshRate: 'Short Rest',
+      slots: [0, 0, 0, 0, 3], spells: ['Telekinesis', 'Shield'], levelCadences: { 1: 'long_rest' },
+    }],
+  })
+  const plate = buildCastingProjection(spellcasting, {
+    stats: { CHA: 18, INT: 14 }, proficiency: 4, save: 16, attack: 8,
+    spellLevel: name => name === 'Shield' ? 1 : 5,
+  })
+  assert.match(plate.resource, /3 spell slots.*Short Rests/)
+  assert.equal(plate.levels.filter(row => row.level === 5).length, 2)
+  assert.ok(plate.levels.filter(row => row.level === 5).every(row => !row.heading.includes('Short Rest')))
+  assert.match(plate.levels[0].heading, /Long Rest/)
+})

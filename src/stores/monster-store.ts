@@ -1,3 +1,4 @@
+import { characterProficiency } from 'src/core/domain/math-utils'
 import { sourceEffectiveSpells } from 'src/core/domain/casting-source-selection'
 import { previewRandomTableImport, nextRandomTableRow } from 'src/core/domain/random-table'
 import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
@@ -73,6 +74,7 @@ export const useMonsterStore = defineStore('monster', {
       crOverride: '',
       proficiency: 2,
       proficiencyOverride: false,
+      proficiencyScale: 'monster',
       HP: {
         HD: 1,
         type: DICE.d8,
@@ -1145,8 +1147,19 @@ export const useMonsterStore = defineStore('monster', {
       this.CR = value
 
       // automatically update proficiency too
+      this.syncProficiency()
+    },
+    setProficiencyScale(scale: 'monster' | 'character') {
+      this.$patch(state => {
+        state.proficiencyScale = scale
+        if (!state.proficiencyOverride) {
+          state.proficiency = scale === 'character' ? characterProficiency(state.HP.HD) : CR[state.CR].proficiency
+        }
+      })
+    },
+    syncProficiency() {
       if (!this.proficiencyOverride) {
-        this.proficiency = CR[this.CR].proficiency
+        this.proficiency = this.proficiencyScale === 'character' ? characterProficiency(this.HP.HD) : CR[this.CR].proficiency
       }
     },
     toggleProficiencyOverride() {

@@ -967,6 +967,7 @@ export interface Monster {
   crOverride: string
   proficiency: number
   proficiencyOverride: boolean
+  proficiencyScale?: 'monster' | 'character'
   HP: DndDice
   hpModifierOverride: boolean
   hpDieTypeOverride: boolean

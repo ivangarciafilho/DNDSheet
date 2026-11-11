@@ -33,7 +33,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   await until(()=>source('primary').querySelector('[data-source-grants="1"]')?.textContent.includes('Bless'),'verified level-one grant guidance');
   facts.grantsSeparateFromAssignments=check(source('primary').querySelector('[data-source-grants="1"]').textContent.includes('Always prepared')&&!monster.spellcasting.standard.includes('Bless'),'Automatic grants must remain separate from manual assignment');
   const merged=await until(()=>lines().find(row=>row.textContent.includes('Bless')&&row.textContent.includes('Magic Missile')&&row.textContent.includes('Cure Wounds')),'merged compatible spell row');
-  facts.compatibleRowsMerge=check(lines().filter(row=>row.querySelector('.sb-spell-head')?.textContent.includes('Level 1')).length===1&&merged.querySelector('.sb-spell-head').textContent.includes('(2/Long Rest)'),'Compatible rows merge without changing availability');
+  facts.compatibleRowsMerge=check(lines().filter(row=>row.querySelector('.sb-spell-head')?.textContent.includes('Level 1')).length===1&&merged.querySelector('.sb-spell-head').textContent.includes('(2), Level 1:'),'Compatible rows merge and inherit the shared recovery');
   facts.noSourceAttribution=check(!/Cleric|Wizard|Life Domain/i.test(plate().textContent),'The statblock must omit source names');
   const original=JSON.stringify(monster.spellcasting.standard);
   const savedSlots=JSON.stringify(monster.spellcasting.slots);

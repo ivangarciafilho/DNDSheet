@@ -1,0 +1,6 @@
+{
+  character: [ 4, 'character' ],
+  higher: 6,
+  survivesCR: 6,
+  monster: [ 2, 'monster' ]
+}

@@ -5,6 +5,7 @@ import { referenceSourcesForMonster } from './catalogs/reference-sources.ts'
 import { inspectNumericField } from './catalogs/field-inspection.ts'
 import { isReferenceAllowedForField, validateNumericFieldDiceValue, validateNumericFieldValue } from './catalogs/field-types.ts'
 import { parseNumericFieldPath, readNumericFieldPath } from './catalogs/field-path.ts'
+import { characterProficiency } from './math-utils.ts'
 import type { Monster } from './types.ts'
 
 export interface BindingModel { bindings?: Record<string, NumericBinding> }
@@ -56,9 +57,11 @@ export function writeBoundNumericField(model: unknown, path: string, value: numb
  */
 export function resolveMonsterBindings<T extends object>(input: T): MonsterBindingResolution<T> {
   const original = input as T & BindingModel
-  if (original.bindings === undefined) return { model: original, errors: {}, changed: false, changedPaths: [] }
+  const monster = original as unknown as Monster
+  const useHitDice = monster.proficiencyScale === 'character' && !monster.proficiencyOverride && Boolean(monster.HP)
+  if (original.bindings === undefined && !useHitDice) return { model: original, errors: {}, changed: false, changedPaths: [] }
   const errors: Record<string, string> = {}
-  const raw = original.bindings
+  const raw = original.bindings === undefined ? {} : original.bindings
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { model: original, errors: { bindings: 'Invalid binding map' }, changed: false, changedPaths: [] }
   const active: Record<string, NumericBinding> = Object.create(null)
   for (const path of Object.keys(raw)) {
@@ -74,15 +77,23 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
   const storedSources = referenceSourcesForMonster(original as unknown as Monster)
   const sources = (ref: string, target: string) => {
     const paths = storedSources(ref, target)
-    return !(original as unknown as Monster).hpModifierOverride && paths.includes('HP.modifier')
+    if (useHitDice && paths.includes('proficiency')) return [...paths, 'HP.HD']
+    return !monster.hpModifierOverride && paths.includes('HP.modifier')
       ? [...paths, 'stats.CON', 'HP.HD'] : paths
   }
   try { order = dependencyOrder(active as BindingMap, sources) }
   catch (error) { for (const path of Object.keys(active)) errors[path] = message(error); return { model: original, errors, changed: false, changedPaths: [] } }
   const model = clone(original)
   const changedPaths: string[] = []
-  const syncAutomaticHp = () => {
+  const syncAutomaticStats = () => {
     const m = model as unknown as Monster
+    if (useHitDice) {
+      const bonus = characterProficiency(m.HP.HD)
+      if (m.proficiency !== bonus) {
+        m.proficiency = bonus
+        if (!changedPaths.includes('proficiency')) changedPaths.push('proficiency')
+      }
+    }
     if (order.length && !m.hpModifierOverride && m.HP && m.stats) {
       const bonus = abilityModifier(m.stats.CON) * m.HP.HD
       if (Number.isSafeInteger(bonus) && m.HP.modifier !== bonus) {
@@ -91,7 +102,7 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
       }
     }
   }
-  syncAutomaticHp()
+  syncAutomaticStats()
   for (const path of order) {
     try {
       const inspection = inspectNumericField(model, path)
@@ -100,7 +111,7 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
       if (active[path].mode === 'ref') for (const ref of result.refs) if (!isReferenceAllowedForField(path, ref)) throw new Error(`Reference ${ref} is not allowed for ${path}`)
       validateNumericFieldDiceValue(path, result)
       if (inspection.value !== result.flat) { writeBoundNumericField(model, path, result.flat); changedPaths.push(path) }
-      syncAutomaticHp()
+      syncAutomaticStats()
     } catch (error) {
       errors[path] = message(error)
       return { model: original, errors, changed: false, changedPaths: [] }

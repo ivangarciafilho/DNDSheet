@@ -1,3 +1,4 @@
+import { defaultMonster } from '../../src/core/domain/types.ts'
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { setMonsterBinding, clearMonsterBinding, resolveMonsterBindings } from '../../src/core/domain/monster-bindings.ts'
@@ -61,4 +62,17 @@ test('automatic CON hit-point bonus is synchronized before HP-dependent bindings
   result = setMonsterBinding(result.model, 'speeds[id=x].speed', { mode: 'formula', expr: 'HP' })
   assert.equal(result.model.HP.modifier, 12)
   assert.equal(result.model.speeds[0].speed, 25)
+})
+
+test('character proficiency follows resolved Hit Dice and participates in PB dependencies', () => {
+  const monster = defaultMonster()
+  monster.proficiencyScale = 'character'
+  const linked = setMonsterBinding(monster, 'AC', { mode: 'formula', expr: '10 + PB' }).model
+  const leveled = setMonsterBinding(linked, 'HP.HD', { mode: 'formula', expr: '9' }).model
+  assert.equal(leveled.proficiency, 4)
+  assert.equal(leveled.AC, 14)
+  assert.throws(() => setMonsterBinding(leveled, 'HP.HD', { mode: 'formula', expr: 'PB + 5' }), /cycl/i)
+  leveled.proficiencyOverride = true
+  leveled.proficiency = 7
+  assert.equal(resolveMonsterBindings(leveled).model.proficiency, 7)
 })

@@ -1,5 +1,6 @@
 import { normalizeCastingSpellGrants } from '../domain/casting-source-selection.ts'
 import { normalizeRandomTables } from '../domain/random-table.ts'
+import { characterProficiency } from '../domain/math-utils.ts'
 import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts'
 
 export const CURRENT_MONSTER_VERSION = 11
@@ -511,6 +512,9 @@ export function migrateMonsterSchema(raw: any): Monster {
   // A11.9: optional field, normalised on every load so hand-edited or partial JSON cannot break the editor.
   monster.randomTables = normalizeRandomTables(monster.randomTables)
 
+  if (monster.proficiencyScale === 'character' && !monster.proficiencyOverride && monster.HP) {
+    monster.proficiency = characterProficiency(monster.HP.HD)
+  }
   return monster as Monster
 }
 

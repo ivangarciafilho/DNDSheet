@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { CharacterActor, defaultCharacterActor, DndStat } from 'src/core/domain/types'
-import { statModifier } from 'src/core/domain/math-utils'
+import { characterProficiency, statModifier } from 'src/core/domain/math-utils'
 
 export const useCharacterStore = defineStore(
   'character',
@@ -34,8 +34,7 @@ export const useCharacterStore = defineStore(
     watch(
       () => actor.value.level,
       (lvl) => {
-        const clampedLvl = Math.max(1, Math.min(20, lvl || 1))
-        actor.value.proficiency = Math.floor((clampedLvl - 1) / 4) + 2
+        actor.value.proficiency = characterProficiency(lvl)
       }
     )
 
