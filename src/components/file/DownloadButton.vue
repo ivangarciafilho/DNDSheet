@@ -255,10 +255,12 @@ export default defineComponent({
       }
     }
 
-    const captureA4Png = async (page: HTMLElement) => {
+    const captureMonsterPng = async (page: HTMLElement) => {
       const copy = page.cloneNode(true) as HTMLElement
       // Keep the copy under the same layout and theme selectors while measuring its rows.
-      Object.assign(copy.style, { position: 'absolute', inset: '0 auto auto -100000px', pointerEvents: 'none' })
+      const isA4 = page.matches('.a4-page-sheet')
+      const width = isA4 ? page.offsetWidth : Math.max(page.offsetWidth, 1120)
+      Object.assign(copy.style, { position: 'absolute', inset: '0 auto auto -100000px', width: width + 'px', pointerEvents: 'none' })
       copy.inert = true
       page.after(copy)
       try {
@@ -277,6 +279,10 @@ export default defineComponent({
           element.style.setProperty('font-style', 'normal', 'important')
         }
         await document.fonts.ready
+        const block = copy.querySelector<HTMLElement>('.statblock')
+        if (block && block.offsetWidth < 560) block.style.setProperty('column-count', '1', 'important')
+        const portrait = copy.querySelector<HTMLElement>('.monster-portrait')
+        if (portrait && !isA4 && block) portrait.style.height = block.offsetHeight + 'px'
         return await snapdom.toBlob(copy, {
           embedFonts: true,
           scale: 2,
@@ -285,7 +291,7 @@ export default defineComponent({
           plugins: [{
             name: 'statblock-flow',
             afterClone({ clone }) {
-              for (const cell of clone?.querySelectorAll<HTMLElement>('.statblock, .statblock-wrapper, .sb-plate, .sb-row, .sb-cell') ?? []) {
+              for (const cell of clone?.querySelectorAll<HTMLElement>('.statblock, .statblock-wrapper, .sb-plate, .sb-row, .sb-cell, .sb-text, .sb-body') ?? []) {
                 cell.style.setProperty('height', 'auto', 'important')
                 cell.style.setProperty('block-size', 'auto', 'important')
               }
@@ -303,7 +309,7 @@ export default defineComponent({
         ? document.getElementById('char-sheet')
         : editorStore.a4PreviewMode
           ? document.getElementById('render')?.closest<HTMLElement>('.a4-page-sheet')
-          : document.getElementById('renderer')
+          : document.getElementById('render')
       const targetName = isChar ? (charStore.actor.name || 'Hero') : monster.name
 
       if (node != null) {
@@ -321,8 +327,8 @@ export default defineComponent({
         try {
           await document.fonts?.ready
           await Promise.allSettled(Array.from(node.querySelectorAll('img'), image => image.decode()))
-          const result = node.matches('.a4-page-sheet')
-            ? await captureA4Png(node)
+          const result = !isChar
+            ? await captureMonsterPng(node)
             : await snapdom.toBlob(node, { embedFonts: true, scale: 2, type: 'png' })
           const blobUrl = URL.createObjectURL(result)
           const link = document.createElement('a')

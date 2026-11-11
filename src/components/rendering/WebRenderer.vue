@@ -192,7 +192,7 @@
             label="Print / PDF"
             @click="printA4Sheet"
           >
-            <q-tooltip>Print or save as PDF. Print one A4 sheet with its full paper background.</q-tooltip>
+            <q-tooltip>Print or save as PDF. Stretch the artwork and statblock to fill one A4 page.</q-tooltip>
           </q-btn>
         </template>
       </div>
@@ -1695,14 +1695,23 @@ export default defineComponent({
     const fitA4ForPrint = () => {
       const page = a4PageRef.value
       if (!editorStore.a4PreviewMode || !page) return
+      page.style.removeProperty('--a4-print-transform')
       const paperWidth = (editorStore.a4Orientation === 'landscape' ? 297 : 210) * 96 / 25.4
       const paperHeight = a4TargetHeightPx.value
-      const width = Math.max(page.offsetWidth, page.scrollWidth)
-      const height = Math.max(page.offsetHeight, page.scrollHeight)
-      const scale = width <= Math.ceil(paperWidth) && height <= Math.ceil(paperHeight)
-        ? 1
-        : Math.min(1, (paperWidth - 2) / width, (paperHeight - 2) / height)
-      page.style.setProperty('--a4-print-scale', String(scale))
+      const pageRect = page.getBoundingClientRect()
+      const previewScaleX = pageRect.width / page.offsetWidth
+      const previewScaleY = pageRect.height / page.offsetHeight
+      const boxes = Array.from(page.querySelectorAll('.statblock, .monster-portrait, .a4-hero-banner'))
+        .map(element => element.getBoundingClientRect())
+        .filter(box => box.width > 0 && box.height > 0)
+      if (!boxes.length) return
+      const left = (Math.min(...boxes.map(box => box.left)) - pageRect.left) / previewScaleX
+      const top = (Math.min(...boxes.map(box => box.top)) - pageRect.top) / previewScaleY
+      const right = (Math.max(...boxes.map(box => box.right)) - pageRect.left) / previewScaleX
+      const bottom = (Math.max(...boxes.map(box => box.bottom)) - pageRect.top) / previewScaleY
+      const scaleX = (paperWidth - 2) / (right - left)
+      const scaleY = (paperHeight - 2) / (bottom - top)
+      page.style.setProperty('--a4-print-transform', `matrix(${scaleX},0,0,${scaleY},${1 - left * scaleX},${1 - top * scaleY})`)
       const stage = page.parentElement
       if (stage) {
         const paper = getComputedStyle(page)

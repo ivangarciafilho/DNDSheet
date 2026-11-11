@@ -23,8 +23,8 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   return true;
  })()`)
  assert.equal(setup,true)
- const png=await evaluate(`(async()=>{
-  const page=document.querySelector('.a4-page-sheet');
+ const exportPng=()=>evaluate(`(async()=>{
+  const page=document.querySelector('.a4-page-sheet') || document.getElementById('render');
   const originalUrl=URL.createObjectURL, originalClick=HTMLAnchorElement.prototype.click;
   let blob;
   URL.createObjectURL=value=>{if(value.type==='image/png')blob=value;return originalUrl.call(URL,value)};
@@ -45,6 +45,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
    return {width:image.width,height:image.height,aspect:page.offsetWidth/page.offsetHeight,opaque:ctx.getImageData(15,15,1,1).data[3]>0};
   }finally{URL.createObjectURL=originalUrl;HTMLAnchorElement.prototype.click=originalClick}
  })()`)
+ const png=await exportPng()
  assert.ok(png.opaque&&png.width>=1500&&Math.abs(png.width/png.height-png.aspect)<0.02,'PNG includes the full paper composition at export resolution, independent of preview zoom')
 
  const result=[]
@@ -88,8 +89,12 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  const native={preferCSSPageSize:false,paperWidth:210/25.4,paperHeight:297/25.4,landscape:true,printBackground:true,displayHeaderFooter:false,marginTop:0,marginRight:0,marginBottom:0,marginLeft:0}
  const pages=async(label)=>{
   await send('Emulation.setEmulatedMedia',{media:'print'})
-  const paper=await evaluate(`(()=>{window.dispatchEvent(new Event('beforeprint'));const stage=document.querySelector('.a4-scale-stage');const style=getComputedStyle(stage);return {width:stage.offsetWidth,height:stage.offsetHeight,background:style.backgroundColor,gradient:style.backgroundImage}})()`)
+  const paper=await evaluate(`(()=>{window.dispatchEvent(new Event('beforeprint'));const stage=document.querySelector('.a4-scale-stage');const style=getComputedStyle(stage);const bounds=stage.getBoundingClientRect();
+    const boxes=[...stage.querySelectorAll('.statblock, .monster-portrait')].map(el=>el.getBoundingClientRect());
+    const gutters=[Math.min(...boxes.map(x=>x.left))-bounds.left,Math.min(...boxes.map(x=>x.top))-bounds.top,bounds.right-Math.max(...boxes.map(x=>x.right)),bounds.bottom-Math.max(...boxes.map(x=>x.bottom))];
+    return {width:stage.offsetWidth,height:stage.offsetHeight,background:style.backgroundColor,gradient:style.backgroundImage,gutters}})()`)
   assert.ok(Math.abs(paper.width-1123)<=1&&Math.abs(paper.height-794)<=1,'The outer paper box stays full-size when the content scales')
+  assert.ok(paper.gutters.every(gutter=>gutter>=-0.5&&gutter<2.5),'Artwork and statblock fill the page on both axes: '+JSON.stringify(paper.gutters))
   assert.notEqual(paper.background,'rgba(0, 0, 0, 0)','The paper box paints behind the scaled composition')
   assert.notEqual(paper.gradient,'none','The paper box retains the selected theme background')
   const {result:pdf}=await send('Page.printToPDF',native)
@@ -112,6 +117,8 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  await send('Emulation.setEmulatedMedia',{media:'screen'})
  await evaluate(`(()=>{document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor').a4PreviewMode=false;return true})()`)
  await delay(150)
+ const plainPng=await exportPng()
+ assert.ok(plainPng.width>0&&plainPng.height>0&&plainPng.width>=2240,'Ordinary monster export uses the same capture path')
  const plain=await evaluate('window.__printParitySnapshot()')
  await send('Emulation.setEmulatedMedia',{media:'print'})
  const plainPrint=await evaluate('window.__printParitySnapshot()')

@@ -1825,6 +1825,7 @@
   }
   .a4-scale-stage {
     display: block !important;
+    position: relative;
     break-inside: avoid;
     overflow: clip;
     background-color: var(--a4-print-paper, #fbf2e3);
@@ -1841,8 +1842,10 @@
     height: 210mm !important;
   }
   .a4-page-sheet {
-    zoom: var(--a4-print-scale, 1);
-    margin-inline: auto;
+    position: absolute;
+    inset: 0 auto auto 0;
+    transform: var(--a4-print-transform, none);
+    transform-origin: top left;
     break-inside: avoid;
     overflow: visible;
     box-shadow: none !important;
