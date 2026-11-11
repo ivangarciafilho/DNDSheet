@@ -255,6 +255,48 @@ export default defineComponent({
       }
     }
 
+    const captureA4Png = async (page: HTMLElement) => {
+      const copy = page.cloneNode(true) as HTMLElement
+      // Keep the copy under the same layout and theme selectors while measuring its rows.
+      Object.assign(copy.style, { position: 'absolute', inset: '0 auto auto -100000px', pointerEvents: 'none' })
+      copy.inert = true
+      page.after(copy)
+      try {
+        const fonts = [copy, ...copy.querySelectorAll<HTMLElement>('*')].flatMap(element => {
+          const style = getComputedStyle(element)
+          if (!style.fontFamily.includes('ff-scala-sans-pro')) return []
+          const bold = Number(style.fontWeight) >= 600
+          const italic = style.fontStyle !== 'normal'
+          return [{ element, family: 'ScalySans' + (bold ? 'Bold' : '') + (italic ? 'Italic' : '') }]
+        })
+        // Use the bundled faces in both measurement and rasterization. The SVG
+        // image cannot rely on the page's externally loaded Typekit fonts.
+        for (const { element, family } of fonts) {
+          element.style.setProperty('font-family', family + ', sans-serif', 'important')
+          element.style.setProperty('font-weight', '400', 'important')
+          element.style.setProperty('font-style', 'normal', 'important')
+        }
+        await document.fonts.ready
+        return await snapdom.toBlob(copy, {
+          embedFonts: true,
+          scale: 2,
+          type: 'png',
+          outerShadows: false,
+          plugins: [{
+            name: 'statblock-flow',
+            afterClone({ clone }) {
+              for (const cell of clone?.querySelectorAll<HTMLElement>('.statblock, .statblock-wrapper, .sb-plate, .sb-row, .sb-cell') ?? []) {
+                cell.style.setProperty('height', 'auto', 'important')
+                cell.style.setProperty('block-size', 'auto', 'important')
+              }
+            },
+          }],
+        })
+      } finally {
+        copy.remove()
+      }
+    }
+
     const savePng = async () => {
       const isChar = editorStore.activeMode === 'character'
       const node = isChar
@@ -279,7 +321,9 @@ export default defineComponent({
         try {
           await document.fonts?.ready
           await Promise.allSettled(Array.from(node.querySelectorAll('img'), image => image.decode()))
-          const result = await snapdom.toBlob(node, { embedFonts: true, scale: 2, type: 'png' })
+          const result = node.matches('.a4-page-sheet')
+            ? await captureA4Png(node)
+            : await snapdom.toBlob(node, { embedFonts: true, scale: 2, type: 'png' })
           const blobUrl = URL.createObjectURL(result)
           const link = document.createElement('a')
           link.download = safeFileName(targetName, '.png')

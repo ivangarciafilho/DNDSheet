@@ -1825,10 +1825,24 @@
   }
   .a4-scale-stage {
     display: block !important;
-    height: auto !important;
+    break-inside: avoid;
+    overflow: clip;
+    background-color: var(--a4-print-paper, #fbf2e3);
+    background-image: var(--a4-print-paper-image, none);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .a4-scale-stage:has(.a4-portrait) {
+    width: 210mm !important;
+    height: 297mm !important;
+  }
+  .a4-scale-stage:has(.a4-landscape) {
+    width: 297mm !important;
+    height: 210mm !important;
   }
   .a4-page-sheet {
     zoom: var(--a4-print-scale, 1);
+    margin-inline: auto;
     break-inside: avoid;
     overflow: visible;
     box-shadow: none !important;

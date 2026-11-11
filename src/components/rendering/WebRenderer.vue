@@ -192,7 +192,7 @@
             label="Print / PDF"
             @click="printA4Sheet"
           >
-            <q-tooltip>Print or save as PDF. Oversized sheets scale to fit one A4 page.</q-tooltip>
+            <q-tooltip>Print or save as PDF. Print one A4 sheet with its full paper background.</q-tooltip>
           </q-btn>
         </template>
       </div>
@@ -1703,6 +1703,12 @@ export default defineComponent({
         ? 1
         : Math.min(1, (paperWidth - 2) / width, (paperHeight - 2) / height)
       page.style.setProperty('--a4-print-scale', String(scale))
+      const stage = page.parentElement
+      if (stage) {
+        const paper = getComputedStyle(page)
+        stage.style.setProperty('--a4-print-paper', paper.backgroundColor)
+        stage.style.setProperty('--a4-print-paper-image', paper.backgroundImage)
+      }
     }
 
     onMounted(() => window.addEventListener('beforeprint', fitA4ForPrint))

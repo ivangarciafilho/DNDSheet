@@ -87,6 +87,11 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  await delay(300)
  const native={preferCSSPageSize:false,paperWidth:210/25.4,paperHeight:297/25.4,landscape:true,printBackground:true,displayHeaderFooter:false,marginTop:0,marginRight:0,marginBottom:0,marginLeft:0}
  const pages=async(label)=>{
+  await send('Emulation.setEmulatedMedia',{media:'print'})
+  const paper=await evaluate(`(()=>{window.dispatchEvent(new Event('beforeprint'));const stage=document.querySelector('.a4-scale-stage');const style=getComputedStyle(stage);return {width:stage.offsetWidth,height:stage.offsetHeight,background:style.backgroundColor,gradient:style.backgroundImage}})()`)
+  assert.ok(Math.abs(paper.width-1123)<=1&&Math.abs(paper.height-794)<=1,'The outer paper box stays full-size when the content scales')
+  assert.notEqual(paper.background,'rgba(0, 0, 0, 0)','The paper box paints behind the scaled composition')
+  assert.notEqual(paper.gradient,'none','The paper box retains the selected theme background')
   const {result:pdf}=await send('Page.printToPDF',native)
   const bytes=Buffer.from(pdf.data,'base64')
   const evidenceDir=process.env.DNDSHEET_PRINT_PARITY_EVIDENCE
@@ -94,6 +99,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   const text=bytes.toString('latin1')
   const boxes=[...text.matchAll(/\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/g)].map(m=>m.slice(1).map(Number))
   assert.ok(boxes.length===1&&boxes.every(box=>Math.abs(box[0]-PAPER_POINTS[1])<2&&Math.abs(box[1]-PAPER_POINTS[0])<2),'Loaded native print preserves landscape A4 on every page')
+  await send('Emulation.setEmulatedMedia',{media:'screen'})
   return boxes.length
  }
  const nominal=await pages('loaded-landscape-native')
