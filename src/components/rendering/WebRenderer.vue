@@ -40,6 +40,22 @@
           <q-tooltip>Simulate true A4 physical sheet aspect ratio (210×297mm) with integrated creature artwork</q-tooltip>
         </q-btn>
 
+        <q-btn flat dense no-caps icon="format_size" :label="`Text: ${editorStore.statblockFontScale}%`">
+          <q-menu class="q-pa-sm bg-grey-10 text-white" style="min-width: 200px">
+            <div class="text-caption">Statblock text size</div>
+            <q-slider
+              v-model="editorStore.statblockFontScale"
+              aria-label="Statblock text size"
+              :min="65"
+              :max="150"
+              :step="1"
+              label
+              dense
+            />
+            <q-btn flat dense no-caps label="Reset text size" @click="editorStore.statblockFontScale = 100" />
+          </q-menu>
+        </q-btn>
+
         <!-- A4 Controls (Visible when A4 preview is ON) -->
         <template v-if="editorStore?.a4PreviewMode">
           <q-separator vertical dark class="q-mx-xs" />
@@ -734,22 +750,19 @@
         <div class="sb-row sb-spell-header-row">
           <div class="sb-cell sb-head" data-help="entry-name" tabindex="0"><strong>{{ spellPlate.title }}</strong> <span class="sb-qual">({{ spellPlate.stat }})</span></div>
           <div class="sb-cell" data-help="spell-save-dc" tabindex="0">Spell Save DC <strong>{{ spellPlate.save }}</strong> · Spell Attack <strong>{{ spellPlate.attack }}</strong></div>
-          <div v-if="spellPlate.resource && !hasExplicitResourceRow" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.resource }}</div>
-          <div v-if="spellPlate.prepared && !hasExplicitResourceRow" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.prepared }}</div>
         </div>
         <div v-if="hasExplicitResourceRow" class="sb-row sb-spell-row sb-spell-resource-row" :class="{ 'sb-striped': isResourceRowStriped, 'is-striped': isResourceRowStriped }">
-          <div v-if="spellPlate.resource" class="sb-cell sb-grow" data-help="spell-slots" tabindex="0">{{ spellPlate.resource }}</div>
-          <div v-if="spellPlate.prepared" class="sb-cell" data-help="spell-slots" tabindex="0">{{ spellPlate.prepared }}</div>
+          <div class="sb-cell sb-spells-inline sb-grow" data-help="spell-slots" tabindex="0">
+            {{ [spellPlate.resource, spellPlate.prepared].filter(Boolean).join('. ') }}.
+          </div>
         </div>
         <div v-if="spellPlate.consolidatedSummary" class="sb-row"><div class="sb-cell sb-grow">{{ spellPlate.consolidatedSummary }}</div></div>
         <div v-if="spellPlate.metamagic" class="sb-row sb-spell-row sb-spell-metamagic-row" :class="{ 'sb-striped': isMetamagicRowStriped, 'is-striped': isMetamagicRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" style="border: none; padding: 2px 4px;" data-help="metamagic" tabindex="0">
-            <strong>{{ spellPlate.metamagic.points }} Sorcery Points</strong>, regained on {{ spellPlate.metamagic.refresh }}.
-            <ul v-if="spellPlate.metamagic.options.length" class="sb-metamagic-options">
-              <li v-for="(meta, index) in spellPlate.metamagic.options" :key="index">
-                <strong>{{ meta.cost || meta.name }}:</strong> {{ meta.effect || meta.name }}
-              </li>
-            </ul>
+            <strong><span class="sb-metamagic-badge">{{ spellPlate.metamagic.points }}</span> Sorcery Points</strong>, regained on {{ spellPlate.metamagic.refresh }}.
+            <span v-for="meta in spellPlate.metamagic.options" :key="meta.name" class="sb-metamagic-option">
+              <strong v-if="meta.cost" class="sb-metamagic-badge" :aria-label="meta.cost + ' Sorcery Points'">{{ meta.cost }}</strong> {{ meta.effect || meta.name }}
+            </span>
           </div>
         </div>
         <!-- Unified Spells Cell (Per-Level lines inside single consolidated cell) -->
@@ -1086,7 +1099,7 @@ import { buildCastingProjection } from 'src/core/domain/casting-projection'
 import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
 import { useTextRenderer } from './useTextRenderer'
 import { useProcessTokens } from './useProcessTokens'
-import { useEditorStore } from 'src/stores/editor-store'
+import { useEditorStore, type A4CompositionLayer } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, spellLevelLead } from 'src/core/domain/spell-plate'
@@ -1270,15 +1283,17 @@ export default defineComponent({
 
     const updateMeasuredHeight = () => {
       nextTick(() => {
-        const el = document.querySelector('#render .statblock-wrapper') || document.querySelector('#render .statblock')
+        const el = document.querySelector<HTMLElement>('#render.statblock-wrapper')
         if (el && editorStore) {
-          editorStore.a4PageMeasuredHeight = Math.round(el.getBoundingClientRect().height)
+          editorStore.a4PageMeasuredHeight = el.offsetHeight
         }
       })
     }
     watch(() => editorStore?.a4PreviewMode, updateMeasuredHeight)
     watch(() => editorStore?.statBlockColumns, updateMeasuredHeight)
     watch(() => editorStore?.a4CompactDensity, updateMeasuredHeight)
+    watch(() => editorStore?.a4StatblockWidth, updateMeasuredHeight)
+    watch(() => editorStore?.statblockFontScale, updateMeasuredHeight)
     onMounted(updateMeasuredHeight)
 
     const a4ScaleStageStyle = computed<StyleValue>(() => {
@@ -1389,6 +1404,13 @@ export default defineComponent({
       }
     })
 
+    const a4StatblockWidth = computed(() => {
+      const width = editorStore.a4StatblockWidth
+      return width != null && resolvedA4Layout.value === 'side_by_side' && hasPortrait.value
+        ? Math.max(35, Math.min(95, width))
+        : null
+    })
+
     const a4StatblockStyle = computed<StyleValue>(() => {
       const base = { ...(columns.value as Record<string, string>) }
       const occ = editorStore.a4PictureOcclusion || 0
@@ -1455,6 +1477,25 @@ export default defineComponent({
           ...layerVisibilityAndBlend,
           ...opacityStyle,
           ...transformStyle
+        }
+      }
+
+      if (a4StatblockWidth.value !== null) {
+        const width = a4StatblockWidth.value + '%'
+        const overlap = occ > 0 ? Math.round((portraitW * occ) / 100) : 0
+        const portraitOnRight = monster.portrait?.position === 'right'
+        return {
+          ...base,
+          width,
+          flex: '0 0 ' + width,
+          minWidth: '0',
+          marginLeft: !portraitOnRight && overlap ? '-' + overlap + 'px' : undefined,
+          marginRight: portraitOnRight && overlap ? '-' + overlap + 'px' : undefined,
+          zIndex: statblockZ,
+          position: 'relative',
+          ...layerVisibilityAndBlend,
+          ...opacityStyle,
+          ...transformStyle,
         }
       }
 
@@ -1525,9 +1566,12 @@ export default defineComponent({
         }
       }
 
+      const frameWidth = a4StatblockWidth.value !== null
+        ? 'min(' + w + 'px, calc(' + (100 - a4StatblockWidth.value) + '% - 16px + ' + Math.round(w * occ / 100) + 'px))'
+        : w + 'px'
       return {
-        width: `${w}px`,
-        maxWidth: `${w}px`,
+        width: frameWidth,
+        maxWidth: frameWidth,
         flexShrink: '0',
         zIndex: portraitZ,
         position: 'relative',
@@ -1557,6 +1601,13 @@ export default defineComponent({
       }
     })
 
+    const imageShapeTransform = (layer?: A4CompositionLayer | null) => {
+      if (!layer) return ''
+      const x = (layer.scaleX ?? 100) / 100 * (layer.mirrorHorizontal ? -1 : 1)
+      const y = (layer.scaleY ?? 100) / 100 * (layer.mirrorVertical ? -1 : 1)
+      return x === 1 && y === 1 && !layer.rotation ? '' : 'rotate(' + (layer.rotation ?? 0) + 'deg) scale(' + x + ', ' + y + ')'
+    }
+
     const portraitImgStyle = computed<StyleValue>(() => {
       if (!editorStore.a4PreviewMode) return {}
       const cx = editorStore.a4PortraitCropCenterX || 0
@@ -1565,10 +1616,11 @@ export default defineComponent({
       const filter = pLayer?.grayscaleAsAlpha
         ? (pLayer.grayscaleInvert ? 'url(#a4-luminance-to-alpha-invert)' : 'url(#a4-luminance-to-alpha)')
         : undefined
-      if (cx === 0 && cy === 0 && !filter) return {}
+      const shape = imageShapeTransform(pLayer)
+      if (cx === 0 && cy === 0 && !filter && !shape) return {}
       return {
         objectPosition: (cx !== 0 || cy !== 0) ? `${50 + cx}% ${50 + cy}%` : undefined,
-        transform: (cx !== 0 || cy !== 0) ? `translate(${cx}%, ${cy}%)` : undefined,
+        transform: [(cx || cy) ? 'translate(' + cx + '%, ' + cy + '%)' : '', shape].filter(Boolean).join(' ') || undefined,
         filter,
       }
     })
@@ -1609,9 +1661,10 @@ export default defineComponent({
       const offX = layer.offsetX || 0
       const offY = layer.offsetY || 0
       const sc = (layer.scale ?? 100) / 100
-      const transform = (offX !== 0 || offY !== 0 || sc !== 1)
-        ? `translate(${offX}px, ${offY}px) scale(${sc})`
-        : undefined
+      const transform = [
+        (offX || offY || sc !== 1) ? 'translate(' + offX + 'px, ' + offY + 'px) scale(' + sc + ')' : '',
+        imageShapeTransform(layer),
+      ].filter(Boolean).join(' ') || undefined
 
       const calculatedZIndex = getLayerZIndex(layer)
 
@@ -1684,6 +1737,8 @@ export default defineComponent({
         () => editorStore.a4Orientation,
         () => editorStore.a4Layout,
         () => editorStore.a4CompactDensity,
+        () => editorStore.a4StatblockWidth,
+        () => editorStore.statblockFontScale,
         () => editorStore.a4PreviewMode,
       ],
       () => {
@@ -1946,6 +2001,7 @@ export default defineComponent({
     const columns = computed<StyleValue>(() => {
       return {
         columnCount: editorStore.statBlockColumns,
+        '--statblock-font-scale': (editorStore.statblockFontScale ?? 100) / 100,
       }
     })
 
@@ -2289,7 +2345,7 @@ export default defineComponent({
   .portrait-caption {
     font-family: ff-scala-sans-pro, ScalySansItalic;
     font-style: italic;
-    font-size: 0.85rem;
+    font-size: calc(0.85rem * var(--statblock-font-scale, 1));
     color: #58180d;
     margin-top: 4px;
     text-align: center;
@@ -2303,7 +2359,7 @@ export default defineComponent({
   color: #58180d;
   border-bottom: 1px dotted #9c2b1b;
   margin: 8px 0 4px 0;
-  font-size: 1.05rem;
+  font-size: calc(1.05rem * var(--statblock-font-scale, 1));
   letter-spacing: 0.02em;
 }
 
@@ -2351,7 +2407,7 @@ export default defineComponent({
   .monster-name {
     color: #1a365d;
     font-weight: 800;
-    font-size: 1.6rem;
+    font-size: calc(1.6rem * var(--statblock-font-scale, 1));
     letter-spacing: -0.02em;
   }
   .type {
@@ -2416,7 +2472,7 @@ export default defineComponent({
       color: #1a365d;
       font-weight: 700;
       text-transform: uppercase;
-      font-size: 0.85rem;
+      font-size: calc(0.85rem * var(--statblock-font-scale, 1));
       letter-spacing: 0.03em;
     }
     .dnd-cascade-title,
@@ -2436,7 +2492,7 @@ export default defineComponent({
   .stat-table .header-label {
     color: #4a5568;
     font-weight: 700;
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--statblock-font-scale, 1));
   }
   .stat-table .score {
     font-weight: 800;
@@ -2454,7 +2510,7 @@ export default defineComponent({
     color: #2b6cb0;
     border-bottom: 2px solid #2b6cb0;
     padding-bottom: 3px;
-    font-size: 1.15rem;
+    font-size: calc(1.15rem * var(--statblock-font-scale, 1));
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.04em;
@@ -2463,7 +2519,7 @@ export default defineComponent({
   .sub-section-header {
     color: #2c5282;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: calc(0.95rem * var(--statblock-font-scale, 1));
     border-left: 3px solid #2b6cb0;
     padding-left: 6px;
     margin: 8px 0 4px 0;
@@ -2490,7 +2546,7 @@ export default defineComponent({
     border-radius: 6px;
 
     .filter-label {
-      font-size: 0.75rem;
+      font-size: calc(0.75rem * var(--statblock-font-scale, 1));
       font-weight: 700;
       color: #553c9a;
       text-transform: uppercase;
@@ -2502,7 +2558,7 @@ export default defineComponent({
       border: none;
       border-radius: 4px;
       padding: 2px 8px;
-      font-size: 0.72rem;
+      font-size: calc(0.72rem * var(--statblock-font-scale, 1));
       font-weight: 700;
       cursor: pointer;
       background: #e2e8f0;
@@ -2524,7 +2580,7 @@ export default defineComponent({
   .preamble {
     color: #718096 !important;
     font-style: italic;
-    font-size: 0.88rem;
+    font-size: calc(0.88rem * var(--statblock-font-scale, 1));
     margin: 4px 0 8px 2px;
   }
 }
@@ -2533,7 +2589,7 @@ export default defineComponent({
   display: inline-block;
   font-style: italic;
   color: #58180d;
-  font-size: 0.85rem;
+  font-size: calc(0.85rem * var(--statblock-font-scale, 1));
   margin-left: 2px;
   cursor: help;
 }
@@ -2549,7 +2605,7 @@ export default defineComponent({
   background-color: #fdf1dc;
   color: #000;
   font-family: ff-scala-sans-pro;
-  font-size: 1rem;
+  font-size: calc(1rem * var(--statblock-font-scale, 1));
   letter-spacing: 0.01em;
   padding: 8px;
   width: 100%;
@@ -2560,7 +2616,7 @@ export default defineComponent({
     font-weight: 800;
     font-size: 2.2em;
     margin: 0;
-    line-height: 2.5rem;
+    line-height: calc(2.5rem * var(--statblock-font-scale, 1));
   }
 
   .type,
@@ -2576,7 +2632,7 @@ export default defineComponent({
   }
 
   .skill {
-    line-height: 1.2rem;
+    line-height: calc(1.2rem * var(--statblock-font-scale, 1));
     color: #58180d;
 
     .name {
@@ -2601,7 +2657,7 @@ export default defineComponent({
 
     .stat {
       display: flex;
-      font-size: 0.95rem;
+      font-size: calc(0.95rem * var(--statblock-font-scale, 1));
       .score {
         margin-right: 4px;
       }
@@ -2638,7 +2694,7 @@ export default defineComponent({
   .lair-actions .preamble,
   .regional-effects .preamble,
   .multiattack {
-    line-height: 1.15rem;
+    line-height: calc(1.15rem * var(--statblock-font-scale, 1));
     margin-bottom: 0.8rem;
 
     .name {
@@ -2656,14 +2712,14 @@ export default defineComponent({
   }
 
   h3.section {
-    font-size: 1.3rem;
+    font-size: calc(1.3rem * var(--statblock-font-scale, 1));
     font-family: ScalaSansCaps;
     font-weight: 400;
     letter-spacing: normal;
     color: #58180d;
     border-bottom: 1px solid #58180d;
     margin-bottom: 4px;
-    line-height: 1.5rem;
+    line-height: calc(1.5rem * var(--statblock-font-scale, 1));
   }
 }
 
@@ -2701,7 +2757,7 @@ export default defineComponent({
     letter-spacing: -1px;
     font-size: 1.8em;
     border-bottom: 1px solid #58180d;
-    line-height: 2rem;
+    line-height: calc(2rem * var(--statblock-font-scale, 1));
     column-span: all;
     margin-bottom: 8px;
   }
@@ -2768,7 +2824,7 @@ export default defineComponent({
 
       .header-label {
         font-family: ScalaSansCaps;
-        font-size: 11px;
+        font-size: calc(11px * var(--statblock-font-scale, 1));
         font-weight: 700;
         letter-spacing: 0.5px;
         color: #69665f;

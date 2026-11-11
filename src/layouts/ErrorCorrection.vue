@@ -104,13 +104,21 @@
 <script lang="ts">
 import { download } from '../components/file/download'
 import { defineComponent } from 'vue'
+import { Notify } from 'quasar'
+import { clearOverflowSnapshot, indexedDbSnapshots } from 'src/core/adapters/IndexedDbAutosave'
 
 export default defineComponent({
   name: 'ErrorCorrectionLayout',
   setup() {
-    const clear = () => {
-      localStorage.removeItem('app.monster')
-      window.location.assign(`${window.location.origin}${window.location.pathname}`)
+    const clear = async () => {
+      const key = 'app.monster'
+      try {
+        localStorage.removeItem(key)
+        if (window.indexedDB) await clearOverflowSnapshot(key)
+        window.location.assign(`${window.location.origin}${window.location.pathname}`)
+      } catch {
+        Notify.create({ type: 'negative', message: 'Could not clear all saved monster data. Browser storage may be blocked.' })
+      }
     }
 
     const clearCharacter = () => {
@@ -128,9 +136,15 @@ export default defineComponent({
       window.location.assign(`${window.location.origin}${window.location.pathname}`)
     }
 
-    const downloadFile = () => {
-      const data = localStorage.getItem('app.monster')
-      if (data) download(data, 'monster-error.json', 'application/json')
+    const downloadFile = async () => {
+      const key = 'app.monster'
+      const overflow = await indexedDbSnapshots.read(key).catch(() => null)
+      try {
+        const data = overflow ?? localStorage.getItem(key)
+        if (data) download(data, 'monster-error.json', 'application/json')
+      } catch {
+        Notify.create({ type: 'negative', message: 'Browser storage blocked the monster backup.' })
+      }
     }
 
     const downloadCharacter = () => {

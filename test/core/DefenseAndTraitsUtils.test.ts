@@ -192,7 +192,7 @@ test('defense-and-traits-utils - formatLanguageItem & formatLanguagesList', () =
       name: 'Dead (Speak with Dead)',
       deadConfig: { maxQuestions: 5, corpseMustHaveMouth: true },
     }),
-    'Dead (as Speak with Dead; up to 5 questions, corpse must have a mouth)'
+    'Can cast Speak with Dead (V,S) At Will'
   )
 
   const list = [

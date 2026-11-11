@@ -16,14 +16,18 @@ export interface CastingProjectionOptions {
   edition?: '2014' | '2024'
 }
 
+function preparedSpellCount(count: number, spellList: string): string {
+  return count + ' ' + (spellList ? spellList + ' ' : '') + (count === 1 ? 'spell' : 'spells')
+}
+
 function preparationLabel(count: number, cadence: string, spellList: string): string {
-  const noun = (spellList ? spellList + ' ' : '') + (count === 1 ? 'spell' : 'spells')
-  if (!cadence) return 'Can prepare ' + count + ' ' + noun
+  const spells = preparedSpellCount(count, spellList)
+  if (!cadence) return 'Can prepare ' + spells
   const timing = cadence === 'Downtime' ? 'during downtime'
     : /rest$/i.test(cadence) ? 'per ' + cadence
     : /^at /i.test(cadence) ? cadence.toLowerCase()
     : 'on ' + cadence
-  return 'Can prepare ' + count + ' ' + noun + ' ' + timing
+  return 'Can prepare ' + spells + ' ' + timing
 }
 
 export const RESTRICTED_SPELL_CADENCES = ['Dawn', 'Downtime', 'Dusk', 'Long Rest', 'Midday', 'Midnight', 'Monthly', 'Ritual', 'Short Rest', 'Short or Long Rest', 'Weekly', 'Yearly'] as const
@@ -57,7 +61,7 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
     spellLevels: [], edition: options.edition,
     metamagic: sources.length && sc.metamagic ? { enabled: sc.metamagic.enabled, points: sc.metamagic.sorceryPoints, refreshRate: sc.metamagic.refreshRate, options: sc.metamagic.options } : undefined,
   })
-  const resourceLines = new Set<string>()
+  const resources = new Map<string, NonNullable<SpellPlateModel['resourceRecovery']>>()
   const rows = new Map<string, SpellPlateLevel>()
   const preparation = new Map<string, { cadence: string; spellList: string; count: number }>()
   const pools = sources.map(source => ({ source, pool: castingResourceView(source, aggregate) }))
@@ -109,7 +113,7 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
         }),
       })),
     })
-    if (plate.resource) resourceLines.add(plate.resource)
+    if (plate.resourceRecovery) resources.set(plate.resource, plate.resourceRecovery)
     for (const row of plate.levels) {
       // Cantrips without their own budget can share a row across resource types.
       const budget = row.level || row.amount ? plate.resource || pool.resourceType : ''
@@ -133,7 +137,31 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
     }
   }
   result.levels = [...rows.values()].sort((a, b) => a.level - b.level)
-  result.resource = [...resourceLines].join(' · ')
+  const summaries: string[] = []
+  const emittedCadences = new Set<string>()
+  for (const [summary, resource] of resources) {
+    const cadence = resource.cadence
+    if (emittedCadences.has(cadence)) continue
+    const prepares = [...preparation].filter(([, entry]) => entry.cadence === cadence)
+    if (prepares.length === 0) {
+      summaries.push(summary)
+      continue
+    }
+    const matching = [...resources.values()].filter(entry => entry.cadence === cadence)
+    const units = [...new Set(matching.map(entry => entry.unit))]
+    const otherPool = [...resources.values()].some(entry => entry.cadence !== cadence && units.includes(entry.unit))
+    const timing = /rest$/i.test(cadence) ? 'On a ' + cadence
+      : cadence === 'Downtime' ? 'During downtime'
+      : /^At /i.test(cadence) ? cadence
+      : 'On ' + cadence
+    const available = prepares.map(([, entry]) => preparedSpellCount(entry.count, entry.spellList))
+    summaries.push(matching.map(entry => entry.description).join('. ') + '. ' + timing + ', regains '
+      + (otherPool ? 'these expended ' : 'all expended ') + units.join(' and ')
+      + ' and can prepare ' + available.join(' and '))
+    emittedCadences.add(cadence)
+    for (const [key] of prepares) preparation.delete(key)
+  }
+  result.resource = summaries.join(' · ')
   result.prepared = [...preparation.values()].map(({ count, cadence, spellList }) => preparationLabel(count, cadence, spellList)).join('; ')
   return result
 }

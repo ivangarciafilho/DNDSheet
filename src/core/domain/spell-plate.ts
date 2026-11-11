@@ -82,7 +82,14 @@ export interface SpellPlateOption {
   source: string
 }
 
+interface SpellResourceRecovery {
+  description: string
+  cadence: string
+  unit: 'spell slots' | 'spell points' | 'focus points'
+}
+
 export interface SpellPlateModel {
+  resourceRecovery?: SpellResourceRecovery
   title: string
   stat: string
   save: string
@@ -203,24 +210,29 @@ export function pactResourceSummary(slots: number[], recoveryCadence = 'short_re
   return `You have ${count} spell slot${count === 1 ? '' : 's'} of ${ordinalLabel(highest)} level, regained on ${cadence}`
 }
 
-function resourceSummary(input: SpellPlateInput, slots: number[]): string {
+function resourceRecovery(input: SpellPlateInput, slots: number[]): SpellResourceRecovery | undefined {
   const resourceType = input.resourceType || 'slots'
-  const className = input.className?.toLowerCase() ?? ''
-  const isPact = input.pactPool ?? (resourceType === 'pact' || className === 'warlock')
-  const refresh = cadenceLabel(input.customRefreshRate || input.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
+  const isPact = input.pactPool ?? (resourceType === 'pact' || input.className?.toLowerCase() === 'warlock')
+  const cadence = cadenceLabel(input.customRefreshRate || input.refreshRate) || (isPact ? 'Short Rest' : 'Long Rest')
+  if (resourceType === 'points' || resourceType === 'focus') {
+    if (!Number.isFinite(input.resourceValue)) return undefined
+    const label = resourceType === 'points' ? 'Spell Points' : 'Focus Points'
+    return {
+      description: Math.max(0, Math.trunc(input.resourceValue as number)) + ' ' + label,
+      cadence,
+      unit: resourceType === 'points' ? 'spell points' : 'focus points',
+    }
+  }
   const highest = slots.reduce((last, count, index) => count > 0 ? index + 1 : last, 0)
+  if (!highest) return undefined
   const total = slots.reduce((sum, count) => sum + count, 0)
-
-  if (resourceType === 'points') return Number.isFinite(input.resourceValue)
-    ? `${Math.max(0, Math.trunc(input.resourceValue as number))} Spell Points · regained on ${refresh}`
-    : ''
-  if (resourceType === 'focus') return Number.isFinite(input.resourceValue)
-    ? `${Math.max(0, Math.trunc(input.resourceValue as number))} Focus Points · regained on ${refresh}`
-    : ''
-  if (highest === 0 || total === 0) return ''
-  const recovery = refresh.replace(/\b(Short|Long) Rest$/i, '$1 Rests')
-  if (isPact) return pactResourceSummary(slots, refresh)
-  return `You have ${total} spell slot${total === 1 ? '' : 's'} through ${ordinalLabel(highest)} level, regained on ${recovery}`
+  return {
+    description: isPact
+      ? pactResourceSummary(slots, 'hidden')
+      : 'You have ' + total + ' spell slot' + (total === 1 ? '' : 's') + ' through ' + ordinalLabel(highest) + ' level',
+    cadence,
+    unit: 'spell slots',
+  }
 }
 
 /** Builds a display-only spellcasting model; it does not mutate the monster or infer missing slots. */
@@ -287,7 +299,11 @@ export function spellLevelHeading(input: SpellLevelHeadingInput): string {
 export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
   const ctx = resourceContext(input)
   const { slots, isPact, maxPactLevel } = ctx
-  const resource = resourceSummary(input, slots)
+  const recovery = resourceRecovery(input, slots)
+  const resource = recovery ? recovery.description
+    + (recovery.unit === 'spell slots' ? ', regained on ' : ' · regained on ')
+    + (recovery.unit === 'spell slots' ? recovery.cadence.replace(/\b(Short|Long) Rest$/i, '$1 Rests') : recovery.cadence)
+    : ''
   const levels = input.spellLevels
     .filter((row) => Number.isInteger(row.level) && row.level >= 0 && row.level <= 9 && row.spells.length > 0)
     .sort((a, b) => a.level - b.level)
@@ -352,6 +368,7 @@ export function buildSpellPlate(input: SpellPlateInput): SpellPlateModel {
     save: String(input.save),
     attack: typeof input.attack === 'number' && input.attack >= 0 ? `+${input.attack}` : String(input.attack),
     resource,
+    ...(recovery ? { resourceRecovery: recovery } : {}),
     prepared: input.preparedCount && input.preparedCount > 0
       ? `${Math.trunc(input.preparedCount)} prepared ${input.className || 'Caster'} spells · ${cadenceLabel(input.preparedInterval) || 'Long Rest'}`
       : '',

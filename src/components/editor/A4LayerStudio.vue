@@ -434,8 +434,8 @@
                     <radial-offset-controller
                       v-model:x="editorStore.a4StatblockOffsetX"
                       v-model:y="editorStore.a4StatblockOffsetY"
-                      :min="-300"
-                      :max="300"
+                      :min="-450"
+                      :max="450"
                       :step="2"
                       label="Statblock Position Gizmo" v-help="'Drag to place the stat block on the page.'"
                       unit="px"
@@ -444,73 +444,31 @@
                     />
                   </div>
 
-                  <!-- Dual-Axis Anamorphic Scaling with Drag Sliders & Manual Inputs -->
                   <div class="col-12 col-sm-8">
-                    <div class="row q-col-gutter-xs">
-                      <div class="col-12 col-sm-6">
-                        <div class="text-caption text-amber-3 flex justify-between">
-                          <span>Scale X (Width)</span>
-                          <span>{{ editorStore.a4StatblockScaleX ?? 100 }}%</span>
-                        </div>
-                        <div class="row items-center q-col-gutter-xs">
-                          <div class="col">
-                            <q-slider
-                              v-model="editorStore.a4StatblockScaleX"
-                              :min="50"
-                              :max="200"
-                              :step="1"
-                              color="amber-5"
-                              dense
-                            />
-                          </div>
-                          <div class="col-auto">
-                            <q-input
-                              v-model.number="editorStore.a4StatblockScaleX"
-                              type="number"
-                              min="50"
-                              max="200"
-                              dense
-                              outlined
-                              dark
-                              label="Width %" v-help="'Layer width as a share of the page.'"
-                              style="width: 80px;"
-                            />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-12 col-sm-6">
-                        <div class="text-caption text-amber-3 flex justify-between">
-                          <span>Scale Y (Height)</span>
-                          <span>{{ editorStore.a4StatblockScaleY ?? 100 }}%</span>
-                        </div>
-                        <div class="row items-center q-col-gutter-xs">
-                          <div class="col">
-                            <q-slider
-                              v-model="editorStore.a4StatblockScaleY"
-                              :min="50"
-                              :max="200"
-                              :step="1"
-                              color="amber-5"
-                              dense
-                            />
-                          </div>
-                          <div class="col-auto">
-                            <q-input
-                              v-model.number="editorStore.a4StatblockScaleY"
-                              type="number"
-                              min="50"
-                              max="200"
-                              dense
-                              outlined
-                              dark
-                              label="Height %" v-help="'Layer height as a share of the page.'"
-                              style="width: 80px;"
-                            />
-                          </div>
-                        </div>
-                      </div>
+                    <div class="row items-center justify-between text-caption text-amber-3">
+                      <span>Statblock width</span>
+                      <span>{{ editorStore.a4StatblockWidth == null ? 'Auto' : editorStore.a4StatblockWidth + '%' }}</span>
                     </div>
+                    <q-slider
+                      aria-label="Statblock width"
+                      :model-value="editorStore.a4StatblockWidth ?? 70"
+                      :min="35"
+                      :max="95"
+                      :step="1"
+                      color="amber-5"
+                      dense
+                      @update:model-value="setStatblockWidth"
+                    />
+                    <div class="row items-center justify-between">
+                      <span class="text-caption">Share of the page in Side-by-Side. Text reflows as width changes.</span>
+                      <q-btn flat dense no-caps label="Auto width" @click="editorStore.a4StatblockWidth = null" />
+                    </div>
+                    <q-btn
+                      v-if="editorStore.a4StatblockScaleX !== 100 || editorStore.a4StatblockScaleY !== 100"
+                      flat dense no-caps
+                      label="Reset saved stretch"
+                      @click="editorStore.a4StatblockScaleX = editorStore.a4StatblockScaleY = 100"
+                    />
                   </div>
                 </div>
               </template>
@@ -666,8 +624,8 @@
                     <radial-offset-controller
                       v-model:x="editorStore.a4PortraitCropCenterX"
                       v-model:y="editorStore.a4PortraitCropCenterY"
-                      :min="-100"
-                      :max="100"
+                      :min="-150"
+                      :max="150"
                       :step="1"
                       label="Pre-Crop Focal Center Radar"
                       unit="%"
@@ -681,8 +639,8 @@
                       v-model:y="editorStore.a4PortraitOffsetY"
                       v-model:crop-x="editorStore.a4PortraitCropX"
                       v-model:crop-y="editorStore.a4PortraitCropY"
-                      :min="-300"
-                      :max="300"
+                      :min="-450"
+                      :max="450"
                       :step="2"
                       label="Post-Crop Position &amp; Parallel Crop"
                       unit="px"
@@ -690,6 +648,8 @@
                       icon="open_with"
                     />
                   </div>
+
+                  <image-layer-transform-controls :layer="layer" class="col-12" @change="patch => Object.assign(layer, patch)" />
 
                   <!-- Grayscale as Alpha Luminance Mask for Portrait -->
                   <div class="col-12 row items-center q-gutter-x-md q-my-xs">
@@ -747,6 +707,18 @@
               <!-- 3. CUSTOM BACKGROUND / FOREGROUND TEXTURE & FRAME LAYER CONTROLS -->
               <template v-else>
                 <div class="row q-col-gutter-xs items-center">
+                  <div class="col-12 col-sm-6">
+                    <q-input v-model="layer.url" dense outlined dark label="Image URL" />
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <q-file
+                      :model-value="null"
+                      accept="image/*"
+                      dense outlined dark
+                      label="Replace image"
+                      @update:model-value="file => replaceLayerImage(layer, Array.isArray(file) ? file[0] ?? null : file)"
+                    />
+                  </div>
                   <div class="col-6 col-sm-4">
                     <q-select
                       v-model="layer.blendMode"
@@ -822,13 +794,15 @@
                     </div>
                   </div>
 
+                  <image-layer-transform-controls :layer="layer" class="col-12" @change="patch => Object.assign(layer, patch)" />
+
                   <!-- 2 Radial Offset Controllers for Custom Layer -->
                   <div class="col-12 col-sm-6 q-py-xs">
                     <radial-offset-controller
                       :x="layer.cropCenterX || 0"
                       :y="layer.cropCenterY || 0"
-                      :min="-100"
-                      :max="100"
+                      :min="-150"
+                      :max="150"
                       :step="1"
                       label="Pre-Crop Focal Center Radar"
                       unit="%"
@@ -844,8 +818,8 @@
                       :y="layer.offsetY || 0"
                       :crop-x="layer.cropX || { min: 0, max: 100 }"
                       :crop-y="layer.cropY || { min: 0, max: 100 }"
-                      :min="-300"
-                      :max="300"
+                      :min="-450"
+                      :max="450"
                       :step="2"
                       label="Post-Crop Position &amp; Parallel Crop"
                       unit="px"
@@ -1012,7 +986,9 @@
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useEditorStore, A4CompositionLayer } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useQuasar } from 'quasar'
 import { appAsset } from 'src/core/domain/asset-url'
+import ImageLayerTransformControls from './widgets/ImageLayerTransformControls.vue'
 import RadialOffsetController from './widgets/RadialOffsetController.vue'
 import GradientOverlayController from './widgets/GradientOverlayController.vue'
 
@@ -1020,6 +996,7 @@ export default defineComponent({
   name: 'A4LayerStudio',
   components: {
     RadialOffsetController,
+    ImageLayerTransformControls,
     GradientOverlayController,
   },
   props: {
@@ -1051,6 +1028,7 @@ export default defineComponent({
       editorStore.a4Orientation = 'portrait'
       editorStore.statBlockColumns = 1
       editorStore.a4CompactDensity = false
+      editorStore.a4StatblockWidth = null
       editorStore.a4StatblockScaleX = 100
       editorStore.a4StatblockScaleY = 100
       editorStore.a4StatblockOffsetX = 0
@@ -1061,6 +1039,7 @@ export default defineComponent({
     }
 
     const editorStore = useEditorStore()
+    const quasar = useQuasar()
     const monsterStore = useMonsterStore()
 
     const showAddLayerForm = ref(false)
@@ -1184,6 +1163,30 @@ export default defineComponent({
         return
       }
       editorStore.a4Layers.splice(index, 1)
+    }
+
+    const setStatblockWidth = (width: number | null) => {
+      editorStore.$patch({ a4StatblockWidth: width, a4StatblockScaleX: 100, a4StatblockScaleY: 100 })
+    }
+
+    const replacementReaders = new WeakMap<A4CompositionLayer, FileReader>()
+    const replaceLayerImage = (layer: A4CompositionLayer, file: File | null) => {
+      if (!file) return
+      const reader = new FileReader()
+      replacementReaders.set(layer, reader)
+      reader.onload = () => {
+        if (replacementReaders.get(layer) !== reader) return
+        replacementReaders.delete(layer)
+        if (typeof reader.result === 'string' && editorStore.a4Layers.some(entry => entry.id === layer.id)) {
+          layer.url = reader.result
+        }
+      }
+      reader.onerror = () => {
+        if (replacementReaders.get(layer) !== reader) return
+        replacementReaders.delete(layer)
+        quasar.notify({ type: 'negative', message: 'Could not read the image. Choose another image file.' })
+      }
+      reader.readAsDataURL(file)
     }
 
     const onNewLayerFileSelected = (file: File | null) => {
@@ -1485,6 +1488,8 @@ export default defineComponent({
       shiftLayer,
       toggleLayerVisibility,
       removeLayer,
+      replaceLayerImage,
+      setStatblockWidth,
       onNewLayerFileSelected,
       addCustomLayer,
       addPreset,

@@ -2335,7 +2335,7 @@ async function runFuzz() {
         text.includes('Recharge 4–6');
 
       const hasStructuredAction = text.includes('Ranged Spell Attack +7') &&
-        text.includes('up to 3 creatures which you can see within 120 ft. of you') &&
+        text.includes('up to 3 creatures you can see 120 ft. of you') &&
         text.includes('On Hit: 5 (1d10) Radiant damage.') &&
         text.includes('The target is surrounded by a radiant flare.');
 
@@ -2570,7 +2570,7 @@ async function runFuzz() {
       const checks = {
         classicLegendary: /Costs 2 Actions \u00b7 Radiant Burst\\. Constitution Saving Throw: DC \\d+, all creatures in a 20-foot radius sphere\\. Failure: \\d+ \\(4d10\\) Radiant damage\\./.test(classic),
         classicMythic: /Mythic Lance\\. Ranged Attack Roll: \\+9, range 120 ft\\., one creature\\. Hit: \\d+ \\(2d10\\) Force damage\\./.test(classic),
-        classicTemplatedAction: /Holy Javelin[\\s\\S]*Ranged Attack Roll: [+-]\\d+, range 120 ft\\., one creature which you can see\\. Hit:/.test(classicTemplated),
+        classicTemplatedAction: /Holy Javelin[\\s\\S]*Ranged Attack Roll: [+-]\\d+, range 120 ft\\., one creature you can see\\. Hit:/.test(classicTemplated),
         modernLegendary: modern.includes('Costs 2 Actions') && modern.includes('Constitution Save') && modern.includes('On Failure:'),
         modernMythic: modern.includes('Ranged Spell Attack +9') && modern.includes('On Hit:'),
       };
@@ -3342,7 +3342,7 @@ async function runFuzz() {
       for(const role of roles){
         const sheet=[...document.querySelectorAll('#render .action')].find(el=>el.textContent.includes('Metadata '+role));
         if(!sheet)problems.push(style+'/'+template+'/'+role+': missing sheet entry');
-        const text=sheet?.textContent||'';for(const fact of facts)if(!text.includes(fact))problems.push(style+'/'+template+'/'+role+': missing '+fact);
+        const text=sheet?.textContent||'';for(const fact of facts)if(!text.includes(fact)&&!text.includes(fact.replace(/^which /,'').replace(/^within /,'')))problems.push(style+'/'+template+'/'+role+': missing '+fact);
         comparisons++;
       }
     }

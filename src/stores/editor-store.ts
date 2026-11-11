@@ -17,8 +17,11 @@ export interface A4CompositionLayer {
   offsetX?: number // horizontal offset in px
   offsetY?: number // vertical offset in px
   scale?: number // uniform scale percentage (e.g. 100 = 100%)
-  scaleX?: number // non-uniform X scale percentage (for statblock anamorphic scaling)
-  scaleY?: number // non-uniform Y scale percentage (for statblock anamorphic scaling)
+  scaleX?: number // non-uniform X scale percentage
+  scaleY?: number // non-uniform Y scale percentage
+  rotation?: number // clockwise degrees
+  mirrorHorizontal?: boolean
+  mirrorVertical?: boolean
   occlusion?: number // occlusion percentage for portrait
   locked?: boolean // true for permanent layers (statblock)
   cropX?: { min: number; max: number } // 0 to 100
@@ -82,6 +85,8 @@ export const useEditorStore = defineStore({
       a4StatblockOpacity: 100, // 0 to 100% background opacity
       a4StatblockOffsetX: 0, // horizontal offset in px
       a4StatblockOffsetY: 0, // vertical offset in px
+      statblockFontScale: 100,
+      a4StatblockWidth: null as number | null,
       a4StatblockScaleX: 100, // horizontal scaling percentage
       a4StatblockScaleY: 100, // vertical scaling percentage
       a4PortraitOffsetX: 0, // portrait horizontal offset in px

@@ -1,3 +1,7 @@
+## Build 235 — Composition and autosave
+
+The [Build 235 packet](DNDSheet-Build235-Composition-and-Autosave.md) records the compact casting and skill render, artwork transforms, A4 typography and text width, and browser autosave fallback. The normalized workload remains 174 complete and 94 open. Continue the shared casting catalogue and output parity items under their existing parent IDs.
+
 ## Build 230 — Spell availability and A4 output
 
 The [Build 230 packet](DNDSheet-Build230-Spellcasting-Availability-and-A4.md) records preparation lists, restricted spell grouping, concise metamagic, single-page A4 print and PNG export. The normalized backlog remains 174 complete and 94 open.

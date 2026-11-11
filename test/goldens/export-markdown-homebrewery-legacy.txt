@@ -26,7 +26,7 @@ ___
 >
 > ***Force Lash.*** Each creature within 10 feet must make a DC 15 Strength saving throw.
 >
-> ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). You have 14 spell slots through 5th level, regained on Long Rests. Can prepare 13 spells per Long Rest.
+> ***Spellcasting.*** Golden Export Fixture is a 9th-level spellcaster. Its spellcasting ability is Intelligence (spell save DC 16, +8 to hit with spell attacks). You have 14 spell slots through 5th level. On a Long Rest, regains all expended spell slots and can prepare 13 spells.
 >
 > Cantrips: *Fire Bolt*  
 > (4/Long Rest), Level 1: *Magic Missile*  

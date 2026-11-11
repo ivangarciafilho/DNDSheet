@@ -146,3 +146,23 @@ test('shared Pact sources announce common recovery once and retain a different r
   assert.ok(plate.levels.filter(row => row.level === 5).every(row => !row.heading.includes('Short Rest')))
   assert.match(plate.levels[0].heading, /Long Rest/)
 })
+
+test('matching spell recovery and preparation share one sentence with an explicit capacity', () => {
+  const { spellcasting } = defaultMonster()
+  Object.assign(spellcasting, {
+    class: 'Warlock', level: 9, stat: 'CHA', resourceType: 'pact', refreshRate: 'short_rest',
+    slots: [0, 0, 0, 0, 3], standard: ['Hold Monster'],
+    preparedCountOverride: 5, preparedSpellList: 'Cleric', preparedInterval: 'Short Rest',
+  })
+  const options = {
+    stats: { CHA: 18 }, proficiency: 4, save: 16, attack: 8,
+    spellLevel: () => 5,
+  }
+  const same = buildCastingProjection(spellcasting, options)
+  assert.equal(same.resource, 'You have 3 spell slots of 5th level. On a Short Rest, regains all expended spell slots and can prepare 5 Cleric spells')
+  assert.equal(same.prepared, '')
+
+  const different = buildCastingProjection({ ...spellcasting, preparedInterval: 'long_rest' }, options)
+  assert.equal(different.resource, 'You have 3 spell slots of 5th level, regained on Short Rests')
+  assert.equal(different.prepared, 'Can prepare 5 Cleric spells per Long Rest')
+})

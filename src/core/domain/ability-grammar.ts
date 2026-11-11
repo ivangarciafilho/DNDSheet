@@ -22,6 +22,7 @@ export interface AbilityProjection {
 }
 
 export interface AbilityRenderContext {
+  compactScope?: boolean
   attackBonus?: number
   saveDc?: number
   randomTables?: RandomTable[]
@@ -437,10 +438,14 @@ export function scopePhrase(
     : ''
   const pieces = [countText, kind].filter(Boolean)
   let subject = pieces.join(' ')
-  if (targeting.qualifier?.trim()) subject += `${subject ? ' ' : ''}${targeting.qualifier.trim()}`
+  const qualifier = targeting.qualifier?.trim()
+  if (qualifier) subject += ' ' + (context.compactScope ? qualifier.replace(/^(?:which|that) (?=you can see\b)/i, '') : qualifier)
 
   const details: string[] = []
-  if (targeting.range) details.push(rangePhrase(targeting.range, context))
+  if (targeting.range) {
+    const range = targeting.range
+    details.push(rangePhrase(context.compactScope && range.relation === 'within' && range.origin ? { ...range, relation: undefined } : range, context))
+  }
   if (targeting.area) details.push(areaPhrase(targeting.area, context))
   let phrase = subject
   if (details.length) phrase += `${phrase ? ' ' : ''}${details.join(' ')}`

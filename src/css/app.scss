@@ -24,7 +24,7 @@
   display: inline-block;
   font-style: italic;
   color: #58180d;
-  font-size: 0.85rem;
+  font-size: calc(0.85rem * var(--statblock-font-scale, 1));
   margin-left: 2px;
   cursor: help;
 }
@@ -74,7 +74,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.72rem;
+  font-size: calc(0.72rem * var(--statblock-font-scale, 1));
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -152,7 +152,7 @@
           align-items: center;
           justify-content: center;
           padding: 3px 4px;
-          font-size: clamp(0.58rem, 0.9vw, 0.68rem);
+          font-size: calc(clamp(0.58rem, 0.9vw, 0.68rem) * var(--statblock-font-scale, 1));
           font-weight: 800;
           letter-spacing: 0.05em;
           text-transform: uppercase;
@@ -167,7 +167,7 @@
           align-items: center;
           justify-content: center;
           padding: 4px 4px;
-          font-size: clamp(0.78rem, 1.2vw, 0.92rem);
+          font-size: calc(clamp(0.78rem, 1.2vw, 0.92rem) * var(--statblock-font-scale, 1));
           font-weight: 900;
           line-height: 1.15;
           white-space: nowrap;
@@ -233,7 +233,7 @@
       .monster-name {
         margin: 0 !important;
         padding: 0 !important;
-        font-size: clamp(0.85rem, 1.8vw, 1.35rem) !important;
+        font-size: calc(clamp(0.85rem, 1.8vw, 1.35rem) * var(--statblock-font-scale, 1)) !important;
         font-weight: 800;
         color: #7a200d;
         line-height: 1.25 !important;
@@ -249,7 +249,7 @@
       .monster-nickname {
         font-style: italic;
         color: #718096;
-        font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+        font-size: calc(clamp(0.75rem, 1.2vw, 0.9rem) * var(--statblock-font-scale, 1));
         font-weight: 600;
         white-space: nowrap;
       }
@@ -272,7 +272,7 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-size: clamp(0.62rem, 1vw, 0.78rem);
+        font-size: calc(clamp(0.62rem, 1vw, 0.78rem) * var(--statblock-font-scale, 1));
         font-weight: 700;
         text-transform: capitalize;
         padding: 2px 3px;
@@ -324,7 +324,7 @@
       padding: 3px 10px;
       background: #f8fafc;
       border-bottom: 1.5px solid #cbd5e0;
-      font-size: 0.68rem;
+      font-size: calc(0.68rem * var(--statblock-font-scale, 1));
       font-weight: 800;
       letter-spacing: 0.05em;
       text-transform: uppercase;
@@ -348,7 +348,7 @@
         justify-content: center;
         gap: 5px;
         padding: 4px 9px;
-        font-size: clamp(0.74rem, 1.1vw, 0.86rem);
+        font-size: calc(clamp(0.74rem, 1.1vw, 0.86rem) * var(--statblock-font-scale, 1));
         font-weight: 500;
         color: #1a202c;
         line-height: 1.15;
@@ -435,7 +435,7 @@
     justify-content: flex-start;
     min-width: 95px;
     font-weight: 800 !important;
-    font-size: clamp(0.72rem, 1vw, 0.8rem);
+    font-size: calc(clamp(0.72rem, 1vw, 0.8rem) * var(--statblock-font-scale, 1));
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #58180d;
@@ -458,7 +458,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(0.7rem, 0.96vw, 0.78rem);
+    font-size: calc(clamp(0.7rem, 0.96vw, 0.78rem) * var(--statblock-font-scale, 1));
     font-weight: 700 !important;
     text-transform: uppercase;
     letter-spacing: 0.03em;
@@ -532,8 +532,8 @@
     background: #ffffff;
 
     .dnd-defense-prose-text {
-      font-size: 0.88rem;
-      line-height: 1.45rem;
+      font-size: calc(0.88rem * var(--statblock-font-scale, 1));
+      line-height: calc(1.45rem * var(--statblock-font-scale, 1));
       color: #1e293b;
       font-weight: 500;
     }
@@ -545,7 +545,7 @@
       gap: 4px;
 
       .dnd-defense-inline-tag {
-        font-size: 0.68rem;
+        font-size: calc(0.68rem * var(--statblock-font-scale, 1));
         font-weight: 800;
         text-transform: uppercase;
         letter-spacing: 0.04em;
@@ -571,7 +571,7 @@
     box-shadow: none !important;
     padding: 1px 3px !important;
     min-height: auto !important;
-    font-size: clamp(0.78rem, 1.02vw, 0.88rem);
+    font-size: calc(clamp(0.78rem, 1.02vw, 0.88rem) * var(--statblock-font-scale, 1));
     font-weight: 400;
     color: inherit;
     line-height: 1.25;
@@ -583,7 +583,7 @@
   .spell-tag-badge {
     display: inline-flex;
     align-items: center;
-    font-size: 0.72rem;
+    font-size: calc(0.72rem * var(--statblock-font-scale, 1));
     line-height: 1;
     font-weight: 700;
     letter-spacing: 0.02em;
@@ -598,7 +598,7 @@
   .spell-cadence-badge {
     display: inline-flex;
     align-items: center;
-    font-size: 0.65rem;
+    font-size: calc(0.65rem * var(--statblock-font-scale, 1));
     line-height: 1;
     font-weight: 800;
     letter-spacing: 0.04em;
@@ -624,7 +624,7 @@
     font-weight: 700;
 
     .bloodied-tag {
-      font-size: 0.72rem;
+      font-size: calc(0.72rem * var(--statblock-font-scale, 1));
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.04em;
@@ -702,14 +702,14 @@
       background: #7a200d !important;
       color: #ffffff !important;
       font-weight: 800;
-      font-size: 0.85rem;
+      font-size: calc(0.85rem * var(--statblock-font-scale, 1));
     }
 
     .action-pill-cell {
       background: #fbf0d9 !important;
       color: #2b1b12 !important;
       font-weight: 700;
-      font-size: 0.78rem;
+      font-size: calc(0.78rem * var(--statblock-font-scale, 1));
       border-left: 1px solid rgba(122, 31, 18, 0.35) !important;
     }
 
@@ -719,7 +719,7 @@
         color: #ffffff !important;
         .cell-phase-text {
           font-weight: 800;
-          font-size: 0.76rem;
+          font-size: calc(0.76rem * var(--statblock-font-scale, 1));
           text-transform: uppercase;
           letter-spacing: 0.04em;
           color: #ffffff !important;
@@ -732,7 +732,7 @@
         color: #ffffff !important;
         .cell-main-text {
           font-weight: 800;
-          font-size: 0.86rem;
+          font-size: calc(0.86rem * var(--statblock-font-scale, 1));
           color: #ffffff !important;
           line-height: 1.15;
         }
@@ -742,7 +742,7 @@
         background: #fdf1d6;
         .cell-sub-text {
           font-weight: 700;
-          font-size: 0.78rem;
+          font-size: calc(0.78rem * var(--statblock-font-scale, 1));
           color: #2b1b12;
           line-height: 1.15;
         }
@@ -791,7 +791,7 @@
         color: #ffffff !important;
         .cell-main-text {
           font-weight: 800;
-          font-size: 0.84rem;
+          font-size: calc(0.84rem * var(--statblock-font-scale, 1));
           color: #ffffff !important;
         }
       }
@@ -801,7 +801,7 @@
         .cell-sub-text {
           color: #6b21a8 !important;
           font-style: italic;
-          font-size: 0.8rem;
+          font-size: calc(0.8rem * var(--statblock-font-scale, 1));
         }
         flex: 1;
       }
@@ -810,7 +810,7 @@
         background: #ffffff !important;
         border-right: 1px solid #e9d5ff !important;
         padding: 4px 8px !important;
-        font-size: 0.78rem !important;
+        font-size: calc(0.78rem * var(--statblock-font-scale, 1)) !important;
 
         &:last-child {
           border-right: none !important;
@@ -871,7 +871,7 @@
       padding: 0 4px 0 0 !important;
       margin: 0 !important;
       text-indent: 0 !important;
-      font-size: 0.92rem !important;
+      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
       font-weight: 800 !important;
       color: #58180d !important;
       text-transform: none !important;
@@ -964,7 +964,7 @@
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
-    font-size: 0.72rem !important;
+    font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
     color: #7e22ce !important;
     font-weight: 700 !important;
     padding: 0 !important;
@@ -983,7 +983,7 @@
     rgba(90, 40, 10, 0.04) 3rem
   ) !important;
   background-attachment: local;
-  line-height: 1.5rem !important;
+  line-height: calc(1.5rem * var(--statblock-font-scale, 1)) !important;
   padding: 0 4px !important;
   border-radius: 4px;
   border: none !important;
@@ -1139,7 +1139,7 @@
       border: none !important;
       border-right: none !important;
       font-weight: 800 !important;
-      font-size: 0.92rem !important;
+      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
       height: auto !important;
       min-height: auto !important;
       padding: 0 4px 0 0 !important;
@@ -1161,7 +1161,7 @@
       border-radius: 3px !important;
       padding: 1px 5px !important;
       margin: 0 5px !important;
-      font-size: 0.72rem !important;
+      font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       align-self: center !important;
@@ -1651,7 +1651,7 @@
     padding: 22px 20px 24px 20px;
 
     .statblock {
-      font-size: 0.88rem !important;
+      font-size: calc(0.88rem * var(--statblock-font-scale, 1)) !important;
     }
     .dnd-cascade-panel {
       padding: 0 !important;
@@ -1698,7 +1698,7 @@
 
   .a4-book-header {
     font-family: ff-scala-sans-pro, 'Cinzel', Georgia, serif;
-    font-size: 0.72rem;
+    font-size: calc(0.72rem * var(--statblock-font-scale, 1));
     letter-spacing: 0.12em;
     text-transform: uppercase;
     font-weight: 700;
@@ -1731,7 +1731,7 @@
     .a4-portrait-caption {
       font-family: ff-scala-sans-pro, ScalySansItalic;
       font-style: italic;
-      font-size: 0.8rem;
+      font-size: calc(0.8rem * var(--statblock-font-scale, 1));
       color: #58180d;
       text-align: center;
       padding: 3px;
@@ -1742,7 +1742,7 @@
 
   .a4-book-footer {
     font-family: ff-scala-sans-pro, Georgia, serif;
-    font-size: 0.70rem;
+    font-size: calc(0.70rem * var(--statblock-font-scale, 1));
     letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 600;
@@ -1771,7 +1771,7 @@
       top: -11px;
       background: #b91c1c;
       color: #ffffff;
-      font-size: 0.65rem;
+      font-size: calc(0.65rem * var(--statblock-font-scale, 1));
       font-weight: 800;
       letter-spacing: 0.05em;
       padding: 2px 8px;
@@ -1934,7 +1934,17 @@
   }
 }
 
-.sb-metamagic-options {
-  margin: 0;
-  padding-inline-start: 1.4em;
+.sb-metamagic-option {
+  margin-inline-start: .4em;
+}
+
+.sb-metamagic-badge {
+  display: inline-block;
+  min-width: 1.25em;
+  padding-inline: .25em;
+  border-radius: .2em;
+  background: var(--sb-head-bg);
+  color: var(--sb-head-ink);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }

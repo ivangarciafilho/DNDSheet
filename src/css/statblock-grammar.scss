@@ -210,7 +210,7 @@
     border-left: 1px solid var(--sb-rule) !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    font-size: 0.8rem;
+    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
     font-weight: 600;
     line-height: 1.25 !important;
     white-space: normal !important;
@@ -233,7 +233,7 @@
   .sb-cell.sb-head {
     background: var(--sb-head-bg) !important;
     color: var(--sb-head-ink) !important;
-    font-size: 0.86rem;
+    font-size: calc(0.86rem * var(--statblock-font-scale, 1));
     font-weight: 800;
 
     * {
@@ -246,7 +246,7 @@
     }
 
     .sb-qual {
-      font-size: 0.7rem;
+      font-size: calc(0.7rem * var(--statblock-font-scale, 1));
       font-weight: 700;
       letter-spacing: 0.04em;
       text-transform: uppercase;
@@ -262,7 +262,7 @@
     }
 
     .sb-qual.school-cell {
-      font-size: 0.78rem;
+      font-size: calc(0.78rem * var(--statblock-font-scale, 1));
       font-weight: 700;
       letter-spacing: 0.01em;
       text-transform: none;
@@ -270,7 +270,7 @@
     }
 
     .sb-qual.sb-comp {
-      font-size: 0.76rem;
+      font-size: calc(0.76rem * var(--statblock-font-scale, 1));
       font-weight: 600;
       letter-spacing: 0;
       text-transform: none;
@@ -328,7 +328,7 @@
         background: transparent !important;
         color: var(--sb-cell-ink) !important;
         font-weight: 500 !important;
-        font-size: 0.85rem !important;
+        font-size: calc(0.85rem * var(--statblock-font-scale, 1)) !important;
         line-height: 1.42 !important;
         min-height: 0 !important;
         padding: 0 !important;
@@ -360,13 +360,13 @@
       > div {
         padding: 2px 1px !important;
         min-height: 24px !important;
-        font-size: clamp(0.72rem, 1.02vw, 0.83rem) !important;
+        font-size: calc(clamp(0.72rem, 1.02vw, 0.83rem) * var(--statblock-font-scale, 1)) !important;
         white-space: nowrap !important;
         overflow: visible !important;
       }
 
       .header-label {
-        font-size: 0.68rem !important;
+        font-size: calc(0.68rem * var(--statblock-font-scale, 1)) !important;
         letter-spacing: 0.01em !important;
       }
 
@@ -392,14 +392,14 @@
     display: flex !important;
     align-items: baseline !important;
     padding: 1px 0 1px 18px !important;
-    font-size: 0.86rem !important;
+    font-size: calc(0.86rem * var(--statblock-font-scale, 1)) !important;
     line-height: 1.35 !important;
     color: var(--sb-cell-ink, #58180d) !important;
     box-sizing: border-box !important;
 
     .dnd-subrow-bullet {
       margin-right: 6px !important;
-      font-size: 0.82rem !important;
+      font-size: calc(0.82rem * var(--statblock-font-scale, 1)) !important;
       color: var(--sb-badge-ink, #7a2012) !important;
       opacity: 0.85 !important;
     }
@@ -413,7 +413,7 @@
   .trait:not(.sb-plate).sb-striped,
   .action:not(.sb-plate).sb-striped {
     padding: 0 8px !important;
-    line-height: 1.5rem !important;
+    line-height: calc(1.5rem * var(--statblock-font-scale, 1)) !important;
     background-image: repeating-linear-gradient(
       to bottom,
       transparent 0,
@@ -432,7 +432,7 @@
   .skill.dnd-cellular-row {
     padding: 1px 0 !important;
     margin: 1px 0 !important;
-    line-height: 1.45rem !important;
+    line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
     box-sizing: border-box !important;
   }
 
@@ -444,7 +444,7 @@
     padding: 1px 0 !important;
     margin: 1px 0 !important;
     border-radius: 2px !important;
-    line-height: 1.45rem !important;
+    line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
   }
 
   .skill.dnd-cascade-panel.zebra-stripe-text,
@@ -452,7 +452,7 @@
     background-color: transparent !important;
     padding: 1px 0 !important;
     margin: 1px 0 !important;
-    line-height: 1.45rem !important;
+    line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
     background-image: repeating-linear-gradient(
       to bottom,
       transparent 0,
@@ -501,7 +501,7 @@
     .sb-spell-resource-row,
     .sb-spell-metamagic-row {
       .sb-cell {
-        font-size: 0.8rem;
+        font-size: calc(0.8rem * var(--statblock-font-scale, 1));
         font-weight: 500;
         line-height: 1.4;
       }
@@ -627,7 +627,7 @@
     padding: 3px 8px !important;
     display: inline-block !important;
     line-height: 1.45 !important;
-    font-size: 0.8rem;
+    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
     font-weight: 500;
 
     .spell-inline-item {
@@ -650,14 +650,14 @@
 
   .sb-plate .sb-spell-head {
     white-space: nowrap !important;
-    font-size: 0.82rem;
+    font-size: calc(0.82rem * var(--statblock-font-scale, 1));
     font-weight: 700;
   }
 }
 
 /* Rich tooltips (stat block + editor): readable width, consistent color code */
 .q-tooltip.dnd-tip {
-  font-size: 0.8rem;
+  font-size: calc(0.8rem * var(--statblock-font-scale, 1));
   line-height: 1.35;
   background: #1f1b18;
   color: #f3ead7;
@@ -684,7 +684,7 @@
   background: #231c19;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
   color: #f7ede1;
-  font-size: 0.84rem;
+  font-size: calc(0.84rem * var(--statblock-font-scale, 1));
   line-height: 1.45;
   pointer-events: none;
 
@@ -692,7 +692,7 @@
     color: #e5b358;
     font-weight: 700;
     margin-bottom: 3px;
-    font-size: 0.88rem;
+    font-size: calc(0.88rem * var(--statblock-font-scale, 1));
     display: block;
   }
   .tip-body {
@@ -700,7 +700,7 @@
   }
   .tip-detail {
     color: #b5c7d3;
-    font-size: 0.8rem;
+    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
     margin-top: 4px;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     padding-top: 3px;
@@ -814,7 +814,7 @@
     border-radius: 2px !important;
     padding: 1px 0 !important;
     margin: 1px 0 !important;
-    line-height: 1.45rem !important;
+    line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
     text-indent: 0 !important;
     overflow: visible !important;
     box-sizing: border-box !important;
@@ -857,7 +857,7 @@
       padding: 0 4px 0 0 !important;
       margin: 0 !important;
       text-indent: 0 !important;
-      font-size: 0.92rem !important;
+      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
       font-weight: 800 !important;
       color: #58180d !important;
       text-transform: none !important;
@@ -879,7 +879,7 @@
       border-radius: 3px !important;
       padding: 1px 5px !important;
       margin: 0 5px !important;
-      font-size: 0.72rem !important;
+      font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       display: inline-flex !important;
@@ -966,7 +966,7 @@
 
     .cn-name {
       font-weight: 800;
-      font-size: 1.05rem;
+      font-size: calc(1.05rem * var(--statblock-font-scale, 1));
       text-align: left;
       justify-content: flex-start;
       flex: 1 1 auto;
@@ -975,7 +975,7 @@
       overflow-wrap: anywhere;
     }
     .cn-identity {
-      font-size: clamp(0.72rem, 1.1vw, 0.82rem);
+      font-size: calc(clamp(0.72rem, 1.1vw, 0.82rem) * var(--statblock-font-scale, 1));
       font-style: italic;
       text-align: left;
       justify-content: flex-start;
@@ -987,7 +987,7 @@
     }
     .cn-cr {
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: calc(0.82rem * var(--statblock-font-scale, 1));
       white-space: nowrap;
       flex-shrink: 0;
       text-align: center;
@@ -997,7 +997,7 @@
     }
     .cn-pb {
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: calc(0.82rem * var(--statblock-font-scale, 1));
       white-space: nowrap;
       flex-shrink: 0;
       text-align: center;
@@ -1007,7 +1007,7 @@
     }
     .cn-xp {
       font-weight: 700;
-      font-size: 0.78rem;
+      font-size: calc(0.78rem * var(--statblock-font-scale, 1));
       white-space: nowrap;
       flex-shrink: 0;
       text-align: center;
@@ -1017,7 +1017,7 @@
     }
     .cn-cr-pb {
       font-weight: 800;
-      font-size: 0.82rem;
+      font-size: calc(0.82rem * var(--statblock-font-scale, 1));
       white-space: nowrap;
       flex-shrink: 0;
     }
@@ -1028,7 +1028,7 @@
     flex-direction: row;
     align-items: center;
     padding: 4px 8px;
-    font-size: 0.84rem;
+    font-size: calc(0.84rem * var(--statblock-font-scale, 1));
     background: var(--sb-cell-bg, #fdf6e9);
     color: var(--sb-cell-ink, #1f1b18);
     line-height: 1.35;

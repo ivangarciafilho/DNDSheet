@@ -664,7 +664,9 @@ export function calculateCr(
   const offensiveStep =
     damageCr.index +
     (offensiveDelta < 0 ? Math.ceil(offensiveDelta) : Math.floor(offensiveDelta))
-  const offensiveCr = CR[Math.max(0, Math.min(CR.length - 1, offensiveStep))]
+  const offensiveCr = Number.isFinite(offensiveStep)
+    ? CR[Math.max(0, Math.min(CR.length - 1, offensiveStep))]
+    : damageCr
   const attackCrDelta = renderBonus(offensiveCr.numeric - damageCr.numeric)
 
   // Defensive CR calculation

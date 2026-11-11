@@ -246,9 +246,9 @@ export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (fiel
   if (lowerName.startsWith('dead') || item.deadConfig) {
     const cfg = item.deadConfig || {}
     const maxQ = cfg.maxQuestions ?? 5
-    const bits: string[] = [`up to ${formatValue('deadConfig.maxQuestions', maxQ)} questions`]
-    if (cfg.corpseMustHaveMouth !== false) {
-      bits.push('corpse must have a mouth')
+    const bits: string[] = maxQ === 5 ? [] : [`up to ${formatValue('deadConfig.maxQuestions', maxQ)} questions`]
+    if (cfg.corpseMustHaveMouth === false) {
+      bits.push('corpse need not have a mouth')
     }
     if (cfg.deadWithinYears && cfg.deadWithinYears.trim()) {
       bits.push(`dead within ${cfg.deadWithinYears.trim()}`)
@@ -259,7 +259,7 @@ export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (fiel
     if (cfg.note && cfg.note.trim()) {
       bits.push(cfg.note.trim())
     }
-    return `Dead (as Speak with Dead; ${bits.join(', ')})`
+    return 'Can cast Speak with Dead (V,S) At Will' + (bits.length ? ' (' + bits.join(', ') + ')' : '')
   }
 
   // 6. Telepathy (Fluid Official 5e Rules Prose)

@@ -129,6 +129,7 @@ export interface SkillGroupRow {
   stat?: DndStat
   /** Untrained check of the group's ability; absent on rows that only list exceptions. */
   base?: { passive: number; bonus: number }
+  baseSkillKeys?: string[]
   entries: SkillCheckEntry[]
   tip: string
 }
@@ -213,13 +214,16 @@ export function computeSkillGroupLayout(params: SkillGroupLayoutParams): SkillGr
     const sameEconomy = members.filter((s) => s.bonusAction == null || (s.bonusAction ? 'Bonus Action' : 'Action') === actionType)
     const otherEconomy = members.filter((s) => s.bonusAction != null && (s.bonusAction ? 'Bonus Action' : 'Action') !== actionType)
 
+    const entries = sameEconomy.map(toEntry).filter(e => differsFromBase(e, base))
+    const distinct = new Set([...entries, ...otherEconomy].map(skill => normalizeSkillKey(skill.key)))
     rows.push({
       id: group.id,
       label: group.label,
       actionType,
       stat: group.stat,
       base,
-      entries: sameEconomy.map(toEntry).filter((e) => differsFromBase(e, base)),
+      ...(members.length ? { baseSkillKeys: group.skills.filter(key => !distinct.has(key)) } : {}),
+      entries,
       tip: group.tip,
     })
 

@@ -54,7 +54,7 @@
                 {{ sense.name }}
               </q-badge>
             </div>
-            <div class="col-auto row items-center q-gutter-xs">
+            <div v-if="sense.name !== 'Detect Magic'" class="col-auto row items-center q-gutter-xs">
               <q-select
                 :model-value="sense.range"
                 :options="senseRangePresets"
@@ -95,8 +95,9 @@
             </div>
           </div>
 
+          <div v-if="sense.name === 'Detect Magic'" class="text-caption q-mt-xs">Can cast Detect Magic (V,S,R) At Will</div>
           <!-- Specific Modifiers Row -->
-          <div class="row q-col-gutter-sm items-center q-mt-xs">
+          <div v-else class="row q-col-gutter-sm items-center q-mt-xs">
             <!-- Universal Checkboxes for ranged senses -->
             <div class="col-auto">
               <q-checkbox
@@ -404,6 +405,7 @@ const SENSES_PRESETS: {
   { name: 'Tremorsense', category: 'Sight & Vibration', icon: 'waves', color: 'amber-5', defaultRange: 60, rangeUnit: 'ft' },
   { name: 'Truesight', category: 'Sight & Vibration', icon: 'visibility', color: 'cyan-4', defaultRange: 120, rangeUnit: 'ft' },
   { name: 'Web Sense', category: 'Sight & Vibration', icon: 'hub', color: 'amber-4', defaultRange: 60, rangeUnit: 'ft', webSense: true },
+  { name: 'Detect Magic', category: 'Analytical & Aura', icon: 'auto_fix_high', color: 'purple-4', defaultRange: 0 },
   { name: 'Divine Sense', category: 'Analytical & Aura', icon: 'auto_awesome', color: 'yellow-6', defaultRange: 60, rangeUnit: 'ft', detectionMode: 'location', targetCreatureTypes: ['celestials', 'fiends', 'undead'] },
   { name: 'Life Sense', category: 'Analytical & Aura', icon: 'favorite', color: 'red-4', defaultRange: 5, rangeUnit: 'miles', lifeSense: true, detectionMode: 'presence', targetCreatureTypes: ['living creatures'] },
   { name: 'Sense Sentience', category: 'Analytical & Aura', icon: 'psychology', color: 'pink-4', defaultRange: 60, rangeUnit: 'ft', senseSentienceMode: 'location_intelligent' },

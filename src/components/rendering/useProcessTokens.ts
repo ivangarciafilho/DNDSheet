@@ -656,7 +656,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const presentation = monster.bindings?.[`${prefix}.${field}`]?.presentation
       return presentation ? formatNumericPresentation(text, presentation) : text
     } : undefined
-    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables, formatValue } }
+    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables, formatValue, compactScope: webProjection } }
   }
 
   /** Modern Modular plate; `usage` is the recharge/uses chip, or the legendary cost. */

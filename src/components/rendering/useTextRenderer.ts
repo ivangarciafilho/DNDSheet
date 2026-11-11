@@ -993,15 +993,17 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   }
 
   const formatCheckEntry = (entry: SkillCheckEntry, labels: string[]): string => {
-    const inner = `${numHtml(`${entry.passive}/${renderBonus(entry.bonus)}`)}, ${labels.map(escapeHtml).join(' and ')}${condHtml(entry.condition)}`
+    const inner = `${numHtml(`${entry.passive}/${renderBonus(entry.bonus)}`)}, ${labels.map(escapeHtml).join(', ')}${condHtml(entry.condition)}`
     return `<span class="dnd-check">${advHtml(inner, entry.advantage, entry.disadvantage)}</span>`
   }
 
   const formatGroupRow = (row: SkillGroupRow): string => {
     const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
-    if (!row.base) return options.web === false ? mechanicPlainText(parts.join('; ')) : parts.join('; ')
-    const baseHtml = numHtml(`${row.base.passive}/${renderBonus(row.base.bonus)}`)
-    return parts.length > 0 ? `${baseHtml}, ${parts.join('; ')}` : baseHtml
+    const base = row.base ? numHtml(row.base.passive + '/' + renderBonus(row.base.bonus)) : ''
+    const baseLabels = row.baseSkillKeys?.map(key => escapeHtml(skillLabel(key))) ?? []
+    const groups = [...(base ? [[base, ...baseLabels].join(', ')] : []), ...parts]
+    const content = groups.length > 1 || baseLabels.length ? groups.map(group => '(' + group + ')').join(', ') : groups.join('')
+    return options.web === false ? mechanicPlainText(content) : content
   }
 
   const combatSkillRows = computed(() => {
@@ -1161,6 +1163,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const formatSingleSenseItem = (item: any, omitScope = false): string => {
+    if (item.name?.trim().toLowerCase() === 'detect magic') return 'Can cast Detect Magic (V,S,R) At Will'
     const rangeUnit = item.rangeUnit || 'ft'
     const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${formattedNumeric(`sensesList[id=${encodeURIComponent(item.id)}].range`, item.range)} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}` : ''
     const notes: string[] = []
