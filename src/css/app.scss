@@ -1828,11 +1828,9 @@
     height: auto !important;
   }
   .a4-page-sheet {
-    /* A transformed layer may bleed past the physical paper edge. Excluding that
-       inline overflow prevents Chromium from shrinking the whole printed sheet.
-       Keep block overflow visible so long statblocks still paginate. */
-    overflow-x: clip;
-    overflow-y: visible;
+    zoom: var(--a4-print-scale, 1);
+    break-inside: avoid;
+    overflow: visible;
     box-shadow: none !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
@@ -1917,4 +1915,9 @@
   .a4-scale-stage {
     transition: none !important;
   }
+}
+
+.sb-metamagic-options {
+  margin: 0;
+  padding-inline-start: 1.4em;
 }

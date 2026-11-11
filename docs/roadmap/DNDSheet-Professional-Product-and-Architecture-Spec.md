@@ -1,3 +1,7 @@
+## Build 230 — Spell availability and A4 output
+
+The [Build 230 packet](DNDSheet-Build230-Spellcasting-Availability-and-A4.md) records preparation lists, restricted spell grouping, concise metamagic, single-page A4 print and PNG export. The normalized backlog remains 174 complete and 94 open.
+
 ## Build 229 — Shared spellcasting and A4 print
 
 The [Build 229 packet](DNDSheet-Build229-Shared-Casting-and-Print.md) covers one editor for all casting sources, independent learning and grant progression, anonymous spellcasting rows, and the A4 landscape overflow regression. The normalized workload remains 268 items, with 174 complete and 94 open. The 15 acceptance changes do not close the broader casting-source migration or grant catalogue work.

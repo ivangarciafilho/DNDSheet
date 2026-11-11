@@ -105,3 +105,24 @@ test('extra roll and preparation bindings retain source identity and explicit ze
  assert.equal(learning.perClass[1]?.id,'pact');assert.equal(learning.perClass[1]?.saveDc,16);assert.equal(learning.perClass[1]?.spellAttack,4);assert.equal(learning.perClass[1]?.preparedSpells,0);assert.equal(learning.perClass[1]?.preparedInterval,'short_rest');assert.equal(learning.spells,learning.perClass[0]?.preparedSpells)
  const promoted=removeCastingSource(sc,'primary').source;assert.equal(promoted.preparedCountOverride,0);assert.equal(promoted.preparedInterval,'short_rest');assert.equal(promoted.save.overrideValue,16)
 })
+
+import { buildCastingProjection } from '../../src/core/domain/casting-projection.ts'
+
+test('the statblock shows the selected preparation list and separates encounter spells from restricted spells', () => {
+  const { spellcasting } = defaultMonster()
+  Object.assign(spellcasting, {
+    class: 'Wizard', level: 5, preparedCountOverride: 5, preparedSpellList: 'Cleric',
+    preparedInterval: 'short_rest',
+    standard: ['Mending', 'Magic Missile', 'Unseen Servant', 'Shield'],
+    spellCastingTimeMap: { Shield: '2 actions' },
+    spellCadenceMap: { Shield: 'short_rest' },
+  })
+  const plate = buildCastingProjection(spellcasting, {
+    stats: { INT: 16 }, proficiency: 3, save: 14, attack: 6,
+    spellLevel: name => name === 'Mending' ? 0 : 1,
+  })
+  assert.equal(plate.prepared, 'Can prepare 5 Cleric spells per Short Rest')
+  const spells = plate.levels.flatMap(row => row.spells)
+  assert.deepEqual(spells.filter(spell => spell.restricted).map(spell => spell.name).sort(), ['Mending', 'Shield', 'Unseen Servant'])
+  assert.equal(spells.find(spell => spell.name === 'Mending')?.castingTime, '1 minute')
+})

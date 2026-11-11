@@ -983,6 +983,8 @@ export interface Monster {
     cantripSwitchInterval?: string
     preparedCountOverride?: number
     preparedInterval?: string
+    preparedSpellList?: string
+    spellCastingTimeMap?: Record<string, string>
     customRefreshRate?: string
     rulesEdition?: '2014' | '2024'
     automaticGrants?: boolean
@@ -1002,6 +1004,8 @@ export interface Monster {
       spellGrants?: CastingSpellGrant[]
       preparedCountOverride?: number
       preparedInterval?: string
+      preparedSpellList?: string
+      spellCastingTimeMap?: Record<string, string>
       save?: CastingRollOverride
       attack?: CastingRollOverride
       modifier?: CastingRollOverride

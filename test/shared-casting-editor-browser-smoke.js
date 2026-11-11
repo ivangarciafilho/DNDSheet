@@ -58,7 +58,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  const origin=await evaluate('performance.timeOrigin');await send('Page.reload',{ignoreCache:false});await delay(200)
  let reload
  for(let i=0;i<180;i++){
-  reload=await evaluate(`(()=>{const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');const text=document.querySelector('#render .class-spellcasting')?.textContent||'';return {reloaded:performance.timeOrigin!==${JSON.stringify(origin)},name:m?.name,assigned:m?.spellcasting.standard,preparation:text.includes('Can prepare 5 spells during downtime'),grants:text.includes('Bless'),extra:text.includes('Magic Missile')}})()`)
+  reload=await evaluate(`(()=>{const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');const text=document.querySelector('#render .class-spellcasting')?.textContent||'';return {reloaded:performance.timeOrigin!==${JSON.stringify(origin)},name:m?.name,assigned:m ? Array.from(m.spellcasting.standard) : undefined,preparation:text.includes('Can prepare 5 spells during downtime'),grants:text.includes('Bless'),extra:text.includes('Magic Missile')}})()`)
   if(reload.reloaded&&reload.name==='Shared casting grant witness'&&reload.preparation&&reload.grants&&reload.extra)break
   await delay(150)
  }

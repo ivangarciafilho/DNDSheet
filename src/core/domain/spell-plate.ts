@@ -2,6 +2,9 @@ import { cadenceLabel } from './catalogs/cadence.ts'
 import { getMetamagicOption, metamagicCost, type RulesEdition } from './catalogs/metamagic.ts'
 
 export interface SpellPlateSpellInput {
+  restricted?: boolean
+  castingTime?: string
+  restrictionCadence?: string
   name: string
   tags?: string
   cadence?: string
@@ -45,6 +48,9 @@ export interface SpellPlateInput {
 }
 
 export interface SpellPlateSpell {
+  restricted?: boolean
+  castingTime?: string
+  restrictionCadence?: string
   name: string
   tags: string
   cadence: string
@@ -174,6 +180,8 @@ const normalizedSlots = (slots?: number[]) =>
   Array.from({ length: 9 }, (_, index) => Math.max(0, Math.trunc(Number(slots?.[index]) || 0)))
 
 const spellView = (spell: SpellPlateSpellInput, row: SpellEntryPresentation = {}): SpellPlateSpell => ({
+  ...(spell.restricted ? { restricted: true, restrictionCadence: cadenceLabel(spell.restrictionCadence) } : {}),
+  ...(spell.castingTime ? { castingTime: spell.castingTime } : {}),
   name: spell.name,
   tags: spell.tags?.trim() ?? '',
   cadence: cadenceLabel(spell.cadence),

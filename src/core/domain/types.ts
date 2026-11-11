@@ -1050,6 +1050,8 @@ export interface Monster {
     customRefreshRate?: string
     preparedCountOverride?: number
     preparedInterval?: string
+    preparedSpellList?: string
+    spellCastingTimeMap?: Record<string, string>
     metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate: string; options: string[] }
     automaticGrants?: boolean
     spellGrants?: CastingSpellGrant[]
@@ -1070,6 +1072,8 @@ export interface Monster {
       spellGrants?: CastingSpellGrant[]
       preparedCountOverride?: number
       preparedInterval?: string
+      preparedSpellList?: string
+      spellCastingTimeMap?: Record<string, string>
       save?: CastingRollOverride
       attack?: CastingRollOverride
       modifier?: CastingRollOverride

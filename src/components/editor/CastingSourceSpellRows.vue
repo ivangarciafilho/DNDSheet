@@ -20,6 +20,7 @@
           <q-select :model-value="map(spellCadenceMap)[spellId] || recovery(level)" :options="cadenceOptions" emit-value map-options dense outlined dark :data-spell-cadence="spellId" label="Spell recovery" class="col-3" @update:model-value="value => setMap(spellCadenceMap, spellId, value)" />
           <div class="col"><i>{{ spellId }}</i><div class="text-caption text-purple-3">{{ getSpellTagString(spellId) }}</div></div>
           <q-select :model-value="map(spellBonusMap)[spellId] ?? 'inherit'" :options="actionOptions" emit-value map-options dense outlined dark :data-spell-bonus="spellId" label="Bonus Action" class="col-3" @update:model-value="value => setMap(spellBonusMap, spellId, value === 'inherit' ? undefined : value)" />
+          <q-input :model-value="map('spellCastingTimeMap')[spellId]" dense outlined dark clearable label="Extended casting time" :placeholder="getSpellMetadata(spellId).extendedCastingTime || 'e.g. 1 minute'" class="col-12" @update:model-value="value => setMap('spellCastingTimeMap', spellId, String(value ?? '').trim() || undefined)" />
           <q-btn flat round dense icon="close" color="negative" :aria-label="'Remove ' + spellId" @click="setSpells(level, assigned(level).filter(id => id !== spellId))" />
         </div>
         <p v-if="unavailable(level)" class="text-caption">Above this sourceâ€™s spell-learning level.</p>
@@ -34,7 +35,7 @@ import { sourceSpellOptions, sourceSpellCeiling, sourceAssignedAtLevel, replaceS
 import { spellRowRecovery } from 'src/core/domain/spell-plate'
 import { CADENCE_OPTIONS } from 'src/core/domain/catalogs/cadence'
 import type { CastingContribution } from 'src/core/usecases/AutoSyncSpellcasting'
-import { getSpellTagString } from 'src/core/domain/spell-metadata'
+import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
 import CastingSpellOption from './CastingSpellOption.vue'
 interface RowSource {
  rulesEdition?:'2014'|'2024'; class?: string; className?: string; subclass?: string; level: number; resourceType?: string; refreshRate?: string; customRefreshRate?: string
@@ -44,7 +45,7 @@ interface RowSource {
  spellGrants?:{spell:string;minLevel:number;origin:'class'|'subclass'|'species'}[]
  levelAmountMap?: Record<string,number|null>; levelAmounts?:Record<string,number|null>; levelCadenceMap?:Record<string,string>; levelCadences?:Record<string,string>
  bonusActionLevelMap?:Record<string,boolean>;levelBonusAction?:Record<string,boolean>;spellAmountMap?:Record<string,number|null>;spellAmounts?:Record<string,number|null>
- spellCadenceMap?:Record<string,string>;spellBonusActionMap?:Record<string,boolean>;spellBonusAction?:Record<string,boolean>
+ spellCastingTimeMap?: Record<string,string>; spellCadenceMap?:Record<string,string>;spellBonusActionMap?:Record<string,boolean>;spellBonusAction?:Record<string,boolean>
 }
 const props=defineProps<{source:RowSource;primary?:boolean;combinedLevel?:number;sourceCount?:number}>()
 const emit=defineEmits<{patch:[value:Partial<RowSource>]}>()

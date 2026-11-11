@@ -5,6 +5,7 @@ export interface SpellMetadata {
   materialDescription?: string
   concentration: boolean
   ritual: boolean
+  extendedCastingTime?: string
 }
 
 // Canonical 5e SRD spell catalog components & tags
@@ -20,7 +21,7 @@ export const SRD_SPELL_METADATA: Record<string, SpellMetadata> = {
   'Guidance': { school: 'Divination', level: 0, components: ['V', 'S'], concentration: true, ritual: false },
   'Light': { school: 'Evocation', level: 0, components: ['V', 'M'], concentration: false, ritual: false },
   'Mage Hand': { school: 'Conjuration', level: 0, components: ['V', 'S'], concentration: false, ritual: false },
-  'Mending': { school: 'Transmutation', level: 0, components: ['V', 'S', 'M'], concentration: false, ritual: false },
+  'Mending': { school: 'Transmutation', level: 0, extendedCastingTime: '1 minute', components: ['V', 'S', 'M'], concentration: false, ritual: false },
   'Message': { school: 'Transmutation', level: 0, components: ['V', 'S', 'M'], concentration: false, ritual: false },
   'Minor Illusion': { school: 'Illusion', level: 0, components: ['S', 'M'], concentration: false, ritual: false },
   'Poison Spray': { school: 'Conjuration', level: 0, components: ['V', 'S'], concentration: false, ritual: false },

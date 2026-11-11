@@ -23,6 +23,30 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   return true;
  })()`)
  assert.equal(setup,true)
+ const png=await evaluate(`(async()=>{
+  const page=document.querySelector('.a4-page-sheet');
+  const originalUrl=URL.createObjectURL, originalClick=HTMLAnchorElement.prototype.click;
+  let blob;
+  URL.createObjectURL=value=>{if(value.type==='image/png')blob=value;return originalUrl.call(URL,value)};
+  HTMLAnchorElement.prototype.click=function(){if(!this.download.endsWith('.png'))originalClick.call(this)};
+  try{
+   const download=[...document.querySelectorAll('header button')].find(button=>button.querySelector('i')?.textContent.trim()==='download');
+   download.click();
+   const wait=ms=>new Promise(r=>setTimeout(r,ms));
+   await wait(300);
+   const entry=[...document.querySelectorAll('.q-menu .q-item')].find(item=>item.textContent.includes('PNG'));
+   if(!entry)throw Error('PNG command unavailable');
+   entry.click();
+   for(let i=0;i<100&&!blob;i++)await wait(100);
+   if(!blob)throw Error('No PNG was downloaded');
+   const image=await createImageBitmap(blob);
+   const canvas=document.createElement('canvas');canvas.width=image.width;canvas.height=image.height;
+   const ctx=canvas.getContext('2d');ctx.drawImage(image,0,0);
+   return {width:image.width,height:image.height,aspect:page.offsetWidth/page.offsetHeight,opaque:ctx.getImageData(15,15,1,1).data[3]>0};
+  }finally{URL.createObjectURL=originalUrl;HTMLAnchorElement.prototype.click=originalClick}
+ })()`)
+ assert.ok(png.opaque&&png.width>=1500&&Math.abs(png.width/png.height-png.aspect)<0.02,'PNG includes the full paper composition at export resolution, independent of preview zoom')
+
  const result=[]
  for(const orientation of ['portrait','landscape']) {
   await send('Emulation.setEmulatedMedia',{media:'screen'})
@@ -69,7 +93,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   if(evidenceDir){fs.mkdirSync(evidenceDir,{recursive:true});fs.writeFileSync(path.join(evidenceDir,label+'.pdf'),bytes)}
   const text=bytes.toString('latin1')
   const boxes=[...text.matchAll(/\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/g)].map(m=>m.slice(1).map(Number))
-  assert.ok(boxes.length>=2&&boxes.every(box=>Math.abs(box[0]-PAPER_POINTS[1])<2&&Math.abs(box[1]-PAPER_POINTS[0])<2),'Loaded native print preserves landscape A4 on every page')
+  assert.ok(boxes.length===1&&boxes.every(box=>Math.abs(box[0]-PAPER_POINTS[1])<2&&Math.abs(box[1]-PAPER_POINTS[0])<2),'Loaded native print preserves landscape A4 on every page')
   return boxes.length
  }
  const nominal=await pages('loaded-landscape-native')
@@ -77,8 +101,8 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  await delay(250)
  const overflow=await evaluate(`(()=>{const el=document.querySelector('.a4-page-sheet'),css=getComputedStyle(el);return {portrait:!!el.querySelector('.monster-portrait'),x:css.overflowX,y:css.overflowY,scrollWidth:el.scrollWidth,width:el.offsetWidth,scrollHeight:el.scrollHeight,height:el.offsetHeight}})()`)
  assert.ok(overflow.portrait&&overflow.scrollWidth>overflow.width&&overflow.scrollHeight>overflow.height,'Loaded fixture exercises artwork and overflow on both axes')
- assert.deepEqual([overflow.x,overflow.y],['clip','visible'],'Horizontal bleed is trimmed at the paper edge without clipping vertical continuation')
- assert.equal(await pages('loaded-landscape-native-overflow'),nominal,'Horizontal bleed must not shrink the composed sheet and alter vertical pagination')
+ assert.equal(nominal,1,'Keep the tall artwork and statblock together on one A4 sheet')
+ assert.equal(await pages('loaded-landscape-native-overflow'),nominal,'Fit both axes on the same sheet')
  await send('Emulation.setEmulatedMedia',{media:'screen'})
  await evaluate(`(()=>{document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor').a4PreviewMode=false;return true})()`)
  await delay(150)
@@ -90,5 +114,5 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  assert.equal(plainPrint.block.fontSize,plain.block.fontSize,'Plain print retains statblock font size')
  assert.equal(plainPrint.block.color,plain.block.color,'Plain print retains statblock color')
  assert.equal(plainPrint.exact,'exact','Plain print requests exact colors')
- console.log('A4 print parity:',JSON.stringify({cases:result,loadedLandscape:{pages:nominal,...overflow},plain:true}))
+ console.log('A4 print parity:',JSON.stringify({png,cases:result,loadedLandscape:{pages:nominal,...overflow},plain:true}))
 },{port:Number(process.env.DNDSHEET_PRINT_PARITY_CDP_PORT||9364)})

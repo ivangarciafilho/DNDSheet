@@ -1,0 +1,6 @@
+{
+  "coreTests": { "before": 586, "after": 587, "delta": 1 },
+  "backlog": { "completeBefore": 174, "completeAfter": 174, "openBefore": 94, "openAfter": 94 },
+  "png": { "previewZoom": 65, "width": 1588, "height": 2246 },
+  "a4": { "portraitPages": 1, "landscapePages": 1, "oversizedLandscapePages": 1 }
+}

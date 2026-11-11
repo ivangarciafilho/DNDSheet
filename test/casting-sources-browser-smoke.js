@@ -26,11 +26,13 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   result.rowOrder=ok(shield().querySelector('.sb-spell-head').textContent.includes('(4/Long Rest), Level 1 (Bonus Action):'),'Amount/cadence/level/action row order');
   result.spellOrder=ok(shield().textContent.indexOf('(2/Short Rest)')>=0&&shield().textContent.indexOf('(2/Short Rest)')<shield().textContent.indexOf('Shield')&&shield().textContent.includes('(Action)'),'Amount/cadence/name/Action exception order');
   result.combinedLevel=ok(plate().textContent.includes('5th Level Spellcaster'),'Combined resource caster level, not summed Pact level');
-  result.learningCounts=ok(plate().textContent.includes('7 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 9 spells'),'Combined cantrip and learning limits');
+  result.learningCounts=ok(source().querySelector('[data-primary-capacity]').textContent.includes('/ 4 cantrips')&&!/Up to .*cantrips|spells known/.test(plate().textContent)&&plate().textContent.includes('Can prepare 9 spells'),'Combined cantrip and learning limits');
   result.distinctModifiers=ok(plate().textContent.includes('+7')&&plate().textContent.includes('+6'),'Distinct source casting modifiers');
   const learning=source().querySelector('[data-source-learning]');await expand(learning);
-  fill(field(learning,'Cantrips multiplier').querySelector('input'),'2');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 9 spells'),'independent cantrip multiplier');
-  fill(field(learning,'Known/prepared spells multiplier').querySelector('input'),'0.5');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 4 spells'),'independent spell divisor');result.learningModifiers=true;
+  fill(field(learning,'Cantrips multiplier').querySelector('input'),'2');await until(()=>source().querySelector('[data-primary-capacity]').textContent.includes('/ 8 cantrips')&&plate().textContent.includes('Can prepare 9 spells'),'independent cantrip multiplier');
+  fill(field(learning,'Known/prepared spells multiplier').querySelector('input'),'0.5');await until(()=>source().querySelector('[data-primary-capacity]').textContent.includes('/ 8 cantrips')&&plate().textContent.includes('Can prepare 4 spells'),'independent spell divisor');result.learningModifiers=true;
+  await select(field(learning,'Preparation spell list'),'Cleric');
+  await until(()=>plate().textContent.includes('Can prepare 4 Cleric spells per Long Rest'),'selected preparation list');
   await expand(row(1));const spellRow=source().querySelector('[data-source-spell="Shield"]');fill(field(spellRow,'Amount').querySelector('input'),'');await until(()=>!shield().textContent.includes('(2/Short Rest)'),'no spell amount hides cadence');
   result.noImplicitSpellBudget=ok(!shield().textContent.includes('Short Rest'),'Divergent cadence must not borrow row amount');
   fill(field(spellRow,'Amount').querySelector('input'),'2');await select(field(spellRow,'Spell recovery'),'Long Rest');await until(()=>shield().textContent.includes('(2), Shield'),'amount-only exception');

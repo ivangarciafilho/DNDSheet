@@ -255,18 +255,20 @@ export default defineComponent({
       }
     }
 
-    const savePng = () => {
+    const savePng = async () => {
       const isChar = editorStore.activeMode === 'character'
       const node = isChar
         ? document.getElementById('char-sheet')
-        : document.getElementById('renderer')
+        : editorStore.a4PreviewMode
+          ? document.getElementById('render')?.closest<HTMLElement>('.a4-page-sheet')
+          : document.getElementById('renderer')
       const targetName = isChar ? (charStore.actor.name || 'Hero') : monster.name
 
       if (node != null) {
         if (
           !isChar &&
           editorStore.statBlockColumns > 1 &&
-          window.navigator.userAgent.includes('Mozilla')
+          window.navigator.userAgent.includes('Firefox')
         ) {
           $q.notify({
             message: t('editor.ffMulticolPngWarning'),
@@ -274,19 +276,20 @@ export default defineComponent({
           })
         }
 
-        snapdom
-          .toBlob(node, {
-            embedFonts: true,
-            scale: 2,
-            type: 'png',
-          })
-          .then((result) => {
-            const blobUrl = URL.createObjectURL(result)
-            const link = document.createElement('a')
-            link.download = safeFileName(targetName, '.png')
-            link.href = blobUrl
-            link.click()
-          })
+        try {
+          await document.fonts?.ready
+          await Promise.allSettled(Array.from(node.querySelectorAll('img'), image => image.decode()))
+          const result = await snapdom.toBlob(node, { embedFonts: true, scale: 2, type: 'png' })
+          const blobUrl = URL.createObjectURL(result)
+          const link = document.createElement('a')
+          link.download = safeFileName(targetName, '.png')
+          link.href = blobUrl
+          link.click()
+          window.setTimeout(() => URL.revokeObjectURL(blobUrl), 1000)
+        } catch (error) {
+          console.error(error)
+          $q.notify({ message: 'Could not export PNG. Try again after the artwork loads.', type: 'negative' })
+        }
       }
     }
 

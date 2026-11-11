@@ -1586,11 +1586,20 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return ''
   })
 
-  const classSpellcastingSlots = computed(() => castingProjection.value.levels.map(row => ({
-    level: row.level, slots: row.amount || 0, spells: row.spells.map(spell => spell.name),
-    renderedLabel: row.heading,
-    renderedSpells: row.spells.map(spell => spell.lead + spell.name + (spell.actionLabel ? ' ' + spell.actionLabel : '')).join(', '),
-  })))
+  const classSpellcastingSlots = computed(() => {
+    const rows = castingProjection.value.levels
+    const groups = monster.spellcasting.splitHighCadence
+      ? [false, true].flatMap(restricted => rows.map(row => ({
+          ...row, heading: restricted ? 'Restricted ' + row.heading : row.heading,
+          spells: row.spells.filter(spell => Boolean(spell.restricted) === restricted),
+        })).filter(row => row.spells.length))
+      : rows
+    return groups.map(row => ({
+      level: row.level, slots: row.amount || 0, spells: row.spells.map(spell => spell.name),
+      renderedLabel: row.heading,
+      renderedSpells: row.spells.map(spell => spell.lead + spell.name + (spell.castingTime ? ' (' + spell.castingTime + ')' : '') + (spell.actionLabel ? ' ' + spell.actionLabel : '')).join(', '),
+    }))
+  })
 
   const innateSpellcastingLists = computed(() => {
     return monster.spellcasting.atWill.map((s) => {

@@ -192,7 +192,7 @@
             label="Print / PDF"
             @click="printA4Sheet"
           >
-            <q-tooltip>Print or Save as PDF (exact 1:1 A4 physical page)</q-tooltip>
+            <q-tooltip>Print or save as PDF. Oversized sheets scale to fit one A4 page.</q-tooltip>
           </q-btn>
         </template>
       </div>
@@ -744,12 +744,12 @@
         <div v-if="spellPlate.consolidatedSummary" class="sb-row"><div class="sb-cell sb-grow">{{ spellPlate.consolidatedSummary }}</div></div>
         <div v-if="spellPlate.metamagic" class="sb-row sb-spell-row sb-spell-metamagic-row" :class="{ 'sb-striped': isMetamagicRowStriped, 'is-striped': isMetamagicRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" style="border: none; padding: 2px 4px;" data-help="metamagic" tabindex="0">
-            <strong>{{ spellPlate.metamagic.refresh }}:</strong> <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points.
-            <template v-if="spellPlate.metamagic.options.length">
-              <span v-for="(meta, index) in spellPlate.metamagic.options" :key="'meta-' + index" class="q-ml-xs">
-                <strong>{{ meta.cost === 'Spell level' ? 'Cost equals spell level' : `${meta.cost} SP` }}</strong> to {{ meta.name }}<template v-if="meta.effect">: {{ meta.effect.replace(/[.\s]+$/, '') }}</template><span>{{ index === spellPlate.metamagic.options.length - 1 ? '.' : '; ' }}</span>
-              </span>
-            </template>
+            <strong>{{ spellPlate.metamagic.points }} Sorcery Points</strong>, regained on {{ spellPlate.metamagic.refresh }}.
+            <ul v-if="spellPlate.metamagic.options.length" class="sb-metamagic-options">
+              <li v-for="(meta, index) in spellPlate.metamagic.options" :key="index">
+                <strong>{{ meta.cost || meta.name }}:</strong> {{ meta.effect || meta.name }}
+              </li>
+            </ul>
           </div>
         </div>
         <!-- Unified Spells Cell (Per-Level lines inside single consolidated cell) -->
@@ -769,7 +769,7 @@
                 :key="'spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.castingTime"> ({{ spell.castingTime }})</span><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -785,7 +785,7 @@
         >
           <div class="sb-cell sb-spells-restricted-cell sb-grow" style="border: none; padding: 0; width: 100%;">
             <div class="restricted-cell-header text-caption text-weight-bold text-italic text-grey-9 q-pa-xs">
-              Restricted Cadence / Not Always Available:
+              Restricted Spells
             </div>
             <div
               v-for="(row, secIdx) in secondarySpellLevels"
@@ -801,7 +801,8 @@
                 :key="'sec-spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.castingTime"> ({{ spell.castingTime }})</span><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
+                <span v-if="!spell.lead && !row.heading.includes('/' + spell.restrictionCadence) && spell.restrictionCadence"> ({{ spell.restrictionCadence }})</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -1691,9 +1692,26 @@ export default defineComponent({
       { deep: true }
     )
 
+    const fitA4ForPrint = () => {
+      const page = a4PageRef.value
+      if (!editorStore.a4PreviewMode || !page) return
+      const paperWidth = (editorStore.a4Orientation === 'landscape' ? 297 : 210) * 96 / 25.4
+      const paperHeight = a4TargetHeightPx.value
+      const width = Math.max(page.offsetWidth, page.scrollWidth)
+      const height = Math.max(page.offsetHeight, page.scrollHeight)
+      const scale = width <= Math.ceil(paperWidth) && height <= Math.ceil(paperHeight)
+        ? 1
+        : Math.min(1, (paperWidth - 2) / width, (paperHeight - 2) / height)
+      page.style.setProperty('--a4-print-scale', String(scale))
+    }
+
+    onMounted(() => window.addEventListener('beforeprint', fitA4ForPrint))
+    onBeforeUnmount(() => window.removeEventListener('beforeprint', fitA4ForPrint))
+
     const printA4Sheet = async () => {
       await document.fonts?.ready
       await Promise.allSettled(Array.from(a4PageRef.value?.querySelectorAll('img') || []).map(img => img.decode()))
+      fitA4ForPrint()
       window.print()
     }
 
@@ -1713,36 +1731,14 @@ export default defineComponent({
 
 
 
-    const isRestrictedCadence = (cadence?: string): boolean => {
-      if (!cadence) return false
-      const c = cadence.trim().toLowerCase()
-      if (c === '' || c === 'hidden' || c === 'none' || c === 'at will' || c === 'at_will' || c === 'slots' || c === 'always' || c === 'always prepared') return false
-      const configuredFilters: string[] = Array.isArray(monster.spellcasting?.restrictedCadences) && monster.spellcasting.restrictedCadences.length > 0
-        ? monster.spellcasting.restrictedCadences.map((x: string) => x.toLowerCase())
-        : [
-            'short rest',
-            'long rest',
-            'midnight',
-            'midday',
-            'dusk',
-            'dawn',
-            'downtime',
-            'ritual',
-            'weekly',
-            'monthly',
-            'yearly'
-          ]
-      return configuredFilters.some((filter) => c.includes(filter))
-    }
-
     const getPrimarySpells = (row: any) => {
       if (!monster.spellcasting?.splitHighCadence) return row.spells || []
-      return (row.spells || []).filter((s: any) => !isRestrictedCadence(s.cadence))
+      return (row.spells || []).filter((s: any) => !s.restricted)
     }
 
     const getSecondarySpells = (row: any) => {
       if (!monster.spellcasting?.splitHighCadence) return []
-      return (row.spells || []).filter((s: any) => isRestrictedCadence(s.cadence))
+      return (row.spells || []).filter((s: any) => s.restricted)
     }
 
     const primarySpellLevels = computed(() => {

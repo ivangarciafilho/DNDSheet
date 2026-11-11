@@ -3,6 +3,7 @@ import { aggregateSpellcastingSources, sourceLearningMetrics, spellcastingRuleCl
 import { buildSpellPlate, ordinalLabel, type SpellPlateLevel, type SpellPlateModel } from './spell-plate.ts'
 import { castingResourceView } from './casting-resource-view.ts'
 import { sourceEffectiveSpells, sourceSpellCeiling } from './casting-source-selection.ts'
+import { getSpellMetadata } from './spell-metadata.ts'
 import { cadenceLabel } from './catalogs/cadence.ts'
 
 export interface CastingProjectionOptions {
@@ -15,14 +16,25 @@ export interface CastingProjectionOptions {
   edition?: '2014' | '2024'
 }
 
-function preparationLabel(count: number, cadence: string): string {
-  const noun = count === 1 ? 'spell' : 'spells'
+function preparationLabel(count: number, cadence: string, spellList: string): string {
+  const noun = (spellList ? spellList + ' ' : '') + (count === 1 ? 'spell' : 'spells')
   if (!cadence) return 'Can prepare ' + count + ' ' + noun
   const timing = cadence === 'Downtime' ? 'during downtime'
-    : /rest$/i.test(cadence) ? 'after a ' + cadence
+    : /rest$/i.test(cadence) ? 'per ' + cadence
     : /^at /i.test(cadence) ? cadence.toLowerCase()
     : 'on ' + cadence
   return 'Can prepare ' + count + ' ' + noun + ' ' + timing
+}
+
+export const RESTRICTED_SPELL_CADENCES = ['Dawn', 'Downtime', 'Dusk', 'Long Rest', 'Midday', 'Midnight', 'Monthly', 'Ritual', 'Short Rest', 'Short or Long Rest', 'Weekly', 'Yearly'] as const
+
+function isRestrictedSpell(sc: Monster['spellcasting'], cadence: string | undefined, name: string, castingTime?: string): boolean {
+  const selected = sc.restrictedCadences ?? RESTRICTED_SPELL_CADENCES
+  const normalized = cadenceLabel(cadence).toLowerCase().replace(/^at /, '')
+  return Boolean(castingTime?.trim()) || selected.some(value => {
+    const filter = cadenceLabel(value).toLowerCase().replace(/^at /, '')
+    return filter === normalized || (filter === 'ritual' && getSpellMetadata(name).ritual)
+  })
 }
 
 /** The output groups casting rules; source identity remains in the editor and saved model. */
@@ -47,8 +59,7 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
   })
   const resourceLines = new Set<string>()
   const rows = new Map<string, SpellPlateLevel>()
-  const preparation = new Map<string, number>()
-  let cantrips = 0, known = 0
+  const preparation = new Map<string, { cadence: string; spellList: string; count: number }>()
   for (const source of sources) {
     const pool = castingResourceView(source, aggregate)
     const ceiling = source.contribution?.highestSlot ? sourceSpellCeiling(source, effectiveLevel, sources.length) : undefined
@@ -62,14 +73,15 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
       : ''
     const rules = spellcastingRuleClass(source.className, source.subclass)
     const learning = sourceLearningMetrics(source, modifier, effectiveLevel, sources.length)
-    cantrips += learning.cantripsKnown
     const override = source.preparedCountOverride
     const limit = override ?? learning.preparedSpells
     const prepares = override != null || Boolean(source.preparedInterval) || Boolean(rules && ['wizard', 'cleric', 'druid', 'paladin', 'artificer'].includes(rules))
     if (limit > 0 && prepares) {
       const cadence = cadenceLabel(source.preparedInterval || 'long_rest')
-      preparation.set(cadence, (preparation.get(cadence) || 0) + limit)
-    } else known += limit
+      const spellList = typeof source.preparedSpellList === 'string' ? source.preparedSpellList.trim() : ''
+      const key = JSON.stringify([cadence, spellList])
+      preparation.set(key, { cadence, spellList, count: (preparation.get(key)?.count || 0) + limit })
+    }
     const customRefreshRate = 'customRefreshRate' in source && typeof source.customRefreshRate === 'string' ? source.customRefreshRate : undefined
     const plate = buildSpellPlate({
       title, stat: source.stat, save, attack, className: source.className, level: source.level,
@@ -78,9 +90,17 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
       refreshRate: source.refreshRate, customRefreshRate,
       spellLevels: Array.from({ length: 10 }, (_, level) => ({
         level, amount: source.levelAmounts?.[level], cadence: source.levelCadences?.[level], bonusAction: Boolean(source.levelBonusAction?.[level]),
-        spells: names.filter(name => (options.spellLevel(name) ?? 0) === level && (ceiling === undefined || level <= ceiling) && visible(source.spellCadenceMap?.[name])).map(name => ({
-          name, tags: options.spellTags?.(name), cadence: source.spellCadenceMap?.[name], amount: source.spellAmounts?.[name], bonusAction: source.spellBonusAction?.[name],
-        })),
+        spells: names.filter(name => (options.spellLevel(name) ?? 0) === level && (ceiling === undefined || level <= ceiling) && visible(source.spellCadenceMap?.[name])).map(name => {
+          const override = source.spellCastingTimeMap?.[name]
+          const castingTime = (typeof override === 'string' ? override.trim() : '') || getSpellMetadata(name).extendedCastingTime
+          const cadence = source.spellCadenceMap?.[name]
+          const restrictionCadence = cadence || source.levelCadences?.[level]
+          return {
+            name, castingTime, restrictionCadence,
+            restricted: isRestrictedSpell(sc, restrictionCadence, name, castingTime),
+            tags: options.spellTags?.(name), cadence, amount: source.spellAmounts?.[name], bonusAction: source.spellBonusAction?.[name],
+          }
+        }),
       })),
     })
     if (plate.resource) resourceLines.add(plate.resource)
@@ -108,10 +128,6 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
   }
   result.levels = [...rows.values()].sort((a, b) => a.level - b.level)
   result.resource = [...resourceLines].join(' · ')
-  result.prepared = [
-    cantrips ? 'Up to ' + cantrips + ' cantrips' : '',
-    known ? known + (known === 1 ? ' spell known' : ' spells known') : '',
-    ...[...preparation].map(([cadence, count]) => preparationLabel(count, cadence)),
-  ].filter(Boolean).join('; ')
+  result.prepared = [...preparation.values()].map(({ count, cadence, spellList }) => preparationLabel(count, cadence, spellList)).join('; ')
   return result
 }
