@@ -33,16 +33,15 @@ export async function browserProbe(
   const pending = new Map(),
     exceptions = []
   try {
-    let pages
-    for (let i = 0; i < 60 && !pages; i++) {
+    let target
+    for (let i = 0; i < 300 && !target; i++) {
       if (launchError) throw launchError
       try {
-        pages = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
-      } catch {
-        await delay(100)
-      }
+        const pages = await (await fetch(`http://127.0.0.1:${port}/json`)).json()
+        target = pages.find((p) => p.type === 'page')
+      } catch { /* Wait for Chrome to expose its page target. */ }
+      if (!target) await delay(100)
     }
-    const target = pages?.find((p) => p.type === 'page')
     if (!target) throw Error('Chrome page target unavailable')
     ws = new WebSocket(target.webSocketDebuggerUrl)
     await new Promise((resolve, reject) => {
@@ -96,12 +95,12 @@ export async function browserProbe(
     await send('Runtime.enable')
     await send('Page.navigate', { url })
     let ready = false
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 450; i++) {
       ready = await evaluate("!!document.querySelector('#render .statblock')")
       if (ready) break
       await delay(100)
     }
-    if (!ready) throw Error('Rendered app unavailable')
+    if (!ready) throw Error('Rendered app unavailable: ' + JSON.stringify(exceptions))
     const result = await run({ send, evaluate, delay })
     if (exceptions.length) throw Error(JSON.stringify(exceptions))
     return result

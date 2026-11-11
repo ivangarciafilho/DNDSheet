@@ -1,3 +1,4 @@
+import { normalizeCastingSpellGrants } from '../domain/casting-source-selection.ts'
 import { normalizeRandomTables } from '../domain/random-table.ts'
 import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts'
 
@@ -200,6 +201,8 @@ export function migrateMonsterSchema(raw: any): Monster {
   const sc = monster.spellcasting || {}
   monster.spellcasting = {
     ...sc,
+    ...(sc.spellGrants === undefined ? {} : { spellGrants: normalizeCastingSpellGrants(sc.spellGrants) }),
+    ...(Array.isArray(sc.classes) ? { classes: sc.classes.map((source: typeof sc) => source.spellGrants === undefined ? source : { ...source, spellGrants: normalizeCastingSpellGrants(source.spellGrants) }) } : {}),
     stat: sc.stat || 'INT',
     save: {
       override: sc.save?.override ?? false,
@@ -235,7 +238,7 @@ export function migrateMonsterSchema(raw: any): Monster {
   }
 
   // Preserve the legacy secondary source when the old enable flag is replaced by source count.
-  if (sc.multiclass?.enabled && !(sc.classes || []).length) {
+  if (sc.primarySourceEnabled !== false && sc.multiclass?.enabled && !(sc.classes || []).length) {
     monster.spellcasting.classes = [{ id: 'legacy-secondary-casting-source', className: sc.multiclass.secondaryClass || 'Cleric', level: sc.multiclass.secondaryLevel || 1, stat: sc.multiclass.secondaryStat || 'WIS', spells: [] }]
   }
 

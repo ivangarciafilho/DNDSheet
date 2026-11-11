@@ -172,6 +172,8 @@ for (const name of ['save', 'attack', 'modifier']) register(`spellcasting.${name
 register('spellcasting.multiclass.secondaryLevel', 'level', 'spellcasting', { min: 1, max: 20, editableWhen: [eq('spellcasting.multiclass.enabled', true)] })
 for (const [name, semantic] of [['secondarySaveDc', 'dc'], ['secondarySpellAttack', 'bonus']] as const) register(`spellcasting.multiclass.${name}`, semantic, 'spellcasting', { ...optional, editableWhen: [eq('spellcasting.multiclass.enabled', true)] })
 register('spellcasting.classes[id=*].level', 'level', 'spellcasting', { min: 1, max: 20 })
+register('spellcasting.classes[id=*].preparedCountOverride', 'count', 'spellcasting', { ...optional, nullable: true, min: 0 })
+for (const name of ['save', 'attack', 'modifier']) register('spellcasting.classes[id=*].'+name+'.overrideValue', name === 'save' ? 'dc' : 'bonus', 'spellcasting', ov('spellcasting.classes[id=*].'+name))
 register('spellcasting.atWill[id=*].count', 'count', 'spellcasting')
 register('spellcasting.preparedCountOverride', 'count', 'spellcasting', { ...optional, nullable: true, min: 0 })
 register('spellcasting.cantripSwitchCount', 'count', 'spellcasting', { min: 1, editableWhen: [eq('spellcasting.cantripSwitch', true)] })

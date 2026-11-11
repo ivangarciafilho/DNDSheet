@@ -258,13 +258,17 @@ export function calculateSpellcastingMetrics(
 export interface CastingCapacityContribution {
   /** Own class progression or the consolidated caster level; absent uses combined for stacked sources. */
   mode: 'own' | 'combined'
-  /** Scales the resulting capacity count, never the class level or spell selection ceiling. */
+  /** Scale a count for cantrips/spells, or an effective level for highest-slot/grants. */
+  multiplier?: number
   numerator: number
   denominator: number
 }
 export interface CastingContribution {
   cantrips?: CastingCapacityContribution
   spells?: CastingCapacityContribution
+  highestSlot?: CastingCapacityContribution
+  grants?: CastingCapacityContribution
+  multiplier?: number
   mode: 'rules' | 'custom'
   target: 'slots' | 'pact' | 'points' | 'focus'
   focusPerLevel?: number
@@ -272,7 +276,15 @@ export interface CastingContribution {
   denominator: number
 }
 
+export interface CastingSpellGrant { spell: string; minLevel: number; origin: 'class' | 'subclass' | 'species'; kind?: 'known' | 'prepared' }
+export interface CastingRollOverride { override: boolean; overrideValue: number }
+
 export interface ClassEntry {
+  save?: CastingRollOverride
+  attack?: CastingRollOverride
+  modifier?: CastingRollOverride
+  preparedCountOverride?: number
+  preparedInterval?: string
   id?: string
   resourceType?: string
   slots?: number[]
@@ -284,6 +296,11 @@ export interface ClassEntry {
 }
 
 export interface SpellcastingSourcesInput {
+ save?: CastingRollOverride
+ attack?: CastingRollOverride
+ modifier?: CastingRollOverride
+ preparedCountOverride?: number
+ preparedInterval?: string
  primarySourceEnabled?: boolean
  resourceType?: string
  slots?: number[]
@@ -298,7 +315,7 @@ export interface SpellcastingSourcesInput {
 
 /** One source projection for editor, renderers and exports. Unknown manual sources do not invent slots. */
 export function allCastingSourceEntries(source: SpellcastingSourcesInput): ClassEntry[] {
- const entries: ClassEntry[] = source.primarySourceEnabled === false ? [] : [{ id: 'primary', className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }]
+ const entries: ClassEntry[] = source.primarySourceEnabled === false ? [] : [{ id: 'primary', className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, save: source.save, attack: source.attack, modifier: source.modifier, preparedCountOverride: source.preparedCountOverride, preparedInterval: source.preparedInterval, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }]
  entries.push(...(source.classes || []))
  if (source.primarySourceEnabled !== false && !(source.classes || []).length && source.multiclass?.enabled) entries.push({ id: 'legacy-secondary', className: source.multiclass.secondaryClass || 'Cleric', level: source.multiclass.secondaryLevel || 1, stat: source.multiclass.secondaryStat || 'WIS' })
  return entries
@@ -308,22 +325,33 @@ export function spellcastingSourceEntries(source: SpellcastingSourcesInput): Cla
  return allCastingSourceEntries(source).filter(entry => entry.contribution?.mode === 'custom' || spellcastingRuleClass(entry.className, entry.subclass) !== undefined)
 }
 
+/** Decimal controls take precedence; absent controls retain the saved rational ratio. */
+export function scaleCastingCapacity(count: number, config?: { multiplier?: number; numerator?: number; denominator?: number }): number {
+ if (!config) return count
+ const ratio = config.multiplier !== undefined ? config.multiplier : Number(config.numerator) / Number(config.denominator)
+ const valid = config.multiplier !== undefined || Number(config.denominator) > 0
+ const result = count * ratio
+ return valid && ratio >= 0 && Number.isFinite(result) ? Math.min(Number.MAX_SAFE_INTEGER, Math.floor(result + Number.EPSILON * Math.max(1, result))) : 0
+}
+
+export function castingCapacityBasis(ownLevel: number, config: CastingCapacityContribution | undefined, combinedLevel?: number, sourceCount = 1, combinedByDefault = false): number {
+ const own = Math.min(20, Math.max(0, Math.trunc(Number(ownLevel) || 0)))
+ if (config?.mode === 'own' || (!config?.mode && (!combinedByDefault || sourceCount <= 1))) return own
+ const combined = Math.trunc(Number(combinedLevel ?? own) || 0)
+ return Math.min(20, Math.max(0, combined, config?.mode === 'combined' ? 0 : own))
+}
+
 /** Learning capacities can use the shared level without changing source-owned spell eligibility. */
 export function sourceLearningMetrics(entry: ClassEntry, abilityModifier = 0, combinedLevel?: number, sourceCount = 1) {
- const own = Math.max(0, Math.min(20, Math.trunc(Number(entry.level) || 0)))
- const basis = (config?: CastingCapacityContribution) => config?.mode === 'own' || (!config?.mode && sourceCount <= 1) ? own : Math.min(20, Math.max(0, Math.trunc(Number(combinedLevel ?? own) || 0), config?.mode === 'combined' ? 0 : own))
- const scale = (count: number, config?: CastingCapacityContribution) => {
-   if (!config) return count
-   const numerator = Number(config.numerator), denominator = Number(config.denominator)
-   return Number.isFinite(numerator) && Number.isFinite(denominator) && numerator >= 0 && denominator > 0 ? Math.floor(count * numerator / denominator) : 0
- }
+ const own = castingCapacityBasis(entry.level, undefined)
+ const basis = (config?: CastingCapacityContribution) => castingCapacityBasis(own, config, combinedLevel, sourceCount, true)
  const cantripCapacityLevel = basis(entry.contribution?.cantrips), spellCapacityLevel = basis(entry.contribution?.spells)
  const native = calculateSpellcastingMetrics(entry.className, own, abilityModifier, entry.subclass)
  const cantripMetrics = calculateSpellcastingMetrics(entry.className, cantripCapacityLevel, abilityModifier, entry.subclass)
  const spellMetrics = calculateSpellcastingMetrics(entry.className, spellCapacityLevel, abilityModifier, entry.subclass)
  return { ...native, cantripCapacityLevel, spellCapacityLevel,
-  cantripsKnown: cantripCapacityLevel > 0 ? scale(cantripMetrics.cantripsKnown, entry.contribution?.cantrips) : 0,
-  preparedSpells: spellCapacityLevel > 0 ? scale(spellMetrics.preparedSpells, entry.contribution?.spells) : 0 }
+  cantripsKnown: cantripCapacityLevel > 0 ? scaleCastingCapacity(cantripMetrics.cantripsKnown, entry.contribution?.cantrips) : 0,
+  preparedSpells: typeof entry.preparedCountOverride === 'number' && Number.isFinite(entry.preparedCountOverride) ? Math.max(0, Math.trunc(entry.preparedCountOverride)) : spellCapacityLevel > 0 ? scaleCastingCapacity(spellMetrics.preparedSpells, entry.contribution?.spells) : 0 }
 }
 
 export function aggregateSpellcastingSources(source: SpellcastingSourcesInput, stats: Record<string, number> = {}, proficiency = 2): MulticlassCalculationResult | undefined {
@@ -337,6 +365,8 @@ export function castingLearningSummary(source: SpellcastingSourcesInput, stats: 
 }
 
 export interface PerClassBreakdown {
+  id?: string
+  preparedInterval?: string
   className: string
   subclass?: string
   level: number
@@ -454,17 +484,14 @@ export function calculateMulticlassSpellcasting(
     const lvl = Math.max(1, Math.min(20, Math.trunc(Number(entry.level) || 1)))
     const stat = entry.stat || getDefaultStatForClass(cls)
     const mod = statModifier(effectiveStats[stat] ?? 10)
-    const saveDc = 8 + effectiveProf + mod
-    const spellAttack = effectiveProf + mod
+    const saveDc = entry.save?.override && Number.isFinite(entry.save.overrideValue) ? entry.save.overrideValue : 8 + effectiveProf + mod
+    const spellAttack = entry.attack?.override && Number.isFinite(entry.attack.overrideValue) ? entry.attack.overrideValue : effectiveProf + mod
 
     const rulesClass = spellcastingRuleClass(cls, entry.subclass)
     const metrics = calculateSpellcastingMetrics(cls, lvl, mod, entry.subclass)
 
     if (entry.contribution?.mode === 'custom') {
-      const numerator = Number(entry.contribution.numerator)
-      const denominator = Number(entry.contribution.denominator)
-      const contribution = Number.isFinite(numerator) && Number.isFinite(denominator) && numerator >= 0 && denominator > 0
-        ? Math.min(20, Math.floor(lvl * numerator / denominator)) : 0
+      const contribution = Math.min(20, scaleCastingCapacity(lvl, entry.contribution))
       if (entry.contribution.target === 'pact') warlockLevel += contribution
       else if (entry.contribution.target === 'points') customPointsLevel += contribution
       else if (entry.contribution.target === 'focus') {
@@ -482,6 +509,8 @@ export function calculateMulticlassSpellcasting(
     }
 
     breakdowns.push({
+      id: entry.id,
+      preparedInterval: entry.preparedInterval,
       className: cls,
       subclass: entry.subclass,
       level: lvl,

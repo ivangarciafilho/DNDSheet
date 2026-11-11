@@ -26,11 +26,11 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   result.rowOrder=ok(shield().querySelector('.sb-spell-head').textContent.includes('(4/Long Rest), Level 1 (Bonus Action):'),'Amount/cadence/level/action row order');
   result.spellOrder=ok(shield().textContent.indexOf('(2/Short Rest)')>=0&&shield().textContent.indexOf('(2/Short Rest)')<shield().textContent.indexOf('Shield')&&shield().textContent.includes('(Action)'),'Amount/cadence/name/Action exception order');
   result.combinedLevel=ok(plate().textContent.includes('5th Level Spellcaster'),'Combined resource caster level, not summed Pact level');
-  result.learningCounts=ok(plate().textContent.includes('7 cantrips')&&plate().textContent.includes('15 known/prepared spells'),'Combined cantrip and learning limits');
+  result.learningCounts=ok(plate().textContent.includes('7 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 9 spells'),'Combined cantrip and learning limits');
   result.distinctModifiers=ok(plate().textContent.includes('+7')&&plate().textContent.includes('+6'),'Distinct source casting modifiers');
-  const learning=Array.from(source().querySelectorAll('.q-expansion-item')).find(x=>x.querySelector('.q-item__label')?.textContent.trim()==='Spell-learning calculation');await expand(learning);
-  fill(field(learning,'Cantrips multiplier').querySelector('input'),'2');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('15 known/prepared spells'),'independent cantrip multiplier');
-  fill(field(learning,'Known/prepared spells divisor').querySelector('input'),'2');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('10 known/prepared spells'),'independent spell divisor');result.learningModifiers=true;
+  const learning=source().querySelector('[data-source-learning]');await expand(learning);
+  fill(field(learning,'Cantrips multiplier').querySelector('input'),'2');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 9 spells'),'independent cantrip multiplier');
+  fill(field(learning,'Known/prepared spells multiplier').querySelector('input'),'0.5');await until(()=>plate().textContent.includes('11 cantrips')&&plate().textContent.includes('6 spells known')&&plate().textContent.includes('Can prepare 4 spells'),'independent spell divisor');result.learningModifiers=true;
   await expand(row(1));const spellRow=source().querySelector('[data-source-spell="Shield"]');fill(field(spellRow,'Amount').querySelector('input'),'');await until(()=>!shield().textContent.includes('(2/Short Rest)'),'no spell amount hides cadence');
   result.noImplicitSpellBudget=ok(!shield().textContent.includes('Short Rest'),'Divergent cadence must not borrow row amount');
   fill(field(spellRow,'Amount').querySelector('input'),'2');await select(field(spellRow,'Spell recovery'),'Long Rest');await until(()=>shield().textContent.includes('(2), Shield'),'amount-only exception');
@@ -50,8 +50,8 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   await wait(250);return result;
  })()`)
  assert.ok(Object.values(checks).every(Boolean),JSON.stringify(checks))
- const origin=await evaluate('performance.timeOrigin');await send('Page.reload',{ignoreCache:true});await delay(200)
- const reload=await evaluate(`(async()=>{for(let i=0;i<100;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');if(performance.timeOrigin!==${JSON.stringify(origin)}&&m?.name==='Casting source lifecycle witness')return m.spellcasting.primarySourceEnabled!==false&&m.spellcasting.class==='Wizard'&&m.spellcasting.classes.length===0&&m.spellcasting.atWill[0].spells.includes('Light');await new Promise(r=>setTimeout(r,40))}return false})()`)
+ const origin=await evaluate('performance.timeOrigin');await send('Page.reload',{ignoreCache:false});await delay(200)
+ const reload=await evaluate(`(async()=>{for(let i=0;i<500;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');if(performance.timeOrigin!==${JSON.stringify(origin)}&&m?.name==='Casting source lifecycle witness')return m.spellcasting.primarySourceEnabled!==false&&m.spellcasting.class==='Wizard'&&m.spellcasting.classes.length===0&&m.spellcasting.atWill[0].spells.includes('Light');await new Promise(r=>setTimeout(r,40))}return false})()`)
  assert.equal(reload,true,'Final source lifecycle and independent innate casting survive reload')
  console.log('Casting source browser checks:',JSON.stringify({...checks,reload}))
 },{port:Number(process.env.DNDSHEET_CASTING_SOURCES_CDP_PORT||9360)})

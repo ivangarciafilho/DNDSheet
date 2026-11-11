@@ -181,7 +181,7 @@
             class="text-weight-bold q-pa-xs"
           >
             <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : 'check_circle'" class="q-mr-xs" />
-            {{ a4PageOverflowPx > 0 ? `Overflow (+${a4PageOverflowPx}px)` : 'Fits 1 A4 Page' }}
+            {{ a4PageOverflowPx > 0 ? 'Content exceeds one A4 page' : 'Fits on one A4 page' }}
           </q-badge>
 
           <q-btn
@@ -769,7 +769,7 @@
                 :key="'spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label"> {{ spell.actionLabel }}</span>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="spellIndex < getPrimarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -801,7 +801,7 @@
                 :key="'sec-spell-' + row.level + '-' + spellIndex"
                 class="spell-inline-item q-ml-xs"
               >
-                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label"> {{ spell.actionLabel }}</span>
+                <span v-if="spell.lead" class="spell-uses">{{ spell.lead }}</span><em class="spell-name">{{ spell.name }}</em><span v-if="spell.actionLabel" class="spell-action-label">{{ ' ' + spell.actionLabel }}</span>
                 <span v-if="spell.tags" class="spell-tag-badge dnd-spell-comp" data-help="spell-components" tabindex="0"> ({{ spell.tags }})</span>
                 <span v-if="spellIndex < getSecondarySpells(row).length - 1" class="spell-sep">, </span>
               </span>
@@ -1088,14 +1088,12 @@ import { useProcessTokens } from './useProcessTokens'
 import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
-import { buildInnateSpellPlate, ordinalLabel, spellLevelLead } from 'src/core/domain/spell-plate'
+import { buildInnateSpellPlate, spellLevelLead } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
-import { formatSpellcastingTitle } from 'src/core/usecases/AutoSyncSpellcasting'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statModifier } from 'src/core/domain/math-utils'
-import { castingLearningSummary, allCastingSourceEntries } from 'src/core/usecases/AutoSyncSpellcasting'
 import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { statblockHelpText } from './statblock-help'
 
@@ -1673,7 +1671,7 @@ export default defineComponent({
       if (!a4PageRef.value) return
       const actualHeight = a4PageRef.value.scrollHeight || 0
       const targetHeight = a4TargetHeightPx.value
-      a4PageOverflowPx.value = Math.max(0, actualHeight - targetHeight)
+      a4PageOverflowPx.value = Math.max(0, actualHeight - Math.ceil(targetHeight))
     }
 
     onMounted(() => {
@@ -1713,17 +1711,6 @@ export default defineComponent({
       sanitizeWebString(textRenderer.innateSpellcastingPreamble.value)
     )
 
-    const renderedSpellcastingTitle = computed(() => {
-      const sc = monster.spellcasting
-      if (!sc) return 'Spellcasting'
-      const sources = allCastingSourceEntries(sc)
-      const learning = castingLearningSummary(sc, monster.stats, monster.proficiency)
-      const level = learning.casterLevel || sc.level || 1
-      if (sources.length > 1) return ordinalLabel(level) + ' Level Spellcaster'
-      const mode = sc.displayTitleMode || 'class_names'
-      const title = formatSpellcastingTitle(sc.class || 'Spellcaster', level, undefined, undefined, mode)
-      return mode === 'caster_source' ? ordinalLabel(level) + ' Level ' + title : title.replace(/Level (\d+) /g, (_match: string, value: string) => ordinalLabel(Number(value)) + ' Level ')
-    })
 
 
     const isRestrictedCadence = (cadence?: string): boolean => {
@@ -1862,7 +1849,7 @@ export default defineComponent({
 
     const spellPlate = computed(() => buildCastingProjection(monster.spellcasting, {
       stats: monster.stats, proficiency: monster.proficiency, save: monster.spellSave, attack: monster.spellAttackModifier,
-      title: renderedSpellcastingTitle.value, edition: editorStore.style === '2014' ? '2014' : '2024',
+      edition: editorStore.style === '2014' ? '2014' : '2024',
       spellLevel: name => castingSpells.allSpells[name]?.level,
       spellTags: getSpellTagString,
     }))

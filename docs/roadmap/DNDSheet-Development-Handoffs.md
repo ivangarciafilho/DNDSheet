@@ -1,3 +1,7 @@
+## Build 229 — Shared spellcasting and A4 print
+
+The [Build 229 packet](DNDSheet-Build229-Shared-Casting-and-Print.md) covers one editor for all casting sources, independent learning and grant progression, anonymous spellcasting rows, and the A4 landscape overflow regression. The normalized workload remains 268 items, with 174 complete and 94 open. The 15 acceptance changes do not close the broader casting-source migration or grant catalogue work.
+
 ## Build228 — spellcasting sources and A4 print
 
 Each class owns its settings and spell lists. Zero class sources are supported; combined caster level and independently configurable cantrip and known/prepared limits reach the statblock. The source-owned grammar, verified grants and same-sheet A4 print projection are shared across the documented adapters.

@@ -8,7 +8,7 @@ export function castingResourceView(source:ResourceSource, combined:MulticlassCa
  const name=source.className||source.class||''
  const custom=source.contribution?.mode==='custom'
  const resourceType=custom?source.contribution!.target:source.resourceType|| (name.toLowerCase()==='warlock'?'pact':'slots')
- if(!combined||(!custom&&!spellcastingRuleClass(name))||(!custom&&['points','focus','at_will'].includes(resourceType)))return {className:name,pactPool:undefined as boolean|undefined,resourceType,slots:source.slots,resourceValue:source.resourceValue}
+ if(!combined||(!custom&&!spellcastingRuleClass(name, source.subclass))||(!custom&&['points','focus','at_will'].includes(resourceType)))return {className:name,pactPool:undefined as boolean|undefined,resourceType,slots:source.slots,resourceValue:source.resourceValue}
  const pact=custom?resourceType==='pact':resourceType==='pact'||name.toLowerCase()==='warlock'
  return {className:name,pactPool:pact,resourceType:pact?'pact':resourceType,
   slots:!custom && Array.isArray(source.slots) ? source.slots : pact?combined.warlockSlots||[]:resourceType==='slots'?combined.standardSlots:[],

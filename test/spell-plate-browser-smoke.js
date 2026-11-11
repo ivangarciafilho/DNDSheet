@@ -174,13 +174,14 @@ try {
     assert.equal(check.plateVisible, true, `${check.theme}: class spell plate did not render`)
     assert.equal(check.innatePlateVisible, true, `${check.theme}: innate spell plate did not render`)
     assert.match(check.innateText, /Innate Spellcasting[\s\S]*At Will[\s\S]*Fire Bolt[\s\S]*3\/Day[\s\S]*Fireball/)
-    assert.match(check.text, /9th Level Wizard/)
+    assert.match(check.text, /9th Level Spellcaster/)
+    assert.doesNotMatch(check.text, /Wizard/i, 'class names belong in the editor')
     assert.match(check.text, /Cantrips[\s\S]*Fire Bolt/)
     assert.match(check.text, /\(4\/Long Rest\), Level 1:\s*Magic Missile/)
     assert.match(check.text, /\(1\/Day\), Level 3:\s*Fireball/)
     assert.doesNotMatch(check.text, /\(3\/1\/Day\)/, 'a counted cadence must not be prefixed with the slot count')
     assert.match(check.text, /You have 14 spell slots through 5th level, regained on Long Rests/)
-    assert.match(check.text, /2 prepared Wizard spells · Long Rest/)
+    assert.match(check.text, /Can prepare 2 spells after a Long Rest/)
     assert.match(check.text, /Heightened Spell: Give one target disadvantage on saves against the spell;/)
     assert.match(check.text, /Twinned Spell: Increase the spell’s effective level by one\./)
     assert.match(check.text, /2 SP to Heightened Spell/)
@@ -217,7 +218,7 @@ try {
     if (!persisted) await delay(200)
   }
   assert.equal(persisted, true, 'the edited spellcasting should reach storage before reload')
-  await send('Page.reload', { ignoreCache: true })
+  await send('Page.reload', { ignoreCache: false })
   let reloaded = ''
   for (let attempt = 0; attempt < 80 && !/Level 3:/.test(reloaded); attempt++) {
     await delay(250)

@@ -1,4 +1,4 @@
-import type { CastingContribution } from '../core/usecases/AutoSyncSpellcasting'
+import type { CastingContribution, CastingSpellGrant, CastingRollOverride } from '../core/usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from '../core/domain/skill-passive-state'
 import type { AbilityOutcome, AbilityTargeting, AttackReach, AttackSource } from '../core/domain/types'
 
@@ -985,6 +985,8 @@ export interface Monster {
     preparedInterval?: string
     customRefreshRate?: string
     rulesEdition?: '2014' | '2024'
+    automaticGrants?: boolean
+    spellGrants?: CastingSpellGrant[]
     primarySourceEnabled?: boolean
     innateStat?: DndStat
     innateSave?: { override: boolean; overrideValue: number }
@@ -996,6 +998,13 @@ export interface Monster {
     spellBonusActionMap?: Record<string, boolean>
     contribution?: CastingContribution
     classes?: Array<{
+      automaticGrants?: boolean
+      spellGrants?: CastingSpellGrant[]
+      preparedCountOverride?: number
+      preparedInterval?: string
+      save?: CastingRollOverride
+      attack?: CastingRollOverride
+      modifier?: CastingRollOverride
       rulesEdition?: '2014' | '2024'
       levelAmounts?: Record<string | number, number | null>
       spellAmounts?: Record<string, number | null>

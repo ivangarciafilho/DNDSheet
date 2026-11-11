@@ -68,3 +68,40 @@ test('manual resource and point contribution learning has a level basis without 
  const result=calculateMulticlassSpellcasting([{className:'Wizard',level:3,resourceType:'focus'},{className:'Sorcerer',level:4,resourceType:'points'}],{INT:16,CHA:16},2)
  assert.equal(result.combinedCasterLevel,4);assert.equal(result.totalPreparedSpells,12);assert.deepEqual(result.standardSlots,Array(9).fill(0));assert.equal(result.customFocus,0);assert.equal(result.customPoints,0)
 })
+import {scaleCastingCapacity} from '../../src/core/usecases/AutoSyncSpellcasting.ts'
+import {migrateMonsterSchema} from '../../src/core/usecases/MigrateMonsterSchema.ts'
+import {setMonsterBinding} from '../../src/core/domain/monster-bindings.ts'
+import {defaultMonster} from '../../src/core/domain/types.ts'
+test('highest-slot mode scales a class level independently from spendable slots and learning',()=>{
+ const caster={className:'Wizard',level:3,contribution:{mode:'rules' as const,target:'slots' as const,numerator:1,denominator:1,highestSlot:{mode:'combined' as const,numerator:1,denominator:1,multiplier:0.5}}}
+ assert.equal(sourceSpellCeiling(caster,10,2),3);assert.equal(sourceSpellCeiling({...caster,contribution:undefined},10,2),2)
+ assert.equal(sourceLearningMetrics(caster,2,10,2).preparedSpells,12)
+ assert.equal(calculateMulticlassSpellcasting([caster],{},2).standardSlots[2],0)
+})
+test('decimal multiplier precedes a legacy fraction and stays bounded for invalid inputs',()=>{
+ assert.equal(scaleCastingCapacity(100,{multiplier:0.29,numerator:1,denominator:2}),29)
+ assert.equal(scaleCastingCapacity(7,{numerator:1,denominator:2}),3)
+ assert.equal(scaleCastingCapacity(7,{multiplier:0,numerator:1,denominator:1}),0)
+ assert.equal(scaleCastingCapacity(7,{multiplier:Infinity}),0)
+ assert.equal(scaleCastingCapacity(7,{numerator:-1,denominator:-1}),0)
+ const wizard={className:'Wizard',level:7,contribution:{mode:'custom' as const,target:'slots' as const,numerator:1,denominator:1,multiplier:0.5}}
+ assert.equal(calculateMulticlassSpellcasting([wizard],{},2).combinedCasterLevel,3)
+})
+test('grant progression uses its own basis and toggle without writing authored spells',()=>{
+ const source={className:'Warlock',subclass:'Fiend',rulesEdition:'2024' as const,level:3,spells:['Hex'],spellGrants:[{spell:'Light',minLevel:5,origin:'species' as const},{spell:'Command',minLevel:1,origin:'class' as const}],contribution:{mode:'rules' as const,target:'pact' as const,numerator:1,denominator:1,grants:{mode:'combined' as const,numerator:1,denominator:1,multiplier:0.5}}}
+ assert.deepEqual(sourceGrantedSpells(source,4,2),['Command'])
+ const grants=sourceGrantedSpells(source,10,2);assert.ok(grants.includes('Light'));assert.ok(grants.includes('Fireball'));assert.equal(grants.filter(name=>name==='Command').length,1)
+ assert.deepEqual(sourceEffectiveSpells({...source,automaticGrants:false},10,2),['Hex']);assert.deepEqual(source.spells,['Hex'])
+})
+test('migration retains 0 preparation, grant toggles, and decimal progression without reviving a removed source',()=>{
+ const monster=defaultMonster();Object.assign(monster.spellcasting,{primarySourceEnabled:false,multiclass:{enabled:true},automaticGrants:false,spellGrants:[{spell:' Light ',minLevel:1,origin:'species'},{spell:'Invalid',minLevel:0,origin:'other'}],contribution:{mode:'custom',target:'slots',numerator:1,denominator:2,multiplier:0.4},preparedCountOverride:0})
+ const result=migrateMonsterSchema(JSON.parse(JSON.stringify(monster))).spellcasting
+ assert.equal(hasCastingSources(result),false);assert.equal(result.automaticGrants,false);assert.equal(result.preparedCountOverride,0);assert.equal(result.contribution?.multiplier,0.4);assert.deepEqual(result.spellGrants,[{spell:'Light',minLevel:1,origin:'species'}])
+})
+test('extra roll and preparation bindings retain source identity and explicit zero capacity',()=>{
+ const monster=defaultMonster();monster.spellcasting.class='Wizard';monster.spellcasting.level=3;monster.spellcasting.classes=[{id:'pact',className:'Warlock',level:2,stat:'CHA',preparedCountOverride:0,preparedInterval:'short_rest',save:{override:true,overrideValue:15},attack:{override:true,overrideValue:4}}]
+ const sc=setMonsterBinding(monster,'spellcasting.classes[id=pact].save.overrideValue',{mode:'formula',expr:'PB+14'}).model.spellcasting
+ const learning=castingLearningSummary(sc,{},2)
+ assert.equal(learning.perClass[1]?.id,'pact');assert.equal(learning.perClass[1]?.saveDc,16);assert.equal(learning.perClass[1]?.spellAttack,4);assert.equal(learning.perClass[1]?.preparedSpells,0);assert.equal(learning.perClass[1]?.preparedInterval,'short_rest');assert.equal(learning.spells,learning.perClass[0]?.preparedSpells)
+ const promoted=removeCastingSource(sc,'primary').source;assert.equal(promoted.preparedCountOverride,0);assert.equal(promoted.preparedInterval,'short_rest');assert.equal(promoted.save.overrideValue,16)
+})

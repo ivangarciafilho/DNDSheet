@@ -1,0 +1,26 @@
+{
+  "normalized": {
+    "before": {
+      "total": 268,
+      "complete": 174,
+      "open": 94
+    },
+    "after": {
+      "total": 268,
+      "complete": 174,
+      "open": 94
+    },
+    "delta": {
+      "total": 0,
+      "complete": 0,
+      "open": 0
+    }
+  },
+  "acceptanceChanges": 15,
+  "coreTests": {
+    "before": 581,
+    "after": 586,
+    "delta": 5
+  },
+  "status": "Gate attempt passed 6 of 10 stages. Browser verification and deployment pending."
+}

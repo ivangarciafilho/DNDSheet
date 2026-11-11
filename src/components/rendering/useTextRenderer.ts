@@ -1559,9 +1559,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const summary = castingLearningSummary(monster.spellcasting, monster.stats, monster.proficiency)
     const preamble = processClassSpellcasting({ ...monster.spellcasting, level: summary.casterLevel || monster.spellcasting.level }, monster)
     const sc = monster.spellcasting
-    if (!(sc.classes?.length || sc.contribution?.mode === 'custom' || sc.contribution?.cantrips || sc.contribution?.spells)) return preamble
+    if (sc.useCustomClassPreamble) return preamble
     const details = [castingProjection.value.resource, castingProjection.value.prepared, castingProjection.value.consolidatedSummary].filter(Boolean)
-    return details.length ? preamble.replace(/:\s*$/, '.') + ' ' + details.join('. ') + '.' : preamble
+    return details.length ? preamble.trimEnd() + ' ' + details.join('. ') + '.' : preamble
   })
 
   const innateSpellcastingPreamble = computed(() => {

@@ -1828,7 +1828,11 @@
     height: auto !important;
   }
   .a4-page-sheet {
-    /* Remove the preview backdrop/shadow; leave the composed sheet intact. */
+    /* A transformed layer may bleed past the physical paper edge. Excluding that
+       inline overflow prevents Chromium from shrinking the whole printed sheet.
+       Keep block overflow visible so long statblocks still paginate. */
+    overflow-x: clip;
+    overflow-y: visible;
     box-shadow: none !important;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

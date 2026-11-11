@@ -25,9 +25,9 @@ async function runFuzz() {
   ])
   activeBrowser = chromeProc
 
-  // Poll Chrome CDP endpoint up to 10s so startup timing never flakes
+  // Wait for Chrome to expose a page, even if other targets appear first.
   let targets = null
-  for (let attempt = 0; attempt < 25; attempt++) {
+  for (let attempt = 0; attempt < 75; attempt++) {
     await new Promise((resolve) => setTimeout(resolve, 400))
     try {
       targets = await new Promise((resolve, reject) => {
@@ -43,7 +43,7 @@ async function runFuzz() {
           })
         }).on('error', reject)
       })
-      if (Array.isArray(targets) && targets.length > 0) break
+      if (Array.isArray(targets) && targets.some(target => target.type === 'page')) break
     } catch {
       // retry
     }
@@ -103,11 +103,11 @@ async function runFuzz() {
   // Wait for initial render of Quasar app
   console.log('Waiting for Quasar #q-app mount...')
   let isReady = false
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 180; i++) {
     const ready = await evalInPage(`
       () => {
         const app = document.querySelector('#q-app');
-        return !!(app && app.__vue_app__);
+        return !!(app?.__vue_app__ && document.querySelector('#render .statblock'));
       }
     `)
     if (ready) {
@@ -116,7 +116,7 @@ async function runFuzz() {
     }
     await new Promise((resolve) => setTimeout(resolve, 250))
   }
-  console.log('App ready state:', isReady)
+  if (!isReady) throw new Error('The built app did not render a statblock within 45 seconds')
 
   // Dismiss Changelog dialog if presented on first launch
   await evalInPage(`

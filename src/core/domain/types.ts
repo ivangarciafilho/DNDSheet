@@ -1,4 +1,4 @@
-import type { CastingContribution } from '../usecases/AutoSyncSpellcasting'
+import type { CastingContribution, CastingSpellGrant, CastingRollOverride } from '../usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from './skill-passive-state.ts'
 import type { RandomTable } from './random-table'
 import type { ComposableInitiativeRider } from './initiative-composer'
@@ -1051,6 +1051,8 @@ export interface Monster {
     preparedCountOverride?: number
     preparedInterval?: string
     metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate: string; options: string[] }
+    automaticGrants?: boolean
+    spellGrants?: CastingSpellGrant[]
     primarySourceEnabled?: boolean
     innateStat?: DndStat
     innateSave?: { override: boolean; overrideValue: number }
@@ -1064,6 +1066,13 @@ export interface Monster {
     spellBonusActionMap?: Record<string, boolean>
     contribution?: CastingContribution
     classes?: Array<{
+      automaticGrants?: boolean
+      spellGrants?: CastingSpellGrant[]
+      preparedCountOverride?: number
+      preparedInterval?: string
+      save?: CastingRollOverride
+      attack?: CastingRollOverride
+      modifier?: CastingRollOverride
       rulesEdition?: '2014' | '2024'
       levelAmounts?: Record<string | number, number | null>
       spellAmounts?: Record<string, number | null>
