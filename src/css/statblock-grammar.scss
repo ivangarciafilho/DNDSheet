@@ -780,6 +780,17 @@
   .random-table-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
 }
 
+/* Balance the sheet around complete entries. The multicolumn container can
+   grow to accommodate the tallest entry before print scales the sheet. */
+.statblock :is(.trait, .action, .attack, .reaction, .legendary, .sb-plate,
+               .random-table, table, .dnd-cascade-panel, .dnd-section-card) {
+  break-inside: avoid-column;
+}
+
+.statblock h3.section {
+  break-after: avoid-column;
+}
+
 @media print {
   .statblock .random-table { break-inside: avoid; }
   .statblock .random-table-grid thead { display: table-header-group; }

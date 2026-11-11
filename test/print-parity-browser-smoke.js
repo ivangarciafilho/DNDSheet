@@ -83,7 +83,10 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  }
  const loaded=JSON.parse(fs.readFileSync(new URL('./fixtures/monsters/seraph.json',import.meta.url),'utf8'))
  loaded.portrait={url:witnessImage,position:'right',width:280}
- loaded.traits.push(...Array.from({length:14},(_,i)=>({...loaded.traits[0],id:'print-overflow-'+i,name:'Overflow '+i,description:'Example prose adds height to the statblock. The sheet preserves each rule clause and stays readable. '.repeat(3)})))
+ loaded.actions[0].description='Radiant rays strike creatures on both planes. '.repeat(70)+' Final action clause.'
+ loaded.randomTables=[{id:'print-table',title:'Radiant Effects',dice:'1d8',rows:Array.from({length:8},(_,i)=>({id:'effect-'+i,min:i+1,max:i+1,text:'A radiant effect fills this table row. '.repeat(2)}))}]
+
+ loaded.traits.push(...Array.from({length:5},(_,i)=>({...loaded.traits[0],id:'print-overflow-'+i,name:'Overflow '+i,description:'Example prose adds height to the statblock. The sheet preserves each rule clause and stays readable. '.repeat(3)})))
  await evaluate(`(()=>{const p=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=p._s.get('monster'),e=p._s.get('editor');m.$patch(${JSON.stringify(loaded)});e.a4Orientation='landscape';e.a4CompactDensity=false;e.a4Zoom='fit';e.a4Layout='side_by_side';e.statBlockColumns=2;e.a4StatblockScaleX=100;return true})()`)
  await delay(300)
  const native={preferCSSPageSize:false,paperWidth:210/25.4,paperHeight:297/25.4,landscape:true,printBackground:true,displayHeaderFooter:false,marginTop:0,marginRight:0,marginBottom:0,marginLeft:0}
@@ -95,6 +98,9 @@ await browserProbe(async ({ evaluate, send, delay }) => {
     return {width:stage.offsetWidth,height:stage.offsetHeight,background:style.backgroundColor,gradient:style.backgroundImage,gutters}})()`)
   assert.ok(Math.abs(paper.width-1123)<=1&&Math.abs(paper.height-794)<=1,'The outer paper box stays full-size when the content scales')
   assert.ok(paper.gutters.every(gutter=>gutter>=-0.5&&gutter<2.5),'Artwork and statblock fill the page on both axes: '+JSON.stringify(paper.gutters))
+  const fragmentation=await evaluate(`(()=>[...document.querySelectorAll('#render .sb-plate,#render .random-table,#render .random-table-grid')].map(panel=>({label:panel.textContent.trim().slice(0,40),rects:panel.getClientRects().length,keepTogether:getComputedStyle(panel).breakInside})))()`)
+  assert.ok(fragmentation.length>=9&&fragmentation.some(panel=>panel.label.includes('Radiant Effects')),'Fixture includes the wrapped action, traits and random table')
+  assert.deepEqual(fragmentation.filter(panel=>panel.rects!==1 || !panel.keepTogether.startsWith('avoid')),[],'Every panel and table stays in one printed column')
   assert.notEqual(paper.background,'rgba(0, 0, 0, 0)','The paper box paints behind the scaled composition')
   assert.notEqual(paper.gradient,'none','The paper box retains the selected theme background')
   const {result:pdf}=await send('Page.printToPDF',native)

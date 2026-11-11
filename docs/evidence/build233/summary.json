@@ -1,0 +1,66 @@
+{
+  "ok": true,
+  "inputFingerprint": "763504c315b83ab538ca2fbf995a65a0749225247e5201d228424256af5090ea",
+  "results": [
+    {
+      "step": "core",
+      "ok": true,
+      "code": 0,
+      "seconds": 4
+    },
+    {
+      "step": "lint",
+      "ok": true,
+      "code": 0,
+      "seconds": 16
+    },
+    {
+      "step": "typecheck",
+      "ok": true,
+      "code": 0,
+      "seconds": 29
+    },
+    {
+      "step": "build",
+      "ok": true,
+      "code": 0,
+      "seconds": 45
+    },
+    {
+      "step": "fuzz",
+      "ok": true,
+      "code": 0,
+      "seconds": 188
+    },
+    {
+      "step": "help",
+      "ok": true,
+      "code": 0,
+      "seconds": 116
+    },
+    {
+      "step": "spell",
+      "ok": true,
+      "code": 0,
+      "seconds": 9
+    },
+    {
+      "step": "pages-build",
+      "ok": true,
+      "code": 0,
+      "seconds": 57
+    },
+    {
+      "step": "pages-assets",
+      "ok": true,
+      "code": 0,
+      "seconds": 0
+    },
+    {
+      "step": "pages-fuzz",
+      "ok": true,
+      "code": 0,
+      "seconds": 268
+    }
+  ]
+}
