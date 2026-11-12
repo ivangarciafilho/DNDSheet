@@ -1,4 +1,4 @@
-import { formatBasicRider, type BasicRiderScope, type HpRiderGroup } from 'src/core/domain/basic-riders'
+import { formatBasicRider, formatRiderSchedule, type DefenseEffect, type BasicRiderScope, type HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
 import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
@@ -143,6 +143,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return formatInvulnerabilityText(inv)
   })
 
+  const scheduleDefense = (effect: DefenseEffect, text: string) =>
+    formatRiderSchedule(text, monster.defenseSchedules?.[effect])
+
   const basicRiderText = (scope: BasicRiderScope) =>
     (monster.basicRiders?.[scope] ?? []).map(rider => formatBasicRider(rider, scope)).filter(Boolean)
 
@@ -233,12 +236,12 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (dp?.enabled && dp.name !== 'Mortal') {
       if (dp.dcRule === 'until_x_crits') {
         const text = formatMinimalistDeathPrevention(dp, dynCtx.value)
-        return [{ text: text || 'Immortal' }, ...authored]
+        return [{ text: scheduleDefense('deathPrevention', text || 'Immortal') }, ...authored]
       }
       const noExceptions = (!dp.exceptions || dp.exceptions.length === 0) && !dp.customNote?.trim()
       if (dp.hideHp || (dp.name === 'Immortal' && noExceptions && !dp.returnHpSource)) {
         const text = formatMinimalistDeathPrevention(dp, dynCtx.value) || 'Immortal'
-        return [{ text }, ...authored]
+        return [{ text: scheduleDefense('deathPrevention', text) }, ...authored]
       }
     }
 
@@ -330,7 +333,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     ) {
       const minRegen = formatMinimalistRegen(ext.regeneration, dynCtx.value, (field, value) => formattedNumeric(`extendedHp.regeneration.${field}`, value))
       if (minRegen) {
-        add(minRegen, 'regen')
+        add(scheduleDefense('regeneration', minRegen), 'regen')
       }
     }
     if (ext?.tempHp && ext.tempHp.amount > 0) {
@@ -355,7 +358,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     ) {
       const minDp = formatMinimalistDeathPrevention(dp, dynCtx.value)
       if (minDp) {
-        add(minDp, 'mortality')
+        add(scheduleDefense('deathPrevention', minDp), 'mortality')
       }
     }
 
@@ -371,7 +374,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageThresholdDisruption)
-      add(`DT ${formattedNumeric('extendedHp.damageThreshold', dtStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`, 'dt')
+      add(scheduleDefense('damageThreshold', `DT ${formattedNumeric('extendedHp.damageThreshold', dtStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`), 'dt')
     }
 
     // 6. Damage Reduction (DR)
@@ -386,7 +389,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageReductionDisruption)
-      add(`DR ${formattedNumeric('extendedHp.damageReduction', drStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`, 'dr')
+      add(scheduleDefense('damageReduction', `DR ${formattedNumeric('extendedHp.damageReduction', drStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`), 'dr')
     }
 
     // 7. Invulnerability in HP
@@ -1444,7 +1447,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         list.push({
           id: 'auto-regeneration',
           name: traitName,
-          description: desc,
+          description: scheduleDefense('regeneration', desc),
           limitedUse: { count: 0, rate: '' },
           crAnnotation: {
             maxDamage: 0,
@@ -1491,7 +1494,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         list.push({
           id: 'auto-death-prevention',
           name: traitName,
-          description: desc,
+          description: scheduleDefense('deathPrevention', desc),
           limitedUse: { count: 0, rate: '' },
           crAnnotation: {
             maxDamage: 0,

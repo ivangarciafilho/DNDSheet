@@ -18,6 +18,7 @@ await browserProbe(async ({ evaluate }) => {
     monster.portrait = { url: img, position: 'left', width: 240 };
     monster.customMacros = { WITNESS: 'PB+1' };
     monster.basicRiders = { ac: [{ id: 'native-rider', cadence: 'once_round', timing: 'As a Reaction', effect: 'Raise its shield.' }] };
+    monster.defenseSchedules = { onHit: { cadence: 'once_round', timing: 'As a Reaction' } };
     monster.hpRiderSubrows = { mortality: true, regen: false };
     monster.addAction();
     Object.assign(monster.actions.at(-1), { name: 'Roundtrip Action', description: 'Restored action text.' });

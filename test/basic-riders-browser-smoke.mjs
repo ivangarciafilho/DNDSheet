@@ -24,6 +24,17 @@ await browserProbe(async ({ evaluate }) => {
       preparedCountOverride: 5, preparedInterval: 'short_rest', preparedSpellList: 'Cleric',
       metamagic: { enabled: true, sorceryPoints: 4, refreshRate: 'short_rest', options: ['Quickened Spell', 'Subtle Spell'] }
     });
+    monster.acConfig = { enabled: true, baseMode: 'plate', temporary: 'parry_pb', conditional: 'first_y_attacks',
+      conditionMode: 'near_ally', onMiss: 'knocks_prone', onHit: 'damage_attacker' };
+    Object.assign(monster.extendedHp.regeneration, { enabled: true, amount: 4, displayMode: 'minimalist', valueSource: 'flat' });
+    Object.assign(monster.extendedHp.deathPrevention, { enabled: true, name: 'Undead Fortitude', displayMode: 'minimalist', dcRule: '5_plus_damage' });
+    const schedules = {
+      temporaryAc: ['once_round', 'As a Reaction'], conditionalAc: ['once_long_rest', 'As a Bonus Action'],
+      defensiveRule: ['once_long_rest', 'As an Action'], onMiss: ['once_round', 'As a Reaction'], onHit: ['once_long_rest', 'As an Action'],
+      damageThreshold: ['once_long_rest', 'As a Reaction'], damageReduction: ['once_round', 'As an Action'],
+      regeneration: ['once_short_rest', 'As a Bonus Action'], deathPrevention: ['once_long_rest', 'When it drops to 0 hit points'],
+    };
+    monster.defenseSchedules = Object.fromEntries(Object.entries(schedules).map(([key, [cadence, timing]]) => [key, { cadence, timing }]));
     editor.visualTemplate = 'modern';
     editor.style = '2024';
     await wait(500);
@@ -45,16 +56,35 @@ await browserProbe(async ({ evaluate }) => {
     const meta = [...render.querySelectorAll('.sb-metamagic-option')];
     const resource = render.querySelector('.sb-spell-resource-row');
     const all = render.textContent;
-    const roundness = parseFloat(getComputedStyle(meta[0]?.querySelector('.sb-metamagic-badge')).borderRadius);
+    const badges = [...render.querySelectorAll('.sb-metamagic-badge')];
+    const circular = badges.length === 3 && badges.every(badge => {
+      const rect = badge.getBoundingClientRect();
+      return Math.abs(rect.width - rect.height) < 0.1 && getComputedStyle(badge).borderRadius === '50%';
+    });
+    const controlsPresent = Object.keys(schedules).every(key => document.querySelectorAll(
+      '[data-defense-schedule="' + key + '"] .q-select').length === 2);
+    const scheduled = ['Once per Long Rest: As a Reaction: DT 5',
+      'Once per round: As an Action: DR 2', 'Once per round: As a Reaction: On Miss',
+      'Once per Long Rest: As an Action: On Hit', 'Once per Short Rest: As a Bonus Action:',
+      'Once per Long Rest: When it drops to 0 hit points:'].every(text => all.includes(text));
+    const thresholdTiming = document.querySelector('[data-defense-schedule="damageThreshold"] .q-select:nth-child(2)');
+    thresholdTiming.querySelector('.q-field__control').click();
+    await wait(200);
+    const choice = [...document.querySelectorAll('.q-menu .q-item')].find(item => item.textContent.trim() === 'As a Bonus Action');
+    choice?.click();
+    await wait(200);
+    const editedSchedule = monster.defenseSchedules.damageThreshold.timing === 'As a Bonus Action' &&
+      monster.defenseSchedules.damageReduction.timing === 'As an Action' &&
+      render.textContent.includes('Once per Long Rest: As a Bonus Action: DT 5');
     return {
-      authored,
+      authored, editedSchedule,
       scopeText: Object.fromEntries(scopes.map(scope => [scope, all.includes('Witness ' + scope)])),
       cadence: all.includes('Once per round: As a Reaction: Witness ac'),
       groups: all.includes('(13/+3, Perception, Insight, Survival), (18/+8, Medicine)'),
       skillText: all.slice(all.indexOf('13/+3'), all.indexOf('13/+3') + 120),
       splitBefore, splitAfter, dt: monster.hpRiderSubrows.dt, dr: monster.hpRiderSubrows.dr,
       options: meta.length, separateRows: meta[1]?.getBoundingClientRect().top > meta[0]?.getBoundingClientRect().top,
-      roundness, number: [...resource.querySelectorAll('strong')].map(el => el.textContent),
+      circular, scheduled, controlsPresent, number: [...resource.querySelectorAll('strong')].map(el => el.textContent),
       terms: [...resource.querySelectorAll('em')].map(el => el.textContent),
       optionTerms: [...meta[0].querySelectorAll('em')].map(el => el.textContent),
     };
@@ -63,7 +93,7 @@ await browserProbe(async ({ evaluate }) => {
   assert.ok(result.groups, JSON.stringify(result))
   assert.ok(result.dt && result.dr && result.splitBefore.some(text => text.includes('DT 5')) &&
     result.splitBefore.every(text => !text.includes('DR 2')) && result.splitAfter.some(text => text.includes('DR 2')), JSON.stringify(result))
-  assert.ok(result.options === 2 && result.separateRows && result.roundness > 20, JSON.stringify(result))
+  assert.ok(result.options === 2 && result.separateRows && result.circular && result.scheduled && result.controlsPresent && result.editedSchedule, JSON.stringify(result))
   assert.ok(result.number.includes('5') && result.terms.includes('Short Rest') && result.terms.includes('Cleric') &&
     result.optionTerms.includes('Bonus Action'), JSON.stringify(result))
   console.log('Rider cadence and timing, independent HP rows, grouped skill scores, and spellcasting typography passed.')

@@ -1,4 +1,4 @@
-import type { BasicRider, BasicRiderScope, HpRiderGroup } from '../core/domain/basic-riders'
+import type { BasicRider, BasicRiderScope, HpRiderGroup, DefenseEffect, RiderSchedule } from '../core/domain/basic-riders'
 import type { CastingContribution, CastingSpellGrant, CastingRollOverride } from '../core/usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from '../core/domain/skill-passive-state'
 import type { AbilityOutcome, AbilityTargeting, AttackReach, AttackSource } from '../core/domain/types'
@@ -1093,6 +1093,7 @@ export interface Monster {
   customVariables?: Record<string, string | number>
   basicRiders?: Partial<Record<BasicRiderScope, BasicRider[]>>
   hpRiderSubrows?: Partial<Record<HpRiderGroup, boolean>>
+  defenseSchedules?: Partial<Record<DefenseEffect, RiderSchedule>>
   customMacros?: Record<string, string>
 }
 

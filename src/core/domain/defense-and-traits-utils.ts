@@ -1,3 +1,4 @@
+import { formatRiderSchedule, type DefenseEffect, type RiderSchedule } from './basic-riders.ts'
 import { actionRecharge } from './action-usage.ts'
 import { CADENCES, cadenceDefinition, formatLimitedUses } from './cadence.ts'
 import type { DamageDefenseItem, MonsterLanguageItem, MonsterExtendedHp, MonsterTrait, MonsterAcConfig } from './types.ts'
@@ -1258,9 +1259,15 @@ export function composeAcAndDefenses(
     CR?: number
     HP?: { HD: number }
     acConfig?: MonsterAcConfig
+    defenseSchedules?: Partial<Record<DefenseEffect, RiderSchedule>>
   }
 ): AcComposedResult {
   const cfg = monster.acConfig || {}
+  const scheduled = (effect: DefenseEffect, text: string) => {
+    const schedule = monster.defenseSchedules?.[effect]
+    const ruling = schedule?.timing ? text.replace(/ as a Reaction$/, '') : text
+    return formatRiderSchedule(ruling, schedule)
+  }
   const stats = monster.stats || { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }
   const mod = (stat: string) => Math.floor(((stats[stat] ?? 10) - 10) / 2)
   const dexMod = mod('DEX')
@@ -1374,6 +1381,8 @@ export function composeAcAndDefenses(
     const parryVal = cfg.temporary === 'parry_pb' ? pb : (cfg.temporaryCustomBonus || 3)
     tempNotes.push(`${base + parryVal}, Parry as a Reaction`)
   }
+
+  const temporaryCount = tempNotes.length
 
   // 5. Conditional Modifiers
   if (cfg.conditional === 'all_attacks_beyond_first') {
@@ -1657,6 +1666,16 @@ export function composeAcAndDefenses(
       break
   }
 
+  // The legacy ACType projection stays free of schedule prefixes.
+  const rawConditions = [triggerDesc, onMissText, onHitText].filter(Boolean)
+  const rawConditionNotes = triggerDesc ? [rawConditions.join(', ')] : rawConditions
+  const generatedArmorDesc = [...armorParts, ...tempNotes, ...rawConditionNotes].join(', ')
+  const scheduledTempNotes = tempNotes.map((text, index) => scheduled(index < temporaryCount ? 'temporaryAc' : 'conditionalAc', text))
+  triggerDesc = scheduled('defensiveRule', triggerDesc)
+  absoluteRuleText = scheduled('defensiveRule', absoluteRuleText)
+  onMissText = scheduled('onMiss', onMissText)
+  onHitText = scheduled('onHit', onHitText)
+
   // Combine condition trigger with decoupled onMiss and onHit
   if (triggerDesc) {
     const ruleParts: string[] = [triggerDesc]
@@ -1671,27 +1690,31 @@ export function composeAcAndDefenses(
   // Combine parenthetical descriptors
   const allParenthetical: string[] = [
     ...armorParts,
-    ...tempNotes,
+    ...scheduledTempNotes,
     ...conditionNotes,
   ]
 
   // If user had existing ACType that is not already covered, preserve it
-  if (monster.ACType && monster.ACType.trim() && !armorParts.some(p => monster.ACType!.toLowerCase().includes(p.toLowerCase()))) {
+  const savedAcType = monster.ACType?.trim()
+  const legacyAcType = savedAcType && savedAcType !== generatedArmorDesc ? savedAcType : ''
+  if (legacyAcType && !armorParts.some(p => legacyAcType.toLowerCase().includes(p.toLowerCase()))) {
     if (!cfg.baseMode || cfg.baseMode === 'flat') {
-      allParenthetical.unshift(monster.ACType.trim())
+      allParenthetical.unshift(legacyAcType)
     }
   }
 
-  const armorTypeDesc = allParenthetical.join(', ')
+  const scheduledArmorDesc = allParenthetical.join(', ')
+  const armorTypeDesc = [...(legacyAcType && allParenthetical[0] === legacyAcType ? [legacyAcType] : []),
+    generatedArmorDesc].filter(Boolean).join(', ')
 
   const badges: string[] = []
   const splitRows = Boolean((monster as any).splitAcRiderRows)
 
   if (splitRows) {
     const baseArmorParts = [...armorParts]
-    if (monster.ACType && monster.ACType.trim() && !armorParts.some(p => monster.ACType!.toLowerCase().includes(p.toLowerCase()))) {
+    if (legacyAcType && !armorParts.some(p => legacyAcType.toLowerCase().includes(p.toLowerCase()))) {
       if (!cfg.baseMode || cfg.baseMode === 'flat') {
-        baseArmorParts.unshift(monster.ACType.trim())
+        baseArmorParts.unshift(legacyAcType)
       }
     }
     const baseArmorDesc = baseArmorParts.join(', ')
@@ -1701,7 +1724,7 @@ export function composeAcAndDefenses(
     if (isAbsoluteRule && absoluteRuleText) {
       badges.push(absoluteRuleText)
     }
-    for (const tn of tempNotes) {
+    for (const tn of scheduledTempNotes) {
       if (tn) badges.push(tn)
     }
     if (triggerDesc) badges.push(triggerDesc)
@@ -1710,7 +1733,7 @@ export function composeAcAndDefenses(
 
     const fullText = isAbsoluteRule && absoluteRuleText
       ? absoluteRuleText
-      : (armorTypeDesc ? `${base} (${armorTypeDesc})` : `${base}`)
+      : (scheduledArmorDesc ? `${base} (${scheduledArmorDesc})` : `${base}`)
 
     return {
       totalAc: base,
@@ -1724,6 +1747,8 @@ export function composeAcAndDefenses(
 
   if (isAbsoluteRule && absoluteRuleText) {
     badges.push(absoluteRuleText)
+    if (onMissText && monster.defenseSchedules?.onMiss) badges.push(onMissText)
+    if (onHitText && monster.defenseSchedules?.onHit) badges.push(onHitText)
     return {
       totalAc: base,
       armorTypeDesc: '',
@@ -1736,11 +1761,11 @@ export function composeAcAndDefenses(
 
   const primaryBadge = `<strong class="dnd-num">${base}</strong>`
   badges.push(primaryBadge)
-  if (armorTypeDesc) {
-    badges.push(`(${armorTypeDesc})`)
+  if (scheduledArmorDesc) {
+    badges.push(`(${scheduledArmorDesc})`)
   }
 
-  const fullText = armorTypeDesc ? `${base} (${armorTypeDesc})` : `${base}`
+  const fullText = scheduledArmorDesc ? `${base} (${scheduledArmorDesc})` : `${base}`
 
   return {
     totalAc: base,

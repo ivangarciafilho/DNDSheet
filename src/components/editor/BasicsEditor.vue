@@ -967,6 +967,11 @@
           </div>
         </div>
 
+            <defense-schedule-fields v-if="acConfig.temporary && acConfig.temporary !== 'none'" effect="temporaryAc" label="Temporary AC" />
+            <defense-schedule-fields v-if="acConfig.conditional && acConfig.conditional !== 'none'" effect="conditionalAc" label="Conditional AC" />
+            <defense-schedule-fields v-if="acConfig.conditionMode && acConfig.conditionMode !== 'none'" effect="defensiveRule" label="Defensive rule" />
+            <defense-schedule-fields v-if="acConfig.onMiss && acConfig.onMiss !== 'none'" effect="onMiss" label="On miss" />
+            <defense-schedule-fields v-if="acConfig.onHit && acConfig.onHit !== 'none'" effect="onHit" label="On hit" />
         <!-- 6i. Composed Real-Time AC Result Preview -->
         <div class="row items-center justify-between q-mt-xs q-pa-xs rounded-borders bg-grey-9">
           <div class="text-caption text-weight-bold text-cyan-3 flex items-center">
@@ -974,7 +979,7 @@
             Composed AC & Defensive Ruling:
           </div>
           <q-badge color="cyan-4" outline class="text-subtitle2 text-weight-bold q-pa-xs">
-            AC {{ monster.AC }} {{ monster.ACType ? '(' + monster.ACType + ')' : '' }}
+            {{ composedAcPreview }}
           </q-badge>
         </div>
       </div>
@@ -1706,6 +1711,7 @@
                 </q-select>
               </div>
             </div>
+            <defense-schedule-fields effect="damageThreshold" label="Damage threshold" />
           </div>
 
           <!-- Row 3: Dedicated Damage Reduction (DR) Row -->
@@ -1803,6 +1809,7 @@
                 </q-select>
               </div>
             </div>
+            <defense-schedule-fields effect="damageReduction" label="Damage reduction" />
           </div>
 
           <!-- Row 5: Unified Regeneration & Temporary Hit Points Module -->
@@ -2037,6 +2044,7 @@
                 </div>
               </div>
             </div>
+            <defense-schedule-fields effect="regeneration" label="Regeneration / temporary HP" />
           </div>
 
           <!-- Row 6: Immortality / Undead Fortitude / Death Prevention Module (No Checkbox; Default = Mortal) -->
@@ -2269,6 +2277,7 @@
                 </div>
               </div>
             </div>
+            <defense-schedule-fields v-if="deathPrevention.enabled && deathPrevention.name !== 'Mortal'" effect="deathPrevention" label="Death prevention" />
           </div>
         </div>
         <basic-riders-editor scope="hp" label="Hit point riders" />
@@ -3089,6 +3098,7 @@
 
 <script lang="ts">
 import BasicRidersEditor from './BasicRidersEditor.vue'
+import DefenseScheduleFields from './DefenseScheduleFields.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import { STANDARD_ALIGNMENT } from 'src/data/ALIGNMENT'
 import { CR_SELECT, LAIR_CR_SELECT } from 'src/data/CR'
@@ -3198,7 +3208,7 @@ const DEATH_EXCEPTIONS = [
 
 export default defineComponent({
   name: 'BasicsEditor',
-  components: { BasicRidersEditor, MechanicTextEditor, LockToggleButton, SwapButtons, FormulaField },
+  components: { BasicRidersEditor, DefenseScheduleFields, MechanicTextEditor, LockToggleButton, SwapButtons, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const editorStore = useEditorStore()
@@ -4214,6 +4224,7 @@ export default defineComponent({
       return { totalAc: res.totalAc, typeDescription: res.armorTypeDesc }
     }
 
+    const composedAcPreview = computed(() => composeAcAndDefenses(monster).fullText)
     const computedCompositorAc = computed(() => calculateCompositorAc().totalAc)
     const computedCompositorType = computed(() => calculateCompositorAc().typeDescription)
 
@@ -4824,6 +4835,7 @@ export default defineComponent({
       editorStore,
       openLayerStudio,
       acConfig,
+      composedAcPreview,
       acBaseOptions,
       acAbilityBonusOptions,
       acDefenseItemOptions,

@@ -22,6 +22,20 @@ export const BASIC_RIDER_TIMINGS = [
   'When it takes damage', 'When it drops to 0 hit points', 'When it is destroyed',
 ]
 
+export type DefenseEffect = 'temporaryAc' | 'conditionalAc' | 'defensiveRule' | 'onMiss' | 'onHit'
+  | 'damageThreshold' | 'damageReduction' | 'regeneration' | 'deathPrevention'
+
+export interface RiderSchedule {
+  cadence?: string
+  timing?: string
+}
+
+export function formatRiderSchedule(text: string, schedule?: RiderSchedule): string {
+  if (!text) return ''
+  const cadence = BASIC_RIDER_CADENCES.find(option => option.value === schedule?.cadence)?.label ?? cadenceLabel(schedule?.cadence)
+  return [cadence, schedule?.timing, text].filter(Boolean).join(': ')
+}
+
 export function formatBasicRider(rider: BasicRider, scope: BasicRiderScope): string {
   const effect = rider.effect?.trim()
   if (!effect) return ''

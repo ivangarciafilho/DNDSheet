@@ -346,6 +346,7 @@ const monsterState = {
       splitHpRiderRows: false,
       hpRiderSubrows: {},
       basicRiders: {},
+      defenseSchedules: {},
       splitAcRiderRows: false,
       tools: [],
       initiativeConfig: {
