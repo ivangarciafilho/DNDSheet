@@ -40,7 +40,7 @@ export const SKILL_ACTION_GROUPS: readonly SkillActionGroupDef[] = [
     color: 'primary',
     icon: 'fa-solid fa-magnifying-glass',
     tip: 'Wisdom check to notice what is hidden: a concealed creature, tracks, a lie or a mood. Its passive score is the creature\'s passive Perception.',
-    skills: ['INSIGHT', 'MEDICINE', 'PERCEPTION', 'SURVIVAL'],
+    skills: ['PERCEPTION', 'INSIGHT', 'SURVIVAL', 'MEDICINE'],
   },
   {
     id: 'study',

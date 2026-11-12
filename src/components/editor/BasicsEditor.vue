@@ -1042,6 +1042,8 @@
         </formula-field>
       </div>
 
+      <basic-riders-editor scope="ac" label="Armor Class riders" />
+
       <!-- 8. Initiative Tuning & Paragon Multi-Phase Gate (Feeds Paragon HP Stages below) -->
       <q-expansion-item
         dense
@@ -1422,14 +1424,15 @@
           <div class="row items-center justify-between q-px-xs q-mb-xs">
             <q-toggle
               v-model="monster.splitHpRiderRows"
+              @update:model-value="monster.hpRiderSubrows = {}"
               dark
               dense
               size="xs"
               color="red-4"
-              label="Split HP Relatable Riders into Sub-Rows" v-help="'Show each hit point rider on its own line.'"
+              label="Split all HP riders into sub-rows" v-help="'Show each hit point rider on its own line.'"
               class="text-caption text-weight-medium text-red-2"
             >
-              <q-tooltip>Renders HP relatable riders (Temporary HP, Bloodied riders, Death Prevention, Damage Threshold) on dedicated indented sub-rows (↳) directly beneath base HP.</q-tooltip>
+              <q-tooltip>Set the default for all hit point riders. Individual groups can override it.</q-tooltip>
             </q-toggle>
           </div>
           <!-- Row 1: Bloodied & Per-Phase Bloodied States -->
@@ -1440,7 +1443,8 @@
               </div>
               <div class="row items-center q-gutter-x-sm">
                 <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
-                  v-model="monster.splitHpRiderRows"
+                  :model-value="monster.hpRiderSubrows?.bloodied ?? monster.splitHpRiderRows"
+                  @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, bloodied: $event }"
                   dark
                   dense
                   size="xs"
@@ -1449,7 +1453,7 @@
                   class="text-caption text-red-2"
                   data-contextual-split-hp="bloodied"
                 >
-                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                  <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
                 <q-badge v-if="(extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none') || extendedHp.showBloodied || monster.paragonConfig.poolCount > 1" color="red-5" outline>
                   {{ monster.paragonConfig.poolCount > 1 ? `${monster.paragonConfig.poolCount} Stages` : `Bloodied: ${extendedHp.bloodiedSource === 'flat' ? (extendedHp.bloodiedOverride || Math.max(1, Math.floor(monster.avgHp / 2))) : getDynamicSourceValue(extendedHp.bloodiedSource || 'half_hp', extendedHp.bloodiedDice)} HP` }}
@@ -1615,7 +1619,8 @@
               </div>
               <div class="row items-center q-gutter-x-sm">
                 <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
-                  v-model="monster.splitHpRiderRows"
+                  :model-value="monster.hpRiderSubrows?.dt ?? monster.splitHpRiderRows"
+                  @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, dt: $event }"
                   dark
                   dense
                   size="xs"
@@ -1624,7 +1629,7 @@
                   class="text-caption text-blue-2"
                   data-contextual-split-hp="dt"
                 >
-                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                  <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
                 <q-badge v-if="(extendedHp.damageThreshold && extendedHp.damageThreshold > 0) || (extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' && extendedHp.damageThresholdSource !== 'none')" color="blue-4" outline>
                   DT {{ extendedHp.damageThresholdSource && extendedHp.damageThresholdSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageThresholdSource, extendedHp.damageThresholdDice) : extendedHp.damageThreshold }}
@@ -1711,7 +1716,8 @@
               </div>
               <div class="row items-center q-gutter-x-sm">
                 <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
-                  v-model="monster.splitHpRiderRows"
+                  :model-value="monster.hpRiderSubrows?.dr ?? monster.splitHpRiderRows"
+                  @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, dr: $event }"
                   dark
                   dense
                   size="xs"
@@ -1720,7 +1726,7 @@
                   class="text-caption text-teal-2"
                   data-contextual-split-hp="dr"
                 >
-                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                  <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
                 <q-badge v-if="(extendedHp.damageReduction && extendedHp.damageReduction > 0) || (extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' && extendedHp.damageReductionSource !== 'none')" color="teal-4" outline>
                   DR {{ extendedHp.damageReductionSource && extendedHp.damageReductionSource !== 'flat' ? getDynamicSourceValue(extendedHp.damageReductionSource, extendedHp.damageReductionDice) : extendedHp.damageReduction }}
@@ -1810,7 +1816,8 @@
               </div>
               <div class="row items-center q-gutter-x-xs">
                 <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
-                  v-model="monster.splitHpRiderRows"
+                  :model-value="monster.hpRiderSubrows?.regen ?? monster.splitHpRiderRows"
+                  @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, regen: $event }"
                   dark
                   dense
                   size="xs"
@@ -1819,7 +1826,7 @@
                   class="text-caption text-teal-2 q-mr-xs"
                   data-contextual-split-hp="regen"
                 >
-                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                  <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
                 <q-badge
                   v-if="regenPreview"
@@ -2043,7 +2050,8 @@
               </div>
               <div class="row items-center q-gutter-x-sm">
                 <q-toggle v-help="'Turn on or off ↳ sub-row for the basics editor.'"
-                  v-model="monster.splitHpRiderRows"
+                  :model-value="monster.hpRiderSubrows?.mortality ?? monster.splitHpRiderRows"
+                  @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, mortality: $event }"
                   dark
                   dense
                   size="xs"
@@ -2052,7 +2060,7 @@
                   class="text-caption text-amber-2"
                   data-contextual-split-hp="mortality"
                 >
-                  <q-tooltip>Split HP Riders into dedicated indented sub-rows (↳) beneath base HP.</q-tooltip>
+                  <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
                 <q-badge
                   v-if="deathPrevention.enabled && deathPrevention.name !== 'Mortal' && deathPreventionPreview"
@@ -2263,6 +2271,9 @@
             </div>
           </div>
         </div>
+        <basic-riders-editor scope="hp" label="Hit point riders" />
+        <basic-riders-editor scope="deathThroes" label="Death Throes" />
+        <basic-riders-editor scope="onDamage" label="On Damage" />
       </q-expansion-item>
 
       <!-- 10. Languages Smart List (Dark Mode) -->
@@ -3069,6 +3080,7 @@
             />
           </div>
         </div>
+        <basic-riders-editor scope="languages" label="Language riders" />
       </q-expansion-item>
       <database-studio class="q-mt-sm" />
     </q-card>
@@ -3076,6 +3088,7 @@
 </template>
 
 <script lang="ts">
+import BasicRidersEditor from './BasicRidersEditor.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import { STANDARD_ALIGNMENT } from 'src/data/ALIGNMENT'
 import { CR_SELECT, LAIR_CR_SELECT } from 'src/data/CR'
@@ -3185,7 +3198,7 @@ const DEATH_EXCEPTIONS = [
 
 export default defineComponent({
   name: 'BasicsEditor',
-  components: { MechanicTextEditor, LockToggleButton, SwapButtons, FormulaField },
+  components: { BasicRidersEditor, MechanicTextEditor, LockToggleButton, SwapButtons, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const editorStore = useEditorStore()

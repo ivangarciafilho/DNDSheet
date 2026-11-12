@@ -1935,14 +1935,17 @@
 }
 
 .sb-metamagic-option {
-  margin-inline-start: .4em;
+  display: flex;
+  align-items: baseline;
+  gap: .35em;
+  margin-inline-start: 1em;
 }
 
 .sb-metamagic-badge {
   display: inline-block;
   min-width: 1.25em;
   padding-inline: .25em;
-  border-radius: .2em;
+  border-radius: 999px;
   background: var(--sb-head-bg);
   color: var(--sb-head-ink);
   text-align: center;

@@ -1991,12 +1991,12 @@
     {
       "file": "src/components/editor/VillainActionsEditor.vue",
       "code": "TS2339",
-      "message": "Property 'trigger' does not exist on type '{ id: string; name: string; triggerType: \"immediate_reaction\" | \"while_bloodied\"; description: string; }'."
+      "message": "Property 'trigger' does not exist on type '{ id: string; name: string; triggerType: \"while_bloodied\" | \"immediate_reaction\"; description: string; }'."
     },
     {
       "file": "src/components/editor/VillainActionsEditor.vue",
       "code": "TS2339",
-      "message": "Property 'resetOnHeal' does not exist on type '{ id: string; name: string; triggerType: \"immediate_reaction\" | \"while_bloodied\"; description: string; }'."
+      "message": "Property 'resetOnHeal' does not exist on type '{ id: string; name: string; triggerType: \"while_bloodied\" | \"immediate_reaction\"; description: string; }'."
     },
     {
       "file": "src/components/file/DownloadButton.vue",
@@ -2016,7 +2016,7 @@
     {
       "file": "src/components/rendering/useHomebrewery3Renderer.ts",
       "code": "TS2339",
-      "message": "Property 'trigger' does not exist on type '{ rendered: string; id: string; name: string; triggerType: \"immediate_reaction\" | \"while_bloodied\"; description: string; }'."
+      "message": "Property 'trigger' does not exist on type '{ rendered: string; id: string; name: string; triggerType: \"while_bloodied\" | \"immediate_reaction\"; description: string; }'."
     },
     {
       "file": "src/components/rendering/useHomebrewery3Renderer.ts",
@@ -2076,7 +2076,7 @@
     {
       "file": "src/components/rendering/useMdRenderer.ts",
       "code": "TS2339",
-      "message": "Property 'trigger' does not exist on type '{ rendered: string; id: string; name: string; triggerType: \"immediate_reaction\" | \"while_bloodied\"; description: string; }'."
+      "message": "Property 'trigger' does not exist on type '{ rendered: string; id: string; name: string; triggerType: \"while_bloodied\" | \"immediate_reaction\"; description: string; }'."
     },
     {
       "file": "src/components/rendering/useMdRenderer.ts",

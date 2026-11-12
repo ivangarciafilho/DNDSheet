@@ -1,3 +1,4 @@
+import { formatBasicRider, type BasicRiderScope, type HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
 import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
@@ -142,7 +143,12 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return formatInvulnerabilityText(inv)
   })
 
-  const acBadges = computed(() => {
+  const basicRiderText = (scope: BasicRiderScope) =>
+    (monster.basicRiders?.[scope] ?? []).map(rider => formatBasicRider(rider, scope)).filter(Boolean)
+
+  const acBadges = computed(() => [...armorBadges.value, ...basicRiderText('ac').map(escapeHtml)])
+
+  const armorBadges = computed(() => {
     const acCfg = monster.acConfig
     const hasCompositorSettings = Boolean(
       acCfg && (
@@ -217,24 +223,27 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     )
   })
 
-  const hpBadges = computed(() => {
+  const hpBadgeEntries = computed(() => {
     const ext = monster.extendedHp
     const dp = ext?.deathPrevention
 
-    // Check if True Immortal / Hide HP mode is active
+    const authored = (['hp', 'deathThroes', 'onDamage'] as const).flatMap(group =>
+      basicRiderText(group).map(text => ({ group, text: escapeHtml(text) })))
+    // Preserve authored triggers even when the base HP is hidden.
     if (dp?.enabled && dp.name !== 'Mortal') {
       if (dp.dcRule === 'until_x_crits') {
         const text = formatMinimalistDeathPrevention(dp, dynCtx.value)
-        return text ? [text] : ['Immortal']
+        return [{ text: text || 'Immortal' }, ...authored]
       }
       const noExceptions = (!dp.exceptions || dp.exceptions.length === 0) && !dp.customNote?.trim()
       if (dp.hideHp || (dp.name === 'Immortal' && noExceptions && !dp.returnHpSource)) {
         const text = formatMinimalistDeathPrevention(dp, dynCtx.value) || 'Immortal'
-        return [text]
+        return [{ text }, ...authored]
       }
     }
 
-    const badges: string[] = []
+    const badges: { text: string; group?: HpRiderGroup }[] = []
+    const add = (text: string, group?: HpRiderGroup) => badges.push({ text, group })
 
     const poolCount = monster.paragonConfig?.poolCount || monster.paragonConfig?.poolsCount || ext?.paragonPools || 1
     const isParagon = Boolean(
@@ -245,14 +254,14 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     // 1. Primary HP & Hit Dice (Merged cleanly, or split Bloodied into its own rider row when splitHpRiderRows is enabled)
     const dicePart = `<span class="dnd-hp-hd">(${formattedNumeric('HP.HD', monster.HP.HD)}d${formattedNumeric('HP.type', monster.HP.type)}${hpModifier.value ? formattedNumeric('HP.modifier', hpModifier.value) : ''})</span>`
     if (!isParagon && bloodiedValue.value != null) {
-      if ((monster as any).splitHpRiderRows) {
-        badges.push(`${numHtml(monster.avgHp)} ${dicePart}`)
-        badges.push(`<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied`)
+      if (monster.hpRiderSubrows?.bloodied ?? (monster.$state as { splitHpRiderRows?: boolean }).splitHpRiderRows) {
+        add(`${numHtml(monster.avgHp)} ${dicePart}`)
+        add(`<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied`, 'bloodied')
       } else {
-        badges.push(`${numHtml(monster.avgHp)}/<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
+        add(`${numHtml(monster.avgHp)}/<strong class="dnd-num text-red-7">${bloodiedValue.value}</strong> Bloodied ${dicePart}`)
       }
     } else {
-      badges.push(`${numHtml(monster.avgHp)} ${dicePart}`)
+      add(`${numHtml(monster.avgHp)} ${dicePart}`)
     }
 
     // 2. Multi-phase pools & Grouped Bloodied limiter
@@ -302,13 +311,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       }
 
       if (normalPhases.length > 0) {
-        badges.push(normalPhases.join(' | '))
+        add(normalPhases.join(' | '), 'bloodied')
       }
       if (bloodiedPhases.length > 0) {
         const bloodiedInner = bloodiedPhases.map(b => `${numHtml(b.val)} (${b.label})`).join(' | ')
-        badges.push(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${bloodiedInner} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`)
+        add(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${bloodiedInner} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`, 'bloodied')
       } else if (bloodiedValue.value != null && (!bloodiedAt || bloodiedAt === 'half_total')) {
-        badges.push(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${numHtml(bloodiedValue.value)} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`)
+        add(`<span class="dnd-bloodied-badge dnd-bloodied-phases-limiter">[ ${numHtml(bloodiedValue.value)} | <span class="bloodied-tag">[Bloodied]</span> ]</span>`, 'bloodied')
       }
     }
 
@@ -321,7 +330,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     ) {
       const minRegen = formatMinimalistRegen(ext.regeneration, dynCtx.value, (field, value) => formattedNumeric(`extendedHp.regeneration.${field}`, value))
       if (minRegen) {
-        badges.push(minRegen)
+        add(minRegen, 'regen')
       }
     }
     if (ext?.tempHp && ext.tempHp.amount > 0) {
@@ -333,7 +342,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       else if (thp.trigger === 'bloodied') trigStr = ' when bloodied'
       else if (thp.trigger === 'short_rest') trigStr = ' on short rest'
       else if (thp.trigger === 'long_rest') trigStr = ' on long rest'
-      badges.push(`+${formattedNumeric('extendedHp.tempHp.amount', thp.amount)} temp HP${trigStr}`)
+      add(`+${formattedNumeric('extendedHp.tempHp.amount', thp.amount)} temp HP${trigStr}`, 'regen')
     }
 
     // 4. Minimalist Direct Death Prevention (No redundant "Immortal" wrapper)
@@ -346,7 +355,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     ) {
       const minDp = formatMinimalistDeathPrevention(dp, dynCtx.value)
       if (minDp) {
-        badges.push(minDp)
+        add(minDp, 'mortality')
       }
     }
 
@@ -362,7 +371,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageThresholdDisruption)
-      badges.push(`DT ${formattedNumeric('extendedHp.damageThreshold', dtStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`)
+      add(`DT ${formattedNumeric('extendedHp.damageThreshold', dtStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`, 'dt')
     }
 
     // 6. Damage Reduction (DR)
@@ -377,7 +386,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         dynCtx.value
       )
       const dStr = formatDisrupt(ext.damageReductionDisruption)
-      badges.push(`DR ${formattedNumeric('extendedHp.damageReduction', drStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`)
+      add(`DR ${formattedNumeric('extendedHp.damageReduction', drStr)}${dStr ? ` (disrupted by ${dStr})` : ''}`, 'dr')
     }
 
     // 7. Invulnerability in HP
@@ -386,12 +395,15 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const loc = resolveInvulnerabilityDisplayLocation(hpInv)
       if (loc === 'hp') {
         const invRuling = composeInvulnerabilityRuling(hpInv)
-        if (invRuling) badges.push(invRuling)
+        if (invRuling) add(invRuling, 'invulnerability')
       }
     }
 
-    return badges
+    return [...badges, ...authored]
   })
+
+
+  const hpBadges = computed(() => hpBadgeEntries.value.map(entry => entry.text))
 
   const hp = computed(() => {
     const rawBadges = hpBadges.value
@@ -576,6 +588,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       }
     }
 
+    parts.push(...basicRiderText('speed').map(escapeHtml))
     return options.web === false ? mechanicPlainText(parts.join('; ')) : parts.join('; ')
   })
 
@@ -623,7 +636,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
   const speedRiderBadges = computed(() => {
     const trav = monster.speedTraversal
-    if (!trav) return []
+    const authored = basicRiderText('speed').map(escapeHtml)
+    if (!trav) return authored
     const riders: string[] = []
 
     const sanitizeRiderText = (txt: string) => cleanPunctuation(formatDistanceUnit(txt.replace(/(?<!\bft)\.+$/i, '').trim()))
@@ -681,7 +695,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (trav.note && trav.note.trim()) {
       riders.push(trav.note.trim())
     }
-    return riders
+    return [...riders, ...authored]
   })
 
   const speedBadges = computed(() => {
@@ -1321,14 +1335,14 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (monster.sensesNotes && monster.sensesNotes.trim() !== '') {
       items.push(processTokens(monster.sensesNotes, undefined, monster, 'none'))
     }
-    return items
+    return [...items, ...basicRiderText('senses')]
   })
 
   const senses = computed(() => {
     return sensesBadges.value.map((s) => formatDistanceUnit(s)).join(', ')
   })
 
-  const languagesBadges = computed(() => {
+  const baseLanguagesBadges = computed(() => {
     const badges: string[] = []
     if (monster.specialCommunicationArchetype && monster.specialCommunicationArchetype !== 'none') {
       const archOnly = formatLanguagesList([], monster.specialCommunicationArchetype)
@@ -1348,7 +1362,9 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return []
   })
 
-  const languages = computed(() => {
+  const languagesBadges = computed(() => [...baseLanguagesBadges.value, ...basicRiderText('languages')])
+
+  const baseLanguages = computed(() => {
     if (
       (Array.isArray(monster.languagesList) && monster.languagesList.length > 0) ||
       monster.specialCommunicationArchetype
@@ -1357,6 +1373,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
     return monster.languages ?? ''
   })
+
+  const languages = computed(() => [baseLanguages.value, ...basicRiderText('languages')].filter(Boolean).join('; '))
 
   const cr = computed(() => {
     if (monster.useCrDisplayOverride) return monster.crOverride ?? ''
@@ -1633,7 +1651,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
         const scores = formatGroupRow(row)
         const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
-        const formattedScores = cleanPunctuation(scores.startsWith('(') ? scores : `(${scores})`)
+        const formattedScores = scores.startsWith('(') ? scores : `(${scores})`
         if (options.web !== false) {
           return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
         }
@@ -1957,6 +1975,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     acBadges,
     hp,
     hpBadges,
+    hpBadgeEntries,
     saves,
     speeds,
     speedBadges,

@@ -406,27 +406,16 @@
     <div class="skill hp dnd-cascade-panel dnd-cellular-row dnd-hp-cascade-row" :class="{ 'sb-striped': hpStripe, 'is-striped': hpStripe }">
       <span class="name dnd-cascade-title" data-help="hit-points" tabindex="0">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
       <div class="dnd-cascade-badges-wrap">
-        <template v-if="monster?.splitHpRiderRows && sanitizedHpBadges.length > 1">
-          <span class="dnd-cascade-badge" v-html="sanitizedHpBadges[0]"></span>
-        </template>
-        <template v-else>
-          <template v-for="(hBadge, hIdx) in sanitizedHpBadges" :key="'hp-badge-' + hIdx">
-            <span class="dnd-cascade-badge" v-html="hBadge"></span>
-            <span v-if="hIdx < sanitizedHpBadges.length - 1" class="text-grey-7 q-mr-xs">; </span>
-          </template>
+        <template v-for="(badge, index) in hpInlineBadges" :key="index">
+          <span class="dnd-cascade-badge" v-html="badge"></span>
+          <span v-if="index < hpInlineBadges.length - 1" class="text-grey-7 q-mr-xs">; </span>
         </template>
       </div>
     </div>
-    <template v-if="monster?.splitHpRiderRows && sanitizedHpBadges.length > 1">
-      <div
-        v-for="(hpRider, hrIdx) in sanitizedHpBadges.slice(1)"
-        :key="'hp-sub-' + hrIdx"
-        class="dnd-vitals-indented-subrow"
-      >
-        <span class="dnd-subrow-bullet">↳</span>
-        <span class="dnd-subrow-content" v-html="hpRider"></span>
-      </div>
-    </template>
+    <div v-for="(rider, index) in hpSubrowBadges" :key="index" class="dnd-vitals-indented-subrow">
+      <span class="dnd-subrow-bullet">↳</span>
+      <span class="dnd-subrow-content" v-html="rider"></span>
+    </div>
     <!-- MM2024 Precedence: Defenses -> Speed -> Senses -> Languages -> Stats & Gear -> Passives/Checks -->
     <template v-if="blockStyle.mm2024">
       <!-- Unified Defense Panel per Scope (| Vulnerabilities | Resistances | Immunities) -->
@@ -753,16 +742,21 @@
         </div>
         <div v-if="hasExplicitResourceRow" class="sb-row sb-spell-row sb-spell-resource-row" :class="{ 'sb-striped': isResourceRowStriped, 'is-striped': isResourceRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" data-help="spell-slots" tabindex="0">
-            {{ [spellPlate.resource, spellPlate.prepared].filter(Boolean).join('. ') }}.
+            <template v-for="(part, index) in spellRuleParts([spellPlate.resource, spellPlate.prepared].filter(Boolean).join('. ') + '.')" :key="index">
+              <strong v-if="part.kind === 'number'">{{ part.text }}</strong><em v-else-if="part.kind === 'term'">{{ part.text }}</em><template v-else>{{ part.text }}</template>
+            </template>
           </div>
         </div>
         <div v-if="spellPlate.consolidatedSummary" class="sb-row"><div class="sb-cell sb-grow">{{ spellPlate.consolidatedSummary }}</div></div>
         <div v-if="spellPlate.metamagic" class="sb-row sb-spell-row sb-spell-metamagic-row" :class="{ 'sb-striped': isMetamagicRowStriped, 'is-striped': isMetamagicRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" style="border: none; padding: 2px 4px;" data-help="metamagic" tabindex="0">
-            <strong><span class="sb-metamagic-badge">{{ spellPlate.metamagic.points }}</span> Sorcery Points</strong>, regained on {{ spellPlate.metamagic.refresh }}.
-            <span v-for="meta in spellPlate.metamagic.options" :key="meta.name" class="sb-metamagic-option">
-              <strong v-if="meta.cost" class="sb-metamagic-badge" :aria-label="meta.cost + ' Sorcery Points'">{{ meta.cost }}</strong> {{ meta.effect || meta.name }}
-            </span>
+            <strong><span class="sb-metamagic-badge">{{ spellPlate.metamagic.points }}</span> Sorcery Points</strong>, regained on <em>{{ spellPlate.metamagic.refresh }}</em>.
+            <div v-for="meta in spellPlate.metamagic.options" :key="meta.name" class="sb-metamagic-option">
+              <strong v-if="meta.cost" class="sb-metamagic-badge" :aria-label="meta.cost + ' Sorcery Points'">{{ meta.cost }}</strong>
+              <span><template v-for="(part, index) in spellRuleParts(meta.effect || meta.name)" :key="index">
+                <strong v-if="part.kind === 'number'">{{ part.text }}</strong><em v-else-if="part.kind === 'term'">{{ part.text }}</em><template v-else>{{ part.text }}</template>
+              </template></span>
+            </div>
           </div>
         </div>
         <!-- Unified Spells Cell (Per-Level lines inside single consolidated cell) -->
@@ -1091,6 +1085,7 @@
 </template>
 
 <script lang="ts">
+import type { HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -1123,6 +1118,10 @@ export default defineComponent({
     const activeHelpTarget = ref<HTMLElement | null>(null)
     const helpTipStyle = ref<StyleValue>({ position: 'fixed', left: '12px', top: '12px' })
     let helpTipObserver: MutationObserver | null = null
+    const spellRuleParts = (rule: string) => {
+      const tokens = /\b(\d+(?:st|nd|rd|th)?|Short or Long Rest|Short Rest|Long Rest|Downtime|Bonus Action|Reaction|Cast|Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Warlock|Wizard)\b/gi
+      return rule.split(tokens).map((text, index) => ({ text, kind: index % 2 === 0 ? 'text' : /^\d/.test(text) ? 'number' : 'term' }))
+    }
     const { sanitizeWebString, processLairAction } = useProcessTokens()
     const textRenderer = inject('textRenderer') as ReturnType<
       typeof useTextRenderer
@@ -2046,9 +2045,13 @@ export default defineComponent({
       (textRenderer.acBadges?.value || []).map((c) => sanitizeWebString(c))
     )
 
-    const sanitizedHpBadges = computed(() =>
-      (textRenderer.hpBadges?.value || []).map((c) => sanitizeWebString(c))
-    )
+    const hpRiderIsSplit = (entry: { group?: HpRiderGroup }) => entry.group != null &&
+      (monster.hpRiderSubrows?.[entry.group] ?? (monster.$state as { splitHpRiderRows?: boolean }).splitHpRiderRows)
+    const hpInlineBadges = computed(() => textRenderer.hpBadgeEntries.value
+      .filter(entry => !hpRiderIsSplit(entry)).map(entry => sanitizeWebString(entry.text)))
+    const hpSubrowBadges = computed(() => textRenderer.hpBadgeEntries.value
+      .filter(hpRiderIsSplit).map(entry => sanitizeWebString(entry.text)))
+
 
     const hasPortrait = computed(() => {
       const portraitLayer = editorStore.a4Layers?.find(l => l.type === 'portrait')
@@ -2182,7 +2185,8 @@ export default defineComponent({
       crDisplay,
       ...textRenderer,
       cr,
-      spellPlate,      spellLevelLead,
+      spellPlate,
+      spellLevelLead,
       hasAnySecondarySpells,
       shouldStripeVital,
       innateSpellPlate,
@@ -2210,7 +2214,9 @@ export default defineComponent({
       initiative,
       sanitizedInitiativeCells,
       sanitizedAcBadges,
-      sanitizedHpBadges,
+      hpInlineBadges,
+      hpSubrowBadges,
+      spellRuleParts,
       hasPortrait,
       portraitStyle,
       actionPassivesGroups,

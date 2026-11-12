@@ -1,3 +1,4 @@
+import type { BasicRider, BasicRiderScope, HpRiderGroup } from './basic-riders'
 import type { CastingContribution, CastingSpellGrant, CastingRollOverride } from '../usecases/AutoSyncSpellcasting'
 import type { SkillPassiveState } from './skill-passive-state.ts'
 import type { RandomTable } from './random-table'
@@ -1160,6 +1161,8 @@ export interface Monster {
   showXp?: boolean
   compactNameplate?: boolean
   customVariables?: Record<string, string | number>
+  basicRiders?: Partial<Record<BasicRiderScope, BasicRider[]>>
+  hpRiderSubrows?: Partial<Record<HpRiderGroup, boolean>>
   customMacros?: Record<string, string>
 }
 

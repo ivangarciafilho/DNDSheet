@@ -344,6 +344,8 @@ const monsterState = {
       defenseCategoryOrder: ['vulnerabilities', 'resistances', 'immunities'] as string[],
       splitSpeedRiderRows: false,
       splitHpRiderRows: false,
+      hpRiderSubrows: {},
+      basicRiders: {},
       splitAcRiderRows: false,
       tools: [],
       initiativeConfig: {

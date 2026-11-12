@@ -287,11 +287,13 @@
           </div>
         </div>
       </div>
+      <basic-riders-editor scope="senses" label="Senses riders" />
     </q-card>
   </q-expansion-item>
 </template>
 
 <script lang="ts">
+import BasicRidersEditor from './BasicRidersEditor.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -414,7 +416,7 @@ const SENSES_PRESETS: {
 
 export default defineComponent({
   name: 'SensesEditor',
-  components: { MechanicTextEditor, FormulaField },
+  components: { BasicRidersEditor, MechanicTextEditor, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const selectedSenseToAdd = ref<string | null>(null)

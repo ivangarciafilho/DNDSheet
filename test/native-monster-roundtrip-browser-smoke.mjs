@@ -17,6 +17,8 @@ await browserProbe(async ({ evaluate }) => {
     monster.name = 'Native Roundtrip Witness';
     monster.portrait = { url: img, position: 'left', width: 240 };
     monster.customMacros = { WITNESS: 'PB+1' };
+    monster.basicRiders = { ac: [{ id: 'native-rider', cadence: 'once_round', timing: 'As a Reaction', effect: 'Raise its shield.' }] };
+    monster.hpRiderSubrows = { mortality: true, regen: false };
     monster.addAction();
     Object.assign(monster.actions.at(-1), { name: 'Roundtrip Action', description: 'Restored action text.' });
     spells.addSpell({ name: spellName, damage: 0, multitarget: false, class: ['WIZARD'], level: 1, custom: true, srd: false });
@@ -94,5 +96,3 @@ await browserProbe(async ({ evaluate }) => {
   assert.ok(result.customSpell && result.staleFieldCleared && result.rendered && result.legacyPreserved, JSON.stringify(result))
   console.log('Native monster roundtrip restored all exported monster and presentation fields, its custom spell, and rendered sheet.')
 }, { url: process.env.DNDSHEET_E2E_URL || 'http://127.0.0.1:9234/index.html#/', port: 9397 })
-
-

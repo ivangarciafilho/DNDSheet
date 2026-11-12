@@ -123,7 +123,7 @@
                   color="accent"
                 />
               </div>
-            </q-card>
+              </q-card>
           </div>
         </div>
       </q-card-section>
@@ -596,11 +596,13 @@
           </div>
         </div>
       </div>
+      <basic-riders-editor scope="speed" label="Speed riders" />
     </q-card>
   </q-expansion-item>
 </template>
 
 <script lang="ts">
+import BasicRidersEditor from './BasicRidersEditor.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import MechanicSelectEditor from './MechanicSelectEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -618,7 +620,7 @@ import {
 
 export default defineComponent({
   name: 'SpeedsEditor',
-  components: { MechanicSelectEditor, MechanicTextEditor, SwapButtons },
+  components: { BasicRidersEditor, MechanicSelectEditor, MechanicTextEditor, SwapButtons },
   setup() {
     const { t } = useI18n()
     const monster = useMonsterStore()
