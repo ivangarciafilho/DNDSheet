@@ -29,7 +29,7 @@ await browserProbe(async ({ evaluate }) => {
     monster.spellcasting.level = 3;
     Object.assign(editor, {
       a4PreviewMode: true, a4Orientation: 'landscape', a4Layout: 'side_by_side', a4Zoom: 'fit',
-      a4StatblockWidth: 77, statblockFontScale: 125, visualTemplate: 'modern', visualTheme: 'art_deco',
+      a4StatblockWidth: 77, a4StatblockFinalWidth: 82, a4StatblockFinalHeight: 90, statblockFontScale: 125, visualTemplate: 'modern', visualTheme: 'art_deco',
       a4Layers: [{ id: 'native-art', name: 'Roundtrip Artwork', type: 'background', url: img, opacity: 80,
         visible: true, blendMode: 'normal', rotation: 90, scaleX: 115, scaleY: 85, mirrorVertical: true }]
     });

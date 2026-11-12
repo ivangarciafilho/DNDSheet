@@ -120,6 +120,12 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  assert.ok(overflow.portrait&&overflow.scrollWidth>overflow.width&&overflow.scrollHeight>overflow.height,'Loaded fixture exercises artwork and overflow on both axes')
  assert.equal(nominal,1,'Keep the tall artwork and statblock together on one A4 sheet')
  assert.equal(await pages('loaded-landscape-native-overflow'),nominal,'Fit both axes on the same sheet')
+ await evaluate(`(()=>{const e=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');
+  e.a4StatblockScaleX=100;e.a4StatblockFinalWidth=65;e.a4StatblockFinalHeight=55;return true})()`)
+ await delay(350)
+ assert.equal(await pages('loaded-landscape-with-statblock-fit'),1,'An independently fitted statblock stays on one sheet')
+ const fittedPng=await exportPng()
+ assert.ok(fittedPng.width>0&&fittedPng.height>0,'The fitted A4 sheet exports to PNG')
  await send('Emulation.setEmulatedMedia',{media:'screen'})
  await evaluate(`(()=>{document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor').a4PreviewMode=false;return true})()`)
  await delay(150)

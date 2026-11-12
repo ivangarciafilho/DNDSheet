@@ -445,6 +445,19 @@
                   </div>
 
                   <div class="col-12 col-sm-8">
+                    <div class="text-caption text-amber-3">Overall font size · {{ editorStore.statblockFontScale }}%</div>
+                    <q-slider v-model="editorStore.statblockFontScale" aria-label="Overall font size"
+                      :min="65" :max="150" :step="1" color="amber-5" dense />
+                    <div class="text-caption text-amber-3">Final width · {{ editorStore.a4StatblockFinalWidth }}%</div>
+                    <q-slider v-model="editorStore.a4StatblockFinalWidth" aria-label="Final width"
+                      :min="25" :max="150" :step="1" color="amber-5" dense />
+                    <div class="text-caption text-amber-3">Final height · {{ editorStore.a4StatblockFinalHeight }}%</div>
+                    <q-slider v-model="editorStore.a4StatblockFinalHeight" aria-label="Final height"
+                      :min="25" :max="150" :step="1" color="amber-5" dense />
+                    <div class="row items-center justify-between q-mb-sm">
+                      <span class="text-caption">100% uses the natural size. The layer reduces text first, then scales the remaining difference.</span>
+                      <q-btn flat dense no-caps label="Reset fit" @click="editorStore.a4StatblockFinalWidth = editorStore.a4StatblockFinalHeight = 100" />
+                    </div>
                     <div class="row items-center justify-between text-caption text-amber-3">
                       <span>Statblock width</span>
                       <span>{{ editorStore.a4StatblockWidth == null ? 'Auto' : editorStore.a4StatblockWidth + '%' }}</span>
@@ -1029,6 +1042,8 @@ export default defineComponent({
       editorStore.statBlockColumns = 1
       editorStore.a4CompactDensity = false
       editorStore.a4StatblockWidth = null
+      editorStore.a4StatblockFinalWidth = 100
+      editorStore.a4StatblockFinalHeight = 100
       editorStore.a4StatblockScaleX = 100
       editorStore.a4StatblockScaleY = 100
       editorStore.a4StatblockOffsetX = 0

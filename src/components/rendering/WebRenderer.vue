@@ -304,7 +304,9 @@
             </div>
 
             <!-- Main Statblock -->
+            <div ref="statblockFrame" :class="{ 'a4-fit-active': statblockFitActive }" :style="statblockFrameStyle">
             <div
+              ref="statblockContent"
               class="statblock"
               :class="[
                 blockStyle,
@@ -314,7 +316,7 @@
                 },
                 `theme-${editorStore?.visualTheme || 'wotc'}`
               ]"
-              :style="editorStore?.a4PreviewMode ? a4StatblockStyle : columns"
+              :style="editorStore?.a4PreviewMode ? fittedStatblockStyle : columns"
             >
       <div v-if="monster.compactNameplate" class="monster-nameplate-panel unified-top-plate compact-nameplate">
         <div class="compact-plate-row row-1 compact-nameplate-row-1">
@@ -1031,6 +1033,8 @@
 
     </div>
 
+    </div>
+
     <!-- Right Portrait -->
     <div
       v-if="hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')) && monster.portrait?.position === 'right'"
@@ -1524,6 +1528,133 @@ export default defineComponent({
         ...opacityStyle,
         ...transformStyle
       }
+    })
+
+    const statblockFrame = ref<HTMLElement | null>(null)
+    const statblockContent = ref<HTMLElement | null>(null)
+    const fit = ref<{ width: number; height: number; layoutWidth: number; font: number; x: number; y: number } | null>(null)
+    const statblockFitActive = computed(() => Boolean(fit.value && editorStore.a4PreviewMode))
+    const statblockFrameStyle = computed<StyleValue>(() => {
+      if (!fit.value || !editorStore.a4PreviewMode) return { display: 'contents' }
+      const base = a4StatblockStyle.value as Record<string, string>
+      return {
+        display: base.display, position: 'relative', zIndex: base.zIndex,
+        width: fit.value.width + 'px', height: fit.value.height + 'px', flex: '0 0 auto',
+        marginLeft: base.marginLeft, marginRight: base.marginRight, overflow: 'clip',
+        transform: `translate(${editorStore.a4StatblockOffsetX}px, ${editorStore.a4StatblockOffsetY}px)`,
+      }
+    })
+    const fittedStatblockStyle = computed<StyleValue>(() => {
+      const base = a4StatblockStyle.value as Record<string, string>
+      if (!fit.value) return base
+      return {
+        ...base, position: 'absolute', top: '0', left: '0', width: fit.value.layoutWidth + 'px',
+        minWidth: '0', minHeight: fit.value.y === 1 ? fit.value.height + 'px' : undefined, marginLeft: '0', marginRight: '0',
+        '--statblock-font-scale': fit.value.font,
+        transform: `scale(${fit.value.x}, ${fit.value.y})`, transformOrigin: 'top left',
+      }
+    })
+
+    function measureStatblockFit() {
+      const frame = statblockFrame.value
+      const block = statblockContent.value
+      const widthFactor = Math.max(25, Math.min(150, editorStore.a4StatblockFinalWidth ?? 100)) / 100
+      const heightFactor = Math.max(25, Math.min(150, editorStore.a4StatblockFinalHeight ?? 100)) / 100
+      if (!frame || !block || !editorStore.a4PreviewMode || (widthFactor === 1 && heightFactor === 1)) {
+        fit.value = null
+        return
+      }
+
+      const frameStyle = frame.style.cssText
+      const blockStyle = block.style.cssText
+      try {
+        frame.style.display = 'contents'
+        const base = a4StatblockStyle.value as Record<string, string>
+        Object.assign(block.style, {
+          position: 'relative', top: '', left: '', width: base.width || '', minWidth: base.minWidth || '',
+          flex: base.flex || '', marginLeft: base.marginLeft || '', marginRight: base.marginRight || '',
+          alignSelf: 'start', transform: 'none', minHeight: '',
+        })
+        const preferred = (editorStore.statblockFontScale ?? 100) / 100
+        block.style.setProperty('--statblock-font-scale', String(preferred))
+        const naturalWidth = block.offsetWidth
+        const naturalHeight = block.offsetHeight
+        if (!naturalWidth || !naturalHeight) {
+          fit.value = null
+          return
+        }
+
+        const width = naturalWidth * widthFactor
+        const height = naturalHeight * heightFactor
+        const floor = Math.min(preferred, 0.75)
+        const measure = (font: number) => {
+          const layoutWidth = Math.max(width, naturalWidth * font / preferred)
+          block.style.width = layoutWidth + 'px'
+          block.style.flex = '0 0 ' + layoutWidth + 'px'
+          block.style.setProperty('--statblock-font-scale', String(font))
+          return { font, layoutWidth, contentHeight: block.offsetHeight }
+        }
+        const fits = (sample: ReturnType<typeof measure>) =>
+          sample.layoutWidth <= width && (heightFactor === 1 || sample.contentHeight <= height)
+        let sample = measure(preferred)
+        if (!fits(sample)) {
+          let low = floor
+          let high = preferred
+          sample = measure(low)
+          if (fits(sample)) {
+            for (let attempt = 0; attempt < 7; attempt++) {
+              const candidate = measure((low + high) / 2)
+              if (fits(candidate)) {
+                sample = candidate
+                low = candidate.font
+              } else high = candidate.font
+            }
+          }
+        }
+        const targetHeight = heightFactor === 1 ? sample.contentHeight : height
+        fit.value = {
+          width, height: targetHeight, layoutWidth: sample.layoutWidth, font: sample.font,
+          x: width / sample.layoutWidth, y: Math.min(1, targetHeight / Math.max(1, sample.contentHeight)),
+        }
+      } finally {
+        frame.style.cssText = frameStyle
+        block.style.cssText = blockStyle
+      }
+    }
+
+    let fitFrame = 0
+    const scheduleStatblockFit = () => {
+      cancelAnimationFrame(fitFrame)
+      fitFrame = requestAnimationFrame(measureStatblockFit)
+    }
+    const fitObserver = new MutationObserver(scheduleStatblockFit)
+    let lastFitContainerWidth = 0
+    const fitResizeObserver = new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width ?? 0
+      if (width !== lastFitContainerWidth) {
+        lastFitContainerWidth = width
+        scheduleStatblockFit()
+      }
+    })
+    watch(renderRoot, root => {
+      fitResizeObserver.disconnect()
+      if (root) fitResizeObserver.observe(root)
+    })
+    watch(statblockContent, block => {
+      fitObserver.disconnect()
+      if (block) fitObserver.observe(block, { subtree: true, childList: true, characterData: true })
+    })
+    onMounted(() => {
+      window.addEventListener('resize', scheduleStatblockFit)
+      document.fonts?.addEventListener('loadingdone', scheduleStatblockFit)
+      scheduleStatblockFit()
+    })
+    onBeforeUnmount(() => {
+      cancelAnimationFrame(fitFrame)
+      fitObserver.disconnect()
+      fitResizeObserver.disconnect()
+      window.removeEventListener('resize', scheduleStatblockFit)
+      document.fonts?.removeEventListener('loadingdone', scheduleStatblockFit)
     })
 
     const a4PortraitStyle = computed<StyleValue>(() => {
@@ -2166,6 +2297,17 @@ export default defineComponent({
     const comboActionsList = computed(() => textRenderer.comboActionsList.value)
     const runehammerTrackData = computed(() => textRenderer.runehammerTrackData.value)
 
+    watch([
+      a4StatblockStyle, statblockContent, () => editorStore.a4PreviewMode,
+      () => editorStore.a4StatblockFinalWidth, () => editorStore.a4StatblockFinalHeight,
+      () => editorStore.a4Orientation, () => editorStore.a4CompactDensity, () => editorStore.visualTheme,
+      () => editorStore.visualTemplate, () => editorStore.style,
+    ], scheduleStatblockFit, { flush: 'post' })
+    watch(fit, () => {
+      updateMeasuredHeight()
+      checkA4Overflow()
+    }, { flush: 'post' })
+
     return {
       renderRoot,
       mechanicRichHtml,
@@ -2255,7 +2397,11 @@ export default defineComponent({
       resolvedA4Layout,
       a4ScaleStageStyle,
       a4StatblockWrapperStyle,
-      a4StatblockStyle,
+      statblockFrame,
+      statblockContent,
+      statblockFrameStyle,
+      statblockFitActive,
+      fittedStatblockStyle,
       a4PortraitStyle,
       portraitCropContainerStyle,
       portraitImgStyle,

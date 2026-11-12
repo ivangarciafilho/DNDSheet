@@ -87,6 +87,8 @@ export const useEditorStore = defineStore({
       a4StatblockOffsetY: 0, // vertical offset in px
       statblockFontScale: 100,
       a4StatblockWidth: null as number | null,
+      a4StatblockFinalWidth: 100,
+      a4StatblockFinalHeight: 100,
       a4StatblockScaleX: 100, // horizontal scaling percentage
       a4StatblockScaleY: 100, // vertical scaling percentage
       a4PortraitOffsetX: 0, // portrait horizontal offset in px

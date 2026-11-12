@@ -282,7 +282,7 @@ export default defineComponent({
         }
         await document.fonts.ready
         const block = copy.querySelector<HTMLElement>('.statblock')
-        if (block && block.offsetWidth < 560) block.style.setProperty('column-count', '1', 'important')
+        if (block && !block.closest('.a4-fit-active') && block.offsetWidth < 560) block.style.setProperty('column-count', '1', 'important')
         const portrait = copy.querySelector<HTMLElement>('.monster-portrait')
         if (portrait && !isA4 && block) portrait.style.height = block.offsetHeight + 'px'
         return await snapdom.toBlob(copy, {
