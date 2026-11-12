@@ -1,14 +1,14 @@
-import { migrateMonsterSchema } from 'src/core/usecases/MigrateMonsterSchema'
+import { CURRENT_MONSTER_VERSION, migrateMonsterSchema } from 'src/core/usecases/MigrateMonsterSchema'
 import { validate } from 'jsonschema'
 import { useQuasar } from 'quasar'
 import { SCHEMA } from 'src/data/SCHEMA'
-import { useMonsterStore } from 'src/stores/monster-store'
+import { createMonsterState, useMonsterStore } from 'src/stores/monster-store'
 import { useCharacterStore } from 'src/stores/character-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { importCharacter } from 'src/core/domain/character-import'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
-import { Monster } from '../models'
+import { readSheetPresentation, readSheetSpells } from './native-monster-file'
 
 export function useFileLoader() {
   const $q = useQuasar()
@@ -34,7 +34,7 @@ export function useFileLoader() {
           }
 
           // validate
-          if (!monster.saveVersion) {
+          if (!monster || !Object.hasOwn(SCHEMA, monster.saveVersion)) {
             $q.notify({
               type: 'negative',
               message: t('io.error.version'),
@@ -83,41 +83,14 @@ export function useFileLoader() {
     // File import, live validation and stored-library loading share one migration authority.
     Object.assign(monster, migrateMonsterSchema(monster))
   }
-  const validateSpells = (monster: Monster) => {
-    // checks that the given keys exist in the spell list
-    const invalid = monster.spellcasting.standard.filter(
-      (id) => !(id in spellStore.allSpells)
-    )
-
-    monster.spellcasting.standard = monster.spellcasting.standard.filter(
-      (id) => id in spellStore.allSpells
-    )
-
-    for (const atWill of monster.spellcasting.atWill) {
-      const inv = atWill.spells.filter((id) => !(id in spellStore.allSpells))
-      invalid.push(...inv)
-
-      atWill.spells = atWill.spells.filter((id) => id in spellStore.allSpells)
-    }
-
-    if (invalid.length > 0) {
-      $q.notify({
-        message: t('io.warn.spell', [invalid.join(', ')]),
-        timeout: 0,
-        type: 'warning',
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
-        actions: [{ label: t('editor.ok'), color: 'white' }],
-      })
-    }
-  }
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const loadMonster = (data: any) => {
-    updateMonster(data)
-
-    // one more validation for the road, use the most recent version
-    const monster = data as Monster
-    const valid = validate(data, SCHEMA['9'])
+    const { sheetPresentation, sheetCustomSpells, ...record } = data
+    delete record.__proto__
+    delete record.constructor
+    delete record.prototype
+    const monster = migrateMonsterSchema(record)
+    const valid = validate(monster, SCHEMA[CURRENT_MONSTER_VERSION])
 
     if (!valid.valid) {
       console.error(valid.errors.map((e) => e.toString()))
@@ -136,12 +109,19 @@ export function useFileLoader() {
         actions: [{ label: t('editor.ok'), color: 'white' }],
       })
     } else {
-      // VALIDATE SPELLS FIRST
-      validateSpells(monster)
+      const editor = useEditorStore()
+      const presentation = readSheetPresentation(sheetPresentation, editor.$state)
+      spellStore.import(readSheetSpells(sheetCustomSpells), true)
 
-      // update the store
       const monsterStore = useMonsterStore()
-      monsterStore.$state = { ...monster, bindings: monster.bindings ?? {} }
+      const next = { ...createMonsterState(), ...monster, bindings: monster.bindings ?? {} }
+      monsterStore.$patch(state => {
+        for (const key of Object.keys(state)) {
+          if (!Object.hasOwn(next, key)) delete (state as unknown as Record<string, unknown>)[key]
+        }
+        Object.assign(state, next)
+      })
+      editor.$patch({ ...presentation, a4PageMeasuredHeight: 0, activeMode: 'monster' })
 
       $q.notify({
         type: 'positive',

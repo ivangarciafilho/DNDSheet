@@ -44,7 +44,7 @@ import { monsterBindingActions } from './binding-runtime'
 
 export const MONSTER_VERSION = 11
 
-export const useMonsterStore = defineStore('monster', {
+const monsterState = {
   state: (): Monster => {
     return {
       name: 'My New Monster',
@@ -402,6 +402,12 @@ export const useMonsterStore = defineStore('monster', {
       customMacros: {} as Record<string, string>,
     }
   },
+}
+
+export const createMonsterState = monsterState.state
+
+export const useMonsterStore = defineStore('monster', {
+  ...monsterState,
   getters: {
     statsWithModifiers: (state) => {
       const statKeys = Object.keys(state.stats) as (keyof typeof state.stats)[]

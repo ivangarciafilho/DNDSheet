@@ -6,7 +6,7 @@ Every way data leaves the app, read from `src/components/file/DownloadButton.vue
 
 | # | Menu label | Function | Source → transform | MIME | File name | Known omissions / notes | Golden |
 |---|---|---|---|---|---|---|---|
-| 1 | Export JSON (5emm format) | `save5emm` | `monster.$state` → `JSON.stringify` | application/json | `<name>.5emm.json` | none; reload path = `loadMonster` → `migrateMonsterSchema` (round-trip test `ExportBoundary.test.ts`) | — |
+| 1 | Export JSON (5emm format) | `save5emm` | Complete monster state, sheet presentation, and referenced custom spell definitions | application/json | `<name>.5emm.json` | Toolbar round-trip checked by `native-monster-roundtrip-browser-smoke.mjs`. Legacy files use the existing presentation settings. | External artwork remains a URL. |
 | 2 | Export Markdown (Homebrewery Legacy) | `saveMd` | `useMdRenderer.renderMarkdown(twoCol)` | text/markdown | `<name>.md` | empty header lines omitted (B4.10) | ✅ |
 | 3 | Export Markdown (Homebrewery v3) | `saveMd3` | `useHomebrewery3Renderer.renderMarkdownV3(twoCol)` | text/markdown | `<name>.md` | random tables included (A11.9) | ✅ |
 | 4 | Export JSON (Improved Initiative) | `saveImprovedInit` | `useImprovedInitRenderer.renderImprovedInitJson()` | application/json | `<name>.improved-initiative.json` | shared prose since218; target arrays may follow active sheet phase filtering (separate export-policy acceptance) | ✅ |

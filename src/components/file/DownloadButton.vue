@@ -71,6 +71,8 @@ import { useMonsterStore } from '../../stores/monster-store'
 import { defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { download, saveJson } from './download'
+import { nativeMonsterFile } from './native-monster-file'
+import { useSpellsStore } from 'src/stores/spells-store'
 import { safeFileName } from 'src/core/domain/file-name'
 import copy from 'copy-to-clipboard'
 import { useLatexRenderer } from '../rendering/useLatexRenderer'
@@ -119,7 +121,7 @@ export default defineComponent({
 
     const save5emm = () => {
       try {
-        saveJson(monster.$state, `${monster.name}.5emm.json`)
+        saveJson(nativeMonsterFile(monster.$state, editorStore.$state, useSpellsStore().customSpells), `${monster.name}.5emm.json`)
       } catch (e) {
         console.error(e)
 
