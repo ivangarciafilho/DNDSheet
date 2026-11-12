@@ -1014,13 +1014,39 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return `<span class="dnd-check">${advHtml(inner, entry.advantage, entry.disadvantage)}</span>`
   }
 
-  const formatGroupRow = (row: SkillGroupRow): string => {
-    const parts = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => formatCheckEntry(entry, labels))
-    const base = row.base ? numHtml(row.base.passive + '/' + renderBonus(row.base.bonus)) : ''
-    const baseLabels = row.baseSkillKeys?.map(key => escapeHtml(skillLabel(key))) ?? []
-    const groups = [...(base ? [[base, ...baseLabels].join(', ')] : []), ...parts]
-    const content = groups.length > 1 || baseLabels.length ? groups.map(group => '(' + group + ')').join(', ') : groups.join('')
+  const formatScoreGroups = (entries: SkillCheckEntry[], row?: SkillGroupRow): string => {
+    const groups = mergeIdenticalEntries(entries).map(({ entry, labels }) => ({
+      passive: entry.passive, bonus: entry.bonus, html: formatCheckEntry(entry, labels),
+    }))
+    if (row?.base && row.baseSkillKeys?.length) {
+      const { passive, bonus } = row.base
+      const labels = row.baseSkillKeys.map(key => escapeHtml(skillLabel(key)))
+      groups.push({ passive, bonus, html: [numHtml(`${passive}/${renderBonus(bonus)}`), ...labels].join(', ') })
+    }
+    const content = groups.sort((left, right) => left.passive - right.passive || left.bonus - right.bonus)
+      .map(group => '(' + group.html + ')').join(', ')
     return options.web === false ? mechanicPlainText(content) : content
+  }
+
+  const formatGroupRow = (row: SkillGroupRow) => formatScoreGroups(row.entries, row)
+
+  const toolCheckEntry = (tool: NonNullable<typeof monster.tools>[number]): SkillCheckEntry => {
+    const bonus = tool.override
+      ? tool.overrideValue
+      : statModifier(monster.stats[tool.stat] ?? 10) +
+        (tool.proficient ? monster.proficiency : 0) +
+        (tool.expertise ? monster.proficiency : 0)
+    const mode = effectiveAdvantage(tool.advantage, tool.disadvantage)
+    return {
+      key: tool.id,
+      label: tool.name,
+      stat: tool.stat,
+      passive: passiveScore(bonus, tool.advantage, tool.disadvantage),
+      bonus,
+      advantage: mode === 'advantage',
+      disadvantage: mode === 'disadvantage',
+      condition: tool.condition?.trim() ?? '',
+    }
   }
 
   const combatSkillRows = computed(() => {
@@ -1063,14 +1089,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       })
     }
 
-    // 2. Untrained skills that only carry passive tweaks from the Skills editor
+    // 2. Untrained skills use their own ability, including in mixed-ability groups.
     for (const group of SKILL_ACTION_GROUPS) {
       for (const key of group.skills) {
         if (seen.has(key)) continue
         const cfg = passiveCfg(key)
         const condition = cfg?.condition?.trim() || sharedCondition(key)
         const override = cfg?.override && cfg.overrideValue != null ? Number(cfg.overrideValue) : passivePerceptionOverride(key)
-        if (!cfg?.advantage && !cfg?.disadvantage && !condition && override == null) continue
         seen.add(key)
         const stat = statOf(key)
         inputs.push({
@@ -1136,30 +1161,12 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       for (const actionType of ['Action', 'Bonus Action'] as SkillActionType[]) {
         const entries = monster.tools
           .filter((tool) => (typeof tool.bonusAction === 'boolean' ? (tool.bonusAction ? 'Bonus Action' : 'Action') : defaultToolAction) === actionType)
-          .map((tool) => {
-            const bonus = tool.override
-              ? tool.overrideValue
-              : statModifier(monster.stats[tool.stat] ?? 10) +
-                (tool.proficient ? monster.proficiency : 0) +
-                (tool.expertise ? monster.proficiency : 0)
-            const mode = effectiveAdvantage(tool.advantage, tool.disadvantage)
-            const entry: SkillCheckEntry = {
-              key: tool.id,
-              label: tool.name,
-              stat: tool.stat,
-              passive: passiveScore(bonus, tool.advantage, tool.disadvantage),
-              bonus,
-              advantage: mode === 'advantage',
-              disadvantage: mode === 'disadvantage',
-              condition: tool.condition?.trim() ?? '',
-            }
-            return formatCheckEntry(entry, [tool.name])
-          })
+          .map(toolCheckEntry)
         if (entries.length > 0) {
-          const html = entries.join('; ')
+          const html = formatScoreGroups(entries)
           groups.push({
-            name: `Tools (${actionType})`,
-            scopeLabel: 'Tools',
+            name: `Use Tool (${actionType})`,
+            scopeLabel: 'Use Tool',
             subTypeLabel: actionType,
             skills: html,
             badges: [html],
@@ -1652,9 +1659,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       .filter((row) => placementFor(row.id, row.actionType) === targetPlacement)
       .map((row) => {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
-        const scores = formatGroupRow(row)
+        const formattedScores = formatGroupRow(row)
         const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
-        const formattedScores = scores.startsWith('(') ? scores : `(${scores})`
         if (options.web !== false) {
           return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
         }
@@ -1668,35 +1674,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return placementFor('tools', actionType) === targetPlacement
     })
     if (tools.length > 0) {
-      const toolEntries = tools.map((tool) => {
-        const bonus = tool.override
-          ? tool.overrideValue
-          : statModifier(monster.stats[tool.stat] ?? 10) +
-            (tool.proficient ? monster.proficiency : 0) +
-            (tool.expertise ? monster.proficiency : 0)
-        const mode = effectiveAdvantage(tool.advantage, tool.disadvantage)
-        const entry: SkillCheckEntry = {
-          key: tool.id,
-          label: tool.name,
-          stat: tool.stat,
-          passive: passiveScore(bonus, tool.advantage, tool.disadvantage),
-          bonus,
-          advantage: mode === 'advantage',
-          disadvantage: mode === 'disadvantage',
-          condition: tool.condition?.trim() ?? '',
-        }
-        return formatCheckEntry(entry, [tool.name])
-      })
-      if (toolEntries.length > 0) {
-        const label = targetPlacement === 'legendary' ? 'Use Tool (Costs 1 Action)' : 'Use Tool'
-        const scores = toolEntries.join('; ')
-        const formattedScores = `(${scores})`
-        const rider = (aop?.riders?.['tools'] ?? (editorPassives?.riders as any)?.['tools'] ?? '').trim()
-        if (options.web !== false) {
-          actionResults.push(buildPlateEntry(monster, { name: label, scores: formattedScores }, rider))
-        } else {
-          actionResults.push(`<b><i>${label} ${formattedScores}.</i></b>${rider ? ` ${rider}` : ''}`)
-        }
+      const label = targetPlacement === 'legendary' ? 'Use Tool (Costs 1 Action)' : 'Use Tool'
+      const formattedScores = formatScoreGroups(tools.map(toolCheckEntry))
+      const rider = (aop?.riders?.['tools'] ?? (editorPassives?.riders as any)?.['tools'] ?? '').trim()
+      if (options.web !== false) {
+        actionResults.push(buildPlateEntry(monster, { name: label, scores: formattedScores }, rider))
+      } else {
+        actionResults.push(`<b><i>${label} ${formattedScores}.</i></b>${rider ? ` ${rider}` : ''}`)
       }
     }
     return actionResults

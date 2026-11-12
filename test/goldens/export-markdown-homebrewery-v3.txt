@@ -17,13 +17,13 @@ ___
 ***Arcane Ward.*** Golden Export Fixture has a ward with 10 hit points.
 ### Actions
 :
-***Search (10/+0).***
+***Search (10/+0, Perception, Insight, Survival, Medicine).***
 :
-***Study (14/+4).***
+***Study (14/+4, Arcana, History, Investigation, Nature, Religion).***
 :
-***Influence (10/+0).***
+***Influence (10/+0, Animal Handling, Deception, Intimidation, Performance, Persuasion).***
 :
-***Hide (10/+0).***
+***Hide (10/+0, Acrobatics, Athletics, Sleight of Hand, Stealth).***
 :
 ***Force Lash.*** Each creature within 10 feet must make a DC 15 Strength saving throw.
 :

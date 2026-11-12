@@ -752,9 +752,9 @@
         <div v-if="spellPlate.consolidatedSummary" class="sb-row"><div class="sb-cell sb-grow">{{ spellPlate.consolidatedSummary }}</div></div>
         <div v-if="spellPlate.metamagic" class="sb-row sb-spell-row sb-spell-metamagic-row" :class="{ 'sb-striped': isMetamagicRowStriped, 'is-striped': isMetamagicRowStriped }">
           <div class="sb-cell sb-spells-inline sb-grow" style="border: none; padding: 2px 4px;" data-help="metamagic" tabindex="0">
-            <strong><span class="sb-metamagic-badge">{{ spellPlate.metamagic.points }}</span> Sorcery Points</strong>, regained on <em>{{ spellPlate.metamagic.refresh }}</em>.
+            <strong>{{ spellPlate.metamagic.points }}</strong> Sorcery Points, regained on <em>{{ spellPlate.metamagic.refresh }}</em>.
             <div v-for="meta in spellPlate.metamagic.options" :key="meta.name" class="sb-metamagic-option">
-              <strong v-if="meta.cost" class="sb-metamagic-badge" :aria-label="meta.cost + ' Sorcery Points'">{{ meta.cost }}</strong>
+              <strong v-if="meta.cost" :aria-label="meta.cost + ' Sorcery Points'">{{ meta.cost }}</strong>
               <span><template v-for="(part, index) in spellRuleParts(meta.effect || meta.name)" :key="index">
                 <strong v-if="part.kind === 'number'">{{ part.text }}</strong><em v-else-if="part.kind === 'term'">{{ part.text }}</em><template v-else>{{ part.text }}</template>
               </template></span>

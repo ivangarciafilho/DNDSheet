@@ -10,7 +10,12 @@ await browserProbe(async ({ evaluate }) => {
     monster.name = 'Rider Witness';
     monster.stats.WIS = 16;
     monster.skills = [{ key: 'MEDICINE', skill: { label: 'Medicine', stat: 'WIS' }, proficient: false,
-      expertise: false, override: true, overrideValue: 8 }];
+      expertise: false, override: true, overrideValue: 8 },
+    { key: 'INSIGHT', skill: { label: 'Insight', stat: 'WIS' }, override: true, overrideValue: 8, advantage: true }];
+    monster.tools = [
+      { id: 'smith', name: "Smith's Tools", stat: 'STR', override: true, overrideValue: 7 },
+      { id: 'weaver', name: "Weaver's Tools", stat: 'DEX', override: true, overrideValue: 1 },
+    ];
     monster.extendedHp.damageThreshold = 5;
     monster.extendedHp.damageReduction = 2;
     monster.hpRiderSubrows = { dt: true, dr: false };
@@ -56,11 +61,14 @@ await browserProbe(async ({ evaluate }) => {
     const meta = [...render.querySelectorAll('.sb-metamagic-option')];
     const resource = render.querySelector('.sb-spell-resource-row');
     const all = render.textContent;
-    const badges = [...render.querySelectorAll('.sb-metamagic-badge')];
-    const circular = badges.length === 3 && badges.every(badge => {
-      const rect = badge.getBoundingClientRect();
-      return Math.abs(rect.width - rect.height) < 0.1 && getComputedStyle(badge).borderRadius === '50%';
-    });
+    const numbers = [...render.querySelectorAll('.sb-spell-metamagic-row strong')];
+    const boldPoints = numbers.slice(0, 3).map(el => el.textContent).join(',') === '4,2,1' &&
+      !render.querySelector('.sb-metamagic-badge');
+    const groupOrder = all.includes('(13/+3, Perception, Survival), (18/+8, Medicine), (23/+8, Insight') &&
+      all.includes('(10/+0, Arcana, History, Investigation, Nature, Religion)') &&
+      all.includes('(10/+0, Acrobatics, Athletics, Sleight of Hand, Stealth)') &&
+      all.includes('(10/+0, Deception, Intimidation, Performance, Persuasion), (13/+3, Animal Handling)') &&
+      all.includes("(11/+1, Weaver's Tools), (17/+7, Smith's Tools)");
     const controlsPresent = Object.keys(schedules).every(key => document.querySelectorAll(
       '[data-defense-schedule="' + key + '"] .q-select').length === 2);
     const scheduled = ['Once per Long Rest: As a Reaction: DT 5',
@@ -80,11 +88,11 @@ await browserProbe(async ({ evaluate }) => {
       authored, editedSchedule,
       scopeText: Object.fromEntries(scopes.map(scope => [scope, all.includes('Witness ' + scope)])),
       cadence: all.includes('Once per round: As a Reaction: Witness ac'),
-      groups: all.includes('(13/+3, Perception, Insight, Survival), (18/+8, Medicine)'),
+      groups: groupOrder,
       skillText: all.slice(all.indexOf('13/+3'), all.indexOf('13/+3') + 120),
       splitBefore, splitAfter, dt: monster.hpRiderSubrows.dt, dr: monster.hpRiderSubrows.dr,
       options: meta.length, separateRows: meta[1]?.getBoundingClientRect().top > meta[0]?.getBoundingClientRect().top,
-      circular, scheduled, controlsPresent, number: [...resource.querySelectorAll('strong')].map(el => el.textContent),
+      boldPoints, scheduled, controlsPresent, number: [...resource.querySelectorAll('strong')].map(el => el.textContent),
       terms: [...resource.querySelectorAll('em')].map(el => el.textContent),
       optionTerms: [...meta[0].querySelectorAll('em')].map(el => el.textContent),
     };
@@ -93,7 +101,7 @@ await browserProbe(async ({ evaluate }) => {
   assert.ok(result.groups, JSON.stringify(result))
   assert.ok(result.dt && result.dr && result.splitBefore.some(text => text.includes('DT 5')) &&
     result.splitBefore.every(text => !text.includes('DR 2')) && result.splitAfter.some(text => text.includes('DR 2')), JSON.stringify(result))
-  assert.ok(result.options === 2 && result.separateRows && result.circular && result.scheduled && result.controlsPresent && result.editedSchedule, JSON.stringify(result))
+  assert.ok(result.options === 2 && result.separateRows && result.boldPoints && result.scheduled && result.controlsPresent && result.editedSchedule, JSON.stringify(result))
   assert.ok(result.number.includes('5') && result.terms.includes('Short Rest') && result.terms.includes('Cleric') &&
     result.optionTerms.includes('Bonus Action'), JSON.stringify(result))
   console.log('Rider cadence and timing, independent HP rows, grouped skill scores, and spellcasting typography passed.')

@@ -1940,17 +1940,3 @@
   gap: .35em;
   margin-inline-start: 1em;
 }
-
-.sb-metamagic-badge {
-  display: inline-grid;
-  place-items: center;
-  box-sizing: border-box;
-  inline-size: 1.6em;
-  block-size: 1.6em;
-  flex: none;
-  border-radius: 50%;
-  background: var(--sb-head-bg);
-  color: var(--sb-head-ink);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}

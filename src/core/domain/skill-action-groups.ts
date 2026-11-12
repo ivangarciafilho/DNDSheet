@@ -216,13 +216,13 @@ export function computeSkillGroupLayout(params: SkillGroupLayoutParams): SkillGr
 
     const entries = sameEconomy.map(toEntry).filter(e => differsFromBase(e, base))
     const distinct = new Set([...entries, ...otherEconomy].map(skill => normalizeSkillKey(skill.key)))
-    rows.push({
+    const baseSkillKeys = group.skills.filter(key => !distinct.has(key))
+    if (baseSkillKeys.length || entries.length) rows.push({
       id: group.id,
       label: group.label,
       actionType,
       stat: group.stat,
-      base,
-      ...(members.length ? { baseSkillKeys: group.skills.filter(key => !distinct.has(key)) } : {}),
+      ...(baseSkillKeys.length ? { base, baseSkillKeys } : {}),
       entries,
       tip: group.tip,
     })
