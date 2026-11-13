@@ -7,7 +7,7 @@
         <q-select v-model="rider.cadence" :options="BASIC_RIDER_CADENCES" emit-value map-options clearable dense outlined label="Cadence" class="col-12 col-sm-4" />
         <q-select v-model="rider.timing" :options="BASIC_RIDER_TIMINGS" clearable dense outlined label="Timing" class="col-12 col-sm-4" />
         <q-btn flat dense icon="delete_outline" color="negative" aria-label="Remove rider" @click="rows.splice(index, 1)" />
-        <q-input v-model="rider.effect" autogrow dense outlined label="Effect" class="col-12" />
+        <mechanic-text-editor v-model="rider.effect" autogrow dense outlined label="Effect" class="col-12" />
       </div>
       <q-btn flat dense no-caps icon="add" label="Add rider" @click="addRider" />
     </div>

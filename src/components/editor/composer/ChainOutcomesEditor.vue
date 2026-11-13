@@ -82,7 +82,7 @@
         <!-- A11.5 recipient, references and presentation -->
         <div class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-5">
-            <q-input v-help="'Who this result applies to, e.g. “each creature in the area”.'" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(outcome.id, { recipient: String(value ?? '') || undefined })" />
+            <mechanic-text-editor scope="action" v-help="'Who this result applies to, e.g. “each creature in the area”.'" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(outcome.id, { recipient: String(value ?? '') || undefined })" />
           </div>
           <div class="col-12 col-sm-4">
             <q-select v-help="'Results this one builds on, e.g. “half as much” on a success.'" :model-value="outcome.refs ?? []" :options="refOptions(outcome.id)" multiple emit-value map-options dense outlined dark label="Builds on" @update:model-value="(value: string[]) => setOutcome(outcome.id, { refs: value })" />

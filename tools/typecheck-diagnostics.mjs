@@ -13,7 +13,10 @@ export function parseDiagnostics(output) {
 }
 // Compiler display truncation counts describe omitted shape members, not the error itself.
 // Normalize this exact compiler token only; preserve all visible types and diagnostics.
-const normalizeTruncationCounts = message => message.replace(/\.\.\. \d+ more \.\.\./g, '... <count> more ...')
+// TypeScript prints string-literal unions in internal type-id order, which shifts when unrelated
+// types change; the same diagnostic must compare equal, so such unions are sorted.
+const sortLiteralUnions = message => message.replace(/'((?:"[^"]*"\s*\|\s*)+"[^"]*")'/g, (_m, union) => `'${union.split(/\s*\|\s*/).sort().join(' | ')}'`)
+const normalizeTruncationCounts = message => sortLiteralUnions(message.replace(/\.\.\. \d+ more \.\.\./g, '... <count> more ...'))
 export function compareDiagnostics(current, baseline) {
   const key = diagnostic => JSON.stringify([diagnostic.file, diagnostic.code, normalizeTruncationCounts(diagnostic.message)])
   const remaining = new Map()

@@ -1,3 +1,7 @@
+## Build 242 — Unified text field
+
+The [Build 242 packet](DNDSheet-Build242-Unified-Text-Field.md) delivers H24's core: one macro catalog, one standard text field (plain, rich and formula-aware, with scoped suggestions) and resolution on the stat block. It also advances A10.1 (catalog) and A10.5 (menus generated from the catalog). The workload is unchanged at 174 complete and 95 open; H24 stays open for caret autocomplete in rich mode and export resolution.
+
 ## Build 241 — Statblock wiring repairs
 
 The [Build 241 packet](DNDSheet-Build241-Statblock-Wiring-Repairs.md) covers italic skill names, plates that flow under their name, the reaction trigger leading (or trailing) its text, and the regeneration, mortality and language wiring. It adds open item H24 (unified rich-text and formula input), so the normalized workload moves from 94 to 95 open. Next: H24 classification, then H14.

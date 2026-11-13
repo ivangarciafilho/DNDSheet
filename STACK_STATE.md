@@ -1,3 +1,7 @@
+## Build 242 — unified text field
+
+One macro catalog feeds a standard text field: plain by default, rich on demand, `{` suggestions scoped to the field, a live preview and an unknown-token warning. Prose editors get one Insert menu, and stat-line text resolves formulas. Core 606 tests, typecheck 505 diagnostics with 0 new. See docs/roadmap/DNDSheet-Build242-Unified-Text-Field.md.
+
 ## Build 241 — statblock wiring repairs
 
 Skill names are italic and unbolded. Single-cell plates and skill groups flow under their name. The reaction trigger leads the text, with a before/after option and its own compositor row. Regeneration, mortality and language output are rewired. Core 600 tests, typecheck 505 diagnostics with 0 new. See docs/roadmap/DNDSheet-Build241-Statblock-Wiring-Repairs.md.

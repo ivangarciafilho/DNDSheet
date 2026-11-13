@@ -21,7 +21,7 @@
       </label>
       <p class="text-caption q-mb-none">{{ selectedHelp }}</p>
     </template>
-    <q-input v-else-if="modelValue.mode === 'custom'" :model-value="modelValue.custom" dark outlined dense label="Custom recharge text" v-help="'Wording printed instead of the standard recharge tag.'" data-usage-custom @update:model-value="value => update('custom', value ?? '')" />
+    <mechanic-text-editor v-else-if="modelValue.mode === 'custom'" :model-value="modelValue.custom" dark outlined dense label="Custom recharge text" v-help="'Wording printed instead of the standard recharge tag.'" data-usage-custom @update:model-value="(value: string) => update('custom', value ?? '')" />
     <p class="text-caption q-mb-none">Apply replaces recharge and limited-use settings. Other entry data is kept.</p>
   </div>
 </template>

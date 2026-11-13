@@ -534,10 +534,12 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const quals: string[] = []
     const phase = phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
     if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase" tabindex="0">${phase}</span>`)
-    if (spec.usage?.trim()) {
-      const helpKey = statblockUsageHelpKey(spec.usage)
+    // Authored tags ("Recharges after {PB} rounds") resolve like any other mechanic text.
+    const printedUsage = spec.usage?.includes('{') ? processMonsterTokens(spec.usage, monster) : spec.usage
+    if (printedUsage?.trim()) {
+      const helpKey = statblockUsageHelpKey(printedUsage)
       const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
-      quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${spec.usage.trim()}</span>`)
+      quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${printedUsage.trim()}</span>`)
     }
     const classification = spec.discipline?.trim()
     const comps = Array.isArray(spec.components) && spec.components.length > 0

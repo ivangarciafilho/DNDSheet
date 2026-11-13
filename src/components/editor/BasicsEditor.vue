@@ -277,7 +277,7 @@
             monster.lairCr = value ?? -1
           }"
         />
-        <q-input
+        <mechanic-text-editor
           v-model="monster.lairCrNote"
           :label="$t('monster.lairCrNote')"
           :disable="monster.lairCr === -1"
@@ -447,7 +447,7 @@
             </q-btn>
           </template>
         </formula-field>
-        <q-input
+        <mechanic-text-editor
           v-model="monster.ACType"
           :label="$t('monster.acType')"
           class="col-12 col-sm-5"

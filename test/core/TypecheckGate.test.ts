@@ -67,3 +67,10 @@ test('compiler omitted-member counts do not create diagnostic churn', () => {
   assert.equal(compareDiagnostics([diagnostic(after[0].message.replace("'missing'", "'different'"))], before).added.length, 1)
   assert.equal(compareDiagnostics([diagnostic('Expected 74 arguments')], [diagnostic('Expected 73 arguments')]).added.length, 1)
 })
+
+test('a reordered string-literal union is the same diagnostic, a changed one is new', () => {
+  const at = (message: string) => ({ file: 'src/a.vue', code: 'TS2322', message })
+  const baseline = [at(`Type 'string' is not assignable to type '"all" | "legendary" | "reaction" | "trait"'.`)]
+  assert.equal(compareDiagnostics([at(`Type 'string' is not assignable to type '"all" | "legendary" | "trait" | "reaction"'.`)], baseline).added.length, 0)
+  assert.equal(compareDiagnostics([at(`Type 'string' is not assignable to type '"all" | "legendary" | "trait" | "lair"'.`)], baseline).added.length, 1)
+})

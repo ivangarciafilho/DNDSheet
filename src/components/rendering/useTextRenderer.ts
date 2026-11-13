@@ -26,6 +26,7 @@ import { cleanPunctuation, formatDistanceUnit } from 'src/core/domain/number-gra
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed } from 'vue'
+import type { ComputedRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
   renderBonus,
@@ -1967,32 +1968,42 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
   })
 
+  // Stat-line text (notes, riders, badges) resolves the same formulas and macros as prose:
+  // any field may hold {SPELL_DC}, {2d6 + STR_MOD} or the author's own variables.
+  const resolveInline = (value: unknown, depth = 0): unknown => {
+    if (typeof value === 'string') return value.includes('{') ? processTokens(value, undefined as never, monster, 'none') : value
+    if (depth > 4 || !value || typeof value !== 'object') return value
+    if (Array.isArray(value)) return value.map((item) => resolveInline(item, depth + 1))
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, resolveInline(item, depth + 1)]))
+  }
+  const resolved = <T>(source: ComputedRef<T>) => computed(() => resolveInline(source.value) as T)
+
   return {
     stats,
     acInvulnerability,
-    acBadges,
-    hp,
-    hpBadges,
-    hpBadgeEntries,
+    acBadges: resolved(acBadges),
+    hp: resolved(hp),
+    hpBadges: resolved(hpBadges),
+    hpBadgeEntries: resolved(hpBadgeEntries),
     saves,
-    speeds,
-    speedBadges,
-    speedBaseBadges,
-    speedRiderBadges,
-    skills,
-    tools,
-    vulnerabilities,
-    conditionVulnerabilities,
-    resistances,
-    conditionResistances,
-    immunities,
-    conditions,
-    cascadingDefenses,
-    senses,
-    sensesBadges,
-    languages,
-    languagesBadges,
-    cr,
+    speeds: resolved(speeds),
+    speedBadges: resolved(speedBadges),
+    speedBaseBadges: resolved(speedBaseBadges),
+    speedRiderBadges: resolved(speedRiderBadges),
+    skills: resolved(skills),
+    tools: resolved(tools),
+    vulnerabilities: resolved(vulnerabilities),
+    conditionVulnerabilities: resolved(conditionVulnerabilities),
+    resistances: resolved(resistances),
+    conditionResistances: resolved(conditionResistances),
+    immunities: resolved(immunities),
+    conditions: resolved(conditions),
+    cascadingDefenses: resolved(cascadingDefenses),
+    senses: resolved(senses),
+    sensesBadges: resolved(sensesBadges),
+    languages: resolved(languages),
+    languagesBadges: resolved(languagesBadges),
+    cr: resolved(cr),
     traits,
     classSpellcastingPreamble,
     classSpellcastingWarlockLabel,
@@ -2013,14 +2024,14 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     lairActions,
     regionalEffectPreamble,
     regionalEffects,
-    inventory,
-    initiative,
+    inventory: resolved(inventory),
+    initiative: resolved(initiative),
     initiativeCells,
     statsAndSavesByKey,
     immunitiesAndConditions,
-    actionPassives,
-    actionPassivesGroups,
-    groupedTraits,
+    actionPassives: resolved(actionPassives),
+    actionPassivesGroups: resolved(actionPassivesGroups),
+    groupedTraits: resolved(groupedTraits),
     villainActionsList,
     bloodiedActionsList,
     reactiveActionsList,

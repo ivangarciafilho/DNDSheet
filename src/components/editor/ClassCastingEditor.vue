@@ -101,7 +101,7 @@
     </q-expansion-item>
     <q-expansion-item dense dense-toggle label="Spellcasting presentation">
       <div class="q-pa-sm">
-        <q-input v-model="monster.spellcasting.notes" :label="$t('monster.spellcasting.notes')" dense outlined dark />
+        <mechanic-text-editor v-model="monster.spellcasting.notes" scope="spell" :label="$t('monster.spellcasting.notes')" dense outlined dark />
         <q-checkbox v-model="monster.spellcasting.useCustomClassPreamble" label="Custom spellcasting introduction" dense />
         <monster-text-editor v-if="monster.spellcasting.useCustomClassPreamble" :field="monster.spellcasting.customClassPreamble" i18n-label-key="editor.spellcasting.slot.preamble" token-category="spell" :show-reset="true" @update:model-value="value => monster.spellcasting.customClassPreamble=value" @reset="monster.spellcasting.customClassPreamble=$t('presets.classSpellcasting')" />
         <div class="row q-col-gutter-xs">

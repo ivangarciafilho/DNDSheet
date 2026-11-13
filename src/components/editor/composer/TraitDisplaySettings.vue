@@ -5,9 +5,9 @@
       <q-checkbox :model-value="trait.customPreamble" dark dense label="Description supplies its own heading" class="col-12 col-sm-6" @update:model-value="(value) => update('customPreamble', value)" />
       <div v-if="trait.customPreamble" class="col-12 text-caption">The preview prints your description without an automatic name or cadence heading.</div>
       <q-checkbox :model-value="!!trait.renderInRechargeSection" dark dense label="Group under a recharge heading" class="col-12 col-sm-6" @update:model-value="(value) => update('renderInRechargeSection', value)" />
-      <q-input v-if="trait.renderInRechargeSection" :model-value="trait.rechargeSection" dense outlined dark label="Recharge heading" class="col-12 col-sm-6" @update:model-value="(value) => update('rechargeSection', value)" />
+      <mechanic-text-editor v-if="trait.renderInRechargeSection" :model-value="trait.rechargeSection" dense outlined dark label="Recharge heading" class="col-12 col-sm-6" @update:model-value="(value: string) => update('rechargeSection', value)" />
       <q-checkbox :model-value="!!trait.isConditional" dark dense label="Group under a conditional heading" class="col-12 col-sm-6" @update:model-value="(value) => update('isConditional', value)" />
-      <q-input :model-value="trait.conditionalTrigger" dense outlined dark label="Condition / trigger" hint="Also included in the generated tag; clear to remove it" class="col-12 col-sm-6" @update:model-value="(value) => update('conditionalTrigger', value)" />
+      <mechanic-text-editor :model-value="trait.conditionalTrigger" dense outlined dark label="Condition / trigger" hint="Also included in the generated tag; clear to remove it" class="col-12 col-sm-6" @update:model-value="(value: string) => update('conditionalTrigger', value)" />
       <div v-if="trait.isConditional && trait.renderInRechargeSection" class="col-12 text-caption">Conditional grouping takes precedence over the recharge heading on the sheet.</div>
       <div class="col-12">
         <cr-annotation-card v-if="trait.crAnnotation" field="traits" :index="index" />

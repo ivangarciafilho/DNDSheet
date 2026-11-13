@@ -36,7 +36,7 @@
         <div class="chain-editor__title">{{ cell.label }}</div>
 
         <mechanic-text-editor v-if="kind === 'text' && cell.id === 'trigger'" v-model="draft" dense outlined dark :label="cell.label" />
-        <q-input v-else-if="kind === 'text'" v-model="draft" dense outlined dark autofocus :label="cell.label" :hint="hint" />
+        <mechanic-text-editor v-else-if="kind === 'text'" v-model="draft" scope="action" dense outlined dark autofocus :label="cell.label" :hint="hint" />
 
         <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input

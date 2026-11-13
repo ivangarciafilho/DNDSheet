@@ -15,7 +15,7 @@
       </select>
     </label>
     <q-input :model-value="modelValue.rechargeCount" type="number" min="0" max="999" dense outlined dark label="Recharge count override" v-help="'Number shown in the recharge tag instead of the computed one.'" hint="Leave blank to use the limited-use count" @update:model-value="(value) => update('rechargeCount', value ?? '')" />
-    <q-input :model-value="modelValue.rechargeTagOverride" dense outlined dark label="Printed tag override" v-help="'Text printed in place of the usage tag.'" hint="Replaces the generated tag, including any conditional text" @update:model-value="(value) => update('rechargeTagOverride', String(value ?? ''))" />
+    <mechanic-text-editor :model-value="modelValue.rechargeTagOverride" dense outlined dark label="Printed tag override" v-help="'Text printed in place of the usage tag.'" hint="Replaces the generated tag, including any conditional text" @update:model-value="(value: string) => update('rechargeTagOverride', String(value ?? ''))" />
     <p class="text-caption q-ma-none">Clear removes uses and cadence overrides. Conditional grouping stays in Trait display settings.</p>
   </div>
 </template>

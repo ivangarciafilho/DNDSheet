@@ -26,7 +26,7 @@
       </div>
     </section>
     <q-btn flat dense no-caps icon="add" label="Add multiattack option" data-multiattack-add @click="monster.addMultiattack()" />
-    <q-input v-model="monster.multiattackOptions.postscript" dark outlined dense class="q-my-sm" label="Multiattack postscript" hint="Printed after the options. Shared by every option." data-multiattack-postscript />
+    <mechanic-text-editor scope="action" v-model="monster.multiattackOptions.postscript" dark outlined dense class="q-my-sm" label="Multiattack postscript" hint="Printed after the options. Shared by every option." data-multiattack-postscript />
     <q-toggle :model-value="monster.multiattackOptions.useCustomRenderer" dark label="Use custom multiattack text" @update:model-value="toggleCustom" />
     <div v-if="monster.multiattackOptions.useCustomRenderer" class="text-caption text-amber-3">Custom text controls the stat block. Your option references remain saved.</div>
     <monster-text-editor v-if="monster.multiattackOptions.useCustomRenderer" :field="monster.multiattackOptions.customMultiattackRenderer" i18n-label-key="editor.multiattack.label" :show-reset="true" @update:model-value="(value: string) => monster.multiattackOptions.customMultiattackRenderer = value" @reset="monster.multiattackOptions.customMultiattackRenderer = defaultCustomText" />

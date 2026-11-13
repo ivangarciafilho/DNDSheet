@@ -16,203 +16,37 @@
           {{ displayTitle }}
         </div>
       </template>
-      <template #saves>
-        <q-btn-dropdown
-          ref="saveTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          :label="$t('editor.statSave')"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in saveTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-              <q-item-section side class="text-caption text-amber-3">{{ resolveTokenPreview(token.token) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #attacks>
-        <q-btn-dropdown
-          ref="attackTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          :label="$t('editor.attackMod')"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in attackTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-              <q-item-section side class="text-caption text-cyan-3">{{ resolveTokenPreview(token.token) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #abilities>
-        <q-btn-dropdown
-          ref="abilityTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          label="Stats &amp; Mods"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in abilityTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-              <q-item-section side class="text-caption text-green-3">{{ resolveTokenPreview(token.token) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #formulas>
-        <q-btn-dropdown
-          ref="formulaTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          label="Dice &amp; Tiers"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in formulaTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-              <q-item-section side class="text-caption text-orange-3">{{ resolveTokenPreview(token.token) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #delivery>
-        <q-btn-dropdown
-          ref="deliveryTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          label="Delivery"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in deliveryTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #conditions>
-        <q-btn-dropdown
-          ref="conditionTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          label="Riders"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in conditionTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #monster-tokens>
-        <q-btn-dropdown
-          ref="monsterTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          :label="$t('editor.monsterToken')"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in monsterTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-              <q-item-section side class="text-caption text-purple-3">{{ resolveTokenPreview(token.token) }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </template>
-      <template #context-tokens>
-        <q-btn-dropdown
-          v-if="contextTokens != null && contextTokenLabel"
-          ref="contextTokenRef"
-          dense
-          no-caps
-          no-wrap
-          unelevated
-          :label="$t(contextTokenLabel)"
-          size="sm"
-        >
-          <q-list dense>
-            <q-item
-              v-for="token in contextTokens"
-              :key="token.token"
-              clickable
-              @click="add(token.token)"
-            >
-              <q-item-section>{{ token.label }}</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
+      <template #macros>
+        <q-btn dense no-caps no-wrap unelevated size="sm" icon="data_object" label="Insert" :aria-label="`Insert a formula or macro${displayTitle ? ' into ' + displayTitle : ''}`" data-macro-browse @click="browse = true">
+          <q-tooltip>Formulas, references, rolls and macros, filtered to what this text can use.</q-tooltip>
+          <macro-browse-menu v-model="browse" :scope="scope" @pick="(entry: MacroEntry) => add(entry.insert)" />
+        </q-btn>
       </template>
     </q-editor>
+    <div v-if="unknown.length" class="text-caption q-mx-xs" style="color: #f2a65a" data-macro-preview aria-live="polite">
+      Not recognised: {{ unknown.join(', ') }}
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue'
-import { QBtnDropdown } from 'quasar'
 import { MonsterContextType } from '../rendering/useProcessTokens'
-import { useTokens } from './useTokens'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useProcessTokens } from '../rendering/useProcessTokens'
+import { catalogFor, unresolvedMacros } from 'src/core/domain/macro-catalog'
+import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
+import MacroBrowseMenu from './MacroBrowseMenu.vue'
+
+const SCOPE_OF: Record<MonsterContextType, MacroScope> = {
+  none: 'prose', trait: 'trait', attack: 'attack', spell: 'spell', action: 'action',
+  multiattack: 'action', legendary: 'legendary', mythic: 'legendary', reaction: 'reaction',
+}
 
 export default defineComponent({
   name: 'MonsterTextEditor',
+  components: { MacroBrowseMenu },
   props: {
     field: { required: false, type: String, default: '' },
     modelValue: { type: String, default: undefined },
@@ -232,17 +66,9 @@ export default defineComponent({
     const { t } = useI18n()
     const monster = useMonsterStore()
     const editorRef = ref<any>(null)
-    const monsterTokenRef = ref<QBtnDropdown | null>(null)
-    const attackTokenRef = ref<QBtnDropdown | null>(null)
-    const saveTokenRef = ref<QBtnDropdown | null>(null)
-    const contextTokenRef = ref<QBtnDropdown | null>(null)
-    const abilityTokenRef = ref<QBtnDropdown | null>(null)
-    const formulaTokenRef = ref<QBtnDropdown | null>(null)
-    const deliveryTokenRef = ref<QBtnDropdown | null>(null)
-    const conditionTokenRef = ref<QBtnDropdown | null>(null)
-
-    const tokens = useTokens()
+    const browse = ref(false)
     const { processTokens: renderTokens } = useProcessTokens()
+    const scope = computed<MacroScope>(() => SCOPE_OF[props.tokenCategory] ?? 'prose')
 
     const displayTitle = computed(() => {
       if (props.label) return props.label
@@ -260,7 +86,7 @@ export default defineComponent({
       ['title'],
       ['bold', 'italic', 'underline'],
       ['undo', 'redo'],
-      ['saves', 'attacks', 'abilities', 'formulas', 'delivery', 'conditions', 'monster-tokens', 'context-tokens'],
+      ['macros'],
     ])
 
     if (props.showReset) {
@@ -281,16 +107,7 @@ export default defineComponent({
 
     const add = (token: string) => {
       const edit = editorRef.value as any
-
-      monsterTokenRef.value?.hide()
-      saveTokenRef.value?.hide()
-      attackTokenRef.value?.hide()
-      contextTokenRef.value?.hide()
-      abilityTokenRef.value?.hide()
-      formulaTokenRef.value?.hide()
-      deliveryTokenRef.value?.hide()
-      conditionTokenRef.value?.hide()
-
+      browse.value = false
       if (edit && edit.caret) {
         edit.caret.restore()
         edit.runCmd('insertHTML', `${token}`)
@@ -301,61 +118,22 @@ export default defineComponent({
       }
     }
 
-    // Live value of a token, rendered exactly as the stat block renders it (markup stripped)
-    const resolveTokenPreview = (tokenStr: string): string => {
-      try {
-        const rendered = renderTokens(tokenStr, undefined, monster, 'none')
-        return String(rendered ?? '').replace(/<[^>]*>/g, '').trim() || tokenStr
-      } catch {
-        return tokenStr
-      }
-    }
-
-    const contextTokens = computed(() => {
-      if (props.tokenCategory === 'trait') {
-        return tokens.traitTokens.value
-      } else if (props.tokenCategory === 'spell') {
-        return tokens.spellTokens.value
-      } else if (props.tokenCategory === 'attack') {
-        return tokens.attackDamageTokens.value
-      } else if (props.tokenCategory === 'action') {
-        return tokens.actionTokens.value
-      } else if (props.tokenCategory === 'legendary') {
-        return tokens.legendaryTokens.value
-      }
-      return null
-    })
-
-    const contextTokenLabel = computed(() => {
-      if (props.tokenCategory === 'trait') {
-        return 'editor.trait'
-      } else if (props.tokenCategory === 'spell') {
-        return 'editor.spellcasting.label'
-      } else if (props.tokenCategory === 'attack') {
-        return 'editor.attack.customRenderer'
-      } else if (props.tokenCategory === 'action') {
-        return 'editor.action.tokenLabel'
-      } else if (props.tokenCategory === 'legendary') {
-        return 'editor.legendary.label'
-      }
-      return ''
+    // Tokens the stat block cannot resolve, ignoring context tokens resolved per entry at render time.
+    const unknown = computed(() => {
+      const source = String((props.modelValue !== undefined ? props.modelValue : props.field) ?? '')
+      if (!source.includes('{')) return []
+      const contextual = new Set(catalogFor({ scope: scope.value }).filter(entry => entry.kind === 'context').map(entry => entry.insert.toLowerCase()))
+      let rendered = source
+      try { rendered = String(renderTokens(source, undefined as never, monster, 'none') ?? '') } catch { rendered = source }
+      return unresolvedMacros(rendered).filter(token => !contextual.has(token.toLowerCase()))
     })
 
     return {
-      monsterTokenRef,
-      attackTokenRef,
-      saveTokenRef,
-      contextTokenRef,
-      abilityTokenRef,
-      formulaTokenRef,
-      deliveryTokenRef,
-      conditionTokenRef,
       editorRef,
-      resolveTokenPreview,
+      browse,
+      scope,
       add,
-      ...tokens,
-      contextTokens,
-      contextTokenLabel,
+      unknown,
       displayTitle,
       throttledUpdate,
       toolbarOptions,

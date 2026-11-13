@@ -3,7 +3,8 @@
     <q-card class="bg-grey-10 text-white rounded-borders" style="border: 1px solid rgba(255, 255, 255, 0.12);">
       <q-card-section>
         <div class="row">
-          <q-input
+          <mechanic-text-editor
+            scope="spell"
             v-model="monster.spellcasting.atWillNotes"
             class="col-12 q-pa-sm q-mb-sm"
             bottom-slots
@@ -36,7 +37,7 @@
                 }}</q-tooltip></q-btn
               >
             </template>
-          </q-input>
+          </mechanic-text-editor>
           <q-slide-transition>
             <div
               v-show="monster.spellcasting.useCustomInnatePreamble"
