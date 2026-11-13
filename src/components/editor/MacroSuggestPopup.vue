@@ -1,7 +1,7 @@
 <template>
   <teleport to="body">
-    <div v-if="open" class="macro-suggest-popup q-menu" :style="{ left: x + 'px', top: y + 'px' }" role="listbox" :aria-label="label" data-macro-suggest data-macro-suggest-rich>
-      <div v-for="(entry, index) in entries" :key="entry.insert" class="macro-suggest-popup__item" :class="{ 'is-active': index === active }" role="option" :aria-selected="index === active" @mousedown.prevent="$emit('pick', entry)">
+    <div v-if="open" :id="listId" class="macro-suggest-popup q-menu" :style="{ left: x + 'px', top: y + 'px' }" role="listbox" :aria-label="label" data-macro-suggest data-macro-suggest-rich>
+      <div v-for="(entry, index) in entries" :id="`${listId}-opt-${index}`" :key="entry.insert" class="macro-suggest-popup__item" :class="{ 'is-active': index === active }" role="option" :aria-selected="index === active" @mousedown.prevent="$emit('pick', entry)">
         <div class="macro-suggest-label">{{ entry.label }}</div>
         <div class="macro-suggest-popup__caption"><code>{{ entry.insert }}</code> · {{ entry.group }}</div>
       </div>
@@ -17,6 +17,7 @@ export default defineComponent({
   name: 'MacroSuggestPopup',
   props: {
     open: { type: Boolean, default: false },
+    listId: { type: String, default: 'macro-suggest' },
     entries: { type: Array as PropType<MacroEntry[]>, default: () => [] },
     active: { type: Number, default: 0 },
     x: { type: Number, default: 0 },

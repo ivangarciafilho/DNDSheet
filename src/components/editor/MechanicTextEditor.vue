@@ -11,8 +11,8 @@
         <q-btn type="button" flat dense size="sm" icon="format_bold" label="Format" :disable="Boolean($attrs.disable || $attrs.readonly)" :aria-label="'Format '+label" @click.stop="formatting = true"><q-tooltip>Format this text</q-tooltip></q-btn>
       </template>
       <q-menu v-model="suggestOpen" no-focus no-refocus fit anchor="bottom left" self="top left" class="macro-suggest-menu" data-macro-suggest>
-        <q-list dense role="listbox" :aria-label="'Suggestions for '+label">
-          <q-item v-for="(entry, index) in suggestions" :key="entry.insert" clickable dense role="option" :aria-selected="index === active" :active="index === active" active-class="macro-suggest-active" @mousedown.prevent="pick(entry)">
+        <q-list :id="listId" dense role="listbox" :aria-label="'Suggestions for '+label">
+          <q-item v-for="(entry, index) in suggestions" :id="`${listId}-opt-${index}`" :key="entry.insert" clickable dense role="option" :aria-selected="index === active" :active="index === active" active-class="macro-suggest-active" @mousedown.prevent="pick(entry)">
             <q-item-section>
               <q-item-label class="macro-suggest-label">{{ entry.label }}</q-item-label>
               <q-item-label caption><code>{{ entry.insert }}</code> · {{ entry.group }}</q-item-label>
@@ -33,7 +33,7 @@
         </div>
       </div>
       <q-editor ref="editorRef" :disable="Boolean($attrs.disable)" :readonly="Boolean($attrs.readonly)" :model-value="editorValue" :toolbar="toolbar" min-height="3rem" :content-class="'mechanic-text-editor__content'" :aria-label="label" @keydown.stop @keyup.stop @update:model-value="value => emitValue(mechanicRichHtml(value))" />
-      <macro-suggest-popup :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="'Suggestions for '+label" @pick="richSuggest.pick" />
+      <macro-suggest-popup :list-id="richSuggest.listId" :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="'Suggestions for '+label" @pick="richSuggest.pick" />
     </div>
     <div v-if="preview" class="mechanic-text-editor__preview" :class="{ 'is-unresolved': preview.unknown.length > 0 }" data-macro-preview aria-live="polite">
       <template v-if="preview.unknown.length">Not recognised: {{ preview.unknown.join(', ') }}</template>
@@ -54,6 +54,7 @@ import { useProcessTokens } from '../rendering/useProcessTokens'
 import MacroBrowseMenu from './MacroBrowseMenu.vue'
 import MacroSuggestPopup from './MacroSuggestPopup.vue'
 import { useRichMacroAutocomplete } from './useRichMacroAutocomplete'
+import { nextListId, syncComboboxAria } from './comboboxAria'
 
 // Plain text by default; formulas and macros resolve silently in the preview and on the stat block.
 export default defineComponent({
@@ -105,6 +106,8 @@ export default defineComponent({
 
     const suggestOpen = ref(false), active = ref(0), open = ref<{ query: string; start: number } | undefined>()
     const suggestions = ref<MacroEntry[]>([])
+    const listId = nextListId()
+    watch([suggestOpen, active, rich], () => void nextTick(() => syncComboboxAria(rich.value ? null : nativeInput(), suggestOpen.value, listId, active.value)))
     const closeSuggest = () => { suggestOpen.value = false; open.value = undefined }
     const refreshSuggest = (text: string) => {
       const el = nativeInput()
@@ -157,7 +160,7 @@ export default defineComponent({
     watch([rich, editorRef], () => void nextTick(() => { contentEl.value = rich.value ? editorRef.value?.getContentEl?.() ?? null : null }), { immediate: true })
     const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({ scope: props.scope, query, limit: 8, ...custom() }))
 
-    return { richSuggest, formatting, browse, rich, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
+    return { listId, richSuggest, formatting, browse, rich, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
   },
 })
 </script>

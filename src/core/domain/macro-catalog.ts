@@ -135,6 +135,21 @@ export function insertMacro(text: string, start: number, caret: number, insert: 
   return { text: next, caret: start + insert.length }
 }
 
+/** The identifier being typed at the caret in a bare formula ("PB + STR_M"), if any. */
+export function openIdentifierAt(text: string, caret: number): { query: string; start: number } | undefined {
+  const match = /([A-Za-z_][A-Za-z0-9_]*)$/.exec(text.slice(0, caret))
+  return match ? { query: match[1], start: caret - match[1].length } : undefined
+}
+
+/** Formula references for bare formula fields: inserted without braces, limited to what `allow` accepts. */
+export function formulaReferences(query: string, allow: (id: string) => boolean = () => true, limit = 8): MacroEntry[] {
+  return catalogFor({ scope: 'mechanic', query })
+    .filter((entry) => entry.kind === 'reference')
+    .map((entry) => ({ ...entry, insert: entry.insert.slice(1, -1) }))
+    .filter((entry) => allow(entry.insert))
+    .slice(0, limit)
+}
+
 /** Braced tokens left unresolved after rendering (shown as a quiet warning in editors). */
 export function unresolvedMacros(rendered: string): string[] {
   return [...new Set(String(rendered ?? '').match(/\{[^{}]{1,60}\}/g) ?? [])]

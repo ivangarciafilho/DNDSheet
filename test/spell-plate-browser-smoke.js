@@ -66,7 +66,8 @@ try {
   await send('Page.enable')
 
   let appReady = false
-  for (let attempt = 0; attempt < 60; attempt++) {
+  // 30 s budget (120 x 250 ms): first loads stall behind antivirus scans of fresh builds.
+  for (let attempt = 0; attempt < 120; attempt++) {
     appReady = await evaluate(`() => {
       const root = document.querySelector('#q-app')
       const pinia = root?.__vue_app__?.config.globalProperties.$pinia

@@ -1,3 +1,7 @@
+## Build 244 — Autocomplete close-out and grooming
+
+The [Build 244 packet](DNDSheet-Build244-Autocomplete-Closeout.md) closes A10.3 (ARIA combobox on every suggestion list), A10.6 (identifier completion in custom formulas) and A10.8 (a browser smoke, now in the gate). **Groomed order from here:** A13.9 sheet density (Senses and Languages beside the scores, fewer rules, initiative as styled text) → H14 type debt (505 diagnostics; split BasicsEditor first) → A11.6/A11.7 (reaction availability and skill-group routing; much already shipped in Builds 226–241) → A12.8–A12.10 casting-source identity and compact spell lists → the B1 foundation chain.
+
 ## Build 243 — Unified text field closed
 
 The [Build 243 packet](DNDSheet-Build243-Unified-Text-Closure.md) adds caret autocomplete in rich text and description editors, field-level formula resolution in every printed export, and the standard field with a character scope on the character sheet. Closed: H24, A10.1, A10.2, A10.4 and A10.5. Next in this area: A10.3 (combobox ARIA) and A10.6 (FormulaField completion).

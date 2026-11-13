@@ -2601,10 +2601,13 @@ async function runFuzz() {
   const pause = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
   // A reload command acknowledges navigation before Vue/Pinia is mounted. Wait for
   // a different document and its real stores, never retry a failed assertion.
+  // Budget 30 s: healthy reloads of the full fuzz sheet spike past 10 s on this workstation
+  // while antivirus scans fresh build output (Build 244 measurement: median 1.7 s, spikes 4-5 s
+  // on a light sheet). A document that never mounts still fails.
   const reloadApp = async () => {
     const previousOrigin = await evalInPage('() => performance.timeOrigin')
     await sendCdp('Page.reload')
-    for (let attempt = 0; attempt < 100; attempt++) {
+    for (let attempt = 0; attempt < 300; attempt++) {
       await pause(100)
       const ready = await evalInPage(`() => {
         const pinia = document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia;
@@ -2613,7 +2616,7 @@ async function runFuzz() {
       }`)
       if (ready) return
     }
-    throw new Error('Reloaded document did not mount the editor stores within 10 seconds')
+    throw new Error('Reloaded document did not mount the editor stores within 30 seconds')
   }
 
   await sendCdp('Emulation.setFocusEmulationEnabled', { enabled: true })

@@ -23,7 +23,7 @@
         </q-btn>
       </template>
     </q-editor>
-    <macro-suggest-popup :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="`Suggestions${displayTitle ? ' for ' + displayTitle : ''}`" @pick="richSuggest.pick" />
+    <macro-suggest-popup :list-id="richSuggest.listId" :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="`Suggestions${displayTitle ? ' for ' + displayTitle : ''}`" @pick="richSuggest.pick" />
     <div v-if="unknown.length" class="text-caption q-mx-xs" style="color: #f2a65a" data-macro-preview aria-live="polite">
       Not recognised: {{ unknown.join(', ') }}
     </div>

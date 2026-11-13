@@ -745,12 +745,12 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A10.0** Pre-flight: locate the bottom strip (BS-21); confirm `QEditor` content element API (BS-28); inventory the 7 toolbar menus and `useTokens.ts` categories · S — done (216): the separate “Intellisense” strip (BS-21) is no longer rendered; only its logic remained (`allIntellisenseTokens`, `suggestedTokens`, `tokenSearch` in `MonsterTextEditor.vue`, unused by the template). Seven toolbar menus confirmed; QEditor content API unchanged
 - [x] **A10.1** `MACRO_CATALOG` = `FORMULA_REFS` + `CONTEXT_TOKENS` (`{action.*}`, `{attack.*}`, `{spellcasting.*}`, `{multiattack.*}`) with tips and groups · M — done (242–243): `src/core/domain/macro-catalog.ts`, scoped by field
 - [x] **A10.2** `components/kit/useCompletion.ts`: triggers, token boundary, ranking, caret rect (contenteditable + input mirror) · L — done (243): `useRichMacroAutocomplete` (contenteditable caret) and the plain-field trigger in `MechanicTextEditor`
-- [ ] **A10.3** `components/kit/CompletionMenu.vue`: listbox, ARIA combobox wiring, flip near viewport edge, keyboard · M
+- [x] **A10.3** `components/kit/CompletionMenu.vue`: listbox, ARIA combobox wiring, flip near viewport edge, keyboard · M — done (244): see [packet](DNDSheet-Build244-Autocomplete-Closeout.md)
 - [x] **A10.4** `MonsterTextEditor.vue`: integrate completion; insert with `insertText`; caret restore · M — done (243): `{` autocomplete in `MonsterTextEditor`, inserted with `insertText` at the caret
 - [x] **A10.5** Toolbar macro menus generated from the catalog (replace the 7 hand-written dropdowns) · M — done (242): one Insert menu from the catalog replaces the hand-written dropdowns
-- [ ] **A10.6** `FormulaField` formula mode uses the same completion · S
+- [x] **A10.6** `FormulaField` formula mode uses the same completion · S — done (244): see [packet](DNDSheet-Build244-Autocomplete-Closeout.md)
 - [x] **A10.7** Remove the bottom intellisense strip · S — done (216): removed the dead strip logic and its hand-written 24-token list (a third token catalog beside `useTokens.ts` and `FORMULA_REFS`)
-- [ ] **A10.8** Tests (ranking, token boundary) + browser checks + close: commit `caret intellisense for macros and formulas; menus from one catalog` · M
+- [x] **A10.8** Tests (ranking, token boundary) + browser checks + close: commit `caret intellisense for macros and formulas; menus from one catalog` · M — done (244): see [packet](DNDSheet-Build244-Autocomplete-Closeout.md)
 
 **Done when:** ITL-001…008 proven.
 

@@ -28,7 +28,15 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
     <slot name="after" />
     </div>
     <div v-else class="formula-field__draft">
-      <q-input ref="draftInput" v-model="draft" :label="`${label} — custom formula`" dense outlined autofocus :error="!!error" :error-message="error" :hint="previewText" @update:model-value="checkDraft" @keydown.enter.prevent="commitDraft" @keydown.esc.prevent="cancel" />
+      <q-input ref="draftInput" v-model="draft" :label="`${label} — custom formula`" dense outlined autofocus :error="!!error" :error-message="error" :hint="previewText" @update:model-value="onDraftInput" @keydown="onDraftKeydown" @blur="closeRefSuggest">
+        <q-menu v-model="refSuggestOpen" no-focus no-refocus fit anchor="bottom left" self="top left" class="macro-suggest-menu" data-macro-suggest data-formula-suggest>
+          <q-list :id="refListId" dense role="listbox" :aria-label="`References for ${label}`">
+            <q-item v-for="(entry, index) in refSuggestions" :id="`${refListId}-opt-${index}`" :key="entry.insert" clickable dense role="option" :aria-selected="index === refActive" :active="index === refActive" active-class="macro-suggest-active" @mousedown.prevent="pickRef(entry)">
+              <q-item-section><q-item-label class="macro-suggest-label">{{ entry.label }}</q-item-label><q-item-label caption><code>{{ entry.insert }}</code> · {{ entry.group }}</q-item-label></q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-input>
       <div class="row justify-end">
         <q-btn flat dense no-caps label="Cancel" @click="cancel" />
         <q-btn flat dense no-caps color="primary" label="Apply" :disable="!!error || !draft.trim()" :aria-label="`Apply formula for ${label}`" @click="commitDraft" />
@@ -38,7 +46,10 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
   </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, toRef, watch } from 'vue'
+import { computed, nextTick, ref, toRef, watch } from 'vue'
+import { formulaReferences, insertMacro, openIdentifierAt } from 'src/core/domain/macro-catalog'
+import type { MacroEntry } from 'src/core/domain/macro-catalog'
+import { nextListId, syncComboboxAria } from 'src/components/editor/comboboxAria'
 import { FORMULA_GROUPS, FORMULA_REFS, resolveNumeric } from 'src/core/domain/formula'
 import { isReferenceAllowedForField } from 'src/core/domain/catalogs/field-types'
 import { useBindings } from './useBindings'
@@ -103,6 +114,47 @@ const select = (selected: string | null) => {
 }
 const typed = (text: string, done: () => void) => { if (applyText(text)) { applied(); done() } }
 const commitDraft = () => { if (applyText(draft.value)) { editing.value = false; applied() } }
+
+// Identifier completion in the custom formula: references this field accepts, inserted bare ("PB + STR_MOD").
+const draftInput = ref<{ $el?: HTMLElement } | null>(null)
+const refListId = nextListId('formula-suggest')
+const refSuggestOpen = ref(false), refActive = ref(0), refSuggestions = ref<MacroEntry[]>([])
+let refOpen: { query: string; start: number } | undefined
+const draftEl = (): HTMLInputElement | null => (draftInput.value?.$el?.querySelector('input') as HTMLInputElement | null) ?? null
+const closeRefSuggest = () => { refSuggestOpen.value = false; refOpen = undefined }
+const onDraftInput = () => {
+  checkDraft()
+  void nextTick(() => {
+    const caret = draftEl()?.selectionStart ?? draft.value.length
+    refOpen = openIdentifierAt(draft.value, caret)
+    refSuggestions.value = refOpen ? formulaReferences(refOpen.query, id => isReferenceAllowedForField(props.path, id)) : []
+    refActive.value = 0
+    refSuggestOpen.value = refSuggestions.value.length > 0 && !refSuggestions.value.some(entry => entry.insert === refOpen?.query.toUpperCase())
+  })
+}
+const pickRef = (entry: MacroEntry) => {
+  const caret = draftEl()?.selectionStart ?? draft.value.length
+  const next = insertMacro(draft.value, refOpen?.start ?? caret, caret, entry.insert)
+  draft.value = next.text
+  closeRefSuggest()
+  checkDraft()
+  void nextTick(() => { const el = draftEl(); el?.focus(); el?.setSelectionRange(next.caret, next.caret) })
+}
+const onDraftKeydown = (event: KeyboardEvent) => {
+  const count = refSuggestions.value.length
+  if (refSuggestOpen.value && count) {
+    if (event.key === 'ArrowDown') refActive.value = (refActive.value + 1) % count
+    else if (event.key === 'ArrowUp') refActive.value = (refActive.value - 1 + count) % count
+    else if (event.key === 'Enter' || event.key === 'Tab') pickRef(refSuggestions.value[refActive.value])
+    else if (event.key === 'Escape') closeRefSuggest()
+    else return
+    event.preventDefault()
+    return
+  }
+  if (event.key === 'Enter') { event.preventDefault(); commitDraft() }
+  else if (event.key === 'Escape') { event.preventDefault(); cancel() }
+}
+watch([refSuggestOpen, refActive, editing], () => void nextTick(() => syncComboboxAria(draftEl(), refSuggestOpen.value, refListId, refActive.value)))
 const cancel = () => { editing.value = false; draftError.value = ''; previewText.value = '' }
 </script>
 <style scoped>

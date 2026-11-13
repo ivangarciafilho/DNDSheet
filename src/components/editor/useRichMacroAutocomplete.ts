@@ -2,6 +2,7 @@ import { onBeforeUnmount, ref, watch } from 'vue'
 import type { Ref } from 'vue'
 import { openMacroAt } from 'src/core/domain/macro-catalog'
 import type { MacroEntry } from 'src/core/domain/macro-catalog'
+import { nextListId, syncComboboxAria } from './comboboxAria'
 
 /**
  * "{" autocomplete inside a contenteditable (QEditor content). Reads the text node at the caret,
@@ -12,6 +13,8 @@ export function useRichMacroAutocomplete(content: Ref<HTMLElement | null>, entri
   const open = ref(false), active = ref(0), x = ref(0), y = ref(0)
   const entries = ref<MacroEntry[]>([])
   let target: { node: Text; start: number; end: number } | undefined
+  const listId = nextListId()
+  watch([open, active], () => syncComboboxAria(content.value, open.value, listId, active.value), { flush: 'post' })
 
   const close = () => { open.value = false; target = undefined }
 
@@ -78,5 +81,5 @@ export function useRichMacroAutocomplete(content: Ref<HTMLElement | null>, entri
     content.value?.removeEventListener('blur', onBlur)
   })
 
-  return { open, entries, active, x, y, pick, close }
+  return { listId, open, entries, active, x, y, pick, close }
 }

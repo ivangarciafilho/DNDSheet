@@ -1,3 +1,7 @@
+## Build 244 — autocomplete close-out
+
+ARIA combobox state on plain, rich and formula suggestion lists. Custom formulas complete references allowed for the field, inserted bare. `test/macro-autocomplete-browser-smoke.mjs` runs in the gate. A10.3, A10.6 and A10.8 are closed.
+
 ## Build 243 — unified text field closed
 
 Caret `{` autocomplete in every rich editor. Exports resolve authored formulas per field (LaTeX- and JSON-safe). Character notes and features use the standard field with a character scope. H24 and A10.1/.2/.4/.5 are closed. Core 612 tests, typecheck 505 diagnostics with 0 new.
