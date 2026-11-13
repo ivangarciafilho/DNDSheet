@@ -6,7 +6,7 @@
 import { FORMULA_GROUPS, FORMULA_REFS } from './formula.ts'
 
 /** Where a field lives; decides which tokens its renderer resolves. */
-export type MacroScope = 'mechanic' | 'trait' | 'action' | 'reaction' | 'legendary' | 'attack' | 'spell' | 'prose'
+export type MacroScope = 'mechanic' | 'trait' | 'action' | 'reaction' | 'legendary' | 'attack' | 'spell' | 'prose' | 'character'
 
 export type MacroKind = 'reference' | 'token' | 'roll' | 'context' | 'snippet' | 'custom'
 
@@ -23,18 +23,23 @@ export interface MacroEntry {
 
 const STATS = [['STR', 'Strength'], ['DEX', 'Dexterity'], ['CON', 'Constitution'], ['INT', 'Intelligence'], ['WIS', 'Wisdom'], ['CHA', 'Charisma']] as const
 const PROSE: readonly MacroScope[] = ['trait', 'action', 'reaction', 'legendary', 'attack', 'spell', 'prose']
+/** Monster-only data (CR, legendary budget, saves table, senses): not resolvable on a character sheet. */
+const MONSTER: readonly MacroScope[] = ['mechanic', ...PROSE]
+/** Formula groups a character resolves from its own scores, proficiency, AC, hit points and casting ability. */
+const CHARACTER_GROUPS = new Set(['ability_mod', 'ability_score', 'attack', 'proficiency', 'save_dc', 'hit_points', 'spellcasting', 'combat'])
 
 const groupLabel = (id: string) => FORMULA_GROUPS.find((group) => group.id === id)?.label ?? 'Formula'
 
-const REFERENCES: MacroEntry[] = FORMULA_REFS.map((ref) => ({
+const REFERENCES: MacroEntry[] = FORMULA_REFS.map((ref): MacroEntry => ({
   insert: `{${ref.id}}`, label: ref.label, group: groupLabel(ref.group), kind: 'reference', tip: ref.tip,
+  ...(CHARACTER_GROUPS.has(ref.group) ? {} : { scopes: MONSTER }),
 }))
 
 const TOKENS: MacroEntry[] = [
   { insert: '{NAME}', label: 'Monster name', group: 'Monster', kind: 'token', tip: 'The monster name (or nickname), with "the" when the article option is on.' },
-  { insert: '{monster.AC}', label: 'Armor Class', group: 'Monster', kind: 'token', tip: 'The monster Armor Class.' },
-  { insert: '{monster.hp}', label: 'Hit points with dice', group: 'Monster', kind: 'token', tip: 'Average hit points and the hit dice formula.' },
-  { insert: '{XP:monster}', label: 'Experience points', group: 'Monster', kind: 'token', tip: 'XP for the monster Challenge Rating.' },
+  { insert: '{monster.AC}', label: 'Armor Class', group: 'Monster', kind: 'token', tip: 'The monster Armor Class.', scopes: MONSTER },
+  { insert: '{monster.hp}', label: 'Hit points with dice', group: 'Monster', kind: 'token', tip: 'Average hit points and the hit dice formula.', scopes: MONSTER },
+  { insert: '{XP:monster}', label: 'Experience points', group: 'Monster', kind: 'token', tip: 'XP for the monster Challenge Rating.', scopes: MONSTER },
   ...STATS.map(([s, name]): MacroEntry => ({ insert: `{DC:${s}}`, label: `${name} save DC`, group: 'Saves and attacks', kind: 'token', tip: `8 + proficiency bonus + ${name} modifier, printed as "DC n".` })),
   ...STATS.map(([s, name]): MacroEntry => ({ insert: `{A:${s}}`, label: `${name} attack bonus`, group: 'Saves and attacks', kind: 'token', tip: `Proficiency bonus + ${name} modifier, printed as "+n".` })),
 ]

@@ -1,3 +1,7 @@
+## Build 243 — Unified text field closed
+
+The [Build 243 packet](DNDSheet-Build243-Unified-Text-Closure.md) adds caret autocomplete in rich text and description editors, field-level formula resolution in every printed export, and the standard field with a character scope on the character sheet. Closed: H24, A10.1, A10.2, A10.4 and A10.5. Next in this area: A10.3 (combobox ARIA) and A10.6 (FormulaField completion).
+
 ## Build 242 — Unified text field
 
 The [Build 242 packet](DNDSheet-Build242-Unified-Text-Field.md) delivers H24's core: one macro catalog, one standard text field (plain, rich and formula-aware, with scoped suggestions) and resolution on the stat block. It also advances A10.1 (catalog) and A10.5 (menus generated from the catalog). The workload is unchanged at 174 complete and 95 open; H24 stays open for caret autocomplete in rich mode and export resolution.

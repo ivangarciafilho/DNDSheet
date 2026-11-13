@@ -1,6 +1,7 @@
 import N2W from 'number-to-words'
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { resolvingMonsterView } from 'src/core/usecases/ResolveMonsterText'
 import { useI18n } from 'vue-i18n'
 import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
@@ -12,7 +13,8 @@ import { creatureTypeLine, escapeLatexText, splitEntryLead } from 'src/core/doma
 // existing formatting is equivalent
 // the LaTeX renderer is also more rigid than the other renderers, so formatting might not carry over.
 export function useLatexRenderer() {
-  const monster = useMonsterStore()
+  // Fields read directly print resolved, exactly as the stat block does.
+  const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
   const { latexFormatter, processTokens } = useProcessTokens({ web: false })

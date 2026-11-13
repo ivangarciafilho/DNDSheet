@@ -17,8 +17,14 @@ import {
   formatMinimalistDeathPrevention,
 } from '../domain/defense-and-traits-utils.ts'
 import { formatSpeedActionRider } from '../domain/speeds-traversal.ts'
+import { resolveCharacterFields, resolveMonsterText } from './ResolveMonsterText.ts'
 
+// Printed exports resolve authored formulas and macros field by field; JSON save formats stay raw.
 export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '2014'): string {
+  return markdownOf(resolveMonsterText(monster), style)
+}
+
+function markdownOf(monster: Monster, style: '2014' | '2024'): string {
   const crObj = CR[monster.CR] || { cr: '0', xp: 0 }
   const hpTotal = avgHP(monster.HP)
   const hpFormula = `${monster.HP.HD}d${monster.HP.type}${
@@ -849,6 +855,10 @@ ${body}
 }
 
 export function exportToFoundryActor(monster: Monster): Record<string, unknown> {
+  return foundryActorOf(resolveMonsterText(monster))
+}
+
+function foundryActorOf(monster: Monster): Record<string, unknown> {
   const crObj = CR[monster.CR] || { cr: '0', numeric: 0 }
   const hpVal = avgHP(monster.HP)
 
@@ -920,6 +930,10 @@ export function exportToFoundryJson(monster: Monster): string {
 }
 
 export function exportCharacterToMarkdown(char: CharacterActor): string {
+  return characterMarkdownOf(resolveCharacterFields(char))
+}
+
+function characterMarkdownOf(char: CharacterActor): string {
   const lines: string[] = []
   lines.push('___')
   lines.push(`## ${char.name}`)
@@ -1004,6 +1018,10 @@ export function exportCharacterToMarkdown(char: CharacterActor): string {
 }
 
 export function exportCharacterToPlainText(char: CharacterActor): string {
+  return characterPlainTextOf(resolveCharacterFields(char))
+}
+
+function characterPlainTextOf(char: CharacterActor): string {
   const lines: string[] = []
   lines.push(char.name.toUpperCase())
   lines.push(`Level ${char.level} ${char.subclass ? char.subclass + ' ' : ''}${char.class} (${char.race}) • ${char.background} • ${char.alignment}`)

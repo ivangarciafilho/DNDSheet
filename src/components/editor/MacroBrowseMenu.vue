@@ -25,6 +25,8 @@ import { catalogFor, catalogGroups } from 'src/core/domain/macro-catalog'
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useCharacterStore } from 'src/stores/character-store'
+import { resolveCharacterText } from 'src/core/usecases/ResolveMonsterText'
 import { useProcessTokens } from '../rendering/useProcessTokens'
 
 // One browse menu for every text editor; the entries come from the shared macro catalog.
@@ -38,18 +40,22 @@ export default defineComponent({
   setup(props) {
     const query = ref('')
     const monster = useMonsterStore()
+    const character = useCharacterStore()
     const { processTokens } = useProcessTokens()
     const groups = computed(() => catalogGroups(catalogFor({
       scope: props.scope,
       query: query.value ?? '',
-      customVariables: (monster as unknown as { customVariables?: Record<string, unknown> }).customVariables,
-      customMacros: (monster as unknown as { customMacros?: Record<string, unknown> }).customMacros,
+      ...(props.scope === 'character' ? {} : {
+        customVariables: (monster as unknown as { customVariables?: Record<string, unknown> }).customVariables,
+        customMacros: (monster as unknown as { customMacros?: Record<string, unknown> }).customMacros,
+      }),
     })))
     // Live value for single tokens, so authors see what they insert.
     const previewOf = (entry: MacroEntry): string => {
       if (entry.kind === 'context' || entry.kind === 'snippet') return ''
       try {
-        const text = mechanicPlainText(String(processTokens(entry.insert, undefined as never, monster, 'none') ?? ''))
+        const raw = props.scope === 'character' ? resolveCharacterText(entry.insert, character.actor) : String(processTokens(entry.insert, undefined as never, monster, 'none') ?? '')
+        const text = mechanicPlainText(raw)
         return text && text !== entry.insert ? text : ''
       } catch { return '' }
     }

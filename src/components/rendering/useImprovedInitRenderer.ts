@@ -1,5 +1,6 @@
 import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { resolvingMonsterView } from 'src/core/usecases/ResolveMonsterText'
 import { useI18n } from 'vue-i18n'
 import { DndStat } from '../models'
 import { avgRoll, renderBonus, statModifier } from './mathRendering'
@@ -19,7 +20,8 @@ const statMap = {
 
 
 export function useImprovedInitRenderer() {
-  const monster = useMonsterStore()
+  // Fields read directly print resolved, exactly as the stat block does.
+  const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
   const { processTokens, stripTags } = useProcessTokens({ web: false })

@@ -254,7 +254,7 @@
             class="q-mb-xs"
           >
             <span class="text-weight-bold text-body2">{{ feat.name }}:</span>
-            <span class="text-body2 text-grey-9 q-ml-xs">{{ feat.description }}</span>
+            <span class="text-body2 text-grey-9 q-ml-xs" v-html="printed(feat.description)"></span>
           </div>
         </div>
       </div>
@@ -331,9 +331,7 @@
                   ({{ sp.level === 0 ? 'Cantrip' : `Lvl ${sp.level}` }})
                 </span>
               </div>
-              <div v-if="sp.notes" class="text-2xs text-grey-6 text-italic">
-                {{ sp.notes }}
-              </div>
+              <div v-if="sp.notes" class="text-2xs text-grey-6 text-italic" v-html="printed(sp.notes)"></div>
             </div>
           </div>
         </div>
@@ -378,6 +376,8 @@
 import { characterVitals } from 'src/core/domain/character-truth'
 import { computed, defineComponent } from 'vue'
 import { useCharacterStore } from 'src/stores/character-store'
+import { resolveCharacterText } from 'src/core/usecases/ResolveMonsterText'
+import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { DndStat, DND_SKILLS } from 'src/core/domain/types'
 
 export default defineComponent({
@@ -412,7 +412,11 @@ export default defineComponent({
       )
     })
 
+    // Authored notes print formatted, with the character's formulas resolved.
+    const printed = (text: string | undefined): string => resolveCharacterText(mechanicRichHtml(text ?? ''), charStore.actor)
+
     return {
+      printed,
       actor: charStore.actor,
       vitals: computed(() => characterVitals(charStore.actor)),
       charStore,

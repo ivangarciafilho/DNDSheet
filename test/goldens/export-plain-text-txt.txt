@@ -14,7 +14,7 @@ Senses passive Perception 10
 Languages --
 Challenge 9 (5,000 XP)
 ----------------------------------------
-Arcane Ward. {NAME} has a ward with 10 hit points.
+Arcane Ward. Golden Export Fixture has a ward with 10 hit points.
 
 
 === Actions
@@ -22,4 +22,4 @@ Force Lash. Each creature within 10 feet must make a DC 15 Strength saving throw
 
 
 === Reactions
-Counter Glyph. {NAME} interrupts the spell.
+Counter Glyph. Golden Export Fixture interrupts the spell.

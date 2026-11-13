@@ -77,7 +77,7 @@
       "type": "feat",
       "system": {
         "description": {
-          "value": "{NAME} has a ward with 10 hit points."
+          "value": "Golden Export Fixture has a ward with 10 hit points."
         }
       }
     }

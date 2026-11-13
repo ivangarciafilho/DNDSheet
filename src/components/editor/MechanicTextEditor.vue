@@ -33,6 +33,7 @@
         </div>
       </div>
       <q-editor ref="editorRef" :disable="Boolean($attrs.disable)" :readonly="Boolean($attrs.readonly)" :model-value="editorValue" :toolbar="toolbar" min-height="3rem" :content-class="'mechanic-text-editor__content'" :aria-label="label" @keydown.stop @keyup.stop @update:model-value="value => emitValue(mechanicRichHtml(value))" />
+      <macro-suggest-popup :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="'Suggestions for '+label" @pick="richSuggest.pick" />
     </div>
     <div v-if="preview" class="mechanic-text-editor__preview" :class="{ 'is-unresolved': preview.unknown.length > 0 }" data-macro-preview aria-live="polite">
       <template v-if="preview.unknown.length">Not recognised: {{ preview.unknown.join(', ') }}</template>
@@ -42,18 +43,22 @@
 </template>
 <script lang="ts">
 import type { PropType, StyleValue } from 'vue'
-import { computed, defineComponent, nextTick, ref, useSlots } from 'vue'
+import { computed, defineComponent, nextTick, ref, useSlots, watch } from 'vue'
 import { hasMechanicFormatting, mechanicPlainText, mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { catalogFor, insertMacro, openMacroAt, unresolvedMacros } from 'src/core/domain/macro-catalog'
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import { useMonsterStore } from 'src/stores/monster-store'
+import { useCharacterStore } from 'src/stores/character-store'
+import { resolveCharacterText } from 'src/core/usecases/ResolveMonsterText'
 import { useProcessTokens } from '../rendering/useProcessTokens'
 import MacroBrowseMenu from './MacroBrowseMenu.vue'
+import MacroSuggestPopup from './MacroSuggestPopup.vue'
+import { useRichMacroAutocomplete } from './useRichMacroAutocomplete'
 
 // Plain text by default; formulas and macros resolve silently in the preview and on the stat block.
 export default defineComponent({
   name: 'MechanicTextEditor',
-  components: { MacroBrowseMenu },
+  components: { MacroBrowseMenu, MacroSuggestPopup },
   inheritAttrs: false,
   props: {
     modelValue: { type: [String, Number], default: '' },
@@ -65,7 +70,7 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const formatting = ref(false), browse = ref(false), slots = useSlots()
-    const inputRef = ref<{ $el?: HTMLElement } | null>(null), editorRef = ref<{ runCmd?: (cmd: string, value?: string) => void; focus?: () => void } | null>(null)
+    const inputRef = ref<{ $el?: HTMLElement } | null>(null), editorRef = ref<{ runCmd?: (cmd: string, value?: string) => void; focus?: () => void; getContentEl?: () => HTMLElement } | null>(null)
     const forwardedSlots = Object.fromEntries(Object.entries(slots).filter(([name]) => name !== 'append'))
     const rich = computed(() => props.forceRich || formatting.value || hasMechanicFormatting(props.modelValue))
     const editorValue = computed(() => mechanicRichHtml(props.modelValue))
@@ -73,8 +78,13 @@ export default defineComponent({
     const emitValue = (value: string) => emit('update:modelValue', value)
 
     const monster = useMonsterStore()
+    const character = useCharacterStore()
     const { processTokens } = useProcessTokens()
-    const custom = () => ({
+    // Character fields resolve against the character; every other field against the monster.
+    const render = (html: string): string => props.scope === 'character'
+      ? resolveCharacterText(html, character.actor)
+      : String(processTokens(html, undefined as never, monster, 'none') ?? '')
+    const custom = () => props.scope === 'character' ? {} : ({
       customVariables: (monster as unknown as { customVariables?: Record<string, unknown> }).customVariables,
       customMacros: (monster as unknown as { customMacros?: Record<string, unknown> }).customMacros,
     })
@@ -85,7 +95,7 @@ export default defineComponent({
       const source = String(props.modelValue ?? '')
       if (!source.includes('{')) return null
       let rendered = source
-      try { rendered = String(processTokens(mechanicRichHtml(source), undefined as never, monster, 'none') ?? '') } catch { rendered = source }
+      try { rendered = render(mechanicRichHtml(source)) } catch { rendered = source }
       const unknown = unresolvedMacros(rendered).filter(token => !contextInserts.value.has(token.toLowerCase()))
       return { text: mechanicPlainText(rendered), unknown }
     })
@@ -143,7 +153,11 @@ export default defineComponent({
       else if (event.key === 'Escape') { closeSuggest(); event.stopPropagation() }
     }
 
-    return { formatting, browse, rich, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
+    const contentEl = ref<HTMLElement | null>(null)
+    watch([rich, editorRef], () => void nextTick(() => { contentEl.value = rich.value ? editorRef.value?.getContentEl?.() ?? null : null }), { immediate: true })
+    const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({ scope: props.scope, query, limit: 8, ...custom() }))
+
+    return { richSuggest, formatting, browse, rich, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
   },
 })
 </script>

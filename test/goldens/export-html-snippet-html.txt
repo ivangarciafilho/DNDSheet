@@ -240,9 +240,9 @@
 <strong>Languages</strong> --
 <strong>Challenge</strong> 9 (5,000 XP)
 <hr class="statblock-divider" />
-<strong><em>Arcane Ward.</em></strong> {NAME} has a ward with 10 hit points.<p></p><h3 class="statblock-section">Actions</h3>
+<strong><em>Arcane Ward.</em></strong> Golden Export Fixture has a ward with 10 hit points.<p></p><h3 class="statblock-section">Actions</h3>
 <strong><em>Force Lash.</em></strong> Each creature within 10 feet must make a DC 15 Strength saving throw.<p></p><h3 class="statblock-section">Reactions</h3>
-<strong><em>Counter Glyph.</em></strong> {NAME} interrupts the spell.
+<strong><em>Counter Glyph.</em></strong> Golden Export Fixture interrupts the spell.
 
     </div>
   </div>

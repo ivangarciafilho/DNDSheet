@@ -3,6 +3,7 @@ import { tableToMarkdown } from 'src/core/domain/random-table'
 // the autoformatter is allowed to run here it's just ugly af
 // due to the whitespace sensitivity of markdown
 import { useMonsterStore } from 'src/stores/monster-store'
+import { resolvingMonsterView } from 'src/core/usecases/ResolveMonsterText'
 import { useTextRenderer } from './useTextRenderer'
 import { avgRoll, renderBonus, renderModifier } from './mathRendering'
 import { DndStat } from '../models'
@@ -11,7 +12,8 @@ import { useProcessTokens } from './useProcessTokens'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
 
 export function useMd3Renderer() {
-  const monster = useMonsterStore()
+  // Fields read directly print resolved, exactly as the stat block does.
+  const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
   const { mdFormatter: formatMarkdown } = useProcessTokens({ web: false })

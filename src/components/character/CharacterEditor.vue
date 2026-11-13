@@ -105,12 +105,12 @@
         <div class="editor-fit-grid">
           <div class="editor-fit-cell">
             <q-input :model-value="actor.combatVitals?.armorClass ?? null" @update:model-value="setVital('armorClass', $event)" label="Recorded Armor Class" type="number" min="0" clearable dense outlined />
-            <q-input :model-value="actor.combatVitals?.armorClassSource ?? null" @update:model-value="setVital('armorClassSource', $event)" label="Armor Class source / notes" dense outlined class="q-mt-xs" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" @update:model-value="(value: string) => setVital('armorClassSource', value)" label="Armor Class source / notes" dense outlined class="q-mt-xs" />
             <div class="text-caption q-mt-xs" data-character-ac-provenance>{{ vitals.armorClass.value }} — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
           </div>
           <div class="editor-fit-cell">
             <q-input :model-value="actor.combatVitals?.speed ?? null" @update:model-value="setVital('speed', $event)" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined />
-            <q-input :model-value="actor.combatVitals?.speedSource ?? null" @update:model-value="setVital('speedSource', $event)" label="Speed source / notes" dense outlined class="q-mt-xs" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" @update:model-value="(value: string) => setVital('speedSource', value)" label="Speed source / notes" dense outlined class="q-mt-xs" />
             <div class="text-caption q-mt-xs" data-character-speed-provenance>{{ vitals.speed.value }} ft. — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
           </div>
         </div>
@@ -485,7 +485,7 @@
                 />
               </div>
               <div class="col-3">
-                <q-input v-help="'Enter notes (e.g. conc, 1 action) for the character editor.'" v-model="sp.notes" label="Notes (e.g. Conc, 1 Action)" dense outlined />
+                <mechanic-text-editor scope="character" v-help="'Enter notes (e.g. conc, 1 action) for the character editor.'" v-model="sp.notes" label="Notes (e.g. Conc, 1 Action)" dense outlined />
               </div>
               <div class="col-auto text-right">
                 <q-btn
@@ -548,7 +548,7 @@
                 />
               </div>
             </div>
-            <q-input v-help="'Enter description for the character editor.'"
+            <mechanic-text-editor scope="character" v-help="'Enter description for the character editor.'"
               v-model="feat.description"
               type="textarea"
               rows="2"

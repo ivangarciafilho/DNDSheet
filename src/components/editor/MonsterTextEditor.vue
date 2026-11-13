@@ -23,6 +23,7 @@
         </q-btn>
       </template>
     </q-editor>
+    <macro-suggest-popup :open="richSuggest.open.value" :entries="richSuggest.entries.value" :active="richSuggest.active.value" :x="richSuggest.x.value" :y="richSuggest.y.value" :label="`Suggestions${displayTitle ? ' for ' + displayTitle : ''}`" @pick="richSuggest.pick" />
     <div v-if="unknown.length" class="text-caption q-mx-xs" style="color: #f2a65a" data-macro-preview aria-live="polite">
       Not recognised: {{ unknown.join(', ') }}
     </div>
@@ -30,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref } from 'vue'
+import { computed, defineComponent, onMounted, PropType, ref } from 'vue'
 import { MonsterContextType } from '../rendering/useProcessTokens'
 import { useI18n } from 'vue-i18n'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -38,6 +39,8 @@ import { useProcessTokens } from '../rendering/useProcessTokens'
 import { catalogFor, unresolvedMacros } from 'src/core/domain/macro-catalog'
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import MacroBrowseMenu from './MacroBrowseMenu.vue'
+import MacroSuggestPopup from './MacroSuggestPopup.vue'
+import { useRichMacroAutocomplete } from './useRichMacroAutocomplete'
 
 const SCOPE_OF: Record<MonsterContextType, MacroScope> = {
   none: 'prose', trait: 'trait', attack: 'attack', spell: 'spell', action: 'action',
@@ -46,7 +49,7 @@ const SCOPE_OF: Record<MonsterContextType, MacroScope> = {
 
 export default defineComponent({
   name: 'MonsterTextEditor',
-  components: { MacroBrowseMenu },
+  components: { MacroBrowseMenu, MacroSuggestPopup },
   props: {
     field: { required: false, type: String, default: '' },
     modelValue: { type: String, default: undefined },
@@ -128,7 +131,16 @@ export default defineComponent({
       return unresolvedMacros(rendered).filter(token => !contextual.has(token.toLowerCase()))
     })
 
+    const contentEl = ref<HTMLElement | null>(null)
+    onMounted(() => { contentEl.value = editorRef.value?.getContentEl?.() ?? null })
+    const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({
+      scope: scope.value, query, limit: 8,
+      customVariables: (monster as unknown as { customVariables?: Record<string, unknown> }).customVariables,
+      customMacros: (monster as unknown as { customMacros?: Record<string, unknown> }).customMacros,
+    }))
+
     return {
+      richSuggest,
       editorRef,
       browse,
       scope,

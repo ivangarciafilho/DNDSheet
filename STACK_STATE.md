@@ -1,3 +1,7 @@
+## Build 243 — unified text field closed
+
+Caret `{` autocomplete in every rich editor. Exports resolve authored formulas per field (LaTeX- and JSON-safe). Character notes and features use the standard field with a character scope. H24 and A10.1/.2/.4/.5 are closed. Core 612 tests, typecheck 505 diagnostics with 0 new.
+
 ## Build 242 — unified text field
 
 One macro catalog feeds a standard text field: plain by default, rich on demand, `{` suggestions scoped to the field, a live preview and an unknown-token warning. Prose editors get one Insert menu, and stat-line text resolves formulas. Core 606 tests, typecheck 505 diagnostics with 0 new. See docs/roadmap/DNDSheet-Build242-Unified-Text-Field.md.
