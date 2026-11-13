@@ -18,6 +18,15 @@
         />
         <span v-else class="composer-chain__role-label" :data-chain-cell="cell.id">{{ cell.text }}</span>
         </template>
+        <q-btn-toggle
+          v-if="row.row === 'trigger' && reaction"
+          :model-value="reaction.triggerPlacement === 'end' ? 'end' : 'start'"
+          data-trigger-placement
+          dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-9"
+          :options="[{ label: 'Before text', value: 'start' }, { label: 'After text', value: 'end' }]"
+          aria-label="Trigger placement in the printed text"
+          @update:model-value="(value: string) => commit('trigger-placement', value)"
+        ><q-tooltip class="dnd-tip">Print the trigger before the response (the 2024 default) or after it.</q-tooltip></q-btn-toggle>
       </div>
     </div>
 
@@ -43,6 +52,7 @@ import type { NumericBinding } from 'src/core/domain/formula'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
   head: 'Head',
+  trigger: 'Trigger',
   mechanics: 'Roll',
   scope: 'Targets',
   outcomes: 'Outcomes',
@@ -165,7 +175,7 @@ export default defineComponent({
       if (trait.value) Object.assign(trait.value, traitCellPatch(trait.value, cellId, value))
     }
 
-    return { activeEntry, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS, numericPathFor, numericDraftModel }
+    return { activeEntry, reaction, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS, numericPathFor, numericDraftModel }
   },
 })
 </script>

@@ -305,7 +305,7 @@ const monsterState = {
         deathPrevention: {
           enabled: false,
           name: 'Mortal',
-          dcRule: 'CON save DC 5 + damage taken',
+          dcRule: 'dc_5_plus_dmg',
           returnHpSource: '1',
           returnHpValue: 1,
           returnHpDice: '2d8',

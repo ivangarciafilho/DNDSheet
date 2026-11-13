@@ -158,10 +158,21 @@ export function formatDefenseList(items: DamageDefenseItem[] | undefined): strin
 /**
  * Formats an individual language entry into standard D&D 5e wording.
  */
+/** "Language of its Manufacturer", "languages of its creator": always phrased as understanding. */
+export function isManufacturerLanguage(item: Pick<MonsterLanguageItem, 'name'> | undefined): boolean {
+  return /\blanguages? of (?:its|their|the) (?:manufacturer|creator|maker)s?\b/i.test(String(item?.name ?? ''))
+}
+
 export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (field: string, value: string | number) => string = (_field, value) => String(value)): string {
   if (!item || !item.name) return ''
   const name = item.name.trim()
   const lowerName = name.toLowerCase()
+
+  if (isManufacturerLanguage(item)) {
+    const phrase = `understands the ${name.replace(/^understands\s+(?:the\s+)?/i, '').replace(/^the\s+/i, '').toLowerCase()}`
+    const base = item.understandsOnly ? `${phrase} but can't speak` : phrase
+    return item.note?.trim() ? `${base} (${item.note.trim()})` : base
+  }
 
   // 1. Handle Animals / Animal Handling ruling module
   if (item.animalHandling?.enabled || lowerName === 'handle animals' || lowerName.includes('animal handling')) {
@@ -472,6 +483,7 @@ export function formatLanguagesList(items: MonsterLanguageItem[] | undefined, ar
         telepathy.push(formatted)
       } else if (
         item.understandsOnly &&
+        !isManufacturerLanguage(item) &&
         !item.animalsConfig &&
         !item.plantsConfig &&
         !item.undeadConfig &&
@@ -757,6 +769,58 @@ export function resolveDynamicNumericSource(
   return `${flatVal ?? 10}`
 }
 
+// Older saves and defaults stored the option label instead of its key; both resolve to the key.
+const DEATH_RULE_ALIASES: Readonly<Record<string, string>> = {
+  'con save dc 5 + damage taken': 'dc_5_plus_dmg',
+  'con save dc 5 + damage taken (undead fortitude)': 'dc_5_plus_dmg',
+  'returns to life with x hit points': 'always_survives',
+  'returns upon death saving throw success': 'death_save_success',
+  'upon death deals damage (death burst)': 'upon_death_burst',
+  'custom saving throw dc': 'custom_save',
+  'true immortal (hide hp on statblock)': 'true_immortal',
+  'until hit by x critical hits (hide hp)': 'until_x_crits',
+}
+
+export function normalizeDeathRule(rule: unknown): string {
+  const text = typeof rule === 'string' ? rule.trim() : ''
+  return DEATH_RULE_ALIASES[text.toLowerCase()] ?? text
+}
+
+/**
+ * The rule select is the single owner of the revival trigger: a trigger or death burst left behind
+ * by an earlier rule must not keep printing after the author picks another rule.
+ */
+export function normalizeDeathPrevention<T extends { dcRule?: string; triggerCondition?: string; uponDeathDealsDamage?: boolean } | undefined>(dp: T): T {
+  if (!dp) return dp
+  const rule = normalizeDeathRule(dp.dcRule)
+  const ruleTriggers = ['death_save_success', 'upon_death_burst']
+  // With no rule chosen, an explicit trigger is the author's choice, not a leftover.
+  const staleTrigger = Boolean(rule) && ruleTriggers.includes(String(dp.triggerCondition ?? '')) && dp.triggerCondition !== rule
+  return {
+    ...dp,
+    dcRule: rule,
+    triggerCondition: ruleTriggers.includes(rule) ? rule : staleTrigger ? undefined : dp.triggerCondition,
+    uponDeathDealsDamage: rule === 'upon_death_burst' || (Boolean(dp.uponDeathDealsDamage) && !staleTrigger),
+  } as T
+}
+
+/** When a regeneration trait acts, as trait prose: "at the start of its turn", "at dawn". */
+export function regenTimingPhrase(regen: { frequency?: string; timeframe?: string } | undefined): string {
+  const freq = String(regen?.frequency || regen?.timeframe || 'turn_start').toLowerCase()
+  const phrases: Record<string, string> = {
+    turn: 'at the start of its turn', turn_start: 'at the start of its turn', start_of_its_turn: 'at the start of its turn',
+    a_turn_start: 'at the start of each turn', start_of_a_turn: 'at the start of each turn',
+    turn_end: 'at the end of its turn', end_turn: 'at the end of its turn', end_of_its_turn: 'at the end of its turn',
+    a_turn_end: 'at the end of each turn', end_of_a_turn: 'at the end of each turn',
+    current_turn_end: 'at the end of the current turn', end_of_current_turn: 'at the end of the current turn',
+    minute: 'every minute', hour: 'every hour', day: 'every day',
+    dawn: 'at dawn', dusk: 'at dusk', midday: 'at midday', midnight: 'at midnight',
+    short_rest: 'when it finishes a Short Rest', long_rest: 'when it finishes a Long Rest', downtime: 'during downtime',
+    no_damage_taken: 'at the start of its turn if it took no damage since its last turn',
+  }
+  return phrases[freq] ?? 'at the start of its turn'
+}
+
 /**
  * Formats minimalist notation for Regeneration near hit points.
  * e.g. "+10/turn (acid or fire)"
@@ -811,7 +875,8 @@ export function formatMinimalistRegen(
   if (condMod === 'head_not_severed' || (note && (note.toLowerCase().includes('head is not severed') || note.toLowerCase().includes('head not severed')))) {
     return `+${amt} hit points at start of your turn if your head is not severed`
   }
-  if (condMod === 'max_hp_reduction' || regen.maxHpReductionUntil) {
+  // maxHpReductionUntil is only the duration setting; every default monster carries one.
+  if (condMod === 'max_hp_reduction') {
     const dmgTypes = Array.isArray(regen.disruptedByTypes) && regen.disruptedByTypes.length > 0
       ? regen.disruptedByTypes.join(' and ')
       : (types || 'Acid and Fire')
@@ -1102,9 +1167,10 @@ export function composeInvulnerabilityRuling(
  * "When bloodied, makes a Constitution Saving Throw DC 15, on Failure Dies"
  */
 export function formatMinimalistDeathPrevention(
-  dp: MonsterExtendedHp['deathPrevention'],
+  dpInput: MonsterExtendedHp['deathPrevention'],
   ctx?: DynamicValueContext
 ): string {
+  const dp = normalizeDeathPrevention(dpInput)
   if (!dp || !dp.enabled || dp.name === 'Mortal') return ''
   const name = dp.name?.trim() || 'Immortal'
 

@@ -13,6 +13,8 @@ import {
   formatLanguagesList,
   formatMinimalistRegen,
   formatMinimalistDeathPrevention,
+  normalizeDeathPrevention,
+  regenTimingPhrase,
   resolveDynamicNumericSource,
   composeInvulnerabilityRuling,
   resolveInvulnerabilityDisplayLocation,
@@ -1009,8 +1011,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return label === path ? fallback || key : label
   }
 
+  // Skill and tool names: italic, never bold — bold is reserved for numbers.
+  const skillNameHtml = (label: string): string => `<em class="dnd-skill-name">${escapeHtml(label)}</em>`
+
   const formatCheckEntry = (entry: SkillCheckEntry, labels: string[]): string => {
-    const inner = `${numHtml(`${entry.passive}/${renderBonus(entry.bonus)}`)}, ${labels.map(escapeHtml).join(', ')}${condHtml(entry.condition)}`
+    const inner = `${numHtml(`${entry.passive}/${renderBonus(entry.bonus)}`)}, ${labels.map(skillNameHtml).join(', ')}${condHtml(entry.condition)}`
     return `<span class="dnd-check">${advHtml(inner, entry.advantage, entry.disadvantage)}</span>`
   }
 
@@ -1020,7 +1025,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }))
     if (row?.base && row.baseSkillKeys?.length) {
       const { passive, bonus } = row.base
-      const labels = row.baseSkillKeys.map(key => escapeHtml(skillLabel(key)))
+      const labels = row.baseSkillKeys.map(key => skillNameHtml(skillLabel(key)))
       groups.push({ passive, bonus, html: [numHtml(`${passive}/${renderBonus(bonus)}`), ...labels].join(', ') })
     }
     const content = groups.sort((left, right) => left.passive - right.passive || left.bonus - right.bonus)
@@ -1431,6 +1436,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const note = regen.disruptedByNote ? regen.disruptedByNote.trim() : ''
       const dis = [disTypes, note].filter(Boolean).join(', ')
 
+      const when = regenTimingPhrase(regen)
       let desc = ''
       if (recoveryType === 'absorb_temp_hp') {
         const absorbType = regen.triggeredByDamageType || 'lightning'
@@ -1441,13 +1447,13 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       } else if (isTempHp) {
         // Pure temporary hit points gain
         desc = dis
-          ? `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points at the start of its turn. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function at the start of its next turn.`
-          : `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points at the start of its turn.`
+          ? `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points ${when}. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function on its next occasion.`
+          : `The ${monster.name.toLowerCase()} gains ${amt} temporary hit points ${when}.`
       } else {
         // Pure healing / regeneration
         desc = dis
-          ? `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function at the start of its next turn. The ${monster.name.toLowerCase()} dies only if it starts its turn with 0 hit points and doesn't regenerate.`
-          : `The ${monster.name.toLowerCase()} regains ${amt} hit points at the start of its turn if it has at least 1 hit point.`
+          ? `The ${monster.name.toLowerCase()} regains ${amt} hit points ${when}. If the ${monster.name.toLowerCase()} takes ${dis} damage, this trait doesn't function on its next occasion. The ${monster.name.toLowerCase()} dies only if it starts its turn with 0 hit points and doesn't regenerate.`
+          : `The ${monster.name.toLowerCase()} regains ${amt} hit points ${when} if it has at least 1 hit point.`
       }
 
       if (!list.some((t) => t.name?.trim().toLowerCase() === traitName.toLowerCase())) {
@@ -1469,7 +1475,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
 
     // Death Prevention Detailed Trait (Immortal / Undead Fortitude)
-    const dp = monster.extendedHp?.deathPrevention
+    const dp = normalizeDeathPrevention(monster.extendedHp?.deathPrevention)
     if (
       dp?.enabled &&
       (dp.displayMode === 'detailed' || dp.displayMode === 'both')
@@ -1482,16 +1488,21 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const exceptionsStr = [ex, note].filter(Boolean).join(', ')
       const returnHpVal = resolveDynamicNumericSource(
         dp.returnHpSource || 'flat',
-        dp.returnHpAmount ?? 1,
+        dp.returnHpValue ?? dp.returnHpAmount ?? 1,
         dp.returnHpDice,
         dynCtx.value
       ) || '1'
       const hpUnit = returnHpVal === '1' ? '1 hit point' : `${returnHpVal} hit points`
 
+      const statNames: Record<string, string> = { STR: 'Strength', DEX: 'Dexterity', CON: 'Constitution', INT: 'Intelligence', WIS: 'Wisdom', CHA: 'Charisma' }
+      const saveStat = statNames[String(dp.saveStat || 'CON').toUpperCase()] ?? String(dp.saveStat)
       let desc = ''
-      if (traitName.toLowerCase() === 'undead fortitude') {
+      if (dp.dcRule === 'dc_5_plus_dmg' || (traitName.toLowerCase() === 'undead fortitude' && !dp.requiresSave)) {
         const disPart = exceptionsStr ? `unless the damage is ${exceptionsStr}` : 'unless the damage is radiant or from a critical hit'
         desc = `If damage reduces the ${monster.name.toLowerCase()} to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, ${disPart}. On a success, the ${monster.name.toLowerCase()} drops to ${hpUnit} instead.`
+      } else if (dp.requiresSave || dp.dcRule === 'custom_save') {
+        const disPart = exceptionsStr ? `, unless the damage is ${exceptionsStr}` : ''
+        desc = `If damage reduces the ${monster.name.toLowerCase()} to 0 hit points, it must make a DC ${dp.saveDc ?? 15} ${saveStat} saving throw${disPart}. On a success, the ${monster.name.toLowerCase()} drops to ${hpUnit} instead.`
       } else {
         const disPart = exceptionsStr ? `unless the damage is ${exceptionsStr}` : ''
         desc = `If damage reduces the ${monster.name.toLowerCase()} to 0 hit points${disPart ? ` (${disPart})` : ''}, it drops to ${hpUnit} instead.`

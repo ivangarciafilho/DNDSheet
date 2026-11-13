@@ -3032,7 +3032,7 @@
                 <div class="col-12 col-sm-4">
                   <q-checkbox v-help="'Tick to include understands but cannot speak for the basics editor.'"
                     v-model="lang.understandsOnly"
-                    label="Understands but cannot speak"
+                    :label="/manufacturer|creator|maker/i.test(lang.name || '') ? 'However, can\u2019t speak' : 'Understands but cannot speak'"
                     dense
                     @update:model-value="syncLanguagesToString"
                   />
@@ -3677,6 +3677,9 @@ export default defineComponent({
       const dp = deathPrevention.value
       dp.hideHp = rule === 'true_immortal' || rule === 'until_x_crits'
       dp.requiresSave = rule === 'custom_save'
+      // Clear what an earlier rule switched on, so only the chosen rule prints.
+      if (rule !== 'death_save_success' && dp.triggerCondition === 'death_save_success') dp.triggerCondition = undefined
+      if (rule !== 'upon_death_burst' && dp.triggerCondition === 'upon_death_burst') { dp.triggerCondition = undefined; dp.uponDeathDealsDamage = false }
       if (rule === 'death_save_success') {
         dp.triggerCondition = 'death_save_success'
         if (!dp.returnHpSource) dp.returnHpSource = '1'

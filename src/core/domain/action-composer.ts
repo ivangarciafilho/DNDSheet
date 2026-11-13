@@ -1,5 +1,5 @@
 export type ActionComposerRole = 'action' | 'bonus_action' | 'trait' | 'reaction' | 'legendary' | 'mythic' | 'lair'
-export type ComposerRow = 'head' | 'mechanics' | 'scope' | 'outcomes' | 'prose'
+export type ComposerRow = 'head' | 'trigger' | 'mechanics' | 'scope' | 'outcomes' | 'prose'
 export type ComposerEditor = 'text' | 'number' | 'catalog' | 'structured'
 
 export interface ComposerCellSpec {
@@ -143,7 +143,7 @@ const traitChain: readonly ComposerCellSpec[] = actionChain.map(cell => cell.id 
  ? { ...cell, id:'trait-usage', label:'Cadence', editor:'structured' } : cell)
 const reactionChain: readonly ComposerCellSpec[] = [
  ...actionChain.filter(cell => cell.row === 'head'),
- { id:'trigger',label:'Trigger',row:'mechanics',editor:'text',field:'trigger' },
+ { id:'trigger',label:'Trigger',row:'trigger',editor:'text',field:'trigger' },
  ...actionChain.filter(cell => cell.row !== 'head'),
 ]
 
@@ -166,4 +166,4 @@ export const ROLE_CHAINS: Readonly<Record<ActionComposerRole, readonly ComposerC
   lair: lairChain,
 }
 
-export const COMPOSER_ROW_ORDER: readonly ComposerRow[] = ['head', 'mechanics', 'scope', 'outcomes', 'prose']
+export const COMPOSER_ROW_ORDER: readonly ComposerRow[] = ['head', 'trigger', 'mechanics', 'scope', 'outcomes', 'prose']

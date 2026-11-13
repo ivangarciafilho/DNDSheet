@@ -2841,7 +2841,7 @@ async function runFuzz() {
     parity: step36Parity,
   }
   step36.success = step36Setup?.ready === true &&
-    JSON.stringify(step36Setup.rows) === JSON.stringify(['head', 'mechanics', 'scope', 'outcomes']) &&
+    JSON.stringify(step36Setup.rows) === JSON.stringify(['head', 'trigger', 'mechanics', 'scope', 'outcomes']) &&
     JSON.stringify(step36Setup.cells) === JSON.stringify(['usage', 'name', 'components', 'discipline', 'tier', 'duration', 'trigger', 'attack', 'save-ability', 'target-count', 'target-kind', 'target-qualifier', 'target-range', 'target-area', 'target-planes', 'outcomes']) &&
     step36Setup?.focusReady === true &&
     step36Edited?.applied === true && step36Edited?.menuClosed === true && step36Edited?.focusReturned === true &&

@@ -20,7 +20,7 @@ test('action roles share the same ordered chain while role-specific entries use 
     assert.deepStrictEqual(ROLE_CHAINS[role].map(({ id, row }) => [id, row]), expected)
   }
 
-  assert.ok(ROLE_CHAINS.reaction.some((cell) => cell.id === 'trigger' && cell.row === 'mechanics'))
+  assert.ok(ROLE_CHAINS.reaction.some((cell) => cell.id === 'trigger' && cell.row === 'trigger'))
   assert.ok(ROLE_CHAINS.trait.some((cell) => cell.id === 'description' && cell.row === 'prose'))
   assert.ok(ROLE_CHAINS.lair.some((cell) => cell.id === 'role-label' && cell.editable === false))
 })
@@ -47,7 +47,7 @@ test('action descriptor groups follow statblock plate order and include legacy a
   }
   assert.deepStrictEqual(
     ['name', 'attack', 'target-count', 'outcomes', 'description'].map(rowIndex),
-    [0, 1, 2, 3, 4]
+    [0, 2, 3, 4, 5]
   )
   for (const id of ['targeting.range', 'targeting.planes', 'outcomes', 'effects', 'range', 'areaDistance']) {
     assert.ok(cells.some((cell) => cell.field === id), `chain should represent ${id}`)

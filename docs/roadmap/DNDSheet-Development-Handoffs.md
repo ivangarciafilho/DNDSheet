@@ -1,3 +1,7 @@
+## Build 241 — Statblock wiring repairs
+
+The [Build 241 packet](DNDSheet-Build241-Statblock-Wiring-Repairs.md) covers italic skill names, plates that flow under their name, the reaction trigger leading (or trailing) its text, and the regeneration, mortality and language wiring. It adds open item H24 (unified rich-text and formula input), so the normalized workload moves from 94 to 95 open. Next: H24 classification, then H14.
+
 ## Build 235 — Composition and autosave
 
 The [Build 235 packet](DNDSheet-Build235-Composition-and-Autosave.md) records the compact casting and skill render, artwork transforms, A4 typography and text width, and browser autosave fallback. The normalized workload remains 174 complete and 94 open. Continue the shared casting catalogue and output parity items under their existing parent IDs.

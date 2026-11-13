@@ -14,7 +14,7 @@ const reaction = (overrides: Partial<MonsterReaction> = {}): MonsterReaction => 
 
 test('reaction chain preserves plate order and includes the reaction trigger as its own cell', () => {
   const rows = reactionChainView(reaction(), '3/Day')
-  assert.deepStrictEqual(rows.map((row) => row.row), ['head', 'mechanics', 'scope', 'outcomes'])
+  assert.deepStrictEqual(rows.map((row) => row.row), ['head', 'trigger', 'mechanics', 'scope', 'outcomes'])
   assert.ok(['usage','name','trigger','attack','save-ability','target-count','outcomes'].every(id=>rows.flatMap(row=>row.cells).some(cell=>cell.id===id)))
   assert.strictEqual(rows[1].cells[0].text, 'When a creature hits it with a melee attack')
 })

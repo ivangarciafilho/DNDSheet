@@ -848,6 +848,8 @@ export interface MonsterReaction {
   description: string
   limitedUse: DndLimitedUse
   trigger: string
+  /** Where the trigger sits in the printed text: before (default) or after the response. */
+  triggerPlacement?: 'start' | 'end'
   stagePool?: number | string | 'all'
   school?: string
   spellLevel?: string

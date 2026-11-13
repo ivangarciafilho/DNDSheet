@@ -629,6 +629,19 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       return plateHtml({ rows, body: '', cls: `sb-trait-streamlined${singleLineCls}` })
     }
 
+    // An entry whose only content is one text cell beside the name (mechanics or scope prose merged
+    // into row 1, or a skill group's scores) must wrap under the name, not drop into its own column.
+    const merged = rows[0].cells
+    if (rows.length === 1 && !body.trim() && merged.length === 2 && merged[0].head && !classification && !comps && !duration) {
+      const text = merged[1]
+      const plainText = String(text.html ?? '').replace(/<[^>]+>/g, '').trim()
+      if (plainText) {
+        rows[0].cells = [merged[0], { ...text, cls: `sb-body sb-grow action-body-text ${text.cls ?? ''}`.trim() }]
+        const singleLineCls = plainText.length <= 55 ? ' sb-single-line' : ''
+        return plateHtml({ rows, body: '', cls: `sb-trait-streamlined${singleLineCls}` })
+      }
+    }
+
     return plateHtml({ rows, body })
   }
 
@@ -891,6 +904,13 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const trigger = context.trigger?.trim()
         ? `<i>${t('monster.reaction.trigger')}:</i> ${processTokens(context.trigger.trim(), context, monster, 'reaction')}`
         : ''
+      // The trigger leads the printed text by default; authors may move it after the response.
+      const withTrigger = (text: string): string => {
+        if (!trigger) return text
+        const lead = /[.!?]$/.test(trigger.replace(/<[^>]+>/g, '').trim()) ? trigger : `${trigger}.`
+        if (!text.trim()) return lead
+        return context.triggerPlacement === 'end' ? `${text} ${lead}` : `${lead} ${text}`
+      }
 
       if (isStructured) {
         const { ability, renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
@@ -917,31 +937,38 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
             duration,
             mechanics,
             scope,
-            extra: trigger ? [trigger] : [],
           },
-          desc
+          withTrigger(desc)
         )
       }
 
       const desc = processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`, context, monster, 'reaction')
       return buildPlateEntry(
         monster,
-        { stagePool: context?.stagePool, name: context.name, usage: usageText(context), extra: trigger ? [trigger] : [] },
-        desc
+        { stagePool: context?.stagePool, name: context.name, usage: usageText(context) },
+        withTrigger(desc)
       )
     }
 
     if (hasStructuredAbility(context as Partial<MonsterAction>)) {
       const { renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
-      const trigger = context.trigger?.trim() ? `<i>${t('monster.reaction.trigger')}:</i> ${context.trigger.trim()} ` : ''
+      const trigger = context.trigger?.trim() ? `<i>${t('monster.reaction.trigger')}:</i> ${context.trigger.trim()}` : ''
       const prose = text2024(context as unknown as MonsterAction, renderContext, { markup: 'html', componentsInLead: true })
-      return processTokens(`<b><i>${context.name}{reaction.limitedUse}.</i></b> ${trigger}${prose}`, context, monster, 'reaction')
+      const body = !trigger ? prose : context.triggerPlacement === 'end' ? `${prose} ${trigger}` : `${trigger} ${prose}`
+      return processTokens(`<b><i>${context.name}{reaction.limitedUse}.</i></b> ${body}`, context, monster, 'reaction')
     }
 
     // case on the presence of a Trigger to choose old style rendering or new
     if (context.trigger === '') {
       return processTokens(
         `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
+        context,
+        monster,
+        'reaction'
+      )
+    } else if (context.triggerPlacement === 'end') {
+      return processTokens(
+        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)} <i>${t('monster.reaction.trigger')}:</i> ${context.trigger}`,
         context,
         monster,
         'reaction'
@@ -1242,6 +1269,9 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     input = input.replace(allowedTags, (match, tag) => {
       return '<' + tag + '>'
     })
+
+    // Skill and tool names: a fixed, attribute-literal tag (italic, normal weight).
+    input = input.replace(/&lt;em class="dnd-skill-name"&gt;/g, '<em class="dnd-skill-name">')
 
     const allowedStrongWithAttrs = /\&lt;(\/?strong[^\&]*)\&gt;/gi
     input = input.replace(allowedStrongWithAttrs, (match, tag) => {

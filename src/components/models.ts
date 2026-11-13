@@ -788,6 +788,7 @@ export interface MonsterReaction {
   description: string
   limitedUse: DndLimitedUse
   trigger: string
+  triggerPlacement?: 'start' | 'end'
   stagePool?: number | string | 'all'
 }
 

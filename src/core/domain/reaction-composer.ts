@@ -6,10 +6,10 @@ const clean = (value: unknown): string => (typeof value === 'string' ? value.tri
 
 export function reactionChainView(reaction: MonsterReaction, usage: string): ChainRowView[] {
  const rows=chainView('action',reaction as unknown as Partial<MonsterAction>,{usage}).filter(row=>row.row!=='prose')
- const trigger:ChainCellView={id:'trigger',label:'Trigger',row:'mechanics',editor:'text',state:clean(reaction.trigger)?'set':'empty',text:clean(reaction.trigger)||'Trigger',legacy:false}
- const mechanics=rows.find(row=>row.row==='mechanics')
- if(mechanics)mechanics.cells.unshift(trigger)
- else rows.splice(1,0,{row:'mechanics',cells:[trigger]})
+ // The trigger owns its own row directly under the head, ahead of rolls and targets.
+ const trigger:ChainCellView={id:'trigger',label:'Trigger',row:'trigger',editor:'text',state:clean(reaction.trigger)?'set':'empty',text:clean(reaction.trigger)||'Trigger',legacy:false}
+ const head=rows.findIndex(row=>row.row==='head')
+ rows.splice(head+1,0,{row:'trigger',cells:[trigger]})
  return rows
 }
 
@@ -39,6 +39,7 @@ export function reactionCellPatch(reaction: MonsterReaction, cellId: string, val
   switch (cellId) {
     case 'name': return { name: text }
     case 'trigger': return { trigger: text }
+    case 'trigger-placement': return { triggerPlacement: text === 'end' ? 'end' : 'start' }
     case 'usage': {
       if (value && typeof value === 'object') return cellPatch(reaction as unknown as Partial<MonsterAction>,cellId,value) as unknown as Partial<MonsterReaction>
       if (!text) return { limitedUse: { ...reaction.limitedUse, count: 0 } }
