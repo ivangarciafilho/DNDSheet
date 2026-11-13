@@ -78,7 +78,7 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
     const mask = await fetch(`${origin}/homebrew/masks/watercolor_splash_center.png`)
     return index.includes(`${PAGES_BASE}/assets/`) && mask.status === 200
   })
-  await run('pages-fuzz', 'node test/exhaustive-ui-fuzz.js && node test/native-monster-roundtrip-browser-smoke.mjs && node test/statblock-fit-browser-smoke.mjs && node test/basic-riders-browser-smoke.mjs && node test/emergency-skills-browser-smoke.js && node test/emergency-spellcasting-browser-smoke.js && node test/casting-sources-browser-smoke.js && node test/shared-casting-editor-browser-smoke.js && node test/print-parity-browser-smoke.js && node test/emergency-rich-mechanics-browser-smoke.js && node test/emergency-containers-browser-smoke.js && node test/emergency-numeric-presentation-browser-smoke.js && node test/macro-autocomplete-browser-smoke.mjs', { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
+  await run('pages-fuzz', 'node test/exhaustive-ui-fuzz.js && node test/native-monster-roundtrip-browser-smoke.mjs && node test/statblock-fit-browser-smoke.mjs && node test/basic-riders-browser-smoke.mjs && node test/emergency-skills-browser-smoke.js && node test/emergency-spellcasting-browser-smoke.js && node test/casting-sources-browser-smoke.js && node test/shared-casting-editor-browser-smoke.js && node test/print-parity-browser-smoke.js && node test/emergency-rich-mechanics-browser-smoke.js && node test/emergency-containers-browser-smoke.js && node test/emergency-numeric-presentation-browser-smoke.js && node test/macro-autocomplete-browser-smoke.mjs && node test/formatting-reaches-statblock-browser-smoke.mjs', { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
   pages.close()
 }
 

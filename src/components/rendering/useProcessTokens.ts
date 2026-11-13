@@ -1267,7 +1267,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     input = input.replace(/</gi, '&lt;')
 
     // allow b/i/u/br/strong
-    const allowedTags = /\&lt;(\/?[b|i|u]|br|strong)\&gt;/gi
+    const allowedTags = /\&lt;(\/?(?:b|strong|i|em|u|s|strike|del|sub|sup|code|br|p|ul|ol|li))\&gt;/gi
     input = input.replace(allowedTags, (match, tag) => {
       return '<' + tag + '>'
     })

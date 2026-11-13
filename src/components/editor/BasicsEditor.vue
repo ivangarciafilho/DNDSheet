@@ -456,7 +456,7 @@
         />
         <div class="col-12 col-sm-4 text-right">
           <q-badge color="blue-8" class="text-weight-bold q-pa-xs">
-            Preview: AC {{ computedCompositorAc }} {{ computedCompositorType ? `(${computedCompositorType})` : '' }}
+            Preview: AC {{ computedCompositorAc }} <span v-if="computedCompositorType" v-html="`(${mechanicRichHtml(computedCompositorType)})`"></span>
           </q-badge>
         </div>
       </div>
@@ -979,7 +979,7 @@
             Composed AC & Defensive Ruling:
           </div>
           <q-badge color="cyan-4" outline class="text-subtitle2 text-weight-bold q-pa-xs">
-            {{ composedAcPreview }}
+            <span v-html="mechanicRichHtml(composedAcPreview)"></span>
           </q-badge>
         </div>
       </div>
@@ -3100,6 +3100,7 @@
 import BasicRidersEditor from './BasicRidersEditor.vue'
 import DefenseScheduleFields from './DefenseScheduleFields.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
+import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { STANDARD_ALIGNMENT } from 'src/data/ALIGNMENT'
 import { CR_SELECT, LAIR_CR_SELECT } from 'src/data/CR'
 import { DICE_SELECT, DIE_LOOKUP } from 'src/data/DICE'
@@ -4839,6 +4840,7 @@ export default defineComponent({
       openLayerStudio,
       acConfig,
       composedAcPreview,
+      mechanicRichHtml,
       acBaseOptions,
       acAbilityBonusOptions,
       acDefenseItemOptions,

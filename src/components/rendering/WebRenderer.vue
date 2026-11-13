@@ -472,7 +472,7 @@
             v-for="(sBadge, sIdx) in sensesBadges"
             :key="'sense-badge-' + sIdx"
             class="dnd-cascade-badge"
-          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          ><span v-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
         </div>
       </div>
 
@@ -484,7 +484,7 @@
             v-for="(lBadge, lIdx) in languagesBadges"
             :key="'lang-badge-' + lIdx"
             class="dnd-cascade-badge"
-          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          ><span v-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
         </div>
         <span v-else class="dnd-cascade-badge">&mdash;</span>
       </div>
@@ -634,7 +634,7 @@
             v-for="(sBadge, sIdx) in sensesBadges"
             :key="'sense-badge-' + sIdx"
             class="dnd-cascade-badge"
-          >{{ sBadge }}<span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          ><span v-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
         </div>
       </div>
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': languagesStripe }">
@@ -644,7 +644,7 @@
             v-for="(lBadge, lIdx) in languagesBadges"
             :key="'lang-badge-' + lIdx"
             class="dnd-cascade-badge"
-          >{{ lBadge }}<span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+          ><span v-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
         </div>
         <span v-else class="dnd-cascade-badge">&mdash;</span>
       </div>
@@ -691,7 +691,7 @@
 
       <!-- Conditionals Sub-Sections -->
       <template v-for="cond in sanitizedGroupedTraits.conditionals" :key="'cond-' + cond.trigger">
-        <h4 class="sub-section-header">Conditionals ({{ cond.trigger }})</h4>
+        <h4 class="sub-section-header">Conditionals (<span v-html="mechanicRichHtml(cond.trigger)"></span>)</h4>
         <div
           v-for="(trait, idx) in cond.traits"
           :key="'trait-cond-' + idx"
@@ -938,7 +938,7 @@
             <thead><tr><th scope="col">{{ rt.dice }}</th><th scope="col">{{ $t('editor.randomTables.result') }}</th></tr></thead>
             <tbody>
               <tr v-for="row in rt.sortedRows" :key="row.id">
-                <td class="random-table-range">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td>{{ row.text }}</td>
+                <td class="random-table-range">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td v-html="mechanicRichHtml(row.text)"></td>
               </tr>
               <tr v-if="rt.fallback"><td class="random-table-range">{{ $t('editor.randomTables.otherwise') }}</td><td>{{ rt.fallback }}</td></tr>
             </tbody>

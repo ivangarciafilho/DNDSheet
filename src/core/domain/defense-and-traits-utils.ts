@@ -4,6 +4,7 @@ import { CADENCES, cadenceDefinition, formatLimitedUses } from './cadence.ts'
 import type { DamageDefenseItem, MonsterLanguageItem, MonsterExtendedHp, MonsterTrait, MonsterAcConfig } from './types.ts'
 import { buildFormulaContext, evaluateFormula, normalizeLegacyFormula } from './formula.ts'
 import type { FormulaContext } from './formula.ts'
+import { mechanicPlainText } from './mechanic-rich-text.ts'
 
 /**
  * Formats an individual damage/condition defense item into standard D&D 5e wording.
@@ -1762,7 +1763,12 @@ export function composeAcAndDefenses(
 
   // If user had existing ACType that is not already covered, preserve it
   const savedAcType = monster.ACType?.trim()
-  const legacyAcType = savedAcType && savedAcType !== generatedArmorDesc ? savedAcType : ''
+  // The compositor copies its wording into AC Type. When the author formats that copy (bold,
+  // italic...) without changing its words, the formatted copy is what prints.
+  const plainKey = (text?: string) => mechanicPlainText(text ?? '').replace(/[\s.;,]+$/, '').replace(/\s+/g, ' ').trim().toLowerCase()
+  const formattedCopy = Boolean(savedAcType && generatedArmorDesc) && savedAcType !== generatedArmorDesc && plainKey(savedAcType) === plainKey(generatedArmorDesc)
+  if (formattedCopy && savedAcType) allParenthetical.splice(0, allParenthetical.length, savedAcType)
+  const legacyAcType = savedAcType && savedAcType !== generatedArmorDesc && !formattedCopy ? savedAcType : ''
   if (legacyAcType && !armorParts.some(p => legacyAcType.toLowerCase().includes(p.toLowerCase()))) {
     if (!cfg.baseMode || cfg.baseMode === 'flat') {
       allParenthetical.unshift(legacyAcType)
@@ -1770,11 +1776,16 @@ export function composeAcAndDefenses(
   }
 
   const scheduledArmorDesc = allParenthetical.join(', ')
-  const armorTypeDesc = [...(legacyAcType && allParenthetical[0] === legacyAcType ? [legacyAcType] : []),
+  const armorTypeDesc = formattedCopy && savedAcType ? savedAcType : [...(legacyAcType && allParenthetical[0] === legacyAcType ? [legacyAcType] : []),
     generatedArmorDesc].filter(Boolean).join(', ')
 
   const badges: string[] = []
   const splitRows = Boolean((monster as any).splitAcRiderRows)
+
+  if (splitRows && formattedCopy && savedAcType) {
+    const fullText = `${base} (${savedAcType})`
+    return { totalAc: base, armorTypeDesc, badges: [`<strong class="dnd-num">${base}</strong> (${savedAcType})`], fullText, isAbsoluteRule, absoluteRuleText: isAbsoluteRule ? absoluteRuleText : undefined }
+  }
 
   if (splitRows) {
     const baseArmorParts = [...armorParts]

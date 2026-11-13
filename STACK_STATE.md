@@ -1,3 +1,7 @@
+## Build 245 — no dead formatting
+
+Authored bold, italic and strike reach the stat block from every field kind; the compositor prints a formatted AC Type copy; senses notes print for every sense; a formatting smoke runs in the gate.
+
 ## Build 244 — autocomplete close-out
 
 ARIA combobox state on plain, rich and formula suggestion lists. Custom formulas complete references allowed for the field, inserted bare. `test/macro-autocomplete-browser-smoke.mjs` runs in the gate. A10.3, A10.6 and A10.8 are closed.

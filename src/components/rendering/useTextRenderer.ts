@@ -1,5 +1,5 @@
 import { formatBasicRider, formatRiderSchedule, type DefenseEffect, type BasicRiderScope, type HpRiderGroup } from 'src/core/domain/basic-riders'
-import { mechanicPlainText } from 'src/core/domain/mechanic-rich-text'
+import { mechanicPlainText, mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
 import { useSpellsStore } from 'src/stores/spells-store'
@@ -152,7 +152,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const basicRiderText = (scope: BasicRiderScope) =>
     (monster.basicRiders?.[scope] ?? []).map(rider => formatBasicRider(rider, scope)).filter(Boolean)
 
-  const acBadges = computed(() => [...armorBadges.value, ...basicRiderText('ac').map(escapeHtml)])
+  const acBadges = computed(() => [...armorBadges.value, ...basicRiderText('ac').map(mechanicRichHtml)])
 
   const armorBadges = computed(() => {
     const acCfg = monster.acConfig
@@ -234,7 +234,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const dp = ext?.deathPrevention
 
     const authored = (['hp', 'deathThroes', 'onDamage'] as const).flatMap(group =>
-      basicRiderText(group).map(text => ({ group, text: escapeHtml(text) })))
+      basicRiderText(group).map(text => ({ group, text: mechanicRichHtml(text) })))
     // Preserve authored triggers even when the base HP is hidden.
     if (dp?.enabled && dp.name !== 'Mortal') {
       if (dp.dcRule === 'until_x_crits') {
@@ -883,7 +883,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           }
 
           const text = formatDefenseItem(item)
-          if (text) entries.push({ text, html: escapeHtml(text) })
+          if (text) entries.push({ text, html: mechanicRichHtml(text) })
         }
 
         return entries
@@ -892,7 +892,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
         return fallback
           .map((s) => String(s).trim())
           .filter(Boolean)
-          .map((text) => ({ text, html: escapeHtml(text) }))
+          .map((text) => ({ text, html: mechanicRichHtml(text) }))
       }
       return []
     }
@@ -1210,6 +1210,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       else if (item.lightImpairment === 'daylight') notes.push('Blind on Daylight')
       else if (item.lightImpairment === 'dim_and_bright') notes.push('Blind on Dim and Bright Light')
     }
+    // The author's note belongs to every sense kind, so it is collected before any kind returns.
+    if (item.note && item.note.trim()) notes.push(item.note.trim())
 
     // Gathered Info & Observation Clause
     const infoList = Array.isArray(item.perceivedStats) && item.perceivedStats.length > 0
@@ -1288,9 +1290,6 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     }
 
     if (item.webSense) notes.push('while touching web, knows location of creatures on same web')
-    if (item.note && item.note.trim()) {
-      notes.push(item.note.trim())
-    }
 
     if (notes.length > 0) {
       return `${lowerName} (${rangeStr ? `${rangeStr}, ` : ''}${notes.join(', ')})`

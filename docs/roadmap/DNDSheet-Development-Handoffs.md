@@ -1,3 +1,7 @@
+## Build 245 — No dead formatting
+
+The [Build 245 packet](DNDSheet-Build245-No-Dead-Formatting.md) makes authored formatting reach the stat block. It fixes the AC compositor ignoring a formatted copy of its own wording, the senses note being dead for darkvision, blindsight, life sense and divine sense, and escaped riders, defense notes, language and sense badges, conditional headings and table results. The gate now checks this across templates and themes.
+
 ## Build 244 — Autocomplete close-out and grooming
 
 The [Build 244 packet](DNDSheet-Build244-Autocomplete-Closeout.md) closes A10.3 (ARIA combobox on every suggestion list), A10.6 (identifier completion in custom formulas) and A10.8 (a browser smoke, now in the gate). **Groomed order from here:** A13.9 sheet density (Senses and Languages beside the scores, fewer rules, initiative as styled text) → H14 type debt (505 diagnostics; split BasicsEditor first) → A11.6/A11.7 (reaction availability and skill-group routing; much already shipped in Builds 226–241) → A12.8–A12.10 casting-source identity and compact spell lists → the B1 foundation chain.
