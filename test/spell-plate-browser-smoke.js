@@ -229,6 +229,33 @@ try {
   assert.equal(subclassAfterReload, 'Evocation', 'A12.3: the primary subclass should persist across reload')
   console.log('Spell plate live edit and reload: pass')
 
+  // A12.10 d: verify @media print preserves visible class & innate spell plates and formatted cadences
+  await send('Emulation.setEmulatedMedia', { media: 'print' })
+  await evaluate('() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))')
+  const printState = await evaluate(`() => {
+    const classPlate = document.querySelector('.class-spellcasting.sb-plate')
+    const innatePlate = document.querySelector('.innate-spellcasting.sb-plate')
+    const isVisible = (el) => {
+      if (!el) return false
+      const style = getComputedStyle(el)
+      const rect = el.getBoundingClientRect()
+      return style.display !== 'none' && style.visibility !== 'hidden' && rect.height > 0 && rect.width > 0
+    }
+    return {
+      classVisible: isVisible(classPlate),
+      innateVisible: isVisible(innatePlate),
+      classText: classPlate ? classPlate.innerText : '',
+      innateText: innatePlate ? innatePlate.innerText : '',
+    }
+  }`)
+  assert.equal(printState.classVisible, true, 'Class spellcasting plate must remain visible in print media')
+  assert.equal(printState.innateVisible, true, 'Innate spellcasting plate must remain visible in print media')
+  assert.match(printState.classText, /\(2\), Level 1:\s*Magic Missile/, 'Print media must retain class slot cadence')
+  assert.match(printState.classText, /\(1\/Day\), Level 3:\s*Fireball/, 'Print media must retain class counted cadence')
+  assert.match(printState.innateText, /3\/Day[\s\S]*Fireball/, 'Print media must retain innate cadence')
+  await send('Emulation.setEmulatedMedia', { media: '' })
+  console.log('Spell plate print proof: pass')
+
   console.log(`Spell plate browser smoke passed across ${result.length} themes: ${themes.join(', ')}`)
 } finally {
   ws?.close()

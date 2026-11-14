@@ -181,3 +181,93 @@ test('save/import migration retains checkbox choices, legacy placement and group
   assert.equal(skillGroupPlacement('study', 'Action', config), 'header')
   assert.equal(skillGroupPlacement('hide', 'Action', config), 'legendary')
 })
+
+test('A11.7a/b: relocateCombatActivity routes once with full undo/redo restoration', async () => {
+  const {
+    createCombatActivityRoutingState,
+    relocateCombatActivity,
+    undoCombatActivityRelocation,
+    redoCombatActivityRelocation,
+    projectCombatActivitySections,
+  } = await import('../../src/core/domain/skill-action-groups.ts')
+
+  const initial = createCombatActivityRoutingState([
+    {
+      id: 'battle-cry',
+      name: 'Battle Cry',
+      defaultSection: 'Bonus Actions',
+      economyLabel: 'Bonus Action',
+      description: 'Allies gain advantage.',
+    },
+    {
+      id: 'multiattack',
+      name: 'Multiattack',
+      defaultSection: 'Actions',
+      economyLabel: 'Action',
+    },
+  ])
+
+  const moved = relocateCombatActivity(initial, 'battle-cry', 'Traits')
+  const projectedMoved = projectCombatActivitySections(moved.entries)
+  assert.strictEqual(projectedMoved['Bonus Actions'].length, 0)
+  assert.strictEqual(projectedMoved.Traits.length, 1)
+  assert.strictEqual(projectedMoved.Traits[0].relocated, true)
+
+  const undone = undoCombatActivityRelocation(moved)
+  const projectedUndone = projectCombatActivitySections(undone.entries)
+  assert.strictEqual(projectedUndone['Bonus Actions'].length, 1)
+  assert.strictEqual(projectedUndone.Traits.length, 0)
+
+  const redone = redoCombatActivityRelocation(undone)
+  const projectedRedone = projectCombatActivitySections(redone.entries)
+  assert.strictEqual(projectedRedone['Bonus Actions'].length, 0)
+  assert.strictEqual(projectedRedone.Traits.length, 1)
+})
+
+test('A11.7b: projectCombatActivitySections deduplicates duplicate ids and relocated entries', async () => {
+  const { projectCombatActivitySections, COMBAT_ACTIVITY_SECTIONS } = await import(
+    '../../src/core/domain/skill-action-groups.ts'
+  )
+  const sections = projectCombatActivitySections([
+    { id: 'parry', name: 'Parry', defaultSection: 'Reactions', economyLabel: 'Reaction' },
+    {
+      id: 'parry',
+      name: 'Parry',
+      defaultSection: 'Reactions',
+      sectionOverride: 'Actions',
+      economyLabel: 'Reaction',
+    },
+  ])
+  const allOccurrences = COMBAT_ACTIVITY_SECTIONS.flatMap((s) => sections[s]).filter(
+    (item) => item.id === 'parry'
+  )
+  assert.strictEqual(allOccurrences.length, 1)
+  assert.strictEqual(allOccurrences[0].section, 'Actions')
+})
+
+test('A11.7c: formatSectionActivityTitle preserves economy label when relocated or specialized', async () => {
+  const { formatSectionActivityTitle, projectCombatActivitySections } = await import(
+    '../../src/core/domain/skill-action-groups.ts'
+  )
+  const native = formatSectionActivityTitle(
+    { name: 'Shield Block', defaultSection: 'Reactions', economyLabel: 'Reaction' },
+    'Reactions'
+  )
+  assert.strictEqual(native, 'Shield Block')
+
+  const relocated = formatSectionActivityTitle(
+    { name: 'Shield Block', defaultSection: 'Reactions', economyLabel: 'Reaction' },
+    'Traits'
+  )
+  assert.strictEqual(relocated, 'Shield Block (Reaction)')
+
+  const specialized = projectCombatActivitySections([
+    {
+      id: 'breath',
+      name: 'Frost Breath',
+      defaultSection: 'Actions',
+      economyLabel: 'Recharge 5-6',
+    },
+  ])
+  assert.strictEqual(specialized.Actions[0].renderedTitle, 'Frost Breath (Recharge 5-6)')
+})

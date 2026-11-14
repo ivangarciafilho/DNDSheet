@@ -24,6 +24,9 @@ export interface SpeedActionRider {
   actionType?: 'Action' | 'Bonus Action' | 'Reaction' | 'Free'
   rider: string
   trigger?: string
+  phaseStage?: number
+  condition?: string
+  freeformFallback?: string
 }
 
 export const SPEED_ACTION_RIDER_PRESETS: Array<{
@@ -152,9 +155,11 @@ export function formatTraversalCunningRider(rider: TraversalCunningRider): strin
 /**
  * Format an authored movement action rider into clean statblock prose.
  */
-export function formatSpeedActionRider(rider: SpeedActionRider): string {
-  if (!rider || !rider.rider || !rider.rider.trim()) return ''
-  const trimmedRider = rider.rider.trim()
+function formatBaseSpeedActionRider(rider: SpeedActionRider): string {
+  const trimmedRider = (rider.rider || '').trim()
+  if (!trimmedRider) {
+    return rider.freeformFallback?.trim() || ''
+  }
   const act = (rider.action || '').trim()
 
   if (!act || act.toLowerCase() === 'general' || act.toLowerCase() === 'none') {
@@ -189,6 +194,22 @@ export function formatSpeedActionRider(rider: SpeedActionRider): string {
   return `${act}: ${trimmedRider}`
 }
 
+export function formatSpeedActionRider(rider: SpeedActionRider): string {
+  if (!rider) return ''
+  const base = formatBaseSpeedActionRider(rider)
+  if (!base) return ''
+
+  const phasePrefix =
+    rider.phaseStage !== undefined && Number.isFinite(rider.phaseStage)
+      ? `[Phase ${rider.phaseStage}] `
+      : ''
+  const cond = rider.condition?.trim()
+  const condSuffix =
+    cond && !base.toLowerCase().includes(cond.toLowerCase()) ? ` (${cond})` : ''
+
+  return `${phasePrefix}${base}${condSuffix}`
+}
+
 /**
  * Compose a full speed line with base speeds and compoundable cunning riders.
  * Example:
@@ -204,4 +225,133 @@ export function composeSpeedWithRiders(
     .filter(Boolean)
   if (formattedRiders.length === 0) return baseSpeedText
   return `${baseSpeedText}, ${formattedRiders.join(', ')}`
+}
+
+export interface ParsedSpeedMovement {
+  mode: 'walk' | 'fly' | 'swim' | 'climb' | 'burrow' | 'teleport'
+  valueFt: number
+  note?: string
+  raw: string
+}
+
+export interface MigratedLegacySpeed {
+  rawSpeed: string
+  baseSpeedText: string
+  speeds: ParsedSpeedMovement[]
+  riders: SpeedActionRider[]
+  freeformFallback?: string
+  lossless: boolean
+}
+
+function splitTopLevelSpeedSegments(raw: string): string[] {
+  const segments: string[] = []
+  let current = ''
+  let depth = 0
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i]
+    if (ch === '(' || ch === '[') depth++
+    else if ((ch === ')' || ch === ']') && depth > 0) depth--
+    if (ch === ',' && depth === 0) {
+      const trimmed = current.trim()
+      if (trimmed) segments.push(trimmed)
+      current = ''
+    } else {
+      current += ch
+    }
+  }
+  const tail = current.trim()
+  if (tail) segments.push(tail)
+  return segments
+}
+
+export function migrateLegacySpeedString(rawSpeed: string): MigratedLegacySpeed {
+  const trimmed = (rawSpeed || '').trim()
+  if (!trimmed) {
+    return { rawSpeed: '', baseSpeedText: '', speeds: [], riders: [], lossless: true }
+  }
+
+  const segments = splitTopLevelSpeedSegments(trimmed)
+  const baseSegments: string[] = []
+  const speeds: ParsedSpeedMovement[] = []
+  const riders: SpeedActionRider[] = []
+  const freeformSegments: string[] = []
+
+  segments.forEach((seg, idx) => {
+    const speedMatch = seg.match(
+      /^(?:(walk|fly|swim|climb|burrow|teleport)\s+)?(\d+)\s*ft\.?(?:\s*\(([^)]+)\))?$/i
+    )
+    if (speedMatch) {
+      const mode = (speedMatch[1] ? speedMatch[1].toLowerCase() : 'walk') as ParsedSpeedMovement['mode']
+      const valueFt = Number.parseInt(speedMatch[2], 10)
+      const note = speedMatch[3]?.trim()
+      speeds.push({ mode, valueFt, ...(note ? { note } : {}), raw: seg })
+      baseSegments.push(seg)
+      return
+    }
+
+    let working = seg
+    let phaseStage: number | undefined
+    const phaseMatch = working.match(/^\[Phase\s+(\d+)\]\s*(.+)$/i)
+    if (phaseMatch) {
+      phaseStage = Number.parseInt(phaseMatch[1], 10)
+      working = phaseMatch[2].trim()
+    }
+
+    let condition: string | undefined
+    const condMatch = working.match(/^(.+?)\s*\(((?:while|when|if|below|above|during|under)[^)]+)\)$/i)
+    if (condMatch) {
+      working = condMatch[1].trim()
+      condition = condMatch[2].trim()
+    }
+
+    const colonMatch = working.match(/^([^:]{2,40}):\s*(.+)$/)
+    if (colonMatch) {
+      riders.push({
+        id: `legacy-rider-${idx + 1}`,
+        action: colonMatch[1].trim(),
+        rider: colonMatch[2].trim(),
+        ...(phaseStage !== undefined ? { phaseStage } : {}),
+        ...(condition ? { condition } : {}),
+      })
+      return
+    }
+
+    const canMatch = working.match(/^([A-Za-z]+(?:\s+or\s+[A-Za-z]+)?)\s+(can\s+.+)$/i)
+    if (canMatch) {
+      riders.push({
+        id: `legacy-rider-${idx + 1}`,
+        action: canMatch[1].trim(),
+        rider: canMatch[2].trim(),
+        ...(phaseStage !== undefined ? { phaseStage } : {}),
+        ...(condition ? { condition } : {}),
+      })
+      return
+    }
+
+    freeformSegments.push(seg)
+  })
+
+  const baseSpeedText = baseSegments.join(', ')
+  const freeformFallback = freeformSegments.length > 0 ? freeformSegments.join(', ') : undefined
+  return {
+    rawSpeed: trimmed,
+    baseSpeedText,
+    speeds,
+    riders,
+    ...(freeformFallback ? { freeformFallback } : {}),
+    lossless: true,
+  }
+}
+
+export function composeMigratedSpeed(migrated: MigratedLegacySpeed): string {
+  const parts: string[] = []
+  if (migrated.baseSpeedText) parts.push(migrated.baseSpeedText)
+  for (const r of migrated.riders) {
+    const formatted = formatSpeedActionRider(r)
+    if (formatted) parts.push(formatted)
+  }
+  if (migrated.freeformFallback?.trim()) {
+    parts.push(migrated.freeformFallback.trim())
+  }
+  return parts.join(', ')
 }

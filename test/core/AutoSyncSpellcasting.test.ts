@@ -222,3 +222,123 @@ test('Shared source aggregate preserves explicit custom systems and ignores unsu
  assert.strictEqual(result?.classes?.length,2)
  assert.strictEqual(aggregateSpellcastingSources({class:'Unspecified manual system',level:20}),undefined)
 })
+
+test('A12.0/A12.2: SUBCLASS_CATALOG, CASTER_PROGRESSIONS, and planSubclassExpandedSpells resolve subclass spells', async () => {
+  const {
+    CASTER_PROGRESSIONS,
+    SUBCLASS_CATALOG,
+    SUBCLASS_EXPANDED_SPELLS,
+    planSubclassExpandedSpells,
+  } = await import('../../src/core/usecases/AutoSyncSpellcasting.ts')
+
+  assert.strictEqual(CASTER_PROGRESSIONS.pact.poolKind, 'pact_slots')
+  assert.strictEqual(CASTER_PROGRESSIONS.third.classes.length, 2)
+  assert.ok(SUBCLASS_CATALOG.some((s) => s.className === 'Fighter' && s.subclass === 'Eldritch Knight' && s.progressionOverride === 'third'))
+  assert.ok(SUBCLASS_EXPANDED_SPELLS['Cleric:Light'])
+
+  const plan = planSubclassExpandedSpells({
+    className: 'Cleric',
+    subclass: 'Light',
+    classLevel: 5,
+    existingSpellNames: ['Bless', 'Fireball'],
+  })
+  assert.strictEqual(plan.found, true)
+  assert.strictEqual(plan.alwaysPrepared, true)
+  assert.ok(plan.alreadyPresent.includes('Fireball'))
+  assert.ok(plan.missingSpells.some((m) => m.spell === 'Daylight' && m.unlockLevel === 5))
+  assert.strictEqual(plan.missingSpells.some((m) => m.spell === 'Wall of Fire'), false)
+})
+
+test('A12.1/A12.4: computeSpellMetrics emits explicit ok, unavailable, and error states', async () => {
+  const { computeSpellMetrics } = await import('../../src/core/usecases/AutoSyncSpellcasting.ts')
+
+  const ok = computeSpellMetrics({
+    className: 'Wizard',
+    stats: { INT: 18 },
+    proficiency: 3,
+  })
+  assert.strictEqual(ok.status, 'ok')
+  if (ok.status === 'ok') {
+    assert.strictEqual(ok.ability, 'INT')
+    assert.strictEqual(ok.abilityModifier, 4)
+    assert.strictEqual(ok.saveDc, 15)
+    assert.strictEqual(ok.attackBonus, 7)
+  }
+
+  const unavailable = computeSpellMetrics({ ability: 'WIS', stats: { INT: 18 }, proficiency: 3 })
+  assert.strictEqual(unavailable.status, 'unavailable')
+
+  const errBadStat = computeSpellMetrics({ ability: 'LUCK', stats: { INT: 18 }, proficiency: 3 })
+  assert.strictEqual(errBadStat.status, 'error')
+
+  const errNegProf = computeSpellMetrics({ ability: 'INT', stats: { INT: 18 }, proficiency: -1 })
+  assert.strictEqual(errNegProf.status, 'error')
+})
+
+test('A12.8a/b/c: migrateCastingSources and resolveCastingProjection keep shared, pact, and innate pools distinct', async () => {
+  const { migrateCastingSources, resolveCastingProjection } = await import(
+    '../../src/core/usecases/AutoSyncSpellcasting.ts'
+  )
+
+  const sources = migrateCastingSources({
+    class: 'Wizard',
+    subclass: 'Evocation',
+    level: 5,
+    stat: 'INT',
+    multiclass: {
+      enabled: true,
+      secondaryClass: 'Warlock',
+      secondarySubclass: 'Fiend',
+      secondaryLevel: 3,
+      secondaryStat: 'CHA',
+    },
+    atWill: [
+      { count: 'At Will', spells: ['Mage Hand'] },
+      { count: '1/Day', spells: ['Plane Shift'] },
+    ],
+  })
+
+  // Idempotent migration preserves stable IDs
+  const remigrated = migrateCastingSources({ castingSources: sources })
+  assert.deepStrictEqual(
+    remigrated.map((s) => s.id),
+    sources.map((s) => s.id)
+  )
+
+  const projection = resolveCastingProjection(sources, {
+    stats: { INT: 18, CHA: 16 },
+    proficiency: 3,
+  })
+
+  // Wizard level 5 shared slots stay isolated from Warlock level 3 pact slots
+  assert.strictEqual(projection.sharedPool.effectiveCasterLevel, 5)
+  assert.strictEqual(projection.sharedPool.slots[2], 2)
+  assert.strictEqual(projection.pactPools.length, 1)
+  assert.deepStrictEqual(projection.pactPools[0].pactSlots, {
+    count: 2,
+    slotLevel: 2,
+    recharge: 'Short Rest',
+  })
+  assert.strictEqual(projection.innatePools.length, 1)
+  assert.deepStrictEqual(projection.innatePools[0].atWill, ['Mage Hand'])
+  assert.deepStrictEqual(projection.innatePools[0].perDaySpells, { '1/Day': ['Plane Shift'] })
+  assert.strictEqual(projection.sources[0].provenance.sourceName, 'Wizard (Evocation)')
+  assert.strictEqual(projection.sources[0].metrics.status, 'ok')
+})
+
+test('A12.3/migration: migrateMonsterSchema preserves spellcasting.subclass and classes[].subclass', async () => {
+  const { migrateMonsterSchema } = await import('../../src/core/usecases/MigrateMonsterSchema.ts')
+  const migrated = migrateMonsterSchema({
+    name: 'Evoker',
+    spellcasting: {
+      class: 'Wizard',
+      subclass: '  Evocation  ',
+      classes: [{ class: 'Wizard' }, { class: 'Cleric', subclass: 'Light' }],
+      multiclass: { enabled: true, secondaryClass: 'Warlock', secondarySubclass: 'Fiend' },
+    },
+  })
+  assert.strictEqual(migrated.spellcasting.subclass, 'Evocation')
+  assert.strictEqual(migrated.spellcasting.classes?.[0].subclass, 'Evocation')
+  assert.strictEqual(migrated.spellcasting.classes?.[1].subclass, 'Light')
+  assert.strictEqual(migrated.spellcasting.multiclass?.secondarySubclass, 'Fiend')
+})

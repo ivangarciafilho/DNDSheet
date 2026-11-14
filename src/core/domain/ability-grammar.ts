@@ -305,16 +305,13 @@ const plainValueText = (input: number | string, context: AbilityRenderContext = 
   if (typeof input === 'number') return Number.isFinite(input) ? formatNumber(input, style) : ''
   const source = String(input ?? '').trim()
   if (style === 'bonus' && /^-?\d+$/.test(source)) {
-    const num = Number(source)
-    return num > 0 ? `+${num}` : String(num)
+    return formatSignedModifier(Number(source))
   }
   if (!source || !context.formulaContext) return source
   const result = evaluateFormula(source, context.formulaContext, { style })
   if (!result.ok || (style !== 'dice' && result.dice.length > 0)) return source
   if (style === 'bonus') {
-    if (typeof result.value === 'number') {
-      return result.value > 0 ? `+${result.value}` : String(result.value)
-    }
+    if (typeof result.value === 'number') return formatSignedModifier(result.value)
   }
   return result.text
 }
@@ -325,7 +322,7 @@ const valueText = (input: number | string, context: AbilityRenderContext = {}, s
 }
 
 function formatNumber(value: number, style: FormulaStyle): string {
-  if (style === 'bonus') return value > 0 ? `+${value}` : String(value)
+  if (style === 'bonus') return formatSignedModifier(value)
   return String(value)
 }
 
