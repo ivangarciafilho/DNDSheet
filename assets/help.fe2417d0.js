@@ -1,1 +1,0 @@
-import{b as o}from"./index.355de93f.js";const i=(t,a)=>{var r;const e=((r=a.value)!=null?r:"").trim();if(!e){t.removeAttribute("title"),t.removeAttribute("aria-description"),delete t.dataset.helpText;return}t.setAttribute("title",e),t.setAttribute("aria-description",e),t.dataset.helpText=e};var d=o(({app:t})=>{t.directive("help",{mounted:i,updated:i})});export{d as default};
