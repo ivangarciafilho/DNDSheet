@@ -1,3 +1,7 @@
+## Build 246 — Outcomes, routing, traversal riders, proposals and casting pools
+
+Source `0c7ad22` / Pages `e23b9fe` (on Build 245 `3d90075`) closes `A11.5`, `A11.7`, `A11.8`, `A11.9`, `A12.8`, `B3.6`, `B3.7`, and `H11` alongside sixteen Build 186 verification sub-items (`635/635` core tests, 10/10 gate PASS, `0` ESLint errors, `505` typecheck diagnostics / `0` new): `+0` attack sign, `explicitRollOnly` & `data-print-table="true"` random tables, undo/redo combat-activity section routing, legacy speed string rider migration, seeded ability & species grant proposals with revocation, `CastingSource` / `CastingProjection` distinct Pact/shared/innate pools, subclass catalog & metrics core (`A12.1`/`A12.2` progress), and CDP `@media print` spell plate smoke.
+
 ## Build228 — spellcasting sources and A4 print
 
 Each class owns its settings and spell lists. Zero class sources are supported; combined caster level and independently configurable cantrip and known/prepared limits reach the statblock. The source-owned grammar, verified grants and same-sheet A4 print projection are shared across the documented adapters.
@@ -25,8 +29,8 @@ This matrix describes implemented behavior, not completion of an entire roadmap 
 | Area | Implemented | Remaining acceptance / limitation |
 |---|---|---|
 | Monster authoring | One live sheet; shared studio; typed source records, formulas on registered fields | A9.7/A11.2–4 remaining numeric paths; A10 completion |
-| Outcomes and tables | Authored clauses, result references, random tables, prose and rendering repairs | A11.5 stable container/region model; A11.9 full integration; H11 open |
-| Spellcasting | Class/innate rows, existing slot and spell controls, compact projection work | A12 source-owned pools, full metrics/subclass provenance and migration are not complete |
+| Outcomes and tables | Closed in Build 246 (`A11.5`, `A11.9`, `H11`): authored clauses, result references, `explicitRollOnly` random tables, `data-print-table="true"`, `+0` attack sign, prose and rendering parity | Covered by core + Step 50 fuzz + 10/10 gate |
+| Spellcasting | Class/innate rows, existing slot and spell controls, compact projection work, CDP `@media print` plate smoke (`A12.10 d`); Build 246 closes `A12.8` (`CastingSource`, distinct Pact/shared/innate pools, lossless migration) and lands `A12.1`/`A12.2` catalog/metrics core | `A12.9` source-based UI card parity, `A12.10 a3` i18n, and `A12.1–A12.4` UI integration remain open |
 | Templates/history | Existing template, reset and undo workflows tested by browser suite | New model changes must retain transactional ownership and recovery |
 | Presentation | Twelve themes; classic/modern; A4 layers; 60 fixture/theme cases with computed AC head/body contrast | Matrix is representative contrast, not every pixel/text color. A13.9/A14–16 print/keyboard/fit acceptance remains |
 | Fit tooling | Ten viewport/scale cases; clipped-overflow detection, scroll inventory, explicit Quasar field exemptions and negative control | Effective CSS viewport/raster scale is not browser UI zoom. Intentional ellipsis does not prove full label visibility. Per-panel keyboard and full zoom acceptance remains |

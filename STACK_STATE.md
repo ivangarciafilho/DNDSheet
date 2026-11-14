@@ -1,3 +1,7 @@
+## Build 246 — outcomes, routing, traversal riders, proposals and casting pools
+
+Integrates five core domains on top of Build 245 (`3d90075` -> `0c7ad22`, Pages `e23b9fe`, tag `rc-2.4.3-build-246-complete-outcomes-routing-traversal-proposals-and-casting-pools`, 10/10 gate with `635/635` core tests, `0` ESLint errors, `505` typecheck diagnostics / `0` new): `+0` attack sign formatting; `explicitRollOnly` & `data-print-table="true"` random tables (`A11.5`/`A11.9`/`H11` closed); reversible `CombatActivitySection` routing (`A11.7` closed); `SpeedActionRider` legacy migration (`A11.8` closed); deterministic ability/species grant proposals & revocation (`B3.6`/`B3.7` closed); `CastingSource` pools & subclass progression/metrics (`A12.8` closed, `A12.1`/`A12.2` progress); and CDP `@media print` spell plate verification (`A12.10 d` closed). Next queue: `A13.9 f2/g2` -> `H14` -> `A11.6` -> `A12.9/A12.10 a3` -> `A12.1–A12.4`.
+
 ## Build 245 — no dead formatting
 
 Authored bold, italic and strike reach the stat block from every field kind; the compositor prints a formatted AC Type copy; senses notes print for every sense; a formatting smoke runs in the gate.

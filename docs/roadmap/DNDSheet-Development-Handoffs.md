@@ -1,3 +1,7 @@
+## Build 246 — Outcomes, combat routing, traversal riders, proposals and casting pools
+
+The [Build 246 packet](DNDSheet-Build246-Outcomes-Routing-Traversal-Proposals-and-Casting-Pools.md) (source `0c7ad22`, Pages `e23b9fe`, base Build 245 `3d90075`, tag `rc-2.4.3-build-246-complete-outcomes-routing-traversal-proposals-and-casting-pools`) passes the full 10-step gate (`635/635` core tests, `0` ESLint errors, `505` typecheck diagnostics with `0` new and `178` resolved vs Build 213). It closes `A11.5`, `A11.7`, `A11.8`, `A11.9`, `A12.8`, `B3.6`, `B3.7`, `H11`, and sixteen Build 186 sub-items while landing `+0` attack sign formatting, `explicitRollOnly` random-table links with `data-print-table="true"`, reversible combat-activity section routing, compound traversal rider migration, deterministic ability/species proposals with revocation, `CastingSource` pools with subclass progression/metrics, and `@media print` spell plate verification.
+
 ## Build 245 — No dead formatting
 
 The [Build 245 packet](DNDSheet-Build245-No-Dead-Formatting.md) makes authored formatting reach the stat block. It fixes the AC compositor ignoring a formatted copy of its own wording, the senses note being dead for darkvision, blindsight, life sense and divine sense, and escaped riders, defense notes, language and sense badges, conditional headings and table results. The gate now checks this across templates and themes.

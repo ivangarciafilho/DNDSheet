@@ -1,0 +1,90 @@
+{
+  "build": 246,
+  "version": "2.4.3",
+  "slug": "complete-outcomes-routing-traversal-proposals-and-casting-pools",
+  "date": "2026-11-14",
+  "branch": "build185-repairs",
+  "sourceCommit": "0c7ad22469f935f0de056a2a82057db6328928ec",
+  "baseCommit": "3d90075d1e0fc333b46ecf06b0f094c284fe6c1f",
+  "pagesCommit": "e23b9fe29437ab20dddc8f7690c873bb1cebb18a",
+  "tag": "rc-2.4.3-build-246-complete-outcomes-routing-traversal-proposals-and-casting-pools",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "4dd46883ff395cf86da4c66d5780070affe9dcb87e361e5eeac78c54e9d8384f",
+    "coreTests": {
+      "passed": 635,
+      "failed": 0
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2767
+    },
+    "typecheck": {
+      "diagnostics": 505,
+      "new": 0,
+      "resolved": 178,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "timingsSeconds": {
+      "core": 4,
+      "lint": 12,
+      "typecheck": 18,
+      "build": 38,
+      "fuzz": 180,
+      "help": 151,
+      "spell": 9,
+      "pagesBuild": 39,
+      "pagesAssets": 0,
+      "pagesFuzz": 332
+    }
+  },
+  "closedParents": [
+    "A11.5",
+    "A11.7",
+    "A11.8",
+    "A11.9",
+    "A12.8",
+    "B3.6",
+    "B3.7",
+    "H11"
+  ],
+  "closedBuild186SubItems": [
+    "A12.10 d",
+    "A11.7 a",
+    "A11.7 b",
+    "A11.7 c",
+    "A11.8 a",
+    "A11.8 b",
+    "A11.8 c",
+    "B3.7 / B3.6 a",
+    "B3.7 / B3.6 b",
+    "B3.7 / B3.6 c",
+    "B3.7 / B3.6 d",
+    "A12.8 / A12.9 a",
+    "A12.8 / A12.9 b",
+    "A12.8 / A12.9 c",
+    "A12.1 / A12.4 a",
+    "A12.1 / A12.4 b"
+  ],
+  "progressRecordedOnly": [
+    "A12.1",
+    "A12.2"
+  ],
+  "workloadDelta": {
+    "uniqueIds": {
+      "before": { "total": 264, "checked": 177, "open": 87 },
+      "after": { "total": 264, "checked": 185, "open": 79 },
+      "deltaChecked": 8,
+      "deltaOpen": -8
+    },
+    "rawCheckboxes": {
+      "before": { "total": 313, "checked": 210, "open": 103 },
+      "after": { "total": 313, "checked": 234, "open": 79 },
+      "deltaChecked": 24,
+      "deltaOpen": -24
+    }
+  }
+}
