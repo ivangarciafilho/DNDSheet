@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     id="a4-layer-studio-expansion"
+    data-editor-section="a4Layers"
     expand-separator
     icon="layers"
     label="A4 Composition & Page Layer Studio"

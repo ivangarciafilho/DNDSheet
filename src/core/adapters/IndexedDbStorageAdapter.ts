@@ -1,26 +1,30 @@
 import { CR } from '../domain/cr-tables.ts'
 import type { Monster } from '../domain/types.ts'
-import type { MonsterSummary, StoragePort } from '../ports/StoragePort.ts'
+import {
+  classifyStorageError,
+  StorageFailureError,
+  type MonsterSummary,
+  type StoragePort,
+} from '../ports/StoragePort.ts'
 import { migrateMonsterSchema } from '../usecases/MigrateMonsterSchema.ts'
-import { LocalStorageAdapter } from './LocalStorageAdapter.ts'
 
 export class IndexedDbStorageAdapter implements StoragePort {
   private dbName: string
   private storeName = 'monsters'
   private version = 1
-  private fallback: LocalStorageAdapter
 
   constructor(dbName = 'DndSheetDB') {
     this.dbName = dbName
-    this.fallback = new LocalStorageAdapter()
   }
 
-  private isIndexedDbAvailable(): boolean {
-    return (
+  private assertIndexedDbAvailable(): void {
+    const ok =
       typeof window !== 'undefined' &&
       typeof window.indexedDB !== 'undefined' &&
       window.indexedDB !== null
-    )
+    if (!ok) {
+      throw new StorageFailureError('storage_blocked', 'IndexedDB is unavailable in this environment.')
+    }
   }
 
   private async openDb(): Promise<IDBDatabase> {
@@ -42,9 +46,7 @@ export class IndexedDbStorageAdapter implements StoragePort {
   }
 
   async getMonster(id: string): Promise<Monster | null> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.getMonster(id)
-    }
+    this.assertIndexedDbAvailable()
 
     try {
       const db = await this.openDb()
@@ -62,15 +64,13 @@ export class IndexedDbStorageAdapter implements StoragePort {
         }
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.getMonster(id)
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 
   async saveMonster(monster: Monster): Promise<void> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.saveMonster(monster)
-    }
+    this.assertIndexedDbAvailable()
 
     const id = (monster as any).id || (monster as any).name || 'unnamed'
     const payload = {
@@ -89,15 +89,13 @@ export class IndexedDbStorageAdapter implements StoragePort {
         req.onsuccess = () => resolve()
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.saveMonster(monster)
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 
   async listMonsters(): Promise<MonsterSummary[]> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.listMonsters()
-    }
+    this.assertIndexedDbAvailable()
 
     try {
       const db = await this.openDb()
@@ -126,15 +124,13 @@ export class IndexedDbStorageAdapter implements StoragePort {
         }
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.listMonsters()
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 
   async deleteMonster(id: string): Promise<void> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.deleteMonster(id)
-    }
+    this.assertIndexedDbAvailable()
 
     try {
       const db = await this.openDb()
@@ -146,15 +142,13 @@ export class IndexedDbStorageAdapter implements StoragePort {
         req.onsuccess = () => resolve()
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.deleteMonster(id)
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 
   async exportAll(): Promise<string> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.exportAll()
-    }
+    this.assertIndexedDbAvailable()
 
     try {
       const db = await this.openDb()
@@ -169,8 +163,8 @@ export class IndexedDbStorageAdapter implements StoragePort {
         }
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.exportAll()
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 
@@ -191,9 +185,7 @@ export class IndexedDbStorageAdapter implements StoragePort {
   }
 
   async clearAll(): Promise<void> {
-    if (!this.isIndexedDbAvailable()) {
-      return this.fallback.clearAll()
-    }
+    this.assertIndexedDbAvailable()
 
     try {
       const db = await this.openDb()
@@ -205,8 +197,8 @@ export class IndexedDbStorageAdapter implements StoragePort {
         req.onsuccess = () => resolve()
         req.onerror = () => reject(req.error)
       })
-    } catch {
-      return this.fallback.clearAll()
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
     }
   }
 }

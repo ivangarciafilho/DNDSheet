@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    data-editor-section="villainActions"
     expand-separator
     icon="fa-solid fa-crown"
     label="Villain & Bloodied Actions"

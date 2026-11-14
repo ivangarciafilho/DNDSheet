@@ -28,7 +28,7 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input v-help="'Enter variable key for the database studio.'"
+            <q-input v-help="$t('help.databaseStudio.varKey')"
               v-model="newVarKey"
               dense
               outlined
@@ -38,7 +38,7 @@
               class="col-12 col-sm-4"
               @keyup.enter="addVariable"
             />
-            <q-input v-help="'Enter value / formula for the database studio.'"
+            <q-input v-help="$t('help.databaseStudio.varValue')"
               v-model="newVarVal"
               dense
               outlined
@@ -49,7 +49,7 @@
               @keyup.enter="addVariable"
             />
             <div class="col-12 col-sm-2">
-              <q-btn v-help="'Add in the database studio.'"
+              <q-btn v-help="$t('help.databaseStudio.addVar')"
                 dense
                 color="purple-5"
                 icon="add"
@@ -110,7 +110,7 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input v-help="'Enter macro identifier for the database studio.'"
+            <q-input v-help="$t('help.databaseStudio.macroKey')"
               v-model="newMacroKey"
               dense
               outlined
@@ -120,7 +120,7 @@
               class="col-12 col-sm-4"
               @keyup.enter="addMacro"
             />
-            <q-input v-help="'Enter expansion phrase / effect for the database studio.'"
+            <q-input v-help="$t('help.databaseStudio.macroBody')"
               v-model="newMacroVal"
               dense
               outlined
@@ -131,7 +131,7 @@
               @keyup.enter="addMacro"
             />
             <div class="col-12 col-sm-2">
-              <q-btn v-help="'Add in the database studio.'"
+              <q-btn v-help="$t('help.databaseStudio.addMacro')"
                 dense
                 color="purple-5"
                 icon="add"
@@ -194,7 +194,7 @@
           </div>
 
           <div class="row q-gutter-x-sm items-center q-mb-md">
-            <q-input v-help="'Enter preset name for the database studio.'"
+            <q-input v-help="$t('help.databaseStudio.presetName')"
               v-model="newPresetName"
               dense
               outlined
@@ -283,7 +283,7 @@
             />
           </div>
 
-          <q-input v-help="'Enter database json payload for the database studio.'"
+          <q-input v-help="$t('help.databaseStudio.jsonPayload')"
             v-model="databaseJsonPreview"
             type="textarea"
             rows="6"

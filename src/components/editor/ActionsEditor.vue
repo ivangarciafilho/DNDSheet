@@ -77,7 +77,7 @@
         </div>
       </div>
 
-      <q-checkbox v-help="'Tick to include sort traits alphabetically on the sheet for the actions editor.'" v-if="selectedCategory === 'trait' || selectedCategory === 'all'" v-model="monster.alphaTraits" dark dense label="Sort traits alphabetically on the sheet" data-studio-trait-sort class="q-mb-sm" />
+      <q-checkbox v-help="$t('help.actions.sortTraitsAlpha')" v-if="selectedCategory === 'trait' || selectedCategory === 'all'" v-model="monster.alphaTraits" dark dense label="Sort traits alphabetically on the sheet" data-studio-trait-sort class="q-mb-sm" />
 
       <action-associations v-for="role in visibleAssociationRoles" :key="role" :role="role" />
 
@@ -98,7 +98,7 @@
           <span>Showing <b>{{ filteredEntries.length }}</b> entries</span>
         </div>
         <div class="row items-center q-gutter-x-xs">
-          <q-btn v-help="'Collapse All in the actions editor.'"
+          <q-btn v-help="$t('help.actions.collapseAll')"
             dense
             flat
             size="xs"
@@ -108,7 +108,7 @@
             no-caps
             @click="collapseAllEntries"
           />
-          <q-btn v-help="'Expand All in the actions editor.'"
+          <q-btn v-help="$t('help.actions.expandAll')"
             dense
             flat
             size="xs"
@@ -156,7 +156,7 @@
             </div>
 
             <div class="row items-center q-gutter-x-xs" @click.stop>
-              <q-btn v-help="'Fold Cards in the actions editor.'"
+              <q-btn v-help="$t('help.actions.foldCards')"
                 dense
                 flat
                 size="xs"
@@ -168,7 +168,7 @@
               >
                 <q-tooltip>Collapse all individual entry cards inside {{ catGroup.label }}</q-tooltip>
               </q-btn>
-              <q-btn v-help="'Unfold Cards in the actions editor.'"
+              <q-btn v-help="$t('help.actions.unfoldCards')"
                 dense
                 flat
                 size="xs"
@@ -287,7 +287,7 @@
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           >
             <template #head-prefix>
-              <q-select v-help="'Choose role for the actions editor.'"
+              <q-select v-help="$t('help.actions.role')"
                 data-composer-role
                 :model-value="item.role"
                 :options="roleOptions"
@@ -330,7 +330,7 @@
                 Additional Description Containers &amp; Tables ({{ (item.descriptionContainers || []).length }})
               </span>
               <div class="row items-center q-gutter-x-xs">
-                <q-btn v-help="'+ Text Block in the actions editor.'"
+                <q-btn v-help="$t('help.actions.addTextBlock')"
                   flat
                   dense
                   no-caps
@@ -342,7 +342,7 @@
                   label="+ Text Block"
                   @click="addTextContainer(item)"
                 />
-                <q-btn v-help="'+ Dice Table in the actions editor.'"
+                <q-btn v-help="$t('help.actions.addDiceTable')"
                   flat
                   dense
                   no-caps
@@ -360,7 +360,7 @@
             <div v-for="(container, cIdx) in (item.descriptionContainers || [])" :key="container.id || cIdx" class="q-pa-xs q-my-xs rounded-borders bg-grey-9">
               <div class="row q-col-gutter-xs items-center q-mb-xs">
                 <div class="col-12 col-sm-4">
-                  <mechanic-text-editor v-help="'Enter outcome target / clause for the actions editor.'"
+                  <mechanic-text-editor v-help="$t('help.actions.outcomeClause')"
                     v-model="container.outcomeTarget"
                     dense
                     outlined
@@ -391,7 +391,7 @@
 
               <!-- Text block container -->
               <div v-if="container.kind === 'text'">
-                <mechanic-text-editor v-help="'Enter container text / rider for the actions editor.'"
+                <mechanic-text-editor v-help="$t('help.actions.containerText')"
                   v-model="container.text"
                   type="textarea"
                   rows="2"
@@ -408,7 +408,7 @@
               <div v-else-if="container.kind === 'table' && container.table" class="column q-gutter-y-xs q-pa-xs">
                 <div class="row q-col-gutter-xs items-center">
                   <div class="col-12 col-sm-6">
-                    <q-input v-help="'Enter headers (comma separated) for the actions editor.'"
+                    <q-input v-help="$t('help.actions.tableHeaders')"
                       :model-value="container.table.headers.join(', ')"
                       dense
                       outlined
@@ -422,7 +422,7 @@
                     />
                   </div>
                   <div class="col-auto">
-                    <q-btn v-help="'Add Row in the actions editor.'" flat dense no-caps size="xs" icon="add" type="button" data-add-description-row label="Add Row" @click="addTableRow(container, item)" />
+                    <q-btn v-help="$t('help.actions.addRow')" flat dense no-caps size="xs" icon="add" type="button" data-add-description-row label="Add Row" @click="addTableRow(container, item)" />
                   </div>
                 </div>
                 <div v-for="(row, rIdx) in container.table.rows" :key="rIdx" class="row q-col-gutter-xs items-center q-my-xs">

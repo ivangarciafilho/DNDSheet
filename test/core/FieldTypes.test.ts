@@ -12,7 +12,7 @@ test('registry exposes only canonical checkpoint paths', () => {
 })
 
 test('stable collection families and nested identities are covered', () => {
-  for (const path of ['speeds[id=walk].speed', 'skills[key=PERCEPTION].overrideValue', 'tools[id=a].overrideValue', 'sensesList[id=s].observationMinutes', 'languagesList[id=l].probeSaveDc', 'attacks[id=a].additionalDamage[id=x%2Fy].count', 'attacks[id=a].alternateDamage.modifier.overrideValue', 'actions[id=a].targeting.area.distance', 'traits[id=t].rechargeCount', 'reactions[id=r].limitedUse.count', 'lairActions[id=l].crAnnotation.maxSave', 'spellcasting.classes[id=c].level', 'spellcasting.atWill[id=s].count', 'anatomyParts[id=p].hp', 'reactiveActions[id=r].usesPerRound', 'villainActions[id=v].round', 'runehammerTrack.events[id=e].round']) assert.ok(lookupNumericField(path), path)
+  for (const path of ['speeds[id=walk].speed', 'skills[key=PERCEPTION].overrideValue', 'tools[id=a].overrideValue', 'sensesList[id=s].observationMinutes', 'languagesList[id=l].probeSaveDc', 'languagesList[id=l].saveDc', 'paragonConfig.phaseConfigs[id=p].initiativeBonus', 'paragonConfig.phaseConfigs[id=p].hpOverride', 'attacks[id=a].additionalDamage[id=x%2Fy].count', 'attacks[id=a].alternateDamage.modifier.overrideValue', 'actions[id=a].targeting.area.distance', 'actions[id=a].rollScaling.rollCount', 'actions[id=a].rollScaling.beamCount', 'actions[id=a].rollScaling.damageMultiplier', 'traits[id=t].rechargeCount', 'reactions[id=r].limitedUse.count', 'lairActions[id=l].crAnnotation.maxSave', 'spellcasting.classes[id=c].level', 'spellcasting.atWill[id=s].count', 'anatomyParts[id=p].hp', 'reactiveActions[id=r].usesPerRound', 'villainActions[id=v].round', 'runehammerTrack.events[id=e].round']) assert.ok(lookupNumericField(path), path)
   for (const path of ['speeds[0].speed', 'speeds[id=].speed', 'speeds[id=%61].speed', 'actions[id=a].outcomes[id=x].effects[id=y].formula', 'legendaryActions.actions[id=a].cost', 'paragonConfig.phaseConfigs[id=p].override', 'actions[id=a].stagePool', 'portrait.width', 'runehammerTrack.currentCount', 'CR', 'lairCr', 'traits[id=t].crAnnotation.ehpMultiplier']) assert.equal(lookupNumericField(path), undefined, path)
 })
 
@@ -72,7 +72,7 @@ test('complete scalar inventory has unique immutable reviewed descriptors and ex
   }
   // Identity-poor, symbolic, derived, precision-sensitive and tracker leaves have
   // an explicit owner elsewhere; type declarations alone do not grant adoption.
-  for (const path of ['acConfig.conditionSecondaryBonus', 'acConfig.parryCount', 'acConfig.movedDistance', 'extendedHp.deathPrevention.returnHpAmount', 'extendedHp.deathPrevention.critCount', 'acConfig.saveDcCustom', 'languagesList[id=l].saveDc', 'senses.blindsight', 'CR', 'runehammerTrack.currentCount']) assert.equal(lookupNumericField(path), undefined, path)
+  for (const path of ['acConfig.conditionSecondaryBonus', 'acConfig.parryCount', 'acConfig.movedDistance', 'extendedHp.deathPrevention.returnHpAmount', 'extendedHp.deathPrevention.critCount', 'acConfig.saveDcCustom', 'senses.blindsight', 'CR', 'runehammerTrack.currentCount']) assert.equal(lookupNumericField(path), undefined, path)
 })
 
 test('compound gates and their selector instantiations are immutable', () => {

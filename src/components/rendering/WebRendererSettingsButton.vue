@@ -36,6 +36,25 @@
               ]"
             ></q-btn-toggle>
           </div>
+          <div class="col-12 q-mb-sm">
+            <div class="text-body1 q-mb-xs">View Preset</div>
+            <div class="row q-gutter-xs" data-workspace-presets>
+              <q-btn
+                v-for="preset in workspacePresets"
+                :key="preset.id"
+                dense
+                no-caps
+                size="sm"
+                :unelevated="activeWorkspacePreset === preset.id"
+                :outline="activeWorkspacePreset !== preset.id"
+                :color="activeWorkspacePreset === preset.id ? 'primary' : 'grey-5'"
+                :icon="preset.icon"
+                :label="preset.label"
+                :data-workspace-preset="preset.id"
+                @click="selectWorkspacePreset(preset.id)"
+              />
+            </div>
+          </div>
           <div class="col-12 flex items-center justify-between q-my-xs">
             <div class="text-body1 q-mr-md">Visual Template</div>
             <q-btn-toggle
@@ -157,7 +176,13 @@
 <script lang="ts">
 import { useEditorStore, VisualTheme } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+import {
+  WORKSPACE_PRESETS,
+  applyWorkspacePreset,
+  detectActiveWorkspacePreset,
+  type WorkspacePresetId,
+} from 'src/core/domain/workspace-presets'
 
 export interface ThemeOption {
   label: string
@@ -187,11 +212,19 @@ export default defineComponent({
   setup() {
     const monsterStore = useMonsterStore()
     const editorStore = useEditorStore()
+    const activeWorkspacePreset = computed(() => detectActiveWorkspacePreset(editorStore))
+
+    const selectWorkspacePreset = (presetId: WorkspacePresetId) => {
+      applyWorkspacePreset(editorStore as unknown as Record<string, unknown>, presetId)
+    }
 
     return {
       monsterStore,
       editorStore,
       themeOptions: THEME_OPTIONS,
+      workspacePresets: WORKSPACE_PRESETS,
+      activeWorkspacePreset,
+      selectWorkspacePreset,
     }
   },
 })

@@ -8,6 +8,7 @@ import { creatureTypeLine } from '../domain/export-markup.ts'
 import { avgHP, avgRoll, renderBonus, renderModifier, statModifier } from '../domain/math-utils.ts'
 import type { Monster, CharacterActor, DndStat } from '../domain/types.ts'
 import { abilityIdentity, hasStructuredAbility, inferAbility, text2024 } from '../domain/ability-grammar.ts'
+import { formatRollScalingPhrases, hasRollScaling, resolveRollScaling } from '../domain/roll-scaling.ts'
 import { formulaContextForMonster } from '../domain/formula-context.ts'
 import { DND_SKILLS } from '../domain/types.ts'
 import {
@@ -761,12 +762,35 @@ function markdownOf(
         : statModifier(monster.stats[atk.damage.modifier.stat])
       const avgDmg = avgRoll(atk.damage.count, atk.damage.dice) + dmgBonus
       const bonusStr = dmgBonus !== 0 ? renderBonus(dmgBonus, true) : ''
+      const scalingPhrases = hasRollScaling(atk.rollScaling)
+        ? formatRollScalingPhrases(
+            resolveRollScaling(
+              { formulaContext: formulaContextForMonster(monster), cr: monster.CR },
+              atk.rollScaling,
+              {
+                attackCount: atk.attackCount,
+                attackRollModifier: atk.attackRollModifier,
+                attackException: atk.attackException,
+                targetCount: atk.targets,
+              },
+            ),
+          )
+        : {}
+      const scalingExtra = [
+        scalingPhrases.beamPhrase,
+        scalingPhrases.multiplierPhrase,
+        scalingPhrases.rollAdvantagePhrase,
+        scalingPhrases.saveAdvantagePhrase,
+        scalingPhrases.provenanceNote,
+      ]
+        .filter(Boolean)
+        .join('; ')
       lines.push(
         `***${atk.name}.*** *${atk.kind === 'WEAPON' ? 'Weapon' : 'Spell'} Attack:* ${renderBonus(
           toHitBonus
         )} to hit, ${reachOrRange}, ${atk.targets || 1} target. *Hit:* ${avgDmg} (${atk.damage.count}d${
           atk.damage.dice
-        }${bonusStr}) ${atk.damage.type} damage.`
+        }${bonusStr}) ${atk.damage.type} damage.${scalingExtra ? ` (${scalingExtra}.)` : ''}`
       )
       lines.push('')
     }

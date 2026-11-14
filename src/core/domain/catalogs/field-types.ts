@@ -88,7 +88,7 @@ for (const [name, gate] of [['probeSaveDc', 'probeRequiresSave'], ['sensorySaveD
 register(`${lang}.animalHandling.dc`, 'dc', 'save_dc', { ...optional, editableWhen: [eq(`${lang}.animalHandling.enabled`, true)] })
 register(`${lang}.undeadConfig.telepathicRange`, 'distance', 'movement', optional)
 register(`${lang}.deadConfig.maxQuestions`, 'count', 'spellcasting', optional)
-// Legacy language saveDc is compatibility state, not a parallel authored authority.
+register(`${lang}.saveDc`, 'dc', 'save_dc', { ...optional, min: 1 })
 // Mode ownership matches BasicsEditor and composeArmorClass. Type-only, unused
 // fields conditionSecondaryBonus/parryCount/movedDistance are deliberately excluded.
 const acMode = (values: readonly string[]): NumericFieldGate => ({ path: 'acConfig.conditionMode', oneOf: values })
@@ -116,6 +116,8 @@ register('initiativeConfig.lairInitiative', 'count', 'combat', { ...optional, mi
 register('legendaryActions.count', 'count', 'challenge', { min: 0, max: 99 })
 register('paragonConfig.poolCount', 'count', 'hit_points', { min: 1, max: 10 })
 register('paragonConfig.actionsPerTurn', 'count', 'challenge', { ...optional, editableWhen: [eq('paragonConfig.enabled', true)] })
+register('paragonConfig.phaseConfigs[id=*].initiativeBonus', 'bonus', 'combat', { ...optional, nullable: true })
+register('paragonConfig.phaseConfigs[id=*].hpOverride', 'hp', 'hit_points', { ...optional, nullable: true, min: 1 })
 for (const [name, mode] of [['bloodiedOverride', 'bloodiedSource'], ['damageThreshold', 'damageThresholdSource'], ['damageReduction', 'damageReductionSource']] as const) register(`extendedHp.${name}`, 'hp', 'hit_points', { ...optional, nullable: true, ...(name === 'bloodiedOverride' ? { min: 1 } : {}), editableWhen: [{ path: `extendedHp.${mode}`, oneOf: Object.freeze(name === 'bloodiedOverride' ? ['flat'] : [undefined, 'none', 'flat']) }] })
 register('extendedHp.tempHp.amount', 'hp', 'hit_points')
 register('extendedHp.regeneration.amount', 'hp', 'hit_points', { min: 0, editableWhen: [{ path: 'extendedHp.regeneration.valueSource', oneOf: Object.freeze([undefined, 'flat']) }] })
@@ -150,6 +152,10 @@ register(`${action}.save.overrideValue`, 'dc', 'save_dc', ov(`${action}.save`))
 register(`${action}.limitedUse.count`, 'count', 'challenge', { min: 1, max: 999 })
 for (const name of ['rechargeMin', 'rechargeMax']) register(`${action}.${name}`, 'count', 'challenge', { ...optional, min: 1, max: 100 })
 register(`${action}.targeting.count`, 'count', 'attack', optional)
+for (const name of ['rollCount', 'beamCount', 'damageMultiplier']) {
+  register(`${action}.rollScaling.${name}`, 'count', 'attack', { ...optional, min: 1, max: 99 })
+  register(`${attack}.rollScaling.${name}`, 'count', 'attack', { ...optional, min: 1, max: 99 })
+}
 register(`${action}.targeting.range.distance`, 'distance', 'movement', { unit: 'record.targeting.range.unit' })
 register(`${action}.targeting.area.distance`, 'distance', 'movement', { ...optional, unit: 'record.targeting.area.unit' })
 for (const collection of ['traits','reactions']) {
@@ -157,6 +163,9 @@ for (const collection of ['traits','reactions']) {
  register(prefix+'.attackBonus','bonus','attack',optional)
  register(prefix+'.save.overrideValue','dc','save_dc',ov(prefix+'.save'))
  register(prefix+'.targeting.count','count','attack',optional)
+ register(prefix+'.rollScaling.rollCount','count','attack',{...optional,min:1,max:99})
+ register(prefix+'.rollScaling.beamCount','count','attack',{...optional,min:1,max:99})
+ register(prefix+'.rollScaling.damageMultiplier','count','attack',{...optional,min:1,max:99})
  register(prefix+'.targeting.range.distance','distance','movement',{unit:'record.targeting.range.unit'})
  register(prefix+'.targeting.area.distance','distance','movement',{...optional,unit:'record.targeting.area.unit'})
  for(const name of ['rechargeMin','rechargeMax']) register(prefix+'.'+name,'count','challenge',{...optional,min:1,max:100})

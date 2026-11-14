@@ -7,6 +7,7 @@ const monster = useMonsterStore()
 
 <template>
   <q-expansion-item
+    data-editor-section="inventory"
     expand-separator
     icon="luggage"
     :label="$t('editor.inventory.label')"

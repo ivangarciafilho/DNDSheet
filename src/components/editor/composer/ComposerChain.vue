@@ -27,6 +27,13 @@
           aria-label="Trigger placement in the printed text"
           @update:model-value="(value: string) => commit('trigger-placement', value)"
         ><q-tooltip class="dnd-tip">Print the trigger before the response (the 2024 default) or after it.</q-tooltip></q-btn-toggle>
+        <roll-scaling-popover
+          v-if="row.row === 'mechanics' && !lair && activeEntry"
+          :model-value="activeScaling"
+          :entry-collection="scalingCollection"
+          :entry-id="activeEntry.id"
+          @update:model-value="commitScaling"
+        />
       </div>
     </div>
 
@@ -48,8 +55,9 @@ import { reactionCellPatch, reactionCellValue, reactionChainView, validateReacti
 import { traitCellPatch, traitCellValue, traitChainView, validateTraitCell } from 'src/core/domain/trait-composer'
 import { lairChainView } from 'src/core/domain/role-headers'
 import ChainCell from './ChainCell.vue'
+import RollScalingPopover from './RollScalingPopover.vue'
 import type { NumericBinding } from 'src/core/domain/formula'
-import type { MonsterAction } from 'src/core/domain/types'
+import type { MonsterAction, RollScalingSpec } from 'src/core/domain/types'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
   head: 'Head',
@@ -62,7 +70,7 @@ const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
 
 export default defineComponent({
   name: 'ComposerChain',
-  components: { ChainCell },
+  components: { ChainCell, RollScalingPopover },
   props: {
     actionId: { type: String, required: true },
     role: { type: String as PropType<ActionComposerRole>, required: true },
@@ -176,7 +184,44 @@ export default defineComponent({
       if (trait.value) Object.assign(trait.value, traitCellPatch(trait.value, cellId, value))
     }
 
-    return { activeEntry, reaction, pooled, chipRows, specFor, valueFor, validatorFor, commit, rowLabels: ROW_LABELS, numericPathFor, numericDraftModel }
+    const scalingCollection = computed(() =>
+      trait.value ? 'traits' : reaction.value ? 'reactions' : 'actions',
+    )
+    const activeScaling = computed<RollScalingSpec | undefined>(
+      () => (action.value || reaction.value || trait.value)?.rollScaling,
+    )
+
+    const commitScaling = (next: RollScalingSpec | undefined) => {
+      const target = (action.value || reaction.value || trait.value) as unknown as {
+        rollScaling?: RollScalingSpec
+        crAnnotation?: Parameters<typeof autoUpdateCr>[1]
+        description?: string
+      } | undefined
+      if (!target) return
+      if (next) target.rollScaling = next
+      else delete target.rollScaling
+      if (action.value?.crAnnotation) {
+        autoUpdateCr(action.value.description, action.value.crAnnotation, action.value)
+      }
+    }
+
+    return {
+      activeEntry,
+      lair,
+      reaction,
+      pooled,
+      chipRows,
+      specFor,
+      valueFor,
+      validatorFor,
+      commit,
+      scalingCollection,
+      activeScaling,
+      commitScaling,
+      rowLabels: ROW_LABELS,
+      numericPathFor,
+      numericDraftModel,
+    }
   },
 })
 </script>

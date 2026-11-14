@@ -1,3 +1,5 @@
+import { HELP_MESSAGES } from './help'
+
 export default {
   app: {
     name: "Falindrith's Monster Maker",
@@ -840,4 +842,5 @@ export default {
       "The region containing {'{'}NAME{'}'}'s lair is warped by {'{'}NAME{'}'}'s magic. When {'{'}NAME{'}'} dies, the effects fade after {'{'}1d10{'}'} days.",
   },
   changelog: 'Changelog',
+  help: HELP_MESSAGES,
 }

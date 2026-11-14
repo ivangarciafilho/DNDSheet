@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    data-editor-section="regional"
     expand-separator
     icon="public"
     :label="$t('editor.regional.label')"

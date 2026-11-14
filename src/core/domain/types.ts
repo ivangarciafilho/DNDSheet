@@ -269,6 +269,7 @@ export interface MonsterTrait {
   rechargeCount?: number
   rechargeTagOverride?: string
   stagePool?: number | string | 'all'
+  rollScaling?: RollScalingSpec
   descriptionContainers?: ActionDescriptionContainer[]
 }
 
@@ -499,6 +500,7 @@ export interface InvulnerabilityConfig {
 }
 
 export interface ParagonPhaseConfig {
+  id?: string
   name: string
   source: string
   override?: number | null
@@ -731,6 +733,29 @@ export interface AbilityOutcome {
   randomTableId?: string
 }
 
+export type RollScalingSource = 'manual' | 'cr' | 'hd' | 'level' | 'custom'
+export type AttackRollMode = 'normal' | 'advantage' | 'disadvantage'
+
+export interface RollScalingTier {
+  minTier: number
+  rollCount?: number
+  beamCount?: number
+  damageMultiplier?: number
+}
+
+export interface RollScalingSpec {
+  rollCount?: number | string
+  beamCount?: number | string
+  damageMultiplier?: number | string
+  source?: RollScalingSource
+  sourceLabel?: string
+  tiers?: RollScalingTier[]
+  rollMode?: AttackRollMode
+  rollCondition?: string
+  saveMode?: AttackRollMode
+  saveCondition?: string
+}
+
 export interface MonsterAction {
   name: string
   id: string
@@ -774,6 +799,7 @@ export interface MonsterAction {
   attackException?: string
   targeting?: AbilityTargeting
   outcomes?: AbilityOutcome[]
+  rollScaling?: RollScalingSpec
   outcomeLayout?: 'linear' | 'grid_1x2' | 'grid_2x1' | 'grid_2x2' | 'table'
   descriptionContainers?: ActionDescriptionContainer[]
 }
@@ -862,6 +888,10 @@ export interface DndAttack {
   stagePool?: number | string | 'all'
   useCustomRenderer: boolean
   customRenderer: string
+  attackCount?: number | string
+  attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
+  attackException?: string
+  rollScaling?: RollScalingSpec
 }
 
 export interface LegendaryAction {
@@ -926,6 +956,7 @@ export interface MonsterReaction {
   range?: string
   targeting?: AbilityTargeting
   outcomes?: AbilityOutcome[]
+  rollScaling?: RollScalingSpec
   outcomeLayout?: 'linear' | 'grid_1x2' | 'grid_2x1' | 'grid_2x2' | 'table'
   effects?: ActionEffect[]
 }

@@ -1,6 +1,10 @@
 import { CR } from '../domain/cr-tables.ts'
 import type { Monster } from '../domain/types.ts'
-import type { MonsterSummary, StoragePort } from '../ports/StoragePort.ts'
+import {
+  classifyStorageError,
+  type MonsterSummary,
+  type StoragePort,
+} from '../ports/StoragePort.ts'
 import { migrateMonsterSchema } from '../usecases/MigrateMonsterSchema.ts'
 
 export interface StorageBackend {
@@ -60,8 +64,8 @@ export class LocalStorageAdapter implements StoragePort {
     try {
       const parsed = JSON.parse(raw)
       return migrateMonsterSchema(parsed)
-    } catch {
-      return null
+    } catch (err) {
+      throw classifyStorageError(err, 'corrupted_entry')
     }
   }
 
@@ -72,7 +76,11 @@ export class LocalStorageAdapter implements StoragePort {
       id,
       updatedAt: Date.now(),
     }
-    this.storage.setItem(`${this.prefix}${id}`, JSON.stringify(payload))
+    try {
+      this.storage.setItem(`${this.prefix}${id}`, JSON.stringify(payload))
+    } catch (err) {
+      throw classifyStorageError(err, 'io_error')
+    }
   }
 
   async listMonsters(): Promise<MonsterSummary[]> {

@@ -1,4 +1,4 @@
-import { DICE } from './DICE'
+import { DICE } from './DICE.ts'
 
 export const HD_FOR_SIZE = {
   Tiny: DICE.d4,

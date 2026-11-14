@@ -30,7 +30,7 @@
         <!-- Row 1: When (Trigger), Target Filter & Sector Quadrant -->
         <div class="row q-col-gutter-xs items-center">
           <div class="col-12 col-sm-4">
-            <q-input v-help="'Enter when for the chain outcomes editor.'"
+            <q-input v-help="$t('help.composer.outcomeWhen')"
               :model-value="outcome.trigger"
               dense
               outlined
@@ -43,7 +43,7 @@
             />
           </div>
           <div class="col-12 col-sm-4">
-            <q-input v-help="'Enter target scope / filter for the chain outcomes editor.'"
+            <q-input v-help="$t('help.composer.outcomeTarget')"
               :model-value="outcome.targetFilter ?? ''"
               dense
               outlined
@@ -55,7 +55,7 @@
             />
           </div>
           <div class="col-12 col-sm-4">
-            <q-select v-help="'Choose sector for the chain outcomes editor.'"
+            <q-select v-help="$t('help.composer.outcomeKind')"
               :model-value="outcome.layoutSector || 'all'"
               :options="sectorOptions"
               emit-value
@@ -68,7 +68,7 @@
             />
           </div>
           <div class="col-12 q-mt-xs">
-            <mechanic-text-editor v-help="'Enter rider (optional condition/clause) for the chain outcomes editor.'"
+            <mechanic-text-editor v-help="$t('help.composer.outcomeRider')"
               :model-value="outcome.rider ?? ''"
               dense
               outlined
@@ -110,7 +110,7 @@
           </div>
           <template v-if="effect.kind !== 'text'">
             <div class="col">
-              <q-input v-help="'Enter damage for the chain outcomes editor.'"
+              <q-input v-help="$t('help.composer.outcomeDamage')"
                 :model-value="effect.formula ?? ''"
                 dense
                 outlined
@@ -121,7 +121,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter type for the chain outcomes editor.'"
+              <q-input v-help="$t('help.composer.outcomeDamageType')"
                 :model-value="effect.damageType ?? ''"
                 dense
                 outlined
@@ -133,7 +133,7 @@
             </div>
           </template>
           <div v-else class="col">
-            <mechanic-text-editor v-help="'Enter effect for the chain outcomes editor.'"
+            <mechanic-text-editor v-help="$t('help.composer.outcomeEffectText')"
               :model-value="effect.text ?? ''"
               dense
               outlined
@@ -152,11 +152,11 @@
         <div v-if="outcome.diceTable && outcome.diceTable.length" class="q-mt-sm q-pa-xs rounded-borders" style="background: rgba(0,0,0,0.2); border: 1px dashed rgba(255,255,255,0.15);">
           <div class="text-caption text-cyan-3 flex items-center justify-between q-mb-xs">
             <span>🎲 Random Dice Roll Table</span>
-            <q-btn v-help="'Add Roll in the chain outcomes editor.'" flat round dense size="xs" icon="add" label="Add Roll" @click="addDiceRow(outcome.id)" />
+            <q-btn v-help="$t('help.composer.addRollBranch')" flat round dense size="xs" icon="add" label="Add Roll" @click="addDiceRow(outcome.id)" />
           </div>
           <div v-for="(dRow, rIdx) in outcome.diceTable" :key="rIdx" class="row q-col-gutter-xs items-center q-mb-xs">
             <div class="col-3">
-              <q-input v-help="'Enter roll for the chain outcomes editor.'"
+              <q-input v-help="$t('help.composer.rollBranchTrigger')"
                 :model-value="dRow.roll"
                 dense
                 outlined
@@ -167,7 +167,7 @@
               />
             </div>
             <div class="col">
-              <mechanic-text-editor v-help="'Enter outcome effect for the chain outcomes editor.'"
+              <mechanic-text-editor v-help="$t('help.composer.rollBranchEffect')"
                 :model-value="dRow.effect"
                 dense
                 outlined
@@ -185,7 +185,7 @@
 
         <div class="row q-gutter-xs q-mt-xs items-center justify-between">
           <div class="row q-gutter-xs">
-            <q-btn v-help="'Effect in the chain outcomes editor.'" flat dense no-caps size="sm" icon="add" label="Effect" @click="addEffect(outcome.id)" />
+            <q-btn v-help="$t('help.composer.rollBranchClause')" flat dense no-caps size="sm" icon="add" label="Effect" @click="addEffect(outcome.id)" />
             <q-btn flat dense no-caps size="sm" icon="casino" :label="outcome.diceTable && outcome.diceTable.length ? 'Add Table Row' : '+ Dice Table'" @click="addDiceRow(outcome.id)" />
           </div>
           <div class="row q-gutter-xs">
@@ -202,7 +202,7 @@
         </div>
       </fieldset>
       <div v-if="commandMessage" role="alert" class="text-warning q-mb-xs">{{ commandMessage }}</div>
-      <q-btn v-help="'Add Outcome in the chain outcomes editor.'" flat dense no-caps size="sm" icon="add" label="Add Outcome" :disable="invalidOutcomeList" @click="addOutcome" />
+      <q-btn v-help="$t('help.composer.addOutcomeBranch')" flat dense no-caps size="sm" icon="add" label="Add Outcome" :disable="invalidOutcomeList" @click="addOutcome" />
 
       <!-- Native suggestions: a Quasar select here would open a popup inside the editor's popup. -->
       <datalist :id="`${uid}-triggers`">
@@ -219,7 +219,7 @@
     <template v-else>
       <div v-for="(effect, index) in effects" :key="index" class="row q-col-gutter-xs items-center q-mb-xs">
         <div class="col-12 col-sm-4">
-          <q-input v-help="'Enter case for the chain outcomes editor.'"
+          <q-input v-help="$t('help.composer.caseCondition')"
             :model-value="effect.case"
             dense
             outlined
@@ -230,7 +230,7 @@
           />
         </div>
         <div class="col">
-          <mechanic-text-editor v-help="'Enter effect for the chain outcomes editor.'"
+          <mechanic-text-editor v-help="$t('help.composer.outcomeEffectText')"
             :model-value="effect.effect"
             dense
             outlined
@@ -243,7 +243,7 @@
           <q-btn flat round dense size="sm" icon="close" :aria-label="`Remove line ${index + 1}`" @click="removeLegacy(index)" />
         </div>
       </div>
-      <q-btn v-help="'Line in the chain outcomes editor.'" flat dense no-caps size="sm" icon="add" label="Line" @click="addLegacy" />
+      <q-btn v-help="$t('help.composer.caseLine')" flat dense no-caps size="sm" icon="add" label="Line" @click="addLegacy" />
     </template>
   </div>
 </template>

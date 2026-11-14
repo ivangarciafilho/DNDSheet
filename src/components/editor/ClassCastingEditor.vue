@@ -6,7 +6,7 @@
               <div class="row items-center justify-between q-mb-xs">
                 <q-checkbox
 :model-value="metamagicEnabled"
-                  v-help="'Tick to include metamagic studio (sorcery points &amp; enhancements) for the class casting editor.'"
+                  v-help="$t('help.casting.metamagicStudio')"
                   data-metamagic-toggle
                   label="Metamagic Studio (Sorcery Points &amp; Enhancements)"
                   dense

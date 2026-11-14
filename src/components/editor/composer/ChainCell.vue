@@ -104,17 +104,17 @@
           <q-checkbox v-for="option in multiOptions" :key="option" v-model="draft" :val="option" :label="option" dense dark />
           <div v-if="spec.allowCustom" class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col">
-              <q-input v-help="'Enter other for the chain cell.'" v-model="customEntry" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
+              <q-input v-help="$t('help.composer.customOption')" v-model="customEntry" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
             </div>
             <div class="col-auto">
-              <q-btn v-help="'Add in the chain cell.'" flat dense no-caps size="sm" icon="add" label="Add" @click="addCustom" />
+              <q-btn v-help="$t('help.composer.addChip')" flat dense no-caps size="sm" icon="add" label="Add" @click="addCustom" />
             </div>
           </div>
         </div>
 
         <div v-else-if="kind === 'count'" class="row q-col-gutter-xs items-center">
           <div class="col">
-            <q-input v-help="'Enter how many for the chain cell.'" v-model="draft.count" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
+            <q-input v-help="$t('help.composer.amount')" v-model="draft.count" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
           </div>
           <div class="col-auto">
             <q-toggle v-help="'Turn on or off up to for the chain cell.'" v-model="draft.mode" true-value="up_to" false-value="exact" label="up to" dark dense />
@@ -125,32 +125,32 @@
           <q-btn-toggle v-model="draft.relation" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
           <div class="row q-col-gutter-xs items-start">
             <div class="col-5">
-              <q-input v-help="'Enter distance for the chain cell.'" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
+              <q-input v-help="$t('help.composer.distance')" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
             </div>
             <div class="col-auto self-center">
               <q-btn-toggle v-model="draft.unit" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
             </div>
             <div class="col">
-              <q-input v-help="'Enter of for the chain cell.'" v-model="draft.origin" dense outlined dark label="Of" placeholder="you" />
+              <q-input v-help="$t('help.composer.unitOrShape')" v-model="draft.origin" dense outlined dark label="Of" placeholder="you" />
             </div>
           </div>
         </div>
 
         <div v-else-if="kind === 'area'" class="row q-col-gutter-xs items-start">
           <div class="col-12 col-sm-5">
-            <q-input v-help="'Enter shape for the chain cell.'" v-model="draft.shape" dense outlined dark autofocus label="Shape" :list="listId" />
+            <q-input v-help="$t('help.composer.shape')" v-model="draft.shape" dense outlined dark autofocus label="Shape" :list="listId" />
             <datalist :id="listId">
               <option v-for="shape in areaShapes" :key="shape" :value="shape" />
             </datalist>
           </div>
           <div class="col-5 col-sm-3">
-            <q-input v-help="'Enter size for the chain cell.'" v-model="draft.distance" dense outlined dark label="Size" />
+            <q-input v-help="$t('help.composer.size')" v-model="draft.distance" dense outlined dark label="Size" />
           </div>
           <div class="col-auto self-center">
             <q-btn-toggle v-model="draft.unit" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
           </div>
           <div class="col-12">
-            <q-input v-help="'Enter originating from for the chain cell.'" v-model="draft.origin" dense outlined dark label="Originating from" placeholder="itself" />
+            <q-input v-help="$t('help.composer.origin')" v-model="draft.origin" dense outlined dark label="Originating from" placeholder="itself" />
           </div>
         </div>
 

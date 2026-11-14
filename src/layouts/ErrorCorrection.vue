@@ -65,6 +65,63 @@
 
           <q-separator style="background: rgba(255, 255, 255, 0.1);" class="q-my-sm" />
 
+          <!-- Repository Backup & Recovery Section -->
+          <q-card-section class="q-pt-none">
+            <div class="text-subtitle2 text-weight-bold text-grey-4 q-mb-xs">
+              Repository Backup &amp; Restore
+            </div>
+            <div class="row q-col-gutter-xs">
+              <div class="col-12 col-sm-6">
+                <q-btn
+                  outline
+                  color="cyan-4"
+                  icon="download"
+                  class="full-width"
+                  no-caps
+                  data-recovery-export-backup
+                  v-help="$t('help.library.exportBackup')"
+                  @click="exportRepositoryBackup"
+                >
+                  Download Repository Backup (.json)
+                </q-btn>
+              </div>
+              <div class="col-12 col-sm-6">
+                <q-btn
+                  outline
+                  color="amber-4"
+                  icon="upload_file"
+                  class="full-width"
+                  no-caps
+                  data-recovery-restore-backup
+                  v-help="$t('help.library.importBackup')"
+                  @click="triggerRestoreBackup"
+                >
+                  Restore Repository Backup (.json)
+                </q-btn>
+                <input
+                  ref="recoveryImportRef"
+                  type="file"
+                  accept="application/json,.json"
+                  hidden
+                  data-recovery-import-input
+                  @change="onRestoreBackupChange"
+                />
+              </div>
+            </div>
+            <q-banner
+              v-if="recoveryMessage"
+              dense
+              rounded
+              :class="recoveryIsError ? 'bg-red-9 text-white q-mt-xs' : 'bg-teal-9 text-white q-mt-xs'"
+              role="status"
+              data-recovery-status
+            >
+              {{ recoveryMessage }}
+            </q-banner>
+          </q-card-section>
+
+          <q-separator style="background: rgba(255, 255, 255, 0.1);" class="q-my-sm" />
+
           <!-- Reset / Purge Section -->
           <q-card-section class="q-pt-none">
             <div class="text-subtitle2 text-weight-bold text-negative q-mb-xs">Purge Corrupted Local Storage</div>
@@ -103,9 +160,10 @@
 
 <script lang="ts">
 import { download } from '../components/file/download'
-import { defineComponent } from 'vue'
+import { defineComponent, ref } from 'vue'
 import { Notify } from 'quasar'
 import { clearOverflowSnapshot, indexedDbSnapshots } from 'src/core/adapters/IndexedDbAutosave'
+import { useRepositoryStore } from 'src/stores/repository-store'
 
 export default defineComponent({
   name: 'ErrorCorrectionLayout',
@@ -162,6 +220,51 @@ export default defineComponent({
       if (data) download(data, 'templates-error.json', 'application/json')
     }
 
+    const recoveryImportRef = ref<HTMLInputElement | null>(null)
+    const recoveryMessage = ref('')
+    const recoveryIsError = ref(false)
+
+    const exportRepositoryBackup = async () => {
+      try {
+        const repoStore = useRepositoryStore()
+        const json = await repoStore.exportBackupJson()
+        download(json, `dndsheet-library-backup-${new Date().toISOString().slice(0, 10)}.json`, 'application/json')
+        recoveryIsError.value = false
+        recoveryMessage.value = 'Exported full repository backup JSON.'
+      } catch (err) {
+        recoveryIsError.value = true
+        recoveryMessage.value = `Backup export failed: ${err instanceof Error ? err.message : String(err)}`
+      }
+    }
+
+    const triggerRestoreBackup = () => {
+      recoveryImportRef.value?.click()
+    }
+
+    const onRestoreBackupChange = async (evt: Event) => {
+      const input = evt.target as HTMLInputElement
+      const file = input.files?.[0]
+      input.value = ''
+      if (!file) return
+      try {
+        const text = await file.text()
+        const repoStore = useRepositoryStore()
+        const res = await repoStore.restoreBackupJson(text)
+        if (res.ok) {
+          const qText = res.quarantined.length > 0 ? ` Quarantined ${res.quarantined.length} invalid record(s).` : ''
+          recoveryIsError.value = false
+          recoveryMessage.value = `Restored ${res.restoredCount} creature(s).${qText}`
+        } else {
+          const rbText = res.rolledBack ? ' Rolled back to previous repository state.' : ''
+          recoveryIsError.value = true
+          recoveryMessage.value = `Restore failed: ${res.errors.join(' ')}${rbText}`
+        }
+      } catch (err) {
+        recoveryIsError.value = true
+        recoveryMessage.value = `Restore error: ${err instanceof Error ? err.message : String(err)}`
+      }
+    }
+
     return {
       clear,
       clearCharacter,
@@ -171,6 +274,12 @@ export default defineComponent({
       downloadCharacter,
       downloadSpells,
       downloadTemplates,
+      recoveryImportRef,
+      recoveryMessage,
+      recoveryIsError,
+      exportRepositoryBackup,
+      triggerRestoreBackup,
+      onRestoreBackupChange,
     }
   },
 })

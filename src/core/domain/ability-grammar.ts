@@ -3,9 +3,10 @@ import { mechanicRichHtml, mechanicPlainText } from './mechanic-rich-text.ts'
 import { normalizeOutcomeData } from './outcome-data.ts'
 import type { RandomTable } from './random-table.ts'
 import { descriptionContainersText } from './description-containers.ts'
-import type { AbilityArea, AbilityOutcome, AbilityTargeting, AttackReach, AttackSource, DndStat, MonsterAction } from './types.ts'
+import type { AbilityArea, AbilityOutcome, AbilityTargeting, AttackReach, AttackSource, DndStat, MonsterAction, RollScalingSpec } from './types.ts'
 import { evaluateFormula } from './formula.ts'
 import type { FormulaContext, FormulaStyle } from './formula.ts'
+import { formatRollScalingPhrases, hasRollScaling, resolveRollScaling } from './roll-scaling.ts'
 
 export interface AbilityProjection {
   attackReach?: AttackReach
@@ -19,6 +20,7 @@ export interface AbilityProjection {
   attackCount?: number | string
   attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
   attackException?: string
+  rollScaling?: RollScalingSpec
 }
 
 export interface AbilityRenderContext {
@@ -298,6 +300,7 @@ export function inferAbility(action: Partial<MonsterAction>): AbilityProjection 
     attackCount: action.attackCount,
     attackRollModifier: action.attackRollModifier,
     attackException: action.attackException,
+    ...(hasRollScaling(action.rollScaling) ? { rollScaling: action.rollScaling } : {}),
   }
 }
 
@@ -482,6 +485,24 @@ export function mechanicsPhrase(ability: AbilityProjection, context: AbilityRend
     const dc = context.saveDc ?? ability.saveDc
     if (dc !== undefined) phrases.push(`${statName(ability.saveAbility)} Save ${valueText(dc, context, 'number', 'save.overrideValue')}`)
   }
+  if (hasRollScaling(ability.rollScaling)) {
+    const scaling = resolveRollScaling(
+      { formulaContext: context.formulaContext },
+      ability.rollScaling,
+      {
+        attackCount: ability.attackCount,
+        attackRollModifier: ability.attackRollModifier,
+        attackException: ability.attackException,
+        targetCount: ability.targeting?.count,
+      },
+    )
+    const extra = formatRollScalingPhrases(scaling)
+    if (extra.beamPhrase) phrases.push(extra.beamPhrase)
+    if (extra.multiplierPhrase) phrases.push(extra.multiplierPhrase)
+    if (extra.rollAdvantagePhrase) phrases.push(extra.rollAdvantagePhrase)
+    if (extra.saveAdvantagePhrase) phrases.push(extra.saveAdvantagePhrase)
+    if (extra.provenanceNote) phrases.push(extra.provenanceNote)
+  }
   return phrases
 }
 
@@ -613,6 +634,21 @@ export function text2024(action: Partial<MonsterAction>, context: AbilityRenderC
   }
 
   clauses.push(...outcomePhrase(ability, context, 'text2024', markup))
+  if (hasRollScaling(action.rollScaling)) {
+    const scaling = resolveRollScaling(
+      { formulaContext: context.formulaContext },
+      action.rollScaling,
+      {
+        attackCount: action.attackCount,
+        attackRollModifier: action.attackRollModifier,
+        attackException: action.attackException,
+        targetCount: ability.targeting?.count,
+      },
+    )
+    const extra = formatRollScalingPhrases(scaling)
+    const parts = [extra.beamPhrase, extra.multiplierPhrase, extra.rollAdvantagePhrase, extra.saveAdvantagePhrase, extra.provenanceNote].filter(Boolean)
+    if (parts.length) clauses.push(ensurePeriod(parts.join('; ')))
+  }
   const containers = descriptionContainersText(action.descriptionContainers, markup === 'html')
   if (containers) clauses.push(containers)
   if (ability.description.trim()) clauses.push(ability.description.trim())

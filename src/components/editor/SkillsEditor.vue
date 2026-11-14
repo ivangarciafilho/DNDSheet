@@ -134,7 +134,7 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn v-help="'⏫ in the skills editor.'"
+                <q-btn v-help="$t('help.checks.skillDoubleUp')"
                   dense
                   round
                   size="sm"
@@ -144,7 +144,7 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn v-help="'⏬ in the skills editor.'"
+                <q-btn v-help="$t('help.checks.skillDoubleDown')"
                   dense
                   round
                   size="sm"
@@ -321,7 +321,7 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn v-help="'⏫ in the skills editor.'"
+                <q-btn v-help="$t('help.checks.skillDoubleUp')"
                   dense
                   round
                   size="sm"
@@ -331,7 +331,7 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn v-help="'⏬ in the skills editor.'"
+                <q-btn v-help="$t('help.checks.skillDoubleDown')"
                   dense
                   round
                   size="sm"
@@ -454,9 +454,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn v-help="'+ Ethereal (60ft) in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Ethereal (60ft)" @click="appendRiderTag('search', '60ft across Ethereal and Material Planes')" />
-                  <q-btn v-help="'+ Undead/Fiends in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Undead/Fiends" @click="appendRiderTag('search', 'Sense Undead and Fiends')" />
-                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('search', 'DC 15 check')" />
+                  <q-btn v-help="$t('help.checks.chipEthereal')" dense flat size="xs" color="cyan-3" label="+ Ethereal (60ft)" @click="appendRiderTag('search', '60ft across Ethereal and Material Planes')" />
+                  <q-btn v-help="$t('help.checks.chipUndeadFiends')" dense flat size="xs" color="cyan-3" label="+ Undead/Fiends" @click="appendRiderTag('search', 'Sense Undead and Fiends')" />
+                  <q-btn v-help="$t('help.checks.chipSearchDc')" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('search', 'DC 15 check')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('search')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -580,9 +580,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn v-help="'+ Touch in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Touch" @click="appendRiderTag('study', 'Touch: Learn target alignment')" />
-                  <q-btn v-help="'+ Resistances in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Resistances" @click="appendRiderTag('study', 'Learn vulnerabilities, resistances, immunities')" />
-                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('study', 'DC 15 check')" />
+                  <q-btn v-help="$t('help.checks.chipTouch')" dense flat size="xs" color="cyan-3" label="+ Touch" @click="appendRiderTag('study', 'Touch: Learn target alignment')" />
+                  <q-btn v-help="$t('help.checks.chipResistances')" dense flat size="xs" color="cyan-3" label="+ Resistances" @click="appendRiderTag('study', 'Learn vulnerabilities, resistances, immunities')" />
+                  <q-btn v-help="$t('help.checks.chipStudyDc')" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('study', 'DC 15 check')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('study')" :key="`study-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -706,9 +706,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('influence', 'DC 15 Charisma check')" />
-                  <q-btn v-help="'+ Must Hear in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Must Hear" @click="appendRiderTag('influence', 'Creature must hear and understand')" />
-                  <q-btn v-help="'+ 30ft in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ 30ft" @click="appendRiderTag('influence', 'within 30ft')" />
+                  <q-btn v-help="$t('help.checks.chipInsightDc')" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('influence', 'DC 15 Charisma check')" />
+                  <q-btn v-help="$t('help.checks.chipMustHear')" dense flat size="xs" color="cyan-3" label="+ Must Hear" @click="appendRiderTag('influence', 'Creature must hear and understand')" />
+                  <q-btn v-help="$t('help.checks.chipInfluenceRange')" dense flat size="xs" color="cyan-3" label="+ 30ft" @click="appendRiderTag('influence', 'within 30ft')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('influence')" :key="pKey" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -832,9 +832,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn v-help="'+ Light Obscurement in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Light Obscurement" @click="appendRiderTag('hide', 'Must have light obscurement or 3/4 cover')" />
-                  <q-btn v-help="'+ While Observed in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ While Observed" @click="appendRiderTag('hide', 'Can hide while observed in dim light')" />
-                  <q-btn v-help="'+ Invisible in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Invisible" @click="appendRiderTag('hide', 'Become invisible until start of next turn')" />
+                  <q-btn v-help="$t('help.checks.chipLightObscured')" dense flat size="xs" color="cyan-3" label="+ Light Obscurement" @click="appendRiderTag('hide', 'Must have light obscurement or 3/4 cover')" />
+                  <q-btn v-help="$t('help.checks.chipWhileObserved')" dense flat size="xs" color="cyan-3" label="+ While Observed" @click="appendRiderTag('hide', 'Can hide while observed in dim light')" />
+                  <q-btn v-help="$t('help.checks.chipHideInvisible')" dense flat size="xs" color="cyan-3" label="+ Invisible" @click="appendRiderTag('hide', 'Become invisible until start of next turn')" />
                 </div>
               </div>
               <div v-for="pKey in groupPassiveKeys('hide')" :key="`hide-${pKey}`" class="row items-center q-col-gutter-xs q-mb-xs">
@@ -958,9 +958,9 @@
                       </q-item>
                     </q-list>
                   </q-btn-dropdown>
-                  <q-btn v-help="'+ 1 min in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ 1 min" @click="appendRiderTag('tools', 'in 1 minute')" />
-                  <q-btn v-help="'+ Bonus Action in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ Bonus Action" @click="appendRiderTag('tools', 'as a bonus action')" />
-                  <q-btn v-help="'+ DC 15 in the skills editor.'" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('tools', 'DC 15 tool check')" />
+                  <q-btn v-help="$t('help.checks.chipToolTime')" dense flat size="xs" color="cyan-3" label="+ 1 min" @click="appendRiderTag('tools', 'in 1 minute')" />
+                  <q-btn v-help="$t('help.checks.chipToolBonus')" dense flat size="xs" color="cyan-3" label="+ Bonus Action" @click="appendRiderTag('tools', 'as a bonus action')" />
+                  <q-btn v-help="$t('help.checks.chipToolDc')" dense flat size="xs" color="cyan-3" label="+ DC 15" @click="appendRiderTag('tools', 'DC 15 tool check')" />
                 </div>
               </div>
               <div v-if="monster.tools && monster.tools.length > 0" class="row q-gutter-xs q-mt-xs">
@@ -998,55 +998,15 @@ import { bonusForSkill, statModifier } from '../rendering/mathRendering'
 import { validateNumber } from './numberInput'
 import { MonsterSkill, MonsterToolProficiency } from '../models'
 import SwapButtons from './widgets/SwapButtons.vue'
+import { CANONICAL_TOOLS } from 'src/core/domain/catalogs/enumerations'
 
-const STANDARD_5E_TOOLS: Array<{ label: string; value: string; category: string; color: string; icon: string }> = [
-  // Kits & Specialist Tools
-  { label: 'Disguise Kit', value: 'Disguise Kit', category: 'Specialist Kit', color: 'deep-purple-6', icon: 'fa-solid fa-masks-theater' },
-  { label: 'Forgery Kit', value: 'Forgery Kit', category: 'Specialist Kit', color: 'deep-purple-6', icon: 'fa-solid fa-feather-pointed' },
-  { label: 'Herbalism Kit', value: 'Herbalism Kit', category: 'Specialist Kit', color: 'green-7', icon: 'fa-solid fa-leaf' },
-  { label: "Navigator's Tools", value: "Navigator's Tools", category: 'Specialist Kit', color: 'cyan-7', icon: 'fa-solid fa-compass' },
-  { label: "Poisoner's Kit", value: "Poisoner's Kit", category: 'Specialist Kit', color: 'purple-7', icon: 'fa-solid fa-skull-crossbones' },
-  { label: "Thieves' Tools", value: "Thieves' Tools", category: 'Specialist Kit', color: 'amber-8', icon: 'fa-solid fa-key' },
-  // Artisan's Tools
-  { label: "Alchemist's Supplies", value: "Alchemist's Supplies", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-flask' },
-  { label: "Brewer's Supplies", value: "Brewer's Supplies", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-beer-mug-empty' },
-  { label: "Calligrapher's Supplies", value: "Calligrapher's Supplies", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-pen-nib' },
-  { label: "Carpenter's Tools", value: "Carpenter's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-hammer' },
-  { label: "Cartographer's Tools", value: "Cartographer's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-map' },
-  { label: "Cobbler's Tools", value: "Cobbler's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-shoe-prints' },
-  { label: "Cook's Utensils", value: "Cook's Utensils", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-utensils' },
-  { label: "Glassblower's Tools", value: "Glassblower's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-wine-glass' },
-  { label: "Jeweler's Tools", value: "Jeweler's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-gem' },
-  { label: "Leatherworker's Tools", value: "Leatherworker's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-vest' },
-  { label: "Mason's Tools", value: "Mason's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-trowel-bricks' },
-  { label: "Painter's Supplies", value: "Painter's Supplies", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-palette' },
-  { label: "Potter's Tools", value: "Potter's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-jar' },
-  { label: "Smith's Tools", value: "Smith's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-gavel' },
-  { label: "Tinker's Tools", value: "Tinker's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-gears' },
-  { label: "Weaver's Tools", value: "Weaver's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-shirt' },
-  { label: "Woodcarver's Tools", value: "Woodcarver's Tools", category: "Artisan's Tools", color: 'teal-6', icon: 'fa-solid fa-tree' },
-  // Musical Instruments
-  { label: 'Bagpipes', value: 'Bagpipes', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Drum', value: 'Drum', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-drum' },
-  { label: 'Dulcimer', value: 'Dulcimer', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Flute', value: 'Flute', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Horn', value: 'Horn', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-bullhorn' },
-  { label: 'Lute', value: 'Lute', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-guitar' },
-  { label: 'Lyre', value: 'Lyre', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Pan Flute', value: 'Pan Flute', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Shawm', value: 'Shawm', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  { label: 'Viol', value: 'Viol', category: 'Instrument', color: 'pink-6', icon: 'fa-solid fa-music' },
-  // Gaming Sets
-  { label: 'Dice Set', value: 'Dice Set', category: 'Gaming Set', color: 'indigo-6', icon: 'fa-solid fa-dice' },
-  { label: 'Dragonchess Set', value: 'Dragonchess Set', category: 'Gaming Set', color: 'indigo-6', icon: 'fa-solid fa-chess' },
-  { label: 'Playing Card Set', value: 'Playing Card Set', category: 'Gaming Set', color: 'indigo-6', icon: 'fa-solid fa-diamond' },
-  { label: 'Three-Dragon Ante Set', value: 'Three-Dragon Ante Set', category: 'Gaming Set', color: 'indigo-6', icon: 'fa-solid fa-dragon' },
-  // Vehicles
-  { label: 'Vehicles (Air)', value: 'Vehicles (Air)', category: 'Vehicle', color: 'blue-grey-6', icon: 'fa-solid fa-wind' },
-  { label: 'Vehicles (Land)', value: 'Vehicles (Land)', category: 'Vehicle', color: 'blue-grey-6', icon: 'fa-solid fa-horse' },
-  { label: 'Vehicles (Space)', value: 'Vehicles (Space)', category: 'Vehicle', color: 'blue-grey-6', icon: 'fa-solid fa-shuttle-space' },
-  { label: 'Vehicles (Water)', value: 'Vehicles (Water)', category: 'Vehicle', color: 'blue-grey-6', icon: 'fa-solid fa-ship' },
-]
+const STANDARD_5E_TOOLS: Array<{ label: string; value: string; category: string; color: string; icon: string }> = CANONICAL_TOOLS.map((tool) => ({
+  label: tool.label,
+  value: String(tool.value),
+  category: tool.group || 'Tools',
+  color: tool.meta?.color || 'teal-6',
+  icon: tool.meta?.icon || 'fa-solid fa-wrench',
+}))
 
 const SKILL_ICONS: Record<string, string> = {
   PERCEPTION: 'fa-solid fa-magnifying-glass',

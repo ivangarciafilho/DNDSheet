@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    data-editor-section="encounterDynamics"
     expand-separator
     icon="fa-solid fa-hourglass-half"
     label="Encounter Dynamics (Combos & Tracks)"
@@ -15,7 +16,7 @@
           <div class="text-subtitle2 text-weight-bold text-warning">
             ⚡ Reactive Actions (Special Triggered Reactions)
           </div>
-          <q-btn v-help="'Add Reactive Action in the encounter dynamics editor.'"
+          <q-btn v-help="$t('help.encounterDynamics.addReactive')"
             dense
             outline
             size="sm"
@@ -36,7 +37,7 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-4 col-sm-4">
-              <q-input v-help="'Enter action name for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.reactiveName')"
                 v-model="ra.name"
                 dense
                 outlined
@@ -45,7 +46,7 @@
               />
             </div>
             <div class="col-4 col-sm-4">
-              <mechanic-text-editor v-help="'Enter trigger condition for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="$t('help.encounterDynamics.reactiveTrigger')"
                 v-model="ra.trigger"
                 dense
                 outlined
@@ -54,7 +55,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <mechanic-text-editor v-help="'Enter cost/limit for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="$t('help.encounterDynamics.reactiveLimit')"
                 v-model="ra.cost"
                 dense
                 outlined
@@ -91,7 +92,7 @@
           <div class="text-subtitle2 text-weight-bold text-info">
             ⛓️ Combo Actions (Chained Strike Synergies)
           </div>
-          <q-btn v-help="'Add Combo Action in the encounter dynamics editor.'"
+          <q-btn v-help="$t('help.encounterDynamics.addCombo')"
             dense
             outline
             size="sm"
@@ -112,7 +113,7 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-3 col-sm-3">
-              <q-input v-help="'Enter combo name for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.comboName')"
                 v-model="ca.name"
                 dense
                 outlined
@@ -121,7 +122,7 @@
               />
             </div>
             <div class="col-3 col-sm-2">
-              <q-input v-help="'Enter lead attack for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.comboLead')"
                 v-model="ca.leadAction"
                 dense
                 outlined
@@ -130,7 +131,7 @@
               />
             </div>
             <div class="col-2 col-sm-3">
-              <q-input v-help="'Enter followup strike for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.comboFollowup')"
                 :model-value="ca.followUpAction || ca.followup"
                 dense
                 outlined
@@ -140,7 +141,7 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <mechanic-text-editor v-help="'Enter condition for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="$t('help.encounterDynamics.comboCondition')"
                 v-model="ca.condition"
                 dense
                 outlined
@@ -178,14 +179,14 @@
             <div class="text-subtitle2 text-weight-bold text-orange">
               ⏳ Runehammer Escalation Track
             </div>
-            <q-checkbox v-help="'Tick to include enabled for the encounter dynamics editor.'"
+            <q-checkbox v-help="$t('help.encounterDynamics.trackEnabled')"
               v-model="runehammerTrack.enabled"
               dense
               label="Enabled"
               color="orange"
             />
           </div>
-          <q-btn v-help="'Add Track Event in the encounter dynamics editor.'"
+          <q-btn v-help="$t('help.encounterDynamics.addTrackEvent')"
             v-if="runehammerTrack.enabled"
             dense
             outline
@@ -199,7 +200,7 @@
         <div v-if="runehammerTrack.enabled" class="q-gutter-y-xs q-mt-xs">
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-4">
-              <q-select v-help="'Choose track die (timer / escalation) for the encounter dynamics editor.'"
+              <q-select v-help="$t('help.encounterDynamics.trackDie')"
                 :model-value="runehammerTrack.timerDie || runehammerTrack.die"
                 :options="runehammerDieOptions"
                 dense
@@ -209,7 +210,7 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="'Enter starting / current count for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.trackStartCount')"
                 v-model.number="runehammerTrack.currentCount"
                 type="number"
                 dense
@@ -227,7 +228,7 @@
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);"
           >
             <div class="col-2 col-sm-2">
-              <q-input v-help="'Enter round/count for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.trackRound')"
                 v-model.number="ev.round"
                 type="number"
                 dense
@@ -236,7 +237,7 @@
               />
             </div>
             <div class="col-4 col-sm-3">
-              <q-input v-help="'Enter event title for the encounter dynamics editor.'"
+              <q-input v-help="$t('help.encounterDynamics.trackEventTitle')"
                 v-model="ev.name"
                 dense
                 outlined
@@ -245,7 +246,7 @@
               />
             </div>
             <div class="col-5 col-sm-6">
-              <mechanic-text-editor v-help="'Enter mechanical effect for the encounter dynamics editor.'"
+              <mechanic-text-editor v-help="$t('help.encounterDynamics.trackEventEffect')"
                 :model-value="ev.description || ev.effect"
                 dense
                 outlined

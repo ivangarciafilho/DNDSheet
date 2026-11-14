@@ -1,5 +1,6 @@
 <template>
   <q-expansion-item
+    data-editor-section="anatomy"
     expand-separator
     icon="fa-solid fa-shield-halved"
     label="Draco Anatomy (Breakable Limbs)"
@@ -45,31 +46,33 @@
               />
             </div>
             <div class="col-2 col-sm-1">
-              <q-input
-                v-model.number="ap.hp"
-                type="number"
+              <formula-field
+                :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].hp`"
+                label="Part HP"
+                v-help="'Hit points required to disable or sever this body part.'"
                 dense
                 outlined
-                label="Part HP"
               />
             </div>
             <div class="col-2 col-sm-1">
-              <q-input
-                v-model.number="ap.ac"
-                type="number"
+              <formula-field
+                :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].ac`"
+                label="Part AC"
+                v-help="'Armor Class used when targeting this part instead of main AC.'"
                 dense
                 outlined
-                label="Part AC"
+                clearable
               />
             </div>
             <div class="col-2 col-sm-2">
-              <q-input
-                v-model.number="ap.threshold"
-                type="number"
-                dense
-                outlined
+              <formula-field
+                :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].threshold`"
                 label="Threshold"
                 placeholder="Dmg"
+                v-help="'Minimum damage a single hit must deal before damaging this part.'"
+                dense
+                outlined
+                clearable
               />
             </div>
             <div class="col-3 col-sm-3">
@@ -104,11 +107,12 @@
 <script lang="ts">
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent } from 'vue'
+import FormulaField from '../kit/FormulaField.vue'
 import SwapButtons from './widgets/SwapButtons.vue'
 
 export default defineComponent({
   name: 'AnatomyEditor',
-  components: { SwapButtons },
+  components: { FormulaField, SwapButtons },
   setup() {
     const monster = useMonsterStore()
     if (!Array.isArray(monster.anatomyParts)) monster.anatomyParts = []

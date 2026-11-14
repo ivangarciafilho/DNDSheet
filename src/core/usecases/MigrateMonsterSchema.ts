@@ -1,6 +1,7 @@
 import { normalizeCastingSpellGrants } from '../domain/casting-source-selection.ts'
 import { sanitizeReactionAvailability } from '../domain/entry-display.ts'
 import { normalizeRandomTables } from '../domain/random-table.ts'
+import { normalizeRollScaling } from '../domain/roll-scaling.ts'
 import { characterProficiency } from '../domain/math-utils.ts'
 import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts'
 
@@ -555,6 +556,42 @@ export function migrateMonsterSchema(raw: any): Monster {
 
   // A11.9: optional field, normalised on every load so hand-edited or partial JSON cannot break the editor.
   monster.randomTables = normalizeRandomTables(monster.randomTables)
+
+  // A11.2 / A11.3: guarantee stable identities for phaseConfigs, anatomyParts, and languagesList
+  if (Array.isArray(monster.paragonConfig?.phaseConfigs)) {
+    monster.paragonConfig.phaseConfigs.forEach((cfg: Record<string, unknown>, idx: number) => {
+      if (!cfg || typeof cfg !== 'object') return
+      if (!cfg.id || typeof cfg.id !== 'string') cfg.id = `phase-${idx + 1}`
+      if (typeof cfg.initiativeBonus === 'string' && /^[+-]?\d+$/.test(cfg.initiativeBonus.trim())) {
+        cfg.initiativeBonus = Number(cfg.initiativeBonus.trim())
+      }
+    })
+  }
+  if (Array.isArray(monster.anatomyParts)) {
+    monster.anatomyParts.forEach((part: Record<string, unknown>, idx: number) => {
+      if (part && typeof part === 'object' && (!part.id || typeof part.id !== 'string')) {
+        part.id = `part-${idx + 1}`
+      }
+    })
+  }
+  if (Array.isArray(monster.languagesList)) {
+    monster.languagesList.forEach((lang: Record<string, unknown>, idx: number) => {
+      if (lang && typeof lang === 'object' && (!lang.id || typeof lang.id !== 'string')) {
+        lang.id = `lang-${idx + 1}`
+      }
+    })
+  }
+
+  // A9.13: normalize rollScaling specs cleanly across traits, actions, attacks, and reactions
+  for (const collection of [monster.traits, monster.actions, monster.attacks, monster.reactions]) {
+    if (!Array.isArray(collection)) continue
+    for (const entry of collection as Array<Record<string, unknown>>) {
+      if (!entry || typeof entry !== 'object' || entry.rollScaling === undefined) continue
+      const normalized = normalizeRollScaling(entry.rollScaling as never)
+      if (normalized) entry.rollScaling = normalized
+      else delete entry.rollScaling
+    }
+  }
 
   if (monster.proficiencyScale === 'character' && !monster.proficiencyOverride && monster.HP) {
     monster.proficiency = characterProficiency(monster.HP.HD)

@@ -1,5 +1,24 @@
 <template>
   <q-page class="row items-start">
+    <div
+      v-if="isNarrow"
+      class="col-12 q-px-md q-pt-sm narrow-pane-bar"
+      data-narrow-pane-switcher
+    >
+      <q-btn-toggle
+        v-model="narrowPane"
+        dense
+        spread
+        unelevated
+        no-caps
+        toggle-color="primary"
+        :options="[
+          { label: 'Editor', value: 'editor' },
+          { label: 'Stat block', value: 'preview' },
+        ]"
+      />
+    </div>
+
     <!-- Character Mode -->
     <q-splitter
       v-if="editorStore.activeMode === 'character'"
@@ -8,6 +27,7 @@
       reverse
       unit="px"
       :limits="splitterLimits"
+      :class="narrowSplitterClass"
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
@@ -31,11 +51,13 @@
       reverse
       unit="px"
       :limits="splitterLimits"
+      :class="narrowSplitterClass"
       style="height: calc(100vh - 177px); width: 100%"
     >
       <template #before>
         <div id="editor" class="q-pa-md editor-fit" style="width: 100%">
           <database-studio class="q-mb-sm" />
+          <section-strip />
           <q-list bordered separator class="rounded-borders">
             <a4-layer-studio />
             <basics-editor />
@@ -86,6 +108,7 @@ import RegionalEffectsEditor from 'src/components/editor/RegionalEffectsEditor.v
 import RandomTablesEditor from 'src/components/editor/RandomTablesEditor.vue'
 import InventoryEditor from 'src/components/editor/InventoryEditor.vue'
 import DatabaseStudio from 'src/components/editor/DatabaseStudio.vue'
+import SectionStrip from 'src/components/editor/SectionStrip.vue'
 import CharacterEditor from 'src/components/character/CharacterEditor.vue'
 import CharacterSheet from 'src/components/character/CharacterSheet.vue'
 import { useEditorStore } from 'src/stores/editor-store'
@@ -95,6 +118,7 @@ export default defineComponent({
   components: {
     BasicsEditor,
     DatabaseStudio,
+    SectionStrip,
     A4LayerStudio,
     WebRenderer,
     SavesEditor,
@@ -120,6 +144,12 @@ export default defineComponent({
     // FIT-004: the preview (after panel, px) never drops below 320 px and the editor keeps at least 360 px.
     const $q = useQuasar()
     const splitterLimits = computed(() => [320, Math.max(320, $q.screen.width - 360)])
+    const narrowPane = ref<'editor' | 'preview'>('editor')
+    const isNarrow = computed(() => $q.screen.width < 600)
+    const narrowSplitterClass = computed(() => {
+      if (!isNarrow.value) return ''
+      return narrowPane.value === 'preview' ? 'narrow-pane--preview' : 'narrow-pane--editor'
+    })
 
     // automatically resize on column change
     watch(
@@ -138,6 +168,9 @@ export default defineComponent({
     return {
       splitterModel,
       splitterLimits,
+      narrowPane,
+      isNarrow,
+      narrowSplitterClass,
       monster,
       editorStore,
     }
@@ -150,7 +183,8 @@ export default defineComponent({
 @media screen and (max-width: 599px) {
   #splitter, #char-splitter {
     display: block;
-    overflow: auto;
+    height: auto !important;
+    overflow: visible;
   }
   #splitter :deep(> .q-splitter__panel),
   #char-splitter :deep(> .q-splitter__panel) {
@@ -160,6 +194,14 @@ export default defineComponent({
   }
   #splitter :deep(> .q-splitter__separator),
   #char-splitter :deep(> .q-splitter__separator) {
+    display: none;
+  }
+  #splitter.narrow-pane--editor :deep(> .q-splitter__after),
+  #char-splitter.narrow-pane--editor :deep(> .q-splitter__after) {
+    display: none;
+  }
+  #splitter.narrow-pane--preview :deep(> .q-splitter__before),
+  #char-splitter.narrow-pane--preview :deep(> .q-splitter__before) {
     display: none;
   }
 }
