@@ -6,4 +6,4 @@
 // As a side effect, since `@quasar/app-webpack` reference `quasar` to augment it,
 //  this declaration also apply `quasar` own
 //  augmentations (eg. adds `$q` into Vue component context)
-/// <reference types="@quasar/app-webpack" />
+/// <reference types="@quasar/app-vite" />

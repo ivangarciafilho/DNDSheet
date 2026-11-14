@@ -33,6 +33,7 @@ export const STATBLOCK_HELP = Object.freeze({
   'spell-school-level': 'School and spell level describe a spell’s magical tradition and its place in the spell progression.',
   'spell-cadence': 'Cadence shows when a spell or other limited use becomes available again.',
   phase: 'The phase label identifies the stage of this creature or the pool that owns the entry.',
+  availability: 'Availability specifies the combat state, hit point threshold, or phase set required for this reaction to be used.',
   scope: 'Scope describes the target, range, or area affected by this entry.',
   'passive-score': 'A passive score is the check result used when a creature is not actively rolling.',
   'uses-per-day': 'This ability can be used the shown number of times, and the uses return on the displayed schedule.',

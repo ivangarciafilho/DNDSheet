@@ -179,38 +179,38 @@
               ⏳ Runehammer Escalation Track
             </div>
             <q-checkbox v-help="'Tick to include enabled for the encounter dynamics editor.'"
-              v-model="monster.runehammerTrack.enabled"
+              v-model="runehammerTrack.enabled"
               dense
               label="Enabled"
               color="orange"
             />
           </div>
           <q-btn v-help="'Add Track Event in the encounter dynamics editor.'"
-            v-if="monster.runehammerTrack.enabled"
+            v-if="runehammerTrack.enabled"
             dense
             outline
             size="sm"
             color="orange"
             icon="add"
             label="Add Track Event"
-            @click="() => monster.addTrackEvent((monster.runehammerTrack.events?.length || 0) + 1)"
+            @click="() => monster.addTrackEvent((runehammerTrack.events?.length || 0) + 1)"
           />
         </div>
-        <div v-if="monster.runehammerTrack.enabled" class="q-gutter-y-xs q-mt-xs">
+        <div v-if="runehammerTrack.enabled" class="q-gutter-y-xs q-mt-xs">
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-4">
               <q-select v-help="'Choose track die (timer / escalation) for the encounter dynamics editor.'"
-                :model-value="monster.runehammerTrack.timerDie || monster.runehammerTrack.die"
+                :model-value="runehammerTrack.timerDie || runehammerTrack.die"
                 :options="runehammerDieOptions"
                 dense
                 outlined
                 label="Track Die (Timer / Escalation)"
-                @update:model-value="(val: string) => { monster.runehammerTrack.timerDie = val as any; monster.runehammerTrack.die = val as any; }"
+                @update:model-value="(val: string) => { runehammerTrack.timerDie = val as any; runehammerTrack.die = val as any; }"
               />
             </div>
             <div class="col-12 col-sm-4">
               <q-input v-help="'Enter starting / current count for the encounter dynamics editor.'"
-                v-model.number="monster.runehammerTrack.currentCount"
+                v-model.number="runehammerTrack.currentCount"
                 type="number"
                 dense
                 outlined
@@ -221,7 +221,7 @@
 
           <!-- Track Events List -->
           <div
-            v-for="ev in monster.runehammerTrack.events"
+            v-for="ev in runehammerTrack.events"
             :key="ev.id"
             class="row q-col-gutter-xs items-center q-pa-xs rounded-borders q-mt-xs"
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);"
@@ -274,7 +274,7 @@
 
 <script lang="ts">
 import { useMonsterStore } from 'src/stores/monster-store'
-import { defineComponent } from 'vue'
+import { computed, defineComponent, watch } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import SwapButtons from './widgets/SwapButtons.vue'
@@ -287,17 +287,20 @@ export default defineComponent({
 
     if (!Array.isArray(monster.reactiveActions)) monster.reactiveActions = []
     if (!Array.isArray(monster.comboActions)) monster.comboActions = []
-    if (!monster.runehammerTrack) {
-      monster.runehammerTrack = { enabled: false, die: 'd4', currentCount: 4, events: [] }
+    const track = (monster.runehammerTrack ??= { enabled: false, die: 'd4', currentCount: 4, events: [] })
+    if (!Array.isArray(track.events)) {
+      track.events = []
     }
-    if (!Array.isArray(monster.runehammerTrack.events)) {
-      monster.runehammerTrack.events = []
-    }
+    watch(() => monster.runehammerTrack, (next) => {
+      if (!next) monster.runehammerTrack = { enabled: false, die: 'd4', currentCount: 4, events: [] }
+    })
+    const runehammerTrack = computed(() => monster.runehammerTrack ?? track)
 
     const runehammerDieOptions = ['d4', 'd6', 'd8', 'd10', 'd12', 'd20']
 
     return {
       monster,
+      runehammerTrack,
       runehammerDieOptions,
     }
   },

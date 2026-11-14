@@ -73,7 +73,7 @@ export default defineComponent({
     }
     const rows = computed(() => [ ['head', 'Identity'], ['mechanics', 'Roll'], ['scope', 'Targets'], ['outcomes', 'Damage'] ].map(([id, label]) => ({ id, label, fields: fields.value.filter(spec => spec.row === id && visible(spec)) })))
     const extraFields = (id: string) => fields.value.filter(spec => spec.id.startsWith(`${attackExtraPrefix(id)}.`))
-    const phaseOptions = computed(() => [{ label: 'All phases', value: 'all' }, ...Array.from({ length: monster.paragonConfig?.enabled || monster.paragonConfig?.poolCount > 1 ? monster.paragonConfig.poolCount || 2 : 0 }, (_, index) => ({ label: `Phase / pool ${index + 1}`, value: String(index + 1) }))])
+    const phaseOptions = computed(() => [{ label: 'All phases', value: 'all' }, ...Array.from({ length: monster.paragonConfig?.enabled || (monster.paragonConfig?.poolCount ?? 0) > 1 ? monster.paragonConfig?.poolCount || 2 : 0 }, (_, index) => ({ label: `Phase / pool ${index + 1}`, value: String(index + 1) }))])
     const saveTemplate = () => {
       const current = attack.value
       if (!current) return

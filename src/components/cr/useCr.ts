@@ -24,7 +24,7 @@ export const useCr = () => {
   const { t } = useI18n()
 
   const crResult = computed(() => {
-    return calculateCr(monster.$state as unknown as Monster, spells.spells)
+    return calculateCr(monster.$state as unknown as Monster, spells.allSpells)
   })
 
   const actionTypeColor = (type: string) => {

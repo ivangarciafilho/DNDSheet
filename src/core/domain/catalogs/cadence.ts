@@ -24,6 +24,7 @@ export const CADENCE_LABELS: Readonly<Record<string, string>> = Object.freeze({
   midnight: 'At Midnight',
   while_bloodied: 'While Bloodied',
   when_bloodied: 'When Bloodied',
+  while_not_bloodied: 'While Not Bloodied',
   at_0_hp: 'At 0 Hit Points',
   at_1_hp: 'At 1 Hit Point',
   hourly: 'Hourly',
@@ -86,4 +87,11 @@ export function cadenceLabel(value?: string | null): string {
   if (!raw) return ''
   const key = raw.toLowerCase().replace(/[\s/-]+/g, '_').replace(/^_+|_+$/g, '')
   return CADENCE_LABELS[key] ?? raw
+}
+
+export function cadenceKey(value?: string | null, fallback = ''): string {
+  const raw = value?.trim()
+  if (!raw) return fallback
+  const key = raw.toLowerCase().replace(/[\s/-]+/g, '_').replace(/^_+|_+$/g, '')
+  return key in CADENCE_LABELS ? key : raw
 }

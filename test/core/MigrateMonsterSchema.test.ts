@@ -124,3 +124,38 @@ test('MigrateMonsterSchema - Idempotence on already current v11 schema', () => {
   assert.strictEqual(result.lairCr, 20)
   assert.strictEqual(result.inventory, '10,000 gp')
 })
+
+test('MigrateMonsterSchema - A11.6 sanitizes reaction availability sets while preserving IDs, uses, and legacy stagePool', () => {
+  const monsterWithReactions = {
+    name: 'Bloodied Sentinel',
+    saveVersion: 11,
+    reactions: [
+      {
+        id: 'rx-1',
+        name: 'Vengeful Riposte',
+        description: 'Strikes back.',
+        trigger: 'When hit by a melee attack',
+        triggerPlacement: 'invalid-place',
+        stagePool: 2,
+        limitedUse: { count: 1, rate: 'SHORT_REST' },
+        availability: {
+          stagePools: [3, 1, 1, -4, 'NaN'],
+          predicate: 'unsupported_predicate',
+          customCondition: '  until healed  ',
+        },
+      },
+    ],
+  }
+
+  const migrated = migrateMonsterSchema(monsterWithReactions)
+  assert.strictEqual(migrated.reactions[0].id, 'rx-1')
+  assert.strictEqual(migrated.reactions[0].description, 'Strikes back.')
+  assert.strictEqual(migrated.reactions[0].stagePool, 2)
+  assert.deepStrictEqual(migrated.reactions[0].limitedUse, { count: 1, rate: 'SHORT_REST' })
+  assert.strictEqual(migrated.reactions[0].triggerPlacement, 'start')
+  assert.deepStrictEqual(migrated.reactions[0].availability, {
+    stagePools: [1, 3],
+    predicate: 'always',
+    customCondition: 'until healed',
+  })
+})

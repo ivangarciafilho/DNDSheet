@@ -1,5 +1,5 @@
 import { copyEntryBindings, entryBindingPrefix } from './entry-bindings.ts'
-import { defaultAction, defaultTrait, defaultCrAnnotation } from './types.ts'
+import { defaultAction, defaultTrait, defaultReaction, defaultCrAnnotation } from './types.ts'
 import type { Monster, MonsterAction, MonsterTrait, MonsterReaction, LairAction } from './types.ts'
 import type { ActionComposerRole } from './action-composer.ts'
 
@@ -45,7 +45,7 @@ export function roleTransition(monster: Monster, id: string, source: ActionCompo
     const cr = { ...defaultCrAnnotation(), ...('crAnnotation' in entry ? clone(entry.crAnnotation) : {}), include: false }
     const common = { ...clone(entry), id: copyId, description: entry.description, crAnnotation:cr }
     if (target === 'trait') patch.traits = [...monster.traits, { ...defaultTrait(copyId), ...common, name, limitedUse: uses, crAnnotation: cr }]
-    else if (target === 'reaction') patch.reactions = [...monster.reactions, { ...common, name, limitedUse: uses, trigger: 'trigger' in entry && typeof entry.trigger === 'string' ? entry.trigger : '' }]
+    else if (target === 'reaction') patch.reactions = [...monster.reactions, { ...defaultReaction(copyId), ...common, name, limitedUse: uses, crAnnotation: cr, trigger: 'trigger' in entry && typeof entry.trigger === 'string' ? entry.trigger : '' }]
     else if (target === 'lair') patch.lairActions = [...monster.lairActions, { ...common, crAnnotation: cr }]
     else patch.actions = [...monster.actions, { ...defaultAction(copyId), ...common, name, limitedUse: uses, crAnnotation: cr,
       bonusAction: target === 'bonus_action', legendaryOnly: target === 'legendary' || target === 'mythic' }]

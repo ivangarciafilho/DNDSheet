@@ -308,7 +308,7 @@
 
           <attack-composer v-show="!isItemCollapsed(item.id)" v-if="item.rawAttack" :attack-id="item.id" />
 
-          <entry-display-settings v-show="!isItemCollapsed(item.id)" v-if="item.rawAction || item.role === 'lair'" :entry-id="item.id" :field="item.role === 'lair' ? 'lairActions' : 'actions'" />
+          <entry-display-settings v-show="!isItemCollapsed(item.id)" v-if="item.rawAction || item.rawReaction || item.role === 'lair'" :entry-id="item.id" :field="item.role === 'lair' ? 'lairActions' : item.rawReaction ? 'reactions' : 'actions'" />
 
           <trait-display-settings v-show="!isItemCollapsed(item.id)" v-if="item.rawTrait" :trait-id="item.id" />
 
@@ -457,7 +457,7 @@ import { defineComponent, ref, computed } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import { useQuasar } from 'quasar'
-import { MonsterAction, MonsterTrait, MonsterReaction, DndAttack, ActionDescriptionContainer, LairAction } from '../models'
+import { MonsterAction, MonsterTrait, MonsterReaction, DndAttack, ActionDescriptionContainer, LairAction, SwappableField } from '../models'
 import NewTemplateDialog from './widgets/NewTemplateDialog.vue'
 import { useTemplatesStore } from 'src/stores/templates-store'
 import { useI18n } from 'vue-i18n'
@@ -630,7 +630,7 @@ export default defineComponent({
         (selectedCategory.value === 'all' && populated[role]))
     })
 
-    const categoryTabs = computed(() => {
+    const categoryTabs = computed<Array<{ label: string; value: typeof selectedCategory.value; count: number; activeColor: string }>>(() => {
       const all = allEntries.value
       return [
         { label: 'All', value: 'all', count: all.length + monster.multiattacks.length, activeColor: 'amber-9' },
@@ -866,7 +866,7 @@ export default defineComponent({
       }
     }
 
-    const getStoreCollectionField = (role: string): string => {
+    const getStoreCollectionField = (role: string): SwappableField => {
       if (role === 'attack') return 'attacks'
       if (role === 'trait') return 'traits'
       if (role === 'reaction') return 'reactions'

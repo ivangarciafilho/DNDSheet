@@ -63,5 +63,52 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   await delay(150)
  }
  assert.deepEqual(reload,{reloaded:true,name:'Shared casting grant witness',assigned:['Cure Wounds'],preparation:true,grants:true,extra:true})
- console.log('Shared casting editor checks:',JSON.stringify({...results,reload}))
+ const fiendChecks=await evaluate(`(async()=>{
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const until=async(fn,label)=>{for(let i=0;i<100;i++){const v=fn();if(v)return v;await wait(40)}throw Error('Timed out: '+label)};
+  const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+  const monster=pinia._s.get('monster');
+  Object.assign(monster.spellcasting,{primarySourceEnabled:true,class:'Warlock',subclass:'Fiend Patron',rulesEdition:'2014',automaticGrants:true,level:3,stat:'CHA',standard:['Light','Mage Hand','Minor Illusion','Misty Step','Hold Person','Darkness','Mirror Image','Invisibility'],spellGrants:[],classes:[]});
+  await wait(80);
+  const expand=async item=>{if(item&&!item.classList.contains('q-expansion-item--expanded')){item.querySelector('.q-item').click();await wait(80)}};
+  await expand([...document.querySelectorAll('.q-expansion-item')].find(item=>item.querySelector('.q-item__label')?.textContent.trim()==='Spellcasting'));
+  await expand(await until(()=>document.querySelector('[data-casting-source-fold="primary"]'),'fiend fold'));
+  const src=await until(()=>document.querySelector('[data-casting-source="primary"]'),'fiend primary source');
+  const over=await until(()=>src.querySelector('[data-source-over-limit]'),'over-limit warning');
+  const plan=await until(()=>src.querySelector('[data-subclass-expanded-plan]'),'fiend expanded plan');
+  const apply=src.querySelector('[data-apply-expanded-spells]');
+  if(!over.textContent.includes('Over limit')||!plan.textContent.includes('Warlock:Fiend')||!apply)throw Error('Unexpected plan/over-limit state: '+over.textContent+' | '+plan.textContent);
+  apply.click();
+  await until(()=>monster.spellcasting.spellGrants?.some(g=>g.spell==='Burning Hands'&&g.origin==='subclass'&&g.kind==='prepared'),'fiend expanded grants applied');
+  await until(()=>document.querySelector('#render .class-spellcasting')?.textContent.includes('Scorching Ray'),'fiend expanded spell projected');
+  return {overLimit:over.textContent,grantCount:monster.spellcasting.spellGrants.length};
+ })()`)
+ const origin2=await evaluate('performance.timeOrigin');await send('Page.reload',{ignoreCache:false});await delay(200)
+ let fiendReload
+ for(let i=0;i<180;i++){
+  fiendReload=await evaluate(`(()=>{const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');return {reloaded:performance.timeOrigin!==${JSON.stringify(origin2)},subclass:m?.spellcasting?.subclass,grants:(m?.spellcasting?.spellGrants||[]).map(g=>g.spell)}})()`)
+  if(fiendReload.reloaded&&fiendReload.subclass==='Fiend Patron'&&fiendReload.grants.includes('Scorching Ray'))break
+  await delay(150)
+ }
+ assert.equal(fiendReload.subclass,'Fiend Patron')
+ assert.ok(fiendReload.grants.includes('Burning Hands')&&fiendReload.grants.includes('Scorching Ray'))
+ const afterRemoveAndError=await evaluate(`(async()=>{
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+  const until=async(fn,label)=>{for(let i=0;i<100;i++){const v=fn();if(v)return v;await wait(40)}throw Error('Timed out: '+label)};
+  const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
+  const monster=pinia._s.get('monster');
+  const expand=async item=>{if(item&&!item.classList.contains('q-expansion-item--expanded')){item.querySelector('.q-item').click();await wait(80)}};
+  await expand([...document.querySelectorAll('.q-expansion-item')].find(item=>item.querySelector('.q-item__label')?.textContent.trim()==='Spellcasting'));
+  await expand(document.querySelector('[data-casting-source-fold="primary"]'));
+  const src=await until(()=>document.querySelector('[data-casting-source="primary"]'),'fiend panel after reload');
+  src.querySelector('[data-remove-expanded-spells]').click();
+  await until(()=>!(monster.spellcasting.spellGrants||[]).some(g=>g.origin==='subclass'),'fiend expanded grants removed');
+  monster.proficiency=-1;
+  const err=await until(()=>src.querySelector('[data-source-metrics-error]'),'metrics error banner');
+  const inputs=[...src.querySelectorAll('input[readonly]')].map(i=>i.value);
+  monster.proficiency=2;
+  return {removed:true,errText:err.textContent,autoDash:inputs.includes('—')};
+ })()`)
+ assert.ok(afterRemoveAndError.removed&&afterRemoveAndError.autoDash&&/Invalid proficiency/i.test(afterRemoveAndError.errText),JSON.stringify(afterRemoveAndError))
+ console.log('Shared casting editor checks:',JSON.stringify({...results,reload,fiendChecks,afterRemoveAndError}))
 },{port:Number(process.env.DNDSHEET_SHARED_CASTING_CDP_PORT||9365)})

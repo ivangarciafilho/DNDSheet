@@ -12,6 +12,7 @@ import {
   CrActionInfo,
   CrDamageInfo,
   defaultAction,
+  defaultReaction,
   defaultAttack,
   defaultCrAnnotation,
   defaultTrait,
@@ -19,7 +20,9 @@ import {
   DndStat,
   Monster,
   MonsterAction,
+  MonsterSenseItem,
   MonsterSkill,
+  MonsterSpeed,
   SwappableField,
 } from 'src/components/models'
 import {
@@ -435,7 +438,7 @@ export const useMonsterStore = defineStore('monster', {
       // non-override, default computation
       // check if perception is in the skills
       const perception = state.skills.find(
-        (s) => s.key?.toUpperCase() === 'PERCEPTION'
+        (s) => String(s.key ?? '').toUpperCase() === 'PERCEPTION'
       )
       let passive = 10
 
@@ -1222,12 +1225,14 @@ export const useMonsterStore = defineStore('monster', {
       this.HP.HD = hd
       this.HP.modifier = modifier
     },
-    addSpeed() {
+    addSpeed(initial: Partial<Omit<MonsterSpeed, 'id'>> = {}) {
+      const seed = initial && typeof initial === 'object' && !('preventDefault' in initial) ? initial : {}
       this.speeds.push({
-        id: uuidv4(),
         type: 'walk',
         speed: 30,
         note: '',
+        ...seed,
+        id: uuidv4(),
       })
     },
     deleteSpeed(id: string) {
@@ -1243,7 +1248,7 @@ export const useMonsterStore = defineStore('monster', {
     addSkill(skillName: keyof typeof SKILL, proficient = true) {
       this.skills.push({
         skill: SKILL[skillName],
-        key: skillName,
+        key: String(skillName),
         proficient: proficient,
         expertise: false,
         override: false,
@@ -1495,16 +1500,7 @@ export const useMonsterStore = defineStore('monster', {
       }
     },
     addReaction() {
-      this.reactions.push({
-        id: uuidv4(),
-        name: 'New Reaction',
-        description: '',
-        limitedUse: {
-          count: 0,
-          rate: 'DAY',
-        },
-        trigger: '',
-      })
+      this.reactions.push(defaultReaction())
     },
     deleteReaction(reactionId: string) {
       const idx = this.reactions.findIndex((r) => r.id === reactionId)
@@ -1619,7 +1615,7 @@ export const useMonsterStore = defineStore('monster', {
       if (idx !== -1) {
         this.$patch(state => {
           state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('tools', id))
-          this.tools.splice(idx, 1)
+          this.tools?.splice(idx, 1)
         })
       }
     },
@@ -1638,7 +1634,7 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.villainActions.findIndex((a) => a.id === id)
       if (idx !== -1) this.$patch(state => {
         state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('villainActions', id))
-        this.villainActions.splice(idx, 1)
+        this.villainActions?.splice(idx, 1)
       })
     },
     addBloodiedAction() {
@@ -1670,7 +1666,7 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.reactiveActions.findIndex((a) => a.id === id)
       if (idx !== -1) this.$patch(state => {
         state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('reactiveActions', id))
-        this.reactiveActions.splice(idx, 1)
+        this.reactiveActions?.splice(idx, 1)
       })
     },
     addComboAction() {
@@ -1705,7 +1701,7 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.anatomyParts.findIndex((p) => p.id === id)
       if (idx !== -1) this.$patch(state => {
         state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('anatomyParts', id))
-        this.anatomyParts.splice(idx, 1)
+        this.anatomyParts?.splice(idx, 1)
       })
     },
     addTrackEvent(round = 1) {
@@ -1724,7 +1720,7 @@ export const useMonsterStore = defineStore('monster', {
       const idx = this.runehammerTrack.events.findIndex((e) => e.id === id)
       if (idx !== -1) this.$patch(state => {
         state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('runehammerTrack.events', id))
-        this.runehammerTrack.events.splice(idx, 1)
+        this.runehammerTrack?.events?.splice(idx, 1)
       })
     },
     swapItems(target: SwappableField, source: number, dest: number) {

@@ -173,7 +173,7 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     const list = renderer.bloodiedActionsList.value
     if (!list || list.length === 0) return ''
     const parts = list.map(
-      (ba) => `***${ba.name} (${ba.trigger || 'Bloodied'}).*** ${mdFormatter(ba.description)}`
+      (ba) => `***${ba.name} (${ba.trigger || (ba.triggerType === 'immediate_reaction' ? 'Immediate Reaction' : 'While Bloodied')}).*** ${mdFormatter(ba.description)}`
     )
     return `\n### Bloodied Actions\n${parts.join('\n:\n')}`
   }
@@ -191,7 +191,7 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     const list = renderer.comboActionsList.value
     if (!list || list.length === 0) return ''
     const parts = list.map(
-      (ca) => `***${ca.name} (${ca.leadAction} ➔ ${ca.followup}).*** ${mdFormatter(ca.description)}`
+      (ca) => `***${ca.name} (${ca.leadAction} ➔ ${ca.followUpAction || ca.followup || ''}).*** ${mdFormatter(ca.description)}`
     )
     return `\n### Combo Actions\n${parts.join('\n:\n')}`
   }
@@ -200,24 +200,24 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     const list = renderer.anatomyPartsList.value
     if (!list || list.length === 0) return ''
     const parts = list.map(
-      (ap) => `- **${ap.part}** (AC ${ap.ac}, ${ap.hp} HP): ${ap.severEffect}`
+      (ap) => `- **${ap.name || ap.part}** (AC ${ap.ac}, ${ap.hp} HP): ${ap.breakEffect || ap.severEffect || ''}`
     )
     return `\n### Breakable Anatomy\n${parts.join('\n')}`
   }
 
   const getRunehammerTrack = () => {
     const track = renderer.runehammerTrackData.value
-    if (!track?.enabled || !track.events?.length) return ''
+    if (!track || !track.events?.length) return ''
     const parts = track.events.map(
-      (ev) => `- **Round ${ev.round}: ${ev.name}** — ${ev.effect}`
+      (ev) => `- **Round ${ev.round}: ${ev.name}** — ${ev.description || ev.effect || ''}`
     )
-    return `\n### Escalation Track (${track.die.toUpperCase()})\n${parts.join('\n')}`
+    return `\n### Escalation Track (${String(track.timerDie || 'd4').toUpperCase()})\n${parts.join('\n')}`
   }
 
   const getParagonPools = () => {
     const p = renderer.paragonData.value
-    if (!p?.enabled) return ''
-    return `\n### Paragon Boss Pools\nThe creature has **${p.poolsCount} stage pools** (${p.actionsPerTurn} actions/pool/round). ${p.transitionEffect ? p.transitionEffect : ''}`
+    if (!p) return ''
+    return `\n### ${p.title}\n${p.pools} (${p.initiative}). ${p.enrageNote ? p.enrageNote : ''}`
   }
 
   // formatted for the Homebrewery system, version 3

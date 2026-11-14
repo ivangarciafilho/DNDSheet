@@ -6,7 +6,7 @@
         <div class="row items-center q-col-gutter-xs full-width">
           <q-input :model-value="amount(level)" type="number" min="0" dense outlined dark clearable :data-level-amount="level" label="Amount" :placeholder="map(levelMap)[level] === null ? 'Hidden' : 'Automatic'" class="col-3" @click.stop @update:model-value="value => setMap(levelMap, level, numberOrUndefined(value))"><template #append><q-btn flat dense size="xs" :icon="map(levelMap)[level] === null ? 'visibility_off' : 'visibility'" :aria-label="map(levelMap)[level] === null ? 'Use automatic amount' : 'Hide amount'" @click.stop="setMap(levelMap, level, map(levelMap)[level] === null ? undefined : null)" /></template></q-input>
           <q-select :model-value="recovery(level)" :options="cadenceOptions" emit-value map-options dense outlined dark :data-level-cadence="level" label="Cadence" class="col-4" @click.stop @update:model-value="value => setMap(cadenceMap, level, value)" />
-          <span class="col text-subtitle2 text-amber-3">{{ level === 0 ? 'Cantrips' : 'Level ' + level }} <small class="text-grey-4">{{ assigned(level).length }} assigned</small></span>
+          <span class="col text-subtitle2 text-amber-3">{{ level === 0 ? 'Cantrips' : 'Level ' + level }} <small class="text-grey-4">{{ assigned(level).length }} assigned{{ granted(level).length ? ' · ' + granted(level).length + ' granted' : '' }}</small></span>
           <q-checkbox :model-value="!!map(bonusMap)[level]" :data-level-bonus="level" dense dark label="Bonus Action" class="col-auto" @click.stop @update:model-value="value => setMap(bonusMap, level, value)" />
         </div>
       </template>

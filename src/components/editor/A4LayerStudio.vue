@@ -1473,8 +1473,8 @@ export default defineComponent({
       reader.readAsDataURL(file)
     }
 
-    const onPortraitUrlChanged = (val: string) => {
-      portraitUrlModel.value = val
+    const onPortraitUrlChanged = (val: string | number | null) => {
+      portraitUrlModel.value = String(val ?? '')
     }
 
     return {

@@ -1120,7 +1120,7 @@ export default defineComponent({
     const helpTipElement = ref<HTMLElement | null>(null)
     const activeHelpTip = ref<{ title?: string; text: string; detail?: string } | null>(null)
     const activeHelpTarget = ref<HTMLElement | null>(null)
-    const helpTipStyle = ref<StyleValue>({ position: 'fixed', left: '12px', top: '12px' })
+    const helpTipStyle = ref<Record<string, string>>({ position: 'fixed', left: '12px', top: '12px' })
     let helpTipObserver: MutationObserver | null = null
     const spellRuleParts = (rule: string) => {
       const tokens = /\b(\d+(?:st|nd|rd|th)?|Short or Long Rest|Short Rest|Long Rest|Downtime|Bonus Action|Reaction|Cast|Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Warlock|Wizard)\b/gi
@@ -1931,12 +1931,12 @@ export default defineComponent({
 
 
 
-    const getPrimarySpells = (row: any) => {
+    const getPrimarySpells = (row: any): any[] => {
       if (!monster.spellcasting?.splitHighCadence) return row.spells || []
       return (row.spells || []).filter((s: any) => !s.restricted)
     }
 
-    const getSecondarySpells = (row: any) => {
+    const getSecondarySpells = (row: any): any[] => {
       if (!monster.spellcasting?.splitHighCadence) return []
       return (row.spells || []).filter((s: any) => s.restricted)
     }
@@ -2314,12 +2314,6 @@ export default defineComponent({
       helpTipElement,
       activeHelpTip,
       helpTipStyle,
-      anatomyPartsList,
-      villainActionsList,
-      bloodiedActionsList,
-      reactiveActionsList,
-      comboActionsList,
-      runehammerTrackData,
       monster,
       editorStore,
       xpFormatted,

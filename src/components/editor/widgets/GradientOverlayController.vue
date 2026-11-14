@@ -255,8 +255,9 @@ export default defineComponent({
   name: 'GradientOverlayController',
   props: {
     modelValue: {
-      type: Object as PropType<GradientOverlayModel>,
-      required: true,
+      type: Object as PropType<Partial<GradientOverlayModel>>,
+      required: false,
+      default: undefined,
     },
   },
   emits: ['update:modelValue'],
@@ -267,7 +268,7 @@ export default defineComponent({
     const editingStopDraft = ref('')
     const stopEditInputRef = ref<HTMLInputElement[] | HTMLInputElement | null>(null)
 
-    const overlay = computed(() => props.modelValue || {
+    const overlay = computed<GradientOverlayModel>(() => ({
       enabled: false,
       direction: 'top_to_bottom',
       blendMode: 'normal',
@@ -280,7 +281,8 @@ export default defineComponent({
         { color: 'rgba(0,0,0,0.65)', offset: 0 },
         { color: 'rgba(0,0,0,0)', offset: 100 },
       ],
-    })
+      ...props.modelValue,
+    }))
 
     const stopsList = computed<GradientStopItem[]>(() => {
       const raw = overlay.value.stops

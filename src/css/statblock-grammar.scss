@@ -53,15 +53,9 @@
   --dnd-disadv-ink: #000000;
 }
 
-/* The top plate (initiative, nameplate) is painted white on every theme, so its advantage/disadvantage
-   ink follows that panel, not the dark theme body: the dark-theme inks measured 1.6:1 / 2.3:1 there. */
-.statblock:not(.theme-printer) .unified-top-plate {
-  --dnd-adv-ink: #1d6b29;
-  --dnd-disadv-ink: #a8211a;
-}
-
-/* Plate palette per theme: frame = theme border, head = accent, cells = theme panel */
-@mixin plate-palette($frame, $head-bg, $head-ink, $cell-bg, $cell-ink, $body-bg) {
+/* Top plate stays light (#ffffff / parchment card) across all 12 themes for nameplate legibility;
+   its panel background and advantage/disadvantage inks are parameterized directly on plate-palette. */
+@mixin plate-palette($frame, $head-bg, $head-ink, $cell-bg, $cell-ink, $body-bg, $top-plate-bg: #ffffff, $top-adv-ink: #1d6b29, $top-disadv-ink: #a8211a) {
   --sb-frame: #{$frame};
   --sb-head-bg: #{$head-bg};
   --sb-head-ink: #{$head-ink};
@@ -71,10 +65,19 @@
   --sb-body-bg: #{$body-bg};
   --sb-stripe: #{rgba($frame, 0.10)};
   --sb-stripe-shift: #{rgba($frame, 0.06)};
+  --sb-top-plate-bg: #{$top-plate-bg};
+  --sb-top-plate-adv-ink: #{$top-adv-ink};
+  --sb-top-plate-disadv-ink: #{$top-disadv-ink};
+}
+
+.statblock .unified-top-plate {
+  background: var(--sb-top-plate-bg);
+  --dnd-adv-ink: var(--sb-top-plate-adv-ink);
+  --dnd-disadv-ink: var(--sb-top-plate-disadv-ink);
 }
 
 .statblock.theme-wotc { @include plate-palette(#58180d, #58180d, #fdf1dc, #fbf2e3, #2c0e08, rgba(253, 246, 233, 0.96)); }
-.statblock.theme-printer { @include plate-palette(#000000, #000000, #ffffff, #ffffff, #000000, #ffffff); }
+.statblock.theme-printer { @include plate-palette(#000000, #000000, #ffffff, #ffffff, #000000, #ffffff, #ffffff, #000000, #000000); }
 .statblock.theme-art_nouveau { @include plate-palette(#c5a059, #2d5a3e, #f5f5ec, #e8ebe0, #1e3a2f, #f5f5ec); }
 .statblock.theme-lovecraft_golden { @include plate-palette(#d4af37, #d4af37, #0c0f12, #161b22, #e6edf3, rgba(22, 27, 34, 0.85)); }
 .statblock.theme-lovecraft_silver { @include plate-palette(#94a3b8, #94a3b8, #0f172a, #1e293b, #f1f5f9, rgba(30, 41, 59, 0.85)); }
@@ -259,7 +262,8 @@
     }
 
     .sb-qual.phase-cell,
-    .sb-qual.recharge-cell {
+    .sb-qual.recharge-cell,
+    .sb-qual.availability-cell {
       padding: 1px 5px;
       border-radius: 3px;
       background: rgba(255, 255, 255, 0.18);
@@ -483,7 +487,7 @@
     .theme-art_deco
   )
   .sb-cell.sb-head
-  :is(.sb-qual.phase-cell, .sb-qual.recharge-cell) {
+  :is(.sb-qual.phase-cell, .sb-qual.recharge-cell, .sb-qual.availability-cell) {
   background: rgba(0, 0, 0, 0.16);
 }
 

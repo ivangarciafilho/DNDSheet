@@ -4,6 +4,7 @@ import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/Aut
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
+import { entryMatchesStagePool } from 'src/core/domain/entry-display'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
@@ -39,7 +40,7 @@ import {
 import { useProcessTokens } from './useProcessTokens'
 import _, { capitalize } from 'lodash'
 import { useEditorStore } from 'src/stores/editor-store'
-import { DndStat } from '../models'
+import { defaultCrAnnotation, DndStat } from '../models'
 import { SKILL } from 'src/data/SKILL'
 import {
   SKILL_ACTION_GROUPS,
@@ -1462,13 +1463,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           name: traitName,
           description: scheduleDefense('regeneration', desc),
           limitedUse: { count: 0, rate: '' },
+          customPreamble: false,
           crAnnotation: {
-            maxDamage: 0,
-            maxSave: 0,
-            maxToHit: 0,
-            ehpMultiplier: 1,
-            ehpModifier: 0,
-            acModifier: 0,
+            ...defaultCrAnnotation(),
+            include: false,
           },
         })
       }
@@ -1514,13 +1512,10 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
           name: traitName,
           description: scheduleDefense('deathPrevention', desc),
           limitedUse: { count: 0, rate: '' },
+          customPreamble: false,
           crAnnotation: {
-            maxDamage: 0,
-            maxSave: 0,
-            maxToHit: 0,
-            ehpMultiplier: 1,
-            ehpModifier: 0,
-            acModifier: 0,
+            ...defaultCrAnnotation(),
+            include: false,
           },
         })
       }
@@ -1529,12 +1524,12 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     return list
   })
 
-  const filterByStagePool = <T extends { stagePool?: string | number }>(items: T[]): T[] => {
+  const filterByStagePool = <T extends { stagePool?: string | number; availability?: import('src/core/domain/types').ReactionAvailabilitySet }>(items: T[]): T[] => {
     const isParagon = Boolean(monster.paragonConfig?.enabled || (monster.paragonConfig?.poolCount && monster.paragonConfig.poolCount > 1))
     if (!isParagon) return items
     const active = monster.paragonConfig?.activePoolFilter
     if (!active || active === 'all') return items
-    return items.filter((item) => !item.stagePool || item.stagePool === 'all' || `${item.stagePool}` === `${active}`)
+    return items.filter((item) => entryMatchesStagePool(item, active))
   }
 
   const traits = computed(() => {

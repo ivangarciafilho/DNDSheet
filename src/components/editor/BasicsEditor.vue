@@ -1363,8 +1363,8 @@
               <div class="text-caption text-weight-bold" style="color: #f87171;">
                 👹 Paragon Multi-Phase Pools & Initiative Gate (1 = Standard Single Pool)
               </div>
-              <q-badge v-if="monster.paragonConfig.poolCount > 1" color="negative" outline>
-                Active ({{ monster.paragonConfig.poolCount }} {{ monster.paragonConfig.phaseName || 'Phase' }}s)
+              <q-badge v-if="paragonConfig.poolCount > 1" color="negative" outline>
+                Active ({{ paragonConfig.poolCount }} {{ paragonConfig.phaseName || 'Phase' }}s)
               </q-badge>
             </div>
             <div class="q-mt-xs q-gutter-y-xs text-caption">
@@ -1374,7 +1374,7 @@
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-input
-                    v-model="monster.paragonConfig.phaseName"
+                    v-model="paragonConfig.phaseName"
                     dense
                     outlined
                     label="Stage Naming (Phase/Pool)" v-help="'Word used for stages on the sheet.'"
@@ -1383,7 +1383,7 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <mechanic-text-editor
-                    v-model="monster.paragonConfig.transitionEffect"
+                    v-model="paragonConfig.transitionEffect"
                     dense
                     outlined
                     label="Stage Transition Fury / Trigger" v-help="'What happens when the creature moves to its next stage.'"
@@ -1391,7 +1391,7 @@
                   />
                 </div>
               </div>
-              <div v-if="monster.paragonConfig.poolCount > 1" class="row q-col-gutter-sm items-center q-mt-xs">
+              <div v-if="paragonConfig.poolCount > 1" class="row q-col-gutter-sm items-center q-mt-xs">
                 <div
                   v-for="(phaseCfg, pIdx) in paragonPhaseRows"
                   :key="'init-phase-bonus-' + pIdx"
@@ -1460,8 +1460,8 @@
                 >
                   <q-tooltip>Show this group on its own line beneath hit points.</q-tooltip>
                 </q-toggle>
-                <q-badge v-if="(extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none') || extendedHp.showBloodied || monster.paragonConfig.poolCount > 1" color="red-5" outline>
-                  {{ monster.paragonConfig.poolCount > 1 ? `${monster.paragonConfig.poolCount} Stages` : `Bloodied: ${extendedHp.bloodiedSource === 'flat' ? (extendedHp.bloodiedOverride || Math.max(1, Math.floor(monster.avgHp / 2))) : getDynamicSourceValue(extendedHp.bloodiedSource || 'half_hp', extendedHp.bloodiedDice)} HP` }}
+                <q-badge v-if="(extendedHp.bloodiedSource && extendedHp.bloodiedSource !== 'none') || extendedHp.showBloodied || paragonConfig.poolCount > 1" color="red-5" outline>
+                  {{ paragonConfig.poolCount > 1 ? `${paragonConfig.poolCount} Stages` : `Bloodied: ${extendedHp.bloodiedSource === 'flat' ? (extendedHp.bloodiedOverride || Math.max(1, Math.floor(monster.avgHp / 2))) : getDynamicSourceValue(extendedHp.bloodiedSource || 'half_hp', extendedHp.bloodiedDice)} HP` }}
                 </q-badge>
               </div>
             </div>
@@ -3146,7 +3146,7 @@ import {
   formatInitiativeRider,
   formatInitiativeRiders,
 } from 'src/core/domain/initiative-composer'
-import { MonsterAcConfig, MonsterLanguageItem, ParagonPhaseConfig } from '../models'
+import { defaultCrAnnotation, MonsterAcConfig, MonsterExtendedHp, MonsterInitiativeConfig, MonsterLanguageItem, ParagonConfig, ParagonPhaseConfig } from '../models'
 
 const STANDARD_DAMAGE_TYPES = [
   'acid',
@@ -3290,7 +3290,7 @@ export default defineComponent({
                   description: t.description,
                   customPreamble: false,
                   limitedUse: { count: 0, rate: '' },
-                  crAnnotation: { include: false },
+                  crAnnotation: { ...defaultCrAnnotation(), include: false },
                 })
               }
             }
@@ -3479,7 +3479,24 @@ export default defineComponent({
           displayMode: 'both',
         }
       }
-      return monster.extendedHp
+      return monster.extendedHp as MonsterExtendedHp & {
+        regeneration: NonNullable<MonsterExtendedHp['regeneration']>
+      }
+    }
+
+    const defaultInitConfig: MonsterInitiativeConfig = {
+      proficient: false,
+      secondaryStat: 'none',
+      statMode: 'add',
+      advantage: false,
+      disadvantage: false,
+      cantBeSurprised: false,
+      useLairInitiative: false,
+      lairInitiative: 20,
+      specialTrigger: 'none',
+      specialTriggerSpell: '',
+      customEffectNote: '',
+      riders: [],
     }
 
     const defaultAcConfig: MonsterAcConfig = {
@@ -3505,16 +3522,8 @@ export default defineComponent({
         ensureAcConfig()
         if (!monster.initiativeConfig) {
           monster.initiativeConfig = {
-            proficient: false,
-            secondaryStat: 'none',
-            statMode: 'add',
-            advantage: false,
-            cantBeSurprised: false,
-            useLairInitiative: false,
-            lairInitiative: 20,
-            specialTrigger: 'none',
-            specialTriggerSpell: '',
-            customEffectNote: '',
+            ...defaultInitConfig,
+            riders: [],
           }
         } else {
           if (monster.initiativeConfig.lairInitiative == null) {
@@ -3537,7 +3546,7 @@ export default defineComponent({
     )
 
     // Reactive computed getters so loading/resetting a monster never detaches BasicsEditor
-    const extendedHp = computed(() => monster.extendedHp || ensureExtendedHp())
+    const extendedHp = computed(() => ensureExtendedHp())
     const invulnerability = computed(() => extendedHp.value.invulnerability as NonNullable<typeof extendedHp.value.invulnerability>)
     const tempHpConfig = computed(() => extendedHp.value.tempHp as NonNullable<typeof extendedHp.value.tempHp>)
     const deathPrevention = computed(() => extendedHp.value.deathPrevention as NonNullable<typeof extendedHp.value.deathPrevention>)
@@ -3618,6 +3627,9 @@ export default defineComponent({
     })
 
     const onRegenFrequencyChanged = (freq: string) => {
+      if (!extendedHp.value.regeneration) {
+        extendedHp.value.regeneration = { amount: 10, disruptedBy: 'acid or fire', enabled: false }
+      }
       const reg = extendedHp.value.regeneration
       if (freq === 'none') {
         reg.enabled = false
@@ -3697,18 +3709,6 @@ export default defineComponent({
     }
 
     // Initiative Configuration
-    const defaultInitConfig = {
-      proficient: false,
-      secondaryStat: 'none' as const,
-      statMode: 'add' as const,
-      advantage: false,
-      cantBeSurprised: false,
-      useLairInitiative: false,
-      lairInitiative: 20,
-      specialTrigger: 'none' as const,
-      specialTriggerSpell: '',
-      customEffectNote: '',
-    }
     const initiativeConfig = computed(() => monster.initiativeConfig || defaultInitConfig)
 
     const initiativeRollMode = computed({
@@ -3801,8 +3801,9 @@ export default defineComponent({
     const newRiderCustomText = ref('')
 
     const addInitiativeRider = () => {
-      if (!monster.initiativeConfig.riders) {
-        monster.initiativeConfig.riders = []
+      const cfg = (monster.initiativeConfig ??= { ...defaultInitConfig })
+      if (!cfg.riders) {
+        cfg.riders = []
       }
       const rider: ComposableInitiativeRider = {
         id: uuidv4(),
@@ -3815,7 +3816,7 @@ export default defineComponent({
         moveDistance: newRiderMoveDistance.value,
         customText: newRiderCustomText.value.trim(),
       }
-      monster.initiativeConfig.riders.push(rider)
+      cfg.riders.push(rider)
       // Reset form controls
       newRiderAdvMode.value = 'none'
       newRiderCreatureTypes.value = []
@@ -3826,7 +3827,7 @@ export default defineComponent({
     }
 
     const removeInitiativeRider = (index: number) => {
-      if (monster.initiativeConfig.riders) {
+      if (monster.initiativeConfig?.riders) {
         monster.initiativeConfig.riders.splice(index, 1)
       }
     }
@@ -4349,19 +4350,24 @@ export default defineComponent({
       })
     })
 
-    if (!monster.paragonConfig) {
-      monster.paragonConfig = {
-        enabled: false,
-        poolCount: 1,
-        poolHp: [],
-        initiativeStep: 'Initiative 20 & 10',
-        enrageNote: '',
-        transitionEffect: '',
-        phaseName: 'Phase',
-        bloodiedPerPhase: [],
-        phaseConfigs: [],
+    const ensureParagonConfig = (): ParagonConfig => {
+      if (!monster.paragonConfig) {
+        monster.paragonConfig = {
+          enabled: false,
+          poolCount: 1,
+          poolHp: [],
+          initiativeStep: 'Initiative 20 & 10',
+          enrageNote: '',
+          transitionEffect: '',
+          phaseName: 'Phase',
+          bloodiedPerPhase: [],
+          phaseConfigs: [],
+        }
       }
+      return monster.paragonConfig
     }
+    const paragonConfig = computed(() => ensureParagonConfig())
+    ensureParagonConfig()
     if (!monster.specialCommunicationArchetype) {
       monster.specialCommunicationArchetype = 'none'
     }
@@ -4526,7 +4532,7 @@ export default defineComponent({
     watch(() => monster.paragonConfig?.poolCount, (count) => {
       if (!monster.bindings?.['paragonConfig.poolCount']) return
       const p = monster.paragonConfig
-      const expectedRows = count > 1 ? count : 0
+      const expectedRows = (count ?? 0) > 1 ? (count ?? 0) : 0
       if (p && p.phaseConfigs?.length !== expectedRows) updateParagonPoolHp()
     }, { immediate: true })
 
@@ -4551,8 +4557,10 @@ export default defineComponent({
       }
     }
 
-    watch(() => extendedHp.value.regeneration.amount, (amount) => {
-      if (monster.bindings?.['extendedHp.regeneration.amount']) extendedHp.value.regeneration.enabled = amount > 0
+    watch(() => extendedHp.value.regeneration?.amount, (amount) => {
+      if (monster.bindings?.['extendedHp.regeneration.amount'] && extendedHp.value.regeneration) {
+        extendedHp.value.regeneration.enabled = (amount ?? 0) > 0
+      }
     }, { immediate: true })
     watch(() => deathPrevention.value.returnHpValue, (amount) => {
       if (monster.bindings?.['extendedHp.deathPrevention.returnHpValue']) deathPrevention.value.returnHpAmount = amount
@@ -4801,11 +4809,11 @@ export default defineComponent({
     }
 
     const removeLanguage = (index: number) => {
-      const language = monster.languagesList[index]
+      const language = monster.languagesList?.[index]
       if (!language) return
       monster.$patch(state => {
         state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('languagesList', language.id))
-        state.languagesList.splice(index, 1)
+        state.languagesList?.splice(index, 1)
       })
       syncLanguagesToString()
     }
@@ -4865,6 +4873,7 @@ export default defineComponent({
       isLastBloodiedPhase,
       regenConditionModifierOptions,
       deathPrevention,
+      paragonConfig,
       portrait,
       portraitFile,
       portraitPositions,

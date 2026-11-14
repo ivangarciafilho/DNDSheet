@@ -412,7 +412,7 @@ export default defineComponent({
 
     const lintIssues = computed(() => {
       const monsterData = monsterStore.$state as unknown as Monster
-      return lintMonster(monsterData, spellsStore.spells)
+      return lintMonster(monsterData, spellsStore.allSpells)
     })
 
     const lintErrors = computed(() => {

@@ -63,3 +63,35 @@ test('LintMonster - Clean SRD monster passes with zero errors', () => {
   const errors = issues.filter((i) => i.severity === 'ERROR')
   assert.strictEqual(errors.length, 0, 'Standard Knight should have zero lint errors')
 })
+
+test('LintMonster & CalculateCr evaluate spellcasting DPR when spells map is passed', async () => {
+  const { calculateCr } = await import('../../src/core/usecases/CalculateCr.ts')
+  const spells = JSON.parse(fs.readFileSync(path.join(projectRoot, 'src/data/spells.json'), 'utf8'))
+  const caster = migrateMonsterSchema({
+    name: 'Pyromancer',
+    saveVersion: 11,
+    CR: 1, // CR 1/4, far below Fireball output
+    AC: 12,
+    HP: { HD: 6, type: 8, modifier: 0 },
+    stats: { STR: 10, DEX: 12, CON: 10, INT: 18, WIS: 12, CHA: 10 },
+    spellcasting: {
+      class: 'Wizard',
+      level: 5,
+      stat: 'INT',
+      slots: [4, 3, 2, 0, 0, 0, 0, 0, 0],
+      standard: ['Fireball'],
+      atWill: [],
+    },
+  })
+
+  const withSpells = calculateCr(caster, spells)
+  const withoutSpells = calculateCr(caster, {})
+  assert.ok(
+    withSpells.damagePerRound > withoutSpells.damagePerRound,
+    `Expected spell DPR (${withSpells.damagePerRound}) > no-spells DPR (${withoutSpells.damagePerRound})`
+  )
+
+  const issuesWithSpells = lintMonster(caster, spells)
+  const crDrift = issuesWithSpells.find((i) => i.code === 'CR_DRIFT')
+  assert.ok(crDrift != null, 'Expected CR_DRIFT when Fireball pushes calculated CR above CR 1/4')
+})

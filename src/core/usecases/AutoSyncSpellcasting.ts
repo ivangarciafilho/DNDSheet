@@ -164,8 +164,21 @@ export function getSpellSlotsForClass(className: string, level: number): number[
   return [...(FULL_CASTER_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
 }
 
+export function resolveDefaultStatForClass(className?: string, subclass = ''): DndStat | undefined {
+  const clean = (className || '').trim().toLowerCase()
+  if (!clean) return undefined
+  for (const [key, stat] of Object.entries(CLASS_DEFAULT_STAT)) {
+    if (key.toLowerCase() === clean) return stat
+  }
+  const sub = subclass.trim().toLowerCase()
+  if ((clean === 'fighter' && sub.includes('eldritch knight')) || (clean === 'rogue' && sub.includes('arcane trickster')) || clean.includes('eldritch knight') || clean.includes('arcane trickster')) {
+    return 'INT'
+  }
+  return undefined
+}
+
 export function getDefaultStatForClass(className: string): DndStat {
-  return CLASS_DEFAULT_STAT[className] || 'INT'
+  return resolveDefaultStatForClass(className) ?? 'INT'
 }
 
 export interface SpellcastingMetrics {
@@ -774,6 +787,7 @@ export interface SubclassCatalogEntry {
   id: string
   className: string
   subclass: string
+  source: string
   progressionOverride?: CasterProgressionType
   defaultAbility?: DndStat
   hasExpandedSpells: boolean
@@ -882,22 +896,42 @@ export const SUBCLASS_EXPANDED_SPELLS: Record<string, SubclassExpandedSpellPlan>
   },
 }
 
+export function resolveSubclassExpandedSpellKey(className?: string, subclass?: string): string | undefined {
+  const cls = (className || '').trim().toLowerCase()
+  const rawSub = (subclass || '').trim().toLowerCase()
+  if (!cls || !rawSub) return undefined
+
+  const normalizedSub = rawSub
+    .replace(/^(?:oath\s+of\s+(?:the\s+)?|the\s+)/, '')
+    .replace(/\s+(?:domain|patron|soul)$/, '')
+    .trim()
+
+  const candidates = new Set([`${cls}:${rawSub}`, ...(normalizedSub ? [`${cls}:${normalizedSub}`] : [])])
+  return Object.keys(SUBCLASS_EXPANDED_SPELLS).find((k) => candidates.has(k.toLowerCase()))
+}
+
 export const SUBCLASS_CATALOG: SubclassCatalogEntry[] = Object.entries(SRD_SUBCLASSES_BY_CLASS).flatMap(
   ([className, subclasses]) =>
     subclasses.map((subclass) => {
-      const normalizedKey = `${className}:${subclass}`
       const progressionOverride: CasterProgressionType | undefined =
         subclass === 'Eldritch Knight' || subclass === 'Arcane Trickster' ? 'third' : undefined
       return {
         id: `${className.toLowerCase()}-${subclass.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
         className,
         subclass,
+        source: 'SRD 5.1 / 5.2',
         ...(progressionOverride ? { progressionOverride } : {}),
         defaultAbility: getDefaultStatForClass(className),
-        hasExpandedSpells: Boolean(SUBCLASS_EXPANDED_SPELLS[normalizedKey]),
+        hasExpandedSpells: Boolean(resolveSubclassExpandedSpellKey(className, subclass)),
       }
     })
 )
+
+export function getCatalogSubclassesForClass(className?: string): SubclassCatalogEntry[] {
+  const clean = (className || '').trim().toLowerCase()
+  if (!clean) return []
+  return SUBCLASS_CATALOG.filter((entry) => entry.className.toLowerCase() === clean)
+}
 
 export function inferCasterProgression(className?: string, subclass?: string): CasterProgressionType {
   const cls = (className || '').trim().toLowerCase()
@@ -926,9 +960,7 @@ export function planSubclassExpandedSpells(options: {
   const cls = (options.className || '').trim()
   const sub = (options.subclass || '').trim()
   const key = `${cls}:${sub}`
-  const matchKey = Object.keys(SUBCLASS_EXPANDED_SPELLS).find(
-    (k) => k.toLowerCase() === key.toLowerCase()
-  )
+  const matchKey = resolveSubclassExpandedSpellKey(cls, sub)
   if (!matchKey) {
     return {
       key,
@@ -999,6 +1031,7 @@ const VALID_SPELL_ABILITIES = new Set<DndStat>(['STR', 'DEX', 'CON', 'INT', 'WIS
 export function computeSpellMetrics(input: {
   ability?: DndStat | string
   className?: string
+  subclass?: string
   stats?: Partial<Record<DndStat, number>>
   proficiency?: number
   saveDcOverride?: number
@@ -1012,7 +1045,7 @@ export function computeSpellMetrics(input: {
   const rawAbility = input.ability
     ? String(input.ability).trim().toUpperCase()
     : input.className
-      ? getDefaultStatForClass(input.className)
+      ? resolveDefaultStatForClass(input.className, input.subclass) ?? ''
       : ''
 
   if (!rawAbility) {

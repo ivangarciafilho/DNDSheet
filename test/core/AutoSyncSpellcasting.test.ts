@@ -342,3 +342,54 @@ test('A12.3/migration: migrateMonsterSchema preserves spellcasting.subclass and 
   assert.strictEqual(migrated.spellcasting.classes?.[1].subclass, 'Light')
   assert.strictEqual(migrated.spellcasting.multiclass?.secondarySubclass, 'Fiend')
 })
+
+test('A12.1/A12.2/A12.4: getCatalogSubclassesForClass, expanded-spell alias matching, and honest metrics boundaries', async () => {
+  const {
+    SUBCLASS_CATALOG,
+    computeSpellMetrics,
+    getCatalogSubclassesForClass,
+    planSubclassExpandedSpells,
+    resolveDefaultStatForClass,
+    resolveSubclassExpandedSpellKey,
+  } = await import('../../src/core/usecases/AutoSyncSpellcasting.ts')
+
+  assert.strictEqual(getCatalogSubclassesForClass(undefined).length, 0)
+  assert.strictEqual(getCatalogSubclassesForClass('Custom Homebrew Class').length, 0)
+  assert.ok(getCatalogSubclassesForClass('CLERIC').some((s) => s.subclass === 'Life Domain' && s.hasExpandedSpells && s.source))
+  assert.ok(SUBCLASS_CATALOG.some((s) => s.className === 'Paladin' && s.subclass === 'Oath of Devotion' && s.hasExpandedSpells))
+
+  assert.strictEqual(resolveSubclassExpandedSpellKey('Cleric', 'Life Domain'), 'Cleric:Life')
+  assert.strictEqual(resolveSubclassExpandedSpellKey('Warlock', 'Fiend Patron'), 'Warlock:Fiend')
+  assert.strictEqual(resolveSubclassExpandedSpellKey('Paladin', 'Oath of Devotion'), 'Paladin:Devotion')
+  assert.strictEqual(resolveSubclassExpandedSpellKey('Sorcerer', 'Clockwork Soul'), 'Sorcerer:Clockwork')
+
+  const fiendPlan = planSubclassExpandedSpells({
+    className: 'Warlock',
+    subclass: 'Fiend Patron',
+    classLevel: 3,
+    existingSpellNames: ['Burning Hands'],
+  })
+  assert.strictEqual(fiendPlan.found, true)
+  assert.strictEqual(fiendPlan.alwaysPrepared, true)
+  assert.deepStrictEqual(
+    fiendPlan.missingSpells.map((m) => m.spell),
+    ['Command', 'Scorching Ray', 'Suggestion'],
+  )
+
+  assert.strictEqual(resolveDefaultStatForClass('CLERIC'), 'WIS')
+  assert.strictEqual(resolveDefaultStatForClass('Custom Class'), undefined)
+
+  const unknownClass = computeSpellMetrics({
+    className: 'Custom Class',
+    stats: { INT: 16, WIS: 12, CHA: 14 },
+    proficiency: 3,
+  })
+  assert.strictEqual(unknownClass.status, 'unavailable')
+
+  const badScore = computeSpellMetrics({
+    ability: 'INT',
+    stats: { INT: Number.NaN },
+    proficiency: 3,
+  })
+  assert.strictEqual(badScore.status, 'error')
+})

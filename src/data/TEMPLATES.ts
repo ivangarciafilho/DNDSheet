@@ -20,6 +20,10 @@ export const DEFAULT_TEMPLATE_ICON: Record<string, string> = {
 const srd_actions: Record<string, ActionTemplate> = {}
 actions.actions.forEach((a) => {
   srd_actions[a.templateName] = {
+    stat: 'none',
+    save: { override: false, overrideValue: 0 },
+    range: '',
+    effects: [],
     ...a,
     type: 'Action',
     icon: a.icon === '' ? DEFAULT_TEMPLATE_ICON.Action : a.icon,

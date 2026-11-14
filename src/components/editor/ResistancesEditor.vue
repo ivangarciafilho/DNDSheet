@@ -1011,10 +1011,10 @@ export default defineComponent({
     }
 
 const syncDefenses = () => {
-      monster.resistances = monster.resistancesList.map((i) => i.type)
-      monster.immunities = monster.immunitiesList.map((i) => i.type)
-      monster.vulnerabilities = monster.vulnerabilitiesList.map((i) => i.type)
-      monster.conditions = monster.conditionsList.map((i) => i.type)
+      monster.resistances = (monster.resistancesList ?? []).map((i) => i.type)
+      monster.immunities = (monster.immunitiesList ?? []).map((i) => i.type)
+      monster.vulnerabilities = (monster.vulnerabilitiesList ?? []).map((i) => i.type)
+      monster.conditions = (monster.conditionsList ?? []).map((i) => i.type)
     }
 
     const addDefenseItem = (
@@ -1044,23 +1044,29 @@ const syncDefenses = () => {
       }
 
       if (category === 'resistances') {
-        if (monster.resistancesList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.resistancesList.push(item)
+        const list = (monster.resistancesList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       } else if (category === 'immunities') {
-        if (monster.immunitiesList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.immunitiesList.push(item)
+        const list = (monster.immunitiesList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       } else if (category === 'vulnerabilities') {
-        if (monster.vulnerabilitiesList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.vulnerabilitiesList.push(item)
+        const list = (monster.vulnerabilitiesList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       } else if (category === 'conditions') {
-        if (monster.conditionsList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.conditionsList.push(item)
+        const list = (monster.conditionsList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       } else if (category === 'conditionVulnerabilities') {
-        if (monster.conditionVulnerabilitiesList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.conditionVulnerabilitiesList.push(item)
+        const list = (monster.conditionVulnerabilitiesList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       } else if (category === 'conditionResistances') {
-        if (monster.conditionResistancesList.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
-        monster.conditionResistancesList.push(item)
+        const list = (monster.conditionResistancesList ??= [])
+        if (list.some((i) => i.type.toLowerCase().trim() === clean.toLowerCase())) return
+        list.push(item)
       }
       syncDefenses()
     }
@@ -1069,47 +1075,47 @@ const syncDefenses = () => {
       category: 'resistances' | 'immunities' | 'vulnerabilities' | 'conditions' | 'conditionVulnerabilities' | 'conditionResistances',
       index: number
     ) => {
-      if (category === 'resistances') monster.resistancesList.splice(index, 1)
-      else if (category === 'immunities') monster.immunitiesList.splice(index, 1)
-      else if (category === 'vulnerabilities') monster.vulnerabilitiesList.splice(index, 1)
-      else if (category === 'conditions') monster.conditionsList.splice(index, 1)
-      else if (category === 'conditionVulnerabilities') monster.conditionVulnerabilitiesList.splice(index, 1)
-      else if (category === 'conditionResistances') monster.conditionResistancesList.splice(index, 1)
+      if (category === 'resistances') monster.resistancesList?.splice(index, 1)
+      else if (category === 'immunities') monster.immunitiesList?.splice(index, 1)
+      else if (category === 'vulnerabilities') monster.vulnerabilitiesList?.splice(index, 1)
+      else if (category === 'conditions') monster.conditionsList?.splice(index, 1)
+      else if (category === 'conditionVulnerabilities') monster.conditionVulnerabilitiesList?.splice(index, 1)
+      else if (category === 'conditionResistances') monster.conditionResistancesList?.splice(index, 1)
       syncDefenses()
     }
 
     // Deduplicated and sorted computed options per defense category
     const vulnerabilityDamageOptions = computed(() => {
-      const existing = new Set(monster.vulnerabilitiesList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.vulnerabilitiesList ?? []).map((i) => i.type.toLowerCase().trim()))
       return DAMAGE_PRESETS.filter((d) => !existing.has(d.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
     const vulnerabilityConditionOptions = computed(() => {
-      const existing = new Set(monster.conditionVulnerabilitiesList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.conditionVulnerabilitiesList ?? []).map((i) => i.type.toLowerCase().trim()))
       return CONDITION_PRESETS.filter((c) => !existing.has(c.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
     const resistanceDamageOptions = computed(() => {
-      const existing = new Set(monster.resistancesList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.resistancesList ?? []).map((i) => i.type.toLowerCase().trim()))
       return DAMAGE_PRESETS.filter((d) => !existing.has(d.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
     const conditionResistancesOptions = computed(() => {
-      const existing = new Set(monster.conditionResistancesList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.conditionResistancesList ?? []).map((i) => i.type.toLowerCase().trim()))
       return CONDITION_PRESETS.filter((c) => !existing.has(c.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
     const immunityDamageOptions = computed(() => {
-      const existing = new Set(monster.immunitiesList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.immunitiesList ?? []).map((i) => i.type.toLowerCase().trim()))
       return DAMAGE_PRESETS.filter((d) => !existing.has(d.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
     const conditionImmunitiesOptions = computed(() => {
-      const existing = new Set(monster.conditionsList.map((i) => i.type.toLowerCase().trim()))
+      const existing = new Set((monster.conditionsList ?? []).map((i) => i.type.toLowerCase().trim()))
       return CONDITION_PRESETS.filter((c) => !existing.has(c.toLowerCase().trim())).slice().sort((a, b) => a.localeCompare(b))
     })
 
-    const resistancesPreview = computed(() => formatDefenseList(monster.resistancesList))
-    const conditionResistancesPreview = computed(() => formatDefenseList(monster.conditionResistancesList))
-    const immunitiesPreview = computed(() => formatDefenseList(monster.immunitiesList))
-    const vulnerabilitiesPreview = computed(() => formatDefenseList(monster.vulnerabilitiesList))
-    const conditionVulnerabilitiesPreview = computed(() => formatDefenseList(monster.conditionVulnerabilitiesList))
-    const conditionsPreview = computed(() => formatDefenseList(monster.conditionsList))
+    const resistancesPreview = computed(() => formatDefenseList(monster.resistancesList ?? []))
+    const conditionResistancesPreview = computed(() => formatDefenseList(monster.conditionResistancesList ?? []))
+    const immunitiesPreview = computed(() => formatDefenseList(monster.immunitiesList ?? []))
+    const vulnerabilitiesPreview = computed(() => formatDefenseList(monster.vulnerabilitiesList ?? []))
+    const conditionVulnerabilitiesPreview = computed(() => formatDefenseList(monster.conditionVulnerabilitiesList ?? []))
+    const conditionsPreview = computed(() => formatDefenseList(monster.conditionsList ?? []))
 
     return {
       monster,

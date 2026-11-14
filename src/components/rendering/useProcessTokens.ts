@@ -1,4 +1,5 @@
 import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
+import { formatReactionAvailability } from 'src/core/domain/entry-display'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { sanitizeProsePunctuation } from 'src/core/domain/number-grammar'
 import { outcomesHtml } from 'src/core/domain/outcome-rendering'
@@ -27,12 +28,12 @@ import { useClasses } from 'src/data/CLASS'
 import { useEditorStore } from 'src/stores/editor-store'
 import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTokens'
 import { boldNumbers, phaseLabel, plateHtml } from './plate'
-import type { PlateCell } from './plate'
+import type { PlateCell, PlateRow } from './plate'
 import { statblockUsageHelpKey } from './statblock-help'
 import { formulaContextForMonster } from 'src/core/domain/formula-context'
 import { abilityHeader, abilityIdentity, hasStructuredAbility, inferAbility, mechanicsPhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
-import type { LairAction } from 'src/core/domain/types'
+import type { LairAction, ReactionAvailabilitySet } from 'src/core/domain/types'
 import { listJoin } from './list-join'
 
 export type MonsterContext =
@@ -268,6 +269,15 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     return input
   }
 
+  const formatActionOrReactionUsage = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
+    const rechargeVal = actionRecharge(context).replace(/^Recharge\s+/i, '')
+    if (rechargeVal) return ` ${t('editor.action.recharge', [rechargeVal])}`
+    if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate && context.limitedUse.rate !== 'RECHARGE') {
+      return ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
+    }
+    return ''
+  }
+
   const processActionTokens = (input: string, context: MonsterAction) => {
     if (!context) return input;
     // format the effects
@@ -279,23 +289,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       : ''
     input = input.replace(/\{action.effects\}/gi, effects)
 
-    // limitedUse / recharge formatting (no empty Recharge leaks)
-    const rechargeVal = actionRecharge(context).replace(/^Recharge\s+/i, '')
-    const hasRecharge = rechargeVal !== ''
-    const hasLimitedUse = Boolean(
-      context.limitedUse &&
-      context.limitedUse.count > 0 &&
-      context.limitedUse.rate &&
-      context.limitedUse.rate !== 'RECHARGE'
-    )
-
-    let limitedUseStr = ''
-    if (hasRecharge) {
-      limitedUseStr = ` ${t('editor.action.recharge', [rechargeVal])}`
-    } else if (hasLimitedUse) {
-      limitedUseStr = ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
-    }
-
+    const limitedUseStr = formatActionOrReactionUsage(context)
     input = input.replace(/\{action.limitedUse\}/gi, limitedUseStr)
 
     // localize the rate string
@@ -309,12 +303,11 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
   const processReactionTokens = (input: string, context: MonsterReaction) => {
     if (!context) return input;
-    // limitedUse is a special case
-    const limitedUse = context.limitedUse && context.limitedUse.rate ? ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})` : ''
+    const limitedUse = formatActionOrReactionUsage(context)
 
     input = input.replace(
       /\{reaction.limitedUse\}/gi,
-      `${(context.limitedUse && context.limitedUse.count > 0) ? limitedUse : ''}`
+      limitedUse
     )
 
     // localize the rate string
@@ -505,6 +498,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
   interface PlateEntrySpec {
     stagePool?: string | number
+    phaseText?: string
+    availability?: string
     name: string
     scores?: string
     /** Recharge / uses / cost, e.g. "Recharge 4–12", "3/Day", "Costs 2 Actions". */
@@ -532,7 +527,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     body: string
   ): string => {
     const quals: string[] = []
-    const phase = phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
+    const phase = spec.phaseText?.trim() || phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
     if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase" tabindex="0">${phase}</span>`)
     // Authored tags ("Recharges after {PB} rounds") resolve like any other mechanic text.
     const printedUsage = spec.usage?.includes('{') ? processMonsterTokens(spec.usage, monster) : spec.usage
@@ -540,6 +535,9 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const helpKey = statblockUsageHelpKey(printedUsage)
       const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
       quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${printedUsage.trim()}</span>`)
+    }
+    if (spec.availability?.trim()) {
+      quals.push(`<span class="sb-qual availability-cell" data-help="availability" tabindex="0">${spec.availability.trim()}</span>`)
     }
     const classification = spec.discipline?.trim()
     const comps = Array.isArray(spec.components) && spec.components.length > 0
@@ -724,13 +722,22 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     return processTokens(`${lead} ${text2024(context, renderContext, { markup: 'html', componentsInLead: true })}`, context, monster, 'action')
   }
 
+  const entryBadge = (
+    context: { stagePool?: string | number; availability?: ReactionAvailabilitySet } | undefined,
+    monster: ReturnType<typeof useMonsterStore>
+  ): string => {
+    if (!context) return ''
+    const { poolsLabel, conditionLabel } = formatReactionAvailability(context, monster.paragonConfig?.phaseName)
+    const parts = [poolsLabel, conditionLabel].filter(Boolean)
+    return parts.length > 0 ? `<span class="dnd-pool-badge">[${parts.join(' · ')}]</span> ` : ''
+  }
+
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
-    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
-    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+    const poolBadge = entryBadge(context, monster)
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
     if (isModern && !context.customPreamble && hasStructuredAbility(context as Partial<MonsterAction>)) {
@@ -786,8 +793,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
-    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
-    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+    const poolBadge = entryBadge(context, monster)
 
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
 
@@ -899,39 +905,43 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
+    const poolBadge = entryBadge(context, monster)
+    const { poolsLabel, conditionLabel } = formatReactionAvailability(context, monster.paragonConfig?.phaseName)
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
+    const trigger = context.trigger?.trim()
+      ? `<i>${t('monster.reaction.trigger')}:</i> ${processTokens(context.trigger.trim(), context, monster, 'reaction')}`
+      : ''
+    // The trigger leads the printed text by default; authors may move it after the response.
+    const withTrigger = (text: string): string => {
+      if (!trigger) return text
+      const lead = /[.!?]$/.test(trigger.replace(/<[^>]+>/g, '').trim()) ? trigger : `${trigger}.`
+      if (!text.trim()) return lead
+      return context.triggerPlacement === 'end' ? `${text} ${lead}` : `${lead} ${text}`
+    }
 
-    if (isModern) {
-      const isStructured = hasStructuredAbility(context as any) || !!context.school || !!context.spellLevel || (!!context.stat && context.stat !== 'none') || !!context.attackSource
-      const trigger = context.trigger?.trim()
-        ? `<i>${t('monster.reaction.trigger')}:</i> ${processTokens(context.trigger.trim(), context, monster, 'reaction')}`
-        : ''
-      // The trigger leads the printed text by default; authors may move it after the response.
-      const withTrigger = (text: string): string => {
-        if (!trigger) return text
-        const lead = /[.!?]$/.test(trigger.replace(/<[^>]+>/g, '').trim()) ? trigger : `${trigger}.`
-        if (!text.trim()) return lead
-        return context.triggerPlacement === 'end' ? `${text} ${lead}` : `${lead} ${text}`
-      }
-
+    if (isModern && !context.customPreamble) {
+      const asAction = context as unknown as MonsterAction
+      const isStructured = hasStructuredAbility(context as any)
       if (isStructured) {
-        const { ability, renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
+        const { ability, renderContext } = structuredRenderContext(asAction, monster)
         const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
         const effectsStr = outcomesHtml(ability, renderContext)
-        let desc = processTokens(`${effectsStr}${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
+        let desc = processTokens(`${effectsStr}${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
         if (context.stat && context.stat !== 'none') {
           desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
         }
         if (ability.attackSource) {
           desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
         }
-        const { discipline, components, duration } = abilityHeader(context as unknown as MonsterAction)
+        const { discipline, components, duration } = abilityHeader(asAction)
         return buildPlateEntry(
           monster,
           {
             stagePool: context?.stagePool,
+            phaseText: poolsLabel,
+            availability: conditionLabel,
             name: context.name,
             usage: usageText(context),
             discipline,
@@ -944,42 +954,90 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         )
       }
 
-      const desc = processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`, context, monster, 'reaction')
+      const { discipline, components, duration } = abilityHeader(asAction)
+      const scopeParts: string[] = []
+      if (asAction.range && asAction.range.trim()) scopeParts.push(asAction.range.trim())
+      if (context.areaDistance && context.areaDistance.trim()) scopeParts.push(context.areaDistance.trim())
+      if (context.areaShape && context.areaShape.trim()) scopeParts.push(context.areaShape.trim())
+      if (context.targetsText && context.targetsText.trim()) scopeParts.push(context.targetsText.trim())
+      const scope = scopeParts.length > 0 ? [boldNumbers(scopeParts.join(' '))] : []
+      const mechanics: string[] = []
+      if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
+        const isSpell = context.actionType === 'spell_attack'
+        const bonus = structuredAttackBonus(asAction, monster as unknown as DomainMonster) ?? 0
+        mechanics.push(`${isSpell ? 'Spell Attack' : 'Weapon Attack'} <strong class="dnd-num">${renderBonus(bonus)}</strong>`)
+      }
+      if (context.stat && context.stat !== 'none') {
+        const dcVal = saveForAction(monster, context.stat, context.save)
+        mechanics.push(`${t(`statFull.${context.stat}`)} Save <strong class="dnd-num">${dcVal}</strong>`)
+      }
+      const effectsStr = Array.isArray(asAction.effects) && asAction.effects.length > 0
+        ? asAction.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
+        : ''
+      let desc = processTokens(`${effectsStr}${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
+      if (context.stat && context.stat !== 'none') {
+        desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
+      }
+      if (context.actionType === 'spell_attack' || context.actionType === 'weapon_attack') {
+        desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
+      }
       return buildPlateEntry(
         monster,
-        { stagePool: context?.stagePool, name: context.name, usage: usageText(context) },
+        {
+          stagePool: context?.stagePool,
+          phaseText: poolsLabel,
+          availability: conditionLabel,
+          name: context.name,
+          usage: usageText(context),
+          discipline,
+          components,
+          duration,
+          mechanics,
+          scope,
+        },
         withTrigger(desc)
       )
     }
 
+    if (context.customPreamble) {
+      return poolBadge + processTokens(`${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`, context, monster, 'reaction')
+    }
+
     if (hasStructuredAbility(context as Partial<MonsterAction>)) {
       const { renderContext } = structuredRenderContext(context as unknown as MonsterAction, monster)
-      const trigger = context.trigger?.trim() ? `<i>${t('monster.reaction.trigger')}:</i> ${context.trigger.trim()}` : ''
+      const rawTrigger = context.trigger?.trim() ? `<i>${t('monster.reaction.trigger')}:</i> ${context.trigger.trim()}` : ''
       const prose = text2024(context as unknown as MonsterAction, renderContext, { markup: 'html', componentsInLead: true })
-      const body = !trigger ? prose : context.triggerPlacement === 'end' ? `${prose} ${trigger}` : `${trigger} ${prose}`
-      return processTokens(`<b><i>${context.name}{reaction.limitedUse}.</i></b> ${body}`, context, monster, 'reaction')
+      const body = !rawTrigger ? prose : context.triggerPlacement === 'end' ? `${prose} ${rawTrigger}` : `${rawTrigger} ${prose}`
+      return processTokens(`${poolBadge}<b><i>${abilityIdentity(context as Partial<MonsterAction>, 'html')}{reaction.limitedUse}.</i></b> ${body}`, context, monster, 'reaction')
     }
+
+    const effectsStr = Array.isArray((context as unknown as MonsterAction).effects) && (context as unknown as MonsterAction).effects.length > 0
+      ? `${(context as unknown as MonsterAction).effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ')} `
+      : ''
+    const saveLead = context.stat && context.stat !== 'none'
+      ? `<i>${t(`statFull.${context.stat}`)} Saving Throw:</i> DC ${saveForAction(monster, context.stat, context.save)}${(context as unknown as MonsterAction).range ? `, ${(context as unknown as MonsterAction).range}` : ''}. `
+      : ''
 
     // case on the presence of a Trigger to choose old style rendering or new
     if (context.trigger === '') {
       return processTokens(
-        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
+        `${poolBadge}<b><i>${context.name}{reaction.limitedUse}.</i></b> ${saveLead}${effectsStr}${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
         context,
         monster,
         'reaction'
       )
     } else if (context.triggerPlacement === 'end') {
       return processTokens(
-        `<b><i>${context.name}{reaction.limitedUse}.</i></b> ${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)} <i>${t('monster.reaction.trigger')}:</i> ${context.trigger}`,
+        `${poolBadge}<b><i>${context.name}{reaction.limitedUse}.</i></b> ${saveLead}${effectsStr}${context.description} ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)} <i>${t('monster.reaction.trigger')}:</i> ${context.trigger}`,
         context,
         monster,
         'reaction'
       )
     } else {
       return processTokens(
-        `<b><i>${context.name}{reaction.limitedUse}.</i></b> <i>${t(
+        `${poolBadge}<b><i>${context.name}{reaction.limitedUse}.</i></b> ${saveLead}<i>${t(
           'monster.reaction.trigger'
-        )}:</i> ${context.trigger} <i>${t('monster.reaction.response')}:</i> ${
+        )}:</i> ${context.trigger} <i>${t('monster.reaction.response')}:</i> ${effectsStr}${
           context.description
         } ${formatDescriptionContainers((context as unknown as Partial<MonsterAction>).descriptionContainers, monster.randomTables)}`,
         context,
@@ -994,8 +1052,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     monster: ReturnType<typeof useMonsterStore>
   ) => {
     const context = unref(contextRef)
-    const pName = monster.paragonConfig?.phaseName?.trim() || 'Phase'
-    const poolBadge = context?.stagePool && context.stagePool !== 'all' ? `<span class="dnd-pool-badge">[${pName} ${context.stagePool}]</span> ` : ''
+    const poolBadge = entryBadge(context, monster)
 
     const isModern = webProjection && editorStore.visualTemplate === 'modern'
 

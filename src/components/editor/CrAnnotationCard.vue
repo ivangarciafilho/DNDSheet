@@ -122,10 +122,10 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { useAutoUpdateCr } from './useAutoUpdateCr'
 import LockToggleButton from '../LockToggleButton.vue'
 import FormulaField from '../kit/FormulaField.vue'
-import { Monster, MonsterAction, MonsterTrait } from '../models'
+import { Monster, MonsterAction, MonsterReaction, MonsterTrait, defaultCrAnnotation } from '../models'
 import { validateNumber } from './numberInput'
 
-export type CrAnnotatedField = MonsterTrait[] | MonsterAction[]
+export type CrAnnotatedField = MonsterTrait[] | MonsterAction[] | MonsterReaction[]
 
 export default defineComponent({
   name: 'CrAnnotationCard',
@@ -146,9 +146,13 @@ export default defineComponent({
   setup(props) {
     const monster = useMonsterStore()
 
-    const crData = (monster[props.field] as CrAnnotatedField)[props.index]
+    const rawEntry = (monster[props.field] as CrAnnotatedField)[props.index]
+    if (rawEntry && !rawEntry.crAnnotation) {
+      rawEntry.crAnnotation = { ...defaultCrAnnotation(), include: false }
+    }
+    const crData = rawEntry as MonsterAction | MonsterTrait
 
-    const actionContext = props.field === 'actions' ? crData as MonsterAction : undefined
+    const actionContext = props.field === 'actions' || props.field === 'reactions' ? crData as MonsterAction : undefined
 
     return {
       crData,

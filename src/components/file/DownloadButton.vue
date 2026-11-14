@@ -388,8 +388,7 @@ export default defineComponent({
     const exportFoundry = () => {
       try {
         const jsonStr = exportToFoundryJson(
-          monster.$state as unknown as Monster,
-          editorStore.style as '2014' | '2024'
+          monster.$state as unknown as Monster
         )
         download(jsonStr, `${monster.name}.foundry.json`, 'application/json')
         $q.notify({

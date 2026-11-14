@@ -2,7 +2,7 @@
   <div class="column full-width">
     <q-editor
       ref="editorRef"
-      :model-value="$props.modelValue !== undefined ? $props.modelValue : $props.field"
+      :model-value="($props.modelValue !== undefined ? $props.modelValue : $props.field) ?? ''"
       :toolbar="toolbarOptions"
       :definitions="toolbarDefinitions"
       class="full-width q-ma-xs"

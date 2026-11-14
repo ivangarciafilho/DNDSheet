@@ -49,6 +49,7 @@ import { traitCellPatch, traitCellValue, traitChainView, validateTraitCell } fro
 import { lairChainView } from 'src/core/domain/role-headers'
 import ChainCell from './ChainCell.vue'
 import type { NumericBinding } from 'src/core/domain/formula'
+import type { MonsterAction } from 'src/core/domain/types'
 
 const ROW_LABELS: Readonly<Record<ComposerRow, string>> = {
   head: 'Head',
@@ -93,7 +94,7 @@ export default defineComponent({
     const pooled = computed(() => props.role === 'legendary' || props.role === 'mythic')
 
     const context = computed<ChainContext>(() => {
-      const current = action.value
+      const current = action.value ?? (reaction.value as unknown as MonsterAction | undefined)
       if (!current) return {}
       const { renderContext } = structuredRenderContext(current, monster)
       return {
@@ -108,7 +109,7 @@ export default defineComponent({
       if (action.value && ['action', 'bonus_action', 'legendary', 'mythic'].includes(props.role)) {
         return chainView(props.role as ActionModelRole, action.value, context.value).filter((row) => row.row !== 'prose')
       }
-      if (reaction.value) return reactionChainView(reaction.value, usageText(reaction.value))
+      if (reaction.value) return reactionChainView(reaction.value, context.value.usage || '', context.value)
       if (trait.value) return traitChainView(trait.value)
       if (lair.value) return lairChainView()
       return []

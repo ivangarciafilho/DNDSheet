@@ -230,7 +230,7 @@ export default defineComponent({
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
-    value: { type: null as unknown as PropType<unknown>, default: undefined },
+    value: { type: [String, Number, Boolean, Object, Array, Symbol] as PropType<unknown>, required: false },
     numericPath: { type: String, default: undefined },
     numericDraftModel: { type: Function as PropType<(cellId: string) => object>, default: undefined },
     allowClear: { type: Boolean, default: true },

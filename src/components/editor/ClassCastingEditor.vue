@@ -25,13 +25,14 @@
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
-                    v-model="monster.spellcasting.metamagic.refreshRate"
+                    :model-value="cadenceKey(monster.spellcasting.metamagic.refreshRate, 'long_rest')"
                     v-help="'When sorcery points come back.'"
-                    :options="['Long Rest', 'Short Rest', 'Dawn', 'Dusk', 'Midnight']" label="Points Refresh"
+                    :options="cadenceOptions" emit-value map-options label="Points Refresh"
                     dense
                     outlined
                     dark
                     hide-bottom-space
+                    @update:model-value="value => monster.spellcasting.metamagic && (monster.spellcasting.metamagic.refreshRate = value)"
                   />
                 </div>
                 <div class="col-12 col-sm-6">
@@ -69,7 +70,7 @@
         </div>
         <casting-feature-grants-editor :model-value="entry.data.spellGrants || []" class="q-mb-sm" @update:model-value="value => patch(entry,{spellGrants:value})" />
         <div class="row items-center q-col-gutter-xs">
-          <q-select :model-value="selection(entry).className" :options="SrdCastingClassOptions" use-input new-value-mode="add-unique" emit-value map-options dense outlined dark label="Class" class="col-6" @update:model-value="value => changeClass(entry,value)" />
+          <q-select :model-value="selection(entry).className" :options="castingClassOptions" use-input new-value-mode="add-unique" emit-value map-options dense outlined dark label="Class" class="col-6" @update:model-value="value => changeClass(entry,value)" />
           <q-select :model-value="entry.data.subclass" :options="subclasses(entry)" use-input new-value-mode="add-unique" clearable dense outlined dark label="Subclass" class="col-6" @filter="(value, update) => update(() => subclassQueries[entry.id]=value)" @update:model-value="value => updateProgression(entry,{subclass:value || ''})" />
           <formula-field :path="prefix(entry)+'.level'" label="Level" class="col-6" @applied="recalculateSlots" />
           <q-select :model-value="entry.data.stat" :options="['INT','WIS','CHA','CON','STR','DEX']" dense outlined dark label="Casting stat" class="col-6" @update:model-value="value => patch(entry,{stat:value})" />
@@ -82,16 +83,36 @@
             </q-input>
           </div>
         </div>
-        <p class="text-caption text-cyan-3 q-my-sm" :data-primary-capacity="entry.primary ? '' : undefined">{{ sourceGuidance(entry) }}</p>
+        <div class="q-mt-sm q-pa-xs rounded-borders text-caption" :class="sourceMetrics(entry).status === 'error' ? 'bg-red-10 text-white' : sourceMetrics(entry).status === 'unavailable' ? 'bg-amber-10 text-white' : 'bg-grey-9 text-cyan-2'" data-source-metrics :role="sourceMetrics(entry).status === 'error' ? 'alert' : undefined" :data-source-metrics-error="sourceMetrics(entry).status === 'error' ? '' : undefined" :data-source-metrics-unavailable="sourceMetrics(entry).status === 'unavailable' ? '' : undefined">
+          {{ sourceMetricsSummary(entry) }}
+        </div>
+        <p class="text-caption text-cyan-3 q-my-xs" :data-primary-capacity="entry.primary ? '' : undefined">{{ sourceGuidance(entry) }}</p>
+        <div v-if="sourceOverLimit(entry)" class="q-mb-xs q-pa-xs rounded-borders bg-orange-10 text-white text-caption" role="status" data-source-over-limit>
+          {{ sourceOverLimit(entry) }}
+        </div>
+        <div v-if="sourceExpandedPlan(entry).found" class="q-mb-sm q-pa-xs rounded-borders bg-grey-9 text-white text-caption" data-subclass-expanded-plan>
+          <div class="row items-center justify-between q-col-gutter-xs">
+            <span class="col">
+              <b>Subclass Expanded Spells ({{ sourceExpandedPlan(entry).key }}):</b>
+              {{ sourceExpandedPlan(entry).alwaysPrepared ? 'Always prepared (excluded from selection budget)' : 'Expanded list' }} —
+              {{ sourceExpandedPlan(entry).eligibleSpells.length ? sourceExpandedPlan(entry).eligibleSpells.map(s => s.spell).join(', ') : 'Unlocks at higher class level' }}
+              <span v-if="sourceExpandedPlan(entry).missingSpells.length" class="text-amber-3"> ({{ sourceExpandedPlan(entry).missingSpells.length }} missing)</span>
+            </span>
+            <span class="col-auto row q-gutter-xs">
+              <q-btn flat dense no-caps color="cyan-3" label="Apply expanded spells" data-apply-expanded-spells :disable="sourceExpandedPlan(entry).missingSpells.length === 0" @click="applyExpandedSpells(entry)" />
+              <q-btn flat dense no-caps color="orange-3" label="Remove expanded spells" data-remove-expanded-spells :disable="!hasRemovableExpandedSpells(entry)" @click="removeExpandedSpells(entry)" />
+            </span>
+          </div>
+        </div>
         <casting-learning-contribution-editor :model-value="entry.data.contribution" :source-count="sources.length" :highest-slot="sourceSpellCeiling(selection(entry),combinedLevel,sources.length)" :grant-level="grantLevel(entry)" @update:model-value="value => updateContribution(entry,value)">
         <div class="row items-center q-col-gutter-xs q-my-sm">
           <q-select :model-value="entry.data.resourceType" :options="resourceTypeOptions" emit-value map-options dense outlined dark label="Source resource" class="col-6" @update:model-value="value => patch(entry,{resourceType:value})" />
-          <q-select :model-value="entry.data.refreshRate" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry,{refreshRate:value})" />
+          <q-select :model-value="cadenceKey(entry.data.refreshRate)" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry,{refreshRate:value})" />
           <q-input v-if="['focus','points'].includes(entry.data.resourceType || '')" :model-value="entry.data.resourceValue" type="number" min="0" dense outlined dark label="Authored resource maximum" class="col-12" @update:model-value="value => patch(entry,{resourceValue:Math.max(0,Number(value)||0)})" />
           <formula-field :path="prefix(entry)+'.preparedCountOverride'" label="Prepared spells count" data-source-prepared-count class="col-6">
             <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" @click="resetPrepared(entry)" /></template>
           </formula-field>
-          <q-select :model-value="entry.data.preparedInterval || 'long_rest'" :options="cadenceOptions" emit-value map-options dense outlined dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry,{preparedInterval:value})" />
+          <q-select :model-value="cadenceKey(entry.data.preparedInterval, 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry,{preparedInterval:value})" />
           <q-select :model-value="entry.data.preparedSpellList" :options="SrdCastingClassOptions.map(option => option.label)" clearable dense outlined dark label="Preparation spell list" class="col-6" @update:model-value="value => patch(entry,{preparedSpellList:value || undefined})" />
           <q-checkbox :model-value="selection(entry).bypassSlotFilter" dense dark label="Allow assigning spells above the slot ceiling" class="col-12" @update:model-value="value => patch(entry,{[entry.primary?'bypassSlotLevelFilter':'bypassSlotFilter']:value})" />
         </div>
@@ -107,7 +128,7 @@
         <div class="row q-col-gutter-xs">
           <q-checkbox v-model="monster.spellcasting.cantripSwitch" label="Switch cantrips" dense class="col-4" />
           <formula-field v-if="monster.spellcasting.cantripSwitch" path="spellcasting.cantripSwitchCount" label="Count" class="col-4" />
-          <q-select v-if="monster.spellcasting.cantripSwitch" v-model="monster.spellcasting.cantripSwitchInterval" :options="['Short Rest','Long Rest','Dawn','Dusk']" label="Per" dense outlined dark class="col-4" />
+          <q-select v-if="monster.spellcasting.cantripSwitch" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :options="cadenceOptions" emit-value map-options label="Per" dense outlined dark class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = value)" />
         </div>
       </div>
     </q-expansion-item>
@@ -120,21 +141,46 @@ import { useClasses } from 'src/data/CLASS'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { useSpellsStore } from 'src/stores/spells-store'
-import { aggregateSpellcastingSources,getDefaultStatForClass,getSpellSlotsForClass,getSubclassesForClass,spellcastingRuleClass } from 'src/core/usecases/AutoSyncSpellcasting'
-import { sourceSpellCeiling,sourceCapacityReference,sourceGrantLevel } from 'src/core/domain/casting-source-selection'
+import {
+  CASTER_PROGRESSIONS,
+  aggregateSpellcastingSources,
+  computeSpellMetrics,
+  getCatalogSubclassesForClass,
+  getSpellSlotsForClass,
+  inferCasterProgression,
+  planSubclassExpandedSpells,
+  resolveDefaultStatForClass,
+  spellcastingRuleClass,
+} from 'src/core/usecases/AutoSyncSpellcasting'
+import {
+  normalizeCastingSpellGrants,
+  sourceSpellCeiling,
+  sourceCapacityReference,
+  sourceGrantLevel,
+  sourceGrantedSpells,
+} from 'src/core/domain/casting-source-selection'
 import { removeCastingSource } from 'src/core/domain/casting-source-list'
-import { CADENCE_OPTIONS } from 'src/core/domain/catalogs/cadence'
+import { CADENCE_OPTIONS, cadenceKey } from 'src/core/domain/catalogs/cadence'
 import { METAMAGIC_OPTIONS,metamagicCost } from 'src/core/domain/catalogs/metamagic'
-import { statModifier } from 'src/core/domain/math-utils'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import FormulaField from '../kit/FormulaField.vue'
 import CastingSourceSpellRows from './CastingSourceSpellRows.vue'
 import CastingLearningContributionEditor from './CastingLearningContributionEditor.vue'
 import CastingFeatureGrantsEditor from './CastingFeatureGrantsEditor.vue'
-import type { CastingContribution } from 'src/core/usecases/AutoSyncSpellcasting'
+import type { CastingContribution, ComputedSpellMetricsResult } from 'src/core/usecases/AutoSyncSpellcasting'
 
 const monster=useMonsterStore(), editor=useEditorStore(), spells=useSpellsStore()
 const { SrdCastingClassOptions }=useClasses()
+const EXTRA_CASTING_CLASSES = [
+  { value: 'Artificer', label: 'Artificer' },
+  { value: 'Fighter', label: 'Fighter' },
+  { value: 'Rogue', label: 'Rogue' },
+]
+const castingClassOptions = computed(() => {
+  const existing = SrdCastingClassOptions.value.map((o) => ({ label: o.label, value: o.label }))
+  const seen = new Set(existing.map((o) => o.label.toLowerCase()))
+  return [...existing, ...EXTRA_CASTING_CLASSES.filter((o) => !seen.has(o.label.toLowerCase()))]
+})
 type Primary=typeof monster.spellcasting
 type Extra=NonNullable<Primary['classes']>[number]
 type Entry={id:string;primary:true;data:Primary}|{id:string;primary:false;data:Extra}
@@ -152,7 +198,12 @@ const prefix=(entry:Entry)=>entry.primary?'spellcasting':'spellcasting.classes[i
 function selection(entry:Entry) {return {...entry.data,className:entry.primary?entry.data.class||'':entry.data.className,spells:entry.primary?entry.data.standard:entry.data.spells,bypassSlotFilter:entry.primary?entry.data.bypassSlotLevelFilter:entry.data.bypassSlotFilter}}
 function sourceTitle(entry:Entry){const source=selection(entry);return [source.className||'Custom casting source',source.subclass].filter(Boolean).join(' / ')+' - Level '+source.level}
 function sourceCaption(entry:Entry){const source=selection(entry);return (source.stat||'INT')+' - '+(source.spells?.length||0)+' assigned spells'}
-function subclasses(entry:Entry){const query=(subclassQueries[entry.id]||'').toLowerCase();return getSubclassesForClass(selection(entry).className).filter(value=>value.toLowerCase().includes(query))}
+function subclasses(entry:Entry){
+  const query=(subclassQueries[entry.id]||'').toLowerCase()
+  return getCatalogSubclassesForClass(selection(entry).className)
+    .map((item) => item.subclass)
+    .filter(value=>value.toLowerCase().includes(query))
+}
 function patch(entry:Entry,value:object){Object.assign(entry.data,value)}
 function updateProgression(entry:Entry,value:object){patch(entry,value);recalculateSlots()}
 function updateContribution(entry: Entry, value: CastingContribution) {
@@ -161,16 +212,143 @@ function updateContribution(entry: Entry, value: CastingContribution) {
  patch(entry, {contribution:value})
  if (changed) recalculateSlots()
 }
-function changeClass(entry:Entry,value:string|undefined){updateProgression(entry,{[entry.primary?'class':'className']:value||'',subclass:'',stat:getDefaultStatForClass(value||'Wizard')})}
-function autoValue(entry:Entry,key:'save'|'attack'){return key==='save'?monster.defaultSpellSave(entry.data.stat||'INT'):monster.defaultSpellAttackModifier(entry.data.stat||'INT')}
-function toggleOverride(entry:Entry,key:'save'|'attack',enabled:boolean){patch(entry,{[key]:{override:enabled,overrideValue:entry.data[key]?.overrideValue??autoValue(entry,key)}})}
+function changeClass(entry:Entry,value:string|undefined){
+  const nextStat = resolveDefaultStatForClass(value)
+  updateProgression(entry,{
+    [entry.primary?'class':'className']:value||'',
+    subclass:'',
+    ...(nextStat ? {stat:nextStat} : {}),
+  })
+}
+function sourceMetrics(entry:Entry): ComputedSpellMetricsResult {
+  const source = selection(entry)
+  return computeSpellMetrics({
+    ability: source.stat,
+    className: source.className,
+    subclass: source.subclass,
+    stats: monster.stats,
+    proficiency: monster.proficiency,
+    saveDcOverride: source.save?.override ? source.save.overrideValue : undefined,
+    attackBonusOverride: source.attack?.override ? source.attack.overrideValue : undefined,
+  })
+}
+function sourceMetricsSummary(entry: Entry): string {
+  const source = selection(entry)
+  const progKey = inferCasterProgression(source.className, source.subclass)
+  const progLabel = CASTER_PROGRESSIONS[progKey]?.label || 'Custom'
+  const metrics = sourceMetrics(entry)
+  if (metrics.status === 'error') return `${progLabel} · Metrics error: ${metrics.reason}`
+  if (metrics.status === 'unavailable') return `${progLabel} · Metrics unavailable: ${metrics.reason}`
+  const sign = metrics.attackBonus >= 0 ? '+' : ''
+  return `${progLabel} · DC ${metrics.saveDc} · ${sign}${metrics.attackBonus} Spell Attack · ${metrics.ability}`
+}
+function autoValue(entry:Entry,key:'save'|'attack'): number | string {
+  const source = selection(entry)
+  const metrics = computeSpellMetrics({
+    ability: source.stat,
+    className: source.className,
+    subclass: source.subclass,
+    stats: monster.stats,
+    proficiency: monster.proficiency,
+  })
+  if (metrics.status !== 'ok') return '—'
+  return key==='save' ? metrics.saveDc : metrics.attackBonus
+}
+function toggleOverride(entry:Entry,key:'save'|'attack',enabled:boolean){
+  const auto = autoValue(entry, key)
+  const fallback = typeof auto === 'number' ? auto : 10
+  patch(entry,{[key]:{override:enabled,overrideValue:entry.data[key]?.overrideValue ?? fallback}})
+}
 function resetPrepared(entry:Entry){monster.clearBinding(prefix(entry)+'.preparedCountOverride');patch(entry,{preparedCountOverride:null})}
 function grantLevel(entry:Entry){return sourceGrantLevel(selection(entry),combinedLevel.value,sources.value.length)}
+function sourceCapacityState(entry: Entry) {
+  const source = selection(entry)
+  const metrics = sourceMetrics(entry)
+  if (metrics.status !== 'ok') return { source, metrics, capacity: undefined }
+  const capacity = sourceCapacityReference(
+    spells.allSpellOptions,
+    source,
+    metrics.abilityModifier,
+    combinedLevel.value,
+    sources.value.length,
+  )
+  const preparedOverride = typeof entry.data.preparedCountOverride === 'number' && Number.isFinite(entry.data.preparedCountOverride)
+    ? Math.max(0, Math.trunc(entry.data.preparedCountOverride))
+    : undefined
+  return {
+    source,
+    metrics,
+    capacity,
+    preparedBudget: capacity ? (preparedOverride ?? capacity.preparedSpells) : 0,
+  }
+}
 function sourceGuidance(entry:Entry) {
- const source=selection(entry)
- const capacity=sourceCapacityReference(spells.allSpellOptions,source,statModifier(monster.stats?.[source.stat||'INT']??10),combinedLevel.value,sources.value.length)
- if(!capacity)return 'Custom source. Set its resources and spell selections directly.'
- return 'Legacy base-class capacity: '+capacity.selectedCantrips+' / '+capacity.cantripsKnown+' cantrips; '+capacity.selectedBudgetSpells+' / '+capacity.preparedSpells+' '+capacity.selectionModel+' spells. '+(capacity.grantedSpells.length?capacity.grantedSpells.length+' automatic grants. ':'')+'Highest eligible spell: level '+(sourceSpellCeiling(source,combinedLevel.value,sources.value.length)??0)+'.'
+ const state = sourceCapacityState(entry)
+ if (state.metrics.status === 'error') {
+   return `Counters suspended (${state.metrics.reason}). Fix casting ability or proficiency before relying on capacity limits.`
+ }
+ if (state.metrics.status === 'unavailable') {
+   return `Counters unavailable (${state.metrics.reason}).`
+ }
+ const capacity = state.capacity
+ if(!capacity) return 'Custom source. Set its resources and spell selections directly.'
+ const unknownNote = capacity.unknownAssignments > 0 ? ` ${capacity.unknownAssignments} custom/unknown spells preserved.` : ''
+ return 'Legacy base-class capacity: '+capacity.selectedCantrips+' / '+capacity.cantripsKnown+' cantrips; '+capacity.selectedBudgetSpells+' / '+state.preparedBudget+' '+capacity.selectionModel+' spells. '+(capacity.grantedSpells.length?capacity.grantedSpells.length+' automatic grants. ':'')+'Highest eligible spell: level '+(sourceSpellCeiling(state.source,combinedLevel.value,sources.value.length)??0)+'.'+unknownNote
+}
+function sourceOverLimit(entry: Entry): string {
+  const state = sourceCapacityState(entry)
+  if (!state.capacity || state.metrics.status !== 'ok') return ''
+  const parts: string[] = []
+  if (state.capacity.selectedCantrips > state.capacity.cantripsKnown) {
+    parts.push(`${state.capacity.selectedCantrips} / ${state.capacity.cantripsKnown} cantrips (+${state.capacity.selectedCantrips - state.capacity.cantripsKnown} over)`)
+  }
+  if (state.capacity.selectedBudgetSpells > state.preparedBudget) {
+    parts.push(`${state.capacity.selectedBudgetSpells} / ${state.preparedBudget} ${state.capacity.selectionModel} spells (+${state.capacity.selectedBudgetSpells - state.preparedBudget} over)`)
+  }
+  return parts.length ? `Over limit: ${parts.join('; ')}.` : ''
+}
+function sourceExpandedPlan(entry: Entry) {
+  const source = selection(entry)
+  const existing = [...(source.spells || []), ...sourceGrantedSpells(source, combinedLevel.value, sources.value.length)]
+  return planSubclassExpandedSpells({
+    className: source.className,
+    subclass: source.subclass,
+    classLevel: Math.max(1, Number(source.level) || 1),
+    existingSpellNames: existing,
+  })
+}
+function applyExpandedSpells(entry: Entry) {
+  const plan = sourceExpandedPlan(entry)
+  if (!plan.found || !plan.missingSpells.length) return
+  const nextGrants = normalizeCastingSpellGrants([
+    ...(entry.data.spellGrants || []),
+    ...plan.missingSpells.map(({ spell, unlockLevel }) => ({
+      spell,
+      minLevel: unlockLevel,
+      origin: 'subclass' as const,
+      kind: plan.alwaysPrepared ? ('prepared' as const) : ('known' as const),
+    })),
+  ])
+  patch(entry, {
+    spellGrants: nextGrants,
+    ...(entry.data.automaticGrants === false ? { automaticGrants: true } : {}),
+  })
+}
+function hasRemovableExpandedSpells(entry: Entry): boolean {
+  const plan = sourceExpandedPlan(entry)
+  if (!plan.found) return false
+  const names = new Set(plan.eligibleSpells.map((s) => s.spell.toLowerCase()))
+  return (entry.data.spellGrants || []).some((g) => g.origin === 'subclass' && names.has(g.spell.toLowerCase()))
+}
+function removeExpandedSpells(entry: Entry) {
+  const plan = sourceExpandedPlan(entry)
+  if (!plan.found) return
+  const names = new Set(plan.eligibleSpells.map((s) => s.spell.toLowerCase()))
+  patch(entry, {
+    spellGrants: (entry.data.spellGrants || []).filter(
+      (g) => !(g.origin === 'subclass' && names.has(g.spell.toLowerCase())),
+    ),
+  })
 }
 function recalculateSlots(){
  const sc=monster.spellcasting
@@ -210,7 +388,7 @@ function removeSource(id:string){
 const metamagicEnabled=computed(()=>!!monster.spellcasting.metamagic?.enabled)
 function toggleMetamagic(enabled:boolean){
  const previous=monster.spellcasting.metamagic
- monster.spellcasting.metamagic=previous?{...previous,enabled}:{enabled,sorceryPoints:Math.max(2,monster.spellcasting.level||3),refreshRate:'Long Rest',options:['Quickened Spell','Subtle Spell']}
+ monster.spellcasting.metamagic=previous?{...previous,enabled}:{enabled,sorceryPoints:Math.max(2,monster.spellcasting.level||3),refreshRate:'long_rest',options:['Quickened Spell','Subtle Spell']}
 }
 const metamagicOptionsList=computed(()=>METAMAGIC_OPTIONS.map(({name})=>{const cost=metamagicCost(name,editor.style==='2014'?'2014':'2024');return {label:name+' ('+cost+(/^\d+$/.test(cost)?' SP':'')+')',value:name}}))
 </script>

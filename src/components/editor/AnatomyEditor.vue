@@ -37,7 +37,7 @@
             <div class="col-3 col-sm-3">
               <q-input
                 :model-value="ap.name || ap.part"
-                @update:model-value="(val) => { ap.name = val; ap.part = val; }"
+                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.name = s; ap.part = s; }"
                 dense
                 outlined
                 label="Body Part"
@@ -75,7 +75,7 @@
             <div class="col-3 col-sm-3">
               <q-input
                 :model-value="ap.breakEffect || ap.severEffect"
-                @update:model-value="(val) => { ap.breakEffect = val; ap.severEffect = val; }"
+                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.breakEffect = s; ap.severEffect = s; }"
                 dense
                 outlined
                 label="Severed / Broken Consequence"

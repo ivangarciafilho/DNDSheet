@@ -24,11 +24,11 @@ export function tarrasqueText(input: string): string {
 /** Shared prose supplies the printed lead; source metadata is passed explicitly,
  * never recovered by matching a printed title back to an array entry. */
 export function tarrasqueEntry(prose: string, fallbackName = '', attackBonus = 0) {
-  const phase = prose.match(/^\s*(<span class="dnd-pool-badge">[\s\S]*?<\/span>)\s*/)
+  const phase = prose.match(/^\s*((?:<span class="dnd-pool-badge(?:\s+[\w-]+)*">[\s\S]*?<\/span>\s*)+)/)
   const { title, body } = splitEntryLead(phase ? prose.slice(phase[0].length) : prose)
   return {
     name: tarrasqueText(title || fallbackName),
-    desc: tarrasqueText([phase?.[1], body].filter(Boolean).join(' ')),
+    desc: tarrasqueText([phase?.[1]?.trim(), body].filter(Boolean).join(' ')),
     attack_bonus: attackBonus,
   }
 }

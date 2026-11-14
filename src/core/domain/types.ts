@@ -15,11 +15,12 @@ export interface MonsterSenseItem {
   devilsSight?: boolean
   webSense?: boolean
   lifeSense?: boolean
-  detectionMode?: 'presence' | 'location' | 'identity' | 'all'
+  detectionMode?: 'presence' | 'location' | 'both' | 'identity' | 'all'
   targetCreatureTypes?: string[]
   gatheredInfo?: string[]
+  perceivedStats?: string[]
   perceptionPrecision?: 'detailed' | 'comparative'
-  observationRequirement?: 'immediate' | 'observing' | 'fighting' | 'both'
+  observationRequirement?: 'none' | 'immediate' | 'observing' | 'fighting' | 'both'
   observationMinutes?: number
   requiresStudyAction?: boolean
   lightImpairment?: 'none' | 'bright_light' | 'daylight' | 'dim_and_bright'
@@ -86,6 +87,7 @@ export interface MonsterSpeedTraversal {
   dodgeRider?: string
   disengageRider?: string
   moveThroughCreaturesRider?: string
+  splitRiderRows?: boolean
 
   // Movement Action Riders
   actionRiders?: Array<{
@@ -151,6 +153,14 @@ export interface MonsterAcConfig {
   tookDamageType?: string
   tookDamageTimeframe?: string
   lightLevel?: string
+  onHitDoubleBloodied?: boolean
+  doubleIfBloodied?: boolean
+  otherwiseDoubleProne?: boolean
+  targetAdvantage?: string
+  bloodiedDc?: number
+  syntax?: string
+  cover?: string
+  grappleTarget?: string
 }
 
 export interface MonsterInitiativeConfig {
@@ -182,6 +192,7 @@ export interface MonsterSkill {
   condition?: string
   advantage?: boolean
   disadvantage?: boolean
+  bonusAction?: boolean
 }
 
 export interface MonsterToolProficiency {
@@ -194,6 +205,7 @@ export interface MonsterToolProficiency {
   overrideValue: number
   advantage?: boolean
   disadvantage?: boolean
+  bonusAction?: boolean
   condition?: string
 }
 
@@ -207,6 +219,7 @@ export interface MonsterCrAnnotation {
   acModifier: number
   include: boolean
   automatic: boolean
+  recurringDamage?: number
 }
 
 export interface DndLimitedUse {
@@ -413,6 +426,8 @@ export interface BloodiedAction {
   id: string
   name: string
   triggerType: 'immediate_reaction' | 'while_bloodied'
+  trigger?: string
+  resetOnHeal?: boolean
   description: string
 }
 
@@ -422,6 +437,7 @@ export interface ReactiveAction {
   trigger: string
   description: string
   usesPerRound?: number
+  cost?: number | string
 }
 
 export interface ComboAction {
@@ -429,6 +445,7 @@ export interface ComboAction {
   name: string
   leadAction: string
   followUpAction: string
+  followup?: string
   condition: string
   description: string
 }
@@ -436,10 +453,12 @@ export interface ComboAction {
 export interface AnatomyPart {
   id: string
   name: string
+  part?: string
   hp: number
   ac?: number
   threshold?: number
   breakEffect: string
+  severEffect?: string
 }
 
 export interface RunehammerTrackEvent {
@@ -447,11 +466,14 @@ export interface RunehammerTrackEvent {
   round: number | string
   name: string
   description: string
+  effect?: string
 }
 
 export interface RunehammerTrack {
   enabled: boolean
   timerDie?: string
+  die?: string
+  currentCount?: number
   name?: string
   events: RunehammerTrackEvent[]
 }
@@ -504,7 +526,7 @@ export interface ParagonConfig {
 
 export interface MonsterPortrait {
   url: string
-  position: 'none' | 'left' | 'right'
+  position: 'none' | 'left' | 'right' | 'top' | 'bottom'
   width?: number
   caption?: string
 }
@@ -512,6 +534,7 @@ export interface MonsterPortrait {
 export interface MonsterExtendedHp {
   showBloodied?: boolean
   bloodiedSource?: string
+  bloodiedValueSource?: string
   bloodiedOverride?: number | null
   bloodiedDice?: string
   bloodiedAtPhase?: string
@@ -557,6 +580,7 @@ export interface MonsterExtendedHp {
     hideHp?: boolean
     critCount?: number
     critHitsToKill?: number
+    critHitThreshold?: number
     returnHpSource?: string
     returnHpAmount?: number
     returnHpValue?: number
@@ -636,6 +660,7 @@ export interface ActionOrientedPassives {
     persuasion?: boolean
     deception?: boolean
     intimidation?: boolean
+    animalHandling?: boolean
   }
 }
 
@@ -725,6 +750,8 @@ export interface MonsterAction {
     override: boolean
     overrideValue: number
   }
+  saveDc?: number
+  saveStat?: string
   range: string
   effects: ActionEffect[]
   customPreamble: boolean
@@ -832,6 +859,7 @@ export interface DndAttack {
   save: number | undefined
   description: string
   legendaryOnly: boolean
+  stagePool?: number | string | 'all'
   useCustomRenderer: boolean
   customRenderer: string
 }
@@ -841,16 +869,41 @@ export interface LegendaryAction {
   cost: number
 }
 
+export type ReactionAvailabilityPredicate =
+  | 'always'
+  | 'while_bloodied'
+  | 'when_bloodied'
+  | 'while_not_bloodied'
+  | 'at_0_hp'
+  | 'at_1_hp'
+
+export interface ReactionAvailabilitySet {
+  /** Phase/pool numbers (1-based) where this reaction is active; empty/omitted means all pools unless legacy stagePool narrows it. */
+  stagePools?: number[]
+  /** Availability state predicate (separate from recovery cadence and activation trigger). */
+  predicate?: ReactionAvailabilityPredicate
+  /** Optional custom state note preserved verbatim. */
+  customCondition?: string
+}
+
 export interface MonsterReaction {
   descriptionContainers?: ActionDescriptionContainer[]
   name: string
   id: string
   description: string
+  recharge?: string
+  actionType?: string
+  targetsText?: string
+  areaShape?: string
+  areaDistance?: string
   limitedUse: DndLimitedUse
   trigger: string
   /** Where the trigger sits in the printed text: before (default) or after the response. */
   triggerPlacement?: 'start' | 'end'
   stagePool?: number | string | 'all'
+  availability?: ReactionAvailabilitySet
+  customPreamble?: boolean
+  crAnnotation?: MonsterCrAnnotation
   school?: string
   spellLevel?: string
   components?: string[]
@@ -860,11 +913,16 @@ export interface MonsterReaction {
   attackSource?: AttackSource
   weaponAttackAbility?: DndStat | 'auto' | 'finesse' | 'thrown' | 'finesse_thrown'
   attackBonus?: number
+  attackCount?: number | string
+  attackRollModifier?: 'advantage' | 'disadvantage' | 'none'
+  attackException?: string
   stat?: DndStat | 'none'
   save?: {
     override: boolean
     overrideValue: number
   }
+  saveDc?: number
+  saveStat?: string
   range?: string
   targeting?: AbilityTargeting
   outcomes?: AbilityOutcome[]
@@ -943,6 +1001,8 @@ export type SwappableField =
   | 'resistancesList'
   | 'immunitiesList'
   | 'vulnerabilitiesList'
+  | 'conditionVulnerabilitiesList'
+  | 'conditionResistancesList'
   | 'conditionsList'
   | 'villainActions'
   | 'bloodiedActions'
@@ -950,7 +1010,40 @@ export type SwappableField =
   | 'comboActions'
   | 'anatomyParts'
 
+export interface SpellcastingClassEntry {
+  automaticGrants?: boolean
+  spellGrants?: CastingSpellGrant[]
+  preparedCountOverride?: number
+  preparedInterval?: string
+  preparedSpellList?: string
+  spellCastingTimeMap?: Record<string, string>
+  save?: CastingRollOverride
+  attack?: CastingRollOverride
+  modifier?: CastingRollOverride
+  rulesEdition?: '2014' | '2024'
+  levelAmounts?: Record<string | number, number | null>
+  spellAmounts?: Record<string, number | null>
+  spellBonusAction?: Record<string, boolean>
+  contribution?: CastingContribution
+  id: string
+  className: string
+  subclass?: string
+  level: number
+  stat: DndStat
+  slots?: number[]
+  bypassSlotFilter?: boolean
+  spells?: string[]
+  levelCadences?: Record<number, string>
+  levelBonusAction?: Record<number, boolean>
+  spellCadenceMap?: Record<string, string>
+  actionType?: 'Action' | 'Bonus Action'
+  resourceValue?: number
+  refreshRate?: string
+  resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
+}
+
 export interface Monster {
+  id?: string
   bindings?: Record<string, import('./formula').NumericBinding>
   name: string
   nickname: string
@@ -959,6 +1052,7 @@ export interface Monster {
   alphaTraits: boolean
   size: string
   type?: string
+  subtype?: string
   alignment?: string
   languages: string
   AC: number
@@ -1003,6 +1097,7 @@ export interface Monster {
     truesight: number
   }
   sensesNotes: string
+  sensesList?: MonsterSenseItem[]
   passivePerception: {
     override: boolean
     overrideValue: number | null
@@ -1037,10 +1132,13 @@ export interface Monster {
     multiclass?: {
       enabled: boolean
       secondaryClass: string
+      secondarySubclass?: string
       secondaryLevel: number
       secondaryStat: DndStat
       secondarySaveDc?: number
       secondarySpellAttack?: number
+      classes?: SpellcastingClassEntry[]
+      extraClasses?: SpellcastingClassEntry[]
     }
     resourceType?: 'slots' | 'points' | 'focus' | 'pact' | 'at_will'
     refreshRate?: 'long_rest' | 'short_rest' | 'downtime'
@@ -1056,7 +1154,10 @@ export interface Monster {
     preparedInterval?: string
     preparedSpellList?: string
     spellCastingTimeMap?: Record<string, string>
-    metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate: string; options: string[] }
+    metamagic?: { enabled: boolean; sorceryPoints: number; points?: number; refreshRate: string; options: string[] }
+    cantripSwitch?: boolean
+    cantripSwitchCount?: number
+    cantripSwitchInterval?: string
     automaticGrants?: boolean
     spellGrants?: CastingSpellGrant[]
     primarySourceEnabled?: boolean
@@ -1071,37 +1172,7 @@ export interface Monster {
     spellAmountMap?: Record<string, number | null>
     spellBonusActionMap?: Record<string, boolean>
     contribution?: CastingContribution
-    classes?: Array<{
-      automaticGrants?: boolean
-      spellGrants?: CastingSpellGrant[]
-      preparedCountOverride?: number
-      preparedInterval?: string
-      preparedSpellList?: string
-      spellCastingTimeMap?: Record<string, string>
-      save?: CastingRollOverride
-      attack?: CastingRollOverride
-      modifier?: CastingRollOverride
-      rulesEdition?: '2014' | '2024'
-      levelAmounts?: Record<string | number, number | null>
-      spellAmounts?: Record<string, number | null>
-      spellBonusAction?: Record<string, boolean>
-      contribution?: CastingContribution
-      id: string
-      className: string
-      subclass?: string
-      level: number
-      stat: DndStat
-      slots?: number[]
-      bypassSlotFilter?: boolean
-      spells?: string[]
-      levelCadences?: Record<number, string>
-      levelBonusAction?: Record<number, boolean>
-      spellCadenceMap?: Record<string, string>
-      actionType?: 'Action' | 'Bonus Action'
-      resourceValue?: number
-      refreshRate?: string
-      resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
-    }>
+    classes?: SpellcastingClassEntry[]
   }
   attacks: DndAttack[]
   actions: MonsterAction[]
@@ -1167,6 +1238,16 @@ export interface Monster {
   hpRiderSubrows?: Partial<Record<HpRiderGroup, boolean>>
   defenseSchedules?: Partial<Record<DefenseEffect, RiderSchedule>>
   customMacros?: Record<string, string>
+  splitVulnRows?: boolean
+  splitResRows?: boolean
+  splitImmRows?: boolean
+  autoSplitDefenses?: boolean
+  autoSortDefenses?: boolean
+  defenseCategoryOrder?: string[]
+  splitSpeedRiderRows?: boolean
+  splitHpRiderRows?: boolean
+  splitAcRiderRows?: boolean
+  customDatabase?: { presets?: any[]; [key: string]: unknown }
 }
 
 export interface TemplateMetadata<T> {
@@ -1261,6 +1342,34 @@ export function defaultAction(id = uuidv4()): MonsterAction {
   }
 }
 
+export function defaultReaction(id = uuidv4()): MonsterReaction {
+  return {
+    name: 'New Reaction',
+    id,
+    description: '',
+    trigger: '',
+    triggerPlacement: 'start',
+    limitedUse: {
+      count: 0,
+      rate: 'DAY',
+    },
+    recharge: '',
+    stat: 'none',
+    save: {
+      override: false,
+      overrideValue: 0,
+    },
+    range: '',
+    effects: [],
+    customPreamble: false,
+    stagePool: 'all',
+    availability: {
+      predicate: 'always',
+    },
+    crAnnotation: defaultCrAnnotation(),
+  }
+}
+
 export function defaultAttack(): DndAttack {
   return {
     id: uuidv4(),
@@ -1341,11 +1450,7 @@ export interface CharacterActor {
     current: number[]
     max: number[]
   }
-  portrait?: {
-    url: string
-    position: 'none' | 'left' | 'right'
-    caption?: string
-  }
+  portrait?: MonsterPortrait
   savingThrows?: Partial<Record<DndStat, boolean>>
   skills?: Record<string, { proficient: boolean; expertise?: boolean }>
   spellcasting?: {

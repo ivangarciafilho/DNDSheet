@@ -136,7 +136,13 @@ try {
   assert.ok(themeProbe.every((result) => result.headContrast >= 4.5 && result.cellContrast >= 4.5), `Theme text should retain 4.5:1 contrast: ${JSON.stringify(themeProbe)}`)
   assert.ok(themeProbe.every((result) => result.advContrast >= 4.5 && result.disadvContrast >= 4.5), `Initiative advantage/disadvantage ink should retain 4.5:1 contrast: ${JSON.stringify(themeProbe.map(({ theme, advContrast, disadvContrast }) => ({ theme, advContrast, disadvContrast })))}`)
 
-  // A13.9 f: in print media numbers keep their weight and bloodied numbers keep their red ink.
+  // A13.9 f / f2: in print media numbers keep their weight and bloodied numbers keep their red ink.
+  const savedExtHp = await evaluate(`() => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster')
+    const prev = JSON.parse(JSON.stringify(monster.extendedHp || {}))
+    monster.extendedHp = { ...prev, showBloodied: true, bloodiedSource: 'half_hp' }
+    return prev
+  }`)
   await send('Emulation.setEmulatedMedia', { media: 'print' })
   const printProbe = await evaluate(`async () => {
     await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
@@ -147,7 +153,12 @@ try {
     return { media: matchMedia('print').matches, count: nums.length, light, reds: reds.length, notRed }
   }`)
   await send('Emulation.setEmulatedMedia', { media: '' })
+  await evaluate(`() => {
+    const monster = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster')
+    monster.extendedHp = ${JSON.stringify(savedExtHp)}
+  }`)
   assert.ok(printProbe.media && printProbe.count > 0, `Print emulation should apply to a rendered sheet: ${JSON.stringify(printProbe)}`)
+  assert.ok(printProbe.reds > 0, `Bloodied print probe must measure at least one rendered red bloodied number: ${JSON.stringify(printProbe)}`)
   assert.deepEqual(printProbe.light, [], 'Numbers should stay bold in print')
   assert.deepEqual(printProbe.notRed, [], 'Bloodied numbers should stay red in print')
   console.log('Print probe:', JSON.stringify(printProbe))

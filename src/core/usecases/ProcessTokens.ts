@@ -1,6 +1,6 @@
 import { formatLimitedUses } from '../domain/cadence.ts'
 import { CR, getCrByNumber, getCrByString } from '../domain/cr-tables.ts'
-import { avgRoll, renderBonus, statModifier } from '../domain/math-utils.ts'
+import { avgHP, avgRoll, renderBonus, statModifier } from '../domain/math-utils.ts'
 import { renderFormulaMacros } from '../domain/formula.ts'
 import { formulaContextForMonster } from '../domain/formula-context.ts'
 import type {
@@ -82,7 +82,7 @@ export function processTokens(
     return String(monster.AC ?? 10)
   })
   text = text.replace(/\{HP\}/gi, () => {
-    const avg = monster.avgHp || (monster.HP ? Math.floor(monster.HP.HD * ((monster.HP.type + 1) / 2) + monster.HP.modifier) : 10)
+    const avg = monster.HP ? avgHP(monster.HP) : 10
     return String(avg)
   })
   text = text.replace(/\{(CANTRIP_TIER|TIER)\}/gi, () => {

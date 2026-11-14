@@ -75,3 +75,26 @@ test('pool transitions retain costs, position, unknown membership metadata and u
   assert.deepEqual(result.patch?.legendaryActions?.actions, [{ actionId: 'other', cost: 1 }])
   assert.equal(result.patch?.legendaryActions?.count, monster.legendaryActions.count)
 })
+
+test('roleTransition preserves action-family parity fields and reaction availability sets across action <-> reaction', () => {
+  const monster = defaultMonster()
+  monster.actions = [{
+    ...defaultAction('action-src'),
+    name: 'Arcane Rebuke',
+    description: 'Zaps attacker.',
+    stat: 'CON',
+    save: { override: true, overrideValue: 16 },
+    stagePool: 2,
+    availability: { stagePools: [1, 2], predicate: 'while_bloodied', customCondition: 'while conscious' },
+    customPreamble: true,
+    crAnnotation: { ...defaultCrAnnotation(), include: true, maxDamage: 24 },
+  }]
+  const toRx = roleTransition(monster, 'action-src', 'action', 'reaction', 'rx-copy')
+  const copiedRx = toRx.patch?.reactions?.find((r) => r.id === 'rx-copy')
+  assert.ok(copiedRx)
+  assert.equal(copiedRx.stat, 'CON')
+  assert.deepEqual(copiedRx.save, { override: true, overrideValue: 16 })
+  assert.deepEqual(copiedRx.availability, { stagePools: [1, 2], predicate: 'while_bloodied', customCondition: 'while conscious' })
+  assert.equal(copiedRx.customPreamble, true)
+  assert.equal(copiedRx.crAnnotation?.include, false)
+})

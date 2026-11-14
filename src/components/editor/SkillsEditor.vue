@@ -1258,11 +1258,11 @@ export default defineComponent({
     }
 
     const effectiveSkillActionType = (skill: MonsterSkill): 'Action' | 'Bonus Action' =>
-      typeof skill.bonusAction === 'boolean' ? (skill.bonusAction ? 'Bonus Action' : 'Action') : groupActionTypeFor(skill.key)
+      typeof skill.bonusAction === 'boolean' ? (skill.bonusAction ? 'Bonus Action' : 'Action') : groupActionTypeFor(String(skill.key))
 
     const toggleSkillActionType = (skill: MonsterSkill) => {
       const next = effectiveSkillActionType(skill) === 'Action' ? 'Bonus Action' : 'Action'
-      skill.bonusAction = next === groupActionTypeFor(skill.key) ? undefined : next === 'Bonus Action'
+      skill.bonusAction = next === groupActionTypeFor(String(skill.key)) ? undefined : next === 'Bonus Action'
     }
 
     const formatModifier = (val: number): string => {
@@ -1297,7 +1297,8 @@ export default defineComponent({
 
     const getSkillOverrideOptions = (s: MonsterSkill) => {
       const pb = monster.proficiency ?? 2
-      const statName = SKILL[s.key as keyof typeof SKILL] || 'DEX'
+      const skillEntry = SKILL[String(s.key).toUpperCase() as keyof typeof SKILL]
+      const statName = skillEntry?.stat || 'DEX'
       const statVal = monster.stats[statName as keyof typeof monster.stats] ?? 10
       const mod = Math.floor((statVal - 10) / 2)
       return [
@@ -1326,8 +1327,13 @@ export default defineComponent({
 
     const getPassiveOverrideOptions = (pKey: string) => {
       const pb = monster.proficiency ?? 2
-      const skillName = pKey === 'animalHandling' ? 'animal-handling' : pKey
-      const statName = SKILL[skillName as keyof typeof SKILL] || 'WIS'
+      const skillKey =
+        pKey === 'animalHandling'
+          ? 'ANIMAL_HANDLING'
+          : pKey === 'sleightOfHand'
+            ? 'SLIGHT_OF_HAND'
+            : pKey.toUpperCase()
+      const statName = SKILL[skillKey as keyof typeof SKILL]?.stat || 'WIS'
       const statVal = monster.stats[statName as keyof typeof monster.stats] ?? 10
       const mod = Math.floor((statVal - 10) / 2)
       return [

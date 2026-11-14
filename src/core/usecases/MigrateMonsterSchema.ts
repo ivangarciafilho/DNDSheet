@@ -1,4 +1,5 @@
 import { normalizeCastingSpellGrants } from '../domain/casting-source-selection.ts'
+import { sanitizeReactionAvailability } from '../domain/entry-display.ts'
 import { normalizeRandomTables } from '../domain/random-table.ts'
 import { characterProficiency } from '../domain/math-utils.ts'
 import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts'
@@ -436,7 +437,7 @@ export function migrateMonsterSchema(raw: any): Monster {
 
   // Normalize Smart Defense Lists
   if (!Array.isArray(monster.resistancesList)) {
-    monster.resistancesList = (monster.resistances || []).map((r, idx) => ({
+    monster.resistancesList = (monster.resistances || []).map((r: string, idx: number) => ({
       id: 'res-' + idx + '-' + Date.now(),
       type: String(r),
       nonmagical: false,
@@ -447,7 +448,7 @@ export function migrateMonsterSchema(raw: any): Monster {
     }))
   }
   if (!Array.isArray(monster.immunitiesList)) {
-    monster.immunitiesList = (monster.immunities || []).map((r, idx) => ({
+    monster.immunitiesList = (monster.immunities || []).map((r: string, idx: number) => ({
       id: 'imm-' + idx + '-' + Date.now(),
       type: String(r),
       nonmagical: false,
@@ -458,7 +459,7 @@ export function migrateMonsterSchema(raw: any): Monster {
     }))
   }
   if (!Array.isArray(monster.vulnerabilitiesList)) {
-    monster.vulnerabilitiesList = (monster.vulnerabilities || []).map((r, idx) => ({
+    monster.vulnerabilitiesList = (monster.vulnerabilities || []).map((r: string, idx: number) => ({
       id: 'vuln-' + idx + '-' + Date.now(),
       type: String(r),
       nonmagical: false,
@@ -469,7 +470,7 @@ export function migrateMonsterSchema(raw: any): Monster {
     }))
   }
   if (!Array.isArray(monster.conditionsList)) {
-    monster.conditionsList = (monster.conditions || []).map((r, idx) => ({
+    monster.conditionsList = (monster.conditions || []).map((r: string, idx: number) => ({
       id: 'cond-' + idx + '-' + Date.now(),
       type: String(r),
       nonmagical: false,
@@ -484,8 +485,8 @@ export function migrateMonsterSchema(raw: any): Monster {
   if (!Array.isArray(monster.languagesList)) {
     monster.languagesList = []
     if (typeof monster.languages === 'string' && monster.languages.trim() && monster.languages.trim() !== '—') {
-      const rawItems = monster.languages.split(/[,;]/).map(s => s.trim()).filter(Boolean)
-      rawItems.forEach((lang, idx) => {
+      const rawItems = monster.languages.split(/[,;]/).map((s: string) => s.trim()).filter(Boolean)
+      rawItems.forEach((lang: string, idx: number) => {
         const isTelepathy = lang.toLowerCase().includes('telepathy')
         let range = 120
         const matchRange = lang.match(/(\d+)\s*ft/i)
@@ -535,6 +536,21 @@ export function migrateMonsterSchema(raw: any): Monster {
     if (!trait.rechargeSection) trait.rechargeSection = ''
     if (trait.isConditional === undefined) trait.isConditional = false
     if (!trait.conditionalTrigger) trait.conditionalTrigger = ''
+  }
+
+  // A11.6: sanitize reaction availability sets & trigger placement while preserving legacy minimal records and stagePool.
+  for (const reaction of monster.reactions || []) {
+    if (reaction.triggerPlacement !== undefined && reaction.triggerPlacement !== 'start' && reaction.triggerPlacement !== 'end') {
+      reaction.triggerPlacement = 'start'
+    }
+    if (reaction.availability !== undefined) {
+      const normalizedAvailability = sanitizeReactionAvailability(reaction.availability)
+      if (normalizedAvailability) {
+        reaction.availability = normalizedAvailability
+      } else {
+        delete reaction.availability
+      }
+    }
   }
 
   // A11.9: optional field, normalised on every load so hand-edited or partial JSON cannot break the editor.

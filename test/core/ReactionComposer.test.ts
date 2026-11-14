@@ -38,3 +38,20 @@ test('reaction usage rejects ambiguous input and accepts supported free-form rat
   assert.strictEqual(validateReactionCell('name', '  '), 'Name is required')
   assert.deepStrictEqual(reactionCellPatch(reaction(), 'usage', 'three/day'), {})
 })
+
+test('A11.6: reaction composer supports action-family mechanics, resolved bonuses/DCs, and trigger placement', () => {
+  const parryPlusCounter = reaction({
+    attackReach: 'melee',
+    attackSource: 'weapon',
+    stat: 'DEX',
+    triggerPlacement: 'end',
+  })
+  const rows = reactionChainView(parryPlusCounter, '1/Day', { attackBonus: 9, saveDc: 16 })
+  const cells = rows.flatMap((r) => r.cells)
+  assert.ok(cells.some((c) => c.id === 'attack' && c.text === 'Melee Weapon Attack'))
+  assert.ok(cells.some((c) => c.id === 'attack-bonus' && c.text === '+9' && c.auto === true))
+  assert.ok(cells.some((c) => c.id === 'save-ability' && c.text === 'Dexterity Save'))
+  assert.ok(cells.some((c) => c.id === 'save-dc' && c.text.includes('16')))
+  assert.deepStrictEqual(reactionCellPatch(parryPlusCounter, 'trigger-placement', 'end'), { triggerPlacement: 'end' })
+  assert.deepStrictEqual(reactionCellPatch(parryPlusCounter, 'save-ability', 'WIS'), { stat: 'WIS' })
+})

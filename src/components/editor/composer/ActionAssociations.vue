@@ -53,7 +53,7 @@ const sourceName = (id: string) => monster.attacks.find(source => source.id === 
 const apply = (change: AssociationChange, message: string) => {
   const patch = associationPatch(monster, props.role, change)
   if (!Object.keys(patch).length) { status.value = 'Membership changed. Review the current sources and try again.'; return }
-  monster.$patch(patch)
+  monster.$patch((state) => { Object.assign(state, patch) })
   status.value = message
   emit('changed', props.role)
 }

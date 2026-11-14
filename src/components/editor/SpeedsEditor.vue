@@ -611,6 +611,7 @@ import { STANDARD_MOVEMENTS } from 'src/data/MOVEMENT'
 import { useI18n } from 'vue-i18n'
 import { basicArrayFilter } from '../filters'
 import { validateNumber } from './numberInput'
+import { MonsterSpeedTraversal } from '../models'
 import SwapButtons from './widgets/SwapButtons.vue'
 import {
   SPEED_ACTION_RIDER_PRESETS,
@@ -625,19 +626,23 @@ export default defineComponent({
     const { t } = useI18n()
     const monster = useMonsterStore()
 
-    if (!monster.speedTraversal) {
-      monster.speedTraversal = {
-        ignoresDifficultTerrain: false,
-        bonusActionDash: false,
-        bonusActionDodge: false,
-        bonusActionDisengage: false,
-        bonusActionSpeed: 0,
-        trackingSpeed: 0,
-        stealthSpeed: 0,
-        note: '',
+    const ensureSpeedTraversal = (): MonsterSpeedTraversal => {
+      if (!monster.speedTraversal) {
+        monster.speedTraversal = {
+          ignoresDifficultTerrain: false,
+          bonusActionDash: false,
+          bonusActionDodge: false,
+          bonusActionDisengage: false,
+          bonusActionSpeed: 0,
+          trackingSpeed: 0,
+          stealthSpeed: 0,
+          note: '',
+        }
       }
+      return monster.speedTraversal
     }
-    const speedTraversal = computed(() => monster.speedTraversal)
+    ensureSpeedTraversal()
+    const speedTraversal = computed(() => ensureSpeedTraversal())
 
     const defaultSpeedOptions = computed(() => {
       return STANDARD_MOVEMENTS.map((m) => t(`monster.movement.type.${m}`)).sort((a, b) => a.localeCompare(b))
@@ -739,14 +744,15 @@ const shuntDamageOptions = [
     ]
 
     const actionRiders = computed(() => {
-      return monster.speedTraversal.actionRiders || []
+      return speedTraversal.value.actionRiders || []
     })
 
     const addCustomActionRider = () => {
-      if (!monster.speedTraversal.actionRiders) {
-        monster.speedTraversal.actionRiders = []
+      const st = speedTraversal.value
+      if (!st.actionRiders) {
+        st.actionRiders = []
       }
-      monster.speedTraversal.actionRiders.push({
+      st.actionRiders.push({
         id: `rider-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         action: 'Dash',
         actionType: 'Bonus Action',
@@ -755,10 +761,11 @@ const shuntDamageOptions = [
     }
 
     const addPresetRider = (preset: typeof SPEED_ACTION_RIDER_PRESETS[number]) => {
-      if (!monster.speedTraversal.actionRiders) {
-        monster.speedTraversal.actionRiders = []
+      const st = speedTraversal.value
+      if (!st.actionRiders) {
+        st.actionRiders = []
       }
-      monster.speedTraversal.actionRiders.push({
+      st.actionRiders.push({
         id: `rider-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         action: preset.action,
         actionType: preset.actionType,
@@ -767,8 +774,9 @@ const shuntDamageOptions = [
     }
 
     const removeActionRider = (idx: number) => {
-      if (monster.speedTraversal.actionRiders) {
-        monster.speedTraversal.actionRiders.splice(idx, 1)
+      const st = speedTraversal.value
+      if (st.actionRiders) {
+        st.actionRiders.splice(idx, 1)
       }
     }
 

@@ -1,4 +1,5 @@
 import { characterVitals, characterVitalText } from '../domain/character-truth.ts'
+import { formatReactionAvailability } from '../domain/entry-display.ts'
 import { structuredAttackBonus } from '../domain/structured-attack.ts'
 import { actionRecharge } from '../domain/action-usage.ts'
 import { formatLimitedUses } from '../domain/cadence.ts'
@@ -410,7 +411,31 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
   if (Array.isArray(monster.reactions) && monster.reactions.length > 0) {
     lines.push('### Reactions')
     for (const rx of monster.reactions) {
-      lines.push(`***${rx.name}.*** ${rx.description}`)
+      const { poolsLabel, conditionLabel } = formatReactionAvailability(rx, monster.paragonConfig?.phaseName || 'Stage')
+      const availabilityTags = [poolsLabel ? `[${poolsLabel}]` : '', conditionLabel ? `[${conditionLabel}]` : ''].filter(Boolean).join(' ')
+      const rxAsAction = rx as unknown as Monster['actions'][number]
+      const recharge = actionRecharge(rx)
+      const hasUsage = Boolean(recharge || (rx.limitedUse?.count ?? 0) > 0)
+      const isStructured = style === '2024' && hasStructuredAbility(rxAsAction)
+      if (!availabilityTags && !hasUsage && !isStructured && rx.triggerPlacement !== 'end') {
+        lines.push(`***${rx.name}.*** ${rx.description}`)
+        lines.push('')
+        continue
+      }
+      const usageSuffix = !isStructured && hasUsage
+        ? recharge
+          ? ` (${/^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`})`
+          : ` (${formatLimitedUses(rx.limitedUse.count, rx.limitedUse.rate)})`
+        : ''
+      const lead = `${actionLead(rxAsAction)}${usageSuffix}${availabilityTags ? ` ${availabilityTags}` : ''}`
+      const prose = actionText(rxAsAction)
+      const triggerText = rx.trigger?.trim() ? `*Trigger:* ${rx.trigger.trim()}` : ''
+      const body = !triggerText
+        ? prose
+        : rx.triggerPlacement === 'end'
+          ? `${prose} ${triggerText}`.trim()
+          : `${triggerText} ${prose}`.trim()
+      lines.push(`***${lead}.*** ${body}`)
       lines.push('')
     }
   }
@@ -462,7 +487,8 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
 
   // Runehammer Escalation Track
   if (monster.runehammerTrack?.enabled && monster.runehammerTrack.events?.length) {
-    lines.push(`### Escalation Track (${monster.runehammerTrack.die.toUpperCase()})`)
+    const trackDie = (monster.runehammerTrack.die || monster.runehammerTrack.timerDie || 'd4').toUpperCase()
+    lines.push(`### Escalation Track (${trackDie})`)
     for (const ev of monster.runehammerTrack.events) {
       lines.push(`- **Round ${ev.round}: ${ev.name}** — ${ev.effect}`)
     }

@@ -1,11 +1,11 @@
-import type { ChainCellView, ChainRowView } from './composer-chain.ts'
+import type { ChainCellView, ChainContext, ChainRowView } from './composer-chain.ts'
 import { chainView, cellPatch, cellValue, validateCell } from './composer-chain.ts'
 import type { MonsterAction, MonsterReaction } from './types.ts'
 
 const clean = (value: unknown): string => (typeof value === 'string' ? value.trim() : '')
 
-export function reactionChainView(reaction: MonsterReaction, usage: string): ChainRowView[] {
- const rows=chainView('action',reaction as unknown as Partial<MonsterAction>,{usage}).filter(row=>row.row!=='prose')
+export function reactionChainView(reaction: MonsterReaction, usage: string, context: Omit<ChainContext, 'usage'> = {}): ChainRowView[] {
+ const rows=chainView('action',reaction as unknown as Partial<MonsterAction>,{usage,...context}).filter(row=>row.row!=='prose')
  // The trigger owns its own row directly under the head, ahead of rolls and targets.
  const trigger:ChainCellView={id:'trigger',label:'Trigger',row:'trigger',editor:'text',state:clean(reaction.trigger)?'set':'empty',text:clean(reaction.trigger)||'Trigger',legacy:false}
  const head=rows.findIndex(row=>row.row==='head')

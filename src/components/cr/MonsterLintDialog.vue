@@ -143,7 +143,7 @@ export default defineComponent({
 
     const issues = computed<MonsterLintIssue[]>(() => {
       const monsterData = monsterStore.$state as unknown as Monster
-      return lintMonster(monsterData, spellsStore.spells)
+      return lintMonster(monsterData, spellsStore.allSpells)
     })
 
     const errorCount = computed(() => issues.value.filter((i) => i.severity === 'ERROR').length)

@@ -344,6 +344,24 @@ export function buildAttackInfo(
   }
   data.traits.sort((a, b) => b.damage - a.damage)
 
+  // Opted-in Reactions (never alters CR unless reaction.crAnnotation.include is true)
+  for (const reaction of monster.reactions || []) {
+    if (reaction.crAnnotation?.include) {
+      data.actions.push({
+        name: reaction.name,
+        damage:
+          (reaction.crAnnotation.maxDamage || 0) *
+          (reaction.crAnnotation.multitarget ? 2 : 1),
+        limited: (reaction.limitedUse?.count || 0) > 0 || (reaction.recharge ?? '') !== '',
+        uses: reaction.limitedUse?.count || 0,
+        save: reaction.crAnnotation.maxSave || 0,
+        toHit: reaction.crAnnotation.maxModifier || 0,
+        type: 'Action',
+      })
+    }
+  }
+  data.actions.sort((a, b) => b.damage - a.damage)
+
   // Lair Actions
   for (let idx = 0; idx < (monster.lairActions || []).length; idx++) {
     const la = monster.lairActions[idx]
@@ -701,51 +719,41 @@ export function calculateCr(
     })
   }
 
-  // Trait and action multipliers
-  for (const action of monster.actions || []) {
-    const ann = action.crAnnotation
-    if (ann?.include && typeof ann.ehpMultiplier === 'number' && Number.isFinite(ann.ehpMultiplier) && ann.ehpMultiplier !== 1) {
-      ehpModifierList.push({
-        title: action.name,
-        subtitle: 'Action',
-        type: 'Action',
-        value: `x${ann.ehpMultiplier.toFixed(1)}`,
-      })
-    }
-  }
-  for (const trait of monster.traits || []) {
-    const ann = trait.crAnnotation
-    if (ann?.include && typeof ann.ehpMultiplier === 'number' && Number.isFinite(ann.ehpMultiplier) && ann.ehpMultiplier !== 1) {
-      ehpModifierList.push({
-        title: trait.name,
-        subtitle: 'Trait',
-        type: 'Trait',
-        value: `x${ann.ehpMultiplier.toFixed(1)}`,
-      })
+  // Trait, action, and reaction multipliers
+  for (const [label, entries] of [
+    ['Action', monster.actions || []],
+    ['Reaction', monster.reactions || []],
+    ['Trait', monster.traits || []],
+  ] as const) {
+    for (const entry of entries) {
+      const ann = entry.crAnnotation
+      if (ann?.include && typeof ann.ehpMultiplier === 'number' && Number.isFinite(ann.ehpMultiplier) && ann.ehpMultiplier !== 1) {
+        ehpModifierList.push({
+          title: entry.name,
+          subtitle: label,
+          type: label,
+          value: `x${ann.ehpMultiplier.toFixed(1)}`,
+        })
+      }
     }
   }
 
-  // Trait and action additions
-  for (const action of monster.actions || []) {
-    const ann = action.crAnnotation
-    if (ann?.include && typeof ann.ehpModifier === 'number' && Number.isFinite(ann.ehpModifier) && ann.ehpModifier !== 0) {
-      ehpModifierList.push({
-        title: action.name,
-        subtitle: 'Action',
-        type: 'Action',
-        value: renderBonus(ann.ehpModifier),
-      })
-    }
-  }
-  for (const trait of monster.traits || []) {
-    const ann = trait.crAnnotation
-    if (ann?.include && typeof ann.ehpModifier === 'number' && Number.isFinite(ann.ehpModifier) && ann.ehpModifier !== 0) {
-      ehpModifierList.push({
-        title: trait.name,
-        subtitle: 'Trait',
-        type: 'Trait',
-        value: renderBonus(ann.ehpModifier),
-      })
+  // Trait, action, and reaction additions
+  for (const [label, entries] of [
+    ['Action', monster.actions || []],
+    ['Reaction', monster.reactions || []],
+    ['Trait', monster.traits || []],
+  ] as const) {
+    for (const entry of entries) {
+      const ann = entry.crAnnotation
+      if (ann?.include && typeof ann.ehpModifier === 'number' && Number.isFinite(ann.ehpModifier) && ann.ehpModifier !== 0) {
+        ehpModifierList.push({
+          title: entry.name,
+          subtitle: label,
+          type: label,
+          value: renderBonus(ann.ehpModifier),
+        })
+      }
     }
   }
 
@@ -754,35 +762,19 @@ export function calculateCr(
   const baseHp = Number.isFinite(rawBaseHp) ? rawBaseHp : 1
   let ehpVal = baseHp * resMult * immMult * vulnMult
 
-  for (const action of monster.actions || []) {
-    if (action.crAnnotation?.include && typeof action.crAnnotation.ehpMultiplier === 'number' && Number.isFinite(action.crAnnotation.ehpMultiplier)) {
-      ehpVal *= action.crAnnotation.ehpMultiplier
-    }
-  }
-  for (const la of monster.lairActions || []) {
-    if (la.crAnnotation?.include && typeof la.crAnnotation.ehpMultiplier === 'number' && Number.isFinite(la.crAnnotation.ehpMultiplier)) {
-      ehpVal *= la.crAnnotation.ehpMultiplier
-    }
-  }
-  for (const trait of monster.traits || []) {
-    if (trait.crAnnotation?.include && typeof trait.crAnnotation.ehpMultiplier === 'number' && Number.isFinite(trait.crAnnotation.ehpMultiplier)) {
-      ehpVal *= trait.crAnnotation.ehpMultiplier
+  for (const entries of [monster.actions || [], monster.reactions || [], monster.lairActions || [], monster.traits || []]) {
+    for (const entry of entries) {
+      if (entry.crAnnotation?.include && typeof entry.crAnnotation.ehpMultiplier === 'number' && Number.isFinite(entry.crAnnotation.ehpMultiplier)) {
+        ehpVal *= entry.crAnnotation.ehpMultiplier
+      }
     }
   }
 
-  for (const action of monster.actions || []) {
-    if (action.crAnnotation?.include && typeof action.crAnnotation.ehpModifier === 'number' && Number.isFinite(action.crAnnotation.ehpModifier)) {
-      ehpVal += action.crAnnotation.ehpModifier
-    }
-  }
-  for (const la of monster.lairActions || []) {
-    if (la.crAnnotation?.include && typeof la.crAnnotation.ehpModifier === 'number' && Number.isFinite(la.crAnnotation.ehpModifier)) {
-      ehpVal += la.crAnnotation.ehpModifier
-    }
-  }
-  for (const trait of monster.traits || []) {
-    if (trait.crAnnotation?.include && typeof trait.crAnnotation.ehpModifier === 'number' && Number.isFinite(trait.crAnnotation.ehpModifier)) {
-      ehpVal += trait.crAnnotation.ehpModifier
+  for (const entries of [monster.actions || [], monster.reactions || [], monster.lairActions || [], monster.traits || []]) {
+    for (const entry of entries) {
+      if (entry.crAnnotation?.include && typeof entry.crAnnotation.ehpModifier === 'number' && Number.isFinite(entry.crAnnotation.ehpModifier)) {
+        ehpVal += entry.crAnnotation.ehpModifier
+      }
     }
   }
 
@@ -807,26 +799,21 @@ export function calculateCr(
 
   const rawAc = Number.isFinite(monster.AC) ? monster.AC : (parseInt(String(monster.AC), 10) || 10)
   let eacVal = rawAc + saveAcBonus
-  for (const action of monster.actions || []) {
-    if (action.crAnnotation?.include && typeof action.crAnnotation.acModifier === 'number' && Number.isFinite(action.crAnnotation.acModifier) && action.crAnnotation.acModifier !== 0) {
-      eacModifierList.push({
-        title: action.name,
-        subtitle: 'Action',
-        type: 'Action',
-        value: renderBonus(action.crAnnotation.acModifier),
-      })
-      eacVal += action.crAnnotation.acModifier
-    }
-  }
-  for (const trait of monster.traits || []) {
-    if (trait.crAnnotation?.include && typeof trait.crAnnotation.acModifier === 'number' && Number.isFinite(trait.crAnnotation.acModifier) && trait.crAnnotation.acModifier !== 0) {
-      eacModifierList.push({
-        title: trait.name,
-        subtitle: 'Trait',
-        type: 'Trait',
-        value: renderBonus(trait.crAnnotation.acModifier),
-      })
-      eacVal += trait.crAnnotation.acModifier
+  for (const [label, entries] of [
+    ['Action', monster.actions || []],
+    ['Reaction', monster.reactions || []],
+    ['Trait', monster.traits || []],
+  ] as const) {
+    for (const entry of entries) {
+      if (entry.crAnnotation?.include && typeof entry.crAnnotation.acModifier === 'number' && Number.isFinite(entry.crAnnotation.acModifier) && entry.crAnnotation.acModifier !== 0) {
+        eacModifierList.push({
+          title: entry.name,
+          subtitle: label,
+          type: label,
+          value: renderBonus(entry.crAnnotation.acModifier),
+        })
+        eacVal += entry.crAnnotation.acModifier
+      }
     }
   }
 

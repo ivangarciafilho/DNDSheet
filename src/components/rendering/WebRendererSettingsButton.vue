@@ -152,11 +152,19 @@
 </template>
 
 <script lang="ts">
-import { useEditorStore } from 'src/stores/editor-store'
+import { useEditorStore, VisualTheme } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent } from 'vue'
 
-export const THEME_OPTIONS = [
+export interface ThemeOption {
+  label: string
+  value: VisualTheme
+  category: string
+  icon: string
+  color: string
+}
+
+export const THEME_OPTIONS: ThemeOption[] = [
   { label: 'Classic WotC Parchment', value: 'wotc', category: 'Standard', icon: 'auto_stories', color: 'amber-8' },
   { label: 'Printer Friendly (B&W)', value: 'printer', category: 'Standard', icon: 'print', color: 'grey-8' },
   { label: 'Lovecraftian Gothic-Golden', value: 'lovecraft_golden', category: 'Lovecraftian', icon: 'shield_moon', color: 'amber-5' },

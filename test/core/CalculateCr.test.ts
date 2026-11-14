@@ -5,6 +5,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { calculateCr } from '../../src/core/usecases/CalculateCr.ts'
 import { migrateMonsterSchema } from '../../src/core/usecases/MigrateMonsterSchema.ts'
+import { defaultMonster, defaultReaction, defaultCrAnnotation } from '../../src/core/domain/types.ts'
 import type { DndSpell } from '../../src/core/domain/types.ts'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -60,4 +61,26 @@ test('DMG CR Solver - Golden SRD Monsters Validation', async (t) => {
       }
     })
   }
+})
+
+test('CalculateCr - A11.6 opted-in reaction crAnnotation updates CR/EAC while excluded reactions stay neutral', () => {
+  const base = defaultMonster()
+  base.AC = 14
+  base.reactions = [{
+    ...defaultReaction('rx-off'),
+    name: 'Excluded Riposte',
+    crAnnotation: { ...defaultCrAnnotation(), include: false, maxDamage: 60, acModifier: 4 },
+  }]
+  const withoutOptIn = calculateCr(base, {})
+  const optedIn = {
+    ...base,
+    reactions: [{
+      ...defaultReaction('rx-on'),
+      name: 'Shielding Riposte',
+      crAnnotation: { ...defaultCrAnnotation(), include: true, maxDamage: 60, maxSave: 16, acModifier: 4 },
+    }],
+  }
+  const withOptIn = calculateCr(optedIn, {})
+  assert.ok(withOptIn.eac >= withoutOptIn.eac + 4)
+  assert.ok(withOptIn.estimatedCr.cr > withoutOptIn.estimatedCr.cr)
 })
