@@ -71,7 +71,7 @@ export async function browserProbe(
           timer = setTimeout(() => {
             pending.delete(key)
             reject(Error(method + ' timed out'))
-          }, 30000)
+          }, 45000)
         pending.set(key, (m) => {
           clearTimeout(timer)
           pending.delete(key)

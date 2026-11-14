@@ -64,7 +64,7 @@ await run('lint', 'npx eslint --ext .js,.ts,.vue src test')
 await run('typecheck', 'npm run typecheck')
 if (await run('build', 'npx quasar build')) {
   const spa = await serve('dist/spa', 9230, '')
-  const url = 'http://localhost:9230/index.html#/'
+  const url = 'http://127.0.0.1:9230/index.html#/'
   await run('fuzz', 'node test/exhaustive-ui-fuzz.js', { DNDSHEET_E2E_URL: url })
   await run('help', 'node test/native-monster-roundtrip-browser-smoke.mjs && node test/statblock-fit-browser-smoke.mjs && node test/basic-riders-browser-smoke.mjs && node test/emergency-skills-browser-smoke.js && node test/emergency-spellcasting-browser-smoke.js && node test/casting-sources-browser-smoke.js && node test/shared-casting-editor-browser-smoke.js && node test/print-parity-browser-smoke.js && node test/emergency-rich-mechanics-browser-smoke.js && node test/emergency-containers-browser-smoke.js && node test/emergency-numeric-presentation-browser-smoke.js && node test/outcome-lifecycle-browser-smoke.js && node test/statblock-help-browser-smoke.js && node --experimental-strip-types test/release-matrix-browser-smoke.js && node tools/qa/overflow-probe.js && node test/build248-envelope-workflow-browser-smoke.js && node test/build249-workflow-browser-smoke.js && node test/budget-browser-probe.js && node test/build250-workflow-browser-smoke.js', { DNDSHEET_E2E_URL: url })
   await run('spell', 'node test/spell-plate-browser-smoke.js', { DNDSHEET_E2E_URL: url })
@@ -72,7 +72,7 @@ if (await run('build', 'npx quasar build')) {
 }
 if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`, DNDSHEET_BUILD_DIR: 'dist-pages' })) {
   const pages = await serve('dist-pages', 9231, PAGES_BASE)
-  const origin = `http://localhost:9231${PAGES_BASE}`
+  const origin = `http://127.0.0.1:9231${PAGES_BASE}`
   await check('pages-assets', async () => {
     const index = await (await fetch(`${origin}/index.html`)).text()
     const mask = await fetch(`${origin}/homebrew/masks/watercolor_splash_center.png`)
