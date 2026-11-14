@@ -1,0 +1,121 @@
+{
+  "build": 249,
+  "version": "2.4.3",
+  "slug": "repository-catalogs-help-and-workspace",
+  "date": "2026-11-14",
+  "branch": "build185-repairs",
+  "sourceCommit": "01a9ba94d64a0e26c1904b2926a8f29bb8cc09ae",
+  "baseCommit": "6f7a5cf79037073f2d5a7d3cb8d0b2ac15f2b8c9",
+  "pagesCommit": "2dc8305c45aa869ac7cd13fb20fe074cd08d1f56",
+  "tag": "rc-2.4.3-build-249-repository-catalogs-help-and-workspace",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "4c060f4b5f9ed3ef086effb223a1abb5a08273226b6566a15aee12460b5991d0",
+    "coreTests": {
+      "passed": 669,
+      "failed": 0
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2835
+    },
+    "typecheck": {
+      "diagnostics": 48,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 635,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 73.8,
+      "covered": 409,
+      "total": 554,
+      "floorPercent": 70
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 29,
+      "typecheck": 55,
+      "build": 70,
+      "fuzz": 183,
+      "help": 169,
+      "spell": 22,
+      "pagesBuild": 69,
+      "pagesAssets": 0,
+      "pagesFuzz": 336
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "655ef77b1382b3c4ea4d6a79fd0999170bac30b041bdb2f3b43169b79484e25d",
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.686369fd.js",
+        "status": 200,
+        "sha256": "8565ef66f409fa1aa438234088585a7d97a11a2f872eea2c94c05e0f5e375818",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.2189b89e.css",
+        "status": 200,
+        "sha256": "1cdac274cff083471b99bfef0e681243724b1d29bfeec5b10248e41ace053486",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "closedTasks": [
+    "A9.7",
+    "A9.10",
+    "A9.13",
+    "A11.2",
+    "A11.3",
+    "A11.4",
+    "A13.1",
+    "A13.2",
+    "A13.4",
+    "A13.7",
+    "H9",
+    "B5.2",
+    "B5.3",
+    "B5.4",
+    "B5.5",
+    "B5.6",
+    "B6.1",
+    "B6.2",
+    "B6.3",
+    "B6.4",
+    "B7.1",
+    "B7.2",
+    "B7.3",
+    "B7.4"
+  ],
+  "closedSections": [
+    "A9",
+    "A11",
+    "A13",
+    "B6",
+    "B7"
+  ],
+  "workloadDelta": {
+    "topLevelIds": {
+      "before": { "total": 273, "checked": 227, "open": 46 },
+      "after": { "total": 273, "checked": 251, "open": 22 },
+      "deltaChecked": 24,
+      "deltaOpen": -24
+    },
+    "rawCheckboxes": {
+      "before": { "total": 313, "checked": 267, "open": 46 },
+      "after": { "total": 313, "checked": 291, "open": 22 },
+      "deltaChecked": 24,
+      "deltaOpen": -24
+    }
+  }
+}

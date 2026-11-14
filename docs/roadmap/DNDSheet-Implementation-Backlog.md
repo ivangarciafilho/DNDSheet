@@ -1,3 +1,7 @@
+## Build 249 — Bindings & roll scaling, unified catalogs/help, local repository & creature library, workspace sections & presets
+
+The [Build 249 packet](DNDSheet-Build249-Repository-Catalogs-Help-and-Workspace.md) (source `01a9ba9`, Pages `2dc8305`, base `6f7a5cf`, tag `rc-2.4.3-build-249-repository-catalogs-help-and-workspace`, 10/10 gate with `669/669` core tests [`+13`], `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new, `help` coverage `73.8%` `409/554`, live Pages HTML & assets SHA-256 verified) closes **24 tasks** across four pillars (`A9.7`, `A9.10`, `A9.13`, `A11.2`–`A11.4`, `A13.1`, `A13.2`, `A13.4`, `A13.7`, `H9`, `B5.2`–`B5.6`, `B6.1`–`B6.4`, `B7.1`–`B7.4`). Whole sections `A9`, `A11`, `A13`, `B6`, and `B7` are now complete (`☑`), and `B5.1`–`B5.6` are closed (owner decisions `B5.7` and `H16` remain open). Measured backlog counts update from `273` top-level `**ID**` checkboxes (`227` checked / `46` open) to `251` checked / `22` open (`+24 / −24`), and from `313` raw checkboxes (`267` checked / `46` open) to `291` checked / `22` open (`+24 / −24`).
+
 ## Build 248 — Document envelope, rules policy, Track A checks, source-first tune & exports
 
 The [Build 248 packet](DNDSheet-Build248-Envelope-Rules-Checks-Tune-and-Export.md) (source `b7eda87`, Pages `440675b`, base `e17b185`, tag `rc-2.4.3-build-248-envelope-rules-checks-tune-and-export`, 10/10 gate with `656/656` core tests [`+14`], `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new, `help` coverage `72.7%` `389/535`) closes **25 tasks** across four pillars (`B1.1`, `B1.2`, `B1.3`, `B1.5`, `B8.1`, `B8.2`, `A12.0`, `A12.9`, `A12.10`, `B9.1`, `B9.2`, `B9.3`, `B2.1`–`B2.5`, `B3.2`–`B3.5`, `B4.2`–`B4.5`) and fulfills decision `D-02` (`spellcastingPlacement`). Whole sections `A12`, `B1`, `B2`, `B3`, `B4`, `B8`, and `B9` are now complete (`☑`). Measured backlog counts update from `273` top-level `**ID**` checkboxes (`202` checked / `71` open) to `227` checked / `46` open (`+25 / −25`), and from `313` raw checkboxes (`242` checked / `71` open) to `267` checked / `46` open (`+25 / −25`).
@@ -720,7 +724,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R3 · Numbers know their source
 
-#### A9 · NumericBinding fields ◐
+#### A9 · NumericBinding fields ☑
 
 > Pick `PB`, `CHA_MOD`, `HIT_DICE`… from grouped lists or write one formula — the value stays right.
 
@@ -735,12 +739,12 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A9.4** History ledger skips patches flagged `historySilent` · S
 - [x] **A9.5** `components/kit/useBindings.ts`: read/write binding for a path, live value, trace, error · M
 - [x] **A9.6** `components/kit/FormulaField.vue`: states §8.1, grouped options with icons/colours/values, "ƒ Custom formula…" first, trace HelpTip, broken state · L
-- [ ] **A9.7** **Active Build161: remaining inventory/lifecycle sweep** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M
+- [x] **A9.7** **Active Build161: remaining inventory/lifecycle sweep** Replace the inventory-confirmed `BasicsEditor` and studio/`AttackComposer` numeric consumers (`AttackPanel` was deleted in157); delete `DynamicReferenceSelect.vue` · M — closed (249): `FormulaField` adopted across `BasicsEditor.vue`, `AttackComposer.vue`, `ChainCell.vue`, `RollScalingPopover.vue`, and `RoleHeaderEditor.vue`; `DynamicReferenceSelect.vue` confirmed absent from `src/` & `test/`
 - [x] **A9.8** `test/core/Bindings.test.ts`: order, cycles, failure keeps value, no-op patch, unbind · M
 - [x] **A9.9** Browser sequence §8.5: CHA 20 → 22, DCs follow; undo once; reload keeps bindings · S
 - [x] **A9.11** Structured weapon attacks resolve their bonus by reach: ranged → DEX, finesse → the better of STR and DEX, melee → STR; today every structured weapon attack uses STR (*added A7*) · S — weaponAttackAbility (structured-attack.ts) with ranged, finesse, thrown and explicit-ability tests in StructuredAttack.test.ts; ticked on audit (197)
 - [x] **A9.12** CR estimate reads structured outcome damage (formulas in `outcomes`), not only description text; prove with an action that has no damage in its prose (*added A7*) · M — structuredOutcomeDamage (strongest hit/failure outcome, damage clauses averaged via the formula grammar) feeds multiattack rounds and lists unannotated actions; an explicit CR annotation still wins; 4 tests incl. a prose-free 6d6 breath = 21 (198)
-- [ ] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S
+- [x] **A9.10** Close: commit `numeric fields bind to references or formulas and stay in sync`, docs ritual · S — closed (249): section `A9` complete alongside `A9.7` & `A9.13` with `FieldTypes.test.ts` + `BindingsAndScaling.test.ts` and full 10/10 gate pass
 
 **Done when:** BND-001…008, REF-001 (fields), REF-002 (store revision) proven; DEF-09 closed.
 
@@ -768,7 +772,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A11 · Binding sweep ☐
+#### A11 · Binding sweep ☑
 
 > Every remaining number that has a source can be bound.
 
@@ -778,9 +782,9 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 - [x] **A11.0** Inventory script: all `type="number"` inputs (CR-154 static snapshot: 83 markers, not a semantic field count) with file, model path and label · S — `test/inventory.mjs` writes `DNDSheet-Control-Inventory.md`: 56 number inputs today (83 markers in the CR-154 snapshot) (199)
 - [x] **A11.1** Classify each: literal-only · binding-capable · derived (read-only) — table in the closing packet · M — `test/inventory.mjs` classifies all 53 remaining number inputs in `DNDSheet-Control-Inventory.md`: 41 literal (presentation 23, character sheet 11, tracker 2, spell data 2, CR annotation 1, slot table 1), 7 composer drafts owned by composer apply, 6 blocked on identity migration (anatomy parts, paragon phases, language rows); none derived (200)
-- [ ] **A11.2** Register binding-capable paths in `field-types.ts` · S — progress (200): the three migrated paths were already registered; the 6 blocked inputs need stable-id paths for `anatomy`, `paragonConfig.phaseConfigs` and legacy language rows first (field-types A9.2 note)
-- [ ] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M — progress (200): `spellcasting.level`, `spellcasting.classes[id=*].level` and `sensesList[id=*].observationMinutes` now use `FormulaField` (side effects kept via `@applied`); remaining binding-capable inputs are blocked (see A11.2)
-- [ ] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S — progress (216): audit: the only bare-integer option array left (`CharacterEditor` hit die `[6, 8, 10, 12]`) now shows d6…d12 labels with numeric values. The close commit still waits on A11.2/A11.3 (6 inputs blocked on stable ids)
+- [x] **A11.2** Register binding-capable paths in `field-types.ts` · S — closed (249): registered stable-ID paths `anatomyParts[id=*].{hp,ac,threshold}`, `paragonConfig.phaseConfigs[id=*].{initiativeBonus,hpOverride}`, and `languagesList[id=*].saveDc` in `field-types.ts` (`FieldTypes.test.ts`, `BindingsAndScaling.test.ts`)
+- [x] **A11.3** Migrate binding-capable inputs panel by panel to `FormulaField` · M — closed (249): migrated all 6 remaining blocked inputs (`AnatomyEditor.vue` `hp`/`ac`/`threshold` and `BasicsEditor.vue` `initiativeBonus`/`hpOverride`/`saveDc`) to `<formula-field>` with stable-ID migration (`MigrateMonsterSchema.ts`) and binding cleanup on deletion (`withoutEntryBindings`)
+- [x] **A11.4** Audit: no option array of bare integers remains; close: commit `remaining numeric fields accept references and formulas` · S — closed (249): `node test/inventory.mjs` shows `0` remaining blocked inputs; `BindingsAndScaling.test.ts` + `FieldTypes.test.ts` + 10/10 gate pass
 
 **Done when:** BND-009, BND-002 (global) proven.
 
@@ -811,7 +815,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R5 · Explains itself
 
-#### A13 · Interaction kit: CatalogSelect, HelpTip, audits ☐
+#### A13 · Interaction kit: CatalogSelect, HelpTip, audits ☑
 
 > One dropdown anatomy, one tooltip grammar, two audits that keep them honest.
 
@@ -820,14 +824,14 @@ The first post-A4 full run exposed three stale browser expectations and one real
 | R5 | UX-01, UX-02 | A9 | 3–4 d | 10 files · +1 700 |
 
 - [x] **A13.0** Pre-flight: export a control inventory (file, control, label, has tooltip?) — the coverage baseline (≈ 17 %) · S — measured 70 / 559 controls with a `<q-tooltip>` = 12.5 % (static, `test/inventory.mjs`) (199)
-- [ ] **A13.1** `components/kit/CatalogSelect.vue` (+ component tests: order law, custom first, search, keyboard, headers) · L
-- [ ] **A13.2** Enumeration catalogs: sizes, creature types, alignments, damage types, conditions, languages, senses, skills, tools, schools, spell levels, recharge, roles · L
+- [x] **A13.1** `components/kit/CatalogSelect.vue` (+ component tests: order law, custom first, search, keyboard, headers) · L — closed (249): `CatalogSelect.vue` + `catalog-select-model.ts` (custom-first, alphabetical vs `preserveOrder`, case-insensitive filter, keyboard nav) adopted in `BasicsEditor.vue` & `SkillsEditor.vue`, tested in `CatalogKit.test.ts` + `build249-workflow-browser-smoke.js`
+- [x] **A13.2** Enumeration catalogs: sizes, creature types, alignments, damage types, conditions, languages, senses, skills, tools, schools, spell levels, recharge, roles · L — closed (249): unified 13-catalog registry in `src/core/domain/catalogs/enumerations.ts` tested in `CatalogKit.test.ts`
 - [x] **A13.3** `components/kit/HelpTip.vue`, `v-help` directive, generalised delegated host (from A5) · M — `v-help` (201) and `HelpTip.vue` focusable icon (202); the sheet keeps its delegated `statblock-help` host — progress (201): `v-help` directive (`src/boot/help.ts`: native tooltip + `aria-description`) adopted on 15 Senses controls; coverage 12.5 % → 15.2 %. Left: `HelpTip.vue` icon component, delegated host
-- [ ] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M
+- [x] **A13.4** `i18n/en-US/help.ts` skeleton with keys for every control; full copy for Identity, Defenses and Checks panels · M — closed (249): structured purpose-led `HELP_MESSAGES` in `src/i18n/en-US/help.ts` wired across `src/i18n/en-US/index.ts` and all 11 updated editors (`CatalogKit.test.ts`)
 - [x] **A13.5** `tools/audit-help.mjs` + floor file + `npm run audit:help` · M — `test/audit-help.mjs`, floor `test/help-floor.txt` = 35 %, `npm run audit:help` (202)
 - [x] **A13.6** `css/fit.scss` utilities + `tools/qa/overflow-probe.js` + `npm run audit:fit` · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A13.8** Verify BS-40 under CR-154: delegated help, print and global `.statblock` selectors target the sole rendered sheet; no inline composer preview DOM; record the decision (*added A7*) · S — decision: one sheet. Only `WebRenderer.vue` renders `.statblock`; fuzz Step 46 asserts no `[data-composer-preview]`/attack/multiattack preview DOM; help smoke and the print probe target `#render .statblock` (199)
-- [ ] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S
+- [x] **A13.7** Close: commit `interaction kit: catalog selects, help tips, coverage and fit audits`, docs ritual · S — closed (249): section `A13` complete with `CatalogKit.test.ts`, `audit:help` `73.8%` (`409/554`), `overflow-probe` `10` views `0` clips, and 10/10 gate pass
 
 **Done when:** SEL-002…008, TIP-002…005, TIP-007, QA-005 proven.
 
@@ -987,46 +991,46 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R9 · Keep and reuse
 
-#### B5 · Repository and recovery ☐
+#### B5 · Repository and recovery ◐
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R9 | F-07 | B1 | 8–15 d |
 
 - [x] **B5.1** Inventory Pinia keys, `dndsheet_monster_` LocalStorage, IndexedDB and all writers (TASK-026) · M — done (217): inventory §B5.1: six persisted Pinia keys, two legacy keys migrated once, one UI flag; `LocalStorageAdapter` and `IndexedDbStorageAdapter` are never instantiated (dead layer); persistence plugin swallows write errors (verified in v3.2.3 source)
-- [ ] **B5.2** Decision: startup backend selection, migration, quota, rollback (TASK-027) · M
-- [ ] **B5.3** Repository wiring and truthful save status (TASK-028) · L
-- [ ] **B5.4** Migrate sources one by one with verify-then-mark (TASK-029) · L
-- [ ] **B5.5** Backup, restore, failed-write recovery (TASK-030) · L
-- [ ] **B5.6** Browser failure scenarios; close (TASK-031) · M
+- [x] **B5.2** Decision: startup backend selection, migration, quota, rollback (TASK-027) · M — closed (249): [ADR-0002-Repository-Backend-and-Recovery.md](../decisions/ADR-0002-Repository-Backend-and-Recovery.md), `StorageFailureCode` classification (`StoragePort.ts`, `LocalStorageAdapter.ts`, `IndexedDbStorageAdapter.ts`), startup-once `selectRepositoryBackend()` (`RepositoryStorage.ts`), zero silent per-write fallback
+- [x] **B5.3** Repository wiring and truthful save status (TASK-028) · L — closed (249): `RepositoryStorage.ts`, `useRepositoryStore`, `MainLayout.vue` `[data-save-status]` badge (`idle` | `saving` | `saved` | `error` | `read_only`) & 450ms debounced save protecting last-good persisted entries
+- [x] **B5.4** Migrate sources one by one with verify-then-mark (TASK-029) · L — closed (249): `migrateLegacySources()` verifies read-back before writing `DNDSheetRepositoryMigrationV1` and quarantines malformed legacy records without destructive deletion
+- [x] **B5.5** Backup, restore, failed-write recovery (TASK-030) · L — closed (249): `DNDSheetRepositoryBackupV1` bundle export/restore with entry validation, quarantine, and pre-restore rollback guard in `RepositoryStorage.ts`, `CreatureLibraryDialog.vue`, and `ErrorCorrection.vue`
+- [x] **B5.6** Browser failure scenarios; close (TASK-031) · M — closed (249): proven by `test/core/RepositoryAndLibrary.test.ts` and `test/build249-workflow-browser-smoke.js` (`quarantinedCount = 1`, reload & save-status checks; owner decision `B5.7` remains open)
 
 **Done when:** DATA-001, DATA-003, NFR-003, SEC-002, ARC-002 proven.
 
-#### B6 · Local creature library ☐
+#### B6 · Local creature library ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R9 | F-02 | B5 | 3–6 d |
 
-- [ ] **B6.1** Summary index and query model (TASK-032) · M
-- [ ] **B6.2** Open, create, duplicate (new ids, remapped bindings), rename (TASK-033) · L
-- [ ] **B6.3** Delete/archive with recovery (TASK-034) · M
-- [ ] **B6.4** Empty/loading/error/large-list/keyboard states; close (TASK-035) · M
+- [x] **B6.1** Summary index and query model (TASK-032) · M — closed (249): `CreatureSummary` index & `queryCreatureSummaries` in `src/core/domain/creature-library.ts` tested across 250+ creatures
+- [x] **B6.2** Open, create, duplicate (new ids, remapped bindings), rename (TASK-033) · L — closed (249): `create`, `open`, `rename`, and `duplicate` with regenerated UUIDs, nested item IDs, and remapped `bindings` prefixes in `creature-library.ts`, `repository-store.ts`, and `CreatureLibraryDialog.vue`
+- [x] **B6.3** Delete/archive with recovery (TASK-034) · M — closed (249): `archive`, `unarchive`, `trash`, `restoreFromTrash`, and `purge` with `All`/`Archived`/`Trash` view isolation
+- [x] **B6.4** Empty/loading/error/large-list/keyboard states; close (TASK-035) · M — closed (249): `CreatureLibraryDialog.vue` `q-virtual-scroll`, empty/loading/error states, Arrow/Enter/Escape keyboard nav, `RepositoryAndLibrary.test.ts`, and `build249-workflow-browser-smoke.js`
 
 **Done when:** DOM-002, UX-004 proven.
 
 ### R10 · Honest breadth
 
-#### B7 · Workspace: toolbar, navigator, narrow mode, presets ☐
+#### B7 · Workspace: toolbar, navigator, narrow mode, presets ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R10 | F-01 · F-03 · F-12 | A16 | 4–8 d |
 
-- [ ] **B7.1** Toolbar groups: document · editing · context · presentation menu (TASK-047) · M
-- [ ] **B7.2** Section registry and sticky section strip with focus targets (TASK-045) · L
-- [ ] **B7.3** Narrow Editor / Stat block tabs (TASK-046) · M
-- [ ] **B7.4** Presets Screen · Ink saver · Art plate over existing settings (TASK-048) · M
+- [x] **B7.1** Toolbar groups: document · editing · context · presentation menu (TASK-047) · M — closed (249): 4 accessible `role="group"` toolbar groups (`document`, `editing`, `context`, `presentation`) with flex-wrap responsive rules in `MainLayout.vue`
+- [x] **B7.2** Section registry and sticky section strip with focus targets (TASK-045) · L — closed (249): `WORKSPACE_SECTIONS` (`workspace-sections.ts`), `SectionStrip.vue`, and 15 `data-editor-section` panel targets across `MonsterBuilder.vue` and all panel editors
+- [x] **B7.3** Narrow Editor / Stat block tabs (TASK-046) · M — closed (249): `< 600px` `[data-narrow-pane-switcher]` (`Editor` / `Stat block`, default `Editor`) in `MonsterBuilder.vue` preserving all 15 `.q-expansion-item` elements and Step 56 splitter width
+- [x] **B7.4** Presets Screen · Ink saver · Art plate over existing settings (TASK-048) · M — closed (249): `WORKSPACE_PRESETS` (`screen`, `ink_saver`, `art_plate`) in `workspace-presets.ts`, `MainLayout.vue`, and `WebRendererSettingsButton.vue` leaving monster content untouched (`WorkspacePresetsAndSections.test.ts`)
 - [x] **B7.5** Keyboard, 200 % zoom, reduced motion spot checks; close · S — progress (216): fuzz Step 56: no horizontal overflow at a 640 px (200 % zoom) layout, ≥ 10 editor controls take focus. Reduced motion **not** landed: this machine reports `prefers-reduced-motion: reduce` (Windows animations off), and a global 0.01 ms transition rule broke Quasar menu focus (Step 35) and tooltip scroll tracking (help smoke) — see B7.6 — done (218): closed with B7.6: 200 % zoom (640 px layout) has no horizontal overflow; reduced motion honoured in both emulated modes; keyboard: ≥ 10 editor controls take focus (a focusability check, not a full Tab-order walk — that belongs to A14.5/A15.5)
 
 **Done when:** UX-001, UX-002, UX-005, NFR-004 proven.
@@ -1217,7 +1221,7 @@ The 2026-10-30 request adds twelve tasks (11 Track A, 1 Track B). Prior baseline
 - [x] **A8.13** Single rendered surface: remove inline preview DOM/computations from action/reaction/trait/lair, attack and multiattack composers; plain Role select; direct authoritative-sheet regression checks across existing templates/themes, keyboard and mobile. Preserve role-transition semantics · M
 - [x] **A8.14** Canonical cadence identity/aliases/catalog and compact one-use rest label; current usage editors and action/reaction/trait projections share formatting; unknown saved rates preserved, milestone/interval distinctions documented and tested. Formula-bound counts remain A9/A11 work · M
 - [x] **A8.15** Superseding head grammar: usage → name/components → tier/school; shared editor/web/prose projection with old metadata preserved. Scope shortening retains all mechanical quantities; roll count remains separate A9.13 work · M
-- [ ] **A9.13** Independent roll-count/scaling/conditional-roll contract and bindings; distinguish target count, beam count and damage multiplier; explicit level/HD/custom source with provenance; roll versus save advantage/disadvantage; migration and export tests · L
+- [x] **A9.13** Independent roll-count/scaling/conditional-roll contract and bindings; distinguish target count, beam count and damage multiplier; explicit level/HD/custom source with provenance; roll versus save advantage/disadvantage; migration and export tests · L — closed (249): `RollScalingSpec` (`src/core/domain/roll-scaling.ts`), `DndAttack` (`attackCount?`, `attackRollModifier?`, `attackException?`), `RollScalingPopover.vue` inside `ComposerChain.vue`, `cr-structured-damage.ts`, `ability-grammar.ts`, `MigrateMonsterSchema.ts`, `ExportStatblock.ts`, and `BindingsAndScaling.test.ts`
 - [x] **A11.5** Outcome clauses: hit/miss/success/failure/custom, recipient predicates and stable result-reference graph; vertical/horizontal/inline presentation independent of mechanics; empty/invalid/cycle and export tests · L — progress (207–208): stable clause ids, recipient, result references with missing/self/cycle diagnostics, presentation field (inline/vertical/horizontal) in editor, statblock and text prose; remaining: wire stable container/region ownership and typed predicates through the transactional editor; lossless versioned migration, complete adapter goldens and theme/print proof. Progress225: stable draft IDs, identity-based move/copy/delete/repair, full metadata on Apply, legacy-safe shared projections and browser/reload coverage. Closed (246): `+0` attack sign in `ability-grammar.ts` (`plainValueText`/`formatNumber`), Step 50 fuzz alignment, and `explicitRollOnly` outcome integration with full 10/10 gate pass
 - [x] **A11.6** Shared reaction mechanics plus trigger and typed availability sets; adapters/migration preserve reaction IDs/prose/uses and legacy stagePool. Every action-family editing capability has a reaction counterpart where meaningful · L — closed (247): `while_not_bloodied` in `cadence.ts`, typed `availability` sets & predicate formatting (`entry-display.ts`), shared action-family reaction composer (`reaction-composer.ts`), `MigrateMonsterSchema.ts`, `ExportStatblock.ts`, `tarrasque-export.ts`, `CalculateCr.ts`, `EntryDisplaySettings.vue`, `ComposerChain.vue`, `ActionsEditor.vue`, and unit tests (`EntryDisplay.test.ts`, `ReactionComposer.test.ts`, `MigrateMonsterSchema.test.ts`, `RoleTransition.test.ts`, `CalculateCr.test.ts`)
 - [x] **A11.7** Combat activity section routing: Search/Study/Influence/Hide and authored groups own economy/cost/trigger; section projection removes redundant economy labels without losing facts; associations/undo/export tests · L — closed (246): `SECTION_ECONOMY_NORMALIZED`, `createCombatActivityRoutingState`, `relocateCombatActivity`, `undoCombatActivityRelocation`/`redoCombatActivityRelocation`, and `projectCombatActivitySections` in `skill-action-groups.ts` + `SkillActionGroups.test.ts`
@@ -1374,7 +1378,7 @@ Source: `DNDSheet-GoHorse-Audit-204-208.md`. These come **before** any new A-ser
 - [x] **H6** Random tables: i18n keys, NaN-safe From/To, theme + print styles, A4 layer registration, legacy text migration via `parseLegacyTable` · M · proof: 12-theme + print screenshots, migration test — progress (209): `editor.randomTables.*` i18n, NaN-safe From/To, classes instead of inline styles. Remaining: 12-theme/print styles, A4 layer registration, `parseLegacyTable` wiring — progress (210): theme-token CSS (`--sb-head-bg/--sb-head-ink/--sb-rule/--sb-stripe`) for the table, print `break-inside: avoid` + exact colour; Step 52 checks the header colour on all 12 themes. Remaining: A4 layer registration, `parseLegacyTable` wiring (no legacy source located yet — confirm whether any saved field holds free-text tables before building it) — done(213): explicit transactional text import uses parseLegacyTable with strict line/range checks; existing statblock layer ownership and visibility/order/transform proven; four actual compiled A4 PDFs inspected in both orientations,12-theme captures and full nine-step gate. No saved legacy text field found; descriptions are never guessed/re-written. See Build213 packet.
 - [x] **H7** Outcome editor: memoise `validateOutcomes` once per list, disambiguate “Builds on” labels (index + trigger), regenerate ids on duplicate · S · proof: unit test on duplicate path — done (209): one `validateOutcomes` pass per list (computed map), numbered “Builds on” labels; no duplicate-action path exists to regenerate ids (grep `duplicate*`/`clone*` in src: none)
 - [x] **H8** Layout `vertical/horizontal` honoured on the non-sector path too · S · proof: render snapshot — done (209): a non-inline layout routes the action through the sector path that honours it
-- [ ] **H9** Rewrite the 250 generated tips into purpose-led copy (why, not what) per editor; verify the 8 repaired compound tags render; keep the floor at 70 only after rewrite · L · proof: `audit:help` + copy review list
+- [x] **H9** Rewrite the 250 generated tips into purpose-led copy (why, not what) per editor; verify the 8 repaired compound tags render; keep the floor at 70 only after rewrite · L · proof: `audit:help` + copy review list — closed (249): 228 generated/boilerplate `v-help` tooltips across 11 Vue editors replaced with purpose-led `HELP_MESSAGES` in `src/i18n/en-US/help.ts`; `CatalogKit.test.ts` asserts `0` boilerplate tips and `npm run audit:help` passes at `73.8%` (`409/554`, floor `70%`)
 - [x] **H10** Publish guard: one `tools/publish.mjs` that builds SPA + Pages, asserts `dist-pages/index.html` and `/DNDSheet/` base, fixes `make-rc.mjs` args, creates the RC folder and refuses to push an empty tree · S · proof: dry run + RC 208 folder — progress (209): `make-rc.mjs` failure was a usage error (3rd arg is a JSON *file*); RC folder is `DNDSheet/.codex-temp/release-candidates/`; RC209 cut correctly. Remaining: single `tools/publish.mjs` with empty-tree guard — done (211): `tools/publish.mjs` refuses unless `.gate/summary.json` is a 9/9 pass newer than every src/test/public file, `dist-pages/index.html` carries `/DNDSheet/assets/`, no `dist-pages/spa`, ≥ 20 files, and the git tree count matches disk; then cuts the RC (repo copy `tools/make-rc.mjs`), tags, commits gh-pages through a private index and pushes with `--push`. First used for Build211
 - [x] **H11** Close A11.5 (tests + goldens) then A11.9 (depends on A11.5 + H5/H6) · M — progress (214): outcome metadata retention, formula-aware action/reaction sectors, actual safe table rendering, prose/container parity repairs and eight browser combinations. Progress225: transactional outcome lifecycle and complete Apply metadata, iterative occurrence diagnostics and safe presentation. Upstream223/224 add region model/diagnostics and linked random tables. Closed (246): A11.5 and A11.9 completed with `explicitRollOnly`, `data-print-table="true"`, `+0` attack sign in `ability-grammar.ts`, `RandomTableMigration.test.ts`, `AbilityGrammar.test.ts`, and Step 50 fuzz + 10/10 gate verification
 - [x] **H12** Workstation hygiene: stop stray `node` processes; keep one temp tree per build · XS — done (216): one build tree (`dnd-tip`), servers this agent starts (9120–9123) stopped after use; the long-running dev server on 4173 belongs to another session and is left alone
