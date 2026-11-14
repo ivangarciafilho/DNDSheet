@@ -1,8 +1,9 @@
 import { abilityModifier, dependencyOrder, isNumericBinding, resolveNumeric } from './formula.ts'
-import type { BindingMap, NumericBinding } from './formula.ts'
+import type { BindingMap, FormulaContext, NumericBinding } from './formula.ts'
 import { formulaContextForMonster } from './formula-context.ts'
 import { referenceSourcesForMonster } from './catalogs/reference-sources.ts'
 import { inspectNumericField } from './catalogs/field-inspection.ts'
+import type { NumericFieldInspection } from './catalogs/field-inspection.ts'
 import { isReferenceAllowedForField, validateNumericFieldDiceValue, validateNumericFieldValue } from './catalogs/field-types.ts'
 import { parseNumericFieldPath, readNumericFieldPath } from './catalogs/field-path.ts'
 import { characterProficiency } from './math-utils.ts'
@@ -17,6 +18,17 @@ export interface MonsterBindingResolution<T> {
 }
 const message = (error: unknown): string => error instanceof Error ? error.message : String(error)
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value))
+const CONTEXT_AFFECTING_PATH = /^(stats\.|proficiency$|HP\.|AC$|CR$|saves\.|speeds\[|skills\[key=PERCEPTION\]|passivePerception\.|spellcasting\.|legendaryActions\.|initiativeConfig\.)/
+
+function writeScalarTarget(model: unknown, path: string, value: number): void {
+  const parts = parseNumericFieldPath(path)
+  const leaf = parts[parts.length - 1]
+  if (leaf.selector) throw new Error('Numeric table selectors cannot hold bindings')
+  const parentPath = parts.slice(0, -1).map(part => part.name + (part.selector ? `[${part.selector.kind}=${encodeURIComponent(part.selector.value)}]` : '')).join('.')
+  const parent = parentPath ? readNumericFieldPath(model, parentPath) : model
+  // Inspection already guarantees an own data property, or an allowed missing leaf.
+  Object.defineProperty(parent, leaf.name, { value, writable: true, enumerable: true, configurable: true })
+}
 
 /** Publish validated scalar results without replacing live collection records.
  * Normal assignment is intentional here so Vue's reactive setter runs. Pure
@@ -41,13 +53,7 @@ export function applyResolvedNumericValues(target: object, result: MonsterBindin
 export function writeBoundNumericField(model: unknown, path: string, value: number): void {
   const inspection = inspectNumericField(model, path)
   if (!inspection.editable || inspection.field.bindingPolicy !== 'binding') throw new Error(`Inactive numeric field: ${path}`)
-  const parts = parseNumericFieldPath(path)
-  const leaf = parts[parts.length - 1]
-  if (leaf.selector) throw new Error('Numeric table selectors cannot hold bindings')
-  const parentPath = parts.slice(0, -1).map(part => part.name + (part.selector ? `[${part.selector.kind}=${encodeURIComponent(part.selector.value)}]` : '')).join('.')
-  const parent = parentPath ? readNumericFieldPath(model, parentPath) : model
-  // Inspection already guarantees an own data property, or an allowed missing leaf.
-  Object.defineProperty(parent, leaf.name, { value, writable: true, enumerable: true, configurable: true })
+  writeScalarTarget(model, path, value)
 }
 
 /** Resolve against the default stored-creature formula context only.
@@ -64,6 +70,7 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
   const raw = original.bindings === undefined ? {} : original.bindings
   if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { model: original, errors: { bindings: 'Invalid binding map' }, changed: false, changedPaths: [] }
   const active: Record<string, NumericBinding> = Object.create(null)
+  const initialInspections = new Map<string, NumericFieldInspection>()
   for (const path of Object.keys(raw)) {
     try {
       if (!isNumericBinding(raw[path])) throw new Error('Invalid numeric binding')
@@ -71,6 +78,7 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
       if (target.field.bindingPolicy !== 'binding') throw new Error('Literal table fields cannot hold bindings')
       if (!target.editable) throw new Error(target.blockedRepresentation ?? `Inactive numeric field: ${target.inactiveGates.join(', ')}`)
       active[path] = raw[path]
+      initialInspections.set(path, target)
     } catch (error) { errors[path] = message(error) }
   }
   let order: readonly string[]
@@ -85,12 +93,14 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
   catch (error) { for (const path of Object.keys(active)) errors[path] = message(error); return { model: original, errors, changed: false, changedPaths: [] } }
   const model = clone(original)
   const changedPaths: string[] = []
+  let cachedContext: FormulaContext | null = null
   const syncAutomaticStats = () => {
     const m = model as unknown as Monster
     if (useHitDice) {
       const bonus = characterProficiency(m.HP.HD)
       if (m.proficiency !== bonus) {
         m.proficiency = bonus
+        cachedContext = null
         if (!changedPaths.includes('proficiency')) changedPaths.push('proficiency')
       }
     }
@@ -98,20 +108,29 @@ export function resolveMonsterBindings<T extends object>(input: T): MonsterBindi
       const bonus = abilityModifier(m.stats.CON) * m.HP.HD
       if (Number.isSafeInteger(bonus) && m.HP.modifier !== bonus) {
         m.HP.modifier = bonus
+        cachedContext = null
         if (!changedPaths.includes('HP.modifier')) changedPaths.push('HP.modifier')
       }
     }
   }
   syncAutomaticStats()
+  let mutatedModel = changedPaths.length > 0
   for (const path of order) {
     try {
-      const inspection = inspectNumericField(model, path)
-      const result = resolveNumeric(active[path], formulaContextForMonster(model as unknown as Monster), { style: inspection.field.style, integerScalar: true })
+      const inspection = mutatedModel ? inspectNumericField(model, path) : (initialInspections.get(path) ?? inspectNumericField(model, path))
+      if (!cachedContext) cachedContext = formulaContextForMonster(model as unknown as Monster)
+      const result = resolveNumeric(active[path], cachedContext, { style: inspection.field.style, integerScalar: true })
       if (!result.ok) throw new Error(result.error)
       if (active[path].mode === 'ref') for (const ref of result.refs) if (!isReferenceAllowedForField(path, ref)) throw new Error(`Reference ${ref} is not allowed for ${path}`)
       validateNumericFieldDiceValue(path, result)
-      if (inspection.value !== result.flat) { writeBoundNumericField(model, path, result.flat); changedPaths.push(path) }
-      syncAutomaticStats()
+      if (inspection.value !== result.flat) {
+        if (!inspection.editable || inspection.field.bindingPolicy !== 'binding') throw new Error(`Inactive numeric field: ${path}`)
+        writeScalarTarget(model, path, result.flat)
+        changedPaths.push(path)
+        mutatedModel = true
+        if (CONTEXT_AFFECTING_PATH.test(path)) cachedContext = null
+        syncAutomaticStats()
+      }
     } catch (error) {
       errors[path] = message(error)
       return { model: original, errors, changed: false, changedPaths: [] }

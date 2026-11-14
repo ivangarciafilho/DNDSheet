@@ -31,9 +31,10 @@ export interface BuildCatalogOptionsConfig {
 }
 
 const DEFAULT_CUSTOM_GROUP = 'Custom / Saved'
+const ALPHA_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'base' })
 
 function compareAlpha(a: string, b: string): number {
-  return a.localeCompare(b, undefined, { sensitivity: 'base' })
+  return ALPHA_COLLATOR.compare(a, b)
 }
 
 function asArray(value: BuildCatalogOptionsConfig['currentValue']): (string | number)[] {
