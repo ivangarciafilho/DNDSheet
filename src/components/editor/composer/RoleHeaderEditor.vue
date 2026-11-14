@@ -3,9 +3,9 @@
     <form class="q-pa-sm" @submit.prevent="apply">
       <p class="text-caption">These settings apply to the whole {{ role }} section. Entry membership and content are kept.</p>
       <div v-for="field in fields" :key="field.id" :data-header-field="field.id" class="q-mb-sm">
-        <formula-field v-if="field.kind === 'number'" :key="numericDraftVersion" data-enter-local :path="numericPath" :label="field.label" :draft-model="numericModel" @applied="value => draft[field.id] = value" @draft-state="value => numericDraftPending = value" />
-        <q-checkbox v-else-if="field.kind === 'toggle'" v-model="draft.custom" dark dense :label="field.label" />
-        <q-input v-else-if="field.kind === 'text'" v-model="draft[field.id]" dense outlined dark :label="field.label" />
+        <formula-field v-if="field.kind === 'number'" :key="numericDraftVersion" v-help="'Edit this numeric rule value directly or bind it to CR, PB, or an ability modifier.'" data-enter-local :path="numericPath" :label="field.label" :draft-model="numericModel" @applied="value => draft[field.id] = value" @draft-state="value => numericDraftPending = value" />
+        <q-checkbox v-else-if="field.kind === 'toggle'" v-model="draft.custom" v-help="'Override the automatic header summary with custom display text.'" dark dense :label="field.label" />
+        <q-input v-else-if="field.kind === 'text'" v-model="draft[field.id]" v-help="'Set the displayed heading, usage cadence, or role label on the stat block.'" dense outlined dark :label="field.label" />
         <template v-else-if="field.kind === 'prose' && (role === 'mythic' || draft.custom)">
           <div class="text-caption q-mb-xs">{{ field.label }}</div>
           <monster-text-editor :field="draft[field.id]" :show-reset="!!ROLE_HEADER_RESETS[role][field.id]" :token-category="role === 'mythic' ? 'mythic' : role === 'legendary' ? 'legendary' : 'none'" @reset="resetField(field.id)" @update:model-value="(value: string) => draft[field.id] = value" />

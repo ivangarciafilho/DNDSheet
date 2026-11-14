@@ -37,19 +37,21 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-4 col-sm-3">
-              <q-select
-                v-model="va.round"
-                :options="villainRoundOptions"
-                emit-value
-                map-options
-                dense
+              <catalog-select
+                v-help="'Boss combat round when this villain action activates (1 Opening, 2 Escalation, 3 Climax).'"
+                :model-value="String(va.round)"
+                :entries="villainRoundOptions"
+                preserve-order
+                :searchable="false"
                 outlined
                 label="Round"
+                @update:model-value="(val) => (va.round = ((Number(val) || 1) as 1 | 2 | 3))"
               />
             </div>
             <div class="col-6 col-sm-7">
               <q-input
                 v-model="va.name"
+                v-help="'Title of this villain action printed in the Villain Actions section.'"
                 dense
                 outlined
                 label="Action Name"
@@ -108,6 +110,7 @@
             <div class="col-4 col-sm-3">
               <q-input
                 v-model="ba.name"
+                v-help="'Title of this Bloodied action printed when the creature reaches half HP.'"
                 dense
                 outlined
                 label="Action Name"
@@ -115,16 +118,12 @@
               />
             </div>
             <div class="col-3 col-sm-3">
-              <q-select
+              <catalog-select
                 v-model="ba.triggerType"
-                :options="[
-                  { label: 'Free (Instantaneous)', value: 'free' },
-                  { label: 'Reaction', value: 'reaction' },
-                  { label: 'Bonus Action', value: 'bonus' },
-                ]"
-                emit-value
-                map-options
-                dense
+                v-help="'Action economy cost when becoming Bloodied (Free, Reaction, or Bonus Action).'"
+                :entries="bloodiedTriggerOptions"
+                preserve-order
+                :searchable="false"
                 outlined
                 label="Action Cost"
               />
@@ -141,6 +140,7 @@
             <div class="col-2 col-sm-1">
               <q-checkbox
                 v-model="ba.resetOnHeal"
+                v-help="'Allow this Bloodied trigger to reactivate if healing restores HP above 50% and it drops again.'"
                 label="Resets"
                 dense
               />
@@ -170,6 +170,7 @@
 
 <script lang="ts">
 import MechanicTextEditor from './MechanicTextEditor.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { defineComponent } from 'vue'
 import MonsterTextEditor from './MonsterTextEditor.vue'
@@ -177,7 +178,7 @@ import SwapButtons from './widgets/SwapButtons.vue'
 
 export default defineComponent({
   name: 'VillainActionsEditor',
-  components: { MechanicTextEditor, MonsterTextEditor, SwapButtons },
+  components: { CatalogSelect, MechanicTextEditor, MonsterTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 
@@ -185,14 +186,21 @@ export default defineComponent({
     if (!Array.isArray(monster.bloodiedActions)) monster.bloodiedActions = []
 
     const villainRoundOptions = [
-      { label: 'Round 1 (Opening Gambit)', value: 1 },
-      { label: 'Round 2 (Escalation & Chaos)', value: 2 },
-      { label: 'Round 3 (Desperate Climax)', value: 3 },
+      { label: 'Round 1 (Opening Gambit)', value: '1' },
+      { label: 'Round 2 (Escalation & Chaos)', value: '2' },
+      { label: 'Round 3 (Desperate Climax)', value: '3' },
+    ]
+
+    const bloodiedTriggerOptions = [
+      { label: 'Free (Instantaneous)', value: 'free' },
+      { label: 'Reaction', value: 'reaction' },
+      { label: 'Bonus Action', value: 'bonus' },
     ]
 
     return {
       monster,
       villainRoundOptions,
+      bloodiedTriggerOptions,
     }
   },
 })

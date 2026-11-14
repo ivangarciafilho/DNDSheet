@@ -10,6 +10,7 @@
         <q-input
           ref="nameInput"
           v-model="name"
+          v-help="'Unique custom spell title inserted into the spell library and stat block lists.'"
           :label="$t('editor.spellcasting.custom.name')"
           class="col-12 q-pa-sm"
           :rules="[
@@ -18,16 +19,20 @@
               $t('editor.spellcasting.custom.nameValidator'),
           ]"
         />
-        <q-select
-          v-model="level"
+        <catalog-select
+          :model-value="String(level)"
+          v-help="'Circle level from Cantrip (0) through 9th level for slot filtering and innate grouping.'"
           class="col-6 q-pa-sm"
-          :options="spellOptions"
-          emit-value
-          map-options
+          :entries="spellLevelEntries"
+          preserve-order
+          :searchable="false"
           :label="$t('editor.spellcasting.custom.level')"
+          @update:model-value="(val) => (level = Number(val ?? 0))"
         />
+        <!-- CatalogSelect exemption: allows multiple casting classes plus freeform custom class entry via add-unique -->
         <q-select
           v-model="classes"
+          v-help="'Spellcasting classes that can learn or prepare this spell; type to add custom classes.'"
           class="col-6 q-pa-sm"
           :options="SrdCastingClassOptions"
           multiple
@@ -41,6 +46,7 @@
         />
         <q-input
           :model-value="damage"
+          v-help="'Average damage per round used by the CR calculator when evaluating offensive spells.'"
           class="col-6 q-pa-sm"
           type="number"
           min="0"
@@ -50,6 +56,7 @@
         <div class="col-6 flex items-center">
           <q-toggle
             v-model="multitarget"
+            v-help="'Apply multi-target area scaling (2x targets) when estimating offensive CR output.'"
             :label="$t('editor.spellcasting.custom.multitarget')"
           />
         </div>
@@ -73,16 +80,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { QInput, useDialogPluginComponent } from 'quasar'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useSpellLevels } from './useSpellLevels'
 import { useClasses } from 'src/data/CLASS'
 import _ from 'lodash'
 import { validateNumber } from '../editor/numberInput'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'NewSpellDialog',
+  components: { CatalogSelect },
   emits: [
     // REQUIRED; need to specify some events that your
     // component will emit through useDialogPluginComponent()
@@ -101,6 +110,9 @@ export default defineComponent({
 
     const spellStore = useSpellsStore()
     const { spellOptions } = useSpellLevels()
+    const spellLevelEntries = computed(() =>
+      spellOptions.value.map((opt) => ({ label: opt.label, value: String(opt.value) }))
+    )
     const { SrdCastingClassOptions } = useClasses()
 
     // spell field, commits on save
@@ -144,6 +156,7 @@ export default defineComponent({
 
       spellStore,
       spellOptions,
+      spellLevelEntries,
       SrdCastingClassOptions,
       // fields
       name,

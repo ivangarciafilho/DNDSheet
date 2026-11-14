@@ -18,6 +18,7 @@
         <div class="col-12 flex items-center">
           <q-toggle
             v-model="overwrite"
+            v-help="'Replace conflicting custom spells with the imported file instead of keeping existing entries.'"
             :label="$t('editor.spellcasting.custom.importMode')"
           />
         </div>

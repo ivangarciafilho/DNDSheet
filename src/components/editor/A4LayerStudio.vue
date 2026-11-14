@@ -130,16 +130,12 @@
 
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-3">
-              <q-select
+              <catalog-select
                 v-model="newLayerType"
-                :options="[
-                  { label: 'Background Texture', value: 'background' },
-                  { label: 'Foreground Frame / Vignette', value: 'foreground' }
-                ]"
-                emit-value
-                map-options
-                dense
-                outlined
+                v-help="'Place the layer behind the stat block texture stack or as a foreground overlay.'"
+                :entries="layerTypeOptions"
+                preserve-order
+                :searchable="false"
                 dark
                 label="Target"
               />
@@ -180,15 +176,13 @@
               />
             </div>
             <div class="col-6 col-sm-3 q-mt-xs">
-              <q-select
+              <catalog-select
                 v-model="newLayerBlend"
-                :options="blendModeOptions"
-                emit-value
-                map-options
-                dense
-                outlined
+                :entries="blendModeOptions"
+                preserve-order
                 dark
-                label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
+                label="Blend Mode"
+                v-help="'How this layer mixes with the layers below.'"
               />
             </div>
             <div class="col-6 col-sm-3 q-mt-xs text-right">
@@ -207,7 +201,7 @@
       </q-slide-transition>
 
       <!-- Photoshop-Style Unified Layer Stack -->
-      <div class="q-gutter-y-xs">
+      <div class="q-gutter-y-xs editor-scroll-region" data-a4-layer-list>
         <div class="text-caption text-grey-5 flex items-center justify-between q-px-xs">
           <span>▲ Top of Composition (Higher Z-Index)</span>
           <span>▼ Bottom of Composition (Lower Z-Index)</span>
@@ -387,15 +381,13 @@
               <template v-if="layer.type === 'statblock'">
                 <div class="row q-col-gutter-xs items-center">
                   <div class="col-12 col-sm-3">
-                    <q-select
+                    <catalog-select
                       v-model="layer.blendMode"
-                      :options="blendModeOptions"
-                      emit-value
-                      map-options
-                      dense
-                      outlined
+                      :entries="blendModeOptions"
+                      preserve-order
                       dark
-                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
+                      label="Blend Mode"
+                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-9">
@@ -407,6 +399,7 @@
                       <div class="col">
                         <q-slider
                           v-model="editorStore.a4StatblockOpacity"
+                          v-help="'Adjust parchment backdrop opacity behind stat block text to show underlying art.'"
                           :min="0"
                           :max="100"
                           :step="1"
@@ -447,13 +440,13 @@
 
                   <div class="col-12 col-sm-8">
                     <div class="text-caption text-amber-3">Overall font size · {{ editorStore.statblockFontScale }}%</div>
-                    <q-slider v-model="editorStore.statblockFontScale" aria-label="Overall font size"
+                    <q-slider v-model="editorStore.statblockFontScale" v-help="'Scale text typography inside the stat block before fitting box dimensions.'" aria-label="Overall font size"
                       :min="65" :max="150" :step="1" color="amber-5" dense />
                     <div class="text-caption text-amber-3">Final width · {{ editorStore.a4StatblockFinalWidth }}%</div>
-                    <q-slider v-model="editorStore.a4StatblockFinalWidth" aria-label="Final width"
+                    <q-slider v-model="editorStore.a4StatblockFinalWidth" v-help="'Adjust horizontal box squeeze or expansion after font scaling.'" aria-label="Final width"
                       :min="25" :max="150" :step="1" color="amber-5" dense />
                     <div class="text-caption text-amber-3">Final height · {{ editorStore.a4StatblockFinalHeight }}%</div>
-                    <q-slider v-model="editorStore.a4StatblockFinalHeight" aria-label="Final height"
+                    <q-slider v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block height scaling on the A4 sheet.'" aria-label="Final height"
                       :min="25" :max="150" :step="1" color="amber-5" dense />
                     <div class="row items-center justify-between q-mb-sm">
                       <span class="text-caption">100% uses the natural size. The layer reduces text first, then scales the remaining difference.</span>
@@ -464,6 +457,7 @@
                       <span>{{ editorStore.a4StatblockWidth == null ? 'Auto' : editorStore.a4StatblockWidth + '%' }}</span>
                     </div>
                     <q-slider
+                      v-help="'Set the column share width allocated to the stat block when paired with artwork.'"
                       aria-label="Statblock width"
                       :model-value="editorStore.a4StatblockWidth ?? 70"
                       :min="35"
@@ -509,6 +503,7 @@
                   <div class="col-12 col-sm-6 q-mb-xs">
                     <q-input
                       v-model="portraitUrlModel"
+                      v-help="'Paste an image URL or data URI to display as the creature portrait artwork.'"
                       label="Or Portrait Image URL / Data URI"
                       dense
                       outlined
@@ -519,21 +514,14 @@
                   </div>
 
                   <div class="col-6 col-sm-4">
-                    <q-select
+                    <catalog-select
                       v-model="portraitPositionModel"
-                      :options="[
-                        { label: 'Right Side', value: 'right' },
-                        { label: 'Left Side', value: 'left' },
-                        { label: 'Top Header', value: 'top' },
-                        { label: 'Bottom Foot', value: 'bottom' },
-                        { label: 'Hidden', value: 'none' }
-                      ]"
-                      emit-value
-                      map-options
-                      dense
-                      outlined
+                      :entries="portraitPositionOptions"
+                      preserve-order
+                      :searchable="false"
                       dark
-                      label="Layout Position" v-help="'Where the portrait sits relative to the stat block.'"
+                      label="Layout Position"
+                      v-help="'Where the portrait sits relative to the stat block.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
@@ -559,15 +547,13 @@
                   </div>
 
                   <div class="col-12 col-sm-4">
-                    <q-select
+                    <catalog-select
                       v-model="layer.blendMode"
-                      :options="blendModeOptions"
-                      emit-value
-                      map-options
-                      dense
-                      outlined
+                      :entries="blendModeOptions"
+                      preserve-order
                       dark
-                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
+                      label="Blend Mode"
+                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-4">
@@ -579,6 +565,7 @@
                       <div class="col">
                         <q-slider
                           v-model="editorStore.a4PictureOcclusion"
+                          v-help="'Control how far the stat block overlaps portrait artwork (0% separate to 100% covered).'"
                           :min="0"
                           :max="100"
                           :step="1"
@@ -589,6 +576,7 @@
                       <div class="col-auto">
                         <q-input
                           v-model.number="editorStore.a4PictureOcclusion"
+                          v-help="'Exact percentage of portrait area covered by the stat block column.'"
                           type="number"
                           min="0"
                           max="100"
@@ -610,6 +598,7 @@
                       <div class="col">
                         <q-slider
                           v-model="editorStore.a4PortraitScale"
+                          v-help="'Scale portrait artwork uniformly around its focal point.'"
                           :min="50"
                           :max="200"
                           :step="1"
@@ -620,6 +609,7 @@
                       <div class="col-auto">
                         <q-input
                           v-model.number="editorStore.a4PortraitScale"
+                          v-help="'Exact uniform scale percentage applied to portrait artwork.'"
                           type="number"
                           min="50"
                           max="200"
@@ -699,21 +689,21 @@
 
                   <!-- Watercolor Masking for Artwork -->
                   <div class="col-12">
-                    <q-select
-                      v-model="layer.maskUrl"
-                      :options="watercolorMaskOptions"
-                      emit-value
-                      map-options
+                    <catalog-select
+                      :model-value="layer.maskUrl ?? ''"
+                      v-help="'Apply an organic Homebrewery watercolor alpha mask to soften portrait edges.'"
+                      :entries="watercolorMaskOptions"
+                      preserve-order
+                      :searchable="false"
                       clearable
-                      dense
-                      outlined
                       dark
                       label="Watercolor Mask (Homebrewery Splatter Blend)"
+                      @update:model-value="val => (layer.maskUrl = val ? String(val) : '')"
                     >
                       <template #prepend>
                         <q-icon name="brush" color="cyan-4" />
                       </template>
-                    </q-select>
+                    </catalog-select>
                   </div>
                 </div>
               </template>
@@ -722,7 +712,7 @@
               <template v-else>
                 <div class="row q-col-gutter-xs items-center">
                   <div class="col-12 col-sm-6">
-                    <q-input v-model="layer.url" dense outlined dark label="Image URL" />
+                    <q-input v-model="layer.url" v-help="'Image URL or embedded data URI rendered for this composition layer.'" dense outlined dark label="Image URL" />
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-file
@@ -734,15 +724,13 @@
                     />
                   </div>
                   <div class="col-6 col-sm-4">
-                    <q-select
+                    <catalog-select
                       v-model="layer.blendMode"
-                      :options="blendModeOptions"
-                      emit-value
-                      map-options
-                      dense
-                      outlined
+                      :entries="blendModeOptions"
+                      preserve-order
                       dark
-                      label="Blend Mode" v-help="'How this layer mixes with the layers below.'"
+                      label="Blend Mode"
+                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
@@ -754,6 +742,7 @@
                       <div class="col">
                         <q-slider
                           v-model="layer.opacity"
+                          v-help="'Adjust layer opacity from completely transparent (0%) to solid (100%).'"
                           :min="0"
                           :max="100"
                           :step="1"
@@ -764,6 +753,7 @@
                       <div class="col-auto">
                         <q-input
                           v-model.number="layer.opacity"
+                          v-help="'Exact opacity percentage for this composition layer.'"
                           type="number"
                           min="0"
                           max="100"
@@ -785,6 +775,7 @@
                       <div class="col">
                         <q-slider
                           v-model="layer.scale"
+                          v-help="'Uniformly scale this layer texture or overlay image on the page.'"
                           :min="50"
                           :max="200"
                           :step="1"
@@ -795,6 +786,7 @@
                       <div class="col-auto">
                         <q-input
                           v-model.number="layer.scale"
+                          v-help="'Exact uniform scale percentage for this composition layer.'"
                           type="number"
                           min="50"
                           max="200"
@@ -847,21 +839,21 @@
                   </div>
 
                   <div class="col-12 col-sm-12">
-                    <q-select
-                      v-model="layer.maskUrl"
-                      :options="watercolorMaskOptions"
-                      emit-value
-                      map-options
+                    <catalog-select
+                      :model-value="layer.maskUrl ?? ''"
+                      :entries="watercolorMaskOptions"
+                      preserve-order
+                      :searchable="false"
                       clearable
-                      dense
-                      outlined
                       dark
-                      label="Watercolor Edge Mask" v-help="'Fade the layer edges like watercolour.'"
+                      label="Watercolor Edge Mask"
+                      v-help="'Fade the layer edges like watercolour.'"
+                      @update:model-value="val => (layer.maskUrl = val ? String(val) : '')"
                     >
                       <template #prepend>
                         <q-icon name="brush" color="purple-3" />
                       </template>
-                    </q-select>
+                    </catalog-select>
                   </div>
 
                   <!-- Grayscale as Alpha Luminance Mask -->
@@ -922,20 +914,20 @@
                         />
                       </div>
                       <div class="col-6 col-sm-3">
-                        <q-select
+                        <catalog-select
                           v-model="layer.overlayTextAlign"
-                          :options="['left', 'center', 'right']"
-                          label="Text Align" v-help="'Left, centre or right text alignment.'"
-                          dense
-                          outlined
+                          :entries="overlayAlignOptions"
+                          preserve-order
+                          :searchable="false"
                           dark
-                          options-dense
-                          hide-bottom-space
+                          label="Text Align"
+                          v-help="'Left, centre or right text alignment.'"
                         />
                       </div>
                       <div class="col-6 col-sm-3">
                         <q-input
                           v-model="layer.overlayTextColor"
+                          v-help="'Hex or CSS color for running header or footer overlay text.'"
                           label="Color"
                           dense
                           outlined
@@ -1005,6 +997,7 @@ import { appAsset } from 'src/core/domain/asset-url'
 import ImageLayerTransformControls from './widgets/ImageLayerTransformControls.vue'
 import RadialOffsetController from './widgets/RadialOffsetController.vue'
 import GradientOverlayController from './widgets/GradientOverlayController.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'A4LayerStudio',
@@ -1012,6 +1005,7 @@ export default defineComponent({
     RadialOffsetController,
     ImageLayerTransformControls,
     GradientOverlayController,
+    CatalogSelect,
   },
   props: {
     inline: {
@@ -1087,6 +1081,25 @@ export default defineComponent({
       { label: 'Watercolor Top Edge Splatter', value: '/homebrew/masks/watercolor_top_01.png' },
       { label: 'Watercolor Left Edge Splatter', value: '/homebrew/masks/watercolor_left_01.png' },
       { label: 'Watercolor Right Edge Splatter', value: '/homebrew/masks/watercolor_right_01.png' },
+    ]
+
+    const layerTypeOptions = [
+      { label: 'Background Texture', value: 'background' },
+      { label: 'Foreground Frame / Vignette', value: 'foreground' },
+    ]
+
+    const portraitPositionOptions = [
+      { label: 'Right Side', value: 'right' },
+      { label: 'Left Side', value: 'left' },
+      { label: 'Top Header', value: 'top' },
+      { label: 'Bottom Foot', value: 'bottom' },
+      { label: 'Hidden', value: 'none' },
+    ]
+
+    const overlayAlignOptions = [
+      { label: 'Left', value: 'left' },
+      { label: 'Center', value: 'center' },
+      { label: 'Right', value: 'right' },
     ]
 
     // Ensure the permanent Statblock layer and Portrait layer are always in the unified stack
@@ -1501,6 +1514,9 @@ export default defineComponent({
       newLayerBlend,
       blendModeOptions,
       watercolorMaskOptions,
+      layerTypeOptions,
+      portraitPositionOptions,
+      overlayAlignOptions,
       shiftLayer,
       toggleLayerVisibility,
       removeLayer,

@@ -1,7 +1,7 @@
 <template>
   <q-btn-dropdown flat dense no-caps :label="label" :aria-label="label" :disable="targets.length === 0" @before-show="query = ''">
     <q-list class="bg-grey-10 text-white reference-picker">
-      <q-item><q-item-section><q-input v-model="query" dense dark outlined autofocus label="Find an entry" /></q-item-section></q-item>
+      <q-item><q-item-section><q-input v-model="query" v-help="'Filter linked attacks and actions by name to insert a step into Multiattack.'" dense dark outlined autofocus label="Find an entry" /></q-item-section></q-item>
       <q-item v-for="target in matches" :key="target.id" v-close-popup clickable :data-reference-target="target.id" @click="$emit('choose', target.id)">
         <q-item-section>
           <q-item-label>{{ target.name || 'Unnamed entry' }}</q-item-label>

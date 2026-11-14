@@ -39,7 +39,7 @@
         <q-card-section>
           <h2 class="text-h6 q-my-none">{{ $t('editor.randomTables.paste') }}</h2>
           <p>{{ $t('editor.randomTables.pasteHelp') }}</p>
-          <q-input v-model="importText" type="textarea" outlined autofocus :label="$t('editor.randomTables.pasteInput')" />
+          <q-input v-model="importText" v-help="'Paste numbered or dice-ranged table rows to replace rows on this random table.'" type="textarea" outlined autofocus :label="$t('editor.randomTables.pasteInput')" />
           <div v-if="preview && importText.trim()" aria-live="polite">
             <p v-if="preview.invalidLines.length" class="text-negative">{{ $t('editor.randomTables.invalidLines', { lines: preview.invalidLines.join(', ') }) }}</p>
             <p v-for="(diagnostic, i) in preview.diagnostics" :key="i" class="text-negative">{{ diagnostic.message }}</p>

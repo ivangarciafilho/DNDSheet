@@ -7,6 +7,7 @@
     >
       <q-btn-toggle
         v-model="narrowPane"
+        v-help="'Switch narrow screens between the creature editor pane and the live stat block preview.'"
         dense
         spread
         unelevated

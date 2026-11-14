@@ -1,5 +1,7 @@
 <template>
+  <!-- CatalogSelect exemption (A16.3): uses custom async spell filter and item/selected slots for school, level, and ritual badges. -->
   <q-select
+    v-help="help || 'Search and select spells from the loaded compendium.'"
     :model-value="$props.modelValue"
     :label="$props.label"
     :options="spellOptions"
@@ -41,6 +43,10 @@ export default defineComponent({
     label: {
       type: String,
       required: true,
+    },
+    help: {
+      type: String,
+      default: '',
     },
   },
   emits: ['update:model-value', 'clear'],

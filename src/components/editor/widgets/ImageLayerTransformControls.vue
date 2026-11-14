@@ -6,6 +6,7 @@
         <span>{{ layer.scaleX ?? 100 }}%</span>
       </div>
       <q-slider
+        v-help="'Stretch or compress this layer horizontally independently of vertical height.'"
         :model-value="layer.scaleX ?? 100"
         :min="25" :max="300" :step="1"
         aria-label="Image width"
@@ -19,6 +20,7 @@
         <span>{{ layer.scaleY ?? 100 }}%</span>
       </div>
       <q-slider
+        v-help="'Stretch or compress this layer vertically independently of horizontal width.'"
         :model-value="layer.scaleY ?? 100"
         :min="25" :max="300" :step="1"
         aria-label="Image height"

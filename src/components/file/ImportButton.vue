@@ -18,8 +18,10 @@
             }}</a>
           </i18n-t>
         </div>
+        <!-- CatalogSelect exemption (A16.2): async paginated Open5e API selector with virtual-scroll paging and custom item avatars. -->
         <q-select
           v-model="selectedName"
+          v-help="'Search Open5e SRD monsters by name to import stats, actions, and traits into the active sheet.'"
           filled
           use-input
           hide-selected

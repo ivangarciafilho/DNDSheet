@@ -72,13 +72,11 @@
 
         <div class="row q-col-gutter-xs q-mb-xs">
           <div class="col-5">
-            <q-select
+            <catalog-select
               v-model="draft.source"
-              :options="sourceOptions"
-              emit-value
-              map-options
-              dense
-              outlined
+              :entries="sourceOptions"
+              preserve-order
+              :searchable="false"
               dark
               label="Scaling Source"
               v-help="'Which progression stat drives tier scaling (Fixed, CR, Hit Dice, Level, or Custom).'"
@@ -99,13 +97,11 @@
 
         <div class="row q-col-gutter-xs q-mb-xs">
           <div class="col-5">
-            <q-select
+            <catalog-select
               v-model="draft.rollMode"
-              :options="modeOptions"
-              emit-value
-              map-options
-              dense
-              outlined
+              :entries="modeOptions"
+              preserve-order
+              :searchable="false"
               dark
               label="Attack Roll Mode"
               v-help="'Advantage or disadvantage specifically on attack rolls (kept separate from saves).'"
@@ -126,13 +122,11 @@
 
         <div class="row q-col-gutter-xs q-mb-sm">
           <div class="col-5">
-            <q-select
+            <catalog-select
               v-model="draft.saveMode"
-              :options="modeOptions"
-              emit-value
-              map-options
-              dense
-              outlined
+              :entries="modeOptions"
+              preserve-order
+              :searchable="false"
               dark
               label="Target Save Mode"
               v-help="'Advantage or disadvantage specifically on target saving throws (kept separate from attack rolls).'"
@@ -164,6 +158,7 @@
 <script lang="ts">
 import { computed, defineComponent, PropType, ref } from 'vue'
 import FormulaField from 'src/components/kit/FormulaField.vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import type { NumericBinding } from 'src/core/domain/formula'
 import { withoutEntryBindings } from 'src/core/domain/entry-bindings'
@@ -188,7 +183,7 @@ type ScalingNumericKey = 'rollCount' | 'beamCount' | 'damageMultiplier'
 
 export default defineComponent({
   name: 'RollScalingPopover',
-  components: { FormulaField },
+  components: { FormulaField, CatalogSelect },
   props: {
     modelValue: { type: Object as PropType<RollScalingSpec | undefined>, default: undefined },
     entryCollection: { type: String, default: 'actions' },

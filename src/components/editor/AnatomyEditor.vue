@@ -37,6 +37,7 @@
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-3 col-sm-3">
               <q-input
+                v-help="'Name of this targetable limb, wing, organ, or anatomical weak point.'"
                 :model-value="ap.name || ap.part"
                 @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.name = s; ap.part = s; }"
                 dense
@@ -77,6 +78,7 @@
             </div>
             <div class="col-3 col-sm-3">
               <q-input
+                v-help="'Mechanical penalty applied when this body part drops to 0 Hit Points.'"
                 :model-value="ap.breakEffect || ap.severEffect"
                 @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.breakEffect = s; ap.severEffect = s; }"
                 dense

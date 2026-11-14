@@ -1,7 +1,7 @@
 <template>
   <q-menu :model-value="modelValue" class="macro-browse-menu" max-height="360px" data-macro-menu @update:model-value="value => $emit('update:modelValue', value)" @show="query = ''">
     <div class="q-pa-xs" style="min-width: 280px; max-width: 360px">
-      <q-input v-model="query" dense outlined autofocus clearable placeholder="Search formulas and macros" aria-label="Search formulas and macros" @keydown.stop />
+      <q-input v-model="query" v-help="'Filter formulas, dynamic references, and macros by name or syntax.'" dense outlined autofocus clearable placeholder="Search formulas and macros" aria-label="Search formulas and macros" @keydown.stop />
       <q-list dense>
         <template v-for="group in groups" :key="group.group">
           <q-item-label header class="q-py-xs">{{ group.group }}</q-item-label>

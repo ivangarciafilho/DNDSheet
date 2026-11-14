@@ -55,16 +55,14 @@
             />
           </div>
           <div class="col-12 col-sm-4">
-            <q-select v-help="$t('help.composer.outcomeKind')"
+            <catalog-select v-help="$t('help.composer.outcomeKind')"
               :model-value="outcome.layoutSector || 'all'"
-              :options="sectorOptions"
-              emit-value
-              map-options
-              dense
-              outlined
+              :entries="sectorOptions"
+              preserve-order
+              :searchable="false"
               dark
               label="Sector"
-              @update:model-value="(val: string) => setOutcome(outcome.id, { layoutSector: val })"
+              @update:model-value="(val: unknown) => setOutcome(outcome.id, { layoutSector: String(val || 'all') })"
             />
           </div>
           <div class="col-12 q-mt-xs">
@@ -85,10 +83,10 @@
             <mechanic-text-editor scope="action" v-help="'Who this result applies to, e.g. “each creature in the area”.'" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(outcome.id, { recipient: String(value ?? '') || undefined })" />
           </div>
           <div class="col-12 col-sm-4">
-            <q-select v-help="'Results this one builds on, e.g. “half as much” on a success.'" :model-value="outcome.refs ?? []" :options="refOptions(outcome.id)" multiple emit-value map-options dense outlined dark label="Builds on" @update:model-value="(value: string[]) => setOutcome(outcome.id, { refs: value })" />
+            <catalog-select v-help="'Results this one builds on, e.g. “half as much” on a success.'" :model-value="outcome.refs ?? []" :entries="refOptions(outcome.id)" multiple preserve-order :searchable="false" dark label="Builds on" @update:model-value="(value: unknown) => setOutcome(outcome.id, { refs: Array.isArray(value) ? value.map(String) : [] })" />
           </div>
           <div class="col-12 col-sm-3">
-            <q-select v-help="'How the clause is laid out; does not change the rules.'" :model-value="outcome.presentation ?? 'inline'" :options="['inline', 'vertical', 'horizontal']" dense outlined dark label="Layout" @update:model-value="(value: string) => setOutcome(outcome.id, { presentation: value as 'inline' | 'vertical' | 'horizontal' })" />
+            <catalog-select v-help="'How the clause is laid out; does not change the rules.'" :model-value="outcome.presentation ?? 'inline'" :entries="layoutOptions" preserve-order :searchable="false" dark label="Layout" @update:model-value="(value: unknown) => setOutcome(outcome.id, { presentation: String(value || 'inline') as 'inline' | 'vertical' | 'horizontal' })" />
           </div>
           <div v-for="issue in issuesFor(occurrenceKey)" :key="issue.kind + issue.message" class="col-12 text-caption text-warning">⚠ {{ issue.message }}</div>
         </div>
@@ -97,6 +95,7 @@
         <div v-for="(effect, effectIndex) in outcome.effects" :key="effectIndex" class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-auto">
             <q-btn-toggle
+              v-help="'Switch this effect clause between dice damage or flat narrative text.'"
               :model-value="effect.kind === 'text' ? 'text' : 'damage'"
               :options="effectKinds"
               dense
@@ -250,6 +249,7 @@
 
 <script lang="ts">
 import MechanicTextEditor from '../MechanicTextEditor.vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { outcomeOccurrences, repairOutcomeIdAt, moveOutcomeById, removeOutcomeById, duplicateOutcomeById, newOutcomeId, triggerLead, validateOutcomes, type OutcomeIssue } from 'src/core/domain/outcome-graph'
 import { computed, defineComponent, PropType, ref } from 'vue'
 import { normalizeOutcomeData } from 'src/core/domain/outcome-data'
@@ -260,7 +260,7 @@ let instances = 0
 
 export default defineComponent({
   name: 'ChainOutcomesEditor',
-  components: { MechanicTextEditor },
+  components: { MechanicTextEditor, CatalogSelect },
   props: {
     modelValue: { type: Array as PropType<unknown[]>, required: true },
     mode: { type: String as PropType<'outcomes' | 'effects'>, default: 'outcomes' },
@@ -452,6 +452,11 @@ export default defineComponent({
       effectKinds: [
         { label: 'Damage', value: 'damage' },
         { label: 'Text', value: 'text' },
+      ],
+      layoutOptions: [
+        { label: 'Inline', value: 'inline' },
+        { label: 'Vertical', value: 'vertical' },
+        { label: 'Horizontal', value: 'horizontal' },
       ],
     }
   },

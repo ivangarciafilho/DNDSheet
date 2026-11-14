@@ -38,7 +38,10 @@
       <template #body="props">
         <q-tr :props="props">
           <q-td>
-            <q-checkbox v-model="props.selected" />
+            <q-checkbox
+              v-model="props.selected"
+              v-help="'Select this custom spell for bulk deletion or management.'"
+            />
           </q-td>
           <q-td key="name" :props="props">{{ props.row.name }}</q-td>
           <q-td key="level" :props="props" class="editable">
@@ -49,12 +52,14 @@
               auto-save
               :title="$t('editor.spellcasting.custom.level')"
             >
-              <q-select
-                v-model="scope.value"
-                :options="spellOptions"
-                emit-value
-                map-options
+              <catalog-select
+                :model-value="String(scope.value)"
+                v-help="'Circle level from Cantrip (0) through 9th level for slot filtering.'"
+                :entries="spellLevelEntries"
+                preserve-order
+                :searchable="false"
                 :label="$t('editor.spellcasting.custom.level')"
+                @update:model-value="(val) => (scope.value = Number(val ?? 0))"
               /> </q-popup-edit
           ></q-td>
           <q-td key="class" :props="props" class="editable"
@@ -65,8 +70,10 @@
               auto-save
               :title="$t('editor.spellcasting.custom.classes')"
             >
+              <!-- CatalogSelect exemption: allows multiple casting classes plus freeform custom class entry via add-unique -->
               <q-select
                 v-model="scope.value"
+                v-help="'Spellcasting classes able to cast this spell; type to add custom classes.'"
                 :options="SrdCastingClassOptions"
                 multiple
                 clearable
@@ -89,6 +96,7 @@
             >
               <q-input
                 :model-value="scope.value"
+                v-help="'Average damage per round contributed by this spell during CR calculations.'"
                 type="number"
                 min="0"
                 :label="$t('editor.spellcasting.custom.damage')"
@@ -120,14 +128,19 @@ import { DndSpell } from 'src/components/models'
 import { download } from 'src/components/file/download'
 import LoadSpellsDialog from 'src/components/spell/LoadSpellsDialog.vue'
 import { validateNumber } from 'src/components/editor/numberInput'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'SpellsEditor',
+  components: { CatalogSelect },
   setup() {
     const { t } = useI18n()
     const $q = useQuasar()
     const spellStore = useSpellsStore()
     const { ordinalSpellLevels, spellOptions } = useSpellLevels()
+    const spellLevelEntries = computed(() =>
+      spellOptions.value.map((opt) => ({ label: opt.label, value: String(opt.value) }))
+    )
     const selected = ref([])
 
     const spells = computed(() => Object.values(spellStore.customSpells))
@@ -209,6 +222,7 @@ export default defineComponent({
       columns,
       selected,
       spellOptions,
+      spellLevelEntries,
       SrdCastingClassOptions,
       addSpell,
       deleteSpells,

@@ -35,7 +35,10 @@
       <template #body="props">
         <q-tr :props="props">
           <q-td>
-            <q-checkbox v-model="props.selected" />
+            <q-checkbox
+              v-model="props.selected"
+              v-help="'Select this custom template for bulk deletion.'"
+            />
           </q-td>
           <q-td key="templateName" :props="props">{{
             props.row.templateName
@@ -58,6 +61,7 @@
             >
               <q-input
                 v-model="scope.value"
+                v-help="'Edit the Material, MDI, or FontAwesome icon class displayed alongside this template.'"
                 :label="$t('editor.template.icon')"
                 bottom-slots
                 class="q-mb-xl"

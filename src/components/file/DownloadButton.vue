@@ -94,27 +94,23 @@
       <q-card-section class="q-gutter-sm">
         <div class="row q-col-gutter-sm">
           <div class="col-12 col-sm-6">
-            <q-select
+            <catalog-select
               v-model="selectedExportTarget"
               v-help="'Choose export target format to inspect capabilities, omissions, and generated output.'"
-              :options="exportTargetOptions"
-              emit-value
-              map-options
-              outlined
-              dense
+              :entries="exportTargetOptions"
+              preserve-order
+              :searchable="false"
               label="Target Format"
               data-export-target-select
             />
           </div>
           <div class="col-12 col-sm-6">
-            <q-select
+            <catalog-select
               v-model="editorStore.spellcastingPlacement"
               v-help="'Control where Spellcasting appears relative to Traits and Actions in web and text/HTML exports.'"
-              :options="spellcastingPlacementOptions"
-              emit-value
-              map-options
-              outlined
-              dense
+              :entries="spellcastingPlacementOptions"
+              preserve-order
+              :searchable="false"
               :disable="!exportPreviewResult.capability.supportsSpellcastingPlacement"
               label="Spellcasting Placement"
               data-export-spell-placement
@@ -253,9 +249,11 @@ import {
   exportCharacterToJson,
 } from 'src/core/usecases/ExportStatblock'
 import type { Monster } from 'src/core/domain/types'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'DownloadButton',
+  components: { CatalogSelect },
   setup() {
     const monster = useMonsterStore()
     const $q = useQuasar()

@@ -45,6 +45,7 @@
             <div class="text-caption">Statblock text size</div>
             <q-slider
               v-model="editorStore.statblockFontScale"
+              v-help="'Scale overall typography size inside the stat block preview from 65% to 150%.'"
               aria-label="Statblock text size"
               :min="65"
               :max="150"
@@ -135,6 +136,7 @@
               </div>
               <q-slider
                 v-model="editorStore.a4PictureOcclusion"
+                v-help="'Control how much the stat block frame overlaps portrait artwork (0% side-by-side to 100% full cover).'"
                 :min="0"
                 :max="100"
                 color="cyan-4"
@@ -163,6 +165,7 @@
               </div>
               <q-slider
                 v-model="editorStore.a4StatblockOpacity"
+                v-help="'Adjust parchment backdrop opacity behind stat block text to reveal A4 page art underneath.'"
                 :min="0"
                 :max="100"
                 color="amber-4"
@@ -2597,8 +2600,8 @@ export default defineComponent({
     color: #2c5282;
     font-weight: 700;
     font-size: calc(0.95rem * var(--statblock-font-scale, 1));
-    border-left: 3px solid #2b6cb0;
-    padding-left: 6px;
+    border-bottom: 1.5px solid #2b6cb0;
+    padding-bottom: 2px;
     margin: 8px 0 4px 0;
   }
   .trait, .action, .attack, .multiattack, .reaction, .spell-row:not(.dnd-cascade-subpanel) {

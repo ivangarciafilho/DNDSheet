@@ -124,7 +124,7 @@
   .monster-cr-badge-cluster.cr-cluster {
     flex-shrink: 0;
     border-right: 2px solid #2d3748;
-    margin-left: 0 !important;
+    margin-left: 0;
 
     .cr-composite-pill {
       display: flex;
@@ -132,9 +132,9 @@
       height: 100%;
       min-height: 54px;
       background: #ffffff;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
       box-sizing: border-box;
 
       .cr-region {
@@ -143,8 +143,8 @@
         align-items: stretch;
         justify-content: stretch;
         min-width: clamp(28px, 3.5vw, 40px);
-        padding: 0 !important;
-        gap: 0 !important;
+        padding: 0;
+        gap: 0;
 
         .region-label {
           flex: 1;
@@ -175,31 +175,31 @@
       }
 
       .cr-main-region {
-        background: transparent !important;
-        color: #58180d !important;
+        background: transparent;
+        color: #58180d;
 
         .region-label {
-          color: #58180d !important;
-          border-bottom-color: rgba(88, 24, 13, 0.25) !important;
+          color: #58180d;
+          border-bottom-color: rgba(88, 24, 13, 0.25);
         }
 
         .region-val {
-          color: #58180d !important;
+          color: #58180d;
         }
       }
 
       .cr-sub-region {
-        background: #ffffff !important;
-        color: #1a202c !important;
+        background: #ffffff;
+        color: #1a202c;
 
         .region-label {
           background: #f8fafc;
-          color: #4a5568 !important;
+          color: #4a5568;
         }
 
         .region-val {
           background: #ffffff;
-          color: #1a202c !important;
+          color: #1a202c;
         }
       }
 
@@ -231,14 +231,14 @@
       overflow: visible;
 
       .monster-name {
-        margin: 0 !important;
-        padding: 0 !important;
-        font-size: calc(clamp(0.85rem, 1.8vw, 1.35rem) * var(--statblock-font-scale, 1)) !important;
+        margin: 0;
+        padding: 0;
+        font-size: calc(clamp(0.85rem, 1.8vw, 1.35rem) * var(--statblock-font-scale, 1));
         font-weight: 800;
         color: #7a200d;
-        line-height: 1.25 !important;
+        line-height: 1.25;
         letter-spacing: -0.015em;
-        border-bottom: none !important;
+        border-bottom: none;
         text-align: center;
         white-space: normal;
         word-break: break-word;
@@ -368,18 +368,18 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: transparent !important;
-  border: none !important;
-  border-radius: 0 !important;
-  padding: 1px 3px !important;
-  min-height: auto !important;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 1px 3px;
+  min-height: auto;
   margin: 0;
   vertical-align: baseline;
   line-height: 1.25;
   font-style: normal;
   font-size: inherit;
   box-sizing: border-box;
-  text-indent: 0 !important;
+  text-indent: 0;
 
   .dnd-entry-label {
     font-style: normal;
@@ -389,8 +389,8 @@
   }
 
   &.dnd-item-adv {
-    background: transparent !important;
-    border: none !important;
+    background: transparent;
+    border: none;
     .dnd-entry-label {
       color: #1b5e20;
       font-weight: 600;
@@ -398,8 +398,8 @@
   }
 
   &.dnd-item-disadv {
-    background: transparent !important;
-    border: none !important;
+    background: transparent;
+    border: none;
     .dnd-entry-label {
       color: #b71c1c;
       font-weight: 600;
@@ -416,16 +416,16 @@
   background: #ffffff;
   border: 1.5px solid #cbd5e0;
   border-radius: 6px;
-  padding: 0 !important;
-  margin: 4px 0 !important;
-  text-indent: 0 !important;
+  padding: 0;
+  margin: 4px 0;
+  text-indent: 0;
   box-sizing: border-box;
   overflow: hidden;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
 
   &.spellcasting-panel {
     flex-direction: column;
-    padding: 7px 10px !important;
+    padding: 7px 10px;
     gap: 6px;
   }
 
@@ -434,24 +434,24 @@
     align-items: center;
     justify-content: flex-start;
     min-width: 95px;
-    font-weight: 800 !important;
+    font-weight: 800;
     font-size: calc(clamp(0.72rem, 1vw, 0.8rem) * var(--statblock-font-scale, 1));
     text-transform: uppercase;
     letter-spacing: 0.04em;
     color: #58180d;
     background: #f4e6ce;
     border-right: 1.5px solid #cbd5e0;
-    padding: 4px 10px !important;
-    margin: 0 !important;
+    padding: 4px 10px;
+    margin: 0;
     line-height: 1.15;
     white-space: nowrap;
     flex-shrink: 0;
-    text-indent: 0 !important;
-    align-self: stretch !important;
-    height: auto !important;
-    min-height: 100% !important;
-    box-sizing: border-box !important;
-    border-radius: 4px 0 0 4px !important;
+    text-indent: 0;
+    align-self: stretch;
+    height: auto;
+    min-height: 100%;
+    box-sizing: border-box;
+    border-radius: 4px 0 0 4px;
   }
 
   .dnd-cascade-subtitle {
@@ -459,52 +459,22 @@
     align-items: center;
     justify-content: center;
     font-size: calc(clamp(0.7rem, 0.96vw, 0.78rem) * var(--statblock-font-scale, 1));
-    font-weight: 700 !important;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     color: #7a200d;
-    background: #fdf6e9;
-    border-right: 1.25px solid #cbd5e0;
-    padding: 3px 8px !important;
-    margin: 0 !important;
-    line-height: 1.15;
-    white-space: nowrap;
-    flex-shrink: 0;
-    text-indent: 0 !important;
-    align-self: stretch !important;
-    height: auto !important;
-    min-height: 100% !important;
-    box-sizing: border-box !important;
     background: #fbf1df;
     border-right: 1.5px solid #cbd5e0;
-    padding: 4px 9px !important;
-    margin: 0 !important;
+    padding: 4px 9px;
+    margin: 0;
     line-height: 1.15;
     white-space: nowrap;
     flex-shrink: 0;
-    text-indent: 0 !important;
-  }
-
-  .dnd-cascade-subpanels-col {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-  }
-
-  .dnd-cascade-subpanel {
-    display: flex;
-    flex-direction: row;
-    align-items: stretch;
-    gap: 0;
-    background: #ffffff;
-    border: 1.25px solid #cbd5e0;
-    border-radius: 6px;
-    padding: 0 !important;
-    margin: 0 !important;
-    text-indent: 0 !important;
+    text-indent: 0;
+    align-self: stretch;
+    height: auto;
+    min-height: 100%;
     box-sizing: border-box;
-    overflow: hidden;
   }
 
   .dnd-cascade-badges-wrap {
@@ -515,14 +485,7 @@
     gap: 5px;
     padding: 4px 8px;
     background: #ffffff;
-    text-indent: 0 !important;
-
-    &.dnd-defense-unified-wrap {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
+    text-indent: 0;
   }
 
   .dnd-defense-unified-body {
@@ -537,27 +500,6 @@
       color: #1e293b;
       font-weight: 500;
     }
-
-    .dnd-defense-subgroup {
-      display: inline-flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 4px;
-
-      .dnd-defense-inline-tag {
-        font-size: calc(0.68rem * var(--statblock-font-scale, 1));
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        padding: 2px 6px;
-        border-radius: 4px;
-        background: #e2e8f0;
-        color: #475569;
-        border: 1px solid #cbd5e1;
-        line-height: 1.1;
-        margin-right: 2px;
-      }
-    }
   }
 
   .dnd-cascade-badge {
@@ -565,19 +507,19 @@
     align-items: center;
     justify-content: center;
     gap: 3px;
-    background: transparent !important;
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    padding: 1px 3px !important;
-    min-height: auto !important;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 1px 3px;
+    min-height: auto;
     font-size: calc(clamp(0.78rem, 1.02vw, 0.88rem) * var(--statblock-font-scale, 1));
     font-weight: 400;
     color: inherit;
     line-height: 1.25;
     vertical-align: baseline;
     box-sizing: border-box;
-    text-indent: 0 !important;
+    text-indent: 0;
   }
 
   .spell-tag-badge {
@@ -589,8 +531,8 @@
     letter-spacing: 0.02em;
     padding: 0 2px;
     margin-left: 3px;
-    background: transparent !important;
-    border: none !important;
+    background: transparent;
+    border: none;
     color: #7e22ce;
     vertical-align: baseline;
   }
@@ -667,351 +609,104 @@
 
 /* Action & Attack Composite Header with Execution Cells */
 .action-composite-header {
-  display: flex !important;
-  flex-direction: row !important;
-  align-items: center !important;
-  gap: 6px !important;
-  margin-bottom: 6px !important;
-  flex-wrap: wrap !important;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
 
   .action-composite-pill {
-    display: inline-flex !important;
-    flex-direction: row !important;
-    align-items: stretch !important;
-    flex-wrap: wrap !important;
-    background: #fdf1d6 !important;
-    border: 1.5px solid rgba(122, 31, 18, 0.45) !important;
-    border-radius: 4px !important;
-    overflow: hidden !important;
-    box-shadow: 0 1px 3px rgba(122, 31, 18, 0.08) !important;
-    min-height: 26px !important;
-    line-height: 1.2 !important;
-    box-sizing: border-box !important;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: stretch;
+    flex-wrap: wrap;
+    background: #fdf1d6;
+    border: 1.5px solid rgba(122, 31, 18, 0.45);
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(122, 31, 18, 0.08);
+    min-height: 26px;
+    line-height: 1.2;
+    box-sizing: border-box;
 
-    .action-cell, .action-pill-cell, .action-pill-name {
-      padding: 3px 8px !important;
-      min-height: 26px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      white-space: nowrap !important;
-      box-sizing: border-box !important;
+    .action-pill-cell, .action-pill-name {
+      padding: 3px 8px;
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      box-sizing: border-box;
     }
 
     .action-pill-name {
-      background: #7a200d !important;
-      color: #ffffff !important;
+      background: #7a200d;
+      color: #ffffff;
       font-weight: 800;
       font-size: calc(0.85rem * var(--statblock-font-scale, 1));
     }
 
     .action-pill-cell {
-      background: #fbf0d9 !important;
-      color: #2b1b12 !important;
+      background: #fbf0d9;
+      color: #2b1b12;
       font-weight: 700;
       font-size: calc(0.78rem * var(--statblock-font-scale, 1));
-      border-left: 1px solid rgba(122, 31, 18, 0.35) !important;
-    }
-
-    .action-cell {
-      &.phase-cell {
-        background: #6b46c1 !important;
-        color: #ffffff !important;
-        .cell-phase-text {
-          font-weight: 800;
-          font-size: calc(0.76rem * var(--statblock-font-scale, 1));
-          text-transform: uppercase;
-          letter-spacing: 0.04em;
-          color: #ffffff !important;
-          line-height: 1.1;
-        }
-      }
-
-      &.name-cell {
-        background: #7a200d !important;
-        color: #ffffff !important;
-        .cell-main-text {
-          font-weight: 800;
-          font-size: calc(0.86rem * var(--statblock-font-scale, 1));
-          color: #ffffff !important;
-          line-height: 1.15;
-        }
-      }
-
-      &.range-cell, &.type-cell, &.save-cell, &.target-cell, &.recharge-cell, &.meta-cell, &.mech-cell, &.scope-cell {
-        background: #fdf1d6;
-        .cell-sub-text {
-          font-weight: 700;
-          font-size: calc(0.78rem * var(--statblock-font-scale, 1));
-          color: #2b1b12;
-          line-height: 1.15;
-        }
-      }
-
-      &.mech-cell, &.type-cell, &.save-cell {
-        background: #fbf0d9 !important;
-        .cell-sub-text {
-          color: #7a200d !important;
-          font-weight: 700;
-        }
-      }
-
-      &.recharge-cell {
-        background: #ebf8ff !important;
-        .cell-sub-text {
-          color: #2b6cb0 !important;
-        }
-      }
-
-      &.save-cell {
-        background: #fffaf0 !important;
-        .cell-sub-text {
-          color: #c05621 !important;
-        }
-      }
-
-      &.resource-cell {
-        background: #f0fdf4 !important;
-        .cell-sub-text {
-          color: #15803d !important;
-          font-weight: 700;
-        }
-      }
-
-      &.prepared-cell {
-        background: #eff6ff !important;
-        .cell-sub-text {
-          color: #1d4ed8 !important;
-          font-weight: 700;
-        }
-      }
-
-      &.metamagic-header-cell {
-        background: #7e22ce !important;
-        color: #ffffff !important;
-        .cell-main-text {
-          font-weight: 800;
-          font-size: calc(0.84rem * var(--statblock-font-scale, 1));
-          color: #ffffff !important;
-        }
-      }
-
-      &.flexible-casting-cell {
-        background: #faf5ff !important;
-        .cell-sub-text {
-          color: #6b21a8 !important;
-          font-style: italic;
-          font-size: calc(0.8rem * var(--statblock-font-scale, 1));
-        }
-        flex: 1;
-      }
-
-      &.metamagic-option-cell {
-        background: #ffffff !important;
-        border-right: 1px solid #e9d5ff !important;
-        padding: 4px 8px !important;
-        font-size: calc(0.78rem * var(--statblock-font-scale, 1)) !important;
-
-        &:last-child {
-          border-right: none !important;
-        }
-      }
-
-      &.type-cell {
-        background: #f7fafc !important;
-        .cell-sub-text {
-          color: #2d3748 !important;
-        }
-      }
+      border-left: 1px solid rgba(122, 31, 18, 0.35);
     }
 
     .cell-divider {
-      width: 1px !important;
-      background: #cbd5e0 !important;
-      align-self: stretch !important;
+      width: 1px;
+      background: #cbd5e0;
+      align-self: stretch;
     }
   }
 }
 
 .statblock .skill .dnd-entry-pill {
-  text-indent: 0 !important;
-  display: inline-flex !important;
-  vertical-align: middle !important;
-}
-
-/* Elimination of Pill Design Boxes / Panels for AC, HP, Speed, Senses, Languages, and Spell Rows */
-.statblock {
-  .skill.dnd-cellular-row,
-  .skill.dnd-cascade-panel {
-    display: block !important;
-    background: transparent;
-
-    &.is-striped,
-    &.sb-striped {
-      background: rgba(122, 31, 18, 0.055) !important;
-    }
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 2px !important;
-    padding: 1px 0 !important;
-    margin: 1px 0 !important;
-    line-height: 1.45 !important;
-    text-indent: 0 !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
-
-    .dnd-cascade-title,
-    .name.dnd-cascade-title,
-    span.name.dnd-cascade-title {
-      display: inline !important;
-      min-width: 0 !important;
-      background: transparent !important;
-      border: none !important;
-      border-right: none !important;
-      padding: 0 4px 0 0 !important;
-      margin: 0 !important;
-      text-indent: 0 !important;
-      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
-      font-weight: 800 !important;
-      color: #58180d !important;
-      text-transform: none !important;
-      letter-spacing: normal !important;
-      text-shadow: none !important;
-      border-radius: 0 !important;
-      flex-shrink: 0;
-
-      &::after {
-        content: ':';
-        margin-left: 1px;
-      }
-    }
-
-    .dnd-cascade-badges-wrap {
-      display: inline !important;
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-      vertical-align: baseline;
-
-      .dnd-cascade-badge {
-        display: inline !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-        vertical-align: baseline;
-      }
-    }
-  }
-
-  /* Clean Typographic Spell Rows */
-  .spell-row.dnd-cascade-subpanel {
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-    padding: 2px 0 !important;
-    margin: 2px 0 !important;
-    display: block !important;
-
-    .spell-label {
-      background: transparent !important;
-      border: none !important;
-      border-right: none !important;
-      padding: 0 4px 0 0 !important;
-      font-weight: 700 !important;
-      color: #58180d !important;
-      display: inline !important;
-
-      &::after {
-        content: ':';
-        margin-right: 4px;
-      }
-    }
-
-    .spell-list-entries {
-      display: inline !important;
-      padding: 0 !important;
-      background: transparent !important;
-
-      .spell-entry-badge {
-        display: inline !important;
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-
-        &::after {
-          content: ', ';
-          color: inherit;
-        }
-
-        &:last-child::after {
-          content: '';
-        }
-
-        .spell-name-text {
-          font-style: italic;
-        }
-      }
-    }
-  }
-
-  .spell-tag-badge {
-    display: inline !important;
-    background: transparent !important;
-    border: none !important;
-    box-shadow: none !important;
-    font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
-    color: #7e22ce !important;
-    font-weight: 700 !important;
-    padding: 0 !important;
-    margin-left: 3px !important;
-  }
+  text-indent: 0;
+  display: inline-flex;
+  vertical-align: middle;
 }
 
 /* Interleaved Per-Line Horizontal Zebra Stripes for Verbose Text Blocks */
 .zebra-stripe-text {
-  background-color: transparent !important;
+  background-color: transparent;
   background-image: repeating-linear-gradient(
     to bottom,
     transparent 0,
     transparent 1.5rem,
     rgba(90, 40, 10, 0.04) 1.5rem,
     rgba(90, 40, 10, 0.04) 3rem
-  ) !important;
+  );
   background-attachment: local;
-  line-height: calc(1.5rem * var(--statblock-font-scale, 1)) !important;
-  padding: 0 4px !important;
+  line-height: calc(1.5rem * var(--statblock-font-scale, 1));
+  padding: 0 4px;
   border-radius: 4px;
-  border: none !important;
+  border: none;
   margin-top: 2px;
   box-sizing: border-box;
-  text-indent: 0 !important;
+  text-indent: 0;
 }
 
 /* Multi-Phase Grouped Bloodied Limiter Badge */
 .dnd-bloodied-phases-limiter {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   gap: 5px;
-  border: 1.5px solid rgba(220, 38, 38, 0.75) !important;
-  background: rgba(239, 68, 68, 0.08) !important;
-  padding: 1px 7px !important;
+  border: 1.5px solid rgba(220, 38, 38, 0.75);
+  background: rgba(239, 68, 68, 0.08);
+  padding: 1px 7px;
   border-radius: 4px;
-  color: #991b1b !important;
+  color: #991b1b;
   font-weight: 700;
   vertical-align: middle;
   white-space: normal;
   word-break: break-word;
 }
 
-/* Universal Vertical Centering for Panels, Badges, Tags, Cells */
-.dnd-cascade-badge,
-.dnd-cellular-cell,
+/* Universal Vertical Centering for Badges, Tags, Cells */
 .dnd-meta-badge,
 .top-plate-cell,
 .top-plate-header,
@@ -1020,10 +715,10 @@
 .region-val,
 .action-pill-cell,
 .action-pill-name {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  vertical-align: middle !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
 }
 
 /* ==========================================================================
@@ -1031,540 +726,274 @@
    ========================================================================== */
 
 /* 1. Classic WotC Warm Parchment */
-.statblock.theme-wotc {
-  background-color: #fdf1dc !important;
+:is(#render, .composer-preview, body) .statblock.theme-wotc {
+  background-color: #fdf1dc;
   background-image:
     radial-gradient(circle at 18% 12%, rgba(214, 172, 110, 0.30) 0%, transparent 45%),
     radial-gradient(circle at 82% 88%, rgba(191, 142, 82, 0.28) 0%, transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(253, 241, 220, 0.95) 0%, rgba(246, 228, 196, 0.98) 100%),
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139, 69, 19, 0.016) 3px, rgba(139, 69, 19, 0.016) 6px) !important;
-  color: #2c0e08 !important;
-  border: 2px solid #58180d !important;
-  box-shadow: 0 4px 18px rgba(88, 24, 13, 0.2), inset 0 0 40px rgba(184, 134, 76, 0.16) !important;
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139, 69, 19, 0.016) 3px, rgba(139, 69, 19, 0.016) 6px);
+  color: #2c0e08;
+  border: 2px solid #58180d;
+  box-shadow: 0 4px 18px rgba(88, 24, 13, 0.2), inset 0 0 40px rgba(184, 134, 76, 0.16);
 
   .monster-name {
-    color: #58180d !important;
-    font-family: ff-scala-sans-pro, 'Cinzel', 'Libre Baskerville', Georgia, serif !important;
+    color: #58180d;
+    font-family: ff-scala-sans-pro, 'Cinzel', 'Libre Baskerville', Georgia, serif;
   }
   .monster-nickname {
-    color: #7a2014 !important;
+    color: #7a2014;
   }
   .type {
-    color: #7a2014 !important;
-    font-style: italic !important;
+    color: #7a2014;
+    font-style: italic;
   }
   hr {
-    border-color: #9c2b1b !important;
-    background: #9c2b1b !important;
+    border-color: #9c2b1b;
+    background: #9c2b1b;
   }
   h3.section {
-    color: #58180d !important;
-    border-bottom: 2px solid #9c2b1b !important;
+    color: #58180d;
+    border-bottom: 2px solid #9c2b1b;
   }
 
   /* CR & Nameplate Cluster */
   .cr-composite-pill {
-    background: #fdf1dc !important;
-    border: 1.5px solid #58180d !important;
-    box-shadow: 0 1px 4px rgba(88, 24, 13, 0.2) !important;
+    background: #fdf1dc;
+    border: 1.5px solid #58180d;
+    box-shadow: 0 1px 4px rgba(88, 24, 13, 0.2);
 
     .cr-main-region {
-      background: transparent !important;
+      background: transparent;
       .region-label {
-        color: #58180d !important;
+        color: #58180d;
       }
       .region-val {
-        color: #58180d !important;
+        color: #58180d;
       }
     }
     .cr-sub-region {
-      background: #fbf2e3 !important;
+      background: #fbf2e3;
       .region-label {
-        color: #7a2014 !important;
-        font-weight: 700 !important;
+        color: #7a2014;
+        font-weight: 700;
       }
       .region-val {
-        color: #58180d !important;
+        color: #58180d;
       }
     }
     .region-divider {
-      background: #9c2b1b !important;
+      background: #9c2b1b;
     }
   }
 
   .top-plate-init-header {
-    color: #58180d !important;
-    border-bottom: 1.5px solid #9c2b1b !important;
+    color: #58180d;
+    border-bottom: 1.5px solid #9c2b1b;
   }
   .top-plate-init-cell {
-    background: #fbf2e3 !important;
-    border: 1px solid #c9a76d !important;
-    color: #58180d !important;
+    background: #fbf2e3;
+    border: 1px solid #c9a76d;
+    color: #58180d;
   }
   .monster-meta-badges .dnd-meta-badge {
-    background: rgba(88, 24, 13, 0.08) !important;
-    border: 1px solid rgba(88, 24, 13, 0.28) !important;
-    color: #58180d !important;
-    font-weight: 600 !important;
-  }
-
-  /* Panels & Badges */
-  .skill.dnd-cascade-panel,
-  .skill.dnd-cellular-row {
-    display: block !important;
-    background: transparent;
-
-    &.is-striped,
-    &.sb-striped {
-      background: rgba(122, 31, 18, 0.055) !important;
-    }
-    border: none !important;
-    box-shadow: none !important;
-    border-radius: 2px !important;
-    overflow: visible !important;
-    padding: 1px 0 !important;
-    margin: 1px 0 !important;
-    line-height: 1.45 !important;
-    text-indent: 0 !important;
-    box-sizing: border-box !important;
-
-    .dnd-cascade-title,
-    .name.dnd-cascade-title,
-    span.name.dnd-cascade-title {
-      display: inline !important;
-      min-width: 0 !important;
-      background: transparent !important;
-      color: #58180d !important;
-      text-shadow: none !important;
-      border: none !important;
-      border-right: none !important;
-      font-weight: 800 !important;
-      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
-      height: auto !important;
-      min-height: auto !important;
-      padding: 0 4px 0 0 !important;
-      margin: 0 !important;
-      text-indent: 0 !important;
-      border-radius: 0 !important;
-      box-sizing: border-box !important;
-
-      &::after {
-        content: ':';
-        margin-left: 1px;
-      }
-    }
-    .dnd-cascade-subtitle {
-      background: #58180d !important;
-      color: #fff8ed !important;
-      border: none !important;
-      border-right: none !important;
-      border-radius: 3px !important;
-      padding: 1px 5px !important;
-      margin: 0 5px !important;
-      font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
-      font-weight: 700 !important;
-      text-transform: uppercase !important;
-      align-self: center !important;
-      height: auto !important;
-      min-height: auto !important;
-      display: inline-flex !important;
-      line-height: 1.1 !important;
-      vertical-align: middle !important;
-    }
-    .dnd-cascade-badges-wrap,
-    .dnd-defense-unified-body {
-      background: transparent !important;
-      border: none !important;
-      padding: 0 !important;
-
-      .dnd-cascade-badge {
-        background: transparent !important;
-        border: none !important;
-        box-shadow: none !important;
-        padding: 0 !important;
-        margin: 0 !important;
-      }
-    }
-  }
-
-  .dnd-cascade-panel:not(.skill) {
-    background: rgba(253, 241, 220, 0.92) !important;
-    border: 1.5px solid #9c2b1b !important;
-    box-shadow: 0 1px 3px rgba(88, 24, 13, 0.08) !important;
-    border-radius: 6px !important;
-    overflow: hidden !important;
-    padding: 0 !important;
-
-    .dnd-cascade-title,
-    .name.dnd-cascade-title,
-    span.name.dnd-cascade-title {
-      background: #58180d !important;
-      color: #fff8ed !important;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
-      border-right: 1.5px solid #9c2b1b !important;
-      font-weight: 800 !important;
-      align-self: stretch !important;
-      height: auto !important;
-      min-height: 100% !important;
-      margin: 0 !important;
-      border-radius: 4px 0 0 4px !important;
-      box-sizing: border-box !important;
-    }
-    .dnd-cascade-subtitle {
-      background: #f5deb3 !important;
-      color: #58180d !important;
-      border-right: 1.5px solid #c9a76d !important;
-      align-self: stretch !important;
-      height: auto !important;
-      min-height: 100% !important;
-      margin: 0 !important;
-      box-sizing: border-box !important;
-    }
-    .dnd-cascade-subpanel {
-      background: #fdf6e9 !important;
-      border: 1.25px solid #d8be91 !important;
-    }
-    .dnd-cascade-badge {
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      color: #3b170b !important;
-    }
+    background: rgba(88, 24, 13, 0.08);
+    border: 1px solid rgba(88, 24, 13, 0.28);
+    color: #58180d;
+    font-weight: 600;
   }
 
   .dnd-adv-highlight {
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    color: #1b5e20 !important;
+    color: #1b5e20;
     font-weight: 500;
-
-
   }
 
   .dnd-disadv-highlight {
     display: inline-flex;
     align-items: center;
     gap: 3px;
-    color: #b71c1c !important;
+    color: #b71c1c;
     font-weight: 500;
-
-
   }
 
   /* Stat Table */
   .stat-table {
-    background: #f5e4c3 !important;
-    border: 1.5px solid #c9a76d !important;
+    background: #f5e4c3;
+    border: 1.5px solid #c9a76d;
 
     .header-label {
-      color: #58180d !important;
-      font-weight: bold !important;
+      color: #58180d;
+      font-weight: bold;
     }
     .mod.one, .save.one {
-      background-color: #ebd3a8 !important;
-      color: #3b170b !important;
+      background-color: #ebd3a8;
+      color: #3b170b;
     }
     .mod.two, .save.two {
-      background-color: #f1dfbc !important;
-      color: #3b170b !important;
+      background-color: #f1dfbc;
+      color: #3b170b;
     }
   }
 
   /* Cards & Action Blocks */
   .dnd-section-card {
-    background: rgba(253, 246, 233, 0.96) !important;
-    border: 1.5px solid #c8ab83 !important;
-    border-left: 3.5px solid #58180d !important;
-    box-shadow: 0 1px 3px rgba(88, 24, 13, 0.06) !important;
+    background: rgba(253, 246, 233, 0.96);
+    border: 1.5px solid #c8ab83;
+    border-left: 3.5px solid #58180d;
+    box-shadow: 0 1px 3px rgba(88, 24, 13, 0.06);
   }
 
   .trait, .action, .attack, .multiattack, .reaction, .spell-row:not(.dnd-cascade-subpanel) {
-    background: rgba(253, 246, 233, 0.96) !important;
-    border: 1.5px solid #c8ab83 !important;
-    border-left: 3.5px solid #58180d !important;
-    box-shadow: 0 1px 3px rgba(88, 24, 13, 0.06) !important;
+    background: rgba(253, 246, 233, 0.96);
+    border: 1.5px solid #c8ab83;
+    border-left: 3.5px solid #58180d;
+    box-shadow: 0 1px 3px rgba(88, 24, 13, 0.06);
   }
 
   .action-composite-pill {
-    border: 1.5px solid #58180d !important;
+    border: 1.5px solid #58180d;
 
     .action-pill-name {
-      background: #58180d !important;
-      color: #fdf1dc !important;
-    }
-    .action-composite-cell {
-      background: #fbf2e3 !important;
-      color: #58180d !important;
-      border-left: 1px solid #c8ab83 !important;
+      background: #58180d;
+      color: #fdf1dc;
     }
   }
 
   .monster-portrait {
-    background-color: #fbf2e3 !important;
-    border: 2px solid #58180d !important;
-    box-shadow: 0 3px 8px rgba(88, 24, 13, 0.2) !important;
+    background-color: #fbf2e3;
+    border: 2px solid #58180d;
+    box-shadow: 0 3px 8px rgba(88, 24, 13, 0.2);
 
     .portrait-caption {
-      color: #58180d !important;
-      font-style: italic !important;
+      color: #58180d;
+      font-style: italic;
     }
   }
 }
 
 /* Modern Modular with Classic WotC Parchment Theme */
-.statblock.modern-modular.theme-wotc,
-.statblock.theme-wotc.modern-modular {
-  background-color: #fdf1dc !important;
+:is(#render, .composer-preview, body) .statblock.modern-modular.theme-wotc,
+:is(#render, .composer-preview, body) .statblock.theme-wotc.modern-modular {
+  background-color: #fdf1dc;
   background-image:
     radial-gradient(circle at 18% 12%, rgba(214, 172, 110, 0.30) 0%, transparent 45%),
     radial-gradient(circle at 82% 88%, rgba(191, 142, 82, 0.28) 0%, transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(253, 241, 220, 0.95) 0%, rgba(246, 228, 196, 0.98) 100%),
-    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139, 69, 19, 0.016) 3px, rgba(139, 69, 19, 0.016) 6px) !important;
-  color: #2c0e08 !important;
-  border: 2px solid #58180d !important;
-  box-shadow: 0 4px 18px rgba(88, 24, 13, 0.2), inset 0 0 40px rgba(184, 134, 76, 0.16) !important;
+    repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139, 69, 19, 0.016) 3px, rgba(139, 69, 19, 0.016) 6px);
+  color: #2c0e08;
+  border: 2px solid #58180d;
+  box-shadow: 0 4px 18px rgba(88, 24, 13, 0.2), inset 0 0 40px rgba(184, 134, 76, 0.16);
 
   .monster-name {
-    color: #58180d !important;
+    color: #58180d;
   }
   .type {
-    color: #7a2014 !important;
+    color: #7a2014;
   }
   hr {
-    border-color: #9c2b1b !important;
-    background: #9c2b1b !important;
+    border-color: #9c2b1b;
+    background: #9c2b1b;
   }
   h3.section {
-    color: #58180d !important;
-    border-bottom: 2px solid #9c2b1b !important;
+    color: #58180d;
+    border-bottom: 2px solid #9c2b1b;
   }
   .sub-section-header {
-    color: #7a2014 !important;
-    border-left: 3px solid #9c2b1b !important;
+    color: #7a2014;
+    border-bottom: 1.5px solid #9c2b1b;
+    padding-bottom: 2px;
   }
   .cr-composite-pill {
-    background: #fdf1dc !important;
-    border: 1.5px solid #58180d !important;
+    background: #fdf1dc;
+    border: 1.5px solid #58180d;
 
     .cr-main-region {
-      background: transparent !important;
+      background: transparent;
       .region-label, .region-val {
-        color: #58180d !important;
+        color: #58180d;
       }
     }
     .cr-sub-region {
-      background: #fdf1dc !important;
+      background: #fdf1dc;
       .region-label {
-        color: #7a2014 !important;
+        color: #7a2014;
       }
       .region-val {
-        color: #2c0e08 !important;
+        color: #2c0e08;
       }
     }
   }
   .stat-table {
-    background: #f5e4c3 !important;
-    border: 1.5px solid #c9a76d !important;
+    background: #f5e4c3;
+    border: 1.5px solid #c9a76d;
 
     .header-label {
-      color: #58180d !important;
+      color: #58180d;
     }
     .mod.one, .save.one {
-      background-color: #ebd3a8 !important;
-      color: #3b170b !important;
+      background-color: #ebd3a8;
+      color: #3b170b;
     }
     .mod.two, .save.two {
-      background-color: #f1dfbc !important;
-      color: #3b170b !important;
+      background-color: #f1dfbc;
+      color: #3b170b;
     }
   }
   .dnd-section-card,
   .trait, .action, .attack, .multiattack, .reaction, .spell-row:not(.dnd-cascade-subpanel) {
-    background: #fdf1d6 !important;
-    border: 2px solid #58180d !important;
-    border-radius: 4px !important;
-    box-shadow: 0 1px 4px rgba(88, 24, 13, 0.12) !important;
-    margin: 8px 0 !important;
-    padding: 6px 8px !important;
-    overflow: hidden !important;
+    background: #fdf1d6;
+    border: 2px solid #58180d;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(88, 24, 13, 0.12);
+    margin: 8px 0;
+    padding: 6px 8px;
+    overflow: hidden;
   }
 }
 
-/* 2. Printer Friendly Monochromatic */
-.statblock.theme-printer {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border: 1.5px solid #000000 !important;
-  box-shadow: none !important;
+/* 2–12. Monochromatic, Lovecraftian, Dwarven, and Decaying Elegancy Themes */
+@mixin statblock-theme-frame($bg, $ink, $border, $shadow, $name-color, $rule-color, $name-shadow: none) {
+  background-color: $bg;
+  color: $ink;
+  border: $border;
+  box-shadow: $shadow;
 
   .monster-name {
-    color: #000000 !important;
+    color: $name-color;
+    @if $name-shadow != none {
+      text-shadow: $name-shadow;
+    }
   }
   hr {
-    border-color: #000000 !important;
-  }
-  .top-plate-grid, .unified-top-plate {
-    border-color: #000000 !important;
+    border-color: $rule-color;
   }
 }
 
-/* 3. Lovecraftian Gothic-Golden */
-.statblock.theme-lovecraft_golden {
-  background-color: #0c0f12 !important;
-  color: #e6edf3 !important;
-  border: 2px solid #d4af37 !important;
-  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15) !important;
+$statblock-theme-frames: (
+  printer: (#ffffff, #000000, 1.5px solid #000000, none, #000000, #000000, none),
+  lovecraft_golden: (#0c0f12, #e6edf3, 2px solid #d4af37, 0 4px 15px rgba(212, 175, 55, 0.15), #f6e05e, #d4af37, 0 0 4px rgba(246, 224, 94, 0.4)),
+  lovecraft_silver: (#0f172a, #f1f5f9, 2px solid #94a3b8, 0 4px 15px rgba(148, 163, 184, 0.2), #e2e8f0, #64748b, 0 0 5px rgba(226, 232, 240, 0.5)),
+  lovecraft_toxic: (#051b11, #ecfdf5, 2px solid #10b981, 0 4px 15px rgba(16, 185, 129, 0.2), #4ade80, #059669, 0 0 6px rgba(74, 222, 128, 0.6)),
+  lovecraft_spooky: (#140b1e, #faf5ff, 2px solid #9333ea, 0 4px 15px rgba(147, 51, 234, 0.25), #c084fc, #7e22ce, 0 0 6px rgba(192, 132, 252, 0.6)),
+  lovecraft_galactic: (#090919, #f8fafc, 2px solid #6366f1, 0 4px 15px rgba(99, 102, 241, 0.25), #818cf8, #4f46e5, 0 0 6px rgba(129, 140, 248, 0.6)),
+  lovecraft_fathomless: (#03131e, #ecfeff, 2px solid #0891b2, 0 4px 15px rgba(8, 145, 178, 0.25), #06b6d4, #0e7490, 0 0 6px rgba(6, 182, 212, 0.6)),
+  dwarves_forge: (#1c1917, #fafaf9, 2px solid #b45309, 0 4px 15px rgba(180, 83, 9, 0.25), #f97316, #ea580c, 0 0 5px rgba(249, 115, 22, 0.5)),
+  dwarves_aetherpunk: (#181512, #f0fdf4, 2px solid #ca8a04, 0 4px 15px rgba(202, 138, 4, 0.25), #38bdf8, #ca8a04, 0 0 6px rgba(56, 189, 248, 0.6)),
+  art_nouveau: (#f5f5ec, #1e3a2f, 2px solid #c5a059, 0 3px 10px rgba(197, 160, 89, 0.2), #2d5a3e, #c5a059, none),
+  art_deco: (#0b0f19, #f8fafc, 2px solid #eab308, 0 4px 15px rgba(234, 179, 8, 0.25), #facc15, #eab308, 0 0 6px rgba(250, 204, 21, 0.5)),
+);
 
-  .monster-name {
-    color: #f6e05e !important;
-    text-shadow: 0 0 4px rgba(246, 224, 94, 0.4);
-  }
-  hr {
-    border-color: #d4af37 !important;
-  }
-}
-
-/* 4. Lovecraftian Gothic-Silver */
-.statblock.theme-lovecraft_silver {
-  background-color: #0f172a !important;
-  color: #f1f5f9 !important;
-  border: 2px solid #94a3b8 !important;
-  box-shadow: 0 4px 15px rgba(148, 163, 184, 0.2) !important;
-
-  .monster-name {
-    color: #e2e8f0 !important;
-    text-shadow: 0 0 5px rgba(226, 232, 240, 0.5);
-  }
-  hr {
-    border-color: #64748b !important;
-  }
-}
-
-/* 5. Lovecraftian Gothic-Toxic */
-.statblock.theme-lovecraft_toxic {
-  background-color: #051b11 !important;
-  color: #ecfdf5 !important;
-  border: 2px solid #10b981 !important;
-  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2) !important;
-
-  .monster-name {
-    color: #4ade80 !important;
-    text-shadow: 0 0 6px rgba(74, 222, 128, 0.6);
-  }
-  hr {
-    border-color: #059669 !important;
-  }
-}
-
-/* 6. Lovecraftian Gothic-Spooky */
-.statblock.theme-lovecraft_spooky {
-  background-color: #140b1e !important;
-  color: #faf5ff !important;
-  border: 2px solid #9333ea !important;
-  box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25) !important;
-
-  .monster-name {
-    color: #c084fc !important;
-    text-shadow: 0 0 6px rgba(192, 132, 252, 0.6);
-  }
-  hr {
-    border-color: #7e22ce !important;
-  }
-}
-
-/* 7. Lovecraftian Gothic-Galactic */
-.statblock.theme-lovecraft_galactic {
-  background-color: #090919 !important;
-  color: #f8fafc !important;
-  border: 2px solid #6366f1 !important;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25) !important;
-
-  .monster-name {
-    color: #818cf8 !important;
-    text-shadow: 0 0 6px rgba(129, 140, 248, 0.6);
-  }
-  hr {
-    border-color: #4f46e5 !important;
-  }
-}
-
-/* 8. Lovecraftian Gothic-Fathomless */
-.statblock.theme-lovecraft_fathomless {
-  background-color: #03131e !important;
-  color: #ecfeff !important;
-  border: 2px solid #0891b2 !important;
-  box-shadow: 0 4px 15px rgba(8, 145, 178, 0.25) !important;
-
-  .monster-name {
-    color: #06b6d4 !important;
-    text-shadow: 0 0 6px rgba(6, 182, 212, 0.6);
-  }
-  hr {
-    border-color: #0e7490 !important;
-  }
-}
-
-/* 9. Dwarves-Anvil and Forge */
-.statblock.theme-dwarves_forge {
-  background-color: #1c1917 !important;
-  color: #fafaf9 !important;
-  border: 2px solid #b45309 !important;
-  box-shadow: 0 4px 15px rgba(180, 83, 9, 0.25) !important;
-
-  .monster-name {
-    color: #f97316 !important;
-    text-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
-  }
-  hr {
-    border-color: #ea580c !important;
-  }
-}
-
-/* 10. Dwarves-Aetherpunk */
-.statblock.theme-dwarves_aetherpunk {
-  background-color: #181512 !important;
-  color: #f0fdf4 !important;
-  border: 2px solid #ca8a04 !important;
-  box-shadow: 0 4px 15px rgba(202, 138, 4, 0.25) !important;
-
-  .monster-name {
-    color: #38bdf8 !important;
-    text-shadow: 0 0 6px rgba(56, 189, 248, 0.6);
-  }
-  hr {
-    border-color: #ca8a04 !important;
-  }
-}
-
-/* 11. Decaying Elegancy-Art Nouveau */
-.statblock.theme-art_nouveau {
-  background-color: #f5f5ec !important;
-  color: #1e3a2f !important;
-  border: 2px solid #c5a059 !important;
-  box-shadow: 0 3px 10px rgba(197, 160, 89, 0.2) !important;
-
-  .monster-name {
-    color: #2d5a3e !important;
-  }
-  hr {
-    border-color: #c5a059 !important;
-  }
-}
-
-/* 12. Decaying Elegancy-ArtDeco */
-.statblock.theme-art_deco {
-  background-color: #0b0f19 !important;
-  color: #f8fafc !important;
-  border: 2px solid #eab308 !important;
-  box-shadow: 0 4px 15px rgba(234, 179, 8, 0.25) !important;
-
-  .monster-name {
-    color: #facc15 !important;
-    text-shadow: 0 0 6px rgba(250, 204, 21, 0.5);
-  }
-  hr {
-    border-color: #eab308 !important;
+@each $theme, $tokens in $statblock-theme-frames {
+  :is(#render, .composer-preview, body) .statblock.theme-#{$theme} {
+    @include statblock-theme-frame($tokens...);
+    @if $theme == printer {
+      .top-plate-grid, .unified-top-plate {
+        border-color: #000000;
+      }
+    }
   }
 }
 
@@ -1597,7 +1026,7 @@
 .a4-scale-stage {
   display: flex;
   justify-content: center;
-  transition: transform 0.2s ease, width 0.2s ease;
+  transition: transform 0.2s ease;
 }
 
 .a4-page-sheet {

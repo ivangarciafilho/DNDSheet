@@ -50,14 +50,12 @@
             <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Hero Portrait & Avatar</div>
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-4">
-                <q-select v-help="$t('help.character.portraitPosition')"
+                <catalog-select v-help="$t('help.character.portraitPosition')"
                   v-model="portrait.position"
-                  :options="portraitPositions"
-                  emit-value
-                  map-options
+                  :entries="portraitPositions"
+                  preserve-order
+                  :searchable="false"
                   label="Portrait Position"
-                  dense
-                  outlined
                 />
               </div>
               <div class="col-12 col-sm-8">
@@ -104,12 +102,12 @@
         <div class="text-caption q-mb-sm">Class, species and equipment names are references. Enter totals from your character's rules or keep the labelled estimates.</div>
         <div class="editor-fit-grid">
           <div class="editor-fit-cell">
-            <q-input :model-value="actor.combatVitals?.armorClass ?? null" @update:model-value="setVital('armorClass', $event)" label="Recorded Armor Class" type="number" min="0" clearable dense outlined />
+            <q-input v-help="'Record the character’s static Armor Class override shown in the vitals block; leave blank to auto-derive.'" :model-value="actor.combatVitals?.armorClass ?? null" @update:model-value="setVital('armorClass', $event)" label="Recorded Armor Class" type="number" min="0" clearable dense outlined />
             <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" @update:model-value="(value: string) => setVital('armorClassSource', value)" label="Armor Class source / notes" dense outlined class="q-mt-xs" />
             <div class="text-caption q-mt-xs" data-character-ac-provenance>{{ vitals.armorClass.value }} — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
           </div>
           <div class="editor-fit-cell">
-            <q-input :model-value="actor.combatVitals?.speed ?? null" @update:model-value="setVital('speed', $event)" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined />
+            <q-input v-help="'Record the character’s walking speed in feet for the vitals header; leave blank for baseline speed.'" :model-value="actor.combatVitals?.speed ?? null" @update:model-value="setVital('speed', $event)" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined />
             <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" @update:model-value="(value: string) => setVital('speedSource', value)" label="Speed source / notes" dense outlined class="q-mt-xs" />
             <div class="text-caption q-mt-xs" data-character-speed-provenance>{{ vitals.speed.value }} ft. — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
           </div>
@@ -134,6 +132,7 @@
               class="col-4 col-md-2 text-center"
             >
               <q-input
+                v-help="'Base ability score (1–30) used to derive modifiers, saving throws, skills, and DC calculations.'"
                 v-model.number="actor.stats[stat]"
                 type="number"
                 min="1"
@@ -179,6 +178,7 @@
                 @click="charStore.toggleSavingThrow(stat)"
               >
                 <q-checkbox
+                  v-help="'Grant saving throw proficiency in this ability to add Proficiency Bonus.'"
                   :model-value="!!(actor.savingThrows && actor.savingThrows[stat])"
                   dense
                   size="xs"
@@ -198,6 +198,7 @@
             <span class="text-caption text-weight-bold text-teal-3">Skills (18 Standard 5e Skills)</span>
             <q-input
               v-model="skillFilter"
+              v-help="'Filter the 18 character skills by skill name or governing ability score.'"
               placeholder="Filter skills..."
               dense
               outlined
@@ -314,14 +315,13 @@
               />
             </div>
             <div class="col-4">
-              <q-select v-help="$t('help.character.hdDie')"
-                v-model.number="actor.hitDice.die"
-                :options="[6, 8, 10, 12].map((faces) => ({ label: `d${faces}`, value: faces }))"
-                emit-value
-                map-options
+              <catalog-select v-help="$t('help.character.hdDie')"
+                :model-value="String(actor.hitDice.die)"
+                :entries="hitDieOptions"
+                preserve-order
+                :searchable="false"
                 label="Hit Die Type (d)"
-                dense
-                outlined
+                @update:model-value="(val) => (actor.hitDice.die = Number(val ?? 8))"
               />
             </div>
           </div>
@@ -377,14 +377,12 @@
           <!-- Spellcasting Ability & Calculated Metrics -->
           <div class="row q-col-gutter-sm items-center q-mb-md">
             <div class="col-12 col-sm-4">
-              <q-select v-help="$t('help.character.castingAbility')"
+              <catalog-select v-help="$t('help.character.castingAbility')"
                 v-model="spellcastingAbility"
-                :options="castingAbilityOptions"
-                emit-value
-                map-options
+                :entries="castingAbilityOptions"
+                preserve-order
+                :searchable="false"
                 label="Spellcasting Ability"
-                dense
-                outlined
               />
             </div>
             <div class="col-6 col-sm-4 text-center">
@@ -474,14 +472,13 @@
                 <q-input v-help="$t('help.character.spellName')" v-model="sp.name" label="Spell Name" dense outlined />
               </div>
               <div class="col-3">
-                <q-select v-help="$t('help.character.spellLevel')"
-                  v-model.number="sp.level"
-                  :options="spellLevelOptions"
-                  emit-value
-                  map-options
+                <catalog-select v-help="$t('help.character.spellLevel')"
+                  :model-value="String(sp.level)"
+                  :entries="spellLevelEntries"
+                  preserve-order
+                  :searchable="false"
                   label="Level"
-                  dense
-                  outlined
+                  @update:model-value="(val) => (sp.level = Number(val ?? 0))"
                 />
               </div>
               <div class="col-3">
@@ -639,9 +636,11 @@ import { characterVitals } from 'src/core/domain/character-truth'
 import { computed, defineComponent, ref } from 'vue'
 import { useCharacterStore } from 'src/stores/character-store'
 import { DndStat, DND_SKILLS } from 'src/core/domain/types'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'CharacterEditor',
+  components: { CatalogSelect },
   setup() {
     const charStore = useCharacterStore()
     const setVital = (field: 'armorClass' | 'speed' | 'armorClassSource' | 'speedSource', value: string | number | null) => {
@@ -706,6 +705,9 @@ export default defineComponent({
       { label: '9th Level', value: 9 },
     ]
 
+    const hitDieOptions = [6, 8, 10, 12].map((faces) => ({ label: `d${faces}`, value: String(faces) }))
+    const spellLevelEntries = spellLevelOptions.map((opt) => ({ label: opt.label, value: String(opt.value) }))
+
     const spellcastingAbility = computed({
       get: () => charStore.actor.spellcasting?.ability || 'INT',
       set: (val: DndStat) => {
@@ -760,7 +762,9 @@ export default defineComponent({
       portraitPositions,
       onPortraitFileSelected,
       castingAbilityOptions,
+      hitDieOptions,
       spellLevelOptions,
+      spellLevelEntries,
       spellcastingAbility,
       computedSpellSaveDc,
       computedSpellAttackBonus,

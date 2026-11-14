@@ -1,7 +1,9 @@
 <template>
   <div style="display: flex">
+    <!-- CatalogSelect exemption (A16.2): dialog search selector using custom item avatar, subtitle, and type badge slots. -->
     <q-select
       ref="templateRef"
+      v-help="'Search built-in and saved templates for Attacks, Actions, Reactions, and Traits to insert.'"
       :model-value="search"
       :options="filteredTemplateOptions"
       class="template-search"

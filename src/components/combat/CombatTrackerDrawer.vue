@@ -297,7 +297,8 @@ export default defineComponent({
   transition: all 0.2s ease-in-out;
 }
 .active-turn {
-  border-left: 6px solid #f59e0b !important;
-  background: rgba(245, 158, 11, 0.15) !important;
+  border-color: #f59e0b;
+  box-shadow: inset 2px 0 0 rgba(245, 158, 11, 0.85);
+  background: rgba(245, 158, 11, 0.15);
 }
 </style>

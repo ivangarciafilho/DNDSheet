@@ -287,23 +287,17 @@
             @update:cost="(cost: number) => updateItemCost(item, cost)"
           >
             <template #head-prefix>
-              <q-select v-help="$t('help.actions.role')"
+              <catalog-select v-help="$t('help.actions.role')"
                 data-composer-role
                 :model-value="item.role"
-                :options="roleOptions"
-                emit-value
-                map-options
-                dense
-                outlined
+                :entries="roleOptions"
+                preserve-order
+                :searchable="false"
                 dark
-                hide-bottom-space
-                options-dense
                 label="Role"
                 style="min-width: 130px; max-width: 180px;"
-                @update:model-value="(newRole: string) => changeItemRole(item, newRole)"
-              >
-                <q-tooltip class="text-caption">Change compatible action roles, or create a copy for a different entry model. Review before applying.</q-tooltip>
-              </q-select>
+                @update:model-value="(newRole: unknown) => changeItemRole(item, String(newRole || item.role))"
+              />
             </template>
           </composer-chain>
 
@@ -372,6 +366,7 @@
                 </div>
                 <div class="col-auto">
                   <q-btn-toggle
+                    v-help="'Switch this extra block between plain prose text and a rollable dice table.'"
                     :model-value="container.kind"
                     :options="[{ label: 'Text', value: 'text' }, { label: 'Table', value: 'table' }]"
                     dense
@@ -475,6 +470,7 @@ import TraitDisplaySettings from './composer/TraitDisplaySettings.vue'
 import RoleHeaderEditor from './composer/RoleHeaderEditor.vue'
 import EntryDisplaySettings from './composer/EntryDisplaySettings.vue'
 import ActionAssociations from './composer/ActionAssociations.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import type { HeaderRole } from 'src/core/domain/role-headers'
 import { roleTransition } from 'src/core/domain/role-transition'
 
@@ -507,6 +503,7 @@ export default defineComponent({
     RoleHeaderEditor,
     EntryDisplaySettings,
     ActionAssociations,
+    CatalogSelect,
   },
   setup() {
     const monster = useMonsterStore()

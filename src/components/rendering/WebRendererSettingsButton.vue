@@ -10,6 +10,7 @@
             <div class="text-body1 q-mr-md">{{ $t('editor.columns') }}</div>
             <q-btn-toggle
               v-model="editorStore.statBlockColumns"
+              v-help="'Choose one narrow column or a classic two-column wide stat block layout.'"
               :label="$t('editor.settings.cols')"
               :options="[
                 {
@@ -26,6 +27,7 @@
             </div>
             <q-btn-toggle
               v-model="editorStore.style"
+              v-help="'Switch stat block typography and rule conventions between 2014 5e and 2024 Revised 5e.'"
               :label="$t('editor.settings.style')"
               :options="[
                 {
@@ -59,6 +61,7 @@
             <div class="text-body1 q-mr-md">Visual Template</div>
             <q-btn-toggle
               v-model="editorStore.visualTemplate"
+              v-help="'Choose Classic parchment prose layout or Modular block-and-badge card styling.'"
               :options="[
                 { label: 'Classic', value: 'classic' },
                 { label: 'Modular', value: 'modern' },
@@ -67,42 +70,29 @@
           </div>
           <div class="col-12 q-my-sm">
             <div class="text-body1 q-mb-xs">Art Direction / Theme</div>
-            <q-select
+            <catalog-select
               v-model="editorStore.visualTheme"
-              :options="themeOptions"
-              emit-value
-              map-options
-              dense
-              outlined
-            >
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps" dense>
-                  <q-item-section avatar style="min-width: 24px;">
-                    <q-icon :name="scope.opt.icon" :color="scope.opt.color" size="xs" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label class="text-weight-medium">{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side>
-                    <q-badge outline :color="scope.opt.color" class="text-caption">{{ scope.opt.category }}</q-badge>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              v-help="'Select the visual art direction, paper palette, and ornamental border theme for the stat block.'"
+              :entries="themeCatalogEntries"
+              preserve-order
+            />
           </div>
           <q-toggle
             v-if="editorStore.style === '2014'"
             v-model="editorStore.condenseImmunities"
+            v-help="'Group overlapping damage and condition immunity phrases onto denser 2014-style lines.'"
             class="col-12"
             :label="$t('editor.settings.condenseImmunities')"
           />
           <q-toggle
             v-model="monsterStore.useArticleInToken"
+            v-help="'Include an article such as “the” when resolving creature-name tokens inside action text.'"
             class="col-12"
             :label="$t('editor.settings.article')"
           />
           <q-toggle
             v-model="monsterStore.alphaTraits"
+            v-help="'Sort passive Traits alphabetically on the rendered stat block preview and exports.'"
             class="col-12"
             :label="$t('editor.settings.alphaTrait')"
           />
@@ -116,6 +106,7 @@
             </div>
             <q-toggle
               v-model="editorStore.a4PreviewMode"
+              v-help="'Toggle physical 1:1 A4 page framing with layered background and artwork compositing.'"
               dense
               color="primary"
             />
@@ -177,6 +168,7 @@
 import { useEditorStore, VisualTheme } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent } from 'vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import {
   WORKSPACE_PRESETS,
   applyWorkspacePreset,
@@ -209,10 +201,18 @@ export const THEME_OPTIONS: ThemeOption[] = [
 
 export default defineComponent({
   name: 'WebRendererSettingsButton',
+  components: { CatalogSelect },
   setup() {
     const monsterStore = useMonsterStore()
     const editorStore = useEditorStore()
     const activeWorkspacePreset = computed(() => detectActiveWorkspacePreset(editorStore))
+    const themeCatalogEntries = THEME_OPTIONS.map((option) => ({
+      value: option.value,
+      label: option.label,
+      group: option.category,
+      badge: option.category,
+      icon: option.icon,
+    }))
 
     const selectWorkspacePreset = (presetId: WorkspacePresetId) => {
       applyWorkspacePreset(editorStore as unknown as Record<string, unknown>, presetId)
@@ -222,6 +222,7 @@ export default defineComponent({
       monsterStore,
       editorStore,
       themeOptions: THEME_OPTIONS,
+      themeCatalogEntries,
       workspacePresets: WORKSPACE_PRESETS,
       activeWorkspacePreset,
       selectWorkspacePreset,

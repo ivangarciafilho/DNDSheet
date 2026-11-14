@@ -4,7 +4,7 @@
       <span class="composer-chain__label">{{ row.label }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="row.label">
         <template v-for="spec in row.fields" :key="spec.id">
-        <formula-field v-if="numericPath(spec.id)" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
+        <formula-field v-if="numericPath(spec.id)" v-help="'Edit this numeric rule value directly or bind it to CR, PB, or an ability modifier.'" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
         <chain-cell
 v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
           :allow-clear="!!spec.optional" number-hint="Enter a whole number. Apply saves this field; Cancel keeps its current value."
@@ -16,7 +16,7 @@ v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
       <span class="composer-chain__label">Extra {{ index + 1 }}</span>
       <div class="composer-chain__cells" role="group" :aria-label="`Extra damage ${index + 1}`">
         <template v-for="spec in extraFields(extra.id)" :key="spec.id">
-        <formula-field v-if="numericPath(spec.id)" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
+        <formula-field v-if="numericPath(spec.id)" v-help="'Edit this numeric rule value directly or bind it to CR, PB, or an ability modifier.'" :path="numericPath(spec.id) || ''" :label="spec.label" class="attack-formula-field" />
         <chain-cell
 v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
           :allow-clear="!!spec.optional" number-hint="Enter a whole number; this field cannot be cleared." :validate="(next: unknown) => validate(spec.id, next)"
@@ -28,7 +28,7 @@ v-else :cell="cell(spec)" :spec="spec" :value="value(spec.id)"
     <div class="row q-gutter-sm q-my-sm">
       <q-btn flat dense no-caps icon="add" label="Add extra damage" @click="monster.addAdditionalDamage(attack.id)" />
       <q-btn flat dense no-caps icon="save" label="Save attack template" @click="saveTemplate" />
-      <q-select v-if="phaseOptions.length > 1" v-model="attack.stagePool" :options="phaseOptions" emit-value map-options dense dark outlined label="Phase / pool" style="min-width: 160px" />
+      <catalog-select v-if="phaseOptions.length > 1" v-model="attack.stagePool" v-help="'Restrict this attack to one Paragon stage or keep it active in every phase.'" :entries="phaseOptions" preserve-order :searchable="false" dark label="Phase / pool" style="min-width: 160px" />
     </div>
     <div v-if="attack.useCustomRenderer" class="text-caption text-amber-3 q-mb-sm">Custom rendering is active. The stat block uses your custom text; structured fields remain saved.</div>
     <monster-text-editor :field="attack.description" i18n-label-key="editor.attack.description" token-category="attack" @update:model-value="(text: string) => attack && (attack.description = text)" />
@@ -50,10 +50,11 @@ import type { ChainCellView } from 'src/core/domain/composer-chain'
 import ChainCell from './ChainCell.vue'
 import MonsterTextEditor from '../MonsterTextEditor.vue'
 import FormulaField from '../../kit/FormulaField.vue'
+import CatalogSelect from '../../kit/CatalogSelect.vue'
 import NewTemplateDialog from '../widgets/NewTemplateDialog.vue'
 
 export default defineComponent({
-  name: 'AttackComposer', components: { ChainCell, MonsterTextEditor, FormulaField },
+  name: 'AttackComposer', components: { ChainCell, MonsterTextEditor, FormulaField, CatalogSelect },
   props: { attackId: { type: String, required: true } },
   setup(props) {
     const monster = useMonsterStore(), templates = useTemplatesStore(), $q = useQuasar()

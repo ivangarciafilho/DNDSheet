@@ -2,18 +2,18 @@
   <q-expansion-item v-if="entry" dense label="Display and CR settings" v-help="'How this entry prints and whether it counts toward CR.'" icon="tune" class="q-mt-sm" :data-entry-settings="entryId">
     <div class="row q-col-gutter-sm q-pa-sm">
       <template v-if="field === 'actions'">
-        <q-select :model-value="action?.stagePool ?? 'all'" :options="phaseOptions" emit-value map-options dense outlined dark label="Phase / pool" v-help="'Paragon stage in which this entry is available.'" data-entry-phase class="col-12 col-sm-6" @update:model-value="value => update('stagePool', value)" />
+        <catalog-select :model-value="action?.stagePool ?? 'all'" :entries="phaseOptions" preserve-order :searchable="false" dark label="Phase / pool" v-help="'Paragon stage in which this entry is available.'" data-entry-phase class="col-12 col-sm-6" @update:model-value="value => update('stagePool', value)" />
         <q-checkbox :model-value="Boolean(action?.customPreamble)" dark dense label="Description supplies its own heading" v-help="'Do not print the name; the description already starts with it.'" data-entry-custom-heading class="col-12 col-sm-6" @update:model-value="value => update('customPreamble', value)" />
         <div v-if="action?.customPreamble" class="col-12 text-caption">Your description prints without an automatic name or cadence heading.</div>
       </template>
       <template v-else-if="field === 'reactions' && reaction">
-        <q-select :model-value="reaction.availability?.predicate ?? 'always'" :options="predicateOptions" emit-value map-options dense outlined dark label="Availability condition" v-help="'HP or combat state required to use this reaction.'" data-reaction-predicate class="col-12 col-sm-6" @update:model-value="value => updateReactionAvailability({ predicate: value })" />
+        <catalog-select :model-value="reaction.availability?.predicate ?? 'always'" :entries="predicateOptions" preserve-order :searchable="false" dark label="Availability condition" v-help="'HP or combat state required to use this reaction.'" data-reaction-predicate class="col-12 col-sm-6" @update:model-value="value => updateReactionAvailability({ predicate: value as ReactionAvailabilitySet['predicate'] })" />
         <q-input :model-value="reaction.availability?.customCondition ?? ''" dense outlined dark label="Condition qualifier (optional)" placeholder="e.g., while holding its staff" v-help="'Additional qualifier printed alongside the availability state.'" data-reaction-custom-condition class="col-12 col-sm-6" @update:model-value="value => updateReactionAvailability({ customCondition: typeof value === 'string' ? value : '' })" />
         <div class="col-12" data-reaction-stage-pools>
           <div class="text-caption text-grey-4 q-mb-xs">Available in {{ phaseRoot }}s</div>
           <div class="row items-center q-gutter-x-md q-gutter-y-xs">
-            <q-checkbox :model-value="selectedPools.length === 0" dark dense label="All" data-reaction-pool-all @update:model-value="checked => { if (checked) updateReactionAvailability({ stagePools: [] }) }" />
-            <q-checkbox v-for="poolNum in availablePools" :key="poolNum" :model-value="selectedPools.includes(poolNum)" dark dense :label="`${phaseRoot} ${poolNum}`" :data-reaction-pool="poolNum" @update:model-value="checked => toggleReactionPool(poolNum, checked)" />
+            <q-checkbox v-help="'Allow this reaction in every Paragon phase.'" :model-value="selectedPools.length === 0" dark dense label="All" data-reaction-pool-all @update:model-value="checked => { if (checked) updateReactionAvailability({ stagePools: [] }) }" />
+            <q-checkbox v-for="poolNum in availablePools" :key="poolNum" v-help="'Toggle whether this reaction can trigger during this Paragon stage.'" :model-value="selectedPools.includes(poolNum)" dark dense :label="`${phaseRoot} ${poolNum}`" :data-reaction-pool="poolNum" @update:model-value="checked => toggleReactionPool(poolNum, checked)" />
           </div>
         </div>
         <q-checkbox :model-value="Boolean(reaction.customPreamble)" dark dense label="Description supplies its own heading" v-help="'Do not print the name; the description already starts with it.'" data-entry-custom-heading class="col-12" @update:model-value="value => update('customPreamble', value)" />
@@ -41,6 +41,7 @@ import {
 import type { ReactionAvailabilitySet } from 'src/core/domain/types'
 import { traitPhaseOptions } from 'src/core/domain/trait-composer'
 import CrAnnotationCard from '../CrAnnotationCard.vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { defaultCrAnnotation } from '../../models'
 import { useAutoUpdateCr } from '../useAutoUpdateCr'
 

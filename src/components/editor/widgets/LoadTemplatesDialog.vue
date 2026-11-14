@@ -18,6 +18,7 @@
         <div class="col-6 flex items-center">
           <q-toggle
             v-model="overwrite"
+            v-help="'Overwrite matching saved templates instead of skipping conflicting names.'"
             :label="$t('editor.template.importMode')"
           />
         </div>

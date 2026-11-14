@@ -6,6 +6,7 @@
         <span class="text-caption text-weight-bold text-amber-3">Extra Gradient Overlay &amp; Falloff Curve</span>
       </div>
       <q-toggle
+        v-help="'Toggle a multi-stop gradient tint and alpha falloff curve across this image layer.'"
         :model-value="Boolean(overlay.enabled)"
         dense
         dark
@@ -20,45 +21,39 @@
       <!-- Direction, Blend Mode, Curve Preset Row -->
       <div class="row q-col-gutter-xs items-center">
         <div class="col-4">
-          <q-select
+          <catalog-select
             :model-value="overlay.direction || 'top_to_bottom'"
-            :options="directionOptions"
-            emit-value
-            map-options
-            dense
-            outlined
+            v-help="'Set the gradient travel axis or vignette and radial falloff geometry.'"
+            :entries="directionOptions"
+            preserve-order
+            :searchable="false"
             dark
-            options-dense
             label="Direction"
-            @update:model-value="(v) => updateField('direction', v)"
+            @update:model-value="(v) => updateField('direction', String(v || 'top_to_bottom') as GradientOverlayModel['direction'])"
           />
         </div>
         <div class="col-4">
-          <q-select
+          <catalog-select
             :model-value="overlay.blendMode || 'normal'"
-            :options="blendModeOptions"
-            emit-value
-            map-options
-            dense
-            outlined
+            v-help="'Choose the CSS blend mode combining gradient stops with the underlying layer.'"
+            :entries="blendModeOptions"
+            preserve-order
+            :searchable="false"
             dark
-            options-dense
             label="Overlay Blend"
-            @update:model-value="(v) => updateField('blendMode', v)"
+            @update:model-value="(v) => updateField('blendMode', String(v || 'normal'))"
           />
         </div>
         <div class="col-4">
-          <q-select
+          <catalog-select
             :model-value="overlay.curve || 'linear'"
-            :options="curveOptions"
-            emit-value
-            map-options
-            dense
-            outlined
+            v-help="'Select an alpha transition curve preset or drag the yellow curve knob directly.'"
+            :entries="curveOptions"
+            preserve-order
+            :searchable="false"
             dark
-            options-dense
             label="Falloff Curve"
-            @update:model-value="onSelectCurvePreset"
+            @update:model-value="(v) => onSelectCurvePreset(String(v || 'linear') as GradientOverlayModel['curve'])"
           />
         </div>
       </div>
@@ -184,6 +179,7 @@
             </q-popup-proxy>
           </div>
           <q-input
+            v-help="'Enter or tweak the CSS/RGBA color value for the active gradient stop.'"
             :model-value="activeStop.color"
             dense
             outlined
@@ -196,6 +192,7 @@
         <div class="col-6 row items-center no-wrap q-gutter-x-xs">
           <span class="text-caption text-grey-4" style="min-width: 58px;">Opacity: {{ overlay.opacity ?? 80 }}%</span>
           <q-slider
+            v-help="'Scale overall opacity intensity across the entire gradient overlay.'"
             :model-value="overlay.opacity ?? 80"
             :min="0"
             :max="100"
@@ -233,6 +230,7 @@
 <script lang="ts">
 import { computed, defineComponent, nextTick, PropType, ref } from 'vue'
 import { evaluateGradientCurve } from 'src/core/domain/gradient-curve'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 
 export interface GradientStopItem {
   color: string
@@ -253,6 +251,7 @@ export interface GradientOverlayModel {
 
 export default defineComponent({
   name: 'GradientOverlayController',
+  components: { CatalogSelect },
   props: {
     modelValue: {
       type: Object as PropType<Partial<GradientOverlayModel>>,

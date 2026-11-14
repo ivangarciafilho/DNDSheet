@@ -12,6 +12,7 @@
         <q-input
           ref="nameInput"
           v-model="name"
+          v-help="'Display title for saving this action, attack, or trait in your reusable template library.'"
           :label="$t('editor.template.name')"
           class="col-12 q-pa-sm"
           reactive-rules
@@ -24,6 +25,7 @@
         </q-input>
         <q-input
           v-model="icon"
+          v-help="'Optional Material, MDI, or FontAwesome icon class shown next to this template preset.'"
           class="col-12 q-pa-sm"
           :label="$t('editor.template.icon')"
         />
@@ -50,6 +52,7 @@
         <div class="col-12 q-pa-sm">
           <q-toggle
             v-model="override"
+            v-help="'Overwrite an existing template with the same name instead of requiring a unique name.'"
             :label="$t('editor.template.override')"
           />
         </div>

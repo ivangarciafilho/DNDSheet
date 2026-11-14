@@ -137,6 +137,7 @@
           <div class="col-12 col-md-auto">
             <q-btn-toggle
               v-model="view"
+              v-help="'Switch between Active, Archived, Trash, and All library views.'"
               dense
               unelevated
               no-caps
@@ -162,38 +163,32 @@
             </q-input>
           </div>
           <div class="col-6 col-sm-3 col-md-2">
-            <q-select
+            <catalog-select
               v-model="selectedFolder"
-              dense
-              outlined
               clearable
               label="Folder"
-              :options="repo.folders"
+              :entries="folderOptions"
               data-library-folder
               v-help="$t('help.library.folderFilter')"
             />
           </div>
           <div class="col-6 col-sm-3 col-md-2">
-            <q-select
+            <catalog-select
               v-model="selectedTag"
-              dense
-              outlined
               clearable
               label="Tag"
-              :options="repo.tags"
+              :entries="tagOptions"
               data-library-tag
               v-help="$t('help.library.tagFilter')"
             />
           </div>
           <div class="col-12 col-sm-4 col-md-2">
-            <q-select
+            <catalog-select
               v-model="sortBy"
-              dense
-              outlined
-              emit-value
-              map-options
+              preserve-order
+              :searchable="false"
               label="Sort"
-              :options="sortOptions"
+              :entries="sortOptions"
               data-library-sort
               v-help="$t('help.library.sort')"
             />
@@ -420,6 +415,7 @@
                 >
                   <q-input
                     v-model="renameDraft"
+                    v-help="'Enter an updated creature name for the library index and stat block.'"
                     dense
                     outlined
                     autofocus
@@ -454,6 +450,7 @@
                 >
                   <q-input
                     v-model="folderDraft"
+                    v-help="'Assign a campaign, adventure, or folder label to organize this creature.'"
                     dense
                     outlined
                     class="col-4"
@@ -463,6 +460,7 @@
                   />
                   <q-input
                     v-model="tagsDraft"
+                    v-help="'Enter comma-separated encounter, biome, or taxonomy tags for library filtering.'"
                     dense
                     outlined
                     class="col"
@@ -511,6 +509,7 @@ import type {
 } from 'src/core/domain/creature-library'
 import { useRepositoryStore } from 'src/stores/repository-store'
 import { useFileLoader } from 'src/components/file/useFileLoader'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 
 const props = defineProps<{
   modelValue: boolean
@@ -553,6 +552,9 @@ const sortOptions: Array<{ label: string; value: CreatureLibrarySort }> = [
   { label: 'Name (A-Z)', value: 'name' },
   { label: 'Challenge Rating', value: 'cr' },
 ]
+
+const folderOptions = computed(() => repo.folders.map((folder) => ({ value: folder, label: folder })))
+const tagOptions = computed(() => repo.tags.map((tag) => ({ value: tag, label: tag })))
 
 const filteredRows = computed(() =>
   repo.query({
@@ -847,6 +849,7 @@ function onListKeydown(evt: KeyboardEvent) {
 }
 
 .creature-library-row--active {
-  border-left: 3px solid #21ba45;
+  background: rgba(33, 186, 69, 0.08);
+  box-shadow: inset 2px 0 0 rgba(33, 186, 69, 0.75);
 }
 </style>

@@ -42,20 +42,18 @@
 
         <div class="row q-col-gutter-md items-center">
           <div class="col-12 col-sm-6">
-            <q-select
+            <catalog-select
               v-model="selectedCr"
               v-help="'Desired Challenge Rating target used to compute Defensive and Offensive adjustments.'"
               filled
-              dense
-              emit-value
-              map-options
-              :options="crOptions"
+              :entries="crOptions"
+              preserve-order
               label="Target Challenge Rating (CR)"
             >
               <template #prepend>
                 <q-icon name="mdi-sword-cross" color="red-9" />
               </template>
-            </q-select>
+            </catalog-select>
           </div>
           <div class="col-12 col-sm-6 text-body2">
             <div>
@@ -189,9 +187,11 @@ import {
   type AutoTuneSession,
 } from 'src/core/usecases/AutoTuneCr'
 import type { Monster } from 'src/core/domain/types'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 
 export default defineComponent({
   name: 'AutoTuneDialog',
+  components: { CatalogSelect },
   props: {
     modelValue: {
       type: Boolean,

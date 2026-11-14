@@ -38,9 +38,10 @@
         <mechanic-text-editor v-if="kind === 'text' && cell.id === 'trigger'" v-model="draft" dense outlined dark :label="cell.label" />
         <mechanic-text-editor v-else-if="kind === 'text'" v-model="draft" scope="action" dense outlined dark autofocus :label="cell.label" :hint="hint" />
 
-        <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
+        <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" v-help="'Enter a number or bind a formula reference for this rule cell.'" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input
           v-else-if="kind === 'number'"
+          v-help="'Enter a whole numeric override or leave blank to use the creature default.'"
           v-model="draft"
           type="number"
           dense
@@ -76,7 +77,7 @@
         </div>
 
         <template v-else-if="kind === 'suggest'">
-          <q-input v-model="draft" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a categorized suggestion below or type your own" />
+          <q-input v-model="draft" v-help="'Select a suggested 5e duration, target, or rule term below, or type a custom phrase.'" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a categorized suggestion below or type your own" />
           <datalist :id="listId">
             <option v-for="option in spec.options" :key="option" :value="option" />
           </datalist>
@@ -101,7 +102,7 @@
         </template>
 
         <div v-else-if="kind === 'multi'" class="chain-checks">
-          <q-checkbox v-for="option in multiOptions" :key="option" v-model="draft" :val="option" :label="option" dense dark />
+          <q-checkbox v-for="option in multiOptions" :key="option" v-model="draft" v-help="'Toggle whether this option is active in the action clause.'" :val="option" :label="option" dense dark />
           <div v-if="spec.allowCustom" class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col">
               <q-input v-help="$t('help.composer.customOption')" v-model="customEntry" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
@@ -122,13 +123,13 @@
         </div>
 
         <div v-else-if="kind === 'range'" class="column q-gutter-y-xs">
-          <q-btn-toggle v-model="draft.relation" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+          <q-btn-toggle v-model="draft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
           <div class="row q-col-gutter-xs items-start">
             <div class="col-5">
               <q-input v-help="$t('help.composer.distance')" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
             </div>
             <div class="col-auto self-center">
-              <q-btn-toggle v-model="draft.unit" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+              <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
             </div>
             <div class="col">
               <q-input v-help="$t('help.composer.unitOrShape')" v-model="draft.origin" dense outlined dark label="Of" placeholder="you" />
@@ -147,7 +148,7 @@
             <q-input v-help="$t('help.composer.size')" v-model="draft.distance" dense outlined dark label="Size" />
           </div>
           <div class="col-auto self-center">
-            <q-btn-toggle v-model="draft.unit" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+            <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
           </div>
           <div class="col-12">
             <q-input v-help="$t('help.composer.origin')" v-model="draft.origin" dense outlined dark label="Originating from" placeholder="itself" />
