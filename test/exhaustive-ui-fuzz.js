@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { findChrome } from '../tools/qa/chrome.mjs'
+import { findChrome, cleanupChrome } from '../tools/qa/chrome.mjs'
 import { spawn } from 'node:child_process'
 import http from 'node:http'
 import fs from 'node:fs'
@@ -9,9 +9,11 @@ import os from 'node:os'
 const CHROME_PATH = findChrome()
 const PORT = 9223
 let activeBrowser
+let activeProfile
 
 async function runFuzz() {
   const tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'chrome-fuzz-'))
+  activeProfile = tmpDir
   console.log(`Launching headless Chrome on port ${PORT}...`)
 
   const chromeProc = spawn(CHROME_PATH, [
@@ -88,12 +90,28 @@ async function runFuzz() {
     }
   })
 
-  function sendCdp(method, params = {}) {
+  function rawSendCdp(method, params = {}) {
     return new Promise((resolve) => {
       const id = msgId++
       pendingRequests.set(id, resolve)
       ws.send(JSON.stringify({ id, method, params }))
     })
+  }
+
+  async function sendCdp(method, params = {}) {
+    const res = await rawSendCdp(method, params)
+    if (method === 'Page.reload') {
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      for (let attempt = 0; attempt < 80; attempt++) {
+        const probe = await rawSendCdp('Runtime.evaluate', {
+          expression: 'Boolean(document.querySelector("#q-app")?.__vue_app__?.config?.globalProperties?.$pinia)',
+          returnByValue: true,
+        })
+        if (probe?.result?.result?.value === true) break
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+    }
+    return res
   }
 
   // Enable Runtime and Page domains
@@ -3121,6 +3139,7 @@ async function runFuzz() {
     const pinia = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
     const monster = pinia._s.get('monster');
     const editor = pinia._s.get('editor');
+    for (let attempt = 0; attempt < 60 && !document.querySelector('header .mdi-folder-open'); attempt++) await wait(100);
     const openFile = [...document.querySelectorAll('header button')].find((button) => button.querySelector('.mdi-folder-open'));
     if (!openFile) return { loaded: false, reason: 'no Open File button' };
     // The toolbar's own Open File flow; only the native file picker is answered with the fixture.
@@ -3561,11 +3580,11 @@ async function runFuzz() {
     monster.stats.STR=18;monster.stats.DEX=14;monster.spellcasting.attack={override:true,overrideValue:9};
     for(const [id,name,source,reach,bonus] of [['auto-bow','Automatic Bow','weapon','ranged',undefined],['auto-blade','Automatic Blade','weapon','melee',undefined],['auto-spell','Automatic Spell','spell','ranged',undefined],['zero-bonus','Zero Bonus','weapon','ranged',0]]){monster.addAction();Object.assign(monster.actions.at(-1),{id,name,attackSource:source,attackReach:reach,attackBonus:bonus,targeting:{count:3,countMode:'up_to',kind:'creature'},description:'Preserve authored prose.'});}
     const problems=[];let projections=0;const expected=[['auto-bow',monster.proficiency+2],['auto-blade',monster.proficiency+4],['auto-spell',9],['zero-bonus',0]];
-    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(160);for(const [id,bonus] of expected){const entry=window.__sheetEntry(id),text=entry?.textContent||'',sign=bonus>0?'+':'',phrase=template==='modern'?'Attack '+sign+bonus:'Attack Roll: '+sign+bonus;if(!text.includes(phrase)||!text.includes(template==='modern'?'up to 3 creatures':'up to three creatures'))problems.push(style+'/'+template+'/'+id+': '+text);projections++;}}
+    for(const style of ['2014','2024'])for(const template of ['modern','classic']){editor.style=style;editor.visualTemplate=template;await wait(160);for(const [id,bonus] of expected){const entry=window.__sheetEntry(id),text=entry?.textContent||'',sign=bonus>=0?'+':'',phrase=template==='modern'?'Attack '+sign+bonus:'Attack Roll: '+sign+bonus;if(!text.includes(phrase)||!text.includes(template==='modern'?'up to 3 creatures':'up to three creatures'))problems.push(style+'/'+template+'/'+id+': '+text);projections++;}}
     let studio;for(let attempt=0;attempt<40&&!studio;attempt++){studio=[...document.querySelectorAll('.q-expansion-item')].find(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Actions & Traits Studio');if(!studio)await new Promise(resolve=>setTimeout(resolve,50));}if(!studio)throw new Error('Actions & Traits Studio panel did not render');if(!studio.classList.contains('q-expansion-item--expanded'))studio.querySelector('.q-item').click();await wait(100);[...studio.querySelectorAll('button')].find(el=>/^All/.test(el.textContent.trim())).click();await wait(120);const chip=document.querySelector('[data-composer-chain="auto-bow"] [data-chain-cell="attack-bonus"]');const chipMatches=chip?.textContent.includes('+'+(monster.proficiency+2));
-    monster.stats.DEX=20;editor.visualTemplate='modern';await wait(150);const live=window.__sheetEntry('auto-bow').textContent.includes('Attack +'+(monster.proficiency+5))&&window.__sheetEntry('zero-bonus').textContent.includes('Attack 0');
+    monster.stats.DEX=20;editor.visualTemplate='modern';await wait(150);const live=window.__sheetEntry('auto-bow').textContent.includes('Attack +'+(monster.proficiency+5))&&window.__sheetEntry('zero-bonus').textContent.includes('Attack +0');
     const captured=[],nativeUrl=URL.createObjectURL,nativeAnchor=HTMLAnchorElement.prototype.click;URL.createObjectURL=blob=>{captured.push(blob);return 'blob:bonus-proof';};HTMLAnchorElement.prototype.click=function(){};let exports=0;
-    try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=(await captured.at(-1).text()).replace(/[*}]/g,'');if(!text.includes('Attack Roll: +'+(monster.proficiency+5))||!text.includes('Attack Roll: +9')||!text.includes('Attack Roll: 0')||!text.includes('up to three creatures'))problems.push(label+': shared bonus/target output');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
+    try{for(const label of ['Export Markdown (Homebrewery Legacy)','Export Markdown (Homebrewery v3)','Export LaTeX (rpgtex)']){[...document.querySelectorAll('header button')].find(el=>el.querySelector('i')?.textContent.trim()==='download').click();await wait(120);[...document.querySelectorAll('.q-menu .q-item')].find(el=>el.textContent.trim()===label).click();await wait(120);const text=(await captured.at(-1).text()).replace(/[*}]/g,'');if(!text.includes('Attack Roll: +'+(monster.proficiency+5))||!text.includes('Attack Roll: +9')||!text.includes('Attack Roll: +0')||!text.includes('up to three creatures'))problems.push(label+': shared bonus/target output');exports++;}}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
     return {problems,projections,exports,chipMatches,live,authored:monster.actions.find(action=>action.id==='auto-bow').description==='Preserve authored prose.'};
   }`)
   console.log('Step 50 result:',JSON.stringify(step50,null,2))
@@ -3654,7 +3673,7 @@ async function runFuzz() {
     return {problems,resetClears,gapShown,rowContinues,gapCleared,nanSafe,rendered,themed,deleted,undone,markdown,json};
   }`)
   await sendCdp('Page.reload');await pause(1500)
-  step52.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');const t=monster.randomTables?.[0];return !!t&&t.title==='Wild Surge'&&t.rows.length===2&&t.rows[1].text==='Frost creeps';}`)
+  step52.persisted=await evalInPage(`async()=>{for(let attempt=0;attempt<60;attempt++){const monster=document.querySelector('#q-app')?.__vue_app__?.config?.globalProperties?.$pinia?._s.get('monster');const t=monster?.randomTables?.[0];if(t&&t.title==='Wild Surge'&&t.rows.length===2&&t.rows[1].text==='Frost creeps')return true;await new Promise(resolve=>setTimeout(resolve,50));}return false;}`)
   console.log('Step 52 result:',JSON.stringify(step52,null,2))
   if(step52.problems.length||!['resetClears','gapShown','rowContinues','gapCleared','nanSafe','rendered','themed','deleted','undone','markdown','json','persisted'].every(key=>step52[key]===true))throw new Error('Step 52 failed: '+JSON.stringify(step52))
   console.log('\n--- Step 53: Recovered initiative cancellation and accessible roll glyphs ---')
@@ -3889,10 +3908,7 @@ async function runFuzz() {
   console.log('======================================================\n')
 
   ws.close()
-  chromeProc.kill()
-  try {
-    fs.rmSync(tmpDir, { recursive: true, force: true })
-  } catch (e) {}
+  await cleanupChrome(chromeProc, tmpDir).catch(() => undefined)
 
   if (consoleErrors.length > 0 || runtimeExceptions.length > 0) {
     throw new Error('Fuzzing encountered console errors or runtime exceptions!')
@@ -3901,8 +3917,8 @@ async function runFuzz() {
   console.log('ALL 58 EXHAUSTIVE UI STEPS PASSED WITH 0 ERRORS!')
 }
 
-runFuzz().catch((e) => {
-  activeBrowser?.kill()
+runFuzz().catch(async (e) => {
+  await cleanupChrome(activeBrowser, activeProfile).catch(() => undefined)
   console.error('Fatal fuzz test failure:', e)
   process.exit(1)
 })

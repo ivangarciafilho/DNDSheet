@@ -1,6 +1,6 @@
 // A11.9 declarative random-outcome tables: stable ids, dice validation, coverage diagnostics, prose/table output.
 export interface RandomTableRow { id: string; min: number; max: number; text: string }
-export interface RandomTable { id: string; title?: string; dice: string; rows: RandomTableRow[]; fallback?: string }
+export interface RandomTable { id: string; title?: string; dice: string; rows: RandomTableRow[]; fallback?: string; explicitRollOnly?: boolean }
 export interface TableDiagnostic { kind: 'dice' | 'gap' | 'overlap' | 'empty' | 'range'; message: string; rowIds?: string[] }
 
 const DICE = /^\s*(\d*)d(\d+)\s*([+-]\s*\d+)?\s*$/i;
@@ -93,6 +93,7 @@ export function normalizeRandomTables(raw: unknown): RandomTable[] {
     })
     const out: RandomTable = { id, title: text(table.title), dice: text(table.dice) || '1d6', rows }
     if (text(table.fallback)) out.fallback = text(table.fallback)
+    if (table.explicitRollOnly === true) out.explicitRollOnly = true
     return out
   })
 }
@@ -149,7 +150,7 @@ export function formatRandomTableAsHtml(table: RandomTable): string {
     rows.push(`<tr><td><em>Otherwise</em></td><td>${esc(table.fallback)}</td></tr>`)
   }
   const body = `<tbody>${rows.join('')}</tbody>`
-  return `<div class="random-table-container" data-table-id="${esc(table.id)}">${titleHtml}<table class="outcome-dice-table random-table">${head}${body}</table></div>`
+  return `<div class="random-table-container" data-table-id="${esc(table.id)}" data-print-table="true" data-explicit-roll-only="${table.explicitRollOnly ? 'true' : 'false'}">${titleHtml}<table class="outcome-dice-table random-table">${head}${body}</table></div>`
 }
 
 export interface OutcomeRandomTableDiagnostics {
@@ -201,6 +202,12 @@ export function resolveTableOutcome(
       return { title: table.title, dice: table.dice, resultText: table.fallback, isFallback: true }
     }
     return { title: table.title, dice: table.dice, resultText: `No effect for roll ${explicitRoll}`, isFallback: true }
+  }
+  if (table.explicitRollOnly) {
+    const prompt = table.title
+      ? `Roll ${table.dice} on ${table.title} (explicit roll required)`
+      : `Roll ${table.dice} (explicit roll required)`
+    return { title: table.title, dice: table.dice, resultText: prompt, isFallback: false }
   }
   return { title: table.title, dice: table.dice, resultText: tableToProse(table), isFallback: false }
 }

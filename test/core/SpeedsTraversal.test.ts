@@ -142,3 +142,57 @@ test('SpeedsTraversal - All 15 Presets are Defined and Non-Empty', () => {
     assert.ok(formatted.length > 0)
   }
 })
+
+test('A11.8a: migrateLegacySpeedString parses base speeds and action riders with lossless round-trip', async () => {
+  const { migrateLegacySpeedString, composeMigratedSpeed } = await import(
+    '../../src/core/domain/speeds-traversal.ts'
+  )
+  const raw = '30 ft., fly 60 ft. (hover), Dash: +15 ft., Disengage can ignore difficult terrain'
+  const migrated = migrateLegacySpeedString(raw)
+  assert.strictEqual(migrated.speeds.length, 2)
+  assert.strictEqual(migrated.speeds[0].mode, 'walk')
+  assert.strictEqual(migrated.speeds[1].mode, 'fly')
+  assert.strictEqual(migrated.speeds[1].note, 'hover')
+  assert.strictEqual(migrated.riders.length, 2)
+  assert.strictEqual(composeMigratedSpeed(migrated), raw)
+})
+
+test('A11.8b: SpeedActionRider supports phase-change riders and authored conditions', async () => {
+  const { formatSpeedActionRider, migrateLegacySpeedString, composeMigratedSpeed } = await import(
+    '../../src/core/domain/speeds-traversal.ts'
+  )
+  const formatted = formatSpeedActionRider({
+    id: 'bloodied-surge',
+    action: 'Dash',
+    rider: '+20 ft. speed',
+    phaseStage: 2,
+    condition: 'while Bloodied',
+  })
+  assert.strictEqual(formatted, '[Phase 2] Dash: +20 ft. speed (while Bloodied)')
+
+  const migrated = migrateLegacySpeedString(`30 ft., ${formatted}`)
+  assert.strictEqual(migrated.riders.length, 1)
+  assert.strictEqual(migrated.riders[0].phaseStage, 2)
+  assert.strictEqual(migrated.riders[0].condition, 'while Bloodied')
+  assert.strictEqual(composeMigratedSpeed(migrated), `30 ft., ${formatted}`)
+})
+
+test('A11.8c: unparsed traversal clauses preserve verbatim freeformFallback', async () => {
+  const { migrateLegacySpeedString, composeMigratedSpeed, formatSpeedActionRider } = await import(
+    '../../src/core/domain/speeds-traversal.ts'
+  )
+  const raw = '40 ft., moves through solid stone as if it were difficult terrain'
+  const migrated = migrateLegacySpeedString(raw)
+  assert.strictEqual(migrated.baseSpeedText, '40 ft.')
+  assert.strictEqual(migrated.freeformFallback, 'moves through solid stone as if it were difficult terrain')
+  assert.strictEqual(composeMigratedSpeed(migrated), raw)
+  assert.strictEqual(
+    formatSpeedActionRider({
+      id: 'ff',
+      action: '',
+      rider: '',
+      freeformFallback: 'moves through solid stone',
+    }),
+    'moves through solid stone'
+  )
+})

@@ -275,3 +275,187 @@ export function mergeIdenticalEntries(entries: SkillCheckEntry[]): { entry: Skil
   }
   return merged
 }
+
+export type CombatActivitySection =
+  | 'Traits'
+  | 'Actions'
+  | 'Bonus Actions'
+  | 'Reactions'
+  | 'Legendary Actions'
+  | 'Mythic Actions'
+  | 'Lair Actions'
+
+export const COMBAT_ACTIVITY_SECTIONS: readonly CombatActivitySection[] = [
+  'Traits',
+  'Actions',
+  'Bonus Actions',
+  'Reactions',
+  'Legendary Actions',
+  'Mythic Actions',
+  'Lair Actions',
+]
+
+export interface CombatActivityRoutingEntry {
+  id: string
+  name: string
+  defaultSection: CombatActivitySection
+  sectionOverride?: CombatActivitySection
+  economyLabel?: string
+  description?: string
+  tags?: string[]
+  order?: number
+}
+
+export interface CombatActivityRoutingState {
+  entries: CombatActivityRoutingEntry[]
+  undoStack: CombatActivityRoutingEntry[][]
+  redoStack: CombatActivityRoutingEntry[][]
+}
+
+export interface RoutedSectionActivity {
+  id: string
+  name: string
+  renderedTitle: string
+  section: CombatActivitySection
+  defaultSection: CombatActivitySection
+  relocated: boolean
+  economyLabel?: string
+  description?: string
+}
+
+const SECTION_ECONOMY_NORMALIZED: Record<CombatActivitySection, string> = {
+  Actions: 'action',
+  'Bonus Actions': 'bonus action',
+  Reactions: 'reaction',
+  Traits: 'trait',
+  'Legendary Actions': 'legendary action',
+  'Mythic Actions': 'mythic action',
+  'Lair Actions': 'lair action',
+}
+
+function cloneRoutingEntries(entries: CombatActivityRoutingEntry[]): CombatActivityRoutingEntry[] {
+  return entries.map((e) => ({
+    ...e,
+    tags: e.tags ? [...e.tags] : undefined,
+  }))
+}
+
+export function createCombatActivityRoutingState(
+  entries: CombatActivityRoutingEntry[]
+): CombatActivityRoutingState {
+  return {
+    entries: cloneRoutingEntries(entries),
+    undoStack: [],
+    redoStack: [],
+  }
+}
+
+export function formatSectionActivityTitle(
+  entry: Pick<CombatActivityRoutingEntry, 'name' | 'defaultSection' | 'economyLabel'>,
+  targetSection: CombatActivitySection
+): string {
+  const baseName = (entry.name || '').trim()
+  const label = (entry.economyLabel || '').trim()
+  if (!label) return baseName
+  if (baseName.toLowerCase().includes(`(${label.toLowerCase()})`)) {
+    return baseName
+  }
+  const relocated = targetSection !== entry.defaultSection
+  const nativeMatch = SECTION_ECONOMY_NORMALIZED[targetSection] === label.toLowerCase()
+  if (relocated || !nativeMatch) {
+    return `${baseName} (${label})`
+  }
+  return baseName
+}
+
+export function relocateCombatActivity(
+  state: CombatActivityRoutingState,
+  activityId: string,
+  targetSection: CombatActivitySection
+): CombatActivityRoutingState {
+  const idx = state.entries.findIndex((e) => e.id === activityId)
+  if (idx === -1) return state
+  const current = state.entries[idx]
+  const currentEffective = current.sectionOverride ?? current.defaultSection
+  if (currentEffective === targetSection) return state
+
+  const nextEntries = cloneRoutingEntries(state.entries)
+  nextEntries[idx] = {
+    ...nextEntries[idx],
+    sectionOverride: targetSection === current.defaultSection ? undefined : targetSection,
+  }
+  return {
+    entries: nextEntries,
+    undoStack: [...state.undoStack, cloneRoutingEntries(state.entries)],
+    redoStack: [],
+  }
+}
+
+export function undoCombatActivityRelocation(
+  state: CombatActivityRoutingState
+): CombatActivityRoutingState {
+  if (state.undoStack.length === 0) return state
+  const previous = state.undoStack[state.undoStack.length - 1]
+  return {
+    entries: cloneRoutingEntries(previous),
+    undoStack: state.undoStack.slice(0, -1),
+    redoStack: [...state.redoStack, cloneRoutingEntries(state.entries)],
+  }
+}
+
+export function redoCombatActivityRelocation(
+  state: CombatActivityRoutingState
+): CombatActivityRoutingState {
+  if (state.redoStack.length === 0) return state
+  const next = state.redoStack[state.redoStack.length - 1]
+  return {
+    entries: cloneRoutingEntries(next),
+    undoStack: [...state.undoStack, cloneRoutingEntries(state.entries)],
+    redoStack: state.redoStack.slice(0, -1),
+  }
+}
+
+export function projectCombatActivitySections(
+  entries: CombatActivityRoutingEntry[]
+): Record<CombatActivitySection, RoutedSectionActivity[]> {
+  const sections: Record<CombatActivitySection, RoutedSectionActivity[]> = {
+    Traits: [],
+    Actions: [],
+    'Bonus Actions': [],
+    Reactions: [],
+    'Legendary Actions': [],
+    'Mythic Actions': [],
+    'Lair Actions': [],
+  }
+
+  // Deduplicate by activity id so relocated entries are never emitted twice in export/render
+  const dedupedById = new Map<string, { entry: CombatActivityRoutingEntry; index: number }>()
+  entries.forEach((entry, index) => {
+    if (!entry || !entry.id) return
+    dedupedById.set(entry.id, { entry, index })
+  })
+
+  const ordered = [...dedupedById.values()].sort((a, b) => {
+    const orderA = a.entry.order ?? a.index
+    const orderB = b.entry.order ?? b.index
+    if (orderA !== orderB) return orderA - orderB
+    return a.index - b.index
+  })
+
+  for (const { entry } of ordered) {
+    const section = entry.sectionOverride ?? entry.defaultSection
+    const bucket = sections[section] ?? sections.Actions
+    bucket.push({
+      id: entry.id,
+      name: entry.name,
+      renderedTitle: formatSectionActivityTitle(entry, section),
+      section,
+      defaultSection: entry.defaultSection,
+      relocated: section !== entry.defaultSection,
+      economyLabel: entry.economyLabel,
+      description: entry.description,
+    })
+  }
+
+  return sections
+}

@@ -198,6 +198,16 @@ export function migrateMonsterSchema(raw: any): Monster {
 
   // Normalize spellcasting structure
   const sc = monster.spellcasting || {}
+  const normalizedPrimarySubclass =
+    typeof sc.subclass === 'string' && sc.subclass.trim()
+      ? sc.subclass.trim()
+      : Array.isArray(sc.classes) && typeof sc.classes[0]?.subclass === 'string' && sc.classes[0].subclass.trim()
+        ? sc.classes[0].subclass.trim()
+        : undefined
+  const normalizedSecondarySubclass =
+    typeof sc.multiclass?.secondarySubclass === 'string' && sc.multiclass.secondarySubclass.trim()
+      ? sc.multiclass.secondarySubclass.trim()
+      : undefined
   monster.spellcasting = {
     ...sc,
     stat: sc.stat || 'INT',
@@ -214,6 +224,7 @@ export function migrateMonsterSchema(raw: any): Monster {
       overrideValue: sc.attack?.overrideValue ?? 0,
     },
     class: sc.class,
+    ...(normalizedPrimarySubclass ? { subclass: normalizedPrimarySubclass } : {}),
     level: sc.level ?? 1,
     slots: Array.isArray(sc.slots) ? sc.slots : [0, 0, 0, 0, 0, 0, 0, 0, 0],
     atWill: Array.isArray(sc.atWill) ? sc.atWill : [],
@@ -224,9 +235,23 @@ export function migrateMonsterSchema(raw: any): Monster {
     customClassPreamble: sc.customClassPreamble || '',
     useCustomInnatePreamble: sc.useCustomInnatePreamble ?? false,
     customInnatePreamble: sc.customInnatePreamble || '',
+    ...(Array.isArray(sc.classes)
+      ? {
+          classes: sc.classes.map((entry: Record<string, unknown>, idx: number) => {
+            const sub =
+              typeof entry?.subclass === 'string' && entry.subclass.trim()
+                ? entry.subclass.trim()
+                : idx === 0
+                  ? normalizedPrimarySubclass
+                  : undefined
+            return sub ? { ...entry, subclass: sub } : { ...entry }
+          }),
+        }
+      : {}),
     multiclass: sc.multiclass ? {
       enabled: !!sc.multiclass.enabled,
       secondaryClass: sc.multiclass.secondaryClass || 'Cleric',
+      ...(normalizedSecondarySubclass ? { secondarySubclass: normalizedSecondarySubclass } : {}),
       secondaryLevel: sc.multiclass.secondaryLevel ?? 1,
       secondaryStat: sc.multiclass.secondaryStat || 'WIS',
       secondarySaveDc: sc.multiclass.secondarySaveDc,
