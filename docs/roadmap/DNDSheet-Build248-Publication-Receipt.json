@@ -1,0 +1,104 @@
+{
+  "build": 248,
+  "version": "2.4.3",
+  "slug": "envelope-rules-checks-tune-and-export",
+  "date": "2026-11-14",
+  "branch": "build185-repairs",
+  "sourceCommit": "b7eda87dab20a68215a4b30ea0687e55e31d49b9",
+  "baseCommit": "e17b18593622f6247be547c6081f4f07f73388d5",
+  "pagesCommit": "440675b3ca0af2b1a622d4f6428b1226ca291384",
+  "tag": "rc-2.4.3-build-248-envelope-rules-checks-tune-and-export",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "5a08f57a8d3d3f0bbf951aa780dffcc9c578acb96219554d5cb91c67cc4c4bdd",
+    "coreTests": {
+      "passed": 656,
+      "failed": 0
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2790
+    },
+    "typecheck": {
+      "diagnostics": 48,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 635,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 72.7,
+      "covered": 389,
+      "total": 535,
+      "floorPercent": 70
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 42,
+      "typecheck": 57,
+      "build": 72,
+      "fuzz": 188,
+      "help": 163,
+      "spell": 9,
+      "pagesBuild": 67,
+      "pagesAssets": 0,
+      "pagesFuzz": 326
+    }
+  },
+  "closedTasks": [
+    "A12.0",
+    "A12.9",
+    "A12.10",
+    "B1.1",
+    "B1.2",
+    "B1.3",
+    "B1.5",
+    "B2.1",
+    "B2.2",
+    "B2.3",
+    "B2.4",
+    "B2.5",
+    "B3.2",
+    "B3.3",
+    "B3.4",
+    "B3.5",
+    "B4.2",
+    "B4.3",
+    "B4.4",
+    "B4.5",
+    "B8.1",
+    "B8.2",
+    "B9.1",
+    "B9.2",
+    "B9.3"
+  ],
+  "decisionsImplemented": [
+    "D-02"
+  ],
+  "closedSections": [
+    "A12",
+    "B1",
+    "B2",
+    "B3",
+    "B4",
+    "B8",
+    "B9"
+  ],
+  "workloadDelta": {
+    "topLevelIds": {
+      "before": { "total": 273, "checked": 202, "open": 71 },
+      "after": { "total": 273, "checked": 227, "open": 46 },
+      "deltaChecked": 25,
+      "deltaOpen": -25
+    },
+    "rawCheckboxes": {
+      "before": { "total": 313, "checked": 242, "open": 71 },
+      "after": { "total": 313, "checked": 267, "open": 46 },
+      "deltaChecked": 25,
+      "deltaOpen": -25
+    }
+  }
+}

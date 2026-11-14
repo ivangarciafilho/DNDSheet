@@ -1,3 +1,7 @@
+## Build 248 — Document envelope, rules policy, Track A checks, source-first tune & exports
+
+The [Build 248 packet](DNDSheet-Build248-Envelope-Rules-Checks-Tune-and-Export.md) (source `b7eda87`, Pages `440675b`, base `e17b185`, tag `rc-2.4.3-build-248-envelope-rules-checks-tune-and-export`, 10/10 gate with `656/656` core tests [`+14`], `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new, `help` coverage `72.7%` `389/535`) closes **25 tasks** across four pillars (`B1.1`, `B1.2`, `B1.3`, `B1.5`, `B8.1`, `B8.2`, `A12.0`, `A12.9`, `A12.10`, `B9.1`, `B9.2`, `B9.3`, `B2.1`–`B2.5`, `B3.2`–`B3.5`, `B4.2`–`B4.5`) and fulfills decision `D-02` (`spellcastingPlacement`). Whole sections `A12`, `B1`, `B2`, `B3`, `B4`, `B8`, and `B9` are now complete (`☑`). Measured backlog counts update from `273` top-level `**ID**` checkboxes (`202` checked / `71` open) to `227` checked / `46` open (`+25 / −25`), and from `313` raw checkboxes (`242` checked / `71` open) to `267` checked / `46` open (`+25 / −25`).
+
 ## Build 247 — Typecheck debt, reaction availability, casting metrics & sheet density
 
 The [Build 247 packet](DNDSheet-Build247-Typecheck-Reactions-Casting-and-Density.md) (source `62c7519`, Pages `aac4f4e`, base `ce5a761`, tag `rc-2.4.3-build-247-typecheck-reactions-casting-and-density`, 10/10 gate with `642/642` core tests, `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new) closes eight parent tasks (`A11.6`, `A12.1`, `A12.2`, `A12.4`, `A12.7`, `A13.9`, `B1.4`, `H14`) and resolves Build 186 follow-ups `A13.9 f2` and `A13.9 g2`, while recording progress on `A12.0` and `A12.9`. Normalized backlog counts update from `264` unique IDs (`185` checked / `79` open) to `193` checked / `71` open (`+8 / −8`), and from `313` raw checkboxes (`234` checked / `79` open) to `242` checked / `71` open (`+8 / −8`).
@@ -784,7 +788,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R4 · Spellcasting you can trust
 
-#### A12 · Spellcasting authoring accuracy ☐
+#### A12 · Spellcasting authoring accuracy ☑
 
 > Any casting class and subclass, legal candidates, honest counters, subclass spells always prepared.
 
@@ -792,7 +796,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R4 | AU-05 | A4, A9 | 4–6 d | 7 files · +1 400 / −300 |
 
-- [ ] **A12.0** Pre-flight research and checks: SRD 5.2.1 class tables (cantrips, prepared, slots), expanded spell lists of the SRD subclasses, multiclass slot table (BS-29, BS-30); reproduce BS-07 (subclass lost on reload) · L — progress (247): `SUBCLASS_CATALOG`, `SUBCLASS_EXPANDED_SPELLS`, multiclass slot calculations, and reload persistence are verified, while 2014 vs 2024 base-class cantrip/prepared budget tables (`sourceCapacityReference`, BS-29) remain labelled `"Legacy base-class capacity"`
+- [x] **A12.0** Pre-flight research and checks: SRD 5.2.1 class tables (cantrips, prepared, slots), expanded spell lists of the SRD subclasses, multiclass slot table (BS-29, BS-30); reproduce BS-07 (subclass lost on reload) · L — closed (248): recorded SRD 5.1 (2014) vs SRD 5.2.1 (2024) cantrip/prepared/slot & multiclass tables plus `BS-07` reload audit in [DNDSheet-SRD521-Spellcasting-Reference.md](DNDSheet-SRD521-Spellcasting-Reference.md), wired `ruleset` (`'2014' | '2024'`) into `AutoSyncSpellcasting.ts`, `ClassCastingEditor.vue`, and `Spellcasting2024.test.ts` (Wizard L9 = 14 prepared in 2024 vs 13 in 2014)
 - [x] **A12.1** Catalogs: `CASTER_PROGRESSIONS` (2014/2024), `SUBCLASS_CATALOG` (all casting classes, `source`), `SUBCLASS_SPELLS` (SRD only) + invariants tests · L — closed (247): `CASTER_PROGRESSIONS`, `SUBCLASS_CATALOG` (`source: 'SRD 5.1 / 5.2'`, `hasExpandedSpells`), `SUBCLASS_EXPANDED_SPELLS`, `getCatalogSubclassesForClass`, `resolveSubclassExpandedSpellKey`, and `planSubclassExpandedSpells` unit-tested (`AutoSyncSpellcasting.test.ts`) and consumed directly by `ClassCastingEditor.vue`
 - [x] **A12.2** `computeSpellMetrics(spellcasting, ruleset)` → `SpellMetricResult` (`ok/unavailable/error`) + tests · M — closed (247): `computeSpellMetrics` & `resolveDefaultStatForClass` (returning `'unavailable'` for unknown classes) bound in `ClassCastingEditor.vue` (`[data-source-metrics]`, `[data-source-metrics-error]` `role="alert"`, `'—'` readonly auto metrics) and verified in `AutoSyncSpellcasting.test.ts` + `shared-casting-editor-browser-smoke.js`
 - [x] **A12.3** Persist subclasses: `spellcasting.subclass?` and `classes[].subclass`; replace the component-local ref · S — store-backed computed since Builds 175–176; spell-plate smoke proves `spellcasting.subclass` survives reload (197)
@@ -918,61 +922,61 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R7 · Creator confidence
 
-#### B1 · Document identity and revision ☐
+#### B1 · Document identity and revision ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R7 | F-00 | A17 | 5–10 d |
 
-- [ ] **B1.1** Decision record: envelope, `MonsterId`, `envelopeVersion` vs `saveVersion`, `contentRevision`, provenance and presentation ownership (TASK-007) · M
-- [ ] **B1.2** Session adapter around `monster-store` exposing id and revision; stores holding monster copies inventoried (BS-38) (TASK-008) · L
-- [ ] **B1.3** Revision increments on edit/undo/redo; resolver patches excluded; no duplicate history entries (TASK-009) · M
+- [x] **B1.1** Decision record: envelope, `MonsterId`, `envelopeVersion` vs `saveVersion`, `contentRevision`, provenance and presentation ownership (TASK-007) · M — closed (248): [ADR-0001-Document-Envelope-and-Ownership.md](../decisions/ADR-0001-Document-Envelope-and-Ownership.md) specifies `MonsterId`, `envelopeVersion: 1` vs `saveVersion: 11`, monotonic `contentRevision`, `DocumentProvenance`, and `monster-store` vs `editor-store` ownership
+- [x] **B1.2** Session adapter around `monster-store` exposing id and revision; stores holding monster copies inventoried (BS-38) (TASK-008) · L — closed (248): `src/core/domain/document-envelope.ts` + `src/stores/monster-session.ts` (`useMonsterSessionStore`, `MONSTER_STORE_COPY_INVENTORY` covering `monster`, `history`, `combat`, `templates`, `editor`), `useFileLoader.ts`, `DocumentSession.test.ts`, and `build248-envelope-workflow-browser-smoke.js`
+- [x] **B1.3** Revision increments on edit/undo/redo; resolver patches excluded; no duplicate history entries (TASK-009) · M — closed (248): `DocumentRevisionTracker` & `HistoryLedger` deduplicate canonical no-ops, `runSingleUndoCommand` commits repairs/tuning in one Undo step, and presentation toggles / `resolving` passes leave `contentRevision` unchanged
 - [x] **B1.4** One canonical type owner (`core/domain/types.ts`), `components/models.ts` re-exports (TASK-010) · M — closed (247): `src/components/models.ts` solely re-exports `export * from '../core/domain/types'` while canonical monster and template models live in `src/core/domain/types.ts`, verified at 0 `src/` typecheck diagnostics
-- [ ] **B1.5** Tests: same-name ids, monotonic revision, stale proposal rejected; close (TASK-011) · M
+- [x] **B1.5** Tests: same-name ids, monotonic revision, stale proposal rejected; close (TASK-011) · M — closed (248): proven by `test/core/DocumentSession.test.ts` and `test/build248-envelope-workflow-browser-smoke.js`
 
 **Done when:** DOM-002, DOM-003 (contract), DATA-001 (envelope) proven.
 
-#### B2 · Checks and safe repair ☐
+#### B2 · Checks and safe repair ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R7 | F-05 | B1 | 5–10 d |
 
-- [ ] **B2.1** Inventory lint codes, fixable flags and real operations; add Track A families: broken binding, prepared over limit, dangling multiattack reference, unknown macro (TASK-012) · M — progress (217): inventory §B2.1: 8 codes with severity, fixable flag and real repair; `CR_DRIFT` and `SPELL_SLOTS_EMPTY` claimed `fixable: true` with no repair — now `false`, guarded by a test with a control run (fails on Build216). Remaining: Track A lint families (broken binding, prepared over limit, dangling references beyond multiattack)
-- [ ] **B2.2** Issue-target registry: `fieldPath` → mounted control (scroll, expand, focus) (TASK-013) · L
-- [ ] **B2.3** Checks states (current/stale/failed/empty) and honest copy (TASK-014) · M
-- [ ] **B2.4** Repair preview → apply as one command and one undo (TASK-015) · L
-- [ ] **B2.5** Recheck on the new revision; export policy for blocking errors; close (TASK-016) · M
+- [x] **B2.1** Inventory lint codes, fixable flags and real operations; add Track A families: broken binding, prepared over limit, dangling multiattack reference, unknown macro (TASK-012) · M — closed (248): `LintMonster.ts` implements Track A families (`BROKEN_BINDING`, `PREPARED_OVER_LIMIT`, `MULTIATTACK_ORPHAN_ATTACK`, `UNKNOWN_MACRO`, `DANGLING_RANDOM_TABLE_REF`, `AUTO_FIX_ACTIONS`) + shared `LintableOutcome`/`LintableContainerOwner` typing
+- [x] **B2.2** Issue-target registry: `fieldPath` → mounted control (scroll, expand, focus) (TASK-013) · L — closed (248): `LINT_TARGET_REGISTRY` + `resolveLintTarget` (`src/core/domain/check-session.ts`) wired into `MonsterLintDialog.vue` and editor section panels (`data-editor-section`, `data-lint-located`)
+- [x] **B2.3** Checks states (current/stale/failed/empty) and honest copy (TASK-014) · M — closed (248): `CheckSession` (`current`, `stale`, `failed`, `empty`, `repaired`) + `MonsterLintDialog.vue` banners (`[data-check-banner]`, `[data-check-status]`, `[data-check-empty-state]`)
+- [x] **B2.4** Repair preview → apply as one command and one undo (TASK-015) · L — closed (248): `planLintRepairs` + `applyCheckSessionRepairs` (`src/core/domain/check-session.ts`) + `MonsterLintDialog.vue` repair diff preview and `monsterSession.runSingleUndoCommand` atomic apply & Undo rollback
+- [x] **B2.5** Recheck on the new revision; export policy for blocking errors; close (TASK-016) · M — closed (248): `evaluateExportPolicy` (`check-session.ts`), `DownloadButton.vue` blocking banner & override gate (`[data-export-blocking-banner]`, `[data-export-override-checkbox]`), `ChecksAndTune.test.ts`, and `build248-envelope-workflow-browser-smoke.js`
 
 **Done when:** UX-003, DOM-001, DOM-003 proven.
 
-#### B3 · CR breakdown and preview-first tuner ☐
+#### B3 · CR breakdown and preview-first tuner ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R7 | F-06 | B1 | 3–7 d |
 
 - [x] **B3.1** Map each recommendation to the fields it writes; confirm attack-bonus behaviour (TASK-017) · M — done (217): `docs/roadmap/DNDSheet-Domain-Inventories.md` §B3.1 maps all six recommendations to the fields they write; `attacks.toHit` is advisory and writes nothing (confirmed), damage scaling changes dice count only
-- [ ] **B3.2** Transient `AutoTuneSession` with selection (TASK-018) · M
-- [ ] **B3.3** Before/after preview and stale guard (TASK-019) · M
-- [ ] **B3.4** Apply selected changes as one undoable command (TASK-020) · M
-- [ ] **B3.5** Prefer tuning **sources** (PB, ability scores) when fields are bound (AU-02); close · S
+- [x] **B3.2** Transient `AutoTuneSession` with selection (TASK-018) · M — closed (248): `AutoTuneSession`, `createAutoTuneSession`, and selective `toggleAutoTuneSelection` in `src/core/usecases/AutoTuneCr.ts` + `AutoTuneDialog.vue`
+- [x] **B3.3** Before/after preview and stale guard (TASK-019) · M — closed (248): `AutoTuneDialog.vue` CR/diff before-after preview, `markAutoTuneSessionStale`, and `assertRevisionFresh` guard on revision drift
+- [x] **B3.4** Apply selected changes as one undoable command (TASK-020) · M — closed (248): `applyAutoTuneSession` routed via `monsterSession.runSingleUndoCommand` so partial or full AutoTune batches rollback in a single Undo step
+- [x] **B3.5** Prefer tuning **sources** (PB, ability scores) when fields are bound (AU-02); close · S — closed (248): `AutoTuneCr.ts` tunes source ability scores/PB when `AC` or offense paths are formula-bound (`sourceBacked`, `boundPath`) and surfaces binding dependencies in `AutoTuneDialog.vue`, `ChecksAndTune.test.ts`, and `build248-envelope-workflow-browser-smoke.js`
 
 **Done when:** DOM-001, DOM-003 (tuner) proven.
 
 ### R8 · Portable output
 
-#### B4 · Export preview and capability report ☐
+#### B4 · Export preview and capability report ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R8 | F-08 | B1, A6 | 5–10 d |
 
 - [x] **B4.1** Inventory every export target: source, transforms, omissions, MIME, filename (TASK-021) · M — done (216): `docs/roadmap/DNDSheet-Export-Inventory.md`: 17 targets (12 monster, 5 character) with source, transform, MIME, file name, omissions and golden coverage; gaps groomed as B4.12–B4.14
-- [ ] **B4.2** `ExportCapability` / `ExportResult` contract with source revision (TASK-022) · M
-- [ ] **B4.3** Fixtures across targets: Soul Barrage, Veil, spell plates, check rows (TASK-023) · M
-- [ ] **B4.4** Text targets use `text2024` and check-row text; HTML/PNG embed the grammar CSS (BS-11, BS-13) (TASK-024) · L
-- [ ] **B4.5** Preview dialog with omissions; Spellcasting placement option (D-02) (TASK-025) · M
+- [x] **B4.2** `ExportCapability` / `ExportResult` contract with source revision (TASK-022) · M — closed (248): `src/core/domain/export-contract.ts` (`EXPORT_CAPABILITIES`, `detectMonsterExportOmissions`, `buildExportResult`) stamping `sourceDocumentId` and `sourceRevision`
+- [x] **B4.3** Fixtures across targets: Soul Barrage, Veil, spell plates, check rows (TASK-023) · M — closed (248): `ExportContract.test.ts` and Step 51 verified export goldens (`test/goldens/export-*`) covering 2024 Wizard L9 capacity, Veil spell plates, check rows (`Search`/`Study`/`Influence`/`Hide`), and Soul Barrage prose
+- [x] **B4.4** Text targets use `text2024` and check-row text; HTML/PNG embed the grammar CSS (BS-11, BS-13) (TASK-024) · L — closed (248): `ExportStatblock.ts` emits unified `text2024` / check-row prose in Markdown/LaTeX/Plain Text and embeds `STATBLOCK_GRAMMAR_EXPORT_CSS` (`.sb-plate`, `.sb-row`, `.sb-cell`) + `.class-spellcasting.sb-plate` in HTML exports
+- [x] **B4.5** Preview dialog with omissions; Spellcasting placement option (D-02) (TASK-025) · M — closed (248): `DownloadButton.vue` Export Preview & Capabilities dialog (`[data-export-preview-dialog]`) displays target features, format omissions, blocking-error gate, and `editor-store.spellcastingPlacement` (`auto` | `with_traits` | `before_actions` | `after_actions`) honored across web (`WebRenderer.vue`), Markdown/LaTeX/HTML/Plain Text exports, and `build248-envelope-workflow-browser-smoke.js`
 - [x] **B4.7** Improved Initiative and Tarrasque build actions, bonus actions, reactions (with triggers) and traits from the shared prose projection and `splitEntryLead`, as their legendary/mythic entries already do (BS-41) (*added A7*) · M — progress (218): Improved Initiative now builds traits, attacks, actions, bonus actions and reactions from the shared prose projection; reactions carry their trigger and resolved tokens (they were rendered with no context before, B4.18). Golden fixture gained a trait, an action and a triggered reaction. Completed (219): Tarrasque uses per-record shared prose while retaining attack_bonus/damage_dice/damage_bonus; frozen gate10/10, Step57 and15 pure regressions
 - [x] **B4.8** Tarrasque legendary entries and header values (senses, languages, defences) cross the export boundary (*added A7*) · S — done (215): Tarrasque header values (vulnerabilities, resistances, immunities, conditions, senses, languages) and `legendary_desc` pass through `stripTags`; legendary entries already did. Empty senses/languages stay `""`, which Tarrasque accepts
 - [x] **B4.9** LaTeX escapes raw monster strings — name, size/type/alignment, AC type, attack names and types — with the boundary's escaping (*added A7*) · S — done (215): `escapeLatexText` (export-markup) on monster name, creature type line, AC type and attack names in the rpgtex export; unit test covers all ten LaTeX specials
@@ -1027,27 +1031,27 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 **Done when:** UX-001, UX-002, UX-005, NFR-004 proven.
 
-#### B8 · Rules provenance ☐
+#### B8 · Rules provenance ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R10 | F-09 | B1 | 2–4 d |
 
-- [ ] **B8.1** Provenance on the envelope; legacy = unknown (TASK-055) · M
-- [ ] **B8.2** `resolveRulesPolicy(document)` feeds ruleset-aware catalogs (metamagic, progressions) (TASK-056) · M
+- [x] **B8.1** Provenance on the envelope; legacy = unknown (TASK-055) · M — closed (248): `deriveDocumentProvenance` (`document-envelope.ts`) exposes `{ ruleset: '2014' | '2024' | 'unknown', ... }`, defaulting unattributed/legacy fixtures to `'unknown'` without guessing (`DocumentSession.test.ts`)
+- [x] **B8.2** `resolveRulesPolicy(document)` feeds ruleset-aware catalogs (metamagic, progressions) (TASK-056) · M — closed (248): `resolveRulesPolicy` (`document-envelope.ts`) wired into `monster-session.ts`, `AutoSyncSpellcasting.ts`, `ClassCastingEditor.vue`, and metamagic/progression lookups (`DocumentSession.test.ts`, `Spellcasting2024.test.ts`)
 - [x] **B8.3** Tests: style/theme switches leave rules untouched; close · S — done (216): fuzz Step 56 cycles 2 templates × 2 styles × 4 themes (16 switches) and asserts `monster.$state` is byte-identical afterwards
 
 **Done when:** DOM-004 proven.
 
-#### B9 · Combat identity and snapshots ☐
+#### B9 · Combat identity and snapshots ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
 | R10 | F-10 | B1 | 2–5 d |
 
-- [ ] **B9.1** Stable combatant ids; active-index migration; removal policy (TASK-057) · M
-- [ ] **B9.2** Snapshot at add; encounter edits never touch the source (TASK-058) · M
-- [ ] **B9.3** Sort/remove/turn/reload scenarios; close (TASK-059) · M
+- [x] **B9.1** Stable combatant ids; active-index migration; removal policy (TASK-057) · M — closed (248): `CombatTracker.ts` + `combat-store.ts` assign distinct stable IDs per added instance (`Combatant.id`) and migrate/preserve active turn by `activeCombatantId` across initiative reorders & removals
+- [x] **B9.2** Snapshot at add; encounter edits never touch the source (TASK-058) · M — closed (248): `sourceSnapshot` captured immutably at `addMonsterCombatant` (with `sourceDocumentId`, `sourceRevision`, AC/HP/name); `CombatTrackerDrawer.vue` displays `[data-combat-snapshot-badge]`; live sheet mutations never modify snapshots
+- [x] **B9.3** Sort/remove/turn/reload scenarios; close (TASK-059) · M — closed (248): proven by `test/core/CombatTracker.test.ts` and `test/build248-envelope-workflow-browser-smoke.js`
 
 **Done when:** DOM-005 proven.
 
@@ -1219,7 +1223,7 @@ The 2026-10-30 request adds twelve tasks (11 Track A, 1 Track B). Prior baseline
 - [x] **A11.7** Combat activity section routing: Search/Study/Influence/Hide and authored groups own economy/cost/trigger; section projection removes redundant economy labels without losing facts; associations/undo/export tests · L — closed (246): `SECTION_ECONOMY_NORMALIZED`, `createCombatActivityRoutingState`, `relocateCombatActivity`, `undoCombatActivityRelocation`/`redoCombatActivityRelocation`, and `projectCombatActivitySections` in `skill-action-groups.ts` + `SkillActionGroups.test.ts`
 - [x] **A11.8** Compound traversal permissions/costs and Dash/Dodge/Disengage riders; phase-change effect, authored conditions and freeform fallback; safe migration and rendering tests · L — closed (246): `SpeedActionRider` (`phaseStage`, `condition`, `freeformFallback`), `migrateLegacySpeedString`, and `composeMigratedSpeed` in `speeds-traversal.ts` + `SpeedsTraversal.test.ts`
 - [x] **A12.8** Stable-ID casting-source/resource-pool model, source ownership adapters and lossless migration from existing class/innate/multiclass fields; Pact/shared/innate pools kept distinct; one resolved casting projection · L — closed (246): `CastingPoolKind`, `CastingSource`, `migrateCastingSources`, and `resolveCastingProjection` in `AutoSyncSpellcasting.ts` + `MigrateMonsterSchema.ts` subclass trimming/backfill + `AutoSyncSpellcasting.test.ts`
-- [ ] **A12.9** Source-based authoring cards, per-source spell lists and known/prepared/cantrip metrics with provenance/error states; ruleset-aware multiclass calculations, catalog/custom coverage, reload and export proofs · L — progress (247): `ClassCastingEditor.vue` & `CastingSourceSpellRows.vue` wire per-source metrics/error states, over-limit warnings, expanded spell grants, and `CADENCE_OPTIONS`; remaining: per-source sorcery points (currently shared on `spellcasting.metamagic`) and 2014 vs 2024 ruleset-aware known/prepared capacity tables
+- [x] **A12.9** Source-based authoring cards, per-source spell lists and known/prepared/cantrip metrics with provenance/error states; ruleset-aware multiclass calculations, catalog/custom coverage, reload and export proofs · L — closed (248): added per-source `sorceryPoints` (`types.ts`, `AutoSyncSpellcasting.ts`, `ClassCastingEditor.vue` `[data-source-sorcery-points]`), ruleset-aware SRD 5.1 / SRD 5.2.1 cantrip & known/prepared tables, and provenance/metrics display (`Spellcasting2024.test.ts`, `build248-envelope-workflow-browser-smoke.js`)
 - [x] **A13.9** Sheet density/layout: Senses and Languages adjacent under scores; remove redundant horizontal rules; replace initiative pill with consistent minimal text/icon/color; classic/modern/12-theme/print and accessibility proofs · M — closed (247): completed final Build 186 sub-items `f2` (`statblock-help-browser-smoke.js` bloodied `@media print` red probe & `print-parity-browser-smoke.js` classic/modern A4 PNG pixel parity + classic A4 PDF proof) and `g2` (`--sb-top-plate-*` palette token parameterization across all 12 themes in `statblock-grammar.scss`)
 - [x] **B3.6** Ability-score proposals: point buy, arrays, seeded rolling/custom creature heuristics, source/ruleset labels, preview/Apply/Cancel/undo, bound-field interaction and deterministic tests · L — closed (246): `rollSeededAbilityScores`, `proposeAbilityScores`, `cancelProposal`, `applyProposal`, `ProposalProvenance`, and bound-field preservation in `species-and-heuristics.ts` + `SpeciesAndHeuristics.test.ts`
 
@@ -1279,7 +1283,7 @@ Release routing in the latest handoff records157 at9100/9106 and frozen156 at912
 The screenshot request expands existing owners as mapped in the Specification's CR-158 table. Three independently deliverable gaps require new IDs;existing requirements are not duplicated.
 
 - [x] **A11.9** Declarative random-outcome tables (progress 224: randomTableId links, accessible HTML, diagnostics, resolve; open: migration tests, print golden, roll-only toggle):stable row/range/clause IDs,dice-expression validation,overlap/gap diagnostics,authored fallback,explicit-roll-only behavior,accessible table/print/prose output and saved-data migration tests. Depends on A11.5 and numeric/result-reference foundations · L — progress (205–206): `random-table.ts` domain (dice validation, gap/overlap diagnostics, explicit-roll lookup, prose/markdown, legacy text parser), Random tables editor, statblock section and Homebrewery export; remaining: explicit-roll-only UI, container/region editor integration, print golden and other adapter coverage. Build224 post-release tests cover saved-data migration and resolve; Build225 retains them. Closed (246): `RandomTable.explicitRollOnly`, `data-print-table="true"`, explicit-roll prompting in `resolveTableOutcome`, and `RandomTableMigration.test.ts`
-- [ ] **A12.10** Compact spell-list projection:flowing spell text rather than per-spell cells,live resource amounts,amount/cadence before level,display-only hidden cadence,components/ritual/concentration,source-owned grouping and all web/print/prose/reload proofs. Depends on A12.8–9;no fabricated counters · M — progress (246): Build 186 items `a`–`d` (`a3` done 201, `d` `@media print` CDP smoke 246) complete; parent remains open until `A12.9` closes
+- [x] **A12.10** Compact spell-list projection:flowing spell text rather than per-spell cells,live resource amounts,amount/cadence before level,display-only hidden cadence,components/ritual/concentration,source-owned grouping and all web/print/prose/reload proofs. Depends on A12.8–9;no fabricated counters · M — closed (248): `A12.9` closed and compact shared spell-plate projection (`WebSpellPlates.vue`, `WebRenderer.vue`, `ExportStatblock.ts`, `D-02` `spellcastingPlacement`, per-source sorcery point totals) verified across web, print, prose exports, and browser smoke (`build248-envelope-workflow-browser-smoke.js`, `spell-plate-browser-smoke.js`)
 - [x] **B3.7** Species-derived proposals:ruleset/source packages,stable inherited grant provenance,selective score/trait/spell proposals,preview/Apply/Cancel/undo,duplicate/reapply/revoke policy and preservation of user edits. Reuse casting grant contracts;do not assume species always grants ASIs · L — closed (246): `proposeSpeciesGrants`, `ProposalFieldDiff`, `AppliedGrantRecord`, `applyProposal`, `cancelProposal`, and `revokeSpeciesGrants` in `species-and-heuristics.ts` + `SpeciesAndHeuristics.test.ts`
 
 Existing-task acceptance expansion:
