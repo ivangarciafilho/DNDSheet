@@ -1,0 +1,77 @@
+{
+  "build": 247,
+  "version": "2.4.3",
+  "slug": "typecheck-reactions-casting-and-density",
+  "date": "2026-11-14",
+  "branch": "build185-repairs",
+  "sourceCommit": "62c7519ee24c8c64f5066956e4ec2b236b397656",
+  "baseCommit": "ce5a7619ef9a349fd6df881b73d501e9a0db0afe",
+  "pagesCommit": "aac4f4e3481cd05363f9add36b182cc6e6a6c37d",
+  "tag": "rc-2.4.3-build-247-typecheck-reactions-casting-and-density",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "c2541357ab7c8456facfa0e83f435a65ddabf33b370dd1c96b595405ec0ab5b1",
+    "coreTests": {
+      "passed": 642,
+      "failed": 0
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2784
+    },
+    "typecheck": {
+      "diagnostics": 48,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 635,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 32,
+      "typecheck": 56,
+      "build": 74,
+      "fuzz": 197,
+      "help": 144,
+      "spell": 9,
+      "pagesBuild": 66,
+      "pagesAssets": 0,
+      "pagesFuzz": 310
+    }
+  },
+  "closedParents": [
+    "A11.6",
+    "A12.1",
+    "A12.2",
+    "A12.4",
+    "A12.7",
+    "A13.9",
+    "B1.4",
+    "H14"
+  ],
+  "resolvedBuild186SubItems": [
+    "A13.9 f2",
+    "A13.9 g2"
+  ],
+  "progressRecordedOnly": [
+    "A12.0",
+    "A12.9"
+  ],
+  "workloadDelta": {
+    "uniqueIds": {
+      "before": { "total": 264, "checked": 185, "open": 79 },
+      "after": { "total": 264, "checked": 193, "open": 71 },
+      "deltaChecked": 8,
+      "deltaOpen": -8
+    },
+    "rawCheckboxes": {
+      "before": { "total": 313, "checked": 234, "open": 79 },
+      "after": { "total": 313, "checked": 242, "open": 71 },
+      "deltaChecked": 8,
+      "deltaOpen": -8
+    }
+  }
+}

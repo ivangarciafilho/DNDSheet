@@ -1,3 +1,7 @@
+## Build 247 — Typecheck debt, reaction availability, casting metrics & sheet density
+
+Source `62c7519` / Pages `aac4f4e` (on Build 246 `ce5a761`) closes `A11.6`, `A12.1`, `A12.2`, `A12.4`, `A12.7`, `A13.9` (plus `f2` & `g2`), `B1.4`, and `H14` (`642/642` core tests, 10/10 gate PASS, `0` ESLint errors, `48` typecheck diagnostics all in `node_modules/` / `0` in `src/` / `0` new): canonical types re-exported from `src/core/domain/types.ts` via `src/components/models.ts`, reaction availability predicates & multi-pool stage sets with action-family composer parity, `ClassCastingEditor.vue` subclass catalog/metrics/error-alert/expanded-grant bindings (`CADENCE_OPTIONS`/`cadenceKey`), bloodied `@media print` probe, classic/modern A4 PNG & PDF parity, and `--sb-top-plate-*` 12-theme palette tokens.
+
 ## Build 246 — Outcomes, routing, traversal riders, proposals and casting pools
 
 Source `0c7ad22` / Pages `e23b9fe` (on Build 245 `3d90075`) closes `A11.5`, `A11.7`, `A11.8`, `A11.9`, `A12.8`, `B3.6`, `B3.7`, and `H11` alongside sixteen Build 186 verification sub-items (`635/635` core tests, 10/10 gate PASS, `0` ESLint errors, `505` typecheck diagnostics / `0` new): `+0` attack sign, `explicitRollOnly` & `data-print-table="true"` random tables, undo/redo combat-activity section routing, legacy speed string rider migration, seeded ability & species grant proposals with revocation, `CastingSource` / `CastingProjection` distinct Pact/shared/innate pools, subclass catalog & metrics core (`A12.1`/`A12.2` progress), and CDP `@media print` spell plate smoke.
@@ -28,17 +32,17 @@ This matrix describes implemented behavior, not completion of an entire roadmap 
 
 | Area | Implemented | Remaining acceptance / limitation |
 |---|---|---|
-| Monster authoring | One live sheet; shared studio; typed source records, formulas on registered fields | A9.7/A11.2–4 remaining numeric paths; A10 completion |
+| Monster authoring | One live sheet; shared studio; typed source records, formulas on registered fields; Build 247 closes `A11.6` (reaction availability predicates, multi-pool stage sets, action-family composer parity) and `B1.4` (`src/core/domain/types.ts` canonical owner via `models.ts`) | `A9.7`, `A9.13`, `A11.2–4` remaining numeric/roll-count paths; `A10` remaining accessibility/kit polish |
 | Outcomes and tables | Closed in Build 246 (`A11.5`, `A11.9`, `H11`): authored clauses, result references, `explicitRollOnly` random tables, `data-print-table="true"`, `+0` attack sign, prose and rendering parity | Covered by core + Step 50 fuzz + 10/10 gate |
-| Spellcasting | Class/innate rows, existing slot and spell controls, compact projection work, CDP `@media print` plate smoke (`A12.10 d`); Build 246 closes `A12.8` (`CastingSource`, distinct Pact/shared/innate pools, lossless migration) and lands `A12.1`/`A12.2` catalog/metrics core | `A12.9` source-based UI card parity, `A12.10 a3` i18n, and `A12.1–A12.4` UI integration remain open |
+| Spellcasting | Build 246 closed `A12.8` (`CastingSource` pools & migration); Build 247 closes `A12.1`, `A12.2`, `A12.4`, `A12.7` (`ClassCastingEditor.vue` consumes subclass catalogs, `computeSpellMetrics` alerts/`'—'` fallbacks, over-limit warnings, explicit Fiend Patron expanded spell grant apply/reload/remove, `CADENCE_OPTIONS`/`cadenceKey`) | `A12.0` (2014 vs 2024 known/prepared tables `BS-29`), `A12.9` (per-source sorcery points), and `A12.10` compact projection closure remain open |
 | Templates/history | Existing template, reset and undo workflows tested by browser suite | New model changes must retain transactional ownership and recovery |
-| Presentation | Twelve themes; classic/modern; A4 layers; 60 fixture/theme cases with computed AC head/body contrast | Matrix is representative contrast, not every pixel/text color. A13.9/A14–16 print/keyboard/fit acceptance remains |
+| Presentation | Closed in Build 247 (`A13.9` + `f2` / `g2`): twelve themes with `--sb-top-plate-*` nameplate palette tokens, classic/modern A4 PNG pixel parity & PDF `MediaBox`, non-vacuous bloodied `@media print` red probe, 60 fixture/theme cases (120 contrast samples), keyboard/ARIA help | `A14–16` panel split, `CatalogSelect` kit adoption, and per-panel keyboard/zoom sweeps remain open |
 | Fit tooling | Ten viewport/scale cases; clipped-overflow detection, scroll inventory, explicit Quasar field exemptions and negative control | Effective CSS viewport/raster scale is not browser UI zoom. Intentional ellipsis does not prove full label visibility. Per-panel keyboard and full zoom acceptance remains |
 | Monster exports | JSON, text/Markdown, LaTeX, HTML/PNG and VTT adapters; goldens; Tarrasque shared prose and numeric metadata | Target omission/revision policy and previews B4.2–5 remain; no universal native homebrew support |
 | Character references | Identity/resources/inventory/features/spells; character JSON import/export | Names do not establish rules, armor, movement or granted features |
 | Character AC/speed | Shared projection: recorded numeric total plus source note, or explicit estimate; web/text/JSON/reload proof | No automatic class/species/equipment rules. Recorded values are user supplied, not verified by a rules engine |
 | Saving | Browser persistence and failed-save warnings | B5 migration/library/recovery work remains |
-| Quality | Named ten-step gate; pinned type comparison; shared fixtures; AST step replay; browser discovery | Existing type debt H14, purpose-led help H9 and unresolved product/ownership decisions remain |
+| Quality | Closed `H14` in Build 247: named ten-step gate; `0` remaining `src/` `vue-tsc` diagnostics (`48` total in `node_modules/`, `635` resolved vs Build 213 `683`); shared fixtures; AST step replay; browser discovery | Purpose-led help rewrite (`H9`) and remaining Track A / Track B roadmap items remain |
 
 ## Character scope decision (B10.1)
 

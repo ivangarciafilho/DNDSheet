@@ -1,3 +1,7 @@
+## Build 247 — typecheck debt, reaction availability, casting metrics and sheet density
+
+Integrates four roadmap pillars on top of Build 246 (`ce5a761` -> `62c7519`, Pages `aac4f4e`, tag `rc-2.4.3-build-247-typecheck-reactions-casting-and-density`, 10/10 gate with `642/642` core tests, `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new): canonical types re-exported from `src/core/domain/types.ts` via `src/components/models.ts` (`B1.4`, `H14` closed); `while_not_bloodied`, typed reaction `availability` stage-pool sets & predicates, action-family reaction composer parity, migration & CR updates (`A11.6` closed); `ClassCastingEditor.vue` & `CastingSourceSpellRows.vue` subclass catalog pickers, `computeSpellMetrics` alert/`'—'` fallbacks, over-limit warnings, explicit Fiend Patron expanded spell grant apply/reload/remove, `CADENCE_OPTIONS`/`cadenceKey` (`A12.1`, `A12.2`, `A12.4`, `A12.7` closed; `A12.0`/`A12.9` progress); and `--sb-top-plate-*` 12-theme palette tokens plus bloodied `@media print` & classic/modern A4 PNG/PDF parity (`A13.9` + `f2`/`g2` closed). Next queue: `A12.0`/`A12.9`/`A12.10` (2014 vs 2024 capacity tables & per-source sorcery points) -> `A9.7`/`A9.13`/`A11.2–A11.4` (`BasicsEditor` & roll-count bindings) -> `A13.1–A13.7`/`H9` -> `A14.1–A14.6` (`BasicsEditor` split) / `B1`–`B5`.
+
 ## Build 246 — outcomes, routing, traversal riders, proposals and casting pools
 
 Integrates five core domains on top of Build 245 (`3d90075` -> `0c7ad22`, Pages `e23b9fe`, tag `rc-2.4.3-build-246-complete-outcomes-routing-traversal-proposals-and-casting-pools`, 10/10 gate with `635/635` core tests, `0` ESLint errors, `505` typecheck diagnostics / `0` new): `+0` attack sign formatting; `explicitRollOnly` & `data-print-table="true"` random tables (`A11.5`/`A11.9`/`H11` closed); reversible `CombatActivitySection` routing (`A11.7` closed); `SpeedActionRider` legacy migration (`A11.8` closed); deterministic ability/species grant proposals & revocation (`B3.6`/`B3.7` closed); `CastingSource` pools & subclass progression/metrics (`A12.8` closed, `A12.1`/`A12.2` progress); and CDP `@media print` spell plate verification (`A12.10 d` closed). Next queue: `A13.9 f2/g2` -> `H14` -> `A11.6` -> `A12.9/A12.10 a3` -> `A12.1–A12.4`.
@@ -85,5 +89,5 @@ Published source 8aa695e; Pages b65df80; live footer 222 and asset parity verifi
 
 ## Continue in dependency order
 
-A11.9 random-result integration → H9 purpose-led help → H14 per-file type debt burn-down.
+A12.0 / A12.9 / A12.10 (2014 vs 2024 base-class capacity tables, per-source sorcery points & compact spell list closure) -> A9.7 / A9.13 / A11.2–A11.4 (`BasicsEditor` & roll-count `FormulaField` bindings) -> A13.1–A13.7 + H9 (`CatalogSelect` kit, enum catalogs & purpose-led help) -> A14.1–A14.6 (`BasicsEditor` split) / B1.1–B1.5 -> B2–B5.
 
