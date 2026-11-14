@@ -2,6 +2,7 @@
   <q-expansion-item
     expand-separator
     default-opened
+    data-editor-section="basics"
     icon="info"
     :label="$t('editor.basics.label')"
     :caption="$t('editor.basics.caption')"

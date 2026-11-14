@@ -64,6 +64,8 @@ export type VisualTheme =
   | 'art_nouveau'
   | 'art_deco'
 
+import type { SpellcastingPlacement } from 'src/core/domain/export-contract'
+
 export const useEditorStore = defineStore({
   id: 'editor',
   state: () => {
@@ -71,6 +73,7 @@ export const useEditorStore = defineStore({
       statBlockColumns: 1,
       changelogShown: 'v2.4.0',
       style: '2024',
+      spellcastingPlacement: 'auto' as SpellcastingPlacement,
       visualTemplate: 'classic' as 'classic' | 'modern',
       visualTheme: 'wotc' as VisualTheme,
       condenseImmunities: false,

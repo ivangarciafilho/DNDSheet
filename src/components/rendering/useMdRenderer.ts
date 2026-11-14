@@ -9,12 +9,15 @@ import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
+import { useEditorStore } from 'src/stores/editor-store'
 
 export function useMdRenderer() {
   // Fields read directly print resolved, exactly as the stat block does.
   const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
+  const editor = useEditorStore()
   const { mdFormatter } = useProcessTokens({ web: false })
 
   const { t } = useI18n()
@@ -297,6 +300,16 @@ ${formattedActions.join('\n>\n')}\n>`
     const regional = getRegionalEffects()
     const inventory = getInventory()
 
+    const placement = resolveSpellcastingPlacement(editor.spellcastingPlacement, 'export')
+    const spellBlock = `${
+      renderer.classSpellcastingSlots.value.length === 0 ? '' : `${spellcasting}\n>`
+    }${
+      monster.spellcasting.atWill.length === 0 ? '' : `${innate}\n>`
+    }`
+    const traitsSpellBlock = placement === 'with_traits' ? spellBlock : ''
+    const beforeActionsSpellBlock = placement === 'before_actions' ? spellBlock : ''
+    const afterActionsSpellBlock = placement === 'after_actions' ? spellBlock : ''
+
     return `___${twoCol ? '\n___' : ''}
 > ## ${monster.name}
 >*${creatureTypeLine(monster.size, monster.type, monster.alignment)}*
@@ -319,13 +332,9 @@ ${formattedActions.join('\n>\n')}\n>`
 >___${saves}${skills}${renderer.tools.value ? `\n> - **Tools** ${mdFormatter(renderer.tools.value)}` : ''}${vuln}${resist}${immune}${condition}${renderer.senses.value.trim() ? `\n> - **${t('editor.senses.label')}** ${mdFormatter(renderer.senses.value)}` : ''}${renderer.actionPassives.value ? `\n> - **Passive Checks** ${mdFormatter(renderer.actionPassives.value)}` : ''}${renderer.languages.value.trim() ? `\n> - **${t('monster.languages')}** ${mdFormatter(renderer.languages.value)}` : ''}
 > - **${t('monster.challenge')}** ${mdFormatter(renderer.cr.value)}
 >___
-${traits}${mythicTrait}> ### ${t(
+${traits}${mythicTrait}${traitsSpellBlock}${beforeActionsSpellBlock}> ### ${t(
       'editor.action.label'
-    )}${multi}${attacks}${actions}${
-      renderer.classSpellcastingSlots.value.length === 0 ? '' : `${spellcasting}\n>`
-    }${
-      monster.spellcasting.atWill.length === 0 ? '' : `${innate}\n>`
-    }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${inventory}`
+    )}${multi}${attacks}${actions}${afterActionsSpellBlock}${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${inventory}`
   }
 
   return {

@@ -1,5 +1,5 @@
 <template>
-  <q-expansion-item expand-separator icon="casino" :label="$t('editor.randomTables.label')">
+  <q-expansion-item expand-separator data-editor-section="randomTables" icon="casino" :label="$t('editor.randomTables.label')">
     <q-card>
       <q-card-section>
         <div class="q-mb-sm">{{ $t('editor.randomTables.help') }}</div>

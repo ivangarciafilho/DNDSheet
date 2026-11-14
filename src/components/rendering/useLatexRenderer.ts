@@ -7,6 +7,8 @@ import { renderBonus, statModifier } from './mathRendering'
 import { listJoin, useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
 import { creatureTypeLine, escapeLatexText, splitEntryLead } from 'src/core/domain/export-markup'
+import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
+import { useEditorStore } from 'src/stores/editor-store'
 
 // one change to the LaTeX renderer is that I'm dropping the \DndDice command
 // if you're exporting from here you can selectively replace that where you need it, the
@@ -17,6 +19,7 @@ export function useLatexRenderer() {
   const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
+  const editor = useEditorStore()
   const { latexFormatter, processTokens } = useProcessTokens({ web: false })
   const { t } = useI18n()
 
@@ -207,6 +210,10 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
   // - latex renderer does not support custom cr values
   const renderLatex = (twoCol = false) => {
     const saves = renderer.saves.value
+    const placement = resolveSpellcastingPlacement(editor.spellcastingPlacement, 'export')
+    const spellBlock = `${monster.spellcasting.atWill.length > 0 ? getAtWill() : ''}
+
+  ${renderer.classSpellcastingSlots.value.length > 0 ? getStandard() : ''}`
 
     return `\\begin{DndMonster}[${twoCol ? 'width=\\textwidth + 8pt' : ''}]{${
       escapeLatexText(monster.name)
@@ -258,6 +265,8 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
   ${getTraits()}
 
   ${monster.mythicActions.actions.length > 0 ? getMythicTrait() : ''}
+  ${placement === 'with_traits' ? spellBlock : ''}
+  ${placement === 'before_actions' ? spellBlock : ''}
 
   % Actions
   \\DndMonsterSection{${t('editor.action.label')}}
@@ -267,10 +276,7 @@ ${latexFormatter(renderer.lairActionPreamble.value)}`
 
   ${getActions()}
 
-  % Spellcasting
-  ${monster.spellcasting.atWill.length > 0 ? getAtWill() : ''}
-
-  ${renderer.classSpellcastingSlots.value.length > 0 ? getStandard() : ''}
+  ${placement === 'after_actions' ? `% Spellcasting\n  ${spellBlock}` : ''}
 
   ${getBonusActions()}
 

@@ -15,7 +15,10 @@ export class HistoryLedger<T> {
 
   public pushSnapshot(state: T, description: string, options: { historySilent?: boolean } = {}): void {
     if (options.historySilent) return
-    const clone: T = JSON.parse(JSON.stringify(state))
+    const serialized = JSON.stringify(state)
+    const last = this.undoStack[this.undoStack.length - 1]
+    if (last && JSON.stringify(last.snapshot) === serialized) return
+    const clone: T = JSON.parse(serialized)
     this.undoStack.push({
       snapshot: clone,
       description,

@@ -1021,6 +1021,8 @@ export interface SpellcastingClassEntry {
   attack?: CastingRollOverride
   modifier?: CastingRollOverride
   rulesEdition?: '2014' | '2024'
+  sorceryPoints?: number
+  metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate?: string; options?: string[] }
   levelAmounts?: Record<string | number, number | null>
   spellAmounts?: Record<string, number | null>
   spellBonusAction?: Record<string, boolean>
@@ -1042,8 +1044,18 @@ export interface SpellcastingClassEntry {
   resourceType?: 'slots' | 'pact' | 'points' | 'focus' | 'at_will'
 }
 
+export type DocumentRulesetProvenance = '2014' | '2024' | 'unknown'
+
+export interface DocumentProvenance {
+  ruleset: DocumentRulesetProvenance
+  editionLabel: string
+  sourceKind: 'authored' | 'legacy_fixture' | 'imported' | 'migrated'
+  updatedAt?: string
+}
+
 export interface Monster {
   id?: string
+  provenance?: DocumentProvenance
   bindings?: Record<string, import('./formula').NumericBinding>
   name: string
   nickname: string
@@ -1154,6 +1166,7 @@ export interface Monster {
     preparedInterval?: string
     preparedSpellList?: string
     spellCastingTimeMap?: Record<string, string>
+    sorceryPoints?: number
     metamagic?: { enabled: boolean; sorceryPoints: number; points?: number; refreshRate: string; options: string[] }
     cantripSwitch?: boolean
     cantripSwitchCount?: number

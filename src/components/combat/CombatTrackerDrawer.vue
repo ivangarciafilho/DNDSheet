@@ -101,6 +101,16 @@
               <div class="text-subtitle2 ellipsis" :title="combatant.name">
                 {{ combatant.name }}
               </div>
+              <q-badge
+                v-if="combatant.sourceSnapshot"
+                outline
+                color="cyan-3"
+                class="q-ml-xs text-caption"
+                data-combat-snapshot-badge
+              >
+                AC {{ combatant.sourceSnapshot.ac }}<template v-if="combatant.sourceRevision"> · rev #{{ combatant.sourceRevision }}</template>
+                <q-tooltip>Captured snapshot ({{ combatant.sourceKind || 'source' }}). Edits to the live sheet never alter active combatants.</q-tooltip>
+              </q-badge>
               <q-space />
               <q-btn
                 flat

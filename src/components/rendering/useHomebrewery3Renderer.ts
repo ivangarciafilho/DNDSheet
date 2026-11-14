@@ -10,12 +10,15 @@ import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
+import { useEditorStore } from 'src/stores/editor-store'
 
 export function useMd3Renderer() {
   // Fields read directly print resolved, exactly as the stat block does.
   const monster = resolvingMonsterView(useMonsterStore())
   // Exports print prose in every visual template: plates are web markup.
   const renderer = useTextRenderer({ web: false })
+  const editor = useEditorStore()
   const { mdFormatter: formatMarkdown } = useProcessTokens({ web: false })
   // Homebrewery v3 blocks are not blockquotes, so line breaks carry no `> ` prefix.
   const mdFormatter = (input: string) => formatMarkdown(input, false)
@@ -286,6 +289,16 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
     const randomTables = (monster.randomTables ?? []).map((rt) => `\n### ${rt.title || t('editor.randomTables.defaultTitle')}\n${tableToMarkdown(rt)}\n`).join('')
     const inventory = getInventory()
 
+    const placement = resolveSpellcastingPlacement(editor.spellcastingPlacement, 'export')
+    const spellBlock = `${
+      renderer.classSpellcastingSlots.value.length === 0 ? '' : `${spellcasting}`
+    }${
+      monster.spellcasting.atWill.length === 0 ? '' : `${innate}`
+    }`
+    const traitsSpellBlock = placement === 'with_traits' ? spellBlock : ''
+    const beforeActionsSpellBlock = placement === 'before_actions' ? spellBlock : ''
+    const afterActionsSpellBlock = placement === 'after_actions' ? spellBlock : ''
+
     return `{{monster,frame${twoCol ? ',wide' : ''}
 ## ${monster.name}
 *${creatureTypeLine(monster.size, monster.type, monster.alignment)}*
@@ -308,13 +321,9 @@ ___
 ___${saves}${skills}${renderer.tools.value ? `\n**Tools** :: ${mdFormatter(renderer.tools.value)}` : ''}${vuln}${resist}${immune}${condition}${renderer.senses.value.trim() ? `\n**${t('editor.senses.label')}** :: ${mdFormatter(renderer.senses.value)}` : ''}${renderer.actionPassives.value ? `\n**Passive Checks** :: ${mdFormatter(renderer.actionPassives.value)}` : ''}${renderer.languages.value.trim() ? `\n**${t('monster.languages')}** :: ${mdFormatter(renderer.languages.value)}` : ''}
 **${t('monster.challenge')}** :: ${mdFormatter(renderer.cr.value)}
 ___
-${traits}${mythicTrait}### ${t(
+${traits}${mythicTrait}${traitsSpellBlock}${beforeActionsSpellBlock}### ${t(
       'editor.action.label'
-    )}${multi}${attacks}${actions}${
-      renderer.classSpellcastingSlots.value.length === 0 ? '' : `${spellcasting}`
-    }${
-      monster.spellcasting.atWill.length === 0 ? '' : `${innate}`
-    }${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${randomTables}${inventory}
+    )}${multi}${attacks}${actions}${afterActionsSpellBlock}${bonusActions}${legendary}${mythic}${reactions}${villainActions}${bloodiedActions}${reactiveActions}${comboActions}${dracoAnatomy}${runehammer}${paragon}${lair}${regional}${randomTables}${inventory}
 }}`
   }
 

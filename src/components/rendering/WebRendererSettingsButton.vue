@@ -107,6 +107,7 @@
               <div class="text-caption text-weight-medium">Orientation</div>
               <q-btn-toggle
                 v-model="editorStore.a4Orientation"
+                v-help="'Choose Portrait or Landscape A4 print page orientation.'"
                 dense
                 rounded
                 unelevated
@@ -123,6 +124,7 @@
               <div class="text-caption text-weight-medium">Layout</div>
               <q-btn-toggle
                 v-model="editorStore.a4Layout"
+                v-help="'Choose A4 sheet layout between stat block and art/notes panels.'"
                 dense
                 rounded
                 unelevated
@@ -139,6 +141,7 @@
 
             <q-toggle
               v-model="editorStore.a4CompactDensity"
+              v-help="'Tighten vertical A4 spacing so dense stat blocks fit onto a single page.'"
               class="col-12 q-my-xs"
               dense
               color="primary"

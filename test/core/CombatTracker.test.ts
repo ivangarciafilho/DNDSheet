@@ -159,3 +159,90 @@ test('CombatTracker - Death Save progression and stabilization/death thresholds'
   assert.strictEqual(res.failures, 3)
   assert.strictEqual(res.dead, true)
 })
+
+test('B9.1/B9.2/B9.3: Duplicate monsters get distinct IDs, snapshots isolate source edits, and active turn survives sort/remove/reload', async () => {
+  const {
+    addCombatantPreserveTurn,
+    applyDamage: dmg,
+    createCombatantFromMonster: fromMonster,
+    removeCombatantPreserveTurn,
+    setInitiativePreserveTurn,
+    sortInitiative: sortInit,
+  } = await import('../../src/core/usecases/CombatTracker.ts')
+
+  const baseMonster = defaultMonster()
+  baseMonster.id = 'shared-goblin-doc'
+  baseMonster.name = 'Goblin'
+  baseMonster.AC = 15
+  baseMonster.HP = { HD: 2, type: 6, modifier: 0 } // 7 HP
+
+  const g1 = fromMonster(baseMonster, 12, { sourceDocumentId: 'shared-goblin-doc', sourceRevision: 4 })
+  const g2 = fromMonster(baseMonster, 6, { sourceDocumentId: 'shared-goblin-doc', sourceRevision: 4 })
+  assert.notStrictEqual(g1.id, g2.id)
+  assert.strictEqual(g1.sourceDocumentId, 'shared-goblin-doc')
+  assert.strictEqual(g1.sourceRevision, 4)
+
+  // Mutating original monster after snapshot capture never mutates combatant snapshot or live encounter HP/name
+  baseMonster.AC = 99
+  baseMonster.name = 'Mutated Goblin'
+  assert.strictEqual(g1.sourceSnapshot?.ac, 15)
+  assert.strictEqual(g1.sourceSnapshot?.name, 'Goblin')
+  assert.strictEqual(g1.name, 'Goblin')
+
+  // Damaging one Goblin clone never damages the second clone or source
+  dmg(g1, 4)
+  assert.strictEqual(g1.currentHp, 3)
+  assert.strictEqual(g2.currentHp, 7)
+
+  const hero = {
+    id: 'cbt-hero-1',
+    sourceKind: 'custom' as const,
+    name: 'Hero Paladin',
+    initiative: 18,
+    currentHp: 30,
+    maxHp: 30,
+    tempHp: 0,
+    conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    isMonster: false,
+  }
+
+  let state = addCombatantPreserveTurn([], g1, null, 0)
+  state = addCombatantPreserveTurn(state.combatants, g2, state.activeCombatantId, state.activeTurnIndex)
+  state = addCombatantPreserveTurn(state.combatants, hero, g1.id, 1) // Currently g1's turn!
+
+  const ambusher = {
+    id: 'cbt-ambusher',
+    sourceKind: 'custom' as const,
+    name: 'Ambusher',
+    initiative: 25,
+    currentHp: 18,
+    maxHp: 18,
+    tempHp: 0,
+    conditions: [],
+    deathSaves: { successes: 0, failures: 0 },
+    isMonster: true,
+  }
+  state = addCombatantPreserveTurn(state.combatants, ambusher, state.activeCombatantId, state.activeTurnIndex)
+  assert.strictEqual(state.activeCombatantId, g1.id)
+  assert.strictEqual(state.activeTurnIndex, 2) // Shifted cleanly as faster combatant arrived above g1
+
+  const reordered = setInitiativePreserveTurn(state.combatants, ambusher.id, 2, state.activeCombatantId, state.activeTurnIndex)
+  assert.strictEqual(reordered.activeCombatantId, g1.id)
+  assert.strictEqual(reordered.activeTurnIndex, 1)
+
+  // Remove slower combatant: g1 stays active
+  const removedSlow = removeCombatantPreserveTurn(reordered.combatants, ambusher.id, reordered.activeTurnIndex, 2, reordered.activeCombatantId)
+  assert.strictEqual(removedSlow.activeCombatantId, g1.id)
+  assert.strictEqual(removedSlow.currentRound, 2)
+
+  // Remove active combatant g1: falls cleanly onto remaining slot without crash or skipping
+  const removedActive = removeCombatantPreserveTurn(removedSlow.combatants, g1.id, removedSlow.activeTurnIndex, 2, removedSlow.activeCombatantId)
+  assert.strictEqual(removedActive.combatants.length, 2)
+  assert.strictEqual(removedActive.activeCombatantId, sortInit(removedActive.combatants)[removedActive.activeTurnIndex].id)
+
+  // Reload JSON round-trip retains source snapshots & activeCombatantId
+  const reloaded = JSON.parse(JSON.stringify(removedSlow))
+  assert.strictEqual(reloaded.combatants.find((c: { id: string }) => c.id === g1.id).sourceSnapshot.ac, 15)
+  assert.strictEqual(reloaded.activeCombatantId, g1.id)
+})

@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     expand-separator
+    data-editor-section="resistances"
     icon="shield"
     :label="$t('editor.resistances.label')"
     :caption="$t('editor.resistances.caption')"

@@ -5,6 +5,7 @@ import { SCHEMA } from 'src/data/SCHEMA'
 import { createMonsterState, useMonsterStore } from 'src/stores/monster-store'
 import { useCharacterStore } from 'src/stores/character-store'
 import { useEditorStore } from 'src/stores/editor-store'
+import { useMonsterSessionStore } from 'src/stores/monster-session'
 import { importCharacter } from 'src/core/domain/character-import'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
@@ -121,6 +122,7 @@ export function useFileLoader() {
         }
         Object.assign(state, next)
       })
+      useMonsterSessionStore().ensureDistinctDocumentId(!monster.id || !String(monster.id).trim())
       editor.$patch({ ...presentation, a4PageMeasuredHeight: 0, activeMode: 'monster' })
 
       $q.notify({

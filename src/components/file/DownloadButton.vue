@@ -58,9 +58,162 @@
         <q-item v-close-popup clickable @click="copyLink()">
           <q-item-section>{{ $t('io.export.link') }}</q-item-section>
         </q-item>
+        <q-separator />
+        <q-item
+          v-close-popup
+          clickable
+          data-export-preview-open
+          @click="openExportPreview()"
+        >
+          <q-item-section>Export Preview &amp; Capabilities...</q-item-section>
+        </q-item>
       </q-list>
     </q-menu>
   </q-btn>
+
+  <q-dialog v-model="exportPreviewOpen" data-export-preview-dialog>
+    <q-card style="min-width: 680px; max-width: 92vw;">
+      <q-card-section class="row items-center justify-between q-pb-sm">
+        <div>
+          <div class="text-h6">Export Preview &amp; Capabilities</div>
+          <div class="text-caption text-grey-7">
+            Source rev #{{ exportPreviewResult.sourceRevision }} · {{ exportPreviewResult.capability.lossless ? 'Lossless Canonical Save' : 'Derived Projection' }}
+          </div>
+        </div>
+        <q-chip
+          dense
+          :color="exportPreviewResult.capability.supports2024Grammar ? 'positive' : 'warning'"
+          text-color="white"
+        >
+          {{ exportPreviewResult.capability.supports2024Grammar ? '2024 Grammar' : '2014 Schema' }}
+        </q-chip>
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section class="q-gutter-sm">
+        <div class="row q-col-gutter-sm">
+          <div class="col-12 col-sm-6">
+            <q-select
+              v-model="selectedExportTarget"
+              v-help="'Choose export target format to inspect capabilities, omissions, and generated output.'"
+              :options="exportTargetOptions"
+              emit-value
+              map-options
+              outlined
+              dense
+              label="Target Format"
+              data-export-target-select
+            />
+          </div>
+          <div class="col-12 col-sm-6">
+            <q-select
+              v-model="editorStore.spellcastingPlacement"
+              v-help="'Control where Spellcasting appears relative to Traits and Actions in web and text/HTML exports.'"
+              :options="spellcastingPlacementOptions"
+              emit-value
+              map-options
+              outlined
+              dense
+              :disable="!exportPreviewResult.capability.supportsSpellcastingPlacement"
+              label="Spellcasting Placement"
+              data-export-spell-placement
+            />
+          </div>
+        </div>
+
+        <q-banner
+          v-if="exportPolicy.blockingErrors.length > 0"
+          dense
+          rounded
+          class="bg-red-1 text-negative"
+          data-export-blocking-banner
+        >
+          <div class="text-weight-bold">
+            Export blocked by {{ exportPolicy.blockingErrors.length }} critical check error(s)
+          </div>
+          <ul class="q-pl-md q-my-xs">
+            <li v-for="(err, idx) in exportPolicy.blockingErrors" :key="err.code + '-' + (err.fieldPath || err.targetId || idx)">
+              <strong>[{{ err.code }}]</strong> {{ err.message }}
+            </li>
+          </ul>
+          <q-checkbox
+            v-model="allowBlockingOverride"
+            v-help="'Bypass blocking lint errors to copy or download the draft export anyway.'"
+            dense
+            color="negative"
+            label="Override blocking lint errors and export anyway"
+            data-export-override-checkbox
+          />
+        </q-banner>
+
+        <q-banner
+          v-if="exportPreviewResult.omissions.length > 0"
+          dense
+          rounded
+          class="bg-amber-1 text-amber-10"
+          data-export-omissions-banner
+        >
+          <div class="text-weight-bold q-mb-xs">
+            Format Omissions ({{ exportPreviewResult.omissions.length }})
+          </div>
+          <div
+            v-for="om in exportPreviewResult.omissions"
+            :key="om.feature"
+            class="text-caption"
+          >
+            <strong>{{ om.feature }}:</strong> {{ om.reason }}
+          </div>
+        </q-banner>
+
+        <div class="row q-gutter-xs items-center">
+          <q-chip
+            v-for="feat in exportPreviewResult.capability.supportedFeatures"
+            :key="feat"
+            dense
+            size="sm"
+            color="blue-grey-1"
+            text-color="blue-grey-9"
+          >
+            {{ feat }}
+          </q-chip>
+        </div>
+
+        <q-input
+          v-help="'Read-only generated output matching the selected export target and document revision.'"
+          :model-value="previewContent"
+          type="textarea"
+          readonly
+          outlined
+          autogrow
+          input-style="font-family: monospace; font-size: 12px; max-height: 280px;"
+          data-export-preview-text
+        />
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-actions align="right">
+        <q-btn v-close-popup flat label="Close" />
+        <q-btn
+          outline
+          color="primary"
+          label="Copy Preview"
+          :disable="!exportPolicy.allowed || selectedExportTarget === 'png'"
+          data-export-preview-copy
+          @click="copySelectedExport()"
+        />
+        <q-btn
+          unelevated
+          color="primary"
+          label="Download Export"
+          :disable="!exportPolicy.allowed"
+          data-export-preview-download
+          @click="downloadSelectedExport()"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script lang="ts">
@@ -68,11 +221,19 @@ import { useQuasar } from 'quasar'
 import { useMdRenderer } from '../rendering/useMdRenderer'
 import { useMd3Renderer } from '../rendering/useHomebrewery3Renderer'
 import { useMonsterStore } from '../../stores/monster-store'
-import { defineComponent } from 'vue'
+import { computed, defineComponent, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { download, saveJson } from './download'
 import { nativeMonsterFile } from './native-monster-file'
 import { useSpellsStore } from 'src/stores/spells-store'
+import { useMonsterSessionStore } from 'src/stores/monster-session'
+import { evaluateExportPolicy } from 'src/core/domain/check-session'
+import {
+  buildExportResult,
+  EXPORT_CAPABILITIES,
+  SPELLCASTING_PLACEMENT_OPTIONS,
+  type ExportTargetId,
+} from 'src/core/domain/export-contract'
 import { safeFileName } from 'src/core/domain/file-name'
 import copy from 'copy-to-clipboard'
 import { useLatexRenderer } from '../rendering/useLatexRenderer'
@@ -106,6 +267,123 @@ export default defineComponent({
     const { renderImprovedInitJson } = useImprovedInitRenderer()
     const codec = jsonurl('lzma')
     const editorStore = useEditorStore()
+    const spellsStore = useSpellsStore()
+    const monsterSession = useMonsterSessionStore()
+
+    const exportPreviewOpen = ref(false)
+    const selectedExportTarget = ref<ExportTargetId>('homebrewery_v3')
+    const allowBlockingOverride = ref(false)
+    const previewContent = ref('')
+    const exportTargetOptions = EXPORT_CAPABILITIES.map((cap) => ({
+      label: cap.label,
+      value: cap.id,
+    }))
+    const spellcastingPlacementOptions = SPELLCASTING_PLACEMENT_OPTIONS
+
+    const exportPolicy = computed(() =>
+      evaluateExportPolicy(monster.$state as unknown as Monster, spellsStore.allSpells, {
+        allowBlockingIssues: allowBlockingOverride.value,
+      }),
+    )
+
+    const refreshPreview = async () => {
+      if (!exportPreviewOpen.value || editorStore.activeMode === 'character') return
+      const m = monster.$state as unknown as Monster
+      const style = editorStore.style as '2014' | '2024'
+      const opts = {
+        spellcastingPlacement: editorStore.spellcastingPlacement,
+        spells: spellsStore.allSpells,
+      }
+      try {
+        switch (selectedExportTarget.value) {
+          case '5emm_json':
+            previewContent.value = JSON.stringify(
+              nativeMonsterFile(monster.$state, editorStore.$state, spellsStore.customSpells),
+              null,
+              2,
+            )
+            break
+          case 'homebrewery_v3':
+            previewContent.value = renderMarkdownV3(editorStore.statBlockColumns === 2)
+            break
+          case 'homebrewery_legacy':
+            previewContent.value = renderMarkdown(editorStore.statBlockColumns === 2)
+            break
+          case 'latex':
+            previewContent.value = renderLatex(editorStore.statBlockColumns === 2)
+            break
+          case 'improved_initiative':
+            previewContent.value = await renderImprovedInitJson()
+            break
+          case 'tarrasque_io':
+            previewContent.value = renderTarrasqueJson()
+            break
+          case 'foundry_vtt':
+            previewContent.value = exportToFoundryJson(m)
+            break
+          case 'plain_text':
+            previewContent.value = exportToPlainText(m, style, opts)
+            break
+          case 'html_snippet':
+            previewContent.value = exportToHtml(m, style, opts)
+            break
+          case 'png':
+            previewContent.value = 'PNG raster snapshot is captured live from the active statblock viewport when Download Export is clicked.'
+            break
+        }
+      } catch (e) {
+        previewContent.value = `Preview generation failed: ${String(e)}`
+      }
+    }
+
+    watch(
+      [
+        exportPreviewOpen,
+        selectedExportTarget,
+        () => monsterSession.contentRevision,
+        () => editorStore.style,
+        () => editorStore.spellcastingPlacement,
+        () => editorStore.statBlockColumns,
+      ],
+      () => {
+        void refreshPreview()
+      },
+      { immediate: true },
+    )
+
+    const exportPreviewResult = computed(() =>
+      buildExportResult({
+        monster: monster.$state as unknown as Monster,
+        spells: spellsStore.allSpells,
+        targetId: selectedExportTarget.value,
+        sourceDocumentId: monsterSession.documentId,
+        sourceRevision: monsterSession.contentRevision,
+        style: editorStore.style as '2014' | '2024',
+        spellcastingPlacement: editorStore.spellcastingPlacement,
+        content: previewContent.value,
+      }),
+    )
+
+    const openExportPreview = (targetId: ExportTargetId = 'homebrewery_v3') => {
+      selectedExportTarget.value = targetId
+      allowBlockingOverride.value = false
+      exportPreviewOpen.value = true
+      void refreshPreview()
+    }
+
+    const guardExport = (targetId: ExportTargetId): boolean => {
+      if (editorStore.activeMode === 'character') return true
+      const decision = evaluateExportPolicy(monster.$state as unknown as Monster, spellsStore.allSpells, {
+        allowBlockingIssues: false,
+      })
+      if (decision.allowed) return true
+      $q.notify({
+        message: `Export blocked by ${decision.blockingErrors.length} critical check error(s). Review or override in Export Preview.`,
+        type: 'warning',
+      })
+      openExportPreview(targetId)
+      return false
+    }
 
     // who needs a library i guess
     const shorten = async (url: string) => {
@@ -119,9 +397,10 @@ export default defineComponent({
       return short
     }
 
-    const save5emm = () => {
+    const save5emm = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('5emm_json')) return
       try {
-        saveJson(nativeMonsterFile(monster.$state, editorStore.$state, useSpellsStore().customSpells), `${monster.name}.5emm.json`)
+        saveJson(nativeMonsterFile(monster.$state, editorStore.$state, spellsStore.customSpells), `${monster.name}.5emm.json`)
       } catch (e) {
         console.error(e)
 
@@ -132,7 +411,8 @@ export default defineComponent({
       }
     }
 
-    const saveMd = () => {
+    const saveMd = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('homebrewery_legacy')) return
       try {
         download(
           renderMarkdown(editorStore.statBlockColumns === 2),
@@ -149,7 +429,8 @@ export default defineComponent({
       }
     }
 
-    const saveMd3 = () => {
+    const saveMd3 = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('homebrewery_v3')) return
       try {
         download(
           renderMarkdownV3(editorStore.statBlockColumns === 2),
@@ -167,6 +448,7 @@ export default defineComponent({
     }
 
     const copyMd = () => {
+      if (!guardExport('homebrewery_v3')) return
       try {
         copy(renderMarkdownV3(editorStore.statBlockColumns === 2))
         $q.notify({
@@ -183,7 +465,8 @@ export default defineComponent({
       }
     }
 
-    const saveLatex = () => {
+    const saveLatex = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('latex')) return
       download(
         renderLatex(editorStore.statBlockColumns === 2),
         `${monster.name}.tex`,
@@ -191,7 +474,8 @@ export default defineComponent({
       )
     }
 
-    const saveTio = () => {
+    const saveTio = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('tarrasque_io')) return
       download(
         renderTarrasqueJson(),
         `${monster.name}.tio.json`,
@@ -305,7 +589,8 @@ export default defineComponent({
       }
     }
 
-    const savePng = async () => {
+    const savePng = async (bypassGate = false) => {
+      if (!bypassGate && !guardExport('png')) return
       const isChar = editorStore.activeMode === 'character'
       const node = isChar
         ? document.getElementById('char-sheet')
@@ -345,7 +630,8 @@ export default defineComponent({
       }
     }
 
-    const saveImprovedInit = async () => {
+    const saveImprovedInit = async (bypassGate = false) => {
+      if (!bypassGate && !guardExport('improved_initiative')) return
       download(
         await renderImprovedInitJson(),
         `${monster.name}.improved-initiative.json`,
@@ -385,7 +671,8 @@ export default defineComponent({
       }
     }
 
-    const exportFoundry = () => {
+    const exportFoundry = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('foundry_vtt')) return
       try {
         const jsonStr = exportToFoundryJson(
           monster.$state as unknown as Monster
@@ -404,11 +691,16 @@ export default defineComponent({
       }
     }
 
-    const exportPlainText = () => {
+    const exportPlainText = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('plain_text')) return
       try {
         const txt = exportToPlainText(
           monster.$state as unknown as Monster,
-          editorStore.style as '2014' | '2024'
+          editorStore.style as '2014' | '2024',
+          {
+            spellcastingPlacement: editorStore.spellcastingPlacement,
+            spells: spellsStore.allSpells,
+          },
         )
         download(txt, `${monster.name}.txt`, 'text/plain')
         $q.notify({
@@ -424,11 +716,16 @@ export default defineComponent({
       }
     }
 
-    const exportHtml = () => {
+    const exportHtml = (bypassGate = false) => {
+      if (!bypassGate && !guardExport('html_snippet')) return
       try {
         const html = exportToHtml(
           monster.$state as unknown as Monster,
-          editorStore.style as '2014' | '2024'
+          editorStore.style as '2014' | '2024',
+          {
+            spellcastingPlacement: editorStore.spellcastingPlacement,
+            spells: spellsStore.allSpells,
+          },
         )
         download(html, `${monster.name}.html`, 'text/html')
         $q.notify({
@@ -444,8 +741,44 @@ export default defineComponent({
       }
     }
 
+    const copySelectedExport = () => {
+      if (!exportPolicy.value.allowed || selectedExportTarget.value === 'png') return
+      copy(previewContent.value)
+      $q.notify({
+        message: `Copied ${exportPreviewResult.value.capability.label} preview to clipboard`,
+        type: 'positive',
+      })
+    }
+
+    const downloadSelectedExport = () => {
+      if (!exportPolicy.value.allowed) return
+      switch (selectedExportTarget.value) {
+        case '5emm_json': save5emm(true); break
+        case 'homebrewery_v3': saveMd3(true); break
+        case 'homebrewery_legacy': saveMd(true); break
+        case 'latex': saveLatex(true); break
+        case 'improved_initiative': void saveImprovedInit(true); break
+        case 'tarrasque_io': saveTio(true); break
+        case 'foundry_vtt': exportFoundry(true); break
+        case 'plain_text': exportPlainText(true); break
+        case 'html_snippet': exportHtml(true); break
+        case 'png': void savePng(true); break
+      }
+    }
+
     return {
       editorStore,
+      exportPreviewOpen,
+      selectedExportTarget,
+      allowBlockingOverride,
+      previewContent,
+      exportTargetOptions,
+      spellcastingPlacementOptions,
+      exportPolicy,
+      exportPreviewResult,
+      openExportPreview,
+      copySelectedExport,
+      downloadSelectedExport,
       save5emm,
       saveMd,
       saveMd3,

@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     expand-separator
+    data-editor-section="skills"
     icon="fa-solid fa-dice-d20"
     :label="$t('editor.skills.label')"
     :caption="$t('editor.skills.caption')"

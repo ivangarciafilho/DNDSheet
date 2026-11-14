@@ -1,5 +1,5 @@
 <template>
-  <q-expansion-item expand-separator icon="auto_fix_high" :label="$t('editor.spellcasting.label')" :caption="sourceCaption">
+  <q-expansion-item expand-separator data-editor-section="spellcasting" icon="auto_fix_high" :label="$t('editor.spellcasting.label')" :caption="sourceCaption">
     <div class="q-mx-sm q-my-xs">
       <class-casting-editor />
       <div class="row items-center justify-between q-mt-sm">

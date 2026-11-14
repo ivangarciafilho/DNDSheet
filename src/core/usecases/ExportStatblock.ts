@@ -18,14 +18,346 @@ import {
   formatMinimalistDeathPrevention,
 } from '../domain/defense-and-traits-utils.ts'
 import { formatSpeedActionRider } from '../domain/speeds-traversal.ts'
+import { buildCastingProjection } from '../domain/casting-projection.ts'
+import { innateCastingContext, resolveCastingAbility } from '../domain/casting-ability.ts'
+import { ordinalLabel } from '../domain/spell-plate.ts'
+import { getSpellMetadata } from '../domain/spell-metadata.ts'
+import { mechanicPlainText } from '../domain/mechanic-rich-text.ts'
+import {
+  computeSkillGroupLayout,
+  mergeIdenticalEntries,
+  normalizeSkillKey,
+  passiveConfigKey,
+  SKILL_ACTION_GROUPS,
+  skillGroupPlacement,
+  type CombatSkillGroupId,
+  type SkillActionType,
+  type SkillCheckInput,
+  type SkillGroupRow,
+} from '../domain/skill-action-groups.ts'
+import {
+  resolveSpellcastingPlacement,
+  STATBLOCK_GRAMMAR_EXPORT_CSS,
+  type SpellcastingPlacement,
+} from '../domain/export-contract.ts'
+import { hasCastingSources, castingLearningSummary } from './AutoSyncSpellcasting.ts'
 import { resolveCharacterFields, resolveMonsterText } from './ResolveMonsterText.ts'
+import type { DndSpell } from '../domain/types.ts'
 
-// Printed exports resolve authored formulas and macros field by field; JSON save formats stay raw.
-export function exportToMarkdown(monster: Monster, style: '2014' | '2024' = '2014'): string {
-  return markdownOf(resolveMonsterText(monster), style)
+export interface ExportRenderOptions {
+  spellcastingPlacement?: SpellcastingPlacement
+  embedGrammarCss?: boolean
+  spells?: Record<string, DndSpell>
 }
 
-function markdownOf(monster: Monster, style: '2014' | '2024'): string {
+const ABILITY_FULL_NAMES: Record<string, string> = {
+  STR: 'Strength',
+  DEX: 'Dexterity',
+  CON: 'Constitution',
+  INT: 'Intelligence',
+  WIS: 'Wisdom',
+  CHA: 'Charisma',
+}
+
+const RATE_LABELS: Record<string, string> = {
+  AT_WILL: 'At will',
+  DAY: 'day',
+  LONG_REST: 'Long Rest',
+  SHORT_REST: 'Short Rest',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+}
+
+const SKILL_DEF_BY_KEY = new Map<string, { name: string; stat: DndStat }>(
+  DND_SKILLS.map((s) => [normalizeSkillKey(s.name), s]),
+)
+SKILL_DEF_BY_KEY.set('SLIGHT_OF_HAND', { name: 'Sleight of Hand', stat: 'DEX' })
+
+function skillDisplayLabel(key: string, fallback?: string): string {
+  const norm = normalizeSkillKey(key)
+  return SKILL_DEF_BY_KEY.get(norm)?.name || fallback || key
+}
+
+function skillStatOf(key: string): DndStat {
+  return SKILL_DEF_BY_KEY.get(normalizeSkillKey(key))?.stat || 'INT'
+}
+
+function escapeExportHtml(value: unknown): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
+
+function collectCombatCheckRows(monster: Monster): SkillGroupRow[] {
+  const aop = monster.actionOrientedPassives as Record<string, unknown> | undefined
+  const monsterRecord = monster as unknown as Record<string, unknown>
+  const editorPassives = monsterRecord.passives as Record<string, Record<string, unknown>> | undefined
+  const passiveCfg = (key: string) => {
+    const cfgKey = passiveConfigKey(key)
+    return editorPassives?.[cfgKey] ?? editorPassives?.[cfgKey.toLowerCase()]
+  }
+  const sharedCondition = (key: string): string => {
+    const cfgKey = passiveConfigKey(key)
+    const condMap = aop?.conditions as Record<string, unknown> | undefined
+    const raw = condMap?.[cfgKey] ?? condMap?.[cfgKey.toLowerCase()]
+    return typeof raw === 'string' ? raw.trim() : ''
+  }
+
+  const inputs: SkillCheckInput[] = []
+  const seen = new Set<string>()
+  for (const sk of monster.skills || []) {
+    const key = normalizeSkillKey(sk.key)
+    if (!key || key === 'INITIATIVE' || seen.has(key)) continue
+    seen.add(key)
+    const cfg = passiveCfg(key)
+    const stat = (sk.skill?.stat as DndStat) || skillStatOf(key)
+    const bonus = sk.override
+      ? sk.overrideValue
+      : statModifier(monster.stats?.[stat] ?? 10) +
+        (sk.expertise ? monster.proficiency * 2 : sk.proficient ? monster.proficiency : 0)
+    const ppOverride = key === 'PERCEPTION' && monster.passivePerception?.override
+      ? Number(monster.passivePerception.overrideValue)
+      : null
+    inputs.push({
+      key,
+      label: skillDisplayLabel(key, sk.skill?.label),
+      stat,
+      bonus,
+      advantage: Boolean(sk.advantage || cfg?.advantage),
+      disadvantage: Boolean(sk.disadvantage || cfg?.disadvantage),
+      condition: sk.condition?.trim() || sk.conditional?.trim() || String(cfg?.condition || '').trim() || sharedCondition(key),
+      bonusAction: typeof sk.bonusAction === 'boolean' ? sk.bonusAction : undefined,
+      passiveOverride: cfg?.override && cfg.overrideValue != null ? Number(cfg.overrideValue) : ppOverride,
+    })
+  }
+
+  for (const group of SKILL_ACTION_GROUPS) {
+    for (const key of group.skills) {
+      if (seen.has(key)) continue
+      seen.add(key)
+      const cfg = passiveCfg(key)
+      const stat = skillStatOf(key)
+      const ppOverride = key === 'PERCEPTION' && monster.passivePerception?.override
+        ? Number(monster.passivePerception.overrideValue)
+        : null
+      inputs.push({
+        key,
+        label: skillDisplayLabel(key),
+        stat,
+        bonus: statModifier(monster.stats?.[stat] ?? 10),
+        advantage: Boolean(cfg?.advantage),
+        disadvantage: Boolean(cfg?.disadvantage),
+        condition: String(cfg?.condition || '').trim() || sharedCondition(key),
+        passiveOverride: cfg?.override && cfg.overrideValue != null ? Number(cfg.overrideValue) : ppOverride,
+      })
+    }
+  }
+
+  const groupType = (flag: unknown, editorType: unknown): SkillActionType =>
+    flag || editorType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+
+  return computeSkillGroupLayout({
+    stats: monster.stats,
+    skills: inputs,
+    groupActionTypes: {
+      search: groupType(aop?.bonusActionSearch, editorPassives?.searchActionType),
+      study: groupType(aop?.bonusActionStudy, editorPassives?.studyActionType),
+      influence: groupType(aop?.bonusActionInfluence, editorPassives?.influenceActionType),
+      hide: groupType(aop?.bonusActionHide, editorPassives?.hideActionType),
+    },
+  })
+}
+
+function formatSkillGroupScores(row: SkillGroupRow): string {
+  const groups = mergeIdenticalEntries(row.entries).map(({ entry, labels }) => {
+    const modeTag = entry.advantage ? ' (Advantage)' : entry.disadvantage ? ' (Disadvantage)' : ''
+    const condTag = entry.condition ? ` (${entry.condition})` : ''
+    return {
+      passive: entry.passive,
+      bonus: entry.bonus,
+      text: `${entry.passive}/${renderBonus(entry.bonus)}, ${labels.join(', ')}${modeTag}${condTag}`,
+    }
+  })
+  if (row.base && row.baseSkillKeys?.length) {
+    const labels = row.baseSkillKeys.map((k) => skillDisplayLabel(k))
+    groups.push({
+      passive: row.base.passive,
+      bonus: row.base.bonus,
+      text: `${row.base.passive}/${renderBonus(row.base.bonus)}, ${labels.join(', ')}`,
+    })
+  }
+  return groups
+    .sort((a, b) => a.passive - b.passive || a.bonus - b.bonus)
+    .map((g) => `(${g.text})`)
+    .join(', ')
+}
+
+function hasAnySpellcastingContent(monster: Monster): boolean {
+  const atWillHas = (monster.spellcasting?.atWill || []).some((g) => (g.spells?.length || 0) > 0)
+  return Boolean(atWillHas || hasCastingSources(monster.spellcasting))
+}
+
+function buildExportClassPlate(
+  monster: Monster,
+  style: '2014' | '2024',
+  spells?: Record<string, DndSpell>,
+) {
+  const sc = monster.spellcasting
+  const ability = resolveCastingAbility(sc, monster.stats, monster.proficiency)
+  const plate = buildCastingProjection(sc, {
+    stats: monster.stats,
+    proficiency: monster.proficiency,
+    save: ability.save,
+    attack: renderBonus(ability.attack),
+    edition: style,
+    spellLevel: (name) => spells?.[name]?.level ?? getSpellMetadata(name).level,
+  })
+  const summary = castingLearningSummary(sc, monster.stats, monster.proficiency)
+  const casterLevel = summary.casterLevel || sc.level || 1
+  const statFull = ABILITY_FULL_NAMES[sc.stat || 'INT'] || sc.stat || 'Intelligence'
+  const monsterName = monster.nickname || monster.name || 'This creature'
+  const details = [plate.resource, plate.prepared, plate.consolidatedSummary].filter(Boolean)
+  const preambleText = sc.useCustomClassPreamble && sc.customClassPreamble?.trim()
+    ? mechanicPlainText(sc.customClassPreamble)
+    : `${monsterName} is a ${ordinalLabel(casterLevel).toLowerCase()}-level spellcaster. Its spellcasting ability is ${statFull} (spell save DC ${plate.save}, ${plate.attack} to hit with spell attacks).${details.length ? ' ' + details.join('. ') + '.' : ''}`
+  const rows = sc.splitHighCadence
+    ? [false, true].flatMap((restricted) =>
+        plate.levels
+          .map((row) => ({
+            ...row,
+            heading: restricted ? `Restricted ${row.heading}` : row.heading,
+            spells: row.spells.filter((s) => Boolean(s.restricted) === restricted),
+          }))
+          .filter((row) => row.spells.length > 0),
+      )
+    : plate.levels
+  return { plate, preambleText, rows }
+}
+
+function renderSpellcastingMarkdown(
+  monster: Monster,
+  style: '2014' | '2024',
+  spells?: Record<string, DndSpell>,
+): string[] {
+  const out: string[] = []
+  const sc = monster.spellcasting
+  const monsterName = monster.nickname || monster.name || 'This creature'
+  const atWillGroups = (sc?.atWill || []).filter((g) => (g.spells?.length || 0) > 0)
+
+  if (atWillGroups.length > 0) {
+    const innateCtx = innateCastingContext(sc)
+    const innateAbility = resolveCastingAbility(innateCtx, monster.stats, monster.proficiency)
+    const statFull = ABILITY_FULL_NAMES[innateCtx.stat || 'INT'] || innateCtx.stat || 'Charisma'
+    const label = style === '2014' ? 'Innate Spellcasting' : 'Spellcasting (Innate)'
+    const notes = sc.atWillNotes?.trim() ? ` ${mechanicPlainText(sc.atWillNotes)}` : ''
+    const preamble = sc.useCustomInnatePreamble && sc.customInnatePreamble?.trim()
+      ? mechanicPlainText(sc.customInnatePreamble)
+      : `${monsterName}'s ${style === '2014' ? 'innate ' : ''}spellcasting ability is ${statFull} (spell save DC ${innateAbility.save}, ${renderBonus(innateAbility.attack)} to hit with spell attacks).${notes} It can cast the following spells, requiring no material components:`
+    out.push(`***${label}.*** ${preamble}`)
+    for (const g of atWillGroups) {
+      const rateLabel = g.rate === 'AT_WILL' ? 'At will' : `${g.count}/${RATE_LABELS[g.rate] || g.rate}`
+      out.push(`**${rateLabel}:** *${g.spells.join(', ')}*`)
+    }
+    out.push('')
+  }
+
+  if (hasCastingSources(sc)) {
+    const { plate, preambleText, rows } = buildExportClassPlate(monster, style, spells)
+    if (rows.length > 0 || plate.resource || plate.metamagic) {
+      out.push(`***Spellcasting.*** ${preambleText}`)
+      if (plate.metamagic) {
+        const optText = plate.metamagic.options.length > 0
+          ? `: ${plate.metamagic.options.map((o) => `${o.name}${o.cost ? ` (${o.cost})` : ''}`).join(', ')}`
+          : ''
+        out.push(`**Sorcery Points** ${plate.metamagic.points} (regained on ${plate.metamagic.refresh})${optText}`)
+      }
+      for (const row of rows) {
+        const spellList = row.spells
+          .map((s) => `${s.lead}${s.name}${s.castingTime ? ` (${s.castingTime})` : ''}${s.actionLabel ? ` ${s.actionLabel}` : ''}`)
+          .join(', ')
+        out.push(`**${row.heading}** *${spellList}*`)
+      }
+      out.push('')
+    }
+  }
+
+  return out
+}
+
+function renderSpellcastingHtmlPlates(
+  monster: Monster,
+  style: '2014' | '2024',
+  spells?: Record<string, DndSpell>,
+): string {
+  const blocks: string[] = []
+  const sc = monster.spellcasting
+  const atWillGroups = (sc?.atWill || []).filter((g) => (g.spells?.length || 0) > 0)
+
+  if (atWillGroups.length > 0) {
+    const innateCtx = innateCastingContext(sc)
+    const innateAbility = resolveCastingAbility(innateCtx, monster.stats, monster.proficiency)
+    const notes = sc.atWillNotes?.trim() ? `<div class="sb-body sb-striped">${escapeExportHtml(mechanicPlainText(sc.atWillNotes))}</div>` : ''
+    const rowsHtml = atWillGroups.map((g, idx) => {
+      const rateLabel = g.rate === 'AT_WILL' ? 'At will' : `${g.count}/${RATE_LABELS[g.rate] || g.rate}`
+      const striped = idx % 2 === 1 ? ' sb-striped' : ''
+      return `<div class="sb-row${striped}"><div class="sb-cell sb-head">${escapeExportHtml(rateLabel)}:</div><div class="sb-cell sb-grow"><em>${escapeExportHtml(g.spells.join(', '))}</em></div></div>`
+    }).join('')
+    blocks.push(
+      `<div class="innate-spellcasting sb-plate">` +
+      `<div class="sb-row"><div class="sb-cell sb-head">Innate Spellcasting <span class="sb-qual">(${escapeExportHtml(innateCtx.stat || 'INT')})</span></div>` +
+      `<div class="sb-cell">Spell Save DC <span class="dnd-num">${innateAbility.save}</span></div>` +
+      `<div class="sb-cell">Spell Attack <span class="dnd-num">${escapeExportHtml(renderBonus(innateAbility.attack))}</span></div></div>` +
+      `${notes}${rowsHtml}</div>`,
+    )
+  }
+
+  if (hasCastingSources(sc)) {
+    const { plate, rows } = buildExportClassPlate(monster, style, spells)
+    if (rows.length > 0 || plate.resource || plate.metamagic) {
+      const resText = [plate.resource, plate.prepared].filter(Boolean).join('. ')
+      const resourceRow = resText
+        ? `<div class="sb-row sb-striped"><div class="sb-cell sb-grow">${escapeExportHtml(resText)}.</div></div>`
+        : ''
+      const metaRow = plate.metamagic
+        ? `<div class="sb-row"><div class="sb-cell sb-grow"><span class="dnd-num">${plate.metamagic.points}</span> Sorcery Points, regained on <em>${escapeExportHtml(plate.metamagic.refresh)}</em>.${plate.metamagic.options.map((o) => ` <strong>${escapeExportHtml(o.cost)}</strong> ${escapeExportHtml(o.effect || o.name)}`).join('')}</div></div>`
+        : ''
+      const levelRows = rows.map((row, idx) => {
+        const striped = idx % 2 === 1 ? ' sb-striped' : ''
+        const spellList = row.spells
+          .map((s) => `${escapeExportHtml(s.lead)}<em>${escapeExportHtml(s.name)}</em>${s.castingTime ? ` (${escapeExportHtml(s.castingTime)})` : ''}${s.actionLabel ? ` ${escapeExportHtml(s.actionLabel)}` : ''}`)
+          .join(', ')
+        return `<div class="sb-row${striped}"><div class="sb-cell sb-head">${escapeExportHtml(row.heading)}</div><div class="sb-cell sb-grow">${spellList}</div></div>`
+      }).join('')
+      blocks.push(
+        `<div class="class-spellcasting sb-plate">` +
+        `<div class="sb-row"><div class="sb-cell sb-head">${escapeExportHtml(plate.title)} <span class="sb-qual">(${escapeExportHtml(plate.stat)})</span></div>` +
+        `<div class="sb-cell sb-grow">Spell Save DC <span class="dnd-num">${escapeExportHtml(plate.save)}</span> · Spell Attack <span class="dnd-num">${escapeExportHtml(plate.attack)}</span></div></div>` +
+        `${resourceRow}${metaRow}${levelRows}</div>`,
+      )
+    }
+  }
+
+  return blocks.join('\n')
+}
+
+// Printed exports resolve authored formulas and macros field by field; JSON save formats stay raw.
+export function exportToMarkdown(
+  monster: Monster,
+  style: '2014' | '2024' = '2014',
+  options: ExportRenderOptions = {},
+): string {
+  return markdownOf(resolveMonsterText(monster), style, options)
+}
+
+function markdownOf(
+  monster: Monster,
+  style: '2014' | '2024',
+  options: ExportRenderOptions = {},
+  spellcastingPlaceholder?: string,
+): string {
   const crObj = CR[monster.CR] || { cr: '0', xp: 0 }
   const hpTotal = avgHP(monster.HP)
   const hpFormula = `${monster.HP.HD}d${monster.HP.type}${
@@ -245,8 +577,37 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
   senseList.push(`passive Perception ${passivePerc}`)
   lines.push(`**Senses** ${senseList.join(', ')}`)
 
-  // Action Passives
-  if (monster.actionOrientedPassives) {
+  // Action Passives (2024 unified check groups vs 2014 legacy rows)
+  const monsterRecord = monster as unknown as Record<string, unknown>
+  const aop = monster.actionOrientedPassives as Record<string, unknown> | undefined
+  const editorPassives = monsterRecord.passives as Record<string, Record<string, unknown>> | undefined
+  const headerCheckLines: string[] = []
+  const actionCheckEntries: string[] = []
+  const bonusCheckEntries: string[] = []
+
+  if (style === '2024') {
+    const riders = (aop?.riders || editorPassives?.riders) as Record<string, string> | undefined
+    for (const row of collectCombatCheckRows(monster)) {
+      if (row.id === 'skills') continue
+      const placement = skillGroupPlacement(
+        row.id as CombatSkillGroupId,
+        row.actionType,
+        editorPassives,
+        aop,
+        monsterRecord,
+      )
+      const scores = formatSkillGroupScores(row)
+      const riderText = typeof riders?.[row.id] === 'string' && riders[row.id].trim() ? ` ${riders[row.id].trim()}` : ''
+      if (placement === 'header') {
+        headerCheckLines.push(`**${row.label}** ${scores}`)
+      } else if (placement === 'bonus_action') {
+        bonusCheckEntries.push(`***${row.label} ${scores}.***${riderText}`)
+      } else {
+        actionCheckEntries.push(`***${row.label} ${scores}.***${riderText}`)
+      }
+    }
+    lines.push(...headerCheckLines)
+  } else if (monster.actionOrientedPassives) {
     const p = monster.actionOrientedPassives
     if (p.search && (p.search.perception || p.search.investigation || p.search.survival)) {
       const items: string[] = []
@@ -337,6 +698,15 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
     }
   }
 
+  const spellPlacement = resolveSpellcastingPlacement(options.spellcastingPlacement, 'export')
+  const spellLines = spellcastingPlaceholder
+    ? (hasAnySpellcastingContent(monster) ? [spellcastingPlaceholder, ''] : [])
+    : renderSpellcastingMarkdown(monster, style, options.spells)
+
+  if (spellPlacement === 'with_traits' && spellLines.length > 0) {
+    lines.push(...spellLines)
+  }
+
   const actionText = (action: Monster['actions'][number]): string => {
     if (style !== '2024' || !hasStructuredAbility(action)) return action.description
     const ability = inferAbility(action)
@@ -361,9 +731,23 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
     return [usage, abilityIdentity(action)].filter(Boolean).join(' · ')
   }
 
+  if (spellPlacement === 'before_actions' && spellLines.length > 0) {
+    lines.push(...spellLines)
+  }
+
   // Actions
-  if ((monster.actions && monster.actions.length > 0) || (monster.attacks && monster.attacks.length > 0)) {
+  const standardActions = (monster.actions || []).filter((a) => !a.bonusAction)
+  const hasActionsSection =
+    actionCheckEntries.length > 0 ||
+    standardActions.length > 0 ||
+    (monster.attacks && monster.attacks.length > 0) ||
+    (spellPlacement === 'after_actions' && spellLines.length > 0)
+  if (hasActionsSection) {
     lines.push('### Actions')
+    for (const checkEntry of actionCheckEntries) {
+      lines.push(checkEntry)
+      lines.push('')
+    }
     for (const atk of monster.attacks || []) {
       const reachOrRange =
         atk.distance === 'MELEE'
@@ -387,19 +771,25 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
       lines.push('')
     }
 
-    for (const act of monster.actions || []) {
-      if (!act.bonusAction) {
-        const stageStr = act.stagePool && act.stagePool !== 'all' ? ` [Stage ${act.stagePool}]` : ''
-        lines.push(`***${actionLead(act)}${stageStr}.*** ${actionText(act)}`)
-        lines.push('')
-      }
+    for (const act of standardActions) {
+      const stageStr = act.stagePool && act.stagePool !== 'all' ? ` [Stage ${act.stagePool}]` : ''
+      lines.push(`***${actionLead(act)}${stageStr}.*** ${actionText(act)}`)
+      lines.push('')
+    }
+
+    if (spellPlacement === 'after_actions' && spellLines.length > 0) {
+      lines.push(...spellLines)
     }
   }
 
   // Bonus Actions
   const bonusActs = (monster.actions || []).filter((a) => a.bonusAction)
-  if (bonusActs.length > 0) {
+  if (bonusActs.length > 0 || bonusCheckEntries.length > 0) {
     lines.push('### Bonus Actions')
+    for (const checkEntry of bonusCheckEntries) {
+      lines.push(checkEntry)
+      lines.push('')
+    }
     for (const ba of bonusActs) {
       const stageStr = ba.stagePool && ba.stagePool !== 'all' ? ` [Stage ${ba.stagePool}]` : ''
       lines.push(`***${actionLead(ba)}${stageStr}.*** ${actionText(ba)}`)
@@ -509,10 +899,15 @@ function markdownOf(monster: Monster, style: '2014' | '2024'): string {
   return lines.join('\n')
 }
 
-export function exportToPlainText(monster: Monster, style: '2014' | '2024' = '2014'): string {
-  const md = exportToMarkdown(monster, style)
+export function exportToPlainText(
+  monster: Monster,
+  style: '2014' | '2024' = '2014',
+  options: ExportRenderOptions = {},
+): string {
+  const md = exportToMarkdown(monster, style, options)
   return md
     .replace(/^___$/gm, '----------------------------------------')
+    .replace(/^#### /gm, '')
     .replace(/^### /gm, '\n=== ')
     .replace(/^## /gm, '')
     .replace(/\*\*\*(.*?)\.\*\*\*/g, '$1.')
@@ -520,9 +915,15 @@ export function exportToPlainText(monster: Monster, style: '2014' | '2024' = '20
     .replace(/\*(.*?)\*/g, '$1')
 }
 
-export function exportToHtml(monster: Monster, style: '2014' | '2024' = '2014'): string {
-  const monsterName = monster.nickname || monster.name || 'Monster'
-  const md = exportToMarkdown(monster, style)
+export function exportToHtml(
+  monster: Monster,
+  style: '2014' | '2024' = '2014',
+  options: ExportRenderOptions = {},
+): string {
+  const resolvedMonster = resolveMonsterText(monster)
+  const monsterName = resolvedMonster.nickname || resolvedMonster.name || 'Monster'
+  const spellPlaceholder = '%%DNDSHEET_SPELLCASTING_PLATES%%'
+  const md = markdownOf(resolvedMonster, style, options, spellPlaceholder)
   let body = md
     .replace(/^## (.*$)/gm, '<h2 class="statblock-name">$1</h2>')
     .replace(/^\*(.*)\*$/gm, '<div class="statblock-meta"><em>$1</em></div>')
@@ -531,7 +932,9 @@ export function exportToHtml(monster: Monster, style: '2014' | '2024' = '2014'):
     .replace(/\*\*\*(.*?)\.\*\*\*/g, '<strong><em>$1.</em></strong>')
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/<em>(Hit|Miss|Save Success|Save Failure|Success|Failure|First Failure|Second Failure|Trigger|Response):<\/em>/g, '<em class="dnd-outcome">$1:</em>')
     .replace(/\n\n/g, '<p></p>')
+    .replace(spellPlaceholder, () => renderSpellcastingHtmlPlates(resolvedMonster, style, options.spells))
 
   // Enhance with interactive click-to-roll tags
   // 1. Attack bonuses: e.g. "+5 to hit"
@@ -767,7 +1170,7 @@ export function exportToHtml(monster: Monster, style: '2014' | '2024' = '2014'):
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(4px); }
       to { opacity: 1; transform: translateY(0); }
-    }
+    }${options.embedGrammarCss === false ? '' : `\n${STATBLOCK_GRAMMAR_EXPORT_CSS}`}
   </style>
 </head>
 <body>

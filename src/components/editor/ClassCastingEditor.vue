@@ -64,21 +64,21 @@
     <q-expansion-item v-for="entry in sources" :key="entry.id" :label="sourceTitle(entry)" :caption="sourceCaption(entry)" default-opened dense :data-source-panel="entry.id" :data-casting-source-fold="entry.id" class="q-mb-sm">
       <div class="q-pa-sm bg-grey-10 text-white" :data-casting-source="entry.id">
         <div class="row items-center q-col-gutter-xs q-mb-sm">
-          <q-select :model-value="entry.data.rulesEdition || '2014'" :options="['2014','2024']" dense outlined dark data-source-rules label="Subclass grant rules" class="col-5" @update:model-value="value => patch(entry, {rulesEdition:value})" />
-          <q-checkbox :model-value="entry.data.automaticGrants !== false" dense dark data-source-grants-toggle label="Automatically add granted spells" class="col" @update:model-value="value => patch(entry, {automaticGrants:value})" />
+          <q-select v-help="'Edition rules governing automatic class and subclass spell grants.'" :model-value="entry.data.rulesEdition || '2014'" :options="['2014','2024']" dense outlined dark data-source-rules label="Subclass grant rules" class="col-5" @update:model-value="value => patch(entry, {rulesEdition:value})" />
+          <q-checkbox v-help="'Automatically include subclass and feature-granted spells on the sheet.'" :model-value="entry.data.automaticGrants !== false" dense dark data-source-grants-toggle label="Automatically add granted spells" class="col" @update:model-value="value => patch(entry, {automaticGrants:value})" />
           <q-btn flat dense round icon="delete" color="negative" aria-label="Remove source" :data-remove-casting-source="entry.id" @click="removeSource(entry.id)" />
         </div>
         <casting-feature-grants-editor :model-value="entry.data.spellGrants || []" class="q-mb-sm" @update:model-value="value => patch(entry,{spellGrants:value})" />
         <div class="row items-center q-col-gutter-xs">
-          <q-select :model-value="selection(entry).className" :options="castingClassOptions" use-input new-value-mode="add-unique" emit-value map-options dense outlined dark label="Class" class="col-6" @update:model-value="value => changeClass(entry,value)" />
-          <q-select :model-value="entry.data.subclass" :options="subclasses(entry)" use-input new-value-mode="add-unique" clearable dense outlined dark label="Subclass" class="col-6" @filter="(value, update) => update(() => subclassQueries[entry.id]=value)" @update:model-value="value => updateProgression(entry,{subclass:value || ''})" />
-          <formula-field :path="prefix(entry)+'.level'" label="Level" class="col-6" @applied="recalculateSlots" />
-          <q-select :model-value="entry.data.stat" :options="['INT','WIS','CHA','CON','STR','DEX']" dense outlined dark label="Casting stat" class="col-6" @update:model-value="value => patch(entry,{stat:value})" />
+          <q-select v-help="'Base class or custom spellcasting tradition for this source.'" :model-value="selection(entry).className" :options="castingClassOptions" use-input new-value-mode="add-unique" emit-value map-options dense outlined dark label="Class" class="col-6" @update:model-value="value => changeClass(entry,value)" />
+          <q-select v-help="'Subclass selection used for expanded spell lists and features.'" :model-value="entry.data.subclass" :options="subclasses(entry)" use-input new-value-mode="add-unique" clearable dense outlined dark label="Subclass" class="col-6" @filter="(value, update) => update(() => subclassQueries[entry.id]=value)" @update:model-value="value => updateProgression(entry,{subclass:value || ''})" />
+          <formula-field v-help="'Caster level contributed by this spellcasting source.'" :path="prefix(entry)+'.level'" label="Level" class="col-6" @applied="recalculateSlots" />
+          <q-select v-help="'Ability score used to calculate spell save DC and spell attack bonus.'" :model-value="entry.data.stat" :options="['INT','WIS','CHA','CON','STR','DEX']" dense outlined dark label="Casting stat" class="col-6" @update:model-value="value => patch(entry,{stat:value})" />
           <div v-for="field in overrides" :key="field.key" class="col-6">
-            <formula-field v-if="entry.data[field.key]?.override" :path="prefix(entry)+'.'+field.key+'.overrideValue'" :label="field.label">
+            <formula-field v-if="entry.data[field.key]?.override" v-help="'Manual override formula for this casting statistic.'" :path="prefix(entry)+'.'+field.key+'.overrideValue'" :label="field.label">
               <template #append><q-btn flat dense round icon="lock" :aria-label="'Use automatic '+field.label" @click="toggleOverride(entry,field.key,false)" /></template>
             </formula-field>
-            <q-input v-else :model-value="autoValue(entry,field.key)" :label="field.label" readonly dense outlined dark>
+            <q-input v-else v-help="'Automatically derived spellcasting statistic from level and ability modifier.'" :model-value="autoValue(entry,field.key)" :label="field.label" readonly dense outlined dark>
               <template #append><q-btn flat dense round icon="lock_open" :aria-label="'Set manual '+field.label" @click="toggleOverride(entry,field.key,true)" /></template>
             </q-input>
           </div>
@@ -106,15 +106,16 @@
         </div>
         <casting-learning-contribution-editor :model-value="entry.data.contribution" :source-count="sources.length" :highest-slot="sourceSpellCeiling(selection(entry),combinedLevel,sources.length)" :grant-level="grantLevel(entry)" @update:model-value="value => updateContribution(entry,value)">
         <div class="row items-center q-col-gutter-xs q-my-sm">
-          <q-select :model-value="entry.data.resourceType" :options="resourceTypeOptions" emit-value map-options dense outlined dark label="Source resource" class="col-6" @update:model-value="value => patch(entry,{resourceType:value})" />
-          <q-select :model-value="cadenceKey(entry.data.refreshRate)" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry,{refreshRate:value})" />
-          <q-input v-if="['focus','points'].includes(entry.data.resourceType || '')" :model-value="entry.data.resourceValue" type="number" min="0" dense outlined dark label="Authored resource maximum" class="col-12" @update:model-value="value => patch(entry,{resourceValue:Math.max(0,Number(value)||0)})" />
-          <formula-field :path="prefix(entry)+'.preparedCountOverride'" label="Prepared spells count" data-source-prepared-count class="col-6">
+          <q-select v-help="'Resource model used by this casting source (slots, pact, focus, or points).'" :model-value="entry.data.resourceType" :options="resourceTypeOptions" emit-value map-options dense outlined dark label="Source resource" class="col-6" @update:model-value="value => patch(entry,{resourceType:value})" />
+          <q-select v-help="'Rest or encounter cadence on which this source recovers expended casting uses.'" :model-value="cadenceKey(entry.data.refreshRate)" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry,{refreshRate:value})" />
+          <q-input v-if="['focus','points'].includes(entry.data.resourceType || '')" v-help="'Maximum focus or spell points granted by this custom casting source.'" :model-value="entry.data.resourceValue" type="number" min="0" dense outlined dark label="Authored resource maximum" class="col-12" @update:model-value="value => patch(entry,{resourceValue:Math.max(0,Number(value)||0)})" />
+          <formula-field v-help="'Manual prepared spell limit override for this source.'" :path="prefix(entry)+'.preparedCountOverride'" label="Prepared spells count" data-source-prepared-count class="col-6">
             <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" @click="resetPrepared(entry)" /></template>
           </formula-field>
-          <q-select :model-value="cadenceKey(entry.data.preparedInterval, 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry,{preparedInterval:value})" />
-          <q-select :model-value="entry.data.preparedSpellList" :options="SrdCastingClassOptions.map(option => option.label)" clearable dense outlined dark label="Preparation spell list" class="col-6" @update:model-value="value => patch(entry,{preparedSpellList:value || undefined})" />
-          <q-checkbox :model-value="selection(entry).bypassSlotFilter" dense dark label="Allow assigning spells above the slot ceiling" class="col-12" @update:model-value="value => patch(entry,{[entry.primary?'bypassSlotLevelFilter':'bypassSlotFilter']:value})" />
+          <q-select v-help="'Cadence on which prepared spells can be swapped for this source.'" :model-value="cadenceKey(entry.data.preparedInterval, 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry,{preparedInterval:value})" />
+          <q-select v-help="'Override class spell list filtered when preparing spells for this source.'" :model-value="entry.data.preparedSpellList" :options="SrdCastingClassOptions.map(option => option.label)" clearable dense outlined dark label="Preparation spell list" class="col-6" @update:model-value="value => patch(entry,{preparedSpellList:value || undefined})" />
+          <q-input v-help="'Sorcery points attributed specifically to this casting source.'" :model-value="entry.data.sorceryPoints ?? ''" type="number" min="0" clearable dense outlined dark label="Source sorcery points" data-source-sorcery-points class="col-6" @update:model-value="value => patch(entry,{sorceryPoints:value === '' || value === null ? undefined : Math.max(0,Number(value)||0)})" />
+          <q-checkbox v-help="'Allow assigning spells higher than the current maximum slot ceiling.'" :model-value="selection(entry).bypassSlotFilter" dense dark label="Allow assigning spells above the slot ceiling" class="col-12" @update:model-value="value => patch(entry,{[entry.primary?'bypassSlotLevelFilter':'bypassSlotFilter']:value})" />
         </div>
         </casting-learning-contribution-editor>
         <casting-source-spell-rows :source="entry.data" :primary="entry.primary" :combined-level="combinedLevel" :source-count="sources.length" @patch="value => patch(entry,value)" />
@@ -123,12 +124,12 @@
     <q-expansion-item dense dense-toggle label="Spellcasting presentation">
       <div class="q-pa-sm">
         <mechanic-text-editor v-model="monster.spellcasting.notes" scope="spell" :label="$t('monster.spellcasting.notes')" dense outlined dark />
-        <q-checkbox v-model="monster.spellcasting.useCustomClassPreamble" label="Custom spellcasting introduction" dense />
+        <q-checkbox v-help="'Replace the automatic class spellcasting header prose with custom text.'" v-model="monster.spellcasting.useCustomClassPreamble" label="Custom spellcasting introduction" dense />
         <monster-text-editor v-if="monster.spellcasting.useCustomClassPreamble" :field="monster.spellcasting.customClassPreamble" i18n-label-key="editor.spellcasting.slot.preamble" token-category="spell" :show-reset="true" @update:model-value="value => monster.spellcasting.customClassPreamble=value" @reset="monster.spellcasting.customClassPreamble=$t('presets.classSpellcasting')" />
         <div class="row q-col-gutter-xs">
-          <q-checkbox v-model="monster.spellcasting.cantripSwitch" label="Switch cantrips" dense class="col-4" />
-          <formula-field v-if="monster.spellcasting.cantripSwitch" path="spellcasting.cantripSwitchCount" label="Count" class="col-4" />
-          <q-select v-if="monster.spellcasting.cantripSwitch" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :options="cadenceOptions" emit-value map-options label="Per" dense outlined dark class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = value)" />
+          <q-checkbox v-help="'Enable 2024 Wizard or feature-based cantrip swapping after rests.'" v-model="monster.spellcasting.cantripSwitch" label="Switch cantrips" dense class="col-4" />
+          <formula-field v-if="monster.spellcasting.cantripSwitch" v-help="'Number of cantrips that can be swapped.'" path="spellcasting.cantripSwitchCount" label="Count" class="col-4" />
+          <q-select v-if="monster.spellcasting.cantripSwitch" v-help="'Cadence at which cantrips may be swapped.'" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :options="cadenceOptions" emit-value map-options label="Per" dense outlined dark class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = value)" />
         </div>
       </div>
     </q-expansion-item>
@@ -161,7 +162,7 @@ import {
 } from 'src/core/domain/casting-source-selection'
 import { removeCastingSource } from 'src/core/domain/casting-source-list'
 import { CADENCE_OPTIONS, cadenceKey } from 'src/core/domain/catalogs/cadence'
-import { METAMAGIC_OPTIONS,metamagicCost } from 'src/core/domain/catalogs/metamagic'
+import { useMonsterSessionStore } from 'src/stores/monster-session'
 import MonsterTextEditor from './MonsterTextEditor.vue'
 import FormulaField from '../kit/FormulaField.vue'
 import CastingSourceSpellRows from './CastingSourceSpellRows.vue'
@@ -261,6 +262,8 @@ function toggleOverride(entry:Entry,key:'save'|'attack',enabled:boolean){
 }
 function resetPrepared(entry:Entry){monster.clearBinding(prefix(entry)+'.preparedCountOverride');patch(entry,{preparedCountOverride:null})}
 function grantLevel(entry:Entry){return sourceGrantLevel(selection(entry),combinedLevel.value,sources.value.length)}
+const monsterSession = useMonsterSessionStore()
+
 function sourceCapacityState(entry: Entry) {
   const source = selection(entry)
   const metrics = sourceMetrics(entry)
@@ -271,6 +274,7 @@ function sourceCapacityState(entry: Entry) {
     metrics.abilityModifier,
     combinedLevel.value,
     sources.value.length,
+    monsterSession.rulesPolicy.activeRuleset,
   )
   const preparedOverride = typeof entry.data.preparedCountOverride === 'number' && Number.isFinite(entry.data.preparedCountOverride)
     ? Math.max(0, Math.trunc(entry.data.preparedCountOverride))
@@ -293,7 +297,7 @@ function sourceGuidance(entry:Entry) {
  const capacity = state.capacity
  if(!capacity) return 'Custom source. Set its resources and spell selections directly.'
  const unknownNote = capacity.unknownAssignments > 0 ? ` ${capacity.unknownAssignments} custom/unknown spells preserved.` : ''
- return 'Legacy base-class capacity: '+capacity.selectedCantrips+' / '+capacity.cantripsKnown+' cantrips; '+capacity.selectedBudgetSpells+' / '+state.preparedBudget+' '+capacity.selectionModel+' spells. '+(capacity.grantedSpells.length?capacity.grantedSpells.length+' automatic grants. ':'')+'Highest eligible spell: level '+(sourceSpellCeiling(state.source,combinedLevel.value,sources.value.length)??0)+'.'+unknownNote
+ return `${capacity.capacityLabel}: `+capacity.selectedCantrips+' / '+capacity.cantripsKnown+' cantrips; '+capacity.selectedBudgetSpells+' / '+state.preparedBudget+' '+capacity.selectionModel+' spells. '+(capacity.grantedSpells.length?capacity.grantedSpells.length+' automatic grants. ':'')+'Highest eligible spell: level '+(sourceSpellCeiling(state.source,combinedLevel.value,sources.value.length)??0)+'.'+unknownNote
 }
 function sourceOverLimit(entry: Entry): string {
   const state = sourceCapacityState(entry)
@@ -390,5 +394,5 @@ function toggleMetamagic(enabled:boolean){
  const previous=monster.spellcasting.metamagic
  monster.spellcasting.metamagic=previous?{...previous,enabled}:{enabled,sorceryPoints:Math.max(2,monster.spellcasting.level||3),refreshRate:'long_rest',options:['Quickened Spell','Subtle Spell']}
 }
-const metamagicOptionsList=computed(()=>METAMAGIC_OPTIONS.map(({name})=>{const cost=metamagicCost(name,editor.style==='2014'?'2014':'2024');return {label:name+' ('+cost+(/^\d+$/.test(cost)?' SP':'')+')',value:name}}))
+const metamagicOptionsList=computed(()=>monsterSession.rulesPolicy.metamagicOptions.map(({name,activeCost})=>({label:name+' ('+activeCost+(/^\d+$/.test(activeCost)?' SP':'')+')',value:name})))
 </script>

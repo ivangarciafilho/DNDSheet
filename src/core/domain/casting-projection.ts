@@ -56,10 +56,36 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
   const effectiveLevel = aggregate?.combinedCasterLevel || sources[0]?.level || 1
   const title = ordinalLabel(effectiveLevel) + ' Level Spellcaster'
   const visible = (cadence?: string) => !sc.alwaysAvailableOnly || !cadence || ['at_will', 'at will', 'always', 'none'].includes(cadence.trim().toLowerCase())
+  const perSourceSorceryPoints = (sc.classes || []).reduce(
+    (sum, entry) => {
+      const explicitSp = Number.isFinite(entry.sorceryPoints) && (entry.sorceryPoints ?? 0) > 0 ? Math.trunc(entry.sorceryPoints!) : 0
+      const legacySp = !explicitSp && entry.metamagic?.enabled && Number.isFinite(entry.metamagic.sorceryPoints)
+        ? Math.max(0, Math.trunc(entry.metamagic.sorceryPoints))
+        : 0
+      return sum + explicitSp + legacySp
+    },
+    0,
+  )
+  const primarySorceryPoints = sc.metamagic?.enabled
+    ? Number(sc.metamagic.sorceryPoints ?? 0)
+    : (Number.isFinite(sc.sorceryPoints) && (sc.sorceryPoints ?? 0) > 0 ? Math.trunc(sc.sorceryPoints!) : 0)
+  const combinedSorceryPoints = primarySorceryPoints + perSourceSorceryPoints
+  const combinedMetamagicOptions = [...new Set([
+    ...(sc.metamagic?.options || []),
+    ...(sc.classes || []).flatMap(entry => entry.metamagic?.enabled || (entry.sorceryPoints ?? 0) > 0 ? (entry.metamagic?.options || []) : []),
+  ])]
+  const hasMetamagic = Boolean(sources.length && (sc.metamagic?.enabled || perSourceSorceryPoints > 0 || (sc.sorceryPoints ?? 0) > 0))
   const result = buildSpellPlate({
     title, stat: sc.stat || 'INT', save: options.save, attack: options.attack, level: effectiveLevel,
     spellLevels: [], edition: options.edition,
-    metamagic: sources.length && sc.metamagic ? { enabled: sc.metamagic.enabled, points: sc.metamagic.sorceryPoints, refreshRate: sc.metamagic.refreshRate, options: sc.metamagic.options } : undefined,
+    metamagic: hasMetamagic
+      ? {
+          enabled: true,
+          points: combinedSorceryPoints,
+          refreshRate: sc.metamagic?.refreshRate || 'long_rest',
+          options: combinedMetamagicOptions,
+        }
+      : undefined,
   })
   const resources = new Map<string, NonNullable<SpellPlateModel['resourceRecovery']>>()
   const rows = new Map<string, SpellPlateLevel>()
@@ -82,7 +108,7 @@ export function buildCastingProjection(sc: Monster['spellcasting'], options: Cas
       ? 'DC ' + save + ', ' + (attack >= 0 ? '+' : '') + attack + ' spell attack'
       : ''
     const rules = spellcastingRuleClass(source.className, source.subclass)
-    const learning = sourceLearningMetrics(source, modifier, effectiveLevel, sources.length)
+    const learning = sourceLearningMetrics(source, modifier, effectiveLevel, sources.length, options.edition || '2014')
     const override = source.preparedCountOverride
     const limit = override ?? learning.preparedSpells
     const prepares = override != null || Boolean(source.preparedInterval) || Boolean(rules && ['wizard', 'cleric', 'druid', 'paladin', 'artificer'].includes(rules))

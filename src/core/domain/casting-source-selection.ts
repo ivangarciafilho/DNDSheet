@@ -92,11 +92,11 @@ export function replaceSourceLevelSpells(options:readonly CastingSpellOption[],a
  return [...new Set([...assigned.filter(id=>!current.has(id)),...next])]
 }
 
-/** The existing legacy base-class tables are reference capacities, not automatic subclass grants. */
-export function sourceCapacityReference(options: readonly CastingSpellOption[], source: CastingSourceSelection, abilityModifier = 0, combinedLevel?: number, sourceCount = combinedLevel === undefined ? 1 : 2) {
+/** Reference class capacity from active ruleset policy; legacy/unspecified sources retain honest legacy disclosure. */
+export function sourceCapacityReference(options: readonly CastingSpellOption[], source: CastingSourceSelection, abilityModifier = 0, combinedLevel?: number, sourceCount = combinedLevel === undefined ? 1 : 2, fallbackRuleset: '2014' | '2024' = '2014') {
  const rule = spellcastingRuleClass(source.className, source.subclass)
  if (!rule) return undefined
- const metrics = sourceLearningMetrics(source, abilityModifier, combinedLevel, sourceCount)
+ const metrics = sourceLearningMetrics(source, abilityModifier, combinedLevel, sourceCount, fallbackRuleset)
  let selectedCantrips = 0, selectedSpells = 0, unknownAssignments = 0
  for (const id of new Set(source.spells || [])) {
   const spell = options.find(option => option.value === id)
@@ -106,8 +106,10 @@ export function sourceCapacityReference(options: readonly CastingSpellOption[], 
  }
  const grantedSpells = sourceGrantedSpells(source, combinedLevel, sourceCount)
  const selectedGrantedSpells = [...new Set(source.spells || [])].filter(id=>grantedSpells.includes(id))
+ const capacityLabel = source.rulesEdition === '2024' ? 'SRD 5.2.1 (2024) capacity' : 'Legacy base-class capacity'
  return { ...metrics, highestSlot: sourceSpellCeiling(source, combinedLevel, sourceCount) ?? metrics.highestSlot, selectedCantrips, selectedSpells, unknownAssignments, grantedSpells, selectedGrantedSpells, selectedBudgetSpells:Math.max(0,selectedSpells-selectedGrantedSpells.filter(id=>options.some(option=>option.value===id&&option.level>0)).length),
   grantRules: source.rulesEdition === '2024' ? 'SRD 5.2 (2024)' : 'Legacy: subclass grants not inferred',
-  selectionModel: ['bard','sorcerer','warlock','ranger','third caster'].includes(rule) ? 'known' : 'prepared',
+  capacityLabel,
+  selectionModel: ['bard','sorcerer','warlock','ranger','third caster'].includes(rule) && metrics.ruleset !== '2024' ? 'known' : 'prepared',
   subclassCatalogSpells: subclassSpells(source.subclass) }
 }

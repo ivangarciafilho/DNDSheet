@@ -1,8 +1,8 @@
 <template>
   <q-expansion-item dense dense-toggle label="Spell-learning calculation" caption="Set resource, learning and grant progression independently." data-source-learning>
     <div v-for="category in categories" :key="category.key" class="row items-center q-col-gutter-xs q-pa-xs">
-      <q-checkbox :model-value="combined(category.key)" :label="'Use combined caster level for ' + category.label" :data-source-learning-mode="category.key" dense dark class="col-12" @update:model-value="value => change(category.key, {mode:value ? 'combined' : 'own'})" />
-      <q-input :model-value="multiplier(category.key)" type="number" min="0" step="any" dense outlined dark :label="category.label + ' multiplier'" :data-source-learning-multiplier="category.key" class="col-6" @update:model-value="value => setMultiplier(category.key,value)" />
+      <q-checkbox v-help="'Pool combined multiclass caster levels to determine this spell learning capacity.'" :model-value="combined(category.key)" :label="'Use combined caster level for ' + category.label" :data-source-learning-mode="category.key" dense dark class="col-12" @update:model-value="value => change(category.key, {mode:value ? 'combined' : 'own'})" />
+      <q-input v-help="'Multiplier applied when this source contributes to combined spell learning progression.'" :model-value="multiplier(category.key)" type="number" min="0" step="any" dense outlined dark :label="category.label + ' multiplier'" :data-source-learning-multiplier="category.key" class="col-6" @update:model-value="value => setMultiplier(category.key,value)" />
       <span v-if="category.key === 'highestSlot'" data-source-slot-ceiling class="col">Highest spell slot: {{ highestSlot ?? 'Manual' }}</span>
       <span v-if="category.key === 'grants'" data-source-grant-level class="col">Feature grant level: {{ grantLevel ?? 'Manual' }}</span>
     </div>

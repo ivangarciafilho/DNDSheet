@@ -60,7 +60,7 @@
           <q-card-section>
             <div class="row">
               <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
-                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxDamage`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxDamage')" />
+                <formula-field v-help="'Manual average damage per round used for Offensive CR.'" :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxDamage`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxDamage')" />
                 <q-btn
                     push
                     :icon="
@@ -82,15 +82,16 @@
                   </q-btn>
               </div>
               <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
-                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxSave`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxSave')" />
+                <formula-field v-help="'Manual save DC used when evaluating Offensive CR.'" :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxSave`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxSave')" />
               </div>
               <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
-                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxModifier')" />
+                <formula-field v-help="'Manual attack bonus used when evaluating Offensive CR.'" :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.maxModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.maxModifier')" />
               </div>
               <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
-                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.ehpModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.ehpModifier')" />
+                <formula-field v-help="'Flat Effective HP adjustment added to Defensive CR.'" :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.ehpModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.ehpModifier')" />
               </div>
               <q-input
+                v-help="'Multiplier applied to Defensive Effective HP for resistances or traits.'"
                 :model-value="crData.crAnnotation.ehpMultiplier"
                 type="number"
                 :label="$t('editor.crAnnotation.ehpMultiplier')"
@@ -106,7 +107,7 @@
                 "
               />
               <div class="col-12 col-sm-6 col-md-3 col-lg-2 q-pa-sm">
-                <formula-field :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.acModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.acModifier')" />
+                <formula-field v-help="'Effective AC bonus added when evaluating Defensive CR.'" :path="`${field}[id=${encodeURIComponent(crData.id)}].crAnnotation.acModifier`" :disable="crData.crAnnotation.automatic" :label="$t('editor.crAnnotation.acModifier')" />
               </div>
             </div>
           </q-card-section>

@@ -1,18 +1,24 @@
 import { defineStore } from 'pinia'
+import { v4 as uuidv4 } from 'uuid'
 import { computed, ref } from 'vue'
 import {
+  addCombatantPreserveTurn,
   applyDamage,
   applyHealing,
   Combatant,
   createCombatantFromMonster,
   createCombatantFromCharacter,
+  removeCombatantPreserveTurn,
+  setInitiativePreserveTurn,
   sortInitiative,
   toggleCondition,
   advanceTurn,
   previousTurn,
   recordDeathSave,
 } from 'src/core/usecases/CombatTracker'
+import type { CharacterActor, Monster } from 'src/core/domain/types'
 import { useMonsterStore } from './monster-store'
+import { useMonsterSessionStore } from './monster-session'
 
 export const STANDARD_CONDITIONS = [
   'Blinded',
@@ -38,6 +44,7 @@ export const useCombatStore = defineStore(
     const combatants = ref<Combatant[]>([])
     const currentRound = ref(1)
     const activeTurnIndex = ref(0)
+    const activeCombatantId = ref<string | null>(null)
     const isEncounterActive = ref(false)
 
     const sortedCombatants = computed(() => {
@@ -45,22 +52,46 @@ export const useCombatStore = defineStore(
     })
 
     const activeCombatant = computed(() => {
-      if (sortedCombatants.value.length === 0) return null
-      const idx = activeTurnIndex.value % sortedCombatants.value.length
-      return sortedCombatants.value[idx] || null
+      return (
+        sortedCombatants.value.find((c) => c.id === activeCombatantId.value) ??
+        sortedCombatants.value[activeTurnIndex.value] ??
+        null
+      )
     })
+
+    const applyAdd = (combatant: Combatant) => {
+      const next = addCombatantPreserveTurn(
+        combatants.value,
+        combatant,
+        activeCombatant.value?.id ?? activeCombatantId.value,
+        activeTurnIndex.value,
+      )
+      combatants.value = next.combatants
+      activeTurnIndex.value = next.activeTurnIndex
+      activeCombatantId.value = next.activeCombatantId
+      isEncounterActive.value = next.isEncounterActive
+    }
 
     const addMonsterCombatant = (initRoll?: number) => {
       const monsterStore = useMonsterStore()
+      const sessionStore = useMonsterSessionStore()
       const init = initRoll ?? Math.floor(Math.random() * 20) + 1 + Math.floor((monsterStore.stats.DEX - 10) / 2)
-      const combatant = createCombatantFromMonster(monsterStore.$state as any, init)
-      combatants.value.push(combatant)
-      isEncounterActive.value = true
+      const combatant = createCombatantFromMonster(monsterStore.$state as unknown as Monster, init, {
+        sourceDocumentId: sessionStore.documentId,
+        sourceRevision: sessionStore.contentRevision,
+      })
+      applyAdd(combatant)
+    }
+
+    const addCharacterCombatant = (character: CharacterActor, initRoll?: number) => {
+      const init = initRoll ?? Math.floor(Math.random() * 20) + 1 + Math.floor((character.stats.DEX - 10) / 2)
+      applyAdd(createCombatantFromCharacter(character, init))
     }
 
     const addCustomCombatant = (name = 'New Combatant', hp = 20, initiative = 10, isMonster = false) => {
-      combatants.value.push({
-        id: `cbt-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      applyAdd({
+        id: `cbt-${uuidv4()}`,
+        sourceKind: 'custom',
         name,
         initiative,
         currentHp: hp,
@@ -69,17 +100,41 @@ export const useCombatStore = defineStore(
         conditions: [],
         deathSaves: { successes: 0, failures: 0 },
         isMonster,
+        sourceSnapshot: {
+          sourceKind: 'custom',
+          name,
+          ac: 10,
+          maxHp: hp,
+        },
       })
-      isEncounterActive.value = true
     }
 
     const removeCombatant = (id: string) => {
-      combatants.value = combatants.value.filter((c) => c.id !== id)
-      if (combatants.value.length === 0) {
-        isEncounterActive.value = false
-        activeTurnIndex.value = 0
-        currentRound.value = 1
-      }
+      const next = removeCombatantPreserveTurn(
+        combatants.value,
+        id,
+        activeTurnIndex.value,
+        currentRound.value,
+        activeCombatant.value?.id ?? activeCombatantId.value,
+      )
+      combatants.value = next.combatants
+      activeTurnIndex.value = next.activeTurnIndex
+      currentRound.value = next.currentRound
+      activeCombatantId.value = next.activeCombatantId
+      isEncounterActive.value = next.isEncounterActive
+    }
+
+    const setInitiative = (combatantId: string, nextInitiative: number) => {
+      const next = setInitiativePreserveTurn(
+        combatants.value,
+        combatantId,
+        nextInitiative,
+        activeCombatant.value?.id ?? activeCombatantId.value,
+        activeTurnIndex.value,
+      )
+      combatants.value = next.combatants
+      activeTurnIndex.value = next.activeTurnIndex
+      activeCombatantId.value = next.activeCombatantId
     }
 
     const damage = (combatantId: string, amount: number) => {
@@ -121,18 +176,21 @@ export const useCombatStore = defineStore(
       const res = advanceTurn(activeTurnIndex.value, currentRound.value, sortedCombatants.value.length)
       activeTurnIndex.value = res.turnIndex
       currentRound.value = res.round
+      activeCombatantId.value = sortedCombatants.value[res.turnIndex]?.id ?? null
     }
 
     const prevTurn = () => {
       const res = previousTurn(activeTurnIndex.value, currentRound.value, sortedCombatants.value.length)
       activeTurnIndex.value = res.turnIndex
       currentRound.value = res.round
+      activeCombatantId.value = sortedCombatants.value[res.turnIndex]?.id ?? null
     }
 
     const resetEncounter = () => {
       combatants.value = []
       currentRound.value = 1
       activeTurnIndex.value = 0
+      activeCombatantId.value = null
       isEncounterActive.value = false
     }
 
@@ -140,12 +198,15 @@ export const useCombatStore = defineStore(
       combatants,
       currentRound,
       activeTurnIndex,
+      activeCombatantId,
       isEncounterActive,
       sortedCombatants,
       activeCombatant,
       addMonsterCombatant,
+      addCharacterCombatant,
       addCustomCombatant,
       removeCombatant,
+      setInitiative,
       damage,
       heal,
       setTempHp,

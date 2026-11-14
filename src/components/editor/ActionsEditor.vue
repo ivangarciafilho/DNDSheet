@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     expand-separator
+    data-editor-section="actions"
     icon="mdi-movie-open"
     label="Actions &amp; Traits Studio"
     caption="Unified studio for attacks, multiattack, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"

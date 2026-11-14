@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     expand-separator
+    data-editor-section="speeds"
     icon="speed"
     :label="$t('editor.speeds.label')"
     :caption="$t('editor.speeds.caption')"

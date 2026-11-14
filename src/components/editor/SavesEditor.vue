@@ -1,6 +1,7 @@
 <template>
   <q-expansion-item
     expand-separator
+    data-editor-section="saves"
     icon="fa-solid fa-helmet-safety"
     :label="$t('editor.saves.label')"
     :caption="$t('editor.saves.caption')"

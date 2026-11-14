@@ -50,6 +50,24 @@ export const HALF_CASTER_SLOTS: number[][] = [
   [4, 3, 3, 3, 2, 0, 0, 0, 0], // level 20
 ]
 
+/** SRD 5.2.1 (2024) half casters begin Spellcasting at class level 1 with 2 1st-level slots. */
+export const HALF_CASTER_2024_SLOTS: number[][] = [
+  [],
+  [2, 0, 0, 0, 0, 0, 0, 0, 0], // level 1
+  ...HALF_CASTER_SLOTS.slice(2),
+]
+
+export const SRD_2024_PREPARED_TABLES: Record<string, readonly number[]> = {
+  wizard:   [4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 19, 20, 21, 22, 25],
+  cleric:   [4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 19, 20, 21, 22, 22],
+  druid:    [4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 19, 20, 21, 22, 22],
+  bard:     [4, 5, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 19, 20, 21, 22, 22],
+  sorcerer: [2, 4, 6, 7, 9, 10, 11, 12, 14, 15, 16, 16, 17, 17, 18, 19, 20, 21, 22, 22],
+  warlock:  [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15],
+  paladin:  [2, 3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15],
+  ranger:   [2, 3, 4, 5, 6, 6, 7, 7, 9, 9, 10, 10, 11, 11, 12, 12, 14, 14, 15, 15],
+}
+
 export const WARLOCK_PACT_SLOTS: number[][] = [
   [],
   [1, 0, 0, 0, 0, 0, 0, 0, 0], // level 1
@@ -143,13 +161,14 @@ export function spellcastingRuleClass(className: string, subclass = ''): string 
   return undefined
 }
 
-export function getSpellSlotsForClass(className: string, level: number): number[] {
+export function getSpellSlotsForClass(className: string, level: number, ruleset: '2014' | '2024' = '2014'): number[] {
   const clampedLevel = Math.max(1, Math.min(20, level))
   const lower = spellcastingRuleClass(className)
   if (!lower) return Array(9).fill(0)
 
   if (lower === 'paladin' || lower === 'ranger') {
-    return [...(HALF_CASTER_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
+    const table = ruleset === '2024' ? HALF_CASTER_2024_SLOTS : HALF_CASTER_SLOTS
+    return [...(table[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
   }
   if (lower === 'warlock') {
     return [...(WARLOCK_PACT_SLOTS[clampedLevel] || [0, 0, 0, 0, 0, 0, 0, 0, 0])]
@@ -190,12 +209,14 @@ export interface SpellcastingMetrics {
 
 /**
  * Calculates 5e standard metrics: known cantrips, prepared spells count, highest slot available.
+ * Respects SRD 5.1 (2014) vs SRD 5.2.1 (2024) progressions when `ruleset` is supplied.
  */
 export function calculateSpellcastingMetrics(
   className: string,
   level: number,
   statMod = 0,
-  subclass = ''
+  subclass = '',
+  ruleset: '2014' | '2024' = '2014',
 ): SpellcastingMetrics {
   const lower = spellcastingRuleClass(className, subclass)
   if (!lower) return { cantripsKnown: 0, preparedSpells: 0, highestSlot: 0, casterType: 'custom' }
@@ -208,35 +229,33 @@ export function calculateSpellcastingMetrics(
 
   if (lower === 'sorcerer') {
     cantripsKnown = lvl >= 10 ? 6 : (lvl >= 4 ? 5 : 4)
-    // Spells known table
-    const sorcKnown = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 15, 15]
-    preparedSpells = sorcKnown[lvl - 1] || lvl
+    const sorc2014 = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 12, 13, 13, 14, 14, 15, 15, 15, 15]
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES.sorcerer[lvl - 1] ?? lvl) : (sorc2014[lvl - 1] || lvl)
     casterType = 'full'
   } else if (lower === 'bard') {
     cantripsKnown = lvl >= 10 ? 4 : (lvl >= 4 ? 3 : 2)
-    const bardKnown = [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 15, 16, 18, 19, 19, 20, 22, 22, 22]
-    preparedSpells = bardKnown[lvl - 1] || lvl
+    const bard2014 = [4, 5, 6, 7, 8, 9, 10, 11, 12, 14, 15, 15, 16, 18, 19, 19, 20, 22, 22, 22]
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES.bard[lvl - 1] ?? lvl) : (bard2014[lvl - 1] || lvl)
     casterType = 'full'
   } else if (lower === 'warlock') {
     cantripsKnown = lvl >= 10 ? 4 : (lvl >= 4 ? 3 : 2)
-    const warlockKnown = [2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 11, 12, 12, 13, 13, 14, 14, 15, 15]
-    preparedSpells = warlockKnown[lvl - 1] || lvl
+    preparedSpells = SRD_2024_PREPARED_TABLES.warlock[lvl - 1] || lvl
     highestSlot = Math.min(5, Math.ceil(lvl / 2))
     casterType = 'pact'
   } else if (lower === 'cleric' || lower === 'druid') {
     const initialCantrips = lower === 'druid' ? 2 : 3
     cantripsKnown = initialCantrips + (lvl >= 4 ? 1 : 0) + (lvl >= 10 ? 1 : 0)
-    preparedSpells = Math.max(1, lvl + statMod)
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES[lower][lvl - 1] ?? lvl) : Math.max(1, lvl + statMod)
     casterType = 'full'
   } else if (lower === 'paladin') {
     cantripsKnown = 0
-    preparedSpells = Math.max(1, Math.floor(lvl / 2) + statMod)
-    highestSlot = Math.min(5, Math.ceil(lvl / 4))
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES.paladin[lvl - 1] ?? 2) : Math.max(1, Math.floor(lvl / 2) + statMod)
+    highestSlot = Math.min(5, ruleset === '2024' ? Math.ceil(lvl / 4) : Math.ceil(lvl / 4))
     casterType = 'half'
   } else if (lower === 'ranger') {
     cantripsKnown = 0
-    const rangerKnown = [0, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11]
-    preparedSpells = rangerKnown[lvl - 1] || Math.floor(lvl / 2)
+    const ranger2014 = [0, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11]
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES.ranger[lvl - 1] ?? 2) : (ranger2014[lvl - 1] || Math.floor(lvl / 2))
     highestSlot = Math.min(5, Math.ceil(lvl / 4))
     casterType = 'half'
   } else if (lower === 'artificer') {
@@ -253,13 +272,13 @@ export function calculateSpellcastingMetrics(
   } else {
     // Default Wizard
     cantripsKnown = lvl >= 10 ? 5 : (lvl >= 4 ? 4 : 3)
-    preparedSpells = Math.max(1, lvl + statMod)
+    preparedSpells = ruleset === '2024' ? (SRD_2024_PREPARED_TABLES.wizard[lvl - 1] ?? lvl) : Math.max(1, lvl + statMod)
     highestSlot = Math.min(9, Math.ceil(lvl / 2))
     casterType = 'full'
   }
 
-  highestSlot = getSpellSlotsForClass(lower, lvl).reduce((maximum, count, index) => count > 0 ? index + 1 : maximum, 0)
-  if (lower === 'paladin' && lvl < 2) preparedSpells = 0
+  highestSlot = getSpellSlotsForClass(lower, lvl, ruleset).reduce((maximum, count, index) => count > 0 ? index + 1 : maximum, 0)
+  if (ruleset === '2014' && lower === 'paladin' && lvl < 2) preparedSpells = 0
   return {
     cantripsKnown,
     preparedSpells,
@@ -299,6 +318,9 @@ export interface ClassEntry {
   preparedCountOverride?: number
   preparedInterval?: string
   id?: string
+  rulesEdition?: '2014' | '2024'
+  sorceryPoints?: number
+  metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate?: string; options?: string[] }
   resourceType?: string
   slots?: number[]
   contribution?: CastingContribution
@@ -315,6 +337,9 @@ export interface SpellcastingSourcesInput {
  preparedCountOverride?: number
  preparedInterval?: string
  primarySourceEnabled?: boolean
+ rulesEdition?: '2014' | '2024'
+ sorceryPoints?: number
+ metamagic?: { enabled: boolean; sorceryPoints: number; refreshRate?: string; options?: string[] }
  resourceType?: string
  slots?: number[]
  class?: string
@@ -328,7 +353,7 @@ export interface SpellcastingSourcesInput {
 
 /** One source projection for editor, renderers and exports. Unknown manual sources do not invent slots. */
 export function allCastingSourceEntries(source: SpellcastingSourcesInput): ClassEntry[] {
- const entries: ClassEntry[] = source.primarySourceEnabled === false ? [] : [{ id: 'primary', className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, save: source.save, attack: source.attack, modifier: source.modifier, preparedCountOverride: source.preparedCountOverride, preparedInterval: source.preparedInterval, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }]
+ const entries: ClassEntry[] = source.primarySourceEnabled === false ? [] : [{ id: 'primary', className: source.class || '', subclass: source.subclass, level: source.level || 1, stat: source.stat, save: source.save, attack: source.attack, modifier: source.modifier, preparedCountOverride: source.preparedCountOverride, preparedInterval: source.preparedInterval, rulesEdition: source.rulesEdition, sorceryPoints: source.sorceryPoints, metamagic: source.metamagic, contribution: source.contribution, resourceType: source.resourceType, slots: source.slots }]
  entries.push(...(source.classes || []))
  if (source.primarySourceEnabled !== false && !(source.classes || []).length && source.multiclass?.enabled) entries.push({ id: 'legacy-secondary', className: source.multiclass.secondaryClass || 'Cleric', level: source.multiclass.secondaryLevel || 1, stat: source.multiclass.secondaryStat || 'WIS' })
  return entries
@@ -355,14 +380,15 @@ export function castingCapacityBasis(ownLevel: number, config: CastingCapacityCo
 }
 
 /** Learning capacities can use the shared level without changing source-owned spell eligibility. */
-export function sourceLearningMetrics(entry: ClassEntry, abilityModifier = 0, combinedLevel?: number, sourceCount = 1) {
+export function sourceLearningMetrics(entry: ClassEntry, abilityModifier = 0, combinedLevel?: number, sourceCount = 1, fallbackRuleset: '2014' | '2024' = '2014') {
+ const ruleset: '2014' | '2024' = entry.rulesEdition === '2024' || entry.rulesEdition === '2014' ? entry.rulesEdition : fallbackRuleset
  const own = castingCapacityBasis(entry.level, undefined)
  const basis = (config?: CastingCapacityContribution) => castingCapacityBasis(own, config, combinedLevel, sourceCount, true)
  const cantripCapacityLevel = basis(entry.contribution?.cantrips), spellCapacityLevel = basis(entry.contribution?.spells)
- const native = calculateSpellcastingMetrics(entry.className, own, abilityModifier, entry.subclass)
- const cantripMetrics = calculateSpellcastingMetrics(entry.className, cantripCapacityLevel, abilityModifier, entry.subclass)
- const spellMetrics = calculateSpellcastingMetrics(entry.className, spellCapacityLevel, abilityModifier, entry.subclass)
- return { ...native, cantripCapacityLevel, spellCapacityLevel,
+ const native = calculateSpellcastingMetrics(entry.className, own, abilityModifier, entry.subclass, ruleset)
+ const cantripMetrics = calculateSpellcastingMetrics(entry.className, cantripCapacityLevel, abilityModifier, entry.subclass, ruleset)
+ const spellMetrics = calculateSpellcastingMetrics(entry.className, spellCapacityLevel, abilityModifier, entry.subclass, ruleset)
+ return { ...native, ruleset, cantripCapacityLevel, spellCapacityLevel,
   cantripsKnown: cantripCapacityLevel > 0 ? scaleCastingCapacity(cantripMetrics.cantripsKnown, entry.contribution?.cantrips) : 0,
   preparedSpells: typeof entry.preparedCountOverride === 'number' && Number.isFinite(entry.preparedCountOverride) ? Math.max(0, Math.trunc(entry.preparedCountOverride)) : spellCapacityLevel > 0 ? scaleCastingCapacity(spellMetrics.preparedSpells, entry.contribution?.spells) : 0 }
 }
@@ -400,6 +426,7 @@ export interface MulticlassCalculationResult {
   standardSlots: number[]
   customPoints: number
   customFocus: number
+  totalSorceryPoints?: number
   primarySaveDc: number
   primarySpellAttack: number
   secondarySaveDc?: number
@@ -472,11 +499,11 @@ export function calculateMulticlassSpellcasting(
   }
 
 
-  // Contribution helper
-  const getContribution = (cls: string, lvl: number) => {
+  // Contribution helper (2024 half-casters round up from level 1; 2014 rounds down)
+  const getContribution = (cls: string, lvl: number, edition: '2014' | '2024' = '2014') => {
     const l = (cls || '').toLowerCase()
     if (l === 'warlock') return 0 // Warlock pact magic stays separate
-    if (l === 'paladin' || l === 'ranger') return Math.floor(lvl / 2)
+    if (l === 'paladin' || l === 'ranger') return edition === '2024' ? Math.ceil(lvl / 2) : Math.floor(lvl / 2)
     if (l === 'artificer') return Math.ceil(lvl / 2)
     if (l === 'third caster') return Math.floor(lvl / 3)
     return spellcastingRuleClass(cls) ? lvl : 0 // Custom systems never grant standard slots
@@ -487,6 +514,7 @@ export function calculateMulticlassSpellcasting(
   let customPointsLevel = 0
   let customFocus = 0
   let customFocusLevel = 0
+  let totalSorceryPoints = 0
   const breakdowns: PerClassBreakdown[] = []
 
   let totalPrepared = 0
@@ -501,7 +529,10 @@ export function calculateMulticlassSpellcasting(
     const spellAttack = entry.attack?.override && Number.isFinite(entry.attack.overrideValue) ? entry.attack.overrideValue : effectiveProf + mod
 
     const rulesClass = spellcastingRuleClass(cls, entry.subclass)
-    const metrics = calculateSpellcastingMetrics(cls, lvl, mod, entry.subclass)
+    const edition = entry.rulesEdition === '2024' ? '2024' : '2014'
+    const metrics = calculateSpellcastingMetrics(cls, lvl, mod, entry.subclass, edition)
+    const entrySp = Number(entry.sorceryPoints ?? (entry.metamagic?.enabled ? entry.metamagic.sorceryPoints : 0))
+    if (Number.isFinite(entrySp) && entrySp > 0) totalSorceryPoints += Math.trunc(entrySp)
 
     if (entry.contribution?.mode === 'custom') {
       const contribution = Math.min(20, scaleCastingCapacity(lvl, entry.contribution))
@@ -518,7 +549,7 @@ export function calculateMulticlassSpellcasting(
     } else if (cls.toLowerCase() === 'warlock') {
       warlockLevel += lvl
     } else {
-      combinedLevelSum += getContribution(rulesClass || cls, lvl)
+      combinedLevelSum += getContribution(rulesClass || cls, lvl, edition)
     }
 
     breakdowns.push({
@@ -578,6 +609,7 @@ export function calculateMulticlassSpellcasting(
     standardSlots: slots,
     customPoints: SPELL_POINTS_BY_LEVEL[Math.min(20, customPointsLevel)] || 0,
     customFocus,
+    ...(totalSorceryPoints > 0 ? { totalSorceryPoints } : {}),
     primarySaveDc: primary.saveDc,
     primarySpellAttack: primary.spellAttack,
     secondarySaveDc: secondary?.saveDc,

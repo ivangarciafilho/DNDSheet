@@ -6,10 +6,10 @@
         <q-btn flat round dense icon="close" :aria-label="'Remove grant for ' + grant.spell" @click="emit('update:modelValue', modelValue.filter((_, i) => i !== index))" />
       </div>
       <div class="row q-col-gutter-xs items-center">
-        <q-select v-model="spell" :options="filtered" use-input emit-value map-options dense outlined dark class="col-12" label="Granted spell" @filter="filterSpells" />
-        <q-select v-model="origin" :options="origins" emit-value map-options dense outlined dark class="col-6 col-sm-4" label="Feature source" />
-        <q-select v-model="kind" :options="kinds" emit-value map-options dense outlined dark class="col-6 col-sm-4" label="Availability" />
-        <q-input v-model.number="minLevel" type="number" min="1" max="20" dense outlined dark class="col-6 col-sm-4" label="Unlock level" />
+        <q-select v-model="spell" v-help="'Spell automatically granted by a class, subclass, or species feature.'" :options="filtered" use-input emit-value map-options dense outlined dark class="col-12" label="Granted spell" @filter="filterSpells" />
+        <q-select v-model="origin" v-help="'Feature source granting this spell.'" :options="origins" emit-value map-options dense outlined dark class="col-6 col-sm-4" label="Feature source" />
+        <q-select v-model="kind" v-help="'Whether the granted spell is always prepared/known or eligible for free swaps.'" :options="kinds" emit-value map-options dense outlined dark class="col-6 col-sm-4" label="Availability" />
+        <q-input v-model.number="minLevel" v-help="'Minimum class or source level required to unlock this grant.'" type="number" min="1" max="20" dense outlined dark class="col-6 col-sm-4" label="Unlock level" />
         <q-btn flat dense no-caps icon="add" label="Add grant" :disable="!spell || !Number.isInteger(minLevel) || minLevel < 1 || minLevel > 20" @click="add" />
       </div>
     </div>
