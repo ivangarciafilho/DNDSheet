@@ -12,6 +12,10 @@ export interface CatalogOption<T extends string | number = string | number> {
   label: string
   group: string
   badge?: string
+  icon?: string
+  color?: string
+  tooltip?: string
+  disable?: boolean
   custom?: boolean
   firstInGroup?: boolean
   meta?: Record<string, string>
@@ -49,6 +53,7 @@ export function buildCatalogOptions(config: BuildCatalogOptionsConfig): CatalogO
   const customOptions: CatalogOption[] = []
 
   const pushCustom = (raw: string | number) => {
+    if (typeof raw === 'number' && !Number.isFinite(raw)) return
     const key = String(raw)
     if (!key.trim() || knownKeys.has(key) || seen.has(key)) return
     seen.add(key)
@@ -83,6 +88,10 @@ export function buildCatalogOptions(config: BuildCatalogOptionsConfig): CatalogO
       label: entry.label,
       group,
       badge: entry.badge,
+      icon: entry.icon,
+      color: entry.color,
+      tooltip: entry.tooltip,
+      disable: entry.disable,
       meta: entry.meta,
     })
   }

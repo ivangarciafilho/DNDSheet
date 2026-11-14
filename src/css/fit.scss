@@ -19,3 +19,21 @@
   overflow-x: auto;
   overscroll-behavior-x: contain;
 }
+
+.editor-fit-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.editor-fit-wrap > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.editor-fit-wrap .q-btn-group {
+  flex-wrap: wrap;
+  max-width: 100%;
+}

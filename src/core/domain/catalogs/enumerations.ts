@@ -28,6 +28,10 @@ export interface CanonicalCatalogEntry<T extends string | number = string> {
   label: string
   group?: string
   badge?: string
+  icon?: string
+  color?: string
+  tooltip?: string
+  disable?: boolean
   meta?: Record<string, string>
 }
 

@@ -12,6 +12,7 @@
     :clearable="clearable"
     :multiple="multiple"
     :use-chips="useChips"
+    :hide-bottom-space="hideBottomSpace"
     :use-input="searchable"
     :fill-input="searchable && !multiple"
     :hide-selected="searchable && !multiple"
@@ -24,6 +25,19 @@
     @filter="onFilter"
     @update:model-value="onUpdate"
   >
+    <q-tooltip v-if="help" class="dnd-tip">{{ help }}</q-tooltip>
+    <template v-if="$slots.prepend" #prepend>
+      <slot name="prepend" />
+    </template>
+    <template v-if="$slots.append" #append>
+      <slot name="append" />
+    </template>
+    <template v-if="$slots.after" #after>
+      <slot name="after" />
+    </template>
+    <template v-if="$slots['selected-item']" #selected-item="scope">
+      <slot name="selected-item" v-bind="scope" />
+    </template>
     <template #option="scope">
       <div class="catalog-select__row">
         <div
@@ -34,17 +48,23 @@
         >
           {{ scope.opt.group }}
         </div>
-        <q-item v-bind="scope.itemProps" :data-catalog-option="String(scope.opt.value)">
+        <q-item v-bind="scope.itemProps" :disable="Boolean(scope.opt.disable)" :data-catalog-option="String(scope.opt.value)">
+          <q-item-section v-if="scope.opt.icon" avatar style="min-width: 28px;">
+            <q-icon :name="scope.opt.icon" :color="scope.opt.color || 'amber-4'" size="xs" />
+          </q-item-section>
           <q-item-section>
             <q-item-label>{{ scope.opt.label }}</q-item-label>
           </q-item-section>
           <q-item-section v-if="scope.opt.badge || scope.opt.custom" side>
             <q-badge
-              :color="scope.opt.custom ? 'deep-purple-6' : 'blue-grey-7'"
+              :color="scope.opt.custom ? 'deep-purple-6' : (scope.opt.color || 'blue-grey-7')"
               text-color="white"
               :label="scope.opt.badge || 'Custom'"
             />
           </q-item-section>
+          <q-tooltip v-if="scope.opt.tooltip" class="bg-grey-10 text-amber-2 text-caption" :delay="250" max-width="260px">
+            {{ scope.opt.tooltip }}
+          </q-tooltip>
         </q-item>
       </div>
     </template>
@@ -82,6 +102,8 @@ const props = withDefaults(
     dense?: boolean
     dark?: boolean
     disable?: boolean
+    hideBottomSpace?: boolean
+    help?: string
   }>(),
   {
     searchable: true,
@@ -92,6 +114,7 @@ const props = withDefaults(
     useChips: false,
     dark: false,
     disable: false,
+    hideBottomSpace: false,
   },
 )
 
@@ -129,6 +152,7 @@ function onUpdate(val: unknown) {
     emit('update:modelValue', Array.isArray(val) ? (val as (string | number)[]) : [])
     return
   }
+  query.value = ''
   emit('update:modelValue', (val as string | number | null) ?? '')
 }
 </script>

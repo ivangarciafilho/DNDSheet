@@ -28,7 +28,7 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
     <slot name="after" />
     </div>
     <div v-else class="formula-field__draft">
-      <q-input ref="draftInput" v-model="draft" :label="`${label} — custom formula`" dense outlined autofocus :error="!!error" :error-message="error" :hint="previewText" @update:model-value="onDraftInput" @keydown="onDraftKeydown" @blur="closeRefSuggest">
+      <q-input ref="draftInput" v-model="draft" :label="`${label} — custom formula`" v-help="'Enter a number or formula expression (e.g. PB + STR_MOD). Preserves live reference links.'" dense outlined autofocus :error="!!error" :error-message="error" :hint="previewText" @update:model-value="onDraftInput" @keydown="onDraftKeydown" @blur="closeRefSuggest">
         <q-menu v-model="refSuggestOpen" no-focus no-refocus fit anchor="bottom left" self="top left" class="macro-suggest-menu" data-macro-suggest data-formula-suggest>
           <q-list :id="refListId" dense role="listbox" :aria-label="`References for ${label}`">
             <q-item v-for="(entry, index) in refSuggestions" :id="`${refListId}-opt-${index}`" :key="entry.insert" clickable dense role="option" :aria-selected="index === refActive" :active="index === refActive" active-class="macro-suggest-active" @mousedown.prevent="pickRef(entry)">
