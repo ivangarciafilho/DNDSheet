@@ -10,34 +10,19 @@
       <!-- 1. Header & Add Sense Dropdown -->
       <div class="row q-col-gutter-xs items-center q-mb-sm">
         <div class="col-12">
-          <q-select
-            v-model="selectedSenseToAdd"
-            :options="availableSenseOptions"
-            emit-value
-            map-options
+          <catalog-select
+            v-help="'Add a special sense (such as Darkvision, Blindsight, or Truesight).'"
+            :model-value="selectedSenseToAdd ?? ''"
+            :entries="availableSenseEntries"
+            preserve-order
             label="Add Sense (Modular 5e Physiology)"
-            dense
-            outlined
             clearable
-            @update:model-value="onSenseSelected"
+            @update:model-value="val => onSenseSelected(val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="visibility" color="primary" />
             </template>
-            <template #option="scope">
-              <q-item v-bind="scope.itemProps" dense>
-                <q-item-section v-if="scope.opt.icon" avatar style="min-width: 28px;">
-                  <q-icon :name="scope.opt.icon" :color="scope.opt.color || 'teal-4'" size="xs" />
-                </q-item-section>
-                <q-item-section>
-                  <q-item-label class="text-weight-medium">{{ scope.opt.label }}</q-item-label>
-                </q-item-section>
-                <q-item-section v-if="scope.opt.category" side>
-                  <q-badge :color="scope.opt.color || 'teal-4'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
-                </q-item-section>
-              </q-item>
-            </template>
-          </q-select>
+          </catalog-select>
         </div>
       </div>
 
@@ -71,14 +56,15 @@
                 @input-value="(val) => (sense.range = validateNumber(val, 0))"
                 @update:model-value="(val) => (sense.range = validateNumber(val, 0))"
               />
-              <q-select
-                v-model="sense.rangeUnit"
-                :options="['ft', 'miles']"
-                dense
-                outlined
+              <catalog-select
+                :model-value="sense.rangeUnit"
+                v-help="'Feet for most senses; miles for very long ranges such as Life Sense.'"
+                :entries="rangeUnitEntries"
+                preserve-order
+                :searchable="false"
                 label="Unit"
-                  v-help="'Feet for most senses; miles for very long ranges such as Life Sense.'"
                 style="width: 85px;"
+                @update:model-value="val => (sense.rangeUnit = val === 'miles' ? 'miles' : 'ft')"
               />
             </div>
             <div class="col text-right">
@@ -148,15 +134,14 @@
                 />
               </div>
               <div class="col-12 col-sm-4">
-                <q-select
-                  v-model="sense.lightImpairment"
-                  :options="lightImpairmentOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Light Impairment"
+                <catalog-select
+                  :model-value="sense.lightImpairment ?? 'none'"
                   v-help="'Sunlight or bright-light sensitivity that blinds or hinders the creature.'"
+                  :entries="lightImpairmentOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Light Impairment"
+                  @update:model-value="val => (sense.lightImpairment = String(val || 'none') as NonNullable<MonsterSenseItem['lightImpairment']>)"
                 />
               </div>
             </template>
@@ -164,15 +149,14 @@
             <!-- Sense Sentience -->
             <template v-if="sense.name.toLowerCase().includes('sentience')">
               <div class="col-12 col-sm-5">
-                <q-select
-                  v-model="sense.senseSentienceMode"
-                  :options="senseSentienceOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Sentience Detection Scope"
+                <catalog-select
+                  :model-value="sense.senseSentienceMode ?? 'location_intelligent'"
                   v-help="'What the sense detects: any thinking creature or only some kinds.'"
+                  :entries="senseSentienceOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Sentience Detection Scope"
+                  @update:model-value="val => (sense.senseSentienceMode = String(val || 'location_intelligent') as NonNullable<MonsterSenseItem['senseSentienceMode']>)"
                 />
               </div>
             </template>
@@ -180,69 +164,66 @@
             <!-- Life Sense & Divine Sense -->
             <template v-if="sense.name.toLowerCase().includes('life') || sense.name.toLowerCase().includes('divine')">
               <div class="col-12 col-sm-4">
-                <q-select
-                  v-model="sense.detectionMode"
-                  :options="detectionModeOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Detection Mode"
+                <catalog-select
+                  :model-value="sense.detectionMode ?? 'presence'"
                   v-help="'Presence only, or exact location of what it senses.'"
+                  :entries="detectionModeOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Detection Mode"
+                  @update:model-value="val => (sense.detectionMode = String(val || 'presence') as NonNullable<MonsterSenseItem['detectionMode']>)"
                 />
               </div>
               <div class="col-12 col-sm-8">
-                <q-select
-                  v-model="sense.targetCreatureTypes"
-                  :options="creatureTypeOptions"
+                <catalog-select
+                  :model-value="sense.targetCreatureTypes ?? []"
+                  v-help="'Creature types the sense reveals, such as celestials, fiends and undead.'"
+                  :entries="creatureTypeEntries"
                   multiple
                   use-chips
                   clearable
-                  dense
-                  outlined
                   label="Target Creature Types / Triggers"
-                  v-help="'Creature types the sense reveals, such as celestials, fiends and undead.'"
+                  @update:model-value="val => (sense.targetCreatureTypes = Array.isArray(val) ? val.map(String) : [])"
                 />
               </div>
               <div class="col-12 col-sm-6">
-                <q-select
-                  v-model="sense.perceivedStats"
-                  :options="perceivedStatsOptions"
+                <catalog-select
+                  :model-value="sense.perceivedStats ?? []"
+                  v-help="'Facts the creature learns about a target it studies.'"
+                  :entries="perceivedStatsEntries"
+                  preserve-order
                   multiple
                   use-chips
                   clearable
-                  dense
-                  outlined
                   label="Gathered Info (Know Your Enemy / Analytical Sense)"
-                  v-help="'Facts the creature learns about a target it studies.'"
+                  @update:model-value="val => (sense.perceivedStats = Array.isArray(val) ? val.map(String) : [])"
                 />
               </div>
               <div class="col-12 col-sm-3">
-                <q-select
-                  v-model="sense.perceptionPrecision"
-                  :options="perceptionPrecisionOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Info Precision"
+                <catalog-select
+                  :model-value="sense.perceptionPrecision ?? 'detailed'"
                   v-help="'How exact the learned facts are: rough, relative or exact.'"
+                  :entries="perceptionPrecisionOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Info Precision"
+                  @update:model-value="val => (sense.perceptionPrecision = String(val || 'detailed') as NonNullable<MonsterSenseItem['perceptionPrecision']>)"
                 />
               </div>
               <div class="col-12 col-sm-3">
-                <q-select
-                  v-model="sense.observationRequirement"
-                  :options="observationRequirementOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Observation Requirement"
+                <catalog-select
+                  :model-value="sense.observationRequirement ?? 'none'"
                   v-help="'Whether the creature must watch the target first, and how.'"
+                  :entries="observationRequirementOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Observation Requirement"
+                  @update:model-value="val => (sense.observationRequirement = String(val || 'none') as NonNullable<MonsterSenseItem['observationRequirement']>)"
                 />
               </div>
               <div v-if="sense.observationRequirement && sense.observationRequirement !== 'none'" class="col-6 col-sm-2">
                 <formula-field
+                  v-help="'Minutes of observation or combat required before the sense takes effect.'"
                   :path="`sensesList[id=${encodeURIComponent(sense.id)}].observationMinutes`"
                   label="Minutes"
                   dense
@@ -266,6 +247,7 @@
               <div class="col-auto">
                 <q-checkbox
                   v-model="sense.webSense"
+                  v-help="'Know the exact location of any other creature in contact with the same web.'"
                   dense
                   label="While touching web, knows exact location of other creatures (Spider)"
                   color="amber"
@@ -295,6 +277,7 @@
 
 <script lang="ts">
 import BasicRidersEditor from './BasicRidersEditor.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import { computed, defineComponent, ref, watch } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -417,7 +400,7 @@ const SENSES_PRESETS: {
 
 export default defineComponent({
   name: 'SensesEditor',
-  components: { BasicRidersEditor, MechanicTextEditor, FormulaField },
+  components: { BasicRidersEditor, CatalogSelect, MechanicTextEditor, FormulaField },
   setup() {
     const monster = useMonsterStore()
     const selectedSenseToAdd = ref<string | null>(null)
@@ -646,22 +629,36 @@ export default defineComponent({
     }
 
     const senseRangePresets = ['10', '30', '60', '90', '120', '150', '300', '1000']
+    const availableSenseEntries = computed(() =>
+      availableSenseOptions.value.map((opt) => ({
+        value: opt.value,
+        label: opt.label,
+        group: opt.category,
+        badge: opt.category,
+        icon: opt.icon,
+        color: opt.color,
+      }))
+    )
+    const rangeUnitEntries = [{ value: 'ft', label: 'ft' }, { value: 'miles', label: 'miles' }]
+    const creatureTypeEntries = CREATURE_TYPE_OPTIONS.map((value) => ({ value, label: value }))
+    const perceivedStatsEntries = PERCEIVED_STATS_OPTIONS.map((value) => ({ value, label: value }))
 
     return {
       monster,
       senseRangePresets,
+      availableSenseEntries,
+      rangeUnitEntries,
+      creatureTypeEntries,
+      perceivedStatsEntries,
       validateNumber,
       passives,
       getPassive,
       selectedSenseToAdd,
-      availableSenseOptions,
       onSenseSelected,
       removeSense,
       lightImpairmentOptions: LIGHT_IMPAIRMENT_OPTIONS,
       detectionModeOptions: DETECTION_MODE_OPTIONS,
       senseSentienceOptions: SENSE_SENTIENCE_OPTIONS,
-      creatureTypeOptions: CREATURE_TYPE_OPTIONS,
-      perceivedStatsOptions: PERCEIVED_STATS_OPTIONS,
       perceptionPrecisionOptions: PERCEPTION_PRECISION_OPTIONS,
       observationRequirementOptions: OBSERVATION_REQUIREMENT_OPTIONS,
     }

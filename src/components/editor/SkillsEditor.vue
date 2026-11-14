@@ -15,32 +15,16 @@
           </div>
           <!-- Dropdown auto-adds on selection (no add button, clicking outside does not select) -->
           <div style="min-width: 220px; max-width: 320px;">
-            <q-select
-              dense
-              outlined
+            <catalog-select
+              v-help="'Add a skill the creature is proficient or expert in.'"
               :model-value="null"
-              :options="availableSkills"
-              emit-value
-              map-options
-              label="Add Skill..." v-help="'Add a skill the creature is proficient or expert in.'"
+              :entries="availableSkillEntries"
+              preserve-order
+              label="Add Skill..."
               placeholder="Select skill to add"
               clearable
-              @update:model-value="onSkillSelected"
-            >
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps" dense>
-                  <q-item-section avatar style="min-width: 28px; padding-right: 8px;">
-                    <q-icon :name="scope.opt.icon || 'fa-solid fa-dice-d20'" :color="scope.opt.color || 'primary'" size="xs" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side v-if="scope.opt.category">
-                    <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              @update:model-value="val => onSkillSelected(val ? String(val) : null)"
+            />
           </div>
         </div>
 
@@ -201,34 +185,17 @@
           </div>
           <!-- Tool dropdown auto-adds on selection (no add button) -->
           <div style="min-width: 220px; max-width: 320px;">
-            <q-select
-              dense
-              outlined
+            <catalog-select
+              v-help="'Add a tool proficiency, such as a Poisoner’s Kit.'"
               :model-value="null"
-              :options="toolOptions"
-              emit-value
-              map-options
-              use-input
-              new-value-mode="add-unique"
-              label="Add Tool..." v-help="'Add a tool proficiency, such as a Poisoner’s Kit.'"
+              :entries="availableToolEntries"
+              preserve-order
+              allow-custom
+              label="Add Tool..."
               placeholder="Select or type tool"
               clearable
-              @update:model-value="onToolSelected"
-            >
-              <template #option="scope">
-                <q-item v-bind="scope.itemProps" dense>
-                  <q-item-section avatar style="min-width: 28px; padding-right: 8px;">
-                    <q-icon :name="scope.opt.icon || 'fa-solid fa-screwdriver-wrench'" :color="scope.opt.color || 'secondary'" size="xs" />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label>{{ scope.opt.label || scope.opt }}</q-item-label>
-                  </q-item-section>
-                  <q-item-section side v-if="scope.opt.category">
-                    <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+              @update:model-value="val => onToolSelected(val ? String(val) : null)"
+            />
           </div>
         </div>
 
@@ -345,12 +312,14 @@
 
               <div class="row q-col-gutter-xs items-center">
                 <div class="col-3">
-                  <q-select
-                    dense
-                    outlined
-                    v-model="tool.stat"
-                    :options="['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA']"
-                    label="Stat" v-help="'Ability used for this skill.'"
+                  <catalog-select
+                    v-help="'Ability used for this skill.'"
+                    :model-value="tool.stat ?? 'DEX'"
+                    :entries="statEntries"
+                    preserve-order
+                    :searchable="false"
+                    label="Stat"
+                    @update:model-value="val => (tool.stat = (val ? String(val) : 'DEX') as MonsterToolProficiency['stat'])"
                   />
                 </div>
                 <div v-if="tool.override" class="col-3">
@@ -405,7 +374,7 @@
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-primary">🔍 Search Checks</span>
-                <div class="row items-center q-gutter-x-xs">
+                <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('search')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
@@ -415,6 +384,7 @@
                   />
                   <q-btn-toggle
                     v-model="passives.searchActionType"
+                    v-help="'Choose whether moving this group places it under Actions or Bonus Actions.'"
                     dense
                     no-caps
                     rounded
@@ -531,7 +501,7 @@
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-info">📖 Study Checks</span>
-                <div class="row items-center q-gutter-x-xs">
+                <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('study')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
@@ -541,6 +511,7 @@
                   />
                   <q-btn-toggle
                     v-model="passives.studyActionType"
+                    v-help="'Choose whether moving this group places it under Actions or Bonus Actions.'"
                     dense
                     no-caps
                     rounded
@@ -657,7 +628,7 @@
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-amber-8">🗣️ Influence Checks</span>
-                <div class="row items-center q-gutter-x-xs">
+                <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('influence')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
@@ -667,6 +638,7 @@
                   />
                   <q-btn-toggle
                     v-model="passives.influenceActionType"
+                    v-help="'Choose whether moving this group places it under Actions or Bonus Actions.'"
                     dense
                     no-caps
                     rounded
@@ -783,7 +755,7 @@
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-deep-purple-4">🥷 Hide Checks</span>
-                <div class="row items-center q-gutter-x-xs">
+                <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('hide')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
@@ -793,6 +765,7 @@
                   />
                   <q-btn-toggle
                     v-model="passives.hideActionType"
+                    v-help="'Choose whether moving this group places it under Actions or Bonus Actions.'"
                     dense
                     no-caps
                     rounded
@@ -909,7 +882,7 @@
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
                 <span class="text-caption text-weight-bold text-teal-4">🛠️ Use Tool Checks</span>
-                <div class="row items-center q-gutter-x-xs">
+                <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('tools')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
@@ -919,6 +892,7 @@
                   />
                   <q-btn-toggle
                     v-model="passives.toolsActionType"
+                    v-help="'Choose whether moving this group places it under Actions or Bonus Actions.'"
                     dense
                     no-caps
                     rounded
@@ -987,6 +961,7 @@
 </template>
 
 <script lang="ts">
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import type { SkillPassiveState } from 'src/core/domain/skill-passive-state'
 import { SKILL } from 'src/data/SKILL'
@@ -1049,7 +1024,7 @@ const SKILL_SCOPE_META: Record<string, { category: string; color: string; icon: 
 
 export default defineComponent({
   name: 'SkillsEditor',
-  components: { MechanicTextEditor, SwapButtons },
+  components: { CatalogSelect, MechanicTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 
@@ -1358,13 +1333,41 @@ export default defineComponent({
       passives.value.riders[category] = cur ? `${cur}, ${tag}` : tag
     }
 
+    const availableSkillEntries = computed(() =>
+      availableSkills.value.map((skill) => ({
+        value: skill.value,
+        label: skill.label,
+        group: skill.category,
+        badge: skill.category,
+        icon: skill.icon,
+        color: skill.color,
+      }))
+    )
+
+    const availableToolEntries = computed(() =>
+      availableTools.value.map((tool) => ({
+        value: tool.value,
+        label: tool.label,
+        group: tool.category,
+        badge: tool.category,
+        icon: tool.icon,
+        color: tool.color,
+      }))
+    )
+
+    const statEntries = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'].map((stat) => ({
+      value: stat,
+      label: stat,
+    }))
+
     return {
       monster,
       skills: computed(() => monster.skills),
       deleteSkill: monster.deleteSkill,
-      availableSkills,
+      availableSkillEntries,
       onSkillSelected,
-      toolOptions: availableTools,
+      availableToolEntries,
+      statEntries,
       onToolSelected,
       passives,
       movesToActionGroup,

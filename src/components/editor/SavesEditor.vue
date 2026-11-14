@@ -19,7 +19,7 @@
             class="q-pa-xs rounded-borders"
             style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.12);"
           >
-            <div class="row items-center justify-between no-wrap q-mb-xs">
+            <div class="row items-center justify-between editor-fit-wrap q-mb-xs">
               <div class="row items-center no-wrap">
                 <span class="text-subtitle2 text-weight-bold text-uppercase q-mr-xs">
                   {{ $t(`monster.stat.${stat}`) }}
@@ -33,7 +33,7 @@
               </div>
 
               <!-- Action button group: Proficient, Override, Advantage, Disadvantage -->
-              <div class="row items-center q-gutter-xs no-wrap">
+              <div class="row items-center q-gutter-xs editor-fit-wrap">
                 <q-btn
                   dense
                   round

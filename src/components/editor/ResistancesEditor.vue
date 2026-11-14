@@ -118,21 +118,19 @@
 
         <!-- Add Vulnerability Dropdown -->
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'Vulnerability doubles damage of this type.'"
             :model-value="null"
-            :options="vulnerabilityDamageOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Damage Vulnerability to Add" v-help="'Vulnerability doubles damage of this type.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('vulnerabilities', val)"
+            :entries="vulnerabilityDamageEntries"
+            allow-custom
+            searchable
+            label="Select or Type Damage Vulnerability to Add"
+            @update:model-value="(val) => addDefenseItem('vulnerabilities', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <!-- Active Vulnerabilities List -->
@@ -174,18 +172,16 @@
               <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
-              <q-select
+              <catalog-select
+                v-help="'Save bonus or penalty and its result.'"
                 :model-value="getUnifiedSaveOutcome(item)"
-                :options="unifiedSaveOutcomeOptions"
-                emit-value
-                map-options
-                use-input
-                new-value-mode="add-unique"
-                label="Save Modifier & Outcome" v-help="'Save bonus or penalty and its result.'"
-                dense
-                outlined
+                :entries="unifiedSaveOutcomeOptions"
+                preserve-order
+                allow-custom
+                searchable
                 clearable
-                @update:model-value="(val) => setUnifiedSaveOutcome(item, val)"
+                label="Save Modifier & Outcome"
+                @update:model-value="(val) => setUnifiedSaveOutcome(item, val ? String(val) : null)"
               />
             </div>
           </div>
@@ -193,44 +189,27 @@
           <!-- Acquired Condition when taking Vulnerability Damage & Duration -->
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-5">
-              <q-select v-help="$t('help.defenses.acquiredCondition')"
-                v-model="item.acquiredCondition"
-                :options="acquiredConditionOptions"
-                use-input
-                new-value-mode="add-unique"
-                label="Acquired Negative Condition"
-                dense
-                outlined
+              <catalog-select v-help="$t('help.defenses.acquiredCondition')"
+                :model-value="item.acquiredCondition ?? ''"
+                :entries="acquiredConditionEntries"
+                allow-custom
+                searchable
                 clearable
-                @update:model-value="syncDefenses"
+                label="Acquired Negative Condition"
+                @update:model-value="val => { item.acquiredCondition = String(val || ''); syncDefenses() }"
               />
             </div>
             <div class="col-12 col-sm-3">
-              <q-select
-                v-model="item.conditionDuration"
-                :options="conditionDurationOptions"
-                emit-value
-                map-options
-                label="Duration" v-help="'How long the effect lasts.'"
-                dense
-                outlined
+              <catalog-select
+                v-help="'How long the effect lasts.'"
+                :model-value="item.conditionDuration ?? ''"
+                :entries="conditionDurationEntries"
+                preserve-order
+                searchable
                 clearable
-                @update:model-value="syncDefenses"
-              >
-                <template #option="scope">
-                  <q-item v-bind="scope.itemProps" dense>
-                    <q-item-section avatar style="min-width: 28px; padding-right: 8px;">
-                      <q-icon :name="scope.opt.icon || 'fa-solid fa-clock'" :color="scope.opt.color || 'primary'" size="xs" />
-                    </q-item-section>
-                    <q-item-section>
-                      <q-item-label>{{ scope.opt.label }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section side v-if="scope.opt.category">
-                      <q-badge :color="scope.opt.color || 'grey-7'" outline class="text-caption">{{ scope.opt.category }}</q-badge>
-                    </q-item-section>
-                  </q-item>
-                </template>
-              </q-select>
+                label="Duration"
+                @update:model-value="val => { item.conditionDuration = String(val || ''); syncDefenses() }"
+              />
             </div>
             <div class="col-12 col-sm-4">
               <mechanic-text-editor v-help="$t('help.defenses.conditionTriggerNote')"
@@ -260,21 +239,19 @@
         </div>
 
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'Disadvantage on saves against this condition.'"
             :model-value="null"
-            :options="vulnerabilityConditionOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Condition Vulnerability to Add" v-help="'Disadvantage on saves against this condition.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('conditionVulnerabilities', val)"
+            :entries="vulnerabilityConditionEntries"
+            allow-custom
+            searchable
+            label="Select or Type Condition Vulnerability to Add"
+            @update:model-value="(val) => addDefenseItem('conditionVulnerabilities', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <div v-if="monster.conditionVulnerabilitiesList?.length === 0" class="text-caption text-grey-5 q-pa-xs">
@@ -312,17 +289,15 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-7">
-              <q-select v-help="$t('help.defenses.compelledWeakness')"
-                v-model="item.acquiredCondition"
-                :options="conditionVulnerabilityActionOptions"
-                use-input
-                new-value-mode="add-unique"
-                label="Compelled Action / Weakness"
-                dense
-                outlined
+              <catalog-select v-help="$t('help.defenses.compelledWeakness')"
+                :model-value="item.acquiredCondition ?? ''"
+                :entries="conditionVulnerabilityActionEntries"
+                allow-custom
+                searchable
                 clearable
+                label="Compelled Action / Weakness"
                 placeholder="e.g. wastes Reaction to move up to speed"
-                @update:model-value="syncDefenses"
+                @update:model-value="val => { item.acquiredCondition = String(val || ''); syncDefenses() }"
               />
             </div>
             <div class="col-12 col-sm-5">
@@ -353,21 +328,19 @@
         </div>
 
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'Resistance halves damage of this type.'"
             :model-value="null"
-            :options="resistanceDamageOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Damage Resistance to Add" v-help="'Resistance halves damage of this type.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('resistances', val)"
+            :entries="resistanceDamageEntries"
+            allow-custom
+            searchable
+            label="Select or Type Damage Resistance to Add"
+            @update:model-value="(val) => addDefenseItem('resistances', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <div v-if="monster.resistancesList?.length === 0" class="text-caption text-grey-5 q-pa-xs">
@@ -408,18 +381,16 @@
               <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
-              <q-select
+              <catalog-select
+                v-help="'Save bonus or penalty and its result.'"
                 :model-value="getUnifiedSaveOutcome(item)"
-                :options="unifiedSaveOutcomeOptions"
-                emit-value
-                map-options
-                use-input
-                new-value-mode="add-unique"
-                label="Save Modifier & Outcome" v-help="'Save bonus or penalty and its result.'"
-                dense
-                outlined
+                :entries="unifiedSaveOutcomeOptions"
+                preserve-order
+                allow-custom
+                searchable
                 clearable
-                @update:model-value="(val) => setUnifiedSaveOutcome(item, val)"
+                label="Save Modifier & Outcome"
+                @update:model-value="(val) => setUnifiedSaveOutcome(item, val ? String(val) : null)"
               />
             </div>
           </div>
@@ -439,15 +410,14 @@
               />
             </div>
             <div class="col-12 col-sm-3">
-              <q-select
-                v-model="item.benefitTrigger"
-                :options="benefitTriggerOptions"
-                emit-value
-                map-options
-                label="Trigger" v-help="'What sets off this defensive effect.'"
-                dense
-                outlined
-                @update:model-value="syncDefenses"
+              <catalog-select
+                v-help="'What sets off this defensive effect.'"
+                :model-value="item.benefitTrigger ?? ''"
+                :entries="benefitTriggerOptions"
+                preserve-order
+                :searchable="false"
+                label="Trigger"
+                @update:model-value="val => { item.benefitTrigger = String(val || 'when hit'); syncDefenses() }"
               />
             </div>
             <div class="col-12 col-sm-4">
@@ -478,21 +448,19 @@
         </div>
 
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'Advantage on saves against this condition.'"
             :model-value="null"
-            :options="conditionResistancesOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Condition Resistance to Add" v-help="'Advantage on saves against this condition.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('conditionResistances', val)"
+            :entries="conditionResistancesEntries"
+            allow-custom
+            searchable
+            label="Select or Type Condition Resistance to Add"
+            @update:model-value="(val) => addDefenseItem('conditionResistances', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <div v-if="monster.conditionResistancesList?.length === 0" class="text-caption text-grey-5 q-pa-xs">
@@ -530,16 +498,15 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-8">
-              <q-select
+              <catalog-select
+                v-help="'What a successful or failed save means here.'"
                 :model-value="getUnifiedSaveOutcome(item)"
-                :options="unifiedSaveOutcomeOptions"
-                emit-value
-                map-options
-                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
-                dense
-                outlined
+                :entries="unifiedSaveOutcomeOptions"
+                preserve-order
+                :searchable="false"
                 clearable
-                @update:model-value="(val) => setUnifiedSaveOutcome(item, val)"
+                label="Save Outcome & Defense Mode"
+                @update:model-value="(val) => setUnifiedSaveOutcome(item, val ? String(val) : null)"
               />
             </div>
             <div class="col-12 col-sm-4">
@@ -570,21 +537,19 @@
         </div>
 
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'Immunity: the creature takes no damage of this type.'"
             :model-value="null"
-            :options="immunityDamageOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Damage Immunity to Add" v-help="'Immunity: the creature takes no damage of this type.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('immunities', val)"
+            :entries="immunityDamageEntries"
+            allow-custom
+            searchable
+            label="Select or Type Damage Immunity to Add"
+            @update:model-value="(val) => addDefenseItem('immunities', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <div v-if="monster.immunitiesList?.length === 0" class="text-caption text-grey-5 q-pa-xs">
@@ -625,16 +590,15 @@
               <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
-              <q-select
+              <catalog-select
+                v-help="'What a successful or failed save means here.'"
                 :model-value="getUnifiedSaveOutcome(item)"
-                :options="unifiedSaveOutcomeOptions"
-                emit-value
-                map-options
-                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
-                dense
-                outlined
+                :entries="unifiedSaveOutcomeOptions"
+                preserve-order
+                :searchable="false"
                 clearable
-                @update:model-value="(val) => setUnifiedSaveOutcome(item, val)"
+                label="Save Outcome & Defense Mode"
+                @update:model-value="(val) => setUnifiedSaveOutcome(item, val ? String(val) : null)"
               />
             </div>
           </div>
@@ -654,15 +618,14 @@
               />
             </div>
             <div class="col-12 col-sm-3">
-              <q-select
-                v-model="item.benefitTrigger"
-                :options="benefitTriggerOptions"
-                emit-value
-                map-options
-                label="Trigger" v-help="'What sets off this defensive effect.'"
-                dense
-                outlined
-                @update:model-value="syncDefenses"
+              <catalog-select
+                v-help="'What sets off this defensive effect.'"
+                :model-value="item.benefitTrigger ?? ''"
+                :entries="benefitTriggerOptions"
+                preserve-order
+                :searchable="false"
+                label="Trigger"
+                @update:model-value="val => { item.benefitTrigger = String(val || 'when hit'); syncDefenses() }"
               />
             </div>
             <div class="col-12 col-sm-4">
@@ -693,21 +656,19 @@
         </div>
 
         <div class="q-mb-xs">
-          <q-select
+          <catalog-select
+            v-help="'The creature cannot be affected by this condition.'"
             :model-value="null"
-            :options="conditionImmunitiesOptions"
-            use-input
-            input-debounce="0"
-            new-value-mode="add-unique"
-            label="Select or Type Condition Immunity to Add" v-help="'The creature cannot be affected by this condition.'"
-            dense
-            outlined
-            @update:model-value="(val) => addDefenseItem('conditions', val)"
+            :entries="conditionImmunitiesEntries"
+            allow-custom
+            searchable
+            label="Select or Type Condition Immunity to Add"
+            @update:model-value="(val) => addDefenseItem('conditions', val ? String(val) : null)"
           >
             <template #prepend>
               <q-icon name="add" />
             </template>
-          </q-select>
+          </catalog-select>
         </div>
 
         <div v-if="monster.conditionsList?.length === 0" class="text-caption text-grey-5 q-pa-xs">
@@ -745,16 +706,15 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-6">
-              <q-select
+              <catalog-select
+                v-help="'What a successful or failed save means here.'"
                 :model-value="getUnifiedSaveOutcome(item)"
-                :options="unifiedSaveOutcomeOptions"
-                emit-value
-                map-options
-                label="Save Outcome & Defense Mode" v-help="'What a successful or failed save means here.'"
-                dense
-                outlined
+                :entries="unifiedSaveOutcomeOptions"
+                preserve-order
+                :searchable="false"
                 clearable
-                @update:model-value="(val) => setUnifiedSaveOutcome(item, val)"
+                label="Save Outcome & Defense Mode"
+                @update:model-value="(val) => setUnifiedSaveOutcome(item, val ? String(val) : null)"
               />
             </div>
             <div class="col-12 col-sm-6">
@@ -774,6 +734,7 @@
 </template>
 
 <script lang="ts">
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import MechanicSelectEditor from './MechanicSelectEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -919,7 +880,7 @@ const BENEFIT_TRIGGER_OPTIONS = [
 
 export default defineComponent({
   name: 'ResistancesEditor',
-  components: { MechanicSelectEditor, MechanicTextEditor, SwapButtons },
+  components: { CatalogSelect, MechanicSelectEditor, MechanicTextEditor, SwapButtons },
   setup() {
     const monster = useMonsterStore()
 
@@ -1118,23 +1079,41 @@ const syncDefenses = () => {
     const conditionVulnerabilitiesPreview = computed(() => formatDefenseList(monster.conditionVulnerabilitiesList ?? []))
     const conditionsPreview = computed(() => formatDefenseList(monster.conditionsList ?? []))
 
+    const toCatalogEntries = (items: readonly string[]) => items.map((value) => ({ value, label: value }))
+    const vulnerabilityDamageEntries = computed(() => toCatalogEntries(vulnerabilityDamageOptions.value))
+    const vulnerabilityConditionEntries = computed(() => toCatalogEntries(vulnerabilityConditionOptions.value))
+    const resistanceDamageEntries = computed(() => toCatalogEntries(resistanceDamageOptions.value))
+    const conditionResistancesEntries = computed(() => toCatalogEntries(conditionResistancesOptions.value))
+    const immunityDamageEntries = computed(() => toCatalogEntries(immunityDamageOptions.value))
+    const conditionImmunitiesEntries = computed(() => toCatalogEntries(conditionImmunitiesOptions.value))
+    const acquiredConditionEntries = toCatalogEntries(ACQUIRED_CONDITION_OPTIONS)
+    const conditionVulnerabilityActionEntries = toCatalogEntries(CONDITION_VULNERABILITY_ACTIONS)
+    const conditionDurationEntries = CONDITION_DURATION_OPTIONS.map((opt) => ({
+      value: opt.value,
+      label: opt.label,
+      group: opt.category,
+      badge: opt.category,
+      icon: opt.icon,
+      color: opt.color,
+    }))
+
     return {
       monster,
       damageTypeOptions: DAMAGE_PRESETS,
       conditionTypeOptions: CONDITION_PRESETS,
-      vulnerabilityDamageOptions,
-      vulnerabilityConditionOptions,
-      resistanceDamageOptions,
-      conditionResistancesOptions,
-      immunityDamageOptions,
-      conditionImmunitiesOptions,
+      vulnerabilityDamageEntries,
+      vulnerabilityConditionEntries,
+      resistanceDamageEntries,
+      conditionResistancesEntries,
+      immunityDamageEntries,
+      conditionImmunitiesEntries,
       resistanceModeOptions: RESISTANCE_MODE_OPTIONS,
       vulnerabilityModeOptions: VULNERABILITY_MODE_OPTIONS,
       conditionModeOptions: CONDITION_MODE_OPTIONS,
       saveOutcomeOptions: SAVE_OUTCOME_OPTIONS,
-      conditionVulnerabilityActionOptions: CONDITION_VULNERABILITY_ACTIONS,
-      acquiredConditionOptions: ACQUIRED_CONDITION_OPTIONS,
-      conditionDurationOptions: CONDITION_DURATION_OPTIONS,
+      conditionVulnerabilityActionEntries,
+      acquiredConditionEntries,
+      conditionDurationEntries,
       benefitOptions: BENEFIT_OPTIONS,
       benefitTriggerOptions: BENEFIT_TRIGGER_OPTIONS,
       getItemMode,

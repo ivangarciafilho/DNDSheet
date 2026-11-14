@@ -5,21 +5,22 @@
       <template #header>
         <div class="row items-center q-col-gutter-xs full-width">
           <q-input v-help="'Override the slot or cast count displayed for this spell level row.'" :model-value="amount(level)" type="number" min="0" dense outlined dark clearable :data-level-amount="level" label="Amount" :placeholder="map(levelMap)[level] === null ? 'Hidden' : 'Automatic'" class="col-3" @click.stop @update:model-value="value => setMap(levelMap, level, numberOrUndefined(value))"><template #append><q-btn flat dense size="xs" :icon="map(levelMap)[level] === null ? 'visibility_off' : 'visibility'" :aria-label="map(levelMap)[level] === null ? 'Use automatic amount' : 'Hide amount'" @click.stop="setMap(levelMap, level, map(levelMap)[level] === null ? undefined : null)" /></template></q-input>
-          <q-select v-help="'Override recovery cadence shown on this spell level group.'" :model-value="recovery(level)" :options="cadenceOptions" emit-value map-options dense outlined dark :data-level-cadence="level" label="Cadence" class="col-4" @click.stop @update:model-value="value => setMap(cadenceMap, level, value)" />
+          <div class="col-4" @click.stop><catalog-select v-help="'Override recovery cadence shown on this spell level group.'" :model-value="recovery(level)" :entries="cadenceOptions" preserve-order :searchable="false" dark :data-level-cadence="level" label="Cadence" @update:model-value="value => setMap(cadenceMap, level, value ? String(value) : undefined)" /></div>
           <span class="col text-subtitle2 text-amber-3">{{ level === 0 ? 'Cantrips' : 'Level ' + level }} <small class="text-grey-4">{{ assigned(level).length }} assigned{{ granted(level).length ? ' · ' + granted(level).length + ' granted' : '' }}</small></span>
           <q-checkbox v-help="'Mark all spells in this level group as castable using a Bonus Action.'" :model-value="!!map(bonusMap)[level]" :data-level-bonus="level" dense dark label="Bonus Action" class="col-auto" @click.stop @update:model-value="value => setMap(bonusMap, level, value)" />
         </div>
       </template>
       <div class="q-pa-sm">
         <div v-if="granted(level).length" class="q-mb-sm text-caption text-cyan-3" :data-source-grants="level"><b>Always prepared or known:</b> <i>{{ granted(level).join(', ') }}</i><q-tooltip>Granted by a class, subclass or species feature. These spells do not use your selection budget and remain available without manual assignment.</q-tooltip></div>
+        <!-- Exempt from CatalogSelect: uses custom #option="scope" slot with CastingSpellOption metadata layout. -->
         <q-select v-help="'Search and assign spells to this casting level row.'" :model-value="assigned(level)" :options="options(level)" multiple emit-value map-options use-chips use-input input-debounce="0" dense outlined dark label="Assign spells" @filter="(value, update) => update(() => queries[level] = value.toLowerCase().trim())" @update:model-value="value => setSpells(level, value)">
           <template #option="scope"><casting-spell-option :option="scope.opt" :item-props="scope.itemProps" /></template>
         </q-select>
         <div v-for="spellId in assigned(level)" :key="spellId" class="row q-col-gutter-xs items-center q-mt-xs" :data-source-spell="spellId">
           <q-input v-help="'Per-spell cast count exception when this spell differs from the row.'" :model-value="map(spellAmountMap)[spellId]" type="number" min="0" dense outlined dark clearable :data-spell-amount="spellId" label="Amount" :placeholder="map(spellAmountMap)[spellId] === null ? 'Hidden' : 'No own uses'" class="col-2" @click.stop @update:model-value="value => setMap(spellAmountMap, spellId, numberOrUndefined(value))"><template #append><q-btn flat dense size="xs" :icon="map(spellAmountMap)[spellId] === null ? 'visibility_off' : 'visibility'" :aria-label="map(spellAmountMap)[spellId] === null ? 'Clear spell amount' : 'Hide amount'" @click.stop="setMap(spellAmountMap, spellId, map(spellAmountMap)[spellId] === null ? undefined : null)" /></template></q-input>
-          <q-select v-help="'Per-spell recovery cadence exception.'" :model-value="map(spellCadenceMap)[spellId] || recovery(level)" :options="cadenceOptions" emit-value map-options dense outlined dark :data-spell-cadence="spellId" label="Spell recovery" class="col-3" @update:model-value="value => setMap(spellCadenceMap, spellId, value)" />
+          <catalog-select v-help="'Per-spell recovery cadence exception.'" :model-value="map(spellCadenceMap)[spellId] || recovery(level)" :entries="cadenceOptions" preserve-order :searchable="false" dark :data-spell-cadence="spellId" label="Spell recovery" class="col-3" @update:model-value="value => setMap(spellCadenceMap, spellId, value ? String(value) : undefined)" />
           <div class="col"><i>{{ spellId }}</i><div class="text-caption text-purple-3">{{ getSpellTagString(spellId) }}</div></div>
-          <q-select v-help="'Specify whether this individual spell inherits, requires, or excludes a Bonus Action.'" :model-value="map(spellBonusMap)[spellId] ?? 'inherit'" :options="actionOptions" emit-value map-options dense outlined dark :data-spell-bonus="spellId" label="Bonus Action" class="col-3" @update:model-value="value => setMap(spellBonusMap, spellId, value === 'inherit' ? undefined : value)" />
+          <catalog-select v-help="'Specify whether this individual spell inherits, requires, or excludes a Bonus Action.'" :model-value="spellActionValue(spellId)" :entries="actionOptions" preserve-order :searchable="false" dark :data-spell-bonus="spellId" label="Bonus Action" class="col-3" @update:model-value="value => setMap(spellBonusMap, spellId, value === 'inherit' || !value ? undefined : value === 'bonus')" />
           <q-input v-help="'Override extended casting time text shown inline after the spell name.'" :model-value="map('spellCastingTimeMap')[spellId]" dense outlined dark clearable label="Extended casting time" :placeholder="getSpellMetadata(spellId).extendedCastingTime || 'e.g. 1 minute'" class="col-12" @update:model-value="value => setMap('spellCastingTimeMap', spellId, String(value ?? '').trim() || undefined)" />
           <q-btn flat round dense icon="close" color="negative" :aria-label="'Remove ' + spellId" @click="setSpells(level, assigned(level).filter(id => id !== spellId))" />
         </div>
@@ -37,6 +38,7 @@ import { CADENCE_OPTIONS } from 'src/core/domain/catalogs/cadence'
 import type { CastingContribution } from 'src/core/usecases/AutoSyncSpellcasting'
 import { getSpellMetadata, getSpellTagString } from 'src/core/domain/spell-metadata'
 import CastingSpellOption from './CastingSpellOption.vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 interface RowSource {
  rulesEdition?:'2014'|'2024'; class?: string; className?: string; subclass?: string; level: number; resourceType?: string; refreshRate?: string; customRefreshRate?: string
  standard?: string[]; spells?: string[]; bypassSlotLevelFilter?: boolean; bypassSlotFilter?: boolean
@@ -50,7 +52,8 @@ interface RowSource {
 const props=defineProps<{source:RowSource;primary?:boolean;combinedLevel?:number;sourceCount?:number}>()
 const emit=defineEmits<{patch:[value:Partial<RowSource>]}>()
 const store=useSpellsStore(),levels=Array.from({length:10},(_,i)=>i),cadenceOptions=CADENCE_OPTIONS,queries=reactive<Record<number,string>>({})
-const actionOptions=[{label:'Inherit row',value:'inherit'},{label:'Action',value:false},{label:'Bonus Action',value:true}]
+const actionOptions=[{label:'Inherit row',value:'inherit'},{label:'Action',value:'action'},{label:'Bonus Action',value:'bonus'}]
+function spellActionValue(spellId:string) {const raw=map(spellBonusMap.value)[spellId];return raw===undefined?'inherit':raw?'bonus':'action'}
 const selection=computed(()=>({className:props.source.className||props.source.class||'',subclass:props.source.subclass,level:props.source.level,rulesEdition:props.source.rulesEdition,contribution:props.source.contribution,automaticGrants:props.source.automaticGrants,spellGrants:props.source.spellGrants,bypassSlotFilter:props.source.bypassSlotFilter||props.source.bypassSlotLevelFilter}))
 const levelMap=computed(()=>props.primary?'levelAmountMap':'levelAmounts'),cadenceMap=computed(()=>props.primary?'levelCadenceMap':'levelCadences'),bonusMap=computed(()=>props.primary?'bonusActionLevelMap':'levelBonusAction'),spellAmountMap=computed(()=>props.primary?'spellAmountMap':'spellAmounts'),spellBonusMap=computed(()=>props.primary?'spellBonusActionMap':'spellBonusAction'),spellCadenceMap='spellCadenceMap'
 function map(name:string):Record<string,any> { return (props.source as unknown as Record<string,any>)[name] || {} }

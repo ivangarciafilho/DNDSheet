@@ -7,8 +7,8 @@
         <q-btn flat dense no-caps icon="library_add" :label="$t('editor.spellcasting.custom.create')" @click="addSpell" />
       </div>
       <div v-if="showFilterPanel || monster.spellcasting.splitHighCadence" class="q-pa-sm bg-grey-9 text-white">
-        <q-toggle v-model="monster.spellcasting.splitHighCadence" dense label="Append restricted spells" />
-        <div class="row q-gutter-xs q-mt-xs"><q-checkbox v-for="cadence in restrictedCadences" :key="cadence" :model-value="isActive(cadence)" :label="cadence" dense @update:model-value="() => toggleCadence(cadence)" /></div>
+        <q-toggle v-model="monster.spellcasting.splitHighCadence" v-help="'Append high-cadence restricted spells onto the spellplate below the primary spellcasting group.'" dense label="Append restricted spells" />
+        <div class="row q-gutter-xs q-mt-xs"><q-checkbox v-for="cadence in restrictedCadences" :key="cadence" v-help="'Include restricted spells with this recovery cadence.'" :model-value="isActive(cadence)" :label="cadence" dense @update:model-value="() => toggleCadence(cadence)" /></div>
       </div>
       <at-will-casting-editor />
     </div>

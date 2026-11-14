@@ -1,5 +1,6 @@
 <template>
   <q-select
+    ref="selectRef"
     :model-value="modelValue"
     :options="filteredOptions"
     :label="label"
@@ -22,7 +23,10 @@
     map-options
     options-dense
     :data-catalog-select="catalogId || 'custom'"
-    @filter="onFilter"
+    @input="onNativeInput"
+    @input-value="onInputValue"
+    @popup-show="onPopupShow"
+    @popup-hide="onPopupHide"
     @update:model-value="onUpdate"
   >
     <q-tooltip v-if="help" class="dnd-tip">{{ help }}</q-tooltip>
@@ -80,6 +84,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import type { QSelect } from 'quasar'
 import { canonicalCatalog, type CanonicalCatalogEntry, type CatalogId } from 'src/core/domain/catalogs/enumerations'
 import { buildCatalogOptions, filterCatalogOptions } from 'src/core/domain/catalogs/catalog-select-model'
 
@@ -122,6 +127,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | number | (string | number)[] | null]
 }>()
 
+const selectRef = ref<QSelect | null>(null)
+const popupOpen = ref(false)
 const query = ref('')
 
 const effectiveAllowCustom = computed(() => {
@@ -141,10 +148,29 @@ const normalizedOptions = computed(() =>
 
 const filteredOptions = computed(() => filterCatalogOptions(normalizedOptions.value, query.value))
 
-function onFilter(val: string, update: (fn: () => void) => void) {
-  update(() => {
-    query.value = val
-  })
+function onPopupShow() {
+  popupOpen.value = true
+  query.value = ''
+}
+
+function onPopupHide() {
+  popupOpen.value = false
+  query.value = ''
+}
+
+function onInputValue(val: string) {
+  if (!props.searchable || !popupOpen.value) return
+  query.value = val
+}
+
+function onNativeInput(event: Event) {
+  if (!props.searchable || props.disable) return
+  const target = event.target as (HTMLInputElement & { qComposing?: boolean }) | null
+  if (!target || target.tagName !== 'INPUT' || target.qComposing) return
+  query.value = target.value
+  if (!popupOpen.value) {
+    selectRef.value?.showPopup()
+  }
 }
 
 function onUpdate(val: unknown) {

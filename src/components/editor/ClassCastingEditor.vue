@@ -24,30 +24,30 @@
                   <formula-field v-help="'Points spent on metamagic and flexible casting.'" path="spellcasting.metamagic.sorceryPoints" label="Sorcery Points" />
                 </div>
                 <div class="col-12 col-sm-3">
-                  <q-select
+                  <catalog-select
                     :model-value="cadenceKey(monster.spellcasting.metamagic.refreshRate, 'long_rest')"
                     v-help="'When sorcery points come back.'"
-                    :options="cadenceOptions" emit-value map-options label="Points Refresh"
-                    dense
-                    outlined
+                    :entries="cadenceOptions"
+                    preserve-order
+                    :searchable="false"
+                    label="Points Refresh"
                     dark
                     hide-bottom-space
-                    @update:model-value="value => monster.spellcasting.metamagic && (monster.spellcasting.metamagic.refreshRate = value)"
+                    @update:model-value="value => monster.spellcasting.metamagic && (monster.spellcasting.metamagic.refreshRate = String(value || 'long_rest'))"
                   />
                 </div>
                 <div class="col-12 col-sm-6">
-                  <q-select
-                    v-model="monster.spellcasting.metamagic.options"
+                  <catalog-select
+                    :model-value="monster.spellcasting.metamagic.options ?? []"
                     v-help="'Metamagic options the sorcerer knows; costs follow the selected rules edition.'"
-                    :options="metamagicOptionsList"
+                    :entries="metamagicOptionsList"
+                    preserve-order
                     multiple
-                    emit-value
-                    map-options
-                    use-chips label="Active Metamagic Techniques"
-                    dense
-                    outlined
+                    use-chips
+                    label="Active Metamagic Techniques"
                     dark
                     hide-bottom-space
+                    @update:model-value="value => monster.spellcasting.metamagic && (monster.spellcasting.metamagic.options = Array.isArray(value) ? value.map(String) : [])"
                   />
                 </div>
               </div>
@@ -64,16 +64,16 @@
     <q-expansion-item v-for="entry in sources" :key="entry.id" :label="sourceTitle(entry)" :caption="sourceCaption(entry)" default-opened dense :data-source-panel="entry.id" :data-casting-source-fold="entry.id" class="q-mb-sm">
       <div class="q-pa-sm bg-grey-10 text-white" :data-casting-source="entry.id">
         <div class="row items-center q-col-gutter-xs q-mb-sm">
-          <q-select v-help="'Edition rules governing automatic class and subclass spell grants.'" :model-value="entry.data.rulesEdition || '2014'" :options="['2014','2024']" dense outlined dark data-source-rules label="Subclass grant rules" class="col-5" @update:model-value="value => patch(entry, {rulesEdition:value})" />
+          <catalog-select v-help="'Edition rules governing automatic class and subclass spell grants.'" :model-value="entry.data.rulesEdition || '2014'" :entries="rulesEditionOptions" preserve-order :searchable="false" dark data-source-rules label="Subclass grant rules" class="col-5" @update:model-value="value => patch(entry, { rulesEdition: (value === '2024' ? '2024' : '2014') })" />
           <q-checkbox v-help="'Automatically include subclass and feature-granted spells on the sheet.'" :model-value="entry.data.automaticGrants !== false" dense dark data-source-grants-toggle label="Automatically add granted spells" class="col" @update:model-value="value => patch(entry, {automaticGrants:value})" />
           <q-btn flat dense round icon="delete" color="negative" aria-label="Remove source" :data-remove-casting-source="entry.id" @click="removeSource(entry.id)" />
         </div>
         <casting-feature-grants-editor :model-value="entry.data.spellGrants || []" class="q-mb-sm" @update:model-value="value => patch(entry,{spellGrants:value})" />
         <div class="row items-center q-col-gutter-xs">
-          <q-select v-help="'Base class or custom spellcasting tradition for this source.'" :model-value="selection(entry).className" :options="castingClassOptions" use-input new-value-mode="add-unique" emit-value map-options dense outlined dark label="Class" class="col-6" @update:model-value="value => changeClass(entry,value)" />
-          <q-select v-help="'Subclass selection used for expanded spell lists and features.'" :model-value="entry.data.subclass" :options="subclasses(entry)" use-input new-value-mode="add-unique" clearable dense outlined dark label="Subclass" class="col-6" @filter="(value, update) => update(() => subclassQueries[entry.id]=value)" @update:model-value="value => updateProgression(entry,{subclass:value || ''})" />
+          <catalog-select v-help="'Base class or custom spellcasting tradition for this source.'" :model-value="selection(entry).className" :entries="castingClassOptions" preserve-order allow-custom searchable dark label="Class" class="col-6" @update:model-value="value => changeClass(entry, value ? String(value) : undefined)" />
+          <catalog-select v-help="'Subclass selection used for expanded spell lists and features.'" :model-value="entry.data.subclass ?? ''" :entries="subclassEntries(entry)" allow-custom searchable clearable dark label="Subclass" class="col-6" @update:model-value="value => updateProgression(entry, { subclass: value ? String(value) : '' })" />
           <formula-field v-help="'Caster level contributed by this spellcasting source.'" :path="prefix(entry)+'.level'" label="Level" class="col-6" @applied="recalculateSlots" />
-          <q-select v-help="'Ability score used to calculate spell save DC and spell attack bonus.'" :model-value="entry.data.stat" :options="['INT','WIS','CHA','CON','STR','DEX']" dense outlined dark label="Casting stat" class="col-6" @update:model-value="value => patch(entry,{stat:value})" />
+          <catalog-select v-help="'Ability score used to calculate spell save DC and spell attack bonus.'" :model-value="entry.data.stat ?? ''" :entries="castingStatOptions" preserve-order :searchable="false" dark label="Casting stat" class="col-6" @update:model-value="value => patch(entry, { stat: String(value || 'INT') })" />
           <div v-for="field in overrides" :key="field.key" class="col-6">
             <formula-field v-if="entry.data[field.key]?.override" v-help="'Manual override formula for this casting statistic.'" :path="prefix(entry)+'.'+field.key+'.overrideValue'" :label="field.label">
               <template #append><q-btn flat dense round icon="lock" :aria-label="'Use automatic '+field.label" @click="toggleOverride(entry,field.key,false)" /></template>
@@ -106,14 +106,14 @@
         </div>
         <casting-learning-contribution-editor :model-value="entry.data.contribution" :source-count="sources.length" :highest-slot="sourceSpellCeiling(selection(entry),combinedLevel,sources.length)" :grant-level="grantLevel(entry)" @update:model-value="value => updateContribution(entry,value)">
         <div class="row items-center q-col-gutter-xs q-my-sm">
-          <q-select v-help="'Resource model used by this casting source (slots, pact, focus, or points).'" :model-value="entry.data.resourceType" :options="resourceTypeOptions" emit-value map-options dense outlined dark label="Source resource" class="col-6" @update:model-value="value => patch(entry,{resourceType:value})" />
-          <q-select v-help="'Rest or encounter cadence on which this source recovers expended casting uses.'" :model-value="cadenceKey(entry.data.refreshRate)" :options="cadenceOptions" emit-value map-options dense outlined dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry,{refreshRate:value})" />
+          <catalog-select v-help="'Resource model used by this casting source (slots, pact, focus, or points).'" :model-value="entry.data.resourceType ?? ''" :entries="resourceTypeOptions" preserve-order :searchable="false" dark label="Source resource" class="col-6" @update:model-value="value => patch(entry, { resourceType: String(value || '') })" />
+          <catalog-select v-help="'Rest or encounter cadence on which this source recovers expended casting uses.'" :model-value="cadenceKey(entry.data.refreshRate)" :entries="cadenceOptions" preserve-order :searchable="false" dark label="Source recovery" class="col-6" @update:model-value="value => patch(entry, { refreshRate: String(value || '') })" />
           <q-input v-if="['focus','points'].includes(entry.data.resourceType || '')" v-help="'Maximum focus or spell points granted by this custom casting source.'" :model-value="entry.data.resourceValue" type="number" min="0" dense outlined dark label="Authored resource maximum" class="col-12" @update:model-value="value => patch(entry,{resourceValue:Math.max(0,Number(value)||0)})" />
           <formula-field v-help="'Manual prepared spell limit override for this source.'" :path="prefix(entry)+'.preparedCountOverride'" label="Prepared spells count" data-source-prepared-count class="col-6">
             <template #after><q-btn flat dense icon="restart_alt" aria-label="Use automatic prepared spell count" @click="resetPrepared(entry)" /></template>
           </formula-field>
-          <q-select v-help="'Cadence on which prepared spells can be swapped for this source.'" :model-value="cadenceKey(entry.data.preparedInterval, 'long_rest')" :options="cadenceOptions" emit-value map-options dense outlined dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry,{preparedInterval:value})" />
-          <q-select v-help="'Override class spell list filtered when preparing spells for this source.'" :model-value="entry.data.preparedSpellList" :options="SrdCastingClassOptions.map(option => option.label)" clearable dense outlined dark label="Preparation spell list" class="col-6" @update:model-value="value => patch(entry,{preparedSpellList:value || undefined})" />
+          <catalog-select v-help="'Cadence on which prepared spells can be swapped for this source.'" :model-value="cadenceKey(entry.data.preparedInterval, 'long_rest')" :entries="cadenceOptions" preserve-order :searchable="false" dark label="Prepare spells every" data-source-prepared-cadence class="col-6" @update:model-value="value => patch(entry, { preparedInterval: String(value || 'long_rest') })" />
+          <catalog-select v-help="'Override class spell list filtered when preparing spells for this source.'" :model-value="entry.data.preparedSpellList ?? ''" :entries="preparationSpellListOptions" clearable searchable dark label="Preparation spell list" class="col-6" @update:model-value="value => patch(entry, { preparedSpellList: value ? String(value) : undefined })" />
           <q-input v-help="'Sorcery points attributed specifically to this casting source.'" :model-value="entry.data.sorceryPoints ?? ''" type="number" min="0" clearable dense outlined dark label="Source sorcery points" data-source-sorcery-points class="col-6" @update:model-value="value => patch(entry,{sorceryPoints:value === '' || value === null ? undefined : Math.max(0,Number(value)||0)})" />
           <q-checkbox v-help="'Allow assigning spells higher than the current maximum slot ceiling.'" :model-value="selection(entry).bypassSlotFilter" dense dark label="Allow assigning spells above the slot ceiling" class="col-12" @update:model-value="value => patch(entry,{[entry.primary?'bypassSlotLevelFilter':'bypassSlotFilter']:value})" />
         </div>
@@ -129,14 +129,14 @@
         <div class="row q-col-gutter-xs">
           <q-checkbox v-help="'Enable 2024 Wizard or feature-based cantrip swapping after rests.'" v-model="monster.spellcasting.cantripSwitch" label="Switch cantrips" dense class="col-4" />
           <formula-field v-if="monster.spellcasting.cantripSwitch" v-help="'Number of cantrips that can be swapped.'" path="spellcasting.cantripSwitchCount" label="Count" class="col-4" />
-          <q-select v-if="monster.spellcasting.cantripSwitch" v-help="'Cadence at which cantrips may be swapped.'" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :options="cadenceOptions" emit-value map-options label="Per" dense outlined dark class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = value)" />
+          <catalog-select v-if="monster.spellcasting.cantripSwitch" v-help="'Cadence at which cantrips may be swapped.'" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :entries="cadenceOptions" preserve-order :searchable="false" dark label="Per" class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = String(value || 'short_rest'))" />
         </div>
       </div>
     </q-expansion-item>
   </div>
 </template>
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
+import { computed } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useClasses } from 'src/data/CLASS'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -164,6 +164,7 @@ import { removeCastingSource } from 'src/core/domain/casting-source-list'
 import { CADENCE_OPTIONS, cadenceKey } from 'src/core/domain/catalogs/cadence'
 import { useMonsterSessionStore } from 'src/stores/monster-session'
 import MonsterTextEditor from './MonsterTextEditor.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import FormulaField from '../kit/FormulaField.vue'
 import CastingSourceSpellRows from './CastingSourceSpellRows.vue'
 import CastingLearningContributionEditor from './CastingLearningContributionEditor.vue'
@@ -191,19 +192,19 @@ const sources=computed<Entry[]>(()=>[
 ])
 const combined=computed(()=>sources.value.length ? aggregateSpellcastingSources(monster.spellcasting,monster.stats,monster.proficiency) : undefined)
 const combinedLevel=computed(()=>combined.value?.combinedCasterLevel)
-const subclassQueries=reactive<Record<string,string>>({})
 const cadenceOptions=CADENCE_OPTIONS
+const rulesEditionOptions=[{label:'2014',value:'2014'},{label:'2024',value:'2024'}]
+const castingStatOptions=['INT','WIS','CHA','CON','STR','DEX'].map(stat=>({label:stat,value:stat}))
+const preparationSpellListOptions=computed(()=>SrdCastingClassOptions.value.map(option=>({label:option.label,value:option.label})))
 const resourceTypeOptions=[{label:'Focus Points',value:'focus'},{label:'Pact Magic Slots',value:'pact'},{label:'Spell Points',value:'points'},{label:'Spell Slots',value:'slots'}]
 const overrides=[{key:'save' as const,label:'Save DC'},{key:'attack' as const,label:'Spell attack'}]
 const prefix=(entry:Entry)=>entry.primary?'spellcasting':'spellcasting.classes[id='+encodeURIComponent(entry.id)+']'
 function selection(entry:Entry) {return {...entry.data,className:entry.primary?entry.data.class||'':entry.data.className,spells:entry.primary?entry.data.standard:entry.data.spells,bypassSlotFilter:entry.primary?entry.data.bypassSlotLevelFilter:entry.data.bypassSlotFilter}}
 function sourceTitle(entry:Entry){const source=selection(entry);return [source.className||'Custom casting source',source.subclass].filter(Boolean).join(' / ')+' - Level '+source.level}
 function sourceCaption(entry:Entry){const source=selection(entry);return (source.stat||'INT')+' - '+(source.spells?.length||0)+' assigned spells'}
-function subclasses(entry:Entry){
-  const query=(subclassQueries[entry.id]||'').toLowerCase()
+function subclassEntries(entry:Entry){
   return getCatalogSubclassesForClass(selection(entry).className)
-    .map((item) => item.subclass)
-    .filter(value=>value.toLowerCase().includes(query))
+    .map((item) => ({ value: item.subclass, label: item.subclass }))
 }
 function patch(entry:Entry,value:object){Object.assign(entry.data,value)}
 function updateProgression(entry:Entry,value:object){patch(entry,value);recalculateSlots()}

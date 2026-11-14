@@ -66,17 +66,22 @@
             :key="innateList.id"
           >
             <formula-field
+              v-help="'Number of innate casts allowed per recharge interval (ignored for At Will).'"
               :path="`spellcasting.atWill[id=${encodeURIComponent(innateList.id)}].count`"
               :label="$t('editor.spellcasting.innate.casts')"
               class="col-2 q-pa-sm"
             />
-            <q-select
-              v-model="innateList.rate"
-              :display-value="$t(`recharge.${innateList.rate}`)"
-              :options="rechargeTimeOptions"
-              emit-value
+            <catalog-select
+              :model-value="innateList.rate ?? ''"
+              v-help="'Recovery schedule for this group of innate spells.'"
+              :entries="rechargeEntries"
+              preserve-order
+              :outlined="false"
+              :searchable="false"
+              dark
               :label="$t('editor.spellcasting.innate.recharge')"
               class="col-3 q-pa-sm"
+              @update:model-value="value => (innateList.rate = String(value || ''))"
             />
             <searchable-spell-select
               :model-value="innateList.spells"
@@ -123,12 +128,13 @@ import { useSpellsStore, SpellOption } from 'src/stores/spells-store'
 import { ref, computed } from 'vue'
 import { spellArrayFilter } from '../filters'
 import MonsterTextEditor from './MonsterTextEditor.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import FormulaField from '../kit/FormulaField.vue'
 import SearchableSpellSelect from './widgets/SearchableSpellSelect.vue'
 
 export default defineComponent({
   name: 'AtWillCastingEditor',
-  components: { MonsterTextEditor, SearchableSpellSelect, FormulaField },
+  components: { CatalogSelect, MonsterTextEditor, SearchableSpellSelect, FormulaField },
   setup() {
     const showSlots = ref(false)
     const classFilter = ref(false)
@@ -136,6 +142,15 @@ export default defineComponent({
     const monster = useMonsterStore()
     const spells = useSpellsStore()
     const { rechargeTimeOptions } = useRechargeTimes()
+    const rechargeEntries = computed(() =>
+      rechargeTimeOptions.value.map((o) => ({
+        value: o.value,
+        label: o.label,
+        group: o.category,
+        icon: o.icon,
+        color: o.color,
+      }))
+    )
     const classes = useClasses()
     const baseSpells = computed<SpellOption[]>(() =>
       classFilter.value
@@ -152,6 +167,7 @@ export default defineComponent({
 
     return {
       monster,
+      rechargeEntries,
       rechargeTimeOptions,
       spellOptions,
       spellFilter,

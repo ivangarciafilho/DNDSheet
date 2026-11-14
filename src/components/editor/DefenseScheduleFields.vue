@@ -1,19 +1,39 @@
 <template>
   <div class="row q-col-gutter-xs q-mt-xs" :data-defense-schedule="effect">
-    <q-select :model-value="schedule?.cadence" :options="BASIC_RIDER_CADENCES" emit-value map-options clearable
-      dense outlined :label="label + ' cadence'" class="col-12 col-sm-6" @update:model-value="update('cadence', $event)" />
-    <q-select :model-value="schedule?.timing" :options="BASIC_RIDER_TIMINGS" clearable
-      dense outlined :label="label + ' timing'" class="col-12 col-sm-6" @update:model-value="update('timing', $event)" />
+    <catalog-select
+      :model-value="schedule?.cadence ?? ''"
+      v-help="'How often this defense rider triggers or refreshes.'"
+      :entries="BASIC_RIDER_CADENCES"
+      preserve-order
+      clearable
+      :searchable="false"
+      :label="label + ' cadence'"
+      class="col-12 col-sm-6"
+      @update:model-value="value => update('cadence', value ? String(value) : null)"
+    />
+    <catalog-select
+      :model-value="schedule?.timing ?? ''"
+      v-help="'Trigger window or action cost when this defense effect applies.'"
+      :entries="timingEntries"
+      preserve-order
+      allow-custom
+      clearable
+      :label="label + ' timing'"
+      class="col-12 col-sm-6"
+      @update:model-value="value => update('timing', value ? String(value) : null)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { BASIC_RIDER_CADENCES, BASIC_RIDER_TIMINGS, type DefenseEffect, type RiderSchedule } from 'src/core/domain/basic-riders'
 
 const props = defineProps<{ effect: DefenseEffect; label: string }>()
 const monster = useMonsterStore()
+const timingEntries = BASIC_RIDER_TIMINGS.map((timing) => ({ value: timing, label: timing }))
 const schedule = computed(() => monster.defenseSchedules?.[props.effect])
 
 function update(field: keyof RiderSchedule, value: string | null) {

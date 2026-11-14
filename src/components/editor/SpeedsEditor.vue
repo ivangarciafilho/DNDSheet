@@ -25,24 +25,21 @@
         </div>
         <div class="row items-center q-col-gutter-xs q-mb-sm">
           <div class="col-12">
-            <q-select
-              dense
-              outlined
+            <catalog-select
+              v-help="'Add walk, burrow, climb, fly or swim speed, or type a custom one.'"
               :model-value="null"
-              :options="availableSpeedOptions"
-              use-input
-              input-debounce="0"
-              new-value-mode="add-unique"
-              label="Add Speed (select or type to add)..." v-help="'Add walk, burrow, climb, fly or swim speed, or type a custom one.'"
-              placeholder="Select or type movement type (e.g. fly, swim, burrow, climb)"
+              :entries="availableSpeedEntries"
+              allow-custom
+              searchable
               clearable
-              @update:model-value="onSpeedSelected"
-              @filter="movementFilter"
+              label="Add Speed (select or type to add)..."
+              placeholder="Select or type movement type (e.g. fly, swim, burrow, climb)"
+              @update:model-value="val => onSpeedSelected(val ? String(val) : null)"
             >
               <template #prepend>
                 <q-icon name="add" />
               </template>
-            </q-select>
+            </catalog-select>
           </div>
         </div>
 
@@ -64,20 +61,19 @@
             >
               <div class="row items-center q-col-gutter-xs">
                 <div class="col-12 col-sm-4">
-                  <q-select
-                    dense
-                    outlined
-                    v-model="speed.type"
-                    :options="filteredMovementOptions"
-                    use-input
-                    input-debounce="0"
+                  <catalog-select
+                    v-help="'Movement mode name (walk, fly, swim, climb, burrow, or custom).'"
+                    :model-value="speed.type"
+                    :entries="defaultSpeedEntries"
+                    allow-custom
+                    searchable
                     :label="$t('monster.movement.type.label')"
-                    new-value-mode="add-unique"
-                    @filter="movementFilter"
+                    @update:model-value="val => (speed.type = String(val || 'walk'))"
                   />
                 </div>
                 <div class="col-12 col-sm-3">
                   <q-select
+                    v-help="'Movement speed in feet.'"
                     dense
                     outlined
                     :model-value="speed.speed"
@@ -199,39 +195,40 @@
                 </div>
                 <template v-if="speedTraversal.moveThroughCreaturesShunt">
                   <div class="col-12 col-sm-6">
-                    <q-select
-                      v-model="speedTraversal.shuntDestination"
-                      :options="shuntDestinationOptions"
-                      emit-value
-                      map-options
-                      dense
-                      outlined
-                      label="Shunt Outcome" v-help="'What happens to a creature pushed out when the movement ends inside it.'"
+                    <catalog-select
+                      v-help="'What happens to a creature pushed out when the movement ends inside it.'"
+                      :model-value="speedTraversal.shuntDestination ?? 'nearest_unoccupied'"
+                      :entries="shuntDestinationOptions"
+                      preserve-order
+                      :searchable="false"
+                      label="Shunt Outcome"
+                      @update:model-value="val => (speedTraversal.shuntDestination = (val === 'ethereal_plane' ? 'ethereal_plane' : 'nearest_unoccupied'))"
                     />
                   </div>
                   <div v-if="speedTraversal.shuntDestination !== 'ethereal_plane'" class="col-12 col-sm-6">
-                    <q-select
-                      v-model="speedTraversal.moveThroughCreaturesShuntDamage"
-                      :options="shuntDamageOptions"
-                      dense
-                      outlined
-                      use-input
-                      new-value-mode="add-unique"
-                      label="Shunt Damage" v-help="'Damage dealt to a creature shunted out of this space.'"
+                    <catalog-select
+                      v-help="'Damage dealt to a creature shunted out of this space.'"
+                      :model-value="speedTraversal.moveThroughCreaturesShuntDamage ?? ''"
+                      :entries="shuntDamageEntries"
+                      preserve-order
+                      allow-custom
+                      searchable
+                      label="Shunt Damage"
                       placeholder="e.g. 1d10 force"
+                      @update:model-value="val => (speedTraversal.moveThroughCreaturesShuntDamage = String(val || ''))"
                     />
                   </div>
                 </template>
               </template>
               <div class="col-12 col-sm-6">
-                <q-select
-                  v-model="speedTraversal.etherealJaunt"
-                  :options="etherealJauntOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Planar Shift (Material / Ethereal)" v-help="'Can shift between the Material and Ethereal planes while moving.'"
+                <catalog-select
+                  v-help="'Can shift between the Material and Ethereal planes while moving.'"
+                  :model-value="speedTraversal.etherealJaunt ?? 'none'"
+                  :entries="etherealJauntOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Planar Shift (Material / Ethereal)"
+                  @update:model-value="val => (speedTraversal.etherealJaunt = String(val || 'none') as NonNullable<MonsterSpeedTraversal['etherealJaunt']>)"
                 />
               </div>
             </div>
@@ -247,14 +244,14 @@
             </div>
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-6">
-                <q-select
-                  v-model="speedTraversal.aquaticBreathing"
-                  :options="aquaticBreathingOptions"
-                  emit-value
-                  map-options
-                  dense
-                  outlined
-                  label="Aquatic Breathing" v-help="'Can breathe water (and whether it can still breathe air).'"
+                <catalog-select
+                  v-help="'Can breathe water (and whether it can still breathe air).'"
+                  :model-value="speedTraversal.aquaticBreathing ?? 'none'"
+                  :entries="aquaticBreathingOptions"
+                  preserve-order
+                  :searchable="false"
+                  label="Aquatic Breathing"
+                  @update:model-value="val => (speedTraversal.aquaticBreathing = String(val || 'none') as NonNullable<MonsterSpeedTraversal['aquaticBreathing']>)"
                 />
               </div>
               <div v-if="speedTraversal.aquaticBreathing === 'hold_breath'" class="col-12 col-sm-6">
@@ -520,27 +517,28 @@
         >
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-3">
-              <q-select
-                v-model="rider.action"
-                :options="actionTriggerOptions"
-                dense
-                outlined
+              <catalog-select
+                v-help="'What triggers this traversal option.'"
+                :model-value="rider.action"
+                :entries="actionTriggerEntries"
+                preserve-order
+                allow-custom
+                searchable
                 dark
-                emit-value
-                map-options
-                use-input
-                new-value-mode="add-unique"
-                label="Trigger / Action" v-help="'What triggers this traversal option.'"
+                label="Trigger / Action"
+                @update:model-value="val => (rider.action = String(val || 'Dash'))"
               />
             </div>
             <div class="col-6 col-sm-2">
-              <q-select
-                v-model="rider.actionType"
-                :options="['Action', 'Bonus Action', 'Reaction', 'Free']"
-                dense
-                outlined
+              <catalog-select
+                v-help="'Which part of the turn this costs: action, bonus action, reaction or free.'"
+                :model-value="rider.actionType"
+                :entries="actionEconomyEntries"
+                preserve-order
+                :searchable="false"
                 dark
-                label="Economy" v-help="'Which part of the turn this costs: action, bonus action, reaction or free.'"
+                label="Economy"
+                @update:model-value="val => (rider.actionType = (String(val || 'Bonus Action') as SpeedActionRider['actionType']))"
               />
             </div>
             <div class="col-6 col-sm-6">
@@ -582,7 +580,7 @@
           <!-- Live Preview Banner for this rider -->
           <div class="row items-center justify-between q-mt-xs q-px-xs text-xs text-grey-4">
             <span>Rendered Vital: <b class="text-cyan-3">{{ formatSpeedRiderPreview(rider) }}</b></span>
-            <div class="row items-center q-gutter-x-xs flex-wrap">
+            <div class="row items-center q-gutter-x-xs editor-fit-wrap">
               <q-btn v-help="$t('help.speeds.chipBa')" dense flat size="xs" color="cyan-3" label="+ BA" @click="appendToken(rider, 'as a Bonus Action')" />
               <q-btn v-help="$t('help.speeds.chipTempHp')" dense flat size="xs" color="cyan-3" label="+ Temp HP" @click="appendToken(rider, 'Gain 10 Temporary Hit Points')" />
               <q-btn v-help="$t('help.speeds.chipObscured')" dense flat size="xs" color="cyan-3" label="+ Obscured" @click="appendToken(rider, 'Creatures 5ft of you are lightly obscured')" />
@@ -604,13 +602,13 @@
 
 <script lang="ts">
 import BasicRidersEditor from './BasicRidersEditor.vue'
+import CatalogSelect from '../kit/CatalogSelect.vue'
 import MechanicTextEditor from './MechanicTextEditor.vue'
 import MechanicSelectEditor from './MechanicSelectEditor.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent } from 'vue'
 import { STANDARD_MOVEMENTS } from 'src/data/MOVEMENT'
 import { useI18n } from 'vue-i18n'
-import { basicArrayFilter } from '../filters'
 import { validateNumber } from './numberInput'
 import { MonsterSpeedTraversal } from '../models'
 import SwapButtons from './widgets/SwapButtons.vue'
@@ -622,7 +620,7 @@ import {
 
 export default defineComponent({
   name: 'SpeedsEditor',
-  components: { BasicRidersEditor, MechanicSelectEditor, MechanicTextEditor, SwapButtons },
+  components: { BasicRidersEditor, CatalogSelect, MechanicSelectEditor, MechanicTextEditor, SwapButtons },
   setup() {
     const { t } = useI18n()
     const monster = useMonsterStore()
@@ -648,17 +646,17 @@ export default defineComponent({
     const defaultSpeedOptions = computed(() => {
       return STANDARD_MOVEMENTS.map((m) => t(`monster.movement.type.${m}`)).sort((a, b) => a.localeCompare(b))
     })
-    const filteredMovementOptions = ref(Array.from(defaultSpeedOptions.value))
 
-    const availableSpeedOptions = computed(() => {
-      const existing = new Set((monster.speeds || []).map((s) => (s.type || 'walk').toLowerCase()))
-      return filteredMovementOptions.value.filter((opt) => !existing.has(opt.toLowerCase()))
-    })
-
-    const movementFilter = basicArrayFilter(
-      defaultSpeedOptions,
-      filteredMovementOptions
+    const defaultSpeedEntries = computed(() =>
+      defaultSpeedOptions.value.map((opt) => ({ value: opt, label: opt }))
     )
+
+    const availableSpeedEntries = computed(() => {
+      const existing = new Set((monster.speeds || []).map((s) => (s.type || 'walk').toLowerCase()))
+      return defaultSpeedOptions.value
+        .filter((opt) => !existing.has(opt.toLowerCase()))
+        .map((opt) => ({ value: opt, label: opt }))
+    })
 
     const shuntDestinationOptions = [
       { label: 'Nearest Unoccupied Space (Deals Damage)', value: 'nearest_unoccupied' },
@@ -793,6 +791,10 @@ const shuntDamageOptions = [
       return formatSpeedActionRider(rider)
     }
 
+    const shuntDamageEntries = shuntDamageOptions.map((value) => ({ value, label: value }))
+    const actionTriggerEntries = actionTriggerOptions.map((value) => ({ value, label: value }))
+    const actionEconomyEntries = ['Action', 'Bonus Action', 'Reaction', 'Free'].map((value) => ({ value, label: value }))
+
     return {
       monster,
       dashRiderPresets,
@@ -801,7 +803,8 @@ const shuntDamageOptions = [
       speeds: computed(() => monster.speeds),
       speedTraversal,
       speedPresetOptions,
-      actionTriggerOptions,
+      actionTriggerEntries,
+      actionEconomyEntries,
       actionRiders,
       SPEED_ACTION_RIDER_PRESETS,
       addCustomActionRider,
@@ -811,11 +814,10 @@ const shuntDamageOptions = [
       formatSpeedRiderPreview,
       addSpeed: monster.addSpeed,
       deleteSpeed: monster.deleteSpeed,
-      movementFilter,
-      filteredMovementOptions,
-      availableSpeedOptions,
+      defaultSpeedEntries,
+      availableSpeedEntries,
       shuntDestinationOptions,
-      shuntDamageOptions,
+      shuntDamageEntries,
       etherealJauntOptions,
       aquaticBreathingOptions,
       onSpeedSelected,
