@@ -329,6 +329,8 @@ function rangeValue(input: unknown): RangeSpec | undefined {
   const distance = parseAbilityNumber(input.distance)
   if (!distance.ok || distance.value === undefined) return undefined
   const range: RangeSpec = { distance: distance.value, unit: input.unit === 'mi' ? 'mi' : 'ft' }
+  const longDistance = parseAbilityNumber(input.longDistance)
+  if (longDistance.ok && longDistance.value !== undefined) range.longDistance = longDistance.value
   if (input.relation === 'within' || input.relation === 'reach' || input.relation === 'range') range.relation = input.relation
   if (trimmed(input.origin)) range.origin = trimmed(input.origin)
   return range

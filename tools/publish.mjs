@@ -13,7 +13,8 @@ const repo = path.resolve(args.repo || 'F:/AI_Resources/DNDSheet')
 const remote = args.remote || 'https://github.com/ivangarciafilho/DNDSheet.git'
 const fail = (message) => { console.error('refusing: ' + message); process.exit(1) }
 if (!args.build || !args.slug || !args.base) fail('need --build, --slug and --base')
-const tag = `rc-2.4.3-build-${args.build}-${args.slug}`
+const version = JSON.parse(fs.readFileSync(path.join(tree, 'package.json'), 'utf8')).version
+const tag = `rc-${version}-build-${args.build}-${args.slug}`
 const git = (gitArgs, env = {}) => execFileSync('git', ['-C', repo, ...gitArgs], { env: { ...process.env, ...env }, encoding: 'utf8' }).trim()
 
 // 1. The gate must have passed on this tree, and its outputs must be newer than every source file.

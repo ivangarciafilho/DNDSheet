@@ -677,6 +677,7 @@ export type AbilityNumber = number | string
 
 export interface RangeSpec {
   distance: AbilityNumber
+  longDistance?: AbilityNumber
   unit: 'ft' | 'mi'
   relation?: 'within' | 'reach' | 'range'
   origin?: string

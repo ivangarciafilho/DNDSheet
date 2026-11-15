@@ -70,7 +70,7 @@ export class LocalStorageAdapter implements StoragePort {
   }
 
   async saveMonster(monster: Monster): Promise<void> {
-    const id = (monster as any).id || (monster as any).name || 'unnamed'
+    const id = monster.id || monster.name || 'unnamed'
     const payload = {
       ...monster,
       id,

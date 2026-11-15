@@ -7,8 +7,8 @@ import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts
 
 export const CURRENT_MONSTER_VERSION = 11
 
-export function migrateMonsterSchema(raw: any): Monster {
-  const monster = JSON.parse(JSON.stringify(raw))
+export function migrateMonsterSchema(raw: unknown): Monster {
+  const monster = JSON.parse(JSON.stringify(raw ?? {}))
 
   if (!monster.saveVersion) {
     monster.saveVersion = 1

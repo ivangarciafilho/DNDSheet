@@ -128,6 +128,9 @@
             <div class="col-5">
               <q-input v-help="$t('help.composer.distance')" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
             </div>
+            <div v-if="draft.relation !== 'reach'" class="col-3">
+              <q-input v-help="'Optional long range for ranged attacks: 80 with long 320 prints 80/320 ft.'" v-model="draft.longDistance" data-range-long dense outlined dark label="Long" />
+            </div>
             <div class="col-auto self-center">
               <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
             </div>

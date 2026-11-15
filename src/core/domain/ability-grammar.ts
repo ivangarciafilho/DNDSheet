@@ -118,15 +118,18 @@ const inferReach = (range: string | undefined): AttackReach | undefined => {
   return undefined
 }
 
-const parseDistance = (input: string | undefined): { distance: number; unit: 'ft' | 'mi'; relation?: 'within' | 'reach' | 'range' } | undefined => {
-  const match = String(input ?? '').trim().match(/^(?:(within|reach|range)\s+)?(\d+(?:\.\d+)?)\s*(ft\.?|feet|foot|mi\.?|miles?)$/i)
+const parseDistance = (input: string | undefined): { distance: number; longDistance?: number; unit: 'ft' | 'mi'; relation?: 'within' | 'reach' | 'range' } | undefined => {
+  const match = String(input ?? '').trim().match(/^(?:(within|reach|range)\s+)?(\d+(?:\.\d+)?)(?:\s*\/\s*(\d+(?:\.\d+)?))?\s*(ft\.?|feet|foot|mi\.?|miles?)$/i)
   if (!match) return undefined
-  const unitText = match[3].toLowerCase()
-  return {
+  const unitText = match[4].toLowerCase()
+  const parsed: { distance: number; longDistance?: number; unit: 'ft' | 'mi'; relation?: 'within' | 'reach' | 'range' } = {
     distance: Number(match[2]),
     unit: unitText.startsWith('mi') ? 'mi' : 'ft',
     relation: match[1]?.toLowerCase() as 'within' | 'reach' | 'range' | undefined,
   }
+  // "80/320 ft." is the SRD normal/long weapon range pair.
+  if (match[3] !== undefined) parsed.longDistance = Number(match[3])
+  return parsed
 }
 
 const SMALL_NUMBER_VALUES: Record<string, number> = {
@@ -247,6 +250,7 @@ const normalizeTargeting = (input: unknown): AbilityTargeting | undefined => {
   if (isRecord(input.range) && validAbilityNumber(input.range.distance) && (input.range.unit === 'ft' || input.range.unit === 'mi')) {
     result.range = {
       distance: input.range.distance,
+      longDistance: validAbilityNumber(input.range.longDistance) ? input.range.longDistance : undefined,
       unit: input.range.unit,
       relation: input.range.relation === 'within' || input.range.relation === 'reach' || input.range.relation === 'range'
         ? input.range.relation
@@ -390,13 +394,15 @@ const normalizeKind = (kind: string, count: { text: string; number?: number } | 
   return value
 }
 
-const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: AbilityRenderContext): string => {
+const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: AbilityRenderContext, longDistance?: number | string): string => {
   const value = valueText(distance, context, 'number', 'targeting.range.distance')
-  return `${value} ${unit === 'ft' ? 'ft.' : Number(plainValueText(distance, context)) === 1 ? 'mile' : 'miles'}`.trim()
+  const pair = longDistance !== undefined ? `/${valueText(longDistance, context, 'number', 'targeting.range.longDistance')}` : ''
+  return `${value}${pair} ${unit === 'ft' ? 'ft.' : Number(plainValueText(distance, context)) === 1 ? 'mile' : 'miles'}`.trim()
 }
 
 export const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: AbilityRenderContext = {}): string => {
-  const distance = formatDistance(range.distance, range.unit, context)
+  // A long range only exists for ranged attacks; reach never pairs.
+  const distance = formatDistance(range.distance, range.unit, context, range.relation === 'reach' ? undefined : range.longDistance)
   const relation = range.relation
   const lead = relation ? `${relation} ` : ''
   const origin = range.origin?.trim() ? ` of ${range.origin.trim()}` : ''
@@ -580,7 +586,7 @@ const formatText2024Range = (ability: AbilityProjection, context: AbilityRenderC
   const range = ability.targeting?.range
   if (!range) return ''
   const label = ability.attackReach === 'melee' ? 'reach' : 'range'
-  return `${label} ${formatDistance(range.distance, range.unit, context)}`
+  return `${label} ${formatDistance(range.distance, range.unit, context, label === 'range' ? range.longDistance : undefined)}`
 }
 
 export function text2024(action: Partial<MonsterAction>, context: AbilityRenderContext = {}, options: Text2024Options = {}): string {

@@ -59,6 +59,17 @@ async function check(name, fn) {
   return ok
 }
 
+// C12: the SPA and Pages builds run the same browser checks.
+const BROWSER_SUITE = [
+  'node test/native-monster-roundtrip-browser-smoke.mjs', 'node test/statblock-fit-browser-smoke.mjs', 'node test/basic-riders-browser-smoke.mjs',
+  'node test/emergency-skills-browser-smoke.js', 'node test/emergency-spellcasting-browser-smoke.js', 'node test/casting-sources-browser-smoke.js',
+  'node test/shared-casting-editor-browser-smoke.js', 'node test/print-parity-browser-smoke.js', 'node test/emergency-rich-mechanics-browser-smoke.js',
+  'node test/emergency-containers-browser-smoke.js', 'node test/emergency-numeric-presentation-browser-smoke.js', 'node test/outcome-lifecycle-browser-smoke.js',
+  'node test/statblock-help-browser-smoke.js', 'node --experimental-strip-types test/release-matrix-browser-smoke.js', 'node tools/qa/overflow-probe.js',
+  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs',
+  'node test/build248-envelope-workflow-browser-smoke.js', 'node test/build249-workflow-browser-smoke.js', 'node test/budget-browser-probe.js', 'node test/build250-workflow-browser-smoke.js',
+].join(' && ')
+
 await run('core', 'npm test')
 await run('lint', 'npx eslint --ext .js,.ts,.vue src test')
 await run('typecheck', 'npm run typecheck')
@@ -66,7 +77,7 @@ if (await run('build', 'npx quasar build')) {
   const spa = await serve('dist/spa', 9230, '')
   const url = 'http://127.0.0.1:9230/index.html#/'
   await run('fuzz', 'node test/exhaustive-ui-fuzz.js', { DNDSHEET_E2E_URL: url })
-  await run('help', 'node test/native-monster-roundtrip-browser-smoke.mjs && node test/statblock-fit-browser-smoke.mjs && node test/basic-riders-browser-smoke.mjs && node test/emergency-skills-browser-smoke.js && node test/emergency-spellcasting-browser-smoke.js && node test/casting-sources-browser-smoke.js && node test/shared-casting-editor-browser-smoke.js && node test/print-parity-browser-smoke.js && node test/emergency-rich-mechanics-browser-smoke.js && node test/emergency-containers-browser-smoke.js && node test/emergency-numeric-presentation-browser-smoke.js && node test/outcome-lifecycle-browser-smoke.js && node test/statblock-help-browser-smoke.js && node --experimental-strip-types test/release-matrix-browser-smoke.js && node tools/qa/overflow-probe.js && node test/build248-envelope-workflow-browser-smoke.js && node test/build249-workflow-browser-smoke.js && node test/budget-browser-probe.js && node test/build250-workflow-browser-smoke.js', { DNDSHEET_E2E_URL: url })
+  await run('help', BROWSER_SUITE, { DNDSHEET_E2E_URL: url })
   await run('spell', 'node test/spell-plate-browser-smoke.js', { DNDSHEET_E2E_URL: url })
   spa.close()
 }
@@ -78,7 +89,7 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
     const mask = await fetch(`${origin}/homebrew/masks/watercolor_splash_center.png`)
     return index.includes(`${PAGES_BASE}/assets/`) && mask.status === 200
   })
-  await run('pages-fuzz', 'node test/exhaustive-ui-fuzz.js && node test/native-monster-roundtrip-browser-smoke.mjs && node test/statblock-fit-browser-smoke.mjs && node test/basic-riders-browser-smoke.mjs && node test/emergency-skills-browser-smoke.js && node test/emergency-spellcasting-browser-smoke.js && node test/casting-sources-browser-smoke.js && node test/shared-casting-editor-browser-smoke.js && node test/print-parity-browser-smoke.js && node test/emergency-rich-mechanics-browser-smoke.js && node test/emergency-containers-browser-smoke.js && node test/emergency-numeric-presentation-browser-smoke.js && node test/macro-autocomplete-browser-smoke.mjs && node test/formatting-reaches-statblock-browser-smoke.mjs && node test/build248-envelope-workflow-browser-smoke.js && node test/build249-workflow-browser-smoke.js && node test/budget-browser-probe.js && node test/build250-workflow-browser-smoke.js', { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
+  await run('pages-fuzz', `node test/exhaustive-ui-fuzz.js && ${BROWSER_SUITE}`, { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
   pages.close()
 }
 

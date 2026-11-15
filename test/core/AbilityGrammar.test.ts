@@ -294,3 +294,48 @@ test('outcomePhrase strips whitespace before colon in outcome labels', () => {
   assert.ok(phrases[0].startsWith('On Success:'))
   assert.ok(!phrases[0].includes('On Success :'))
 })
+
+test('BS-39: rangePhrase formats paired normal and long range accurately', () => {
+  const paired = action({
+    actionType: 'weapon_attack',
+    attackReach: 'ranged',
+    attackSource: 'weapon',
+    targeting: {
+      count: 1,
+      kind: 'target',
+      range: { distance: 80, longDistance: 320, unit: 'ft', relation: 'range' },
+    },
+  })
+  const projection = inferAbility(paired)
+  const rendered = scopePhrase(projection)
+  assert.ok(rendered.includes('range 80/320 ft.'))
+})
+
+test('BS-39: legacy range text with a normal/long pair parses into longDistance', () => {
+  const legacy = action({ actionType: 'weapon_attack', attackReach: 'ranged', attackSource: 'weapon', targeting: undefined, range: 'range 80/320 ft.' } as Partial<MonsterAction>)
+  const projection = inferAbility(legacy)
+  assert.deepStrictEqual(
+    { distance: projection.targeting?.range?.distance, longDistance: projection.targeting?.range?.longDistance },
+    { distance: 80, longDistance: 320 },
+  )
+})
+
+test('BS-39: text2024 prints the paired range on ranged attacks', () => {
+  const paired = action({
+    actionType: 'weapon_attack',
+    attackReach: 'ranged',
+    attackSource: 'weapon',
+    targeting: { count: 1, kind: 'target', range: { distance: 80, longDistance: 320, unit: 'ft', relation: 'range' } },
+  })
+  assert.match(text2024(paired), /range 80\/320 ft\./)
+})
+
+test('BS-39: a long range never prints on melee reach', () => {
+  const melee = action({
+    actionType: 'weapon_attack',
+    attackReach: 'melee',
+    attackSource: 'weapon',
+    targeting: { count: 1, kind: 'target', range: { distance: 5, longDistance: 20, unit: 'ft', relation: 'reach' } },
+  })
+  assert.doesNotMatch(text2024(melee), /5\/20/)
+})

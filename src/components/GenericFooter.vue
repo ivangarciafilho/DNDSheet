@@ -88,8 +88,7 @@ import ogl from '../data/OGL.txt?raw'
 import ChangelogContent from './ChangelogContent.vue'
 import { useEditorStore } from 'src/stores/editor-store'
 
-// TODO: don't forget to change the target changelog when the app has an update
-// that should trigger a notice
+// Target changelog version that triggers the automatic notice dialog upon update
 const TARGET_CHANGELOG = 'v2.4.0'
 
 export default defineComponent({

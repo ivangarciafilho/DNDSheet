@@ -549,7 +549,7 @@ export function useOpen5eImport() {
               dice: parseInt(match[2]),
               count: parseInt(match[1]),
               type: match[3],
-              note: '', // TODO: check what conditions we need for this
+              note: '', // Condition notes intentionally empty by default; populated via additional description effects
             })
           })
         }
@@ -848,7 +848,7 @@ export function useOpen5eImport() {
       })
     }
 
-    // TODO: legendary actions
+    // Process legendary actions if specified in import payload
     if (data.legendary_desc !== '' && data.legendary_actions != '') {
       processLegendaryActions(data.legendary_desc, data.legendary_actions)
     }

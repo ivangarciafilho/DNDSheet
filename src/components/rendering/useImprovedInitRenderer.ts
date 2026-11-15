@@ -63,7 +63,7 @@ export function useImprovedInitRenderer() {
       )})`,
     }
     ii.InitiativeModifier = statModifier(monster.stats.DEX)
-    ii.InitiativeAdvantage = false // TODO: 5emm needs a flag for that maybe
+    ii.InitiativeAdvantage = Boolean(monster.initiativeConfig?.advantage)
     ii.Speed = []
     monster.speeds.forEach((s) => {
       ii.Speed.push(`${s.type ?? 'walk'} ${s.speed} ft.`)

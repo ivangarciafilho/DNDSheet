@@ -74,7 +74,7 @@ export default defineComponent({
     ImportButton,
   },
   setup() {
-    // TODO: link this to the template search
+    // Current template search query bound to q-select model
     const search = ref('')
     const { t } = useI18n()
     const $q = useQuasar()
