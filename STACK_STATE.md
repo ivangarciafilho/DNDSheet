@@ -1,3 +1,7 @@
+## Build 258 — template split groundwork and visual regression
+
+New tools/qa/visual-diff.mjs (byte-exact screenshot regression; determinism 72/72, control 0/72, candidate 104/104). Scoped styles namespaced under .web-renderer-root; encounter dynamics and A4 toolbar moved to child components; WebRenderer.vue 1,688 to 1,440. See docs/roadmap/DNDSheet-Build258-Template-Split-and-Visual-Regression.md.
+
 ## Build 257 — C1b split of WebRenderer.vue
 
 WebRenderer.vue 2,983 to 1,688 lines: both style blocks moved to src files (built CSS byte-identical), A4 composition, fit and print logic moved verbatim to useA4Composition.ts. See docs/roadmap/DNDSheet-Build257-Split-WebRenderer.md.

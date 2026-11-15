@@ -1,0 +1,313 @@
+// Formerly <style scoped>. Namespaced under the component root instead, so child components that render
+// stat-block sections inherit these rules. Specificity is unchanged: Vue's scope attribute (0,1,0) is
+// replaced by the root class (0,1,0). Nothing in this sheet targets the root element or teleported nodes.
+.web-renderer-root {
+  .statblock.modern-modular .lair-actions ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .statblock {
+    background-color: #fdf1dc;
+    color: #000;
+    font-family: ff-scala-sans-pro;
+    font-size: calc(1rem * var(--statblock-font-scale, 1));
+    letter-spacing: 0.01em;
+    padding: 8px;
+    width: 100%;
+
+    .monster-name {
+      font-family: mrs-eaves-roman-small-caps, MrEaves;
+      color: #58180d;
+      font-weight: 800;
+      font-size: 2.2em;
+      margin: 0;
+      line-height: calc(2.5rem * var(--statblock-font-scale, 1));
+    }
+
+    .type,
+    .attack .distance,
+    .attack .hit {
+      font-family: ff-scala-sans-pro, ScalySansItalic;
+      font-style: italic;
+    }
+
+    hr {
+      border: 1px solid #9c2b1b;
+      margin: 4px 0;
+    }
+
+    .skill {
+      line-height: calc(1.2rem * var(--statblock-font-scale, 1));
+      color: #58180d;
+
+      .name {
+        font-family: ff-scala-sans-pro, ScalySansBold;
+        font-weight: 700;
+        margin-right: 0.35rem;
+      }
+    }
+
+    .stat-container {
+      display: flex;
+      flex-grow: 1;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: #58180d;
+
+      .stat-name {
+        font-family: ff-scala-sans-pro, ScalySansBold;
+        font-weight: 700;
+      }
+
+      .stat {
+        display: flex;
+        font-size: calc(0.95rem * var(--statblock-font-scale, 1));
+        .score {
+          margin-right: 4px;
+        }
+      }
+    }
+
+    .spell-list {
+      margin-top: 0.4rem;
+
+      .spell-row:not(.dnd-cascade-subpanel) {
+        margin-left: 20px;
+        text-indent: -20px;
+      }
+
+      .spell-list-entries {
+        font-family: ff-scala-sans-pro, ScalySansItalic;
+        font-style: italic;
+      }
+    }
+
+    .legendary.action {
+      margin-bottom: 0.1rem;
+      margin-left: 20px;
+      text-indent: -20px;
+    }
+
+    .trait,
+    .attack,
+    .action,
+    .innate-spellcasting,
+    .spellcasting,
+    .legendary-actions .preamble,
+    .mythic-actions .preamble,
+    .lair-actions .preamble,
+    .regional-effects .preamble,
+    .multiattack {
+      line-height: calc(1.15rem * var(--statblock-font-scale, 1));
+      margin-bottom: 0.8rem;
+
+      .name {
+        font-family: ff-scala-sans-pro, ScalySansBoldItalic;
+        font-weight: 700;
+        font-style: italic;
+      }
+    }
+
+    .lair-actions,
+    .regional-effects {
+      li {
+        margin-bottom: 0;
+      }
+    }
+
+    h3.section {
+      font-size: calc(1.3rem * var(--statblock-font-scale, 1));
+      font-family: ScalaSansCaps;
+      font-weight: 400;
+      letter-spacing: normal;
+      color: #58180d;
+      border-bottom: 1px solid #58180d;
+      margin-bottom: 4px;
+      line-height: calc(1.5rem * var(--statblock-font-scale, 1));
+    }
+  }
+
+  /** 2024 overrides */
+  .statblock.mm2024 {
+    background-color: #e4e2d9;
+    border-radius: 12px;
+    border: 2px solid #69665f;
+    outline: 2px solid #69665f;
+    outline-offset: -6px;
+    padding: 10px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+
+    .trait,
+    .attack,
+    .action,
+    .innate-spellcasting,
+    .spellcasting,
+    .legendary-actions .preamble,
+    .mythic-actions .preamble,
+    .lair-actions .preamble,
+    .regional-effects .preamble,
+    .multiattack {
+      line-height: 1.2em;
+    }
+
+    .legendary.action {
+      text-indent: 0px;
+      margin-left: 0px;
+    }
+
+    .monster-name {
+      font-family: ScalaSansCaps;
+      letter-spacing: -1px;
+      font-size: 1.8em;
+      border-bottom: 1px solid #58180d;
+      line-height: calc(2rem * var(--statblock-font-scale, 1));
+      column-span: all;
+      margin-bottom: 8px;
+    }
+
+    .type {
+      color: #69665f;
+      margin-top: -4px;
+    }
+
+    hr {
+      margin: 0.5rem 0;
+      border: none;
+    }
+
+    .ac:not(.dnd-cascade-panel) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: auto;
+    }
+
+    .skill:not(.dnd-cascade-panel) {
+      padding-left: 0;
+      text-indent: 0;
+    }
+
+    .first.section {
+      margin-top: 0.5em;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      grid-template-rows: auto;
+      gap: 4px;
+      margin-bottom: 1em;
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+
+      .stat-table {
+        display: grid;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        grid-template-columns: minmax(22px, 0.85fr) minmax(16px, 0.65fr) minmax(22px, 0.9fr) minmax(36px, 1.4fr);
+        grid-template-rows: repeat(3, auto);
+        grid-template-areas: 'blank blank mod save' 'stat-1 score-1 mod-1 save-1' 'stat-2 score-2 mod-2 save-2';
+        column-gap: 2px;
+        row-gap: 2px;
+        padding: 3px 4px !important;
+
+        > div {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #58180d;
+          padding: 2px 1px !important;
+          min-height: 24px;
+          min-width: 0 !important;
+          box-sizing: border-box;
+          white-space: nowrap;
+          overflow: visible;
+        }
+
+        .header-label {
+          font-family: ScalaSansCaps;
+          font-size: calc(11px * var(--statblock-font-scale, 1));
+          font-weight: 700;
+          letter-spacing: 0.5px;
+          color: #69665f;
+          text-transform: uppercase;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          width: 100%;
+        }
+
+        .header-label.mod {
+          grid-area: mod;
+        }
+
+        .header-label.save {
+          grid-area: save;
+        }
+
+        .stat {
+          font-weight: bold;
+          font-family: ScalaSansCaps;
+          text-transform: capitalize;
+        }
+
+        .stat.one,
+        .score.one {
+          background-color: #dcd2ba;
+        }
+
+        .stat.two,
+        .score.two {
+          background-color: #d0d5b5;
+        }
+
+        .mod.one,
+        .save.one {
+          background-color: #d7c9c2;
+        }
+
+        .mod.two,
+        .save.two {
+          background-color: #d4c8db;
+        }
+
+        .stat.one {
+          grid-area: stat-1;
+        }
+
+        .score.one {
+          grid-area: score-1;
+        }
+
+        .mod.one {
+          grid-area: mod-1;
+        }
+
+        .save.one {
+          grid-area: save-1;
+        }
+
+        .stat.two {
+          grid-area: stat-2;
+        }
+
+        .score.two {
+          grid-area: score-2;
+        }
+
+        .mod.two {
+          grid-area: mod-2;
+        }
+
+        .save.two {
+          grid-area: save-2;
+        }
+      }
+    }
+  }
+}

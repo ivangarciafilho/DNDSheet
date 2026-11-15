@@ -24,199 +24,7 @@
       </defs>
     </svg>
 
-    <!-- A4 Control Toolbar -->
-    <div class="a4-preview-toolbar row items-center justify-between q-px-sm q-py-xs bg-grey-9 text-white rounded-borders q-mb-sm">
-      <div class="row items-center q-gutter-xs">
-        <q-btn
-          :color="editorStore?.a4PreviewMode ? 'amber-5' : 'grey-7'"
-          :text-color="editorStore?.a4PreviewMode ? 'black' : 'white'"
-          dense
-          no-caps
-          icon="description"
-          :label="editorStore?.a4PreviewMode ? 'A4 Sheet 1:1 Preview: ON' : 'A4 Sheet 1:1 Preview: OFF'"
-          class="text-weight-bold"
-          @click="editorStore.a4PreviewMode = !editorStore.a4PreviewMode"
-        >
-          <q-tooltip>Simulate true A4 physical sheet aspect ratio (210×297mm) with integrated creature artwork</q-tooltip>
-        </q-btn>
-
-        <q-btn flat dense no-caps icon="format_size" :label="`Text: ${editorStore.statblockFontScale}%`">
-          <q-menu class="q-pa-sm bg-grey-10 text-white" style="min-width: 200px">
-            <div class="text-caption">Statblock text size</div>
-            <q-slider
-              v-model="editorStore.statblockFontScale"
-              v-help="'Scale overall typography size inside the stat block preview from 65% to 150%.'"
-              aria-label="Statblock text size"
-              :min="65"
-              :max="150"
-              :step="1"
-              label
-              dense
-            />
-            <q-btn flat dense no-caps label="Reset text size" @click="editorStore.statblockFontScale = 100" />
-          </q-menu>
-        </q-btn>
-
-        <!-- A4 Controls (Visible when A4 preview is ON) -->
-        <template v-if="editorStore?.a4PreviewMode">
-          <q-separator vertical dark class="q-mx-xs" />
-          <q-btn-toggle
-            v-model="editorStore.a4Orientation"
-            dense
-            no-caps
-            rounded
-            toggle-color="primary"
-            color="grey-8"
-            :options="[
-              { label: 'Portrait', value: 'portrait', icon: 'crop_portrait' },
-              { label: 'Landscape', value: 'landscape', icon: 'crop_landscape' }
-            ]"
-          >
-            <q-tooltip>A4 Page Orientation (210×297mm vs 297×210mm)</q-tooltip>
-          </q-btn-toggle>
-
-          <q-btn-toggle
-            v-model="editorStore.a4Layout"
-            dense
-            no-caps
-            rounded
-            toggle-color="secondary"
-            color="grey-8"
-            :options="[
-              { label: 'Auto', value: 'auto' },
-              { label: 'Side-by-Side', value: 'side_by_side' },
-              { label: 'Hero Top', value: 'stacked' },
-              { label: 'Statblock Only', value: 'statblock_only' }
-            ]"
-          >
-            <q-tooltip>Page Composition & Artwork Placement</q-tooltip>
-          </q-btn-toggle>
-
-          <q-btn-toggle
-            v-model="editorStore.a4Zoom"
-            dense
-            no-caps
-            rounded
-            toggle-color="indigo"
-            color="grey-8"
-            :options="[
-              { label: 'Fit', value: 'fit' },
-              { label: '100%', value: 100 },
-              { label: '75%', value: 75 }
-            ]"
-          >
-            <q-tooltip>Preview Zoom Scale</q-tooltip>
-          </q-btn-toggle>
-
-          <q-btn
-            :flat="!editorStore.a4CompactDensity"
-            :color="editorStore.a4CompactDensity ? 'teal-4' : 'grey-5'"
-            dense
-            no-caps
-            icon="compress"
-            label="Compact"
-            @click="editorStore.a4CompactDensity = !editorStore.a4CompactDensity"
-          >
-            <q-tooltip>Tighten line height and vertical margins to fit large statblocks on 1 page</q-tooltip>
-          </q-btn>
-
-          <!-- Occlusion Popover -->
-          <q-btn
-            flat
-            dense
-            no-caps
-            icon="layers_clear"
-            color="cyan-3"
-            :label="`Cover: ${editorStore.a4PictureOcclusion || 0}%`"
-          >
-            <q-tooltip>Picture Occlusion: Decides how much the statblock covers/occludes the picture (0% = Side by Side, 50% = Covers Half, 100% = Full Cover)</q-tooltip>
-            <q-menu class="q-pa-sm bg-grey-10 text-white" style="min-width: 220px;">
-              <div class="text-caption text-weight-bold q-mb-xs text-cyan-3">
-                Artwork Occlusion: {{ editorStore.a4PictureOcclusion || 0 }}%
-              </div>
-              <q-slider
-                v-model="editorStore.a4PictureOcclusion"
-                v-help="'Control how much the stat block frame overlaps portrait artwork (0% side-by-side to 100% full cover).'"
-                :min="0"
-                :max="100"
-                color="cyan-4"
-                label
-                dense
-              />
-              <div class="text-caption text-grey-5" style="font-size: 0.7rem;">
-                0% = Side-by-Side | 50% = 50% Overlap | 100% = Full Cover
-              </div>
-            </q-menu>
-          </q-btn>
-
-          <!-- Opacity Popover -->
-          <q-btn
-            flat
-            dense
-            no-caps
-            icon="opacity"
-            color="amber-3"
-            :label="`Opacity: ${editorStore.a4StatblockOpacity ?? 100}%`"
-          >
-            <q-tooltip>Statblock background opacity to reveal underlying artwork and background textures</q-tooltip>
-            <q-menu class="q-pa-sm bg-grey-10 text-white" style="min-width: 220px;">
-              <div class="text-caption text-weight-bold q-mb-xs text-amber-3">
-                Statblock Opacity: {{ editorStore.a4StatblockOpacity ?? 100 }}%
-              </div>
-              <q-slider
-                v-model="editorStore.a4StatblockOpacity"
-                v-help="'Adjust parchment backdrop opacity behind stat block text to reveal A4 page art underneath.'"
-                :min="0"
-                :max="100"
-                color="amber-4"
-                label
-                dense
-              />
-              <div class="text-caption text-grey-5" style="font-size: 0.7rem;">
-                Lower opacity to reveal artwork and page textures
-              </div>
-            </q-menu>
-          </q-btn>
-
-          <!-- Layer Studio Button -->
-          <q-btn
-            flat
-            dense
-            no-caps
-            icon="layers"
-            color="purple-3"
-            label="Layers"
-            @click="openLayerStudio"
-          >
-            <q-tooltip>Scroll to A4 Composition Layer Studio</q-tooltip>
-          </q-btn>
-        </template>
-      </div>
-
-      <div class="row items-center q-gutter-xs">
-        <template v-if="editorStore?.a4PreviewMode">
-          <q-badge
-            :color="a4PageOverflowPx > 0 ? 'amber-4' : 'green-9'"
-            :text-color="a4PageOverflowPx > 0 ? 'grey-10' : 'white'"
-            class="text-weight-bold q-pa-xs"
-          >
-            <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : 'check_circle'" class="q-mr-xs" />
-            {{ a4PageOverflowPx > 0 ? 'Content exceeds one A4 page' : 'Fits on one A4 page' }}
-          </q-badge>
-
-          <q-btn
-            flat
-            dense
-            color="white"
-            icon="print"
-            label="Print / PDF"
-            @click="printA4Sheet"
-          >
-            <q-tooltip>Print or save as PDF. Stretch the artwork and statblock to fill one A4 page.</q-tooltip>
-          </q-btn>
-        </template>
-      </div>
-    </div>
+    <a4-preview-toolbar :a4-page-overflow-px="a4PageOverflowPx" :print-a4-sheet="printA4Sheet" :open-layer-studio="openLayerStudio" />
 
     <!-- Scaled A4 Page or Fluid Container -->
     <div
@@ -866,74 +674,14 @@
       <div v-html="inventory"></div>
     </div>
 
-    <!-- Villain Actions (MCDM Flee, Mortals!) -->
-    <div v-if="villainActionsList && villainActionsList.length > 0" class="actions villain-actions">
-      <h3 class="section">Villain Actions</h3>
-      <div class="preamble">
-        <i>{{ monster.name }} can take 3 villain actions, using one at the end of another creature's turn. Only one villain action can be used per round, in numbered order (1, 2, 3).</i>
-      </div>
-      <div
-        v-for="va in villainActionsList"
-        :key="va.id"
-        class="action villain"
-        v-html="va.rendered"
-      ></div>
-    </div>
-
-    <!-- Bloodied Actions (Anne Gregersen / DMsGuild) -->
-    <div v-if="bloodiedActionsList && bloodiedActionsList.length > 0" class="actions bloodied-actions">
-      <h3 class="section">Bloodied Actions</h3>
-      <div
-        v-for="ba in bloodiedActionsList"
-        :key="ba.id"
-        class="action bloodied"
-        v-html="ba.rendered"
-      ></div>
-    </div>
-
-    <!-- Reactive Actions (Official WotC 2024 / Level Up A5e) -->
-    <div v-if="reactiveActionsList && reactiveActionsList.length > 0" class="actions reactive-actions">
-      <h3 class="section">Reactive Actions</h3>
-      <div
-        v-for="ra in reactiveActionsList"
-        :key="ra.id"
-        class="action reactive"
-        v-html="ra.rendered"
-      ></div>
-    </div>
-
-    <!-- Combo Actions (MCDM) -->
-    <div v-if="comboActionsList && comboActionsList.length > 0" class="actions combo-actions">
-      <h3 class="section">Combo Actions</h3>
-      <div
-        v-for="ca in comboActionsList"
-        :key="ca.id"
-        class="action combo"
-        v-html="ca.rendered"
-      ></div>
-    </div>
-
-    <!-- Draco Anatomy (Breakable Monster Limbs) -->
-    <div v-if="anatomyPartsList && anatomyPartsList.length > 0" class="actions anatomy-actions">
-      <h3 class="section">Targeted Anatomy & Breakable Parts</h3>
-      <div
-        v-for="ap in anatomyPartsList"
-        :key="ap.id"
-        class="action anatomy"
-        v-html="ap.rendered"
-      ></div>
-    </div>
-
-    <!-- Runehammer Track (Escalating Round Countdown) -->
-    <div v-if="runehammerTrackData" class="actions runehammer-track">
-      <h3 class="section">{{ runehammerTrackData.title }} (Timer: 1{{ runehammerTrackData.timerDie }} rounds)</h3>
-      <div
-        v-for="ev in runehammerTrackData.events"
-        :key="ev.id"
-        class="action track-event"
-        v-html="ev.rendered"
-      ></div>
-    </div>
+    <statblock-encounter-dynamics
+      :villain-actions-list="villainActionsList"
+      :bloodied-actions-list="bloodiedActionsList"
+      :reactive-actions-list="reactiveActionsList"
+      :combo-actions-list="comboActionsList"
+      :anatomy-parts-list="anatomyPartsList"
+      :runehammer-track-data="runehammerTrackData"
+    />
 
 
     </div>
@@ -999,6 +747,8 @@ import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { useA4Composition } from './useA4Composition'
+import StatblockEncounterDynamics from './StatblockEncounterDynamics.vue'
+import A4PreviewToolbar from './A4PreviewToolbar.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
@@ -1022,6 +772,8 @@ export default defineComponent({
   name: 'WebRenderer',
   components: {
     WebSpellPlates,
+    StatblockEncounterDynamics,
+    A4PreviewToolbar,
   },
   setup() {
     const monster = useMonsterStore()
@@ -1685,4 +1437,4 @@ export default defineComponent({
 
 <style lang="scss" src="./web-renderer.global.scss"></style>
 
-<style lang="scss" scoped src="./web-renderer.scoped.scss"></style>
+<style lang="scss" src="./web-renderer.namespaced.scss"></style>
