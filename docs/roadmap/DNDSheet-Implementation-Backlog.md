@@ -1095,6 +1095,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 >
 > **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files ≥ 900 lines `20 → 19`. Next: `WebRenderer.vue` (2,983).
 >
+> **Build 257** ([packet](DNDSheet-Build257-Split-WebRenderer.md)): `C1b` ◐ `WebRenderer.vue` `2,983 → 1,688` (styles to `src` files with byte-identical CSS; A4 composition to `useA4Composition.ts`). Template split is next.
+>
 > **Track C status after Build 256:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
 >
 > **Build 255** ([packet](DNDSheet-Build255-Type-Debt-Round-Two.md)): `C8` ◐ `any` `45 → 29`; all 31 `src` non-null assertions audited as guarded; test-only `no-non-null-assertion` override. ESLint `206 → 149`. Remaining `C8` is typed payload schemas for the untyped boundaries (file load, v1 migration, export builders).

@@ -1,3 +1,7 @@
+## Build 257 — C1b split of WebRenderer.vue
+
+WebRenderer.vue 2,983 to 1,688 lines: both style blocks moved to src files (built CSS byte-identical), A4 composition, fit and print logic moved verbatim to useA4Composition.ts. See docs/roadmap/DNDSheet-Build257-Split-WebRenderer.md.
+
 ## Build 256 — C1b split of useTextRenderer
 
 useTextRenderer.ts 2,037 to 871 lines; six sub-composables moved verbatim (defenses, speeds, check rows, senses/languages, traits, encounter dynamics). Output equality proven by export goldens and the browser suites. See docs/roadmap/DNDSheet-Build256-Split-useTextRenderer.md.
