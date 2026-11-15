@@ -1,3 +1,7 @@
+## Build 256 — C1b split of useTextRenderer
+
+useTextRenderer.ts 2,037 to 871 lines; six sub-composables moved verbatim (defenses, speeds, check rows, senses/languages, traits, encounter dynamics). Output equality proven by export goldens and the browser suites. See docs/roadmap/DNDSheet-Build256-Split-useTextRenderer.md.
+
 ## Build 255 — C8 type debt, round 2
 
 any lines 45 to 29; ESLint warnings 206 to 149; all 31 src non-null assertions audited as guarded. See docs/roadmap/DNDSheet-Build255-Type-Debt-Round-Two.md.

@@ -1093,6 +1093,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 >
 > **Track C status after Build 254:** ✅ `C9`, `C12` · ◐ `C3`, `C8`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
 >
+> **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files ≥ 900 lines `20 → 19`. Next: `WebRenderer.vue` (2,983).
+>
+> **Track C status after Build 256:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
+>
 > **Build 255** ([packet](DNDSheet-Build255-Type-Debt-Round-Two.md)): `C8` ◐ `any` `45 → 29`; all 31 `src` non-null assertions audited as guarded; test-only `no-non-null-assertion` override. ESLint `206 → 149`. Remaining `C8` is typed payload schemas for the untyped boundaries (file load, v1 migration, export builders).
 
 > Track A and Track B executable engineering work is complete (`311/313` raw checkboxes; only owner-gated `B5.7` and `H16` open). This **Track C / v2.6+** planning queue merges Build 250 telemetry with the post-Build-251 multi-agent (`debate-council`) codebase and specification delta audit. *(Kept as a planning table outside the `[ABH]` checkbox ledger so Track A/B closure metrics stay invariant.)*
