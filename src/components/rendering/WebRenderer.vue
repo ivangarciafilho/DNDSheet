@@ -239,203 +239,8 @@
         ><b>Proficiency Bonus</b> +{{ monster.proficiency }}</span
       >
     </div>
-    <h3 v-if="blockStyle.mm2024 && (hasGroupedTraits || monster.spellcasting?.standard?.length > 0 || monster.spellcasting?.atWill?.length > 0)" class="section first">
-      {{ $t('editor.traits.label') }}
-    </h3>
-    <div class="traits">
-      <!-- Standard Traits -->
-      <div
-        v-for="(trait, idx) in sanitizedGroupedTraits.standard"
-        :key="'trait-std-' + idx"
-        class="trait"
-        :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-        v-html="trait"
-      ></div>
-
-      <!-- Dedicated Recharge Sections -->
-      <template v-for="sec in sanitizedGroupedTraits.rechargeSections" :key="'sec-' + sec.section">
-        <h4 class="sub-section-header">{{ sec.section }}</h4>
-        <div
-          v-for="(trait, idx) in sec.traits"
-          :key="'trait-sec-' + idx"
-          class="trait"
-          :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-          v-html="trait"
-        ></div>
-      </template>
-
-      <!-- Conditionals Sub-Sections -->
-      <template v-for="cond in sanitizedGroupedTraits.conditionals" :key="'cond-' + cond.trigger">
-        <h4 class="sub-section-header">Conditionals (<span v-html="mechanicRichHtml(cond.trigger)"></span>)</h4>
-        <div
-          v-for="(trait, idx) in cond.traits"
-          :key="'trait-cond-' + idx"
-          class="trait"
-          :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-          v-html="trait"
-        ></div>
-      </template>
-
-      <!-- Mythic Trait -->
-      <div
-        v-if="monster.mythicActions.actions.length > 0"
-        class="trait"
-        v-html="mythicTrait"
-      ></div>
-
-      <!-- Innate and class casting share the plate grammar but retain separate resource semantics. -->
-      <web-spell-plates
-        v-if="resolvedSpellPlacement === 'with_traits'"
-        v-bind="spellPlatesBind"
-      />
-    </div>
-    <div
-      v-if="monster.paragonConfig?.enabled || (monster.paragonConfig?.poolCount && monster.paragonConfig.poolCount > 1)"
-      class="paragon-pool-filter-bar"
-    >
-      <span class="filter-label">Stage {{ monster.paragonConfig?.phaseName || 'Pool' }}:</span>
-      <button
-        type="button"
-        class="pool-filter-btn"
-        :class="{ active: !monster.paragonConfig.activePoolFilter || monster.paragonConfig.activePoolFilter === 'all' }"
-        @click="monster.paragonConfig.activePoolFilter = 'all'"
-      >
-        All {{ monster.paragonConfig?.phaseName || 'Pool' }}s
-      </button>
-      <button
-        v-for="p in (monster.paragonConfig.poolCount || 2)"
-        :key="'pool-btn-' + p"
-        type="button"
-        class="pool-filter-btn"
-        :class="{ active: monster.paragonConfig.activePoolFilter === `${p}` }"
-        @click="monster.paragonConfig.activePoolFilter = `${p}`"
-      >
-        {{ monster.paragonConfig?.phaseName || 'Pool' }} {{ p }}
-      </button>
-    </div>
-    <web-spell-plates
-      v-if="resolvedSpellPlacement === 'before_actions'"
-      v-bind="spellPlatesBind"
-    />
-    <h3 class="section">{{ $t('editor.action.label') }}</h3>
-    <div
-      v-if="monster.multiattacks.length > 0"
-      class="multiattack"
-      v-html="multiattacks"
-    ></div>
-    <div
-      v-for="(attack, idx) in attacks"
-      :key="idx"
-      class="attack"
-      v-html="attack"
-    ></div>
-    <div
-      v-for="(action, idx) in actions"
-      :key="idx"
-      class="action"
-      :class="{ 'sb-striped': action && action.length > 110 && !action.includes('sb-plate') }"
-      v-html="action"
-    ></div>
-    <web-spell-plates
-      v-if="resolvedSpellPlacement === 'after_actions'"
-      v-bind="spellPlatesBind"
-    />
-    <div v-if="bonusActions.length > 0" class="bonus-actions">
-      <h3 class="section">{{ $t('monster.bonusActions') }}</h3>
-      <div
-        v-for="(action, idx) in bonusActions"
-        :key="idx"
-        class="action"
-        :class="{ 'sb-striped': action && action.length > 110 && !action.includes('sb-plate') }"
-        v-html="action"
-      ></div>
-    </div>
-    <div
-      v-if="blockStyle.mm2024 && monster.reactions.length > 0"
-      class="reactions"
-    >
-      <h3 class="section">{{ $t('editor.reaction.label') }}</h3>
-      <div
-        v-for="(reaction, idx) in reactions"
-        :key="idx"
-        class="action reaction"
-        :class="{ 'sb-striped': reaction && reaction.length > 110 && !reaction.includes('sb-plate') }"
-        v-html="reaction"
-      ></div>
-    </div>
-    <div v-if="monster.legendaryActions.count > 0 || monster.legendaryActions.actions.length > 0" class="legendary-actions">
-      <h3 class="section">{{ $t('editor.legendary.label') }}</h3>
-      <div class="preamble" v-html="legendaryPreamble"></div>
-      <div
-        v-for="(action, idx) in legendaryActions"
-        :key="idx"
-        class="action legendary"
-        v-html="action"
-      ></div>
-    </div>
-    <div v-if="monster.mythicActions.actions.length > 0" class="mythic-actions">
-      <h3 class="section">{{ $t('editor.mythic.label') }}</h3>
-      <div class="preamble" v-html="mythicPreamble"></div>
-      <div
-        v-for="(action, idx) in mythicActions"
-        :key="idx"
-        class="action legendary"
-        v-html="action"
-      ></div>
-    </div>
-    <div
-      v-if="blockStyle.mm2014 && monster.reactions.length > 0"
-      class="reactions"
-    >
-      <h3 class="section">{{ $t('editor.reaction.label') }}</h3>
-      <div
-        v-for="(reaction, idx) in reactions"
-        :key="idx"
-        class="action reaction"
-        :class="{ 'sb-striped': reaction && reaction.length > 110 && !reaction.includes('sb-plate') }"
-        v-html="reaction"
-      ></div>
-    </div>
-    <div v-if="monster.lairActions.length > 0" class="lair-actions">
-      <h3 class="section">{{ $t('editor.lair.label') }}</h3>
-      <div class="preamble" v-html="lairActionPreamble"></div>
-      <ul>
-        <li
-          v-for="(lairAction, idx) in lairActions"
-          :key="idx"
-          class="action lair"
-          v-html="lairAction"
-        ></li>
-      </ul>
-    </div>
-    <div v-for="rt in randomTables" :key="rt.id" class="random-table" data-a4-owner="statblock">
-          <h3 class="section">{{ rt.title || $t('editor.randomTables.defaultTitle') }}</h3>
-          <table class="random-table-grid" :aria-label="rt.title || $t('editor.randomTables.defaultTitle')">
-            <thead><tr><th scope="col">{{ rt.dice }}</th><th scope="col">{{ $t('editor.randomTables.result') }}</th></tr></thead>
-            <tbody>
-              <tr v-for="row in rt.sortedRows" :key="row.id">
-                <td class="random-table-range">{{ row.min === row.max ? row.min : row.min + '–' + row.max }}</td><td v-html="mechanicRichHtml(row.text)"></td>
-              </tr>
-              <tr v-if="rt.fallback"><td class="random-table-range">{{ $t('editor.randomTables.otherwise') }}</td><td>{{ rt.fallback }}</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div v-if="monster.regionalEffects.length > 0" class="regional-effects">
-      <h3 class="section">{{ $t('editor.regional.label') }}</h3>
-      <div class="preamble" v-html="regionalEffectPreamble"></div>
-      <ul>
-        <li
-          v-for="(effect, idx) in regionalEffects"
-          :key="idx"
-          class="action regional"
-          v-html="effect"
-        ></li>
-      </ul>
-    </div>
-    <div v-if="blockStyle.mm2014 && monster.inventory !== ''" class="inventory">
-      <h3 class="section">{{ $t('editor.inventory.label') }}</h3>
-      <div v-html="inventory"></div>
-    </div>
+    <statblock-traits />
+    <statblock-actions />
 
     <statblock-encounter-dynamics
       :villain-actions-list="villainActionsList"
@@ -513,6 +318,9 @@ import { useA4Composition } from './useA4Composition'
 import StatblockEncounterDynamics from './StatblockEncounterDynamics.vue'
 import A4PreviewToolbar from './A4PreviewToolbar.vue'
 import StatblockVitals from './StatblockVitals.vue'
+import StatblockActions from './StatblockActions.vue'
+import StatblockTraits from './StatblockTraits.vue'
+import { STATBLOCK_BODY, useStatblockBodyView } from './useStatblockBodyView'
 import { shouldStripeVital, STATBLOCK_VITALS, useStatblockVitalsView } from './useStatblockVitalsView'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore } from 'src/stores/spells-store'
@@ -531,15 +339,15 @@ import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statblockHelpText } from './statblock-help'
 import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
-import WebSpellPlates from './WebSpellPlates.vue'
 
 export default defineComponent({
   name: 'WebRenderer',
   components: {
-    WebSpellPlates,
     StatblockEncounterDynamics,
     A4PreviewToolbar,
     StatblockVitals,
+    StatblockActions,
+    StatblockTraits,
   },
   setup() {
     const monster = useMonsterStore()
@@ -703,7 +511,7 @@ export default defineComponent({
       )
     })
 
-    const { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, ensureCoreLayers, portraitLayerObj, statblockLayerObj, getLayerZIndex, a4StatblockWrapperStyle, a4StatblockWidth, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, measureStatblockFit, fitFrame, scheduleStatblockFit, fitObserver, lastFitContainerWidth, fitResizeObserver, a4PortraitStyle, portraitCropContainerStyle, imageShapeTransform, portraitImgStyle, formatGradient, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, checkA4Overflow, fitA4ForPrint, printA4Sheet } = useA4Composition({ monster, editorStore, renderRoot, columns, hasPortrait })
+    const { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, portraitLayerObj, statblockLayerObj, a4StatblockWrapperStyle, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, scheduleStatblockFit, a4PortraitStyle, portraitCropContainerStyle, portraitImgStyle, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, checkA4Overflow, printA4Sheet } = useA4Composition({ monster, editorStore, renderRoot, columns, hasPortrait })
 
     const cascadingDefenses = computed(() => textRenderer.cascadingDefenses.value)
 
@@ -847,66 +655,8 @@ export default defineComponent({
         processedNotes: processedNotes.trim() ? processedNotes : '',
       })
     })
-    const attacks = computed(() =>
-      textRenderer.attacks.value.map((a) => sanitizeWebString(a))
-    )
-
-    const actions = computed(() =>
-      textRenderer.actions.value.map((a) => sanitizeWebString(a))
-    )
-
-    const bonusActions = computed(() =>
-      textRenderer.bonusActions.value.map((a) => sanitizeWebString(a))
-    )
-
-    const multiattacks = computed(() =>
-      sanitizeWebString(textRenderer.multiattacks.value)
-    )
-
-    const legendaryPreamble = computed(() =>
-      sanitizeWebString(textRenderer.legendaryPreamble.value)
-    )
-
-    const legendaryActions = computed(() =>
-      textRenderer.legendaryActions.value.map((a) => sanitizeWebString(a))
-    )
-
-    const mythicTrait = computed(() =>
-      sanitizeWebString(textRenderer.mythicTrait.value)
-    )
-
-    const mythicPreamble = computed(() =>
-      sanitizeWebString(textRenderer.mythicPreamble.value)
-    )
-
-    const mythicActions = computed(() =>
-      textRenderer.mythicActions.value.map((a) => sanitizeWebString(a))
-    )
-
-    const reactions = computed(() =>
-      textRenderer.reactions.value.map((r) => sanitizeWebString(r))
-    )
-
-    const lairActionPreamble = computed(() =>
-      sanitizeWebString(textRenderer.lairActionPreamble.value)
-    )
-
-    const lairActions = computed(() =>
-      monster.lairActions.map((la) => sanitizeWebString(processLairAction(la, monster, true)))
-    )
-
-    const regionalEffectPreamble = computed(() =>
-      sanitizeWebString(textRenderer.regionalEffectPreamble.value)
-    )
-
-    // A11.9: sorted copies so the template never mutates stored rows.
-    const randomTables = computed(() =>
-      (monster.randomTables ?? []).map((rt) => ({ ...rt, sortedRows: [...rt.rows].sort((a, b) => a.min - b.min) }))
-    )
-
-    const regionalEffects = computed(() =>
-      textRenderer.regionalEffects.value.map((re) => sanitizeWebString(re))
-    )
+    const actionsView = useStatblockBodyView({ monster, textRenderer, sanitizeWebString, processLairAction })
+    const { sanitizedGroupedTraits, hasGroupedTraits, attacks, actions, bonusActions, multiattacks, legendaryPreamble, legendaryActions, mythicTrait, mythicPreamble, mythicActions, reactions, lairActionPreamble, lairActions, regionalEffectPreamble, randomTables, regionalEffects, inventory } = actionsView
 
     const xpFormatted = computed(() => {
       const crObj = CR[monster.CR] || CR[0]
@@ -926,10 +676,6 @@ export default defineComponent({
       return (CR[monster.CR] || CR[0])?.cr ?? `${monster.CR}`
     })
     const cr = computed(() => sanitizeWebString(textRenderer.cr.value))
-
-    const inventory = computed(() =>
-      sanitizeWebString(textRenderer.inventory.value)
-    )
 
     const initiative = computed(() =>
       sanitizeWebString(textRenderer.initiative.value)
@@ -969,30 +715,6 @@ export default defineComponent({
       sanitizeWebString(textRenderer.actionPassives.value)
     )
 
-    const sanitizedGroupedTraits = computed(() => {
-      const raw = textRenderer.groupedTraits.value
-      return {
-        standard: raw.standard.map((t) => sanitizeWebString(t)),
-        conditionals: raw.conditionals.map((c) => ({
-          trigger: c.trigger,
-          traits: c.traits.map((t) => sanitizeWebString(t)),
-        })),
-        rechargeSections: raw.rechargeSections.map((r) => ({
-          section: r.section,
-          traits: r.traits.map((t) => sanitizeWebString(t)),
-        })),
-      }
-    })
-
-    const hasGroupedTraits = computed(() => {
-      const g = sanitizedGroupedTraits.value
-      return (
-        g.standard.length > 0 ||
-        g.conditionals.length > 0 ||
-        g.rechargeSections.length > 0 ||
-        monster.mythicActions.actions.length > 0
-      )
-    })
 
 
     watch([
@@ -1028,6 +750,7 @@ export default defineComponent({
       isSecondarySpellLineStriped,
       shouldStripeSpellLine,
     }))
+    provide(STATBLOCK_BODY, { ...actionsView, monster, blockStyle, mechanicRichHtml, resolvedSpellPlacement, spellPlatesBind })
 
     return {
       renderRoot,

@@ -1,3 +1,7 @@
+## Build 260 — traits and actions as child components
+
+StatblockTraits.vue and StatblockActions.vue render from a typed body view (useStatblockBodyView.ts); WebRenderer.vue 1,143 to 866 lines, under 900; visual diff 104/104 identical. See docs/roadmap/DNDSheet-Build260-Traits-and-Actions-Children.md.
+
 ## Build 259 — vitals section as a child component
 
 StatblockVitals.vue renders both layout branches from a typed provide/inject view (useStatblockVitalsView.ts); WebRenderer.vue 1,440 to 1,143; visual diff 104/104 identical. See docs/roadmap/DNDSheet-Build259-Vitals-Child.md.
