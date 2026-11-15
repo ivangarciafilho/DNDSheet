@@ -12,6 +12,8 @@ Build227 repairs additional-container ownership, brings Role into the compositor
 
 Build228 adds foldable and removable spellcasting sources, independent learning contributions, consistent spell reading order, and matching A4 print geometry. See the [release report](docs/roadmap/DNDSheet-Build228-Spellcasting-and-Print.md).
 
+Build250 (`v2.5.0-statblock`) completes Track A & Track B engineering work (`267 / 269` `count-tasks` IDs, `311 / 313` raw checkboxes; only owner-gated decisions `B5.7` and `H16` remain): `BasicsEditor` decomposed into six domain panels under `src/components/editor/basics/`, site-wide `CatalogSelect` interaction kit & Exemption Registry, `100.0 %` (`554/554`) editor help coverage, `app.scss` `!important` debt cut from `505` to `44`, performance budgets, and live GitHub Pages deployment. See the [Build 250 delivery packet](docs/roadmap/DNDSheet-Build250-v250-Statblock-Overhaul-and-Workspace-Sweeps.md), [publication receipt](docs/roadmap/DNDSheet-Build250-Publication-Receipt.json), and [ADR-0003](docs/decisions/ADR-0003-Basics-Decomposition-Interaction-Kit-and-CSS-Grammar.md).
+
 ## What is available
 
 - One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities.

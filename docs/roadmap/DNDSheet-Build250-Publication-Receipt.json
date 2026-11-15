@@ -1,0 +1,149 @@
+{
+  "build": 250,
+  "version": "2.4.3",
+  "releaseVersion": "v2.5.0-statblock",
+  "slug": "v250-statblock-overhaul-and-workspace-sweeps",
+  "date": "2026-11-14",
+  "branch": "build185-repairs",
+  "sourceCommit": "f7219a79de85725e608280629929ac2a0432e6ef",
+  "parentCommit": "f49b807573be1c2532a1a6c42c0a1e9e77862745",
+  "baseCommit": "01a9ba94d64a0e26c1904b2926a8f29bb8cc09ae",
+  "pagesCommit": "87c24f4426210d274471e56559c4d15fb41b869a",
+  "tag": "rc-2.4.3-build-250-v250-statblock-overhaul-and-workspace-sweeps",
+  "releaseTag": "v2.5.0-statblock",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "8b7355ffeb9632b131745f73bb5333e1c117f7e365cfb5f03a308a622efece46",
+    "coreTests": {
+      "passed": 678,
+      "failed": 0,
+      "subtests": 666
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2740
+    },
+    "typecheck": {
+      "diagnostics": 48,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 635,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 554,
+      "total": 554,
+      "floorPercent": 100
+    },
+    "cssDebt": {
+      "appScssImportantCount": 44,
+      "appScssImportantBaseline": 505,
+      "appScssImportantCeiling": 150,
+      "statblockGrammarImportantCount": 258
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0,
+      "workflowViewportsChecked": [1440, 640, 390]
+    },
+    "budgetsBrowserProbe": {
+      "keystrokeP95Ms": 10.4,
+      "completionOpenMs": 29.1,
+      "catalogSelectOpenMs": 8.9,
+      "headContrast": 12.11
+    },
+    "timingsSeconds": {
+      "core": 4,
+      "lint": 18,
+      "typecheck": 30,
+      "build": 39,
+      "fuzz": 194,
+      "help": 186,
+      "spell": 9,
+      "pagesBuild": 46,
+      "pagesAssets": 0,
+      "pagesFuzz": 372
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "e51f395cbb95385f707c86862460ac94364adf96e4b70f82a0cd1dd774aa37b2",
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.bc17d5db.js",
+        "status": 200,
+        "bytes": 933826,
+        "sha256": "d59b473eda1710f3b092072da9eefc73d84de3cd687bcbdaf29751362eb9e6b5",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.88360bf2.css",
+        "status": 200,
+        "bytes": 670763,
+        "sha256": "a6a644315ff6555514ac7564b31ba663247175620e29ab9bea73b83a42d0fc92",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.df8ff7b1.js",
+        "status": 200,
+        "bytes": 831816,
+        "sha256": "8339f26fbe10f06619002f6cca5b0be57ab7b007e138cde2e91455fc8b68701e",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "closedTasks": [
+    "A14.1",
+    "A14.2",
+    "A14.3",
+    "A14.4",
+    "A14.5",
+    "A14.6",
+    "A15.1",
+    "A15.2",
+    "A15.3",
+    "A15.4",
+    "A15.5",
+    "A15.6",
+    "A16.1",
+    "A16.2",
+    "A16.3",
+    "A16.5",
+    "A16.6",
+    "A16.7",
+    "A17.5",
+    "A17.9"
+  ],
+  "closedSections": [
+    "A14",
+    "A15",
+    "A16",
+    "A17",
+    "B10"
+  ],
+  "workloadDelta": {
+    "topLevelIds": {
+      "before": { "total": 273, "checked": 251, "open": 22 },
+      "after": { "total": 273, "checked": 271, "open": 2 },
+      "deltaChecked": 20,
+      "deltaOpen": -20
+    },
+    "countTasksScript": {
+      "before": { "total": 269, "done": 247, "pending": 22 },
+      "after": { "total": 269, "done": 267, "pending": 2 },
+      "deltaDone": 20,
+      "deltaPending": -20
+    },
+    "rawCheckboxes": {
+      "before": { "total": 313, "checked": 291, "open": 22 },
+      "after": { "total": 313, "checked": 311, "open": 2 },
+      "deltaChecked": 20,
+      "deltaOpen": -20
+    }
+  }
+}

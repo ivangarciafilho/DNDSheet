@@ -1,3 +1,7 @@
+## Build 250 — Basics decomposition, interaction kit adoption, 100% help coverage, budget enforcement & v2.5.0 release
+
+The [Build 250 packet](DNDSheet-Build250-v250-Statblock-Overhaul-and-Workspace-Sweeps.md) (source `f7219a7`, Pages `87c24f4`, base Build 249 `01a9ba9`, RC tag `rc-2.4.3-build-250-v250-statblock-overhaul-and-workspace-sweeps`, release tag `v2.5.0-statblock`, [ADR-0003](../decisions/ADR-0003-Basics-Decomposition-Interaction-Kit-and-CSS-Grammar.md), 10/10 gate with `678/678` core tests [`+9`], `0` ESLint errors / `2,740` warnings, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new, `help` coverage `100.0%` `554/554`, `src/css/app.scss` `!important` reduced `505 -> 44`, budget probe `10.4 ms` keystroke p95 / `29.1 ms` completion / `8.9 ms` `CatalogSelect` open / `12.11:1` AC head contrast, live Pages HTML & assets SHA-256 verified) closes all **20 remaining technical tasks** (`A14.1`–`A14.6`, `A15.1`–`A15.6`, `A16.1`–`A16.3`, `A16.5`–`A16.7`, `A17.5`, `A17.9`). Whole sections `A14`, `A15`, `A16`, `A17`, and `B10` are now complete (`☑`), closing all executable Track A and Track B engineering work (`267 / 269` `count-tasks` IDs, `311 / 313` raw checkboxes; only owner-gated decisions `B5.7` and `H16` remain open). Measured backlog counts update from `273` top-level `**ID**` checkboxes (`251` checked / `22` open) to `271` checked / `2` open (`+20 / −20`), and from `313` raw checkboxes (`291` checked / `22` open) to `311` checked / `2` open (`+20 / −20`), with **Track C / v2.6+** forward enhancements queued below.
+
 ## Build 249 — Bindings & roll scaling, unified catalogs/help, local repository & creature library, workspace sections & presets
 
 The [Build 249 packet](DNDSheet-Build249-Repository-Catalogs-Help-and-Workspace.md) (source `01a9ba9`, Pages `2dc8305`, base `6f7a5cf`, tag `rc-2.4.3-build-249-repository-catalogs-help-and-workspace`, 10/10 gate with `669/669` core tests [`+13`], `0` ESLint errors, `48` third-party `node_modules` typecheck diagnostics / `0` remaining in `src/` / `0` new, `help` coverage `73.8%` `409/554`, live Pages HTML & assets SHA-256 verified) closes **24 tasks** across four pillars (`A9.7`, `A9.10`, `A9.13`, `A11.2`–`A11.4`, `A13.1`, `A13.2`, `A13.4`, `A13.7`, `H9`, `B5.2`–`B5.6`, `B6.1`–`B6.4`, `B7.1`–`B7.4`). Whole sections `A9`, `A11`, `A13`, `B6`, and `B7` are now complete (`☑`), and `B5.1`–`B5.6` are closed (owner decisions `B5.7` and `H16` remain open). Measured backlog counts update from `273` top-level `**ID**` checkboxes (`227` checked / `46` open) to `251` checked / `22` open (`+24 / −24`), and from `313` raw checkboxes (`267` checked / `46` open) to `291` checked / `22` open (`+24 / −24`).
@@ -379,23 +383,23 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 |---|---|---:|:--:|
 | R1 · Reads right | A0 ✅ · A1 ✅ · A2 ✅ · A3 ✅ · A4 ✅ · A5 ✅ | 49 / 49 | ✅ |
 | R2 · Composes like sentences | A6 ✅ · A7 ✅ · A8 ✅ | 36 / 36 | ✅ |
-| R3 · Numbers know their source | A9 ◐ · A10 · A11 | 9 / 33 | ◐ |
-| R4 · Spellcasting you can trust | A12 | 0 / 11 | ☐ |
-| R5 · Explains itself | A13 · A14 · A15 · A16 | 1 / 30 | ☐ |
-| R6 · Overhaul release | A17 | 0 / 9 | ☐ |
-| R7 · Creator confidence | B1 · B2 · B3 | 0 / 17 | ☐ |
-| R8 · Portable output | B4 | 0 / 10 | ☐ |
-| R9 · Keep and reuse | B5 · B6 | 0 / 10 | ☐ |
-| R10 · Honest breadth | B7 · B8 · B9 · B10 | 0 / 14 | ☐ |
-| **Total** | **28 loops** (TrackA167 / TrackB52) | **103 / 219 complete - 1active - 115pending** | **47.03% complete** · 12 partially delivered by Builds 162–184 (see §Build185) |
+| R3 · Numbers know their source | A9 ✅ · A10 ✅ · A11 ✅ | 36 / 36 | ✅ |
+| R4 · Spellcasting you can trust | A12 ✅ | 11 / 11 | ✅ |
+| R5 · Explains itself | A13 ✅ · A14 ✅ · A15 ✅ · A16 ✅ | 30 / 30 | ✅ |
+| R6 · Overhaul release | A17 ✅ | 9 / 9 | ✅ |
+| R7 · Creator confidence | B1 ✅ · B2 ✅ · B3 ✅ | 17 / 17 | ✅ |
+| R8 · Portable output | B4 ✅ | 10 / 10 | ✅ |
+| R9 · Keep and reuse | B5 ◐ · B6 ✅ | 11 / 12 | ◐ (`B5.7` owner-gated) |
+| R10 · Honest breadth | B7 ✅ · B8 ✅ · B9 ✅ · B10 ✅ | 15 / 15 | ✅ |
+| **Total (Canonical v2 loops + H)** | **28 loops** (Track A ✅ + Track B `B5.7` owner-gated + Recovery H `H16` owner-gated) | **311 / 313 raw checkboxes (`267 / 269` count-tasks IDs; `271 / 273` top-level)** | **99.4% complete** (`2` owner gates left; see `## Build 250`) |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 8
-  "In progress" : 1
-  "Pending Track A" : 9
-  "Pending Track B" : 10
+  "Shipped" : 27
+  "Owner-gated (B5 / H)" : 1
+  "Pending Track A" : 0
+  "Pending Track B" : 0
 ```
 
 ### 1.1 Defects and blindspots by closing loop
@@ -837,7 +841,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-#### A14 · Sweep 1 — Basics split, kit, fit ☐
+#### A14 · Sweep 1 — Basics split, kit, fit ☑
 
 > The biggest panel becomes six readable ones, fully explained and never cropped.
 
@@ -845,18 +849,18 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R5 | UX-01…03 | A13 | 4–6 d | 8 files · +3 000 / −3 300 |
 
-- [ ] **A14.1** Split `BasicsEditor.vue` (4 445 LOC) into `editor/basics/` Identity, Defenses, HitPoints, Paragon, Abilities, Lore — pure moves, fixture diff · L
-- [ ] **A14.2** Replace its 71 `q-select` with `CatalogSelect` (or exemptions with reasons) · L
-- [ ] **A14.3** HelpTips on every control; short labels (§4.7) · M
-- [ ] **A14.4** Fit: responsive grids; overflow probe = 0 across the matrix · M
-- [ ] **A14.5** Keyboard pass of the Basics flow · S
-- [ ] **A14.6** Close: commit `basics editor split into six panels with catalog selects and help tips` · S
+- [x] **A14.1** Split `BasicsEditor.vue` (4 445 LOC) into `editor/basics/` Identity, Defenses, HitPoints, Paragon, Abilities, Lore — pure moves, fixture diff · L — done (250): `BasicsEditor.vue` (`31` LOC) + `useBasicsContext.ts` + 6 panels (`IdentitySection`, `AbilitiesSection`, `DefensesSection`, `ParagonSection`, `HitPointsSection`, `LoreSection`); commit `09a33fa`; verified by `test/core/BasicsPanelSplit.test.ts`
+- [x] **A14.2** Replace its 71 `q-select` with `CatalogSelect` (or exemptions with reasons) · L — done (250): migrated across `basics/`, recorded exemptions in `docs/roadmap/DNDSheet-Control-Inventory.md` and `ADR-0003`; commit `09a33fa`
+- [x] **A14.3** HelpTips on every control; short labels (§4.7) · M — done (250): 100% coverage in `Identity`/`Defenses`/`HitPoints`/`Paragon`/`Abilities`/`Lore`; `test/inventory.mjs` `554/554`; commit `09a33fa`
+- [x] **A14.4** Fit: responsive grids; overflow probe = 0 across the matrix · M — done (250): `tools/qa/overflow-probe.js` `10 views / 0 clips` + `test/build250-workflow-browser-smoke.js` (`1440px`, `640px`, `390px`); commit `09a33fa` / `f7219a7`
+- [x] **A14.5** Keyboard pass of the Basics flow · S — done (250): `test/build250-workflow-browser-smoke.js` (`16`-Tab traversal + CDP `Celestial` search/`Enter`/`Escape`); commit `09a33fa` / `f7219a7`
+- [x] **A14.6** Close: commit `basics editor split into six panels with catalog selects and help tips` · S — done (250): commit `09a33fa` (`feat(a14): split basics editor into six panels with catalog selects and help tips`)
 
 **Done when:** SEL-001, TIP-001, FIT-001…003 proven for Basics.
 
 ---
 
-#### A15 · Sweep 2 — casting, checks, senses, defenses ☐
+#### A15 · Sweep 2 — casting, checks, senses, defenses ☑
 
 > The rules-heavy panels speak the kit.
 
@@ -864,19 +868,19 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R5 | UX-01…03 | A13, A12 | 3–4 d | 10 files · +900 / −600 |
 
-- [ ] **A15.1** `ClassCastingEditor`, `SpellcastingEditor`, `AtWillCastingEditor`: kit adoption, tips, fit · L
-- [ ] **A15.2** `SkillsEditor`, `SavesEditor`: kit adoption, tips, fit · M — tips done (202); fit pass left
-- [ ] **A15.3** `SensesEditor`, `SpeedsEditor`, `ResistancesEditor`, `InventoryEditor`: kit adoption, tips, fit · M — tips on Senses, Speeds, Resistances (201–202); Inventory tips and fit left
-- [ ] **A15.4** Audit: help coverage and overflow for these panels · S
-- [ ] **A15.5** Keyboard pass · S
-- [ ] **A15.6** Close: commit `casting, checks, senses and defenses panels adopt the interaction kit` · S
+- [x] **A15.1** `ClassCastingEditor`, `SpellcastingEditor`, `AtWillCastingEditor`: kit adoption, tips, fit · L — done (250): `CatalogSelect` + `v-help` across casting panels (`CastingSourceSpellRows.vue` exempt multi-select registered); commit `47088bd`; verified by `test/build250-workflow-browser-smoke.js`
+- [x] **A15.2** `SkillsEditor`, `SavesEditor`: kit adoption, tips, fit · M — done (250): fit + `CatalogSelect` + `100%` help coverage (compact inline cell pickers documented in Exemption Registry); commit `47088bd`
+- [x] **A15.3** `SensesEditor`, `SpeedsEditor`, `ResistancesEditor`, `InventoryEditor`: kit adoption, tips, fit · M — done (250): kit adoption, `100%` help tips (incl. `InventoryEditor`), responsive fit; commit `47088bd`
+- [x] **A15.4** Audit: help coverage and overflow for these panels · S — done (250): `npm run audit:help` `554/554` (`100.0%`) & `overflow-probe.js` `0` clips across 10 views; commit `47088bd` / `f7219a7`
+- [x] **A15.5** Keyboard pass · S — done (250): verified in `test/build250-workflow-browser-smoke.js` & `test/exhaustive-ui-fuzz.js` Step 56; commit `47088bd` / `f7219a7`
+- [x] **A15.6** Close: commit `casting, checks, senses and defenses panels adopt the interaction kit` · S — done (250): commit `47088bd` (`feat(a15): casting, checks, senses and defenses panels adopt the interaction kit`)
 - [x] **A15.7** Align e2e Step 25 with intentional grouping: skills in Search/Study/Influence/Hide do not create a duplicate Skills row; assert grouped skill/tool content and no redundant Skills heading · S · *added A4; proof: `ae16b86`, full e2e pass*
 
 **Done when:** SEL-001, TIP-001, FIT-001…003 proven for these panels.
 
 ---
 
-#### A16 · Sweep 3 — studio, A4, toolbar, CSS cleanup ☐
+#### A16 · Sweep 3 — studio, A4, toolbar, CSS cleanup ☑
 
 > The last surfaces join the kit; dead CSS leaves.
 
@@ -884,13 +888,13 @@ The first post-A4 full run exposed three stale browser expectations and one real
 |---|---|---|---|---|
 | R5 | UX-01…03 | A13, A8 | 3–4 d | 12 files · +900 / −1 400 |
 
-- [ ] **A16.1** Actions Studio and composer chips: kit adoption and tips · M — tips on usage, cadence and display settings (203); chips left
-- [ ] **A16.2** `A4LayerStudio.vue` (fixed canvas exempt with scroll affordance, BS-35), `MainLayout.vue` toolbar tips · M — A4 studio tips (203); toolbar tips and scroll affordance left
-- [ ] **A16.3** Remaining panels (Regional, Anatomy, Encounter Dynamics, Villain if kept) · M
+- [x] **A16.1** Actions Studio and composer chips: kit adoption and tips · M — done (250): `ActionsEditor`, `ChainCell`, `ChainOutcomesEditor`, `AttackComposer`, `TraitCadenceEditor`, `MultiattackComposer` kit + `100%` help tips; commit `42e6eb1`
+- [x] **A16.2** `A4LayerStudio.vue` (fixed canvas exempt with scroll affordance, BS-35), `MainLayout.vue` toolbar tips · M — done (250): `.editor-scroll-region[data-a4-layer-list]` containment (`BS-35`) & `MainLayout.vue` help tips; commit `42e6eb1`; verified in `test/build250-workflow-browser-smoke.js`
+- [x] **A16.3** Remaining panels (Regional, Anatomy, Encounter Dynamics, Villain if kept) · M — done (250): `RegionalEffectsEditor`, `AnatomyEditor`, `EncounterDynamicsEditor`, `VillainActionsEditor`, `RandomTablesEditor`, `CrAnnotationCard` kit + `100%` help tips; commit `42e6eb1`
 - [x] **A16.4** Splitter minimum widths (FIT-004) · S — done (216): both splitters get `:limits` = [320 px preview, screen − 360 px] from `$q.screen.width`; fuzz Step 56 checks the preview never drops under 320 px
-- [ ] **A16.5** `app.scss` cleanup: delete legacy `.action-composite-*`, `.zebra-stripe-text`, `.trait > div:first-of-type` and cascade blocks whose markup is gone; `!important` < 200 · L
-- [ ] **A16.6** Global audits: help coverage = 1.00, overflow = 0 · S
-- [ ] **A16.7** Close: commit `studio, layout and toolbar adopt the kit; legacy statblock css removed` · S
+- [x] **A16.5** `app.scss` cleanup: delete legacy `.action-composite-*`, `.zebra-stripe-text`, `.trait > div:first-of-type` and cascade blocks whose markup is gone; `!important` < 200 · L — done (250): `src/css/app.scss` reduced `505 -> 44` `!important` declarations (`< 150` target, `91.3%` reduction), isolated grammar in `statblock-grammar.scss`, enforced by `test/core/Budgets.test.ts`; commit `42e6eb1`
+- [x] **A16.6** Global audits: help coverage = 1.00, overflow = 0 · S — done (250): `npm run audit:help` `554/554` (`100.0%`), `overflow-probe.js` `0` clips / `10` views, `test/core/Budgets.test.ts`; commit `42e6eb1` / `a183b5f`
+- [x] **A16.7** Close: commit `studio, layout and toolbar adopt the kit; legacy statblock css removed` · S — done (250): commit `42e6eb1` (`feat(a16): studio, layout and composer panels adopt kit; prune legacy statblock css`)
 
 **Done when:** SEL-001, TIP-001, FIT-001…005 proven app-wide; DEF-10, DEF-11 closed.
 
@@ -898,7 +902,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ### R6 · Overhaul release
 
-#### A17 · Hardening and release ☐
+#### A17 · Hardening and release ☑
 
 > Prove it all at once, write down only what is proven, tag it.
 
@@ -910,11 +914,11 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **A17.2** Move QA helpers from `%TEMP%` to `tools/qa/` (shot, splice, fixture loader, overflow probe, doc check) · S — done (216): `tools/qa/` with `count-tasks.mjs` (now A/B/H), `edit-anchored.mjs`, `shots.mjs` (repo-relative paths), new `run-step.mjs` (one fuzz step in a fresh Chrome) and a README. Fixture loader and overflow probe live in the fuzz itself
 - [x] **A17.3** Update `test/exhaustive-ui-fuzz.js` to the plate grammar and the unified studio; locate headless Chrome (BS-36) · L — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A17.4** Theme matrix: 12 selectable themes × fixture, computed contrast table (SBG-005) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
-- [ ] **A17.5** Budgets: keystroke → preview, completion, select open, resolver pass (§15.4) · M
+- [x] **A17.5** Budgets: keystroke → preview, completion, select open, resolver pass (§15.4) · M — done (250): hoisted `Intl.Collator` in `catalog-select-model.ts`, cached `FormulaContext` in `monster-bindings.ts`, enforced by `test/core/Budgets.test.ts` + CDP `test/budget-browser-probe.js` (`keystrokeP95 10.4 ms <= 100 ms`, `completionOpen 29.1 ms <= 100 ms`, `catalogSelectOpen 8.9 ms <= 150 ms`, `headContrast 12.11:1 >= 4.5`); commits `465e923` / `f7219a7`
 - [x] **A17.6** `npx quasar build` clean · S — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A17.7** Rewrite `STACK_STATE.md` and the README feature list from evidence (DEF-14, BS-03) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 - [x] **A17.8** Profile macro rendering on a 5 000-character description (BS-15); screenshot storage policy (BS-37) · S — done (217): `Build217.test.ts`: 0.18 ms per 5 000-character description (20 runs after warm-up), budget 16 ms. Screenshot policy: screenshots are evidence, never committed — they go to the scratch tree or `%TEMP%`, and reports cite them by path
-- [ ] **A17.9** Release: annotated local tag `v2.5.0-statblock`, release notes, docs ritual · S
+- [x] **A17.9** Release: annotated local tag `v2.5.0-statblock`, release notes, docs ritual · S — done (250): `v2.5.0-statblock` + `rc-2.4.3-build-250-v250-statblock-overhaul-and-workspace-sweeps` on `f7219a7`, published live to `gh-pages` (`87c24f4`), `ADR-0003` + Build 250 packet + publication receipt + docs sync
 
 **Done when:** QA-001…006, SBG-005 (12 selectable themes), NFR-001 (Track A paths) proven; DEF-13, DEF-14 closed.
 
@@ -1059,7 +1063,7 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 **Done when:** DOM-005 proven.
 
-#### B10 · Character truth and final documentation ☐
+#### B10 · Character truth and final documentation ☑
 
 | Release | Feature | Depends on | Effort |
 |---|---|---|---|
@@ -1070,6 +1074,22 @@ The first post-A4 full run exposed three stale browser expectations and one real
 - [x] **B10.3** README, STACK_STATE and feature matrix regenerated from release evidence; close (TASK-062) · M — done (222): see Build222 task/evidence matrix; frozen gate10/10, core/browser and targeted probes.
 
 **Done when:** DOM-006, PRD-002…003, REL-002 proven.
+
+---
+
+### Track C · v2.6+ Forward Roadmap (Post-v2.5.0 Backlog Grooming)
+
+> Now that Tracks A and B are shipped (`311/313` checkboxes complete; only owner-gated `B5.7` and `H16` open), these high-leverage items form the groomed **Track C / v2.6+** candidate queue grounded in Build 250 codebase telemetry. *(Kept as a planning table outside the `[ABH]` checkbox ledger so Track A/B closure metrics stay invariant.)*
+
+| Candidate ID | Telemetry / Trigger | Proposed Scope | Priority |
+|---|---|---|---|
+| `C1` | Large editor panels >1,000 LOC (`A4LayerStudio.vue` 1,544, `SkillsEditor.vue` 1,397, `ResistancesEditor.vue` 1,138, `ActionsEditor.vue` 1,034) | Apply `ADR-0003` `provide*Context` + subsection module pattern (`BasicsEditor.vue` went `4,445 -> 31` LOC) | P1 |
+| `C2` | Remaining inline `<q-select>` cell pickers (`SkillsEditor` ×6, `SpeedsEditor` ×4, `SavesEditor`, `SensesEditor`, `EncounterDynamicsEditor`) | Evaluate lightweight compact `CatalogSelect` preset or formalize strict lint guard tied to Exemption Registry | P2 |
+| `C3` | ESLint warning baseline (`2,740` warnings, `0` errors across `src/` & `test/`) | Burn down quote/style/non-null assertion warnings (`--fix` pass + incremental strictness) | P2 |
+| `C4` | `48` third-party `node_modules` Volar/Vue typecheck diagnostics (`0` in `src/`) | Upgrade pinned `@volar`/`vue-tsc` toolchain cleanly in `tools/typecheck-runtime` | P3 |
+| `C5` | `A16` / `B7` / `B8` prerequisites met (`BS-33` EN-only help today) | Localize `HELP_MESSAGES` in `src/i18n`, add optional focused side-help drawer, & 2014↔2024 rules converter with loss report | P2 |
+| `C6` | `A17` prerequisite met | Add automated pixel-diff visual regression suite & per-document presentation presets alongside `tools/qa/shots.mjs` | P3 |
+| `C7` | Owner gates (`B5.7`, `H16`) | Execute `ErrorCorrection.vue` `/reset` policy decision (`B5.7`) & `DNDSheet-RC/` archive disposition (`H16`) once approved | Owner Gate |
 
 ---
 
