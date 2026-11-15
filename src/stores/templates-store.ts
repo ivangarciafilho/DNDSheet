@@ -169,7 +169,7 @@ export const useTemplatesStore = defineStore('templates', {
 
       // now we have to make it comply
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      delete (template as { id?: string }).id // remove the id
       template.type = 'Action'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Action : icon
       template.templateName = templateName
@@ -182,7 +182,7 @@ export const useTemplatesStore = defineStore('templates', {
 
       // now we have to make it comply
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      delete (template as { id?: string }).id // remove the id
       template.type = 'Attack'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Attack : icon
       template.templateName = templateName
@@ -194,7 +194,7 @@ export const useTemplatesStore = defineStore('templates', {
 
       // now we have to make it comply
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      delete (template as { id?: string }).id // remove the id
       template.type = 'Trait'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Trait : icon
       template.templateName = templateName
@@ -210,7 +210,7 @@ export const useTemplatesStore = defineStore('templates', {
 
       // now we have to make it comply
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      delete (template as { id?: string }).id // remove the id
       template.type = 'Reaction'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Reaction : icon
       template.templateName = templateName

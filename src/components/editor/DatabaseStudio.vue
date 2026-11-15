@@ -316,9 +316,10 @@ v-model="databaseJsonPreview"
 import { defineComponent, ref, computed } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useQuasar } from 'quasar'
+import { applyMonsterPreset, type MonsterPreset } from 'src/core/usecases/ApplyMonsterPreset'
 
 
-export const BUILTIN_PRESETS = [
+export const BUILTIN_PRESETS: MonsterPreset[] = [
   {
     id: 'preset-ezra-meridian',
     name: 'Ezra Meridian Aethelgard (Master Celestial Archetype)',
@@ -331,13 +332,13 @@ export const BUILTIN_PRESETS = [
     proficiency: 2,
     AC: 15,
     ACType: 'Attacker must Succeed on a Wisdom Saving Throw DC 15, On Failure Knocks Prone',
-    HP: { HD: 15, type: 'd8', modifier: 45 },
+    HP: { HD: 15, type: 8, modifier: 45 },
     hpModifierOverride: true,
     hpNotes: 'Bloodied (56); Returns with 1 hit point if Not Reduced to 0 by necrotic',
-    speeds: [{ type: 'walk', speed: 30 }, { type: 'tracking', speed: 30 }],
+    speeds: [{ id: 'ezra-walk', type: 'walk', speed: 30, note: '' }, { id: 'ezra-tracking', type: 'tracking', speed: 30, note: '' }],
     sensesList: [
-      { name: 'Divine Sense', acrossPlanes: true, range: 60, rangeUnit: 'ft', customText: 'presence of celestials, fiends, undead' },
-      { name: 'Darkvision', range: 60, rangeUnit: 'ft', customText: 'ignore Magical Darkness' }
+      { id: 'ezra-divine-sense', name: 'Divine Sense', acrossPlanes: true, range: 60, rangeUnit: 'ft', note: 'presence of celestials, fiends, undead' },
+      { id: 'ezra-darkvision', name: 'Darkvision', range: 60, rangeUnit: 'ft', note: 'ignore Magical Darkness' }
     ],
     languages: 'Common, Celestial, Dead (as Speak with Dead; up to 5 questions, corpse must have a mouth, dead within 10 days, answers may be brief or cryptic)',
     resistances: ['radiant', 'charmed ^^', 'frightened ^^'],
@@ -366,9 +367,11 @@ export const BUILTIN_PRESETS = [
         school: 'Evocation',
         components: ['V', 'S'],
         recharge: '4–12',
-        targeting: { count: 3, kind: 'enemies', range: 60, context: 'you can see 60 ft. of you across the Material and Ethereal Planes' },
+        targeting: { count: 3, kind: 'enemies', qualifier: 'you can see', range: { distance: 60, unit: 'ft', relation: 'within', origin: 'you' }, planes: ['Material', 'Ethereal'] },
         attackBonus: 7,
-        attackType: 'Ranged Spell Attack',
+        actionType: 'spell_attack',
+        attackReach: 'ranged',
+        attackSource: 'spell',
         description: 'On Hit: 9 (1d8 + 5) Speed reduced by 10ft, if 0ft at End Of Turn, its knocked Prone.'
       }
     ],
@@ -381,7 +384,7 @@ export const BUILTIN_PRESETS = [
         components: ['V', 'S'],
         duration: '1 round',
         recharge: '6–12',
-        targeting: { kind: 'enemies', range: 20, context: 'enemies 20 ft. of you across the Ethereal and Material Planes' },
+        targeting: { kind: 'enemies', range: { distance: 20, unit: 'ft', relation: 'within', origin: 'you' }, planes: ['Ethereal', 'Material'] },
         saveDc: 15,
         saveStat: 'Charisma',
         description: 'On Success : takes 13 (3d8) Radiant, otherwise, double and until End Of Turn, Suppresses its effects leaving one or more creatures Possessed or Charmed by it, brought into the Material Plane if on the Ethereal Plane to closest unoccupied space, without Immunity to being Grappled and Prone.'
@@ -394,13 +397,14 @@ export const BUILTIN_PRESETS = [
       stat: 'CHA',
       resourceType: 'pact',
       slots: [0, 0, 3, 0, 0, 0, 0, 0, 0],
-      refreshRate: 'Short Rest',
+      refreshRate: 'short_rest',
       spellCadenceMap: {
         'Misty Step': 'Long Rest',
         'Magic Circle': 'Long Rest'
       },
       metamagic: {
         enabled: true,
+        sorceryPoints: 4,
         points: 4,
         refreshRate: 'Long Rest',
         options: ['Quickened Spell', 'Twinned Spell']
@@ -473,16 +477,16 @@ export default defineComponent({
     const newPresetName = ref('')
     const savedPresets = computed({
       get: () => {
-        const userPresets = (monster.customDatabase?.presets as any[]) || []
+        const userPresets = (monster.customDatabase?.presets ?? []) as MonsterPreset[]
         return [...BUILTIN_PRESETS, ...userPresets]
       },
-      set: (val: any[]) => {
+      set: (val: MonsterPreset[]) => {
         if (!monster.customDatabase) monster.customDatabase = {}
         monster.customDatabase.presets = val.filter((p) => !p.isBuiltin)
       }
     })
 
-    const formatSpeeds = (speeds: any[]) => {
+    const formatSpeeds = (speeds?: MonsterPreset['speeds']) => {
       if (!Array.isArray(speeds)) return '30 ft.'
       return speeds.map((s) => `${s.type ? s.type + ' ' : ''}${s.speed} ft.`).join(', ')
     }
@@ -511,7 +515,7 @@ export default defineComponent({
       $q.notify({ type: 'positive', message: `Saved preset "${name}" to database` })
     }
 
-    const applyPreset = (preset: any) => {
+    const applyPreset = (preset: MonsterPreset) => {
       $q.dialog({
         title: `Apply Preset "${preset.name}"?`,
         message: preset.isBuiltin
@@ -520,47 +524,7 @@ export default defineComponent({
         ok: 'Apply',
         cancel: true,
       }).onOk(() => {
-        monster.$patch((state) => {
-          if (preset.name && preset.isBuiltin) state.name = preset.name.replace(/\s*\(Master.*\)$/, '')
-          if (preset.type) state.type = preset.type
-          if (preset.subtype !== undefined) state.subtype = preset.subtype
-          if (preset.size) state.size = preset.size
-          if (preset.alignment) state.alignment = preset.alignment
-          if (preset.CR !== undefined) state.CR = preset.CR
-          if (preset.AC !== undefined) state.AC = preset.AC
-          if (preset.ACType !== undefined) state.ACType = preset.ACType
-          if (preset.HP) state.HP = JSON.parse(JSON.stringify(preset.HP))
-          if (preset.hpNotes) (state as any).hpNotes = preset.hpNotes
-          if (preset.speeds) state.speeds = JSON.parse(JSON.stringify(preset.speeds))
-          if (preset.senses) state.senses = JSON.parse(JSON.stringify(preset.senses))
-          if (preset.sensesList) (state as any).sensesList = JSON.parse(JSON.stringify(preset.sensesList))
-          if (preset.languages) state.languages = preset.languages
-          if (preset.stats) state.stats = JSON.parse(JSON.stringify(preset.stats))
-          if (preset.saves) state.saves = JSON.parse(JSON.stringify(preset.saves))
-          if (preset.initiative) (state as any).initiative = JSON.parse(JSON.stringify(preset.initiative))
-          if (preset.compactNameplate !== undefined) state.compactNameplate = preset.compactNameplate
-          if (preset.showXp !== undefined) state.showXp = preset.showXp
-          if (preset.actions) state.actions = JSON.parse(JSON.stringify(preset.actions))
-          if (preset.bonusActions && Array.isArray((state as any).bonusActions)) (state as any).bonusActions = JSON.parse(JSON.stringify(preset.bonusActions))
-          if (preset.spellcasting) state.spellcasting = JSON.parse(JSON.stringify(preset.spellcasting))
-          if (preset.traits && Array.isArray(preset.traits)) {
-            for (const t of preset.traits) {
-              if (!state.traits.some((ex) => ex.name.toLowerCase() === t.name.toLowerCase())) {
-                state.traits.push(JSON.parse(JSON.stringify(t)))
-              }
-            }
-          }
-          if (preset.resistances && Array.isArray(preset.resistances)) {
-            for (const r of preset.resistances) {
-              if (!state.resistances.includes(r)) state.resistances.push(r)
-            }
-          }
-          if (preset.vulnerabilities && Array.isArray(preset.vulnerabilities)) {
-            for (const v of preset.vulnerabilities) {
-              if (!state.vulnerabilities.includes(v)) state.vulnerabilities.push(v)
-            }
-          }
-        })
+        monster.$patch((state) => applyMonsterPreset(state, preset))
         $q.notify({ type: 'positive', message: `Applied preset "${preset.name}"` })
       })
     }

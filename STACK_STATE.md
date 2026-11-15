@@ -1,3 +1,7 @@
+## Build 254 — C8 type debt and library preset repairs
+
+any lines 112 to 45; the library preset lost initiative, bonus actions, HP notes, proficiency, HP override and spellcasting fields behind an any cast. Fixed through a tested applyMonsterPreset, with the built-in preset brought to the current schema. See docs/roadmap/DNDSheet-Build254-Type-Debt-and-Preset-Repairs.md.
+
 ## Build 253 — C3 lint burn-down
 
 ESLint warnings 2,733 to 282 with no template or behaviour change (42 Vue templates token-identical); dead imports and duplicate computeds removed; rest-sibling omission allowed. See docs/roadmap/DNDSheet-Build253-Lint-Burndown.md.

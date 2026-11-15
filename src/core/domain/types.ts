@@ -59,6 +59,9 @@ export interface MonsterSpeed {
 
 export interface MonsterSpeedTraversal {
   ignoresDifficultTerrain?: boolean
+  /** Legacy traversal flag still read by the stat line. */
+  bonusActionHide?: boolean
+  hideRider?: string
   bonusActionDash?: boolean
   bonusActionDodge?: boolean
   bonusActionDisengage?: boolean
@@ -448,6 +451,8 @@ export interface ComboAction {
   followUpAction: string
   followup?: string
   condition: string
+  /** Legacy name for condition. */
+  triggerCondition?: string
   description: string
 }
 
@@ -492,7 +497,11 @@ export interface InvulnerabilityConfig {
   damageTypesFilter?: string[]
   customRule?: string
   firstXCount?: number
+  /** Legacy name for firstXCount. */
+  attackCount?: number
   disruption?: string
+  /** Legacy name for disruption. */
+  disruptedBy?: string
   customDisruption?: string
   displayLocation?: 'ac' | 'hp'
   combiner?: 'and' | 'or'
@@ -1292,6 +1301,10 @@ export interface Monster {
   splitSpeedRiderRows?: boolean
   splitHpRiderRows?: boolean
   splitAcRiderRows?: boolean
+  /** Legacy per-category split flags; superseded by splitVulnRows/splitResRows/splitImmRows. */
+  splitDefenseRows?: { vulnerabilities?: boolean; resistances?: boolean; immunities?: boolean }
+  /** Legacy tools action placement; superseded by passives.toolsActionType. */
+  toolsActionType?: 'Action' | 'Bonus Action'
   customDatabase?: { presets?: any[]; [key: string]: unknown }
 }
 

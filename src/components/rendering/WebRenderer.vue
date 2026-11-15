@@ -997,6 +997,7 @@
 import type { HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
+import type { CSSProperties } from 'vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
@@ -1007,6 +1008,7 @@ import { useEditorStore, type A4CompositionLayer } from 'src/stores/editor-store
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, spellLevelLead } from 'src/core/domain/spell-plate'
+import type { SpellPlateLevel } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
@@ -1341,7 +1343,7 @@ export default defineComponent({
           }
         : {}
 
-      const layerVisibilityAndBlend: Record<string, any> = {
+      const layerVisibilityAndBlend: Record<string, string | undefined> = {
         display: sbLayer && sbLayer.visible === false ? 'none' : undefined,
         mixBlendMode: sbLayer?.blendMode || 'normal',
       }
@@ -1571,7 +1573,7 @@ export default defineComponent({
       const portraitZ = getLayerZIndex('portrait')
       const pLayer = portraitLayerObj.value
       const layerOpacity = ((pLayer?.opacity ?? 100) / 100)
-      const layerBlend = (pLayer?.blendMode || 'normal') as any
+      const layerBlend = (pLayer?.blendMode || 'normal') as CSSProperties['mixBlendMode']
       const layerDisplay = pLayer && pLayer.visible === false ? 'none' : undefined
       const maskImg = pLayer?.maskUrl ? `url("${appAsset(pLayer.maskUrl)}")` : undefined
 
@@ -1663,11 +1665,12 @@ export default defineComponent({
       }
     })
 
-    const formatGradient = (overlay: any): string | undefined => {
+    type GradientOverlay = Parameters<typeof formatCurvedGradientCss>[0]
+    const formatGradient = (overlay: GradientOverlay): string | undefined => {
       return formatCurvedGradientCss(overlay)
     }
 
-    const getGradientOverlayStyle = (overlay: any): StyleValue => {
+    const getGradientOverlayStyle = (overlay: GradientOverlay | undefined): StyleValue => {
       if (!overlay || !overlay.enabled) return {}
       const grad = formatGradient(overlay) || 'linear-gradient(to bottom, rgba(0,0,0,0.7), transparent)'
       return {
@@ -1677,7 +1680,7 @@ export default defineComponent({
         width: '100%',
         height: '100%',
         backgroundImage: grad,
-        mixBlendMode: overlay.blendMode || 'normal',
+        mixBlendMode: (overlay.blendMode || 'normal') as CSSProperties['mixBlendMode'],
         opacity: (overlay.opacity ?? 100) / 100,
         pointerEvents: 'none',
       }
@@ -1839,22 +1842,22 @@ export default defineComponent({
 
 
 
-    const getPrimarySpells = (row: any): any[] => {
+    const getPrimarySpells = (row: SpellPlateLevel): SpellPlateLevel['spells'] => {
       if (!monster.spellcasting?.splitHighCadence) return row.spells || []
-      return (row.spells || []).filter((s: any) => !s.restricted)
+      return (row.spells || []).filter((s) => !s.restricted)
     }
 
-    const getSecondarySpells = (row: any): any[] => {
+    const getSecondarySpells = (row: SpellPlateLevel): SpellPlateLevel['spells'] => {
       if (!monster.spellcasting?.splitHighCadence) return []
-      return (row.spells || []).filter((s: any) => s.restricted)
+      return (row.spells || []).filter((s) => s.restricted)
     }
 
     const primarySpellLevels = computed(() => {
-      return (spellPlate.value?.levels || []).filter((row: any) => getPrimarySpells(row).length > 0)
+      return (spellPlate.value?.levels || []).filter((row) => getPrimarySpells(row).length > 0)
     })
 
     const secondarySpellLevels = computed(() => {
-      return (spellPlate.value?.levels || []).filter((row: any) => getSecondarySpells(row).length > 0)
+      return (spellPlate.value?.levels || []).filter((row) => getSecondarySpells(row).length > 0)
     })
 
     const hasAnySecondarySpells = computed(() => {
@@ -1884,9 +1887,9 @@ export default defineComponent({
       return secIdx % 2 === 1
     }
 
-    const shouldStripeSpellLine = (row: any): boolean => {
+    const shouldStripeSpellLine = (row: SpellPlateLevel): boolean => {
       const spells = getPrimarySpells(row)
-      const textLength = spells.reduce((acc: number, s: any) => acc + (s.name?.length || 0) + (s.tags?.length || 0) + 4, 25)
+      const textLength = spells.reduce((acc: number, s) => acc + (s.name?.length || 0) + (s.tags?.length || 0) + 4, 25)
       return textLength > 130
     }
 
@@ -1894,7 +1897,7 @@ export default defineComponent({
       let raw = ''
       if (Array.isArray(content)) raw = content.join(' ')
       else if (content && typeof content === 'object') {
-        if ('value' in (content as any)) raw = String((content as any).value || '')
+        if ('value' in content) raw = String(content.value || '')
         else raw = JSON.stringify(content)
       } else raw = String(content || '')
       const text = raw.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').trim()

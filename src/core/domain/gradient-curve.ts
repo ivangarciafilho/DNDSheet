@@ -128,7 +128,8 @@ function interpolateStopsWithCurve(
   return out
 }
 
-export function formatCurvedGradientCss(overlay?: GradientOverlayConfig): string {
+// Every field is optional in practice: saved layers carry partial overlays and each one defaults here.
+export function formatCurvedGradientCss(overlay?: Partial<GradientOverlayConfig>): string {
   if (!overlay || !overlay.enabled) return 'none'
   const rawStops = Array.isArray(overlay.stops) && overlay.stops.length >= 2
     ? overlay.stops
@@ -156,6 +157,6 @@ export function formatCurvedGradientCss(overlay?: GradientOverlayConfig): string
     top_to_bottom: 'to bottom',
     bottom_to_top: 'to top',
   }
-  const cssDir = dirMap[overlay.direction] || 'to bottom'
+  const cssDir = dirMap[overlay.direction ?? ''] || 'to bottom'
   return `linear-gradient(${cssDir}, ${stopStr})`
 }

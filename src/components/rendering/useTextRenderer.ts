@@ -25,6 +25,8 @@ import { CR } from 'src/data/CR'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed } from 'vue'
 import type { ComputedRef } from 'vue'
+import type { SkillPassivePreference } from 'src/core/domain/skill-passive-state'
+import type { DamageDefenseItem, MonsterSenseItem } from 'src/core/domain/types'
 import { useI18n } from 'vue-i18n'
 import {
   renderBonus,
@@ -171,7 +173,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const inv = monster.extendedHp?.invulnerability
       if (inv) {
         const loc = resolveInvulnerabilityDisplayLocation(inv)
-        if (loc === 'ac' && (!res.isAbsoluteRule || (monster as any).splitAcRiderRows)) {
+        if (loc === 'ac' && (!res.isAbsoluteRule || monster.splitAcRiderRows)) {
           const ruling = composeInvulnerabilityRuling(inv)
           if (ruling && !badges.includes(ruling)) badges.push(ruling)
         }
@@ -179,7 +181,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       return badges
     }
 
-    const splitAc = Boolean((monster as any).splitAcRiderRows)
+    const splitAc = Boolean(monster.splitAcRiderRows)
     const rawAcType = monster.ACType ? monster.ACType.trim() : ''
     if (splitAc && rawAcType) {
       const badges: string[] = [numericHtml('AC', monster.AC)]
@@ -210,7 +212,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const bloodiedValue = computed(() => {
     const ext = monster.extendedHp
     if (!ext) return null
-    const src = ext.bloodiedSource || (ext as any).bloodiedValueSource
+    const src = ext.bloodiedSource || ext.bloodiedValueSource
     if (src === 'none' && !ext.showBloodied) return null
     const hasExplicitOverride = ext.bloodiedOverride != null && Number(ext.bloodiedOverride) > 0
     if (!src && !ext.showBloodied && !hasExplicitOverride) return null
@@ -653,8 +655,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (trav.bonusActionDisengage) {
       riders.push(trav.disengageRider?.trim() ? `Disengage: ${sanitizeRiderText(trav.disengageRider)}` : 'Bonus Action Disengage')
     }
-    if ((trav as any).bonusActionHide) {
-      riders.push((trav as any).hideRider?.trim() ? `Hide: ${(trav as any).hideRider.trim()}` : 'Bonus Action Hide')
+    if (trav.bonusActionHide) {
+      riders.push(trav.hideRider?.trim() ? `Hide: ${trav.hideRider.trim()}` : 'Bonus Action Hide')
     }
     if (Array.isArray(trav.actionRiders) && trav.actionRiders.length > 0) {
       for (const rider of trav.actionRiders) {
@@ -794,10 +796,11 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const cascadingDefenses = computed(() => {
     // Each entry keeps plain text (sorting, verbosity) and HTML (adv/disadv grammar).
     type DefenseEntry = { text: string; html: string }
-    const getItems = (list: any[] | undefined, fallback: string[] | undefined): DefenseEntry[] => {
+    type DefenseRow = { key: string; title: string; scopeLabel: string; subTypeLabel: string; damageItems: string[]; conditionItems: string[]; items: string[]; formattedText: string; formattedProse: string; isVerbose: boolean }
+    const getItems = (list: DamageDefenseItem[] | undefined, fallback: string[] | undefined): DefenseEntry[] => {
       if (Array.isArray(list) && list.length > 0) {
-        const advList: { name: string; item: any }[] = []
-        const disadvList: { name: string; item: any }[] = []
+        const advList: { name: string; item: DamageDefenseItem }[] = []
+        const disadvList: { name: string; item: DamageDefenseItem }[] = []
 
         for (const item of list) {
           if (!item) continue
@@ -938,7 +941,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       const shouldSplit = forceSplit || (Boolean(monster.autoSplitDefenses) && isVerbose)
 
       if (shouldSplit && finalDamages.length > 0 && finalConditions.length > 0) {
-        const rows: any[] = []
+        const rows: DefenseRow[] = []
         rows.push({
           key: `${key}_damage`,
           title: `${scopeLabel} (Damage)`,
@@ -980,20 +983,20 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       }]
     }
 
-    const categoryOrder = Array.isArray((monster as any).defenseCategoryOrder) && (monster as any).defenseCategoryOrder.length === 3
-      ? (monster as any).defenseCategoryOrder
+    const categoryOrder = Array.isArray(monster.defenseCategoryOrder) && monster.defenseCategoryOrder.length === 3
+      ? monster.defenseCategoryOrder
       : ['vulnerabilities', 'resistances', 'immunities']
 
-    const sections: any[] = []
+    const sections: DefenseRow[] = []
     for (const cat of categoryOrder) {
       if (cat === 'vulnerabilities') {
-        const splitVuln = Boolean(monster.splitVulnRows || (monster as any).splitDefenseRows?.vulnerabilities)
+        const splitVuln = Boolean(monster.splitVulnRows || monster.splitDefenseRows?.vulnerabilities)
         sections.push(...buildUnifiedSection('vulnerabilities', 'Vulnerabilities', vulnDamages, vulnConditions, splitVuln))
       } else if (cat === 'resistances') {
-        const splitRes = Boolean(monster.splitResRows || (monster as any).splitDefenseRows?.resistances)
+        const splitRes = Boolean(monster.splitResRows || monster.splitDefenseRows?.resistances)
         sections.push(...buildUnifiedSection('resistances', 'Resistances', resDamages, resConditions, splitRes))
       } else if (cat === 'immunities') {
-        const splitImm = Boolean(monster.splitImmRows || (monster as any).splitDefenseRows?.immunities)
+        const splitImm = Boolean(monster.splitImmRows || monster.splitDefenseRows?.immunities)
         sections.push(...buildUnifiedSection('immunities', 'Immunities', immDamages, immConditions, splitImm))
       }
     }
@@ -1053,18 +1056,19 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   }
 
   const combatSkillRows = computed(() => {
-    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
-    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const aop = monster.actionOrientedPassives
+    const editorPassives = monster.passives
     const passiveCfg = (key: string) => {
       const cfgKey = passiveConfigKey(key)
-      return editorPassives?.[cfgKey] ?? editorPassives?.[cfgKey.toLowerCase()]
+      // Index-signature entries of SkillPassiveState hold one preference per skill key.
+      return (editorPassives?.[cfgKey] ?? editorPassives?.[cfgKey.toLowerCase()]) as Partial<SkillPassivePreference> | undefined
     }
     const sharedCondition = (key: string): string => {
       const cfgKey = passiveConfigKey(key)
       const raw = aop?.conditions?.[cfgKey] ?? aop?.conditions?.[cfgKey.toLowerCase()]
       return typeof raw === 'string' ? raw.trim() : ''
     }
-    const statOf = (key: string): DndStat => ((SKILL as any)[key]?.stat as DndStat) ?? 'INT'
+    const statOf = (key: string): DndStat => (SKILL as Record<string, { stat: DndStat } | undefined>)[key]?.stat ?? 'INT'
     const passivePerceptionOverride = (key: string): number | null =>
       key === 'PERCEPTION' && monster.passivePerception?.override && monster.passivePerception.overrideValue != null
         ? Number(monster.passivePerception.overrideValue)
@@ -1131,8 +1135,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const actionPassivesGroups = computed(() => {
-    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
-    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const aop = monster.actionOrientedPassives
+    const editorPassives = monster.passives
     const rows = combatSkillRows.value
     const placementFor = (groupId: CombatSkillGroupId, actionType: SkillActionType = 'Action') =>
       skillGroupPlacement(groupId, actionType, editorPassives, aop, monster as unknown as Record<string, unknown>)
@@ -1160,7 +1164,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
 
     // Tools: same entry grammar as skills ("13, +3 Calligrapher's Supplies")
     if (placementFor('tools') === 'header' && Array.isArray(monster.tools) && monster.tools.length > 0) {
-      const defaultToolAction = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+      const defaultToolAction = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || monster.toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
       for (const actionType of ['Action', 'Bonus Action'] as SkillActionType[]) {
         const entries = monster.tools
           .filter((tool) => (typeof tool.bonusAction === 'boolean' ? (tool.bonusAction ? 'Bonus Action' : 'Action') : defaultToolAction) === actionType)
@@ -1189,7 +1193,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       .join('; ')
   })
 
-  const formatSingleSenseItem = (item: any, omitScope = false): string => {
+  const formatSingleSenseItem = (item: MonsterSenseItem, omitScope = false): string => {
     if (item.name?.trim().toLowerCase() === 'detect magic') return 'Can cast Detect Magic (V,S,R) At Will'
     const rangeUnit = item.rangeUnit || 'ft'
     const rangeStr = (!omitScope && item.range != null && item.range > 0) ? `${formattedNumeric(`sensesList[id=${encodeURIComponent(item.id)}].range`, item.range)} ${rangeUnit === 'ft' ? 'ft.' : rangeUnit}` : ''
@@ -1303,8 +1307,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const sensesBadges = computed(() => {
     const items: string[] = []
     if (Array.isArray(monster.sensesList) && monster.sensesList.length > 0) {
-      const planarGroup: any[] = []
-      const nonPlanar: any[] = []
+      const planarGroup: MonsterSenseItem[] = []
+      const nonPlanar: MonsterSenseItem[] = []
 
       for (const item of monster.sensesList) {
         if (item.acrossPlanes && item.range != null && item.range > 0) {
@@ -1652,8 +1656,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const relocatedCombatActions = (targetPlacement: 'action' | 'bonus_action' | 'legendary'): string[] => {
-    const aop = monster.actionOrientedPassives as Record<string, any> | undefined
-    const editorPassives = (monster as any).passives as Record<string, any> | undefined
+    const aop = monster.actionOrientedPassives
+    const editorPassives = monster.passives
     const placementFor = (groupId: CombatSkillGroupId, actionType: SkillActionType = 'Action') =>
       skillGroupPlacement(groupId, actionType, editorPassives, aop, monster as unknown as Record<string, unknown>)
     const rows = combatSkillRows.value
@@ -1662,7 +1666,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       .map((row) => {
         const name = targetPlacement === 'legendary' ? `${row.label} (Costs 1 Action)` : row.label
         const formattedScores = formatGroupRow(row)
-        const rider = (aop?.riders?.[row.id] ?? (editorPassives?.riders as any)?.[row.id] ?? '').trim()
+        const rider = (aop?.riders?.[row.id] ?? editorPassives?.riders?.[row.id] ?? '').trim()
         if (options.web !== false) {
           return buildPlateEntry(monster, { name, scores: formattedScores }, rider)
         }
@@ -1670,7 +1674,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       })
 
     // Tools relocation
-    const defaultToolAction: SkillActionType = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || (monster as any).toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
+    const defaultToolAction: SkillActionType = editorPassives?.toolsActionType === 'Bonus Action' || aop?.bonusActionTools || monster.toolsActionType === 'Bonus Action' ? 'Bonus Action' : 'Action'
     const tools = (Array.isArray(monster.tools) ? monster.tools : []).filter(tool => {
       const actionType = typeof tool.bonusAction === 'boolean' ? (tool.bonusAction ? 'Bonus Action' : 'Action') : defaultToolAction
       return placementFor('tools', actionType) === targetPlacement
@@ -1678,7 +1682,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     if (tools.length > 0) {
       const label = targetPlacement === 'legendary' ? 'Use Tool (Costs 1 Action)' : 'Use Tool'
       const formattedScores = formatScoreGroups(tools.map(toolCheckEntry))
-      const rider = (aop?.riders?.['tools'] ?? (editorPassives?.riders as any)?.['tools'] ?? '').trim()
+      const rider = (aop?.riders?.['tools'] ?? editorPassives?.riders?.['tools'] ?? '').trim()
       if (options.web !== false) {
         actionResults.push(buildPlateEntry(monster, { name: label, scores: formattedScores }, rider))
       } else {
@@ -1885,7 +1889,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const bloodiedActionsList = computed(() => {
     if (!Array.isArray(monster.bloodiedActions) || monster.bloodiedActions.length === 0) return []
     return monster.bloodiedActions.map((ba) => {
-      const trig = (ba as any).trigger || (ba.triggerType === 'immediate_reaction' ? 'Immediate Reaction' : 'While Bloodied')
+      const trig = ba.trigger || (ba.triggerType === 'immediate_reaction' ? 'Immediate Reaction' : 'While Bloodied')
       return {
         ...ba,
         rendered: `${buildCompositePill(ba.name, [String(trig)])} ${processTokens(ba.description, undefined, monster, 'action')}`,
@@ -1904,8 +1908,8 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   const comboActionsList = computed(() => {
     if (!Array.isArray(monster.comboActions) || monster.comboActions.length === 0) return []
     return monster.comboActions.map((ca) => {
-      const followUp = ca.followUpAction || (ca as any).followup || 'Follow-Up'
-      const cond = ca.condition || (ca as any).triggerCondition || ''
+      const followUp = ca.followUpAction || ca.followup || 'Follow-Up'
+      const cond = ca.condition || ca.triggerCondition || ''
       return {
         ...ca,
         rendered: `${buildCompositePill(ca.name, [`Combo: ${ca.leadAction} ➔ ${followUp}`, cond ? `Condition: ${cond}` : ''])} ${processTokens(ca.description, undefined, monster, 'action')}`,
@@ -1928,7 +1932,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
   })
 
   const runehammerTrackData = computed(() => {
-    const die = monster.runehammerTrack?.timerDie || (monster.runehammerTrack as any)?.die || 'd4'
+    const die = monster.runehammerTrack?.timerDie || monster.runehammerTrack?.die || 'd4'
     if (!monster.runehammerTrack?.enabled || !Array.isArray(monster.runehammerTrack.events) || monster.runehammerTrack.events.length === 0) {
       return null
     }
@@ -1936,7 +1940,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
       title: monster.runehammerTrack.name || 'Escalation Track',
       timerDie: die,
       events: monster.runehammerTrack.events.map((ev) => {
-        const desc = ev.description || (ev as any).effect || ''
+        const desc = ev.description || ev.effect || ''
         return {
           ...ev,
           rendered: `${buildCompositePill(`Round ${ev.round}: ${ev.name}`, [`Timer ${die}`])} ${desc}`,

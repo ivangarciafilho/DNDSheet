@@ -1088,6 +1088,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 > **Build 253** ([packet](DNDSheet-Build253-Lint-Burndown.md)): `C3` ◐ ESLint warnings `2,733 → 282` (−89.7 %; all auto-fixable cleared, unused `40 → 4`); the remainder is `any`/non-null (→ `C8`), intentional sanitized `v-html`, and per-component emits review.
 >
 > **Track C status after Build 253:** ✅ `C9`, `C12` · ◐ `C3`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C8`, `C11` · owner `C7` (`B5.7`, `H16`).
+>
+> **Build 254** ([packet](DNDSheet-Build254-Type-Debt-and-Preset-Repairs.md)): `C8` ◐ `any` lines `112 → 45`; removing casts exposed 7 silent data losses in the built-in library preset, fixed through a tested `applyMonsterPreset`. ESLint `282 → 206`.
+>
+> **Track C status after Build 254:** ✅ `C9`, `C12` · ◐ `C3`, `C8`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
 
 > Track A and Track B executable engineering work is complete (`311/313` raw checkboxes; only owner-gated `B5.7` and `H16` open). This **Track C / v2.6+** planning queue merges Build 250 telemetry with the post-Build-251 multi-agent (`debate-council`) codebase and specification delta audit. *(Kept as a planning table outside the `[ABH]` checkbox ledger so Track A/B closure metrics stay invariant.)*
 

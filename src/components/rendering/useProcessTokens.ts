@@ -76,7 +76,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
   ) => {
     if (!input) return ''
     if (!monster) return input
-    const state = (monster as any).$state ?? monster
+    const state = '$state' in monster ? monster.$state : monster
     return coreProcessTokens(input, state as Monster)
   }
 
@@ -480,14 +480,14 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     input = processMonsterTokens(input, monster)
 
     // Custom user variables and macros
-    if ((monster as any).customVariables) {
-      for (const [varKey, varVal] of Object.entries((monster as any).customVariables)) {
+    if (monster.customVariables) {
+      for (const [varKey, varVal] of Object.entries(monster.customVariables)) {
         if (!varKey) continue;
         input = input.replace(new RegExp(`\\{${varKey}\\}`, 'gi'), String(varVal));
       }
     }
-    if ((monster as any).customMacros) {
-      for (const [macroKey, macroVal] of Object.entries((monster as any).customMacros)) {
+    if (monster.customMacros) {
+      for (const [macroKey, macroVal] of Object.entries(monster.customMacros)) {
         if (!macroKey) continue;
         input = input.replace(new RegExp(`\\{${macroKey}\\}`, 'gi'), String(macroVal));
       }

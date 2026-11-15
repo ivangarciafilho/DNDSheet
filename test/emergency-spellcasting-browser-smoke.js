@@ -6,7 +6,8 @@ import { browserProbe } from '../tools/qa/browser-probe.mjs'
 await browserProbe(async ({ evaluate, send, delay }) => {
   const point = await evaluate(`(async () => {
     const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
-    const until = async (fn, label) => { for (let i=0;i<100;i++) { const value=fn(); if(value)return value; await wait(40) } throw Error('Timed out: '+label+' '+JSON.stringify({map:monster.spellcasting.levelCadenceMap,rows:[...document.querySelectorAll('#render .spell-level-line')].map(x=>x.textContent)})) };
+    // 10 s budget: under the full gate the Pages run shares the machine with other browser suites.
+    const until = async (fn, label) => { for (let i=0;i<250;i++) { const value=fn(); if(value)return value; await wait(40) } throw Error('Timed out: '+label+' '+JSON.stringify({map:monster.spellcasting.levelCadenceMap,rows:[...document.querySelectorAll('#render .spell-level-line')].map(x=>x.textContent)})) };
     const assert = (condition, label) => { if(!condition)throw Error(label) };
     const pinia=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia;
     const monster=pinia._s.get('monster'), editor=pinia._s.get('editor');
