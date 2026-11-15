@@ -4,9 +4,7 @@ import type { RandomTable } from '../../src/core/domain/random-table.ts'
 import {
   formatRandomTableAsHtml,
   diagnoseOutcomeRandomTables,
-  resolveTableOutcome,
-  tableToProse,
-} from '../../src/core/domain/random-table.ts'
+  resolveTableOutcome } from '../../src/core/domain/random-table.ts'
 import {
   descriptionContainersText,
   descriptionContainersHtml,

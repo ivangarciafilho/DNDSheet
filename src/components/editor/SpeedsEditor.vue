@@ -11,8 +11,9 @@
       <q-card-section class="q-pa-xs">
         <!-- Speeds Auto-Add Dropdown (No add button required) -->
         <div class="row items-center justify-between q-px-xs q-mb-xs">
-          <q-toggle v-help="$t('help.speeds.splitSubrows')"
-            v-model="monster.splitSpeedRiderRows"
+          <q-toggle
+v-model="monster.splitSpeedRiderRows"
+            v-help="$t('help.speeds.splitSubrows')"
             dark
             dense
             size="xs"
@@ -90,9 +91,9 @@
                 </div>
                 <div class="col-9 col-sm-3">
                   <mechanic-text-editor
+                    v-model="speed.note"
                     dense
                     outlined
-                    v-model="speed.note"
                     :label="$t('monster.movement.note')"
                     placeholder="e.g. hover, 120 ft. outside water"
                   />
@@ -115,8 +116,8 @@
               <div v-if="speed.type && speed.type.toLowerCase() === 'fly'" class="row items-center q-mt-xs q-px-xs">
                 <q-checkbox
                   v-model="speed.hover"
-                  dense
-                  label="Hover (does not fall if speed reduced to 0)" v-help="'Flying creature that stays aloft even when its speed drops to 0 or it is incapacitated.'"
+                  v-help="'Flying creature that stays aloft even when its speed drops to 0 or it is incapacitated.'"
+                  dense label="Hover (does not fall if speed reduced to 0)"
                   color="accent"
                 />
               </div>
@@ -155,32 +156,32 @@
               <div class="col-12 col-sm-6">
                 <q-checkbox
                   v-model="speedTraversal.amorphous1Inch"
-                  dense
-                  label="Move through 1-inch spaces without squeezing" v-help="'Fits through gaps as narrow as 1 inch, like an ooze.'"
+                  v-help="'Fits through gaps as narrow as 1 inch, like an ooze.'"
+                  dense label="Move through 1-inch spaces without squeezing"
                   color="teal"
                 />
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
                   v-model="speedTraversal.amorphousCannotEnterLiquids"
-                  dense
-                  label="Cannot enter liquid bodies" v-help="'This speed does not work in water or other liquids.'"
+                  v-help="'This speed does not work in water or other liquids.'"
+                  dense label="Cannot enter liquid bodies"
                   color="teal"
                 />
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
                   v-model="speedTraversal.moveThroughCreaturesDifficultTerrain"
-                  dense
-                  label="Move through creature spaces as difficult terrain" v-help="'Can move through other creatures’ spaces, treating them as difficult terrain.'"
+                  v-help="'Can move through other creatures’ spaces, treating them as difficult terrain.'"
+                  dense label="Move through creature spaces as difficult terrain"
                   color="teal"
                 />
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
                   v-model="speedTraversal.moveThroughCreaturesTwoSizesDifferent"
-                  dense
-                  label="Move through spaces of creatures 2+ sizes different" v-help="'Can pass through a creature at least two sizes larger or smaller.'"
+                  v-help="'Can pass through a creature at least two sizes larger or smaller.'"
+                  dense label="Move through spaces of creatures 2+ sizes different"
                   color="teal"
                 />
               </div>
@@ -188,8 +189,8 @@
                 <div class="col-12 col-sm-6">
                   <q-checkbox
                     v-model="speedTraversal.moveThroughCreaturesShunt"
-                    dense
-                    label="Shunts creature if ending turn inside" v-help="'Ending its turn inside a creature pushes that creature out.'"
+                    v-help="'Ending its turn inside a creature pushes that creature out.'"
+                    dense label="Shunts creature if ending turn inside"
                     color="teal"
                   />
                 </div>
@@ -257,9 +258,9 @@
               <div v-if="speedTraversal.aquaticBreathing === 'hold_breath'" class="col-12 col-sm-6">
                 <mechanic-text-editor
                   v-model="speedTraversal.holdBreathDuration"
+                  v-help="'How long the creature can hold its breath.'"
                   dense
-                  outlined
-                  label="Hold Breath Duration" v-help="'How long the creature can hold its breath.'"
+                  outlined label="Hold Breath Duration"
                   placeholder="e.g. 1 hour, 15 minutes"
                 />
               </div>
@@ -271,40 +272,40 @@
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
                 v-model="speedTraversal.ignoresDifficultTerrain"
-                dense
-                label="Ignores Difficult Terrain" v-help="'Moves through difficult terrain without spending extra movement.'"
+                v-help="'Moves through difficult terrain without spending extra movement.'"
+                dense label="Ignores Difficult Terrain"
                 color="secondary"
               />
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
                 v-model="speedTraversal.bonusActionDash"
-                dense
-                label="Bonus Action Dash" v-help="'Can take the Dash action as a bonus action.'"
+                v-help="'Can take the Dash action as a bonus action.'"
+                dense label="Bonus Action Dash"
                 color="primary"
               />
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
                 v-model="speedTraversal.bonusActionDodge"
-                dense
-                label="Bonus Action Dodge" v-help="'Can take the Dodge action as a bonus action.'"
+                v-help="'Can take the Dodge action as a bonus action.'"
+                dense label="Bonus Action Dodge"
                 color="primary"
               />
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
                 v-model="speedTraversal.bonusActionDisengage"
-                dense
-                label="Bonus Action Disengage" v-help="'Can take the Disengage action as a bonus action.'"
+                v-help="'Can take the Disengage action as a bonus action.'"
+                dense label="Bonus Action Disengage"
                 color="primary"
               />
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
                 v-model="(speedTraversal as any).bonusActionHide"
-                dense
-                label="Bonus Action Hide" v-help="'Can take the Hide action as a bonus action.'"
+                v-help="'Can take the Hide action as a bonus action.'"
+                dense label="Bonus Action Hide"
                 color="primary"
               />
             </div>
@@ -313,14 +314,14 @@
             <div v-if="speedTraversal.bonusActionDash" class="col-12 col-sm-6 col-md-4 q-mt-xs">
               <mechanic-select-editor
                 v-model="speedTraversal.dashRider"
+                v-help="'Extra effect when the creature Dashes.'"
                 :options="dashRiderPresets"
                 use-input
                 fill-input
                 hide-selected
                 new-value-mode="add-unique"
                 dense
-                outlined
-                label="Dash Rider" v-help="'Extra effect when the creature Dashes.'"
+                outlined label="Dash Rider"
                 placeholder="e.g. Ignores Difficult Terrain"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dash action</q-tooltip>
@@ -330,14 +331,14 @@
             <div v-if="speedTraversal.bonusActionDodge" class="col-12 col-sm-6 col-md-4 q-mt-xs">
               <mechanic-select-editor
                 v-model="speedTraversal.dodgeRider"
+                v-help="'Extra effect when the creature Dodges.'"
                 :options="dodgeRiderPresets"
                 use-input
                 fill-input
                 hide-selected
                 new-value-mode="add-unique"
                 dense
-                outlined
-                label="Dodge Rider" v-help="'Extra effect when the creature Dodges.'"
+                outlined label="Dodge Rider"
                 placeholder="e.g. Adv on DEX saves"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Dodge action</q-tooltip>
@@ -347,14 +348,14 @@
             <div v-if="speedTraversal.bonusActionDisengage" class="col-12 col-sm-6 col-md-4 q-mt-xs">
               <mechanic-select-editor
                 v-model="speedTraversal.disengageRider"
+                v-help="'Extra effect when the creature Disengages.'"
                 :options="disengageRiderPresets"
                 use-input
                 fill-input
                 hide-selected
                 new-value-mode="add-unique"
                 dense
-                outlined
-                label="Disengage Rider" v-help="'Extra effect when the creature Disengages.'"
+                outlined label="Disengage Rider"
                 placeholder="e.g. Change to the ethereal plane"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Disengage action</q-tooltip>
@@ -364,14 +365,14 @@
             <div v-if="(speedTraversal as any).bonusActionHide" class="col-12 col-sm-6 col-md-4 q-mt-xs">
               <mechanic-select-editor
                 v-model="(speedTraversal as any).hideRider"
+                v-help="'Extra effect when the creature Hides.'"
                 :options="disengageRiderPresets"
                 use-input
                 fill-input
                 hide-selected
                 new-value-mode="add-unique"
                 dense
-                outlined
-                label="Hide Rider" v-help="'Extra effect when the creature Hides.'"
+                outlined label="Hide Rider"
                 placeholder="e.g. Becomes Invisible until end of turn"
               >
                 <q-tooltip class="text-caption">Rider applied when taking the Hide action</q-tooltip>
@@ -383,14 +384,14 @@
           <div class="row q-col-gutter-xs items-center q-mb-xs">
             <div class="col-12 col-sm-4">
               <q-select
+                v-model="speedTraversal.bonusActionSpeed"
+                v-help="'Speed granted when moving as a bonus action.'"
                 dense
                 outlined
-                v-model="speedTraversal.bonusActionSpeed"
                 :options="speedPresetOptions"
                 use-input
                 fill-input
-                hide-selected
-                label="Bonus Action Speed" v-help="'Speed granted when moving as a bonus action.'"
+                hide-selected label="Bonus Action Speed"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.bonusActionSpeed = validateNumber(val, 0))"
@@ -399,14 +400,14 @@
             </div>
             <div class="col-12 col-sm-4">
               <q-select
+                v-model="speedTraversal.trackingSpeed"
+                v-help="'Speed while tracking quarry.'"
                 dense
                 outlined
-                v-model="speedTraversal.trackingSpeed"
                 :options="speedPresetOptions"
                 use-input
                 fill-input
-                hide-selected
-                label="Tracking Speed" v-help="'Speed while tracking quarry.'"
+                hide-selected label="Tracking Speed"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.trackingSpeed = validateNumber(val, 0))"
@@ -415,14 +416,14 @@
             </div>
             <div class="col-12 col-sm-4">
               <q-select
+                v-model="speedTraversal.stealthSpeed"
+                v-help="'Movement that does not break Stealth or make noise.'"
                 dense
                 outlined
-                v-model="speedTraversal.stealthSpeed"
                 :options="speedPresetOptions"
                 use-input
                 fill-input
-                hide-selected
-                label="Stealth / Silent Speed" v-help="'Movement that does not break Stealth or make noise.'"
+                hide-selected label="Stealth / Silent Speed"
                 suffix="ft"
                 new-value-mode="add-unique"
                 @input-value="(val) => (speedTraversal.stealthSpeed = validateNumber(val, 0))"
@@ -434,10 +435,10 @@
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12">
               <mechanic-text-editor
-                dense
-                outlined
                 v-model="speedTraversal.note"
-                label="Traversal Note" v-help="'Free text added after the speed.'"
+                v-help="'Free text added after the speed.'"
+                dense
+                outlined label="Traversal Note"
                 placeholder="e.g. climbing does not cost extra movement, ignores nonmagical webbing"
                 clearable
               />
@@ -462,8 +463,8 @@
                 <q-item
                   v-for="preset in SPEED_ACTION_RIDER_PRESETS"
                   :key="preset.id"
-                  clickable
                   v-close-popup
+                  clickable
                   @click="addPresetRider(preset)"
                 >
                   <q-item-section>
@@ -492,8 +493,9 @@
         </div>
 
         <div class="row items-center justify-between q-px-xs q-mb-xs">
-          <q-toggle v-help="$t('help.speeds.splitSubrows')"
-            v-model="monster.splitSpeedRiderRows"
+          <q-toggle
+v-model="monster.splitSpeedRiderRows"
+            v-help="$t('help.speeds.splitSubrows')"
             dark
             dense
             size="xs"
@@ -544,10 +546,10 @@
             <div class="col-6 col-sm-6">
               <mechanic-text-editor
                 v-model="rider.rider"
+                v-help="'Extra wording or a formula, such as half speed.'"
                 dense
                 outlined
-                dark
-                label="Rider Clause / Formula" v-help="'Extra wording or a formula, such as half speed.'"
+                dark label="Rider Clause / Formula"
                 placeholder="e.g. can Shove as a Bonus Action"
               >
                 <template #append>

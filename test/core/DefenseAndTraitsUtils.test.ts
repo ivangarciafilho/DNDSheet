@@ -213,7 +213,7 @@ test('defense-and-traits-utils - formatLanguageItem & formatLanguagesList', () =
   )
   assert.equal(
     formatLanguagesList([], 'monk'),
-    "Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)"
+    'Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)'
   )
 })
 

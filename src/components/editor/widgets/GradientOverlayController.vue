@@ -22,8 +22,8 @@
       <div class="row q-col-gutter-xs items-center">
         <div class="col-4">
           <catalog-select
-            :model-value="overlay.direction || 'top_to_bottom'"
             v-help="'Set the gradient travel axis or vignette and radial falloff geometry.'"
+            :model-value="overlay.direction || 'top_to_bottom'"
             :entries="directionOptions"
             preserve-order
             :searchable="false"
@@ -34,8 +34,8 @@
         </div>
         <div class="col-4">
           <catalog-select
-            :model-value="overlay.blendMode || 'normal'"
             v-help="'Choose the CSS blend mode combining gradient stops with the underlying layer.'"
+            :model-value="overlay.blendMode || 'normal'"
             :entries="blendModeOptions"
             preserve-order
             :searchable="false"
@@ -46,8 +46,8 @@
         </div>
         <div class="col-4">
           <catalog-select
-            :model-value="overlay.curve || 'linear'"
             v-help="'Select an alpha transition curve preset or drag the yellow curve knob directly.'"
+            :model-value="overlay.curve || 'linear'"
             :entries="curveOptions"
             preserve-order
             :searchable="false"

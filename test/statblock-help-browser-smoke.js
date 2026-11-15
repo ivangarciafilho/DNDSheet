@@ -43,7 +43,7 @@ try {
   await send('Runtime.enable')
   let ready = false
   for (let i = 0; i < 80; i++) {
-    ready = await evaluate(`() => Boolean(document.querySelector('#render .statblock [data-help=armor-class]'))`)
+    ready = await evaluate('() => Boolean(document.querySelector(\'#render .statblock [data-help=armor-class]\'))')
     if (ready) break
     await delay(250)
   }
@@ -237,7 +237,7 @@ try {
     target.focus()
     document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
   }`)
-  const afterEscape = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('#render .statblock [data-help=armor-class]')?.hasAttribute('aria-describedby') })`)
+  const afterEscape = await evaluate('() => ({ tip: Boolean(document.querySelector(\'#statblock-help-tip\')), described: document.querySelector(\'#render .statblock [data-help=armor-class]\')?.hasAttribute(\'aria-describedby\') })')
   assert.deepEqual(afterEscape, { tip: false, described: false }, 'Escape should dismiss the tooltip and its ARIA reference')
 
   const keyboardFocus = await evaluate(`() => {
@@ -250,7 +250,7 @@ try {
     const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
   }`)
-  const focusHelp = await evaluate(`() => ({ tip: Boolean(document.querySelector('#statblock-help-tip')), described: document.querySelector('#render .statblock [data-help=armor-class]')?.getAttribute('aria-describedby') })`)
+  const focusHelp = await evaluate('() => ({ tip: Boolean(document.querySelector(\'#statblock-help-tip\')), described: document.querySelector(\'#render .statblock [data-help=armor-class]\')?.getAttribute(\'aria-describedby\') })')
   assert.deepEqual(focusHelp, { tip: true, described: 'statblock-help-tip' }, 'Focus should expose a programmatic description')
   await evaluate(`() => {
     const target = document.querySelector('#render .statblock [data-help=armor-class]')

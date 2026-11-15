@@ -4,8 +4,8 @@
       <q-card-section>
         <div class="row">
           <mechanic-text-editor
-            scope="spell"
             v-model="monster.spellcasting.atWillNotes"
+            scope="spell"
             class="col-12 q-pa-sm q-mb-sm"
             bottom-slots
             :label="$t('monster.spellcasting.atWillNotes')"
@@ -72,8 +72,8 @@
               class="col-2 q-pa-sm"
             />
             <catalog-select
-              :model-value="innateList.rate ?? ''"
               v-help="'Recovery schedule for this group of innate spells.'"
+              :model-value="innateList.rate ?? ''"
               :entries="rechargeEntries"
               preserve-order
               :outlined="false"

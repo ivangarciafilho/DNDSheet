@@ -41,8 +41,8 @@
         <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" v-help="'Enter a number or bind a formula reference for this rule cell.'" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input
           v-else-if="kind === 'number'"
-          v-help="'Enter a whole numeric override or leave blank to use the creature default.'"
           v-model="draft"
+          v-help="'Enter a whole numeric override or leave blank to use the creature default.'"
           type="number"
           dense
           outlined
@@ -105,7 +105,7 @@
           <q-checkbox v-for="option in multiOptions" :key="option" v-model="draft" v-help="'Toggle whether this option is active in the action clause.'" :val="option" :label="option" dense dark />
           <div v-if="spec.allowCustom" class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col">
-              <q-input v-help="$t('help.composer.customOption')" v-model="customEntry" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
+              <q-input v-model="customEntry" v-help="$t('help.composer.customOption')" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
             </div>
             <div class="col-auto">
               <q-btn v-help="$t('help.composer.addChip')" flat dense no-caps size="sm" icon="add" label="Add" @click="addCustom" />
@@ -115,10 +115,10 @@
 
         <div v-else-if="kind === 'count'" class="row q-col-gutter-xs items-center">
           <div class="col">
-            <q-input v-help="$t('help.composer.amount')" v-model="draft.count" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
+            <q-input v-model="draft.count" v-help="$t('help.composer.amount')" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
           </div>
           <div class="col-auto">
-            <q-toggle v-help="'Turn on or off up to for the chain cell.'" v-model="draft.mode" true-value="up_to" false-value="exact" label="up to" dark dense />
+            <q-toggle v-model="draft.mode" v-help="'Turn on or off up to for the chain cell.'" true-value="up_to" false-value="exact" label="up to" dark dense />
           </div>
         </div>
 
@@ -126,35 +126,35 @@
           <q-btn-toggle v-model="draft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           <div class="row q-col-gutter-xs items-start">
             <div class="col-5">
-              <q-input v-help="$t('help.composer.distance')" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
+              <q-input v-model="draft.distance" v-help="$t('help.composer.distance')" dense outlined dark autofocus label="Distance" />
             </div>
             <div v-if="draft.relation !== 'reach'" class="col-3">
-              <q-input v-help="'Optional long range for ranged attacks: 80 with long 320 prints 80/320 ft.'" v-model="draft.longDistance" data-range-long dense outlined dark label="Long" />
+              <q-input v-model="draft.longDistance" v-help="'Optional long range for ranged attacks: 80 with long 320 prints 80/320 ft.'" data-range-long dense outlined dark label="Long" />
             </div>
             <div class="col-auto self-center">
               <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
             </div>
             <div class="col">
-              <q-input v-help="$t('help.composer.unitOrShape')" v-model="draft.origin" dense outlined dark label="Of" placeholder="you" />
+              <q-input v-model="draft.origin" v-help="$t('help.composer.unitOrShape')" dense outlined dark label="Of" placeholder="you" />
             </div>
           </div>
         </div>
 
         <div v-else-if="kind === 'area'" class="row q-col-gutter-xs items-start">
           <div class="col-12 col-sm-5">
-            <q-input v-help="$t('help.composer.shape')" v-model="draft.shape" dense outlined dark autofocus label="Shape" :list="listId" />
+            <q-input v-model="draft.shape" v-help="$t('help.composer.shape')" dense outlined dark autofocus label="Shape" :list="listId" />
             <datalist :id="listId">
               <option v-for="shape in areaShapes" :key="shape" :value="shape" />
             </datalist>
           </div>
           <div class="col-5 col-sm-3">
-            <q-input v-help="$t('help.composer.size')" v-model="draft.distance" dense outlined dark label="Size" />
+            <q-input v-model="draft.distance" v-help="$t('help.composer.size')" dense outlined dark label="Size" />
           </div>
           <div class="col-auto self-center">
             <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           </div>
           <div class="col-12">
-            <q-input v-help="$t('help.composer.origin')" v-model="draft.origin" dense outlined dark label="Originating from" placeholder="itself" />
+            <q-input v-model="draft.origin" v-help="$t('help.composer.origin')" dense outlined dark label="Originating from" placeholder="itself" />
           </div>
         </div>
 
@@ -165,7 +165,7 @@
         <div v-if="error" class="chain-editor__error" role="alert">{{ error }}</div>
 
         <div class="row justify-end q-gutter-xs q-mt-sm">
-          <q-btn v-help="'Clear in the chain cell.'" v-if="clearable" flat dense no-caps size="sm" color="grey-4" label="Clear" @click="clear" />
+          <q-btn v-if="clearable" v-help="'Clear in the chain cell.'" flat dense no-caps size="sm" color="grey-4" label="Clear" @click="clear" />
           <q-btn v-help="'Cancel in the chain cell.'" v-close-popup flat dense no-caps size="sm" color="grey-4" label="Cancel" />
           <q-btn v-help="'Apply in the chain cell.'" v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-4" text-color="grey-10" label="Apply" :disable="!!error || numericDraftPending" />
         </div>

@@ -2,6 +2,7 @@
   <div>
     <!-- 10. Languages Smart List -->
     <q-expansion-item
+      v-help="'Configure spoken and understood languages, telepathy, and special communication rules.'"
       dense
       dense-toggle
       expand-separator
@@ -10,7 +11,6 @@
       style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
       icon="translate"
       label="Languages"
-      v-help="'Configure spoken and understood languages, telepathy, and special communication rules.'"
       caption="Select official D&D languages, configure telepathy and understand-only options"
     >
       <div class="q-pa-sm">
@@ -46,11 +46,11 @@
         <!-- Add Language via Dropdown (no add button) -->
         <div class="row q-col-gutter-xs items-center q-mb-sm">
           <catalog-select
+            v-help="'Choose an official D&D language or type a custom language and press Enter to add it.'"
             :model-value="null"
             :entries="availableLanguageEntries"
             allow-custom
             label="Select or Type Language to Add"
-            v-help="'Choose an official D&D language or type a custom language and press Enter to add it.'"
             class="col-12"
             @update:model-value="onLanguageSelected"
           >
@@ -79,9 +79,9 @@
                   Telepathy
                 </q-chip>
                 <formula-field
+                  v-help="'Maximum telepathic communication range in feet.'"
                   :path="`languagesList[id=${encodeURIComponent(lang.id)}].telepathyRange`"
                   label="Range (ft)"
-                  v-help="'Maximum telepathic communication range in feet.'"
                   dense
                   outlined
                   @applied="syncLanguagesToString"
@@ -90,13 +90,13 @@
               <div class="row items-center q-gutter-x-xs">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -148,8 +148,8 @@
               <div class="row q-col-gutter-xs items-center">
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.broadcast')"
                     v-model="lang.broadcast"
+                    v-help="$t('help.languages.broadcast')"
                     label="Broadcast to all creatures in range"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -157,8 +157,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.oneWay')"
                     v-model="lang.noReply"
+                    v-help="$t('help.languages.oneWay')"
                     label="One-way only (target cannot reply)"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -166,8 +166,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.simpleIdeas')"
                     v-model="lang.simpleConceptsOnly"
+                    v-help="$t('help.languages.simpleIdeas')"
                     label="Only simple ideas and concepts"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -175,8 +175,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.planarBridge')"
                     v-model="lang.acrossPlanes"
+                    v-help="$t('help.languages.planarBridge')"
                     label="Across ethereal & material planes"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -184,8 +184,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.multiverse')"
                     v-model="lang.multiverseWide"
+                    v-help="$t('help.languages.multiverse')"
                     label="Multiverse wide reach"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -193,8 +193,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.unseenMinds')"
                     v-model="lang.telepathicAwareness"
+                    v-help="$t('help.languages.unseenMinds')"
                     label="Telepathic Awareness (perceives unseen minds)"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -202,8 +202,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.senseSentient')"
                     v-model="lang.sensesSentient"
+                    v-help="$t('help.languages.senseSentient')"
                     label="Senses sentient creatures in range"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -211,8 +211,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.locateSentient')"
                     v-model="lang.locatesSentient"
+                    v-help="$t('help.languages.locateSentient')"
                     label="Locates exact location of sentient creatures"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -220,8 +220,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <q-checkbox
-                    v-help="$t('help.languages.eavesdrop')"
                     v-model="lang.telepathicEavesdrop"
+                    v-help="$t('help.languages.eavesdrop')"
                     label="Eavesdrops telepathic conversations in range"
                     dense
                     @update:model-value="syncLanguagesToString"
@@ -242,11 +242,11 @@
 
               <!-- Deep Probing Matrix -->
               <q-expansion-item
+                v-help="'Configure surface thought reading, emotion sensing, and resistance saving throws.'"
                 dense
                 dense-toggle
                 icon="psychology"
                 label="Deep Probing & Mental Exploration"
-                v-help="'Configure surface thought reading, emotion sensing, and resistance saving throws.'"
                 caption="Detect thoughts, desires, alignment, memories, centralized save DC"
                 header-class="text-caption text-primary q-pa-none"
                 class="rounded-borders q-pa-xs"
@@ -255,8 +255,8 @@
                 <div class="row q-col-gutter-xs items-center q-pt-xs">
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.learnDesires')"
                       v-model="lang.learnDesires"
+                      v-help="$t('help.languages.learnDesires')"
                       label="Learns greatest desires"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -264,8 +264,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.readSurfaceThoughts')"
                       v-model="lang.readThoughts"
+                      v-help="$t('help.languages.readSurfaceThoughts')"
                       label="Reads surface / active thoughts"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -273,8 +273,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.senseEmotions')"
                       v-model="lang.senseEmotions"
+                      v-help="$t('help.languages.senseEmotions')"
                       label="Senses emotions & turmoil"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -282,8 +282,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.senseAlignment')"
                       v-model="lang.senseAlignment"
+                      v-help="$t('help.languages.senseAlignment')"
                       label="Senses moral/ethical alignment"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -291,8 +291,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.senseTacticalIntent')"
                       v-model="lang.senseIntentions"
+                      v-help="$t('help.languages.senseTacticalIntent')"
                       label="Senses tactical intentions"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -300,8 +300,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.detectDeception')"
                       v-model="lang.detectSincerity"
+                      v-help="$t('help.languages.detectDeception')"
                       label="Detects truth & deception"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -309,8 +309,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.accessDeepMemory')"
                       v-model="lang.accessMemories"
+                      v-help="$t('help.languages.accessDeepMemory')"
                       label="Accesses deep memories"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -319,8 +319,8 @@
 
                   <div class="col-12 q-mt-xs">
                     <q-checkbox
-                      v-help="$t('help.languages.probeSave')"
                       v-model="lang.requiresSave"
+                      v-help="$t('help.languages.probeSave')"
                       label="Requires saving throw to resist mental probing or sensory connection"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -329,20 +329,20 @@
                   <template v-if="lang.requiresSave">
                     <div class="col-12 col-sm-4">
                       <catalog-select
+                        v-help="'Ability score used for the saving throw against telepathic intrusion.'"
                         :model-value="lang.saveType"
                         :entries="MENTAL_SAVE_STAT_ENTRIES"
                         preserve-order
                         :searchable="false"
                         label="Save Type"
-                        v-help="'Ability score used for the saving throw against telepathic intrusion.'"
                         @update:model-value="(val) => { lang.saveType = String(val || 'WIS') as typeof lang.saveType; syncLanguagesToString() }"
                       />
                     </div>
                     <div class="col-12 col-sm-4">
                       <formula-field
+                        v-help="'Difficulty Class targets must beat to resist this special communication ability.'"
                         :path="`languagesList[id=${encodeURIComponent(lang.id)}].saveDc`"
                         label="Save DC"
-                        v-help="'Difficulty Class targets must beat to resist this special communication ability.'"
                         dense
                         outlined
                         clearable
@@ -366,11 +366,11 @@
 
               <!-- Sensory Links & Disruption Matrix -->
               <q-expansion-item
+                v-help="'Configure shared senses, Psychic damage disruption, and Concentration rules.'"
                 dense
                 dense-toggle
                 icon="visibility"
                 label="Sensory Links & Psychic Disruption"
-                v-help="'Configure shared senses, Psychic damage disruption, and Concentration rules.'"
                 caption="Share senses, psychic disruption, concentration"
                 header-class="text-caption text-secondary q-pa-none"
                 class="rounded-borders q-pa-xs"
@@ -379,8 +379,8 @@
                 <div class="row q-col-gutter-xs items-center q-pt-xs">
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.shareOwnSenses')"
                       v-model="lang.shareOwnSenses"
+                      v-help="$t('help.languages.shareOwnSenses')"
                       label="Shares own senses (sight/hearing)"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -388,8 +388,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.probeCreatureSenses')"
                       v-model="lang.probeCreatureSenses"
+                      v-help="$t('help.languages.probeCreatureSenses')"
                       label="Perceives through creature's senses"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -397,8 +397,8 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <q-checkbox
-                      v-help="$t('help.languages.psychicDisruption')"
                       v-model="lang.disruptedByPsychicDamage"
+                      v-help="$t('help.languages.psychicDisruption')"
                       label="Disrupted when creature takes psychic damage"
                       dense
                       @update:model-value="syncLanguagesToString"
@@ -406,23 +406,23 @@
                   </div>
                   <div class="col-12 col-sm-6">
                     <catalog-select
+                      v-help="'Specify how telepathic scanning interacts with an existing concentration effect.'"
                       :model-value="lang.concentrationMode"
                       :entries="CONCENTRATION_MODE_ENTRIES"
                       preserve-order
                       :searchable="false"
                       label="Concentration Interaction"
-                      v-help="'Specify how telepathic scanning interacts with an existing concentration effect.'"
                       @update:model-value="(val) => { lang.concentrationMode = String(val || 'none') as typeof lang.concentrationMode; syncLanguagesToString() }"
                     />
                   </div>
                   <div class="col-12 col-sm-6">
                     <catalog-select
+                      v-help="'Specify whether maintaining this telepathic bond requires concentration.'"
                       :model-value="lang.concentration"
                       :entries="CONCENTRATION_ENTRIES"
                       preserve-order
                       :searchable="false"
                       label="Requires Concentration"
-                      v-help="'Specify whether maintaining this telepathic bond requires concentration.'"
                       @update:model-value="(val) => { lang.concentration = String(val || 'none') as typeof lang.concentration; syncLanguagesToString() }"
                     />
                   </div>
@@ -431,8 +431,8 @@
 
               <div class="col-12 q-mt-xs">
                 <mechanic-text-editor
-                  v-help="$t('help.languages.extraNote')"
                   v-model="lang.note"
+                  v-help="$t('help.languages.extraNote')"
                   label="Additional Note"
                   dense
                   outlined
@@ -454,9 +454,9 @@
                   Handle Animals
                 </q-chip>
                 <formula-field
+                  v-help="'Base Difficulty Class to calm or influence beasts.'"
                   :path="`languagesList[id=${encodeURIComponent(lang.id)}].animalHandling.dc`"
                   label="Base DC"
-                  v-help="'Base Difficulty Class to calm or influence beasts.'"
                   dense
                   outlined
                   @applied="syncLanguagesToString"
@@ -465,13 +465,13 @@
               <div class="row items-center q-gutter-x-xs no-wrap">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -480,8 +480,8 @@
             <div class="row q-col-gutter-xs items-center text-caption q-mt-xs">
               <div class="col-12 col-sm-4">
                 <mechanic-text-editor
-                  v-help="$t('help.languages.beastCalmDc')"
                   v-model="getAnimalHandling(lang).peacefulOutcome"
+                  v-help="$t('help.languages.beastCalmDc')"
                   label="DC (Calm / Cease Aggression)"
                   dense
                   outlined
@@ -491,8 +491,8 @@
               </div>
               <div class="col-12 col-sm-4">
                 <mechanic-text-editor
-                  v-help="$t('help.languages.beastCommandDc')"
                   v-model="getAnimalHandling(lang).commandOutcome"
+                  v-help="$t('help.languages.beastCommandDc')"
                   label="DC+5 (Basic Commands)"
                   dense
                   outlined
@@ -502,8 +502,8 @@
               </div>
               <div class="col-12 col-sm-4">
                 <mechanic-text-editor
-                  v-help="$t('help.languages.beastBondDc')"
                   v-model="getAnimalHandling(lang).recruitOutcome"
+                  v-help="$t('help.languages.beastBondDc')"
                   label="DC+10 (Recruit / Bond)"
                   dense
                   outlined
@@ -513,8 +513,8 @@
               </div>
               <div class="col-12 q-mt-xs">
                 <mechanic-text-editor
-                  v-help="$t('help.languages.beastCustomNote')"
                   v-model="getAnimalHandling(lang).customNotes"
+                  v-help="$t('help.languages.beastCustomNote')"
                   label="Custom Ruling Note"
                   dense
                   outlined
@@ -537,13 +537,13 @@
               <div class="row items-center q-gutter-x-xs no-wrap">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -551,8 +551,8 @@
             <div class="row q-col-gutter-xs items-center text-caption">
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.beastSimpleIdeas')"
                   v-model="getAnimalsConfig(lang).simpleConceptsOnly"
+                  v-help="$t('help.languages.beastSimpleIdeas')"
                   label="Simple concepts, needs, and emotions only"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -560,8 +560,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.beastUnderstandOnly')"
                   v-model="lang.understandsOnly"
+                  v-help="$t('help.languages.beastUnderstandOnly')"
                   label="Understands beasts but cannot speak"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -569,8 +569,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-input
-                  v-help="$t('help.languages.beastSubtypes')"
                   v-model="getAnimalsConfig(lang).specificSubtype"
+                  v-help="$t('help.languages.beastSubtypes')"
                   label="Specific Subtypes"
                   dense
                   outlined
@@ -581,8 +581,8 @@
               <div class="col-12 col-sm-6">
                 <mechanic-text-editor
                   v-model="getAnimalsConfig(lang).note"
-                  label="Note"
                   v-help="'Extra qualifier printed beside Speak with Animals.'"
+                  label="Note"
                   dense
                   outlined
                   placeholder="e.g. within 30 ft."
@@ -604,13 +604,13 @@
               <div class="row items-center q-gutter-x-xs no-wrap">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -618,8 +618,8 @@
             <div class="row q-col-gutter-xs items-center text-caption">
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.plantQuestion')"
                   v-model="getPlantsConfig(lang).canQuestionPastDay"
+                  v-help="$t('help.languages.plantQuestion')"
                   label="Question plants about events of past day"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -627,8 +627,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.plantTerrain')"
                   v-model="getPlantsConfig(lang).difficultTerrainNegotiation"
+                  v-help="$t('help.languages.plantTerrain')"
                   label="Negotiate difficult terrain"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -636,8 +636,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.plantUnderstandOnly')"
                   v-model="lang.understandsOnly"
+                  v-help="$t('help.languages.plantUnderstandOnly')"
                   label="Understands plants but cannot speak"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -646,8 +646,8 @@
               <div class="col-12 col-sm-6">
                 <mechanic-text-editor
                   v-model="getPlantsConfig(lang).note"
-                  label="Note"
                   v-help="'Extra qualifier printed beside Speak with Plants.'"
+                  label="Note"
                   dense
                   outlined
                   placeholder="e.g. ordinary and plant creatures"
@@ -668,9 +668,9 @@
                   Undead (Command / Speak)
                 </q-chip>
                 <formula-field
+                  v-help="'Maximum range in feet to command or communicate with undead.'"
                   :path="`languagesList[id=${encodeURIComponent(lang.id)}].undeadConfig.telepathicRange`"
                   label="Range (ft)"
-                  v-help="'Maximum range in feet to command or communicate with undead.'"
                   dense
                   outlined
                   @applied="syncLanguagesToString"
@@ -679,13 +679,13 @@
               <div class="row items-center q-gutter-x-xs no-wrap">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -693,8 +693,8 @@
             <div class="row q-col-gutter-xs items-center text-caption">
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.undeadCommand')"
                   v-model="getUndeadConfig(lang).commandMindless"
+                  v-help="$t('help.languages.undeadCommand')"
                   label="Issue mental commands to mindless undead"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -702,8 +702,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.undeadUnderstandOnly')"
                   v-model="lang.understandsOnly"
+                  v-help="$t('help.languages.undeadUnderstandOnly')"
                   label="Understands undead languages but cannot speak"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -712,8 +712,8 @@
               <div class="col-12">
                 <mechanic-text-editor
                   v-model="getUndeadConfig(lang).note"
-                  label="Note"
                   v-help="'Extra qualifier printed beside Undead communication.'"
+                  label="Note"
                   dense
                   outlined
                   placeholder="e.g. skeletons and zombies under its command"
@@ -734,9 +734,9 @@
                   Dead (Speak with Dead)
                 </q-chip>
                 <formula-field
+                  v-help="'Maximum number of questions a corpse can answer.'"
                   :path="`languagesList[id=${encodeURIComponent(lang.id)}].deadConfig.maxQuestions`"
                   label="Questions"
-                  v-help="'Maximum number of questions a corpse can answer.'"
                   dense
                   outlined
                   @applied="syncLanguagesToString"
@@ -745,13 +745,13 @@
               <div class="row items-center q-gutter-x-xs no-wrap">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -759,8 +759,8 @@
             <div class="row q-col-gutter-xs items-center text-caption">
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.corpseMouth')"
                   v-model="getDeadConfig(lang).corpseMustHaveMouth"
+                  v-help="$t('help.languages.corpseMouth')"
                   label="Corpse must have a mouth"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -768,8 +768,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-checkbox
-                  v-help="$t('help.languages.corpseCryptic')"
                   v-model="getDeadConfig(lang).answersCryptic"
+                  v-help="$t('help.languages.corpseCryptic')"
                   label="Answers may be brief, cryptic, or repetitive"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -777,8 +777,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-input
-                  v-help="$t('help.languages.corpseRecency')"
                   v-model="getDeadConfig(lang).deadWithinYears"
+                  v-help="$t('help.languages.corpseRecency')"
                   label="Deceased Within"
                   dense
                   outlined
@@ -789,8 +789,8 @@
               <div class="col-12 col-sm-6">
                 <mechanic-text-editor
                   v-model="getDeadConfig(lang).note"
-                  label="Note"
                   v-help="'Extra qualifier printed beside Speak with Dead.'"
+                  label="Note"
                   dense
                   outlined
                   placeholder="e.g. requires 10-minute ritual"
@@ -811,8 +811,8 @@
 
               <div class="col-12 col-sm-4">
                 <q-checkbox
-                  v-help="$t('help.languages.understandOnly')"
                   v-model="lang.understandsOnly"
+                  v-help="$t('help.languages.understandOnly')"
                   :label="/manufacturer|creator|maker/i.test(lang.name || '') ? 'However, can\u2019t speak' : 'Understands but cannot speak'"
                   dense
                   @update:model-value="syncLanguagesToString"
@@ -822,8 +822,8 @@
               <div class="col-10 col-sm-3">
                 <mechanic-text-editor
                   v-model="lang.note"
-                  label="Note"
                   v-help="'Optional qualifier printed beside this language (for example with allies).'"
+                  label="Note"
                   dense
                   outlined
                   placeholder="e.g. with allies"
@@ -834,13 +834,13 @@
               <div class="col-2 col-sm-2 text-right row items-center justify-end q-gutter-x-xs">
                 <swap-buttons field="languagesList" :idx="idx" flat dense />
                 <q-btn
+                  v-help="'Remove this language entry from the creature.'"
                   flat
                   dense
                   round
                   size="sm"
                   color="negative"
                   icon="delete"
-                  v-help="'Remove this language entry from the creature.'"
                   @click="removeLanguage(idx)"
                 />
               </div>
@@ -854,11 +854,11 @@
             Live Preview: <em>{{ monster.languages || '&mdash;' }}</em>
           </div>
           <q-btn
+            v-help="$t('help.languages.plainFallback')"
             flat
             dense
             size="xs"
             color="grey-5"
-            v-help="$t('help.languages.plainFallback')"
             :label="showManualLangEdit ? 'Hide Manual Input' : 'Edit Raw Text'"
             @click="showManualLangEdit = !showManualLangEdit"
           />
@@ -867,8 +867,8 @@
         <div v-if="showManualLangEdit" class="q-mt-xs">
           <q-input
             v-model="monster.languages"
-            label="Raw Languages String"
             v-help="$t('help.languages.plainFallback')"
+            label="Raw Languages String"
             outlined
             dense
           />

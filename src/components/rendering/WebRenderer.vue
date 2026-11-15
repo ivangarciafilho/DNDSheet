@@ -220,8 +220,8 @@
 
     <!-- Scaled A4 Page or Fluid Container -->
     <div
-      :class="editorStore?.a4PreviewMode ? 'a4-preview-viewport' : 'standard-viewport'"
       ref="a4ViewportRef"
+      :class="editorStore?.a4PreviewMode ? 'a4-preview-viewport' : 'standard-viewport'"
     >
       <div :class="editorStore?.a4PreviewMode ? 'a4-scale-stage' : ''" :style="editorStore?.a4PreviewMode ? a4ScaleStageStyle : undefined">
         <div
@@ -980,8 +980,8 @@
   <Teleport to="body">
     <div
       v-if="activeHelpTip"
-      ref="helpTipElement"
       id="statblock-help-tip"
+      ref="helpTipElement"
       class="statblock-help-tip"
       role="tooltip"
       :style="helpTipStyle"
@@ -1011,8 +1011,6 @@ import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { appAsset } from 'src/core/domain/asset-url'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
-import { statModifier } from 'src/core/domain/math-utils'
-import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { statblockHelpText } from './statblock-help'
 import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
 import WebSpellPlates from './WebSpellPlates.vue'
@@ -2200,12 +2198,6 @@ export default defineComponent({
       )
     })
 
-    const anatomyPartsList = computed(() => textRenderer.anatomyPartsList.value)
-    const villainActionsList = computed(() => textRenderer.villainActionsList.value)
-    const bloodiedActionsList = computed(() => textRenderer.bloodiedActionsList.value)
-    const reactiveActionsList = computed(() => textRenderer.reactiveActionsList.value)
-    const comboActionsList = computed(() => textRenderer.comboActionsList.value)
-    const runehammerTrackData = computed(() => textRenderer.runehammerTrackData.value)
 
     watch([
       a4StatblockStyle, statblockContent, () => editorStore.a4PreviewMode,

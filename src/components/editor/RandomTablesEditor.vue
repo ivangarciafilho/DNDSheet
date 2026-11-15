@@ -51,7 +51,7 @@
           <p v-if="!importTable" role="alert">{{ $t('editor.randomTables.tableMissing') }}</p>
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="$t('editor.randomTables.cancelImport')" v-close-popup />
+          <q-btn v-close-popup flat :label="$t('editor.randomTables.cancelImport')" />
           <q-btn color="primary" :label="$t('editor.randomTables.applyImport')" :disable="!preview?.canApply" @click="applyImport" />
         </q-card-actions>
       </q-card>

@@ -26,7 +26,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   assert.ok(Object.values(checks).every(Boolean), JSON.stringify(checks))
   const expected = await evaluate('window.__outcomeLifecycleSaved')
   await send('Page.reload'); await delay(500)
-  const reload = await evaluate(`(async()=>{for(let i=0;i<80;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');const action=m?.actions.find(x=>x.id==='outcome-life');if(action)return JSON.stringify(action.outcomes);await new Promise(r=>setTimeout(r,40))}return null})()`)
+  const reload = await evaluate('(async()=>{for(let i=0;i<80;i++){const m=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia?._s.get(\'monster\');const action=m?.actions.find(x=>x.id===\'outcome-life\');if(action)return JSON.stringify(action.outcomes);await new Promise(r=>setTimeout(r,40))}return null})()')
   assert.equal(reload, expected, 'Applied outcome identities must survive reload')
   console.log('Outcome lifecycle browser checks:', JSON.stringify({ ...checks, reload: true }))
 })

@@ -391,1847 +391,1847 @@ export const SPECIES_CATALOG: SpeciesEntry[] = [
     ],
   },
   {
-    "id": "aasimar_protector",
-    "name": "Aasimar (Protector)",
-    "type": "Celestial",
-    "subtype": "Aasimar",
-    "speed": 30,
-    "senses": [
+    'id': 'aasimar_protector',
+    'name': 'Aasimar (Protector)',
+    'type': 'Celestial',
+    'subtype': 'Aasimar',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "radiant",
-      "necrotic"
+    'resistances': [
+      'radiant',
+      'necrotic'
     ],
-    "languages": [
-      "Common",
-      "Celestial"
+    'languages': [
+      'Common',
+      'Celestial'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "WIS": 1
+    'statBonuses': {
+      'CHA': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Celestial Resistance",
-        "description": "Resistance to necrotic damage and radiant damage."
+        'name': 'Celestial Resistance',
+        'description': 'Resistance to necrotic damage and radiant damage.'
       },
       {
-        "name": "Healing Hands",
-        "description": "As an action, touch a creature and restore HP equal to level (1/Long Rest)."
+        'name': 'Healing Hands',
+        'description': 'As an action, touch a creature and restore HP equal to level (1/Long Rest).'
       },
       {
-        "name": "Light Bearer",
-        "description": "Knows the Light cantrip (Charisma)."
+        'name': 'Light Bearer',
+        'description': 'Knows the Light cantrip (Charisma).'
       },
       {
-        "name": "Radiant Soul",
-        "description": "Bonus action to sprout wings for 1 minute: 30ft fly speed and deal extra radiant damage equal to level once per turn."
+        'name': 'Radiant Soul',
+        'description': 'Bonus action to sprout wings for 1 minute: 30ft fly speed and deal extra radiant damage equal to level once per turn.'
       }
     ]
   },
   {
-    "id": "aasimar_scourge",
-    "name": "Aasimar (Scourge)",
-    "type": "Celestial",
-    "subtype": "Aasimar",
-    "speed": 30,
-    "senses": [
+    'id': 'aasimar_scourge',
+    'name': 'Aasimar (Scourge)',
+    'type': 'Celestial',
+    'subtype': 'Aasimar',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "radiant",
-      "necrotic"
+    'resistances': [
+      'radiant',
+      'necrotic'
     ],
-    "languages": [
-      "Common",
-      "Celestial"
+    'languages': [
+      'Common',
+      'Celestial'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "CON": 1
+    'statBonuses': {
+      'CHA': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Celestial Resistance",
-        "description": "Resistance to necrotic damage and radiant damage."
+        'name': 'Celestial Resistance',
+        'description': 'Resistance to necrotic damage and radiant damage.'
       },
       {
-        "name": "Healing Hands",
-        "description": "As an action, touch a creature and restore HP equal to level (1/Long Rest)."
+        'name': 'Healing Hands',
+        'description': 'As an action, touch a creature and restore HP equal to level (1/Long Rest).'
       },
       {
-        "name": "Radiant Consumption",
-        "description": "Bonus action to unleash searing light: 10ft aura dealing radiant damage equal to half level, and extra radiant damage to one target."
+        'name': 'Radiant Consumption',
+        'description': 'Bonus action to unleash searing light: 10ft aura dealing radiant damage equal to half level, and extra radiant damage to one target.'
       }
     ]
   },
   {
-    "id": "aasimar_fallen",
-    "name": "Aasimar (Fallen)",
-    "type": "Celestial",
-    "subtype": "Aasimar",
-    "speed": 30,
-    "senses": [
+    'id': 'aasimar_fallen',
+    'name': 'Aasimar (Fallen)',
+    'type': 'Celestial',
+    'subtype': 'Aasimar',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "radiant",
-      "necrotic"
+    'resistances': [
+      'radiant',
+      'necrotic'
     ],
-    "languages": [
-      "Common",
-      "Celestial"
+    'languages': [
+      'Common',
+      'Celestial'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "STR": 1
+    'statBonuses': {
+      'CHA': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Celestial Resistance",
-        "description": "Resistance to necrotic damage and radiant damage."
+        'name': 'Celestial Resistance',
+        'description': 'Resistance to necrotic damage and radiant damage.'
       },
       {
-        "name": "Healing Hands",
-        "description": "As an action, touch a creature and restore HP equal to level (1/Long Rest)."
+        'name': 'Healing Hands',
+        'description': 'As an action, touch a creature and restore HP equal to level (1/Long Rest).'
       },
       {
-        "name": "Necrotic Shroud",
-        "description": "Bonus action: creatures within 10ft must succeed on Charisma save (DC 8+PB+Cha) or be frightened; extra necrotic damage once per turn."
+        'name': 'Necrotic Shroud',
+        'description': 'Bonus action: creatures within 10ft must succeed on Charisma save (DC 8+PB+Cha) or be frightened; extra necrotic damage once per turn.'
       }
     ]
   },
   {
-    "id": "genasi_air",
-    "name": "Genasi (Air)",
-    "type": "Humanoid",
-    "subtype": "Genasi",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Primordial"
+    'id': 'genasi_air',
+    'name': 'Genasi (Air)',
+    'type': 'Humanoid',
+    'subtype': 'Genasi',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Primordial'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "DEX": 1
+    'statBonuses': {
+      'CON': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Unending Breath",
-        "description": "Can hold its breath indefinitely while not incapacitated."
+        'name': 'Unending Breath',
+        'description': 'Can hold its breath indefinitely while not incapacitated.'
       },
       {
-        "name": "Mingle with the Wind",
-        "description": "Can cast Levitate once per Long Rest requiring no material components (Constitution)."
+        'name': 'Mingle with the Wind',
+        'description': 'Can cast Levitate once per Long Rest requiring no material components (Constitution).'
       }
     ]
   },
   {
-    "id": "genasi_earth",
-    "name": "Genasi (Earth)",
-    "type": "Humanoid",
-    "subtype": "Genasi",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Primordial"
+    'id': 'genasi_earth',
+    'name': 'Genasi (Earth)',
+    'type': 'Humanoid',
+    'subtype': 'Genasi',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Primordial'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "STR": 1
+    'statBonuses': {
+      'CON': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Earth Walk",
-        "description": "Can move across difficult terrain made of earth or stone without expending extra movement."
+        'name': 'Earth Walk',
+        'description': 'Can move across difficult terrain made of earth or stone without expending extra movement.'
       },
       {
-        "name": "Merge with Stone",
-        "description": "Can cast Pass without Trace once per Long Rest requiring no material components (Constitution)."
+        'name': 'Merge with Stone',
+        'description': 'Can cast Pass without Trace once per Long Rest requiring no material components (Constitution).'
       }
     ]
   },
   {
-    "id": "genasi_fire",
-    "name": "Genasi (Fire)",
-    "type": "Humanoid",
-    "subtype": "Genasi",
-    "speed": 30,
-    "senses": [
+    'id': 'genasi_fire',
+    'name': 'Genasi (Fire)',
+    'type': 'Humanoid',
+    'subtype': 'Genasi',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "fire"
+    'resistances': [
+      'fire'
     ],
-    "languages": [
-      "Common",
-      "Primordial"
+    'languages': [
+      'Common',
+      'Primordial'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "INT": 1
+    'statBonuses': {
+      'CON': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fire Resistance",
-        "description": "Resistance to fire damage."
+        'name': 'Fire Resistance',
+        'description': 'Resistance to fire damage.'
       },
       {
-        "name": "Reach to the Blaze",
-        "description": "Knows Produce Flame cantrip; can cast Burning Hands once per Long Rest (Constitution)."
+        'name': 'Reach to the Blaze',
+        'description': 'Knows Produce Flame cantrip; can cast Burning Hands once per Long Rest (Constitution).'
       }
     ]
   },
   {
-    "id": "genasi_water",
-    "name": "Genasi (Water)",
-    "type": "Humanoid",
-    "subtype": "Genasi",
-    "speed": 30,
-    "resistances": [
-      "acid"
+    'id': 'genasi_water',
+    'name': 'Genasi (Water)',
+    'type': 'Humanoid',
+    'subtype': 'Genasi',
+    'speed': 30,
+    'resistances': [
+      'acid'
     ],
-    "languages": [
-      "Common",
-      "Primordial"
+    'languages': [
+      'Common',
+      'Primordial'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "WIS": 1
+    'statBonuses': {
+      'CON': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Acid Resistance",
-        "description": "Resistance to acid damage."
+        'name': 'Acid Resistance',
+        'description': 'Resistance to acid damage.'
       },
       {
-        "name": "Amphibious",
-        "description": "Can breathe air and water."
+        'name': 'Amphibious',
+        'description': 'Can breathe air and water.'
       },
       {
-        "name": "Swim",
-        "description": "Has a swimming speed of 30 feet."
+        'name': 'Swim',
+        'description': 'Has a swimming speed of 30 feet.'
       },
       {
-        "name": "Call to the Wave",
-        "description": "Knows Shape Water cantrip; can cast Create or Destroy Water once per Long Rest (Constitution)."
+        'name': 'Call to the Wave',
+        'description': 'Knows Shape Water cantrip; can cast Create or Destroy Water once per Long Rest (Constitution).'
       }
     ]
   },
   {
-    "id": "goliath",
-    "name": "Goliath",
-    "type": "Humanoid",
-    "subtype": "Goliath",
-    "speed": 30,
-    "resistances": [
-      "cold"
+    'id': 'goliath',
+    'name': 'Goliath',
+    'type': 'Humanoid',
+    'subtype': 'Goliath',
+    'speed': 30,
+    'resistances': [
+      'cold'
     ],
-    "languages": [
-      "Common",
-      "Giant"
+    'languages': [
+      'Common',
+      'Giant'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "CON": 1
+    'statBonuses': {
+      'STR': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Stone's Endurance",
-        "description": "When taking damage, reaction to roll 1d12 + Con modifier and reduce the damage taken by that total (1/Short or Long Rest)."
+        'name': "Stone's Endurance",
+        'description': 'When taking damage, reaction to roll 1d12 + Con modifier and reduce the damage taken by that total (1/Short or Long Rest).'
       },
       {
-        "name": "Powerful Build",
-        "description": "Counts as one size larger when determining carrying capacity and the weight it can push, drag, or lift."
+        'name': 'Powerful Build',
+        'description': 'Counts as one size larger when determining carrying capacity and the weight it can push, drag, or lift.'
       },
       {
-        "name": "Mountain Born",
-        "description": "Acclimated to high altitude and naturally adapted to cold climates."
+        'name': 'Mountain Born',
+        'description': 'Acclimated to high altitude and naturally adapted to cold climates.'
       }
     ]
   },
   {
-    "id": "tabaxi",
-    "name": "Tabaxi",
-    "type": "Humanoid",
-    "subtype": "Tabaxi",
-    "speed": 30,
-    "senses": [
+    'id': 'tabaxi',
+    'name': 'Tabaxi',
+    'type': 'Humanoid',
+    'subtype': 'Tabaxi',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CHA": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Feline Agility",
-        "description": "When moving on its turn in combat, can double its speed until the end of the turn. Once used, cannot use again until moving 0 feet on one of its turns."
+        'name': 'Feline Agility',
+        'description': 'When moving on its turn in combat, can double its speed until the end of the turn. Once used, cannot use again until moving 0 feet on one of its turns.'
       },
       {
-        "name": "Cat's Claws",
-        "description": "Climbing speed of 20 feet and unarmed strikes deal 1d4 + Str modifier slashing damage."
+        'name': "Cat's Claws",
+        'description': 'Climbing speed of 20 feet and unarmed strikes deal 1d4 + Str modifier slashing damage.'
       },
       {
-        "name": "Cat's Talent",
-        "description": "Proficiency in the Perception and Stealth skills."
+        'name': "Cat's Talent",
+        'description': 'Proficiency in the Perception and Stealth skills.'
       }
     ]
   },
   {
-    "id": "kenku",
-    "name": "Kenku",
-    "type": "Humanoid",
-    "subtype": "Kenku",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Auran"
+    'id': 'kenku',
+    'name': 'Kenku',
+    'type': 'Humanoid',
+    'subtype': 'Kenku',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Auran'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "WIS": 1
+    'statBonuses': {
+      'DEX': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Expert Forgery",
-        "description": "Can duplicate other creatures handwriting and craftwork. Advantage on all checks made to produce forgeries."
+        'name': 'Expert Forgery',
+        'description': 'Can duplicate other creatures handwriting and craftwork. Advantage on all checks made to produce forgeries.'
       },
       {
-        "name": "Kenku Recall",
-        "description": "Proficiency in two skills of choice; can give itself Advantage on an ability check using any skill PB times per Long Rest."
+        'name': 'Kenku Recall',
+        'description': 'Proficiency in two skills of choice; can give itself Advantage on an ability check using any skill PB times per Long Rest.'
       },
       {
-        "name": "Mimicry",
-        "description": "Can mimic sounds it has heard, including voices. Deception vs Insight check to determine if authentic."
+        'name': 'Mimicry',
+        'description': 'Can mimic sounds it has heard, including voices. Deception vs Insight check to determine if authentic.'
       }
     ]
   },
   {
-    "id": "lizardfolk",
-    "name": "Lizardfolk",
-    "type": "Humanoid",
-    "subtype": "Lizardfolk",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Draconic"
+    'id': 'lizardfolk',
+    'name': 'Lizardfolk',
+    'type': 'Humanoid',
+    'subtype': 'Lizardfolk',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Draconic'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "WIS": 1
+    'statBonuses': {
+      'CON': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Bite",
-        "description": "Fanged maw deals 1d6 + Str modifier piercing damage."
+        'name': 'Bite',
+        'description': 'Fanged maw deals 1d6 + Str modifier piercing damage.'
       },
       {
-        "name": "Hungry Jaws",
-        "description": "Bonus action bite attack; on hit, gains temporary HP equal to Constitution modifier (1/Short or Long Rest)."
+        'name': 'Hungry Jaws',
+        'description': 'Bonus action bite attack; on hit, gains temporary HP equal to Constitution modifier (1/Short or Long Rest).'
       },
       {
-        "name": "Hold Breath",
-        "description": "Can hold breath for up to 15 minutes at a time."
+        'name': 'Hold Breath',
+        'description': 'Can hold breath for up to 15 minutes at a time.'
       },
       {
-        "name": "Natural Armor",
-        "description": "Base AC is 13 + Dexterity modifier when not wearing armor."
+        'name': 'Natural Armor',
+        'description': 'Base AC is 13 + Dexterity modifier when not wearing armor.'
       }
     ]
   },
   {
-    "id": "yuanti_pureblood",
-    "name": "Yuan-ti Pureblood",
-    "type": "Humanoid",
-    "subtype": "Yuan-ti",
-    "speed": 30,
-    "senses": [
+    'id': 'yuanti_pureblood',
+    'name': 'Yuan-ti Pureblood',
+    'type': 'Humanoid',
+    'subtype': 'Yuan-ti',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "immunities": [
-      "poison",
-      "poisoned"
+    'immunities': [
+      'poison',
+      'poisoned'
     ],
-    "languages": [
-      "Common",
-      "Abyssal",
-      "Draconic"
+    'languages': [
+      'Common',
+      'Abyssal',
+      'Draconic'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "INT": 1
+    'statBonuses': {
+      'CHA': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Magic Resistance",
-        "description": "Advantage on saving throws against spells and other magical effects."
+        'name': 'Magic Resistance',
+        'description': 'Advantage on saving throws against spells and other magical effects.'
       },
       {
-        "name": "Poison Immunity",
-        "description": "Immune to poison damage and the poisoned condition."
+        'name': 'Poison Immunity',
+        'description': 'Immune to poison damage and the poisoned condition.'
       },
       {
-        "name": "Innate Spellcasting",
-        "description": "Can cast Poison Spray at will; Animal Friendship (snakes only) at will; Suggestion 1/Long Rest (Charisma)."
+        'name': 'Innate Spellcasting',
+        'description': 'Can cast Poison Spray at will; Animal Friendship (snakes only) at will; Suggestion 1/Long Rest (Charisma).'
       }
     ]
   },
   {
-    "id": "goblin",
-    "name": "Goblin",
-    "type": "Humanoid",
-    "subtype": "Goblinoid",
-    "size": "Small",
-    "speed": 30,
-    "senses": [
+    'id': 'goblin',
+    'name': 'Goblin',
+    'type': 'Humanoid',
+    'subtype': 'Goblinoid',
+    'size': 'Small',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Goblin"
+    'languages': [
+      'Common',
+      'Goblin'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CON": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fury of the Small",
-        "description": "When damaging a creature larger than itself, can deal extra damage equal to level (PB times per Long Rest)."
+        'name': 'Fury of the Small',
+        'description': 'When damaging a creature larger than itself, can deal extra damage equal to level (PB times per Long Rest).'
       },
       {
-        "name": "Nimble Escape",
-        "description": "Can take the Disengage or Hide action as a Bonus Action on each of its turns."
+        'name': 'Nimble Escape',
+        'description': 'Can take the Disengage or Hide action as a Bonus Action on each of its turns.'
       }
     ]
   },
   {
-    "id": "hobgoblin",
-    "name": "Hobgoblin",
-    "type": "Humanoid",
-    "subtype": "Goblinoid",
-    "speed": 30,
-    "senses": [
+    'id': 'hobgoblin',
+    'name': 'Hobgoblin',
+    'type': 'Humanoid',
+    'subtype': 'Goblinoid',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Goblin"
+    'languages': [
+      'Common',
+      'Goblin'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "INT": 1
+    'statBonuses': {
+      'CON': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fey Ancestry",
-        "description": "Advantage on saving throws against being Charmed."
+        'name': 'Fey Ancestry',
+        'description': 'Advantage on saving throws against being Charmed.'
       },
       {
-        "name": "Saving Face",
-        "description": "If missing an attack roll or failing an ability check or save, can gain a bonus to the roll equal to the number of allies seen within 30ft (max +5, 1/Short or Long Rest)."
+        'name': 'Saving Face',
+        'description': 'If missing an attack roll or failing an ability check or save, can gain a bonus to the roll equal to the number of allies seen within 30ft (max +5, 1/Short or Long Rest).'
       }
     ]
   },
   {
-    "id": "bugbear",
-    "name": "Bugbear",
-    "type": "Humanoid",
-    "subtype": "Goblinoid",
-    "speed": 30,
-    "senses": [
+    'id': 'bugbear',
+    'name': 'Bugbear',
+    'type': 'Humanoid',
+    'subtype': 'Goblinoid',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Goblin"
+    'languages': [
+      'Common',
+      'Goblin'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "DEX": 1
+    'statBonuses': {
+      'STR': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Long-Limbed",
-        "description": "When making a melee attack on its turn, reach for that attack is 5 feet greater than normal."
+        'name': 'Long-Limbed',
+        'description': 'When making a melee attack on its turn, reach for that attack is 5 feet greater than normal.'
       },
       {
-        "name": "Powerful Build",
-        "description": "Counts as one size larger when determining carrying capacity and weight it can push, drag, or lift."
+        'name': 'Powerful Build',
+        'description': 'Counts as one size larger when determining carrying capacity and weight it can push, drag, or lift.'
       },
       {
-        "name": "Surprise Attack",
-        "description": "If hitting a creature that has not taken a turn yet in current combat, deals an extra 2d6 damage with the attack."
+        'name': 'Surprise Attack',
+        'description': 'If hitting a creature that has not taken a turn yet in current combat, deals an extra 2d6 damage with the attack.'
       }
     ]
   },
   {
-    "id": "kobold",
-    "name": "Kobold",
-    "type": "Humanoid",
-    "subtype": "Kobold",
-    "size": "Small",
-    "speed": 30,
-    "senses": [
+    'id': 'kobold',
+    'name': 'Kobold',
+    'type': 'Humanoid',
+    'subtype': 'Kobold',
+    'size': 'Small',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Draconic"
+    'languages': [
+      'Common',
+      'Draconic'
     ],
-    "statBonuses": {
-      "DEX": 2
+    'statBonuses': {
+      'DEX': 2
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Draconic Cry",
-        "description": "Bonus action: yell to embolden allies within 10ft; allies have Advantage on attack rolls against enemies within 10ft until start of next turn (PB times/Long Rest)."
+        'name': 'Draconic Cry',
+        'description': 'Bonus action: yell to embolden allies within 10ft; allies have Advantage on attack rolls against enemies within 10ft until start of next turn (PB times/Long Rest).'
       },
       {
-        "name": "Kobold Legacy",
-        "description": "Craftiness (skill proficiency), Defiance (advantage against Frightened), or Draconic Sorcery (one sorcerer cantrip)."
+        'name': 'Kobold Legacy',
+        'description': 'Craftiness (skill proficiency), Defiance (advantage against Frightened), or Draconic Sorcery (one sorcerer cantrip).'
       }
     ]
   },
   {
-    "id": "githyanki",
-    "name": "Githyanki",
-    "type": "Humanoid",
-    "subtype": "Gith",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Gith"
+    'id': 'githyanki',
+    'name': 'Githyanki',
+    'type': 'Humanoid',
+    'subtype': 'Gith',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Gith'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "INT": 1
+    'statBonuses': {
+      'STR': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Astral Knowledge",
-        "description": "After a Long Rest, gains proficiency in one skill and one weapon or tool of choice until next Long Rest."
+        'name': 'Astral Knowledge',
+        'description': 'After a Long Rest, gains proficiency in one skill and one weapon or tool of choice until next Long Rest.'
       },
       {
-        "name": "Githyanki Psionics",
-        "description": "Knows Mage Hand; can cast Jump (3rd level) and Misty Step (5th level) 1/Long Rest (Intelligence)."
+        'name': 'Githyanki Psionics',
+        'description': 'Knows Mage Hand; can cast Jump (3rd level) and Misty Step (5th level) 1/Long Rest (Intelligence).'
       }
     ]
   },
   {
-    "id": "githzerai",
-    "name": "Githzerai",
-    "type": "Humanoid",
-    "subtype": "Gith",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Gith"
+    'id': 'githzerai',
+    'name': 'Githzerai',
+    'type': 'Humanoid',
+    'subtype': 'Gith',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Gith'
     ],
-    "statBonuses": {
-      "WIS": 2,
-      "INT": 1
+    'statBonuses': {
+      'WIS': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Mental Discipline",
-        "description": "Advantage on saving throws against being Charmed or Frightened."
+        'name': 'Mental Discipline',
+        'description': 'Advantage on saving throws against being Charmed or Frightened.'
       },
       {
-        "name": "Githzerai Psionics",
-        "description": "Knows Mage Hand; can cast Shield (3rd level) and Detect Thoughts (5th level) 1/Long Rest (Wisdom)."
+        'name': 'Githzerai Psionics',
+        'description': 'Knows Mage Hand; can cast Shield (3rd level) and Detect Thoughts (5th level) 1/Long Rest (Wisdom).'
       }
     ]
   },
   {
-    "id": "changeling",
-    "name": "Changeling",
-    "type": "Fey",
-    "subtype": "Shapechanger",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'changeling',
+    'name': 'Changeling',
+    'type': 'Fey',
+    'subtype': 'Shapechanger',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "DEX": 1
+    'statBonuses': {
+      'CHA': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Shapechanger",
-        "description": "As an action, can change appearance and voice into any humanoid seen, adjusting height and weight between Small and Medium."
+        'name': 'Shapechanger',
+        'description': 'As an action, can change appearance and voice into any humanoid seen, adjusting height and weight between Small and Medium.'
       },
       {
-        "name": "Changeling Instincts",
-        "description": "Proficiency with two skills chosen from Deception, Insight, Intimidation, Performance, and Persuasion."
+        'name': 'Changeling Instincts',
+        'description': 'Proficiency with two skills chosen from Deception, Insight, Intimidation, Performance, and Persuasion.'
       }
     ]
   },
   {
-    "id": "shifter_beasthide",
-    "name": "Shifter (Beasthide)",
-    "type": "Humanoid",
-    "subtype": "Shifter",
-    "speed": 30,
-    "senses": [
+    'id': 'shifter_beasthide',
+    'name': 'Shifter (Beasthide)',
+    'type': 'Humanoid',
+    'subtype': 'Shifter',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "STR": 1
+    'statBonuses': {
+      'CON': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Shifting",
-        "description": "Bonus action to shift for 1 minute: gains 1d6 + Con + level temporary HP and +1 bonus to AC (PB times/Long Rest)."
+        'name': 'Shifting',
+        'description': 'Bonus action to shift for 1 minute: gains 1d6 + Con + level temporary HP and +1 bonus to AC (PB times/Long Rest).'
       },
       {
-        "name": "Natural Athlete",
-        "description": "Proficiency in the Athletics skill."
+        'name': 'Natural Athlete',
+        'description': 'Proficiency in the Athletics skill.'
       }
     ]
   },
   {
-    "id": "shifter_wildhunt",
-    "name": "Shifter (Wildhunt)",
-    "type": "Humanoid",
-    "subtype": "Shifter",
-    "speed": 30,
-    "senses": [
+    'id': 'shifter_wildhunt',
+    'name': 'Shifter (Wildhunt)',
+    'type': 'Humanoid',
+    'subtype': 'Shifter',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "WIS": 2,
-      "DEX": 1
+    'statBonuses': {
+      'WIS': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Shifting",
-        "description": "Bonus action to shift for 1 minute: Advantage on all Wisdom checks, and no creature within 30 feet can make an attack roll with advantage against it (PB times/Long Rest)."
+        'name': 'Shifting',
+        'description': 'Bonus action to shift for 1 minute: Advantage on all Wisdom checks, and no creature within 30 feet can make an attack roll with advantage against it (PB times/Long Rest).'
       },
       {
-        "name": "Natural Tracker",
-        "description": "Proficiency in the Survival skill."
+        'name': 'Natural Tracker',
+        'description': 'Proficiency in the Survival skill.'
       }
     ]
   },
   {
-    "id": "shifter_longtooth",
-    "name": "Shifter (Longtooth)",
-    "type": "Humanoid",
-    "subtype": "Shifter",
-    "speed": 30,
-    "senses": [
+    'id': 'shifter_longtooth',
+    'name': 'Shifter (Longtooth)',
+    'type': 'Humanoid',
+    'subtype': 'Shifter',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "DEX": 1
+    'statBonuses': {
+      'STR': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Shifting",
-        "description": "Bonus action to shift for 1 minute: When shifting and as a bonus action on subsequent turns, can make a fanged bite attack dealing 1d6 + Strength modifier piercing damage (PB times/Long Rest)."
+        'name': 'Shifting',
+        'description': 'Bonus action to shift for 1 minute: When shifting and as a bonus action on subsequent turns, can make a fanged bite attack dealing 1d6 + Strength modifier piercing damage (PB times/Long Rest).'
       },
       {
-        "name": "Fierce",
-        "description": "Proficiency in the Intimidation skill."
+        'name': 'Fierce',
+        'description': 'Proficiency in the Intimidation skill.'
       }
     ]
   },
   {
-    "id": "shifter_swiftstride",
-    "name": "Shifter (Swiftstride)",
-    "type": "Humanoid",
-    "subtype": "Shifter",
-    "speed": 30,
-    "senses": [
+    'id': 'shifter_swiftstride',
+    'name': 'Shifter (Swiftstride)',
+    'type': 'Humanoid',
+    'subtype': 'Shifter',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CHA": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Shifting",
-        "description": "Bonus action to shift for 1 minute: Walking speed increases by 10 feet. When an enemy ends its turn within 5 feet, can use a reaction to move up to 10 feet without provoking opportunity attacks (PB times/Long Rest)."
+        'name': 'Shifting',
+        'description': 'Bonus action to shift for 1 minute: Walking speed increases by 10 feet. When an enemy ends its turn within 5 feet, can use a reaction to move up to 10 feet without provoking opportunity attacks (PB times/Long Rest).'
       },
       {
-        "name": "Graceful",
-        "description": "Proficiency in the Acrobatics skill."
+        'name': 'Graceful',
+        'description': 'Proficiency in the Acrobatics skill.'
       }
     ]
   },
   {
-    "id": "warforged",
-    "name": "Warforged",
-    "type": "Construct",
-    "subtype": "Warforged",
-    "speed": 30,
-    "resistances": [
-      "poison"
+    'id': 'warforged',
+    'name': 'Warforged',
+    'type': 'Construct',
+    'subtype': 'Warforged',
+    'speed': 30,
+    'resistances': [
+      'poison'
     ],
-    "immunities": [
-      "disease"
+    'immunities': [
+      'disease'
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "STR": 1
+    'statBonuses': {
+      'CON': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Constructed Resilience",
-        "description": "Advantage on saves against Poisoned; resistance to poison damage; immune to disease; does not need to eat, drink, or breathe; magic cannot put it to sleep."
+        'name': 'Constructed Resilience',
+        'description': 'Advantage on saves against Poisoned; resistance to poison damage; immune to disease; does not need to eat, drink, or breathe; magic cannot put it to sleep.'
       },
       {
-        "name": "Sentry's Rest",
-        "description": "Needs 6 hours of inactive, motionless state instead of sleeping, remaining fully conscious."
+        'name': "Sentry's Rest",
+        'description': 'Needs 6 hours of inactive, motionless state instead of sleeping, remaining fully conscious.'
       },
       {
-        "name": "Integrated Protection",
-        "description": "Gains a +1 bonus to Armor Class."
+        'name': 'Integrated Protection',
+        'description': 'Gains a +1 bonus to Armor Class.'
       }
     ]
   },
   {
-    "id": "kalashtar",
-    "name": "Kalashtar",
-    "type": "Humanoid",
-    "subtype": "Kalashtar",
-    "speed": 30,
-    "resistances": [
-      "psychic"
+    'id': 'kalashtar',
+    'name': 'Kalashtar',
+    'type': 'Humanoid',
+    'subtype': 'Kalashtar',
+    'speed': 30,
+    'resistances': [
+      'psychic'
     ],
-    "languages": [
-      "Common",
-      "Quori"
+    'languages': [
+      'Common',
+      'Quori'
     ],
-    "statBonuses": {
-      "WIS": 2,
-      "CHA": 1
+    'statBonuses': {
+      'WIS': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Dual Mind",
-        "description": "Advantage on all Wisdom saving throws."
+        'name': 'Dual Mind',
+        'description': 'Advantage on all Wisdom saving throws.'
       },
       {
-        "name": "Mental Discipline",
-        "description": "Resistance to psychic damage."
+        'name': 'Mental Discipline',
+        'description': 'Resistance to psychic damage.'
       },
       {
-        "name": "Mind Link",
-        "description": "Can speak telepathically to any creature within 10 feet per level (target must understand at least one language)."
+        'name': 'Mind Link',
+        'description': 'Can speak telepathically to any creature within 10 feet per level (target must understand at least one language).'
       },
       {
-        "name": "Severed from Dreams",
-        "description": "Immune to spells and other magical effects that require dreaming."
+        'name': 'Severed from Dreams',
+        'description': 'Immune to spells and other magical effects that require dreaming.'
       }
     ]
   },
   {
-    "id": "firbolg",
-    "name": "Firbolg",
-    "type": "Humanoid",
-    "subtype": "Giant",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Elvish",
-      "Giant"
+    'id': 'firbolg',
+    'name': 'Firbolg',
+    'type': 'Humanoid',
+    'subtype': 'Giant',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Elvish',
+      'Giant'
     ],
-    "statBonuses": {
-      "WIS": 2,
-      "STR": 1
+    'statBonuses': {
+      'WIS': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Firbolg Magic",
-        "description": "Can cast Detect Magic and Disguise Self (Wisdom, 1/Short or Long Rest)."
+        'name': 'Firbolg Magic',
+        'description': 'Can cast Detect Magic and Disguise Self (Wisdom, 1/Short or Long Rest).'
       },
       {
-        "name": "Hidden Step",
-        "description": "Bonus action to magically turn invisible until start of next turn or until attacking or casting a spell (PB times/Long Rest)."
+        'name': 'Hidden Step',
+        'description': 'Bonus action to magically turn invisible until start of next turn or until attacking or casting a spell (PB times/Long Rest).'
       },
       {
-        "name": "Powerful Build",
-        "description": "Counts as one size larger for carrying capacity and pushing, dragging, or lifting."
+        'name': 'Powerful Build',
+        'description': 'Counts as one size larger for carrying capacity and pushing, dragging, or lifting.'
       },
       {
-        "name": "Speech of Beast and Leaf",
-        "description": "Advantage on Charisma checks to influence beasts and leaf plants; they understand speech though cannot reply."
+        'name': 'Speech of Beast and Leaf',
+        'description': 'Advantage on Charisma checks to influence beasts and leaf plants; they understand speech though cannot reply.'
       }
     ]
   },
   {
-    "id": "triton",
-    "name": "Triton",
-    "type": "Humanoid",
-    "subtype": "Triton",
-    "speed": 30,
-    "senses": [
+    'id': 'triton',
+    'name': 'Triton',
+    'type': 'Humanoid',
+    'subtype': 'Triton',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "cold"
+    'resistances': [
+      'cold'
     ],
-    "languages": [
-      "Common",
-      "Primordial"
+    'languages': [
+      'Common',
+      'Primordial'
     ],
-    "statBonuses": {
-      "STR": 1,
-      "CON": 1,
-      "CHA": 1
+    'statBonuses': {
+      'STR': 1,
+      'CON': 1,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Amphibious",
-        "description": "Can breathe air and water."
+        'name': 'Amphibious',
+        'description': 'Can breathe air and water.'
       },
       {
-        "name": "Control Air and Water",
-        "description": "Can cast Fog Cloud (1st), Gust of Wind (3rd), and Wall of Water (5th) once per Long Rest (Charisma)."
+        'name': 'Control Air and Water',
+        'description': 'Can cast Fog Cloud (1st), Gust of Wind (3rd), and Wall of Water (5th) once per Long Rest (Charisma).'
       },
       {
-        "name": "Emissary of the Sea",
-        "description": "Can communicate simple ideas to beasts that have a swimming speed."
+        'name': 'Emissary of the Sea',
+        'description': 'Can communicate simple ideas to beasts that have a swimming speed.'
       },
       {
-        "name": "Guardians of the Depths",
-        "description": "Adapted to the freezing depths: resistance to cold damage and ignores pressure effects."
+        'name': 'Guardians of the Depths',
+        'description': 'Adapted to the freezing depths: resistance to cold damage and ignores pressure effects.'
       }
     ]
   },
   {
-    "id": "tortle",
-    "name": "Tortle",
-    "type": "Humanoid",
-    "subtype": "Tortle",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Aquan"
+    'id': 'tortle',
+    'name': 'Tortle',
+    'type': 'Humanoid',
+    'subtype': 'Tortle',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Aquan'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "WIS": 1
+    'statBonuses': {
+      'STR': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Claws",
-        "description": "Unarmed strike deals 1d6 + Str modifier slashing damage."
+        'name': 'Claws',
+        'description': 'Unarmed strike deals 1d6 + Str modifier slashing damage.'
       },
       {
-        "name": "Hold Breath",
-        "description": "Can hold breath for up to 1 hour at a time."
+        'name': 'Hold Breath',
+        'description': 'Can hold breath for up to 1 hour at a time.'
       },
       {
-        "name": "Natural Armor",
-        "description": "Base AC is 17 regardless of Dexterity modifier; cannot wear armor, but shields apply normally."
+        'name': 'Natural Armor',
+        'description': 'Base AC is 17 regardless of Dexterity modifier; cannot wear armor, but shields apply normally.'
       },
       {
-        "name": "Shell Defense",
-        "description": "Action to withdraw into shell: +4 bonus to AC, advantage on Strength and Constitution saving throws, speed becomes 0, disadvantage on Dexterity saves."
+        'name': 'Shell Defense',
+        'description': 'Action to withdraw into shell: +4 bonus to AC, advantage on Strength and Constitution saving throws, speed becomes 0, disadvantage on Dexterity saves.'
       }
     ]
   },
   {
-    "id": "harengon",
-    "name": "Harengon",
-    "type": "Humanoid",
-    "subtype": "Harengon",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'harengon',
+    'name': 'Harengon',
+    'type': 'Humanoid',
+    'subtype': 'Harengon',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "WIS": 1
+    'statBonuses': {
+      'DEX': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Hare-Trigger",
-        "description": "Adds proficiency bonus to initiative rolls."
+        'name': 'Hare-Trigger',
+        'description': 'Adds proficiency bonus to initiative rolls.'
       },
       {
-        "name": "Leporine Senses",
-        "description": "Proficiency in the Perception skill."
+        'name': 'Leporine Senses',
+        'description': 'Proficiency in the Perception skill.'
       },
       {
-        "name": "Lucky Footwork",
-        "description": "Reaction when failing a Dexterity saving throw: add 1d4 to the roll, potentially turning failure into success."
+        'name': 'Lucky Footwork',
+        'description': 'Reaction when failing a Dexterity saving throw: add 1d4 to the roll, potentially turning failure into success.'
       },
       {
-        "name": "Rabbit Hop",
-        "description": "Bonus action to jump up to 5 times PB in feet without provoking opportunity attacks (PB times/Long Rest)."
+        'name': 'Rabbit Hop',
+        'description': 'Bonus action to jump up to 5 times PB in feet without provoking opportunity attacks (PB times/Long Rest).'
       }
     ]
   },
   {
-    "id": "fairy",
-    "name": "Fairy",
-    "type": "Fey",
-    "subtype": "Fairy",
-    "size": "Small",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Sylvan"
+    'id': 'fairy',
+    'name': 'Fairy',
+    'type': 'Fey',
+    'subtype': 'Fairy',
+    'size': 'Small',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Sylvan'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CHA": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Flight",
-        "description": "Flying speed of 30 feet. Cannot fly while wearing medium or heavy armor."
+        'name': 'Flight',
+        'description': 'Flying speed of 30 feet. Cannot fly while wearing medium or heavy armor.'
       },
       {
-        "name": "Fairy Magic",
-        "description": "Knows Druidcraft; can cast Faerie Fire (3rd level) and Enlarge/Reduce (5th level) once per Long Rest (Intelligence, Wisdom, or Charisma)."
+        'name': 'Fairy Magic',
+        'description': 'Knows Druidcraft; can cast Faerie Fire (3rd level) and Enlarge/Reduce (5th level) once per Long Rest (Intelligence, Wisdom, or Charisma).'
       }
     ]
   },
   {
-    "id": "owlin",
-    "name": "Owlin",
-    "type": "Humanoid",
-    "subtype": "Owlin",
-    "speed": 30,
-    "senses": [
+    'id': 'owlin',
+    'name': 'Owlin',
+    'type': 'Humanoid',
+    'subtype': 'Owlin',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Superior Darkvision",
-        "value": "120 ft."
+        'name': 'Superior Darkvision',
+        'value': '120 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "INT": 1
+    'statBonuses': {
+      'DEX': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Flight",
-        "description": "Flying speed of 30 feet. Cannot fly while wearing medium or heavy armor."
+        'name': 'Flight',
+        'description': 'Flying speed of 30 feet. Cannot fly while wearing medium or heavy armor.'
       },
       {
-        "name": "Silent Feathers",
-        "description": "Proficiency in the Stealth skill."
+        'name': 'Silent Feathers',
+        'description': 'Proficiency in the Stealth skill.'
       }
     ]
   },
   {
-    "id": "satyr",
-    "name": "Satyr",
-    "type": "Fey",
-    "subtype": "Satyr",
-    "speed": 35,
-    "languages": [
-      "Common",
-      "Sylvan"
+    'id': 'satyr',
+    'name': 'Satyr',
+    'type': 'Fey',
+    'subtype': 'Satyr',
+    'speed': 35,
+    'languages': [
+      'Common',
+      'Sylvan'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "DEX": 1
+    'statBonuses': {
+      'CHA': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Ram",
-        "description": "Headbutt deals 1d6 + Str modifier bludgeoning damage."
+        'name': 'Ram',
+        'description': 'Headbutt deals 1d6 + Str modifier bludgeoning damage.'
       },
       {
-        "name": "Magic Resistance",
-        "description": "Advantage on saving throws against spells and other magical effects."
+        'name': 'Magic Resistance',
+        'description': 'Advantage on saving throws against spells and other magical effects.'
       },
       {
-        "name": "Mirthful Leaps",
-        "description": "Whenever making a long or high jump, can roll 1d8 and add the number rolled to the jump distance."
+        'name': 'Mirthful Leaps',
+        'description': 'Whenever making a long or high jump, can roll 1d8 and add the number rolled to the jump distance.'
       },
       {
-        "name": "Reveler",
-        "description": "Proficiency in the Performance and Persuasion skills and with one musical instrument."
+        'name': 'Reveler',
+        'description': 'Proficiency in the Performance and Persuasion skills and with one musical instrument.'
       }
     ]
   },
   {
-    "id": "centaur",
-    "name": "Centaur",
-    "type": "Fey",
-    "subtype": "Centaur",
-    "speed": 40,
-    "languages": [
-      "Common",
-      "Sylvan"
+    'id': 'centaur',
+    'name': 'Centaur',
+    'type': 'Fey',
+    'subtype': 'Centaur',
+    'speed': 40,
+    'languages': [
+      'Common',
+      'Sylvan'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "WIS": 1
+    'statBonuses': {
+      'STR': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Charge",
-        "description": "If moving at least 30 feet straight toward a target and hitting with a melee weapon attack on the same turn, can make one hooves attack as a Bonus Action."
+        'name': 'Charge',
+        'description': 'If moving at least 30 feet straight toward a target and hitting with a melee weapon attack on the same turn, can make one hooves attack as a Bonus Action.'
       },
       {
-        "name": "Hooves",
-        "description": "Hooves deal 1d6 + Str modifier bludgeoning damage."
+        'name': 'Hooves',
+        'description': 'Hooves deal 1d6 + Str modifier bludgeoning damage.'
       },
       {
-        "name": "Equine Build",
-        "description": "Counts as one size larger for carrying capacity; climbing requires 4 feet of movement per foot instead of 1."
+        'name': 'Equine Build',
+        'description': 'Counts as one size larger for carrying capacity; climbing requires 4 feet of movement per foot instead of 1.'
       }
     ]
   },
   {
-    "id": "minotaur",
-    "name": "Minotaur",
-    "type": "Humanoid",
-    "subtype": "Minotaur",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Minotaur"
+    'id': 'minotaur',
+    'name': 'Minotaur',
+    'type': 'Humanoid',
+    'subtype': 'Minotaur',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Minotaur'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "CON": 1
+    'statBonuses': {
+      'STR': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Horns",
-        "description": "Horns deal 1d6 + Str modifier piercing damage."
+        'name': 'Horns',
+        'description': 'Horns deal 1d6 + Str modifier piercing damage.'
       },
       {
-        "name": "Goring Rush",
-        "description": "Immediately after using the Dash action on its turn, can make one melee attack with horns as a Bonus Action."
+        'name': 'Goring Rush',
+        'description': 'Immediately after using the Dash action on its turn, can make one melee attack with horns as a Bonus Action.'
       },
       {
-        "name": "Hammering Horns",
-        "description": "Immediately after hitting a creature with a melee attack on its turn, can use a Bonus Action to attempt to push the target up to 10 feet away (Str save DC 8+PB+Str)."
+        'name': 'Hammering Horns',
+        'description': 'Immediately after hitting a creature with a melee attack on its turn, can use a Bonus Action to attempt to push the target up to 10 feet away (Str save DC 8+PB+Str).'
       }
     ]
   },
   {
-    "id": "leonin",
-    "name": "Leonin",
-    "type": "Humanoid",
-    "subtype": "Leonin",
-    "speed": 35,
-    "senses": [
+    'id': 'leonin',
+    'name': 'Leonin',
+    'type': 'Humanoid',
+    'subtype': 'Leonin',
+    'speed': 35,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Leonin"
+    'languages': [
+      'Common',
+      'Leonin'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "STR": 1
+    'statBonuses': {
+      'CON': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Claws",
-        "description": "Claws deal 1d4 + Str modifier slashing damage."
+        'name': 'Claws',
+        'description': 'Claws deal 1d4 + Str modifier slashing damage.'
       },
       {
-        "name": "Hunter's Instincts",
-        "description": "Proficiency in Athletics, Intimidation, Perception, or Survival."
+        'name': "Hunter's Instincts",
+        'description': 'Proficiency in Athletics, Intimidation, Perception, or Survival.'
       },
       {
-        "name": "Daunting Roar",
-        "description": "Bonus action roar: creatures of choice within 10 feet must succeed on a Con save (DC 8+PB+Con) or become frightened until end of its next turn (1/Short or Long Rest)."
+        'name': 'Daunting Roar',
+        'description': 'Bonus action roar: creatures of choice within 10 feet must succeed on a Con save (DC 8+PB+Con) or become frightened until end of its next turn (1/Short or Long Rest).'
       }
     ]
   },
   {
-    "id": "dhampir",
-    "name": "Dhampir",
-    "type": "Humanoid",
-    "subtype": "Dhampir",
-    "speed": 35,
-    "senses": [
+    'id': 'dhampir',
+    'name': 'Dhampir',
+    'type': 'Humanoid',
+    'subtype': 'Dhampir',
+    'speed': 35,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "DEX": 1
+    'statBonuses': {
+      'CON': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Spider Climb",
-        "description": "Climbing speed equal to walking speed, and can move up, down, and across vertical surfaces and ceilings while leaving hands free."
+        'name': 'Spider Climb',
+        'description': 'Climbing speed equal to walking speed, and can move up, down, and across vertical surfaces and ceilings while leaving hands free.'
       },
       {
-        "name": "Vampiric Bite",
-        "description": "Constitution-based fanged bite deals 1d4 piercing damage. While bloodied (half HP), attack has Advantage; on hit can regain HP or add bonus to next ability check or attack roll (PB times/Long Rest)."
+        'name': 'Vampiric Bite',
+        'description': 'Constitution-based fanged bite deals 1d4 piercing damage. While bloodied (half HP), attack has Advantage; on hit can regain HP or add bonus to next ability check or attack roll (PB times/Long Rest).'
       },
       {
-        "name": "Deathless Nature",
-        "description": "Does not need to breathe."
+        'name': 'Deathless Nature',
+        'description': 'Does not need to breathe.'
       }
     ]
   },
   {
-    "id": "hexblood",
-    "name": "Hexblood",
-    "type": "Fey",
-    "subtype": "Hexblood",
-    "speed": 30,
-    "senses": [
+    'id': 'hexblood',
+    'name': 'Hexblood',
+    'type': 'Fey',
+    'subtype': 'Hexblood',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "WIS": 2,
-      "INT": 1
+    'statBonuses': {
+      'WIS': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Hex Magic",
-        "description": "Can cast Disguise Self and Hex once per Long Rest (Intelligence, Wisdom, or Charisma)."
+        'name': 'Hex Magic',
+        'description': 'Can cast Disguise Self and Hex once per Long Rest (Intelligence, Wisdom, or Charisma).'
       },
       {
-        "name": "Eerie Token",
-        "description": "Bonus action to remove a lock of hair or nail to create a magical token: telepathic message up to 10 miles away, or remote sensor for 1 minute."
+        'name': 'Eerie Token',
+        'description': 'Bonus action to remove a lock of hair or nail to create a magical token: telepathic message up to 10 miles away, or remote sensor for 1 minute.'
       }
     ]
   },
   {
-    "id": "reborn",
-    "name": "Reborn",
-    "type": "Humanoid",
-    "subtype": "Reborn",
-    "speed": 30,
-    "resistances": [
-      "poison"
+    'id': 'reborn',
+    'name': 'Reborn',
+    'type': 'Humanoid',
+    'subtype': 'Reborn',
+    'speed': 30,
+    'resistances': [
+      'poison'
     ],
-    "immunities": [
-      "disease"
+    'immunities': [
+      'disease'
     ],
-    "languages": [
-      "Common"
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "STR": 1
+    'statBonuses': {
+      'CON': 2,
+      'STR': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Deathless Nature",
-        "description": "Advantage on saving throws against disease and being poisoned; resistance to poison damage; advantage on death saving throws; does not need to eat, drink, breathe, or sleep; finishes a Long Rest in 4 hours."
+        'name': 'Deathless Nature',
+        'description': 'Advantage on saving throws against disease and being poisoned; resistance to poison damage; advantage on death saving throws; does not need to eat, drink, breathe, or sleep; finishes a Long Rest in 4 hours.'
       },
       {
-        "name": "Knowledge from a Past Life",
-        "description": "When making an ability check that uses a skill, can roll a 1d6 and add the number rolled to the check (PB times/Long Rest)."
+        'name': 'Knowledge from a Past Life',
+        'description': 'When making an ability check that uses a skill, can roll a 1d6 and add the number rolled to the check (PB times/Long Rest).'
       }
     ]
   },
   {
-    "id": "eladrin",
-    "name": "Eladrin",
-    "type": "Humanoid",
-    "subtype": "Elf",
-    "speed": 30,
-    "senses": [
+    'id': 'eladrin',
+    'name': 'Eladrin',
+    'type': 'Humanoid',
+    'subtype': 'Elf',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Elvish"
+    'languages': [
+      'Common',
+      'Elvish'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CHA": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fey Ancestry",
-        "description": "Advantage on saves against being Charmed; magic cannot put to sleep."
+        'name': 'Fey Ancestry',
+        'description': 'Advantage on saves against being Charmed; magic cannot put to sleep.'
       },
       {
-        "name": "Trance",
-        "description": "Meditates deeply for 4 hours instead of sleeping."
+        'name': 'Trance',
+        'description': 'Meditates deeply for 4 hours instead of sleeping.'
       },
       {
-        "name": "Fey Step",
-        "description": "Bonus action to magically teleport up to 30 feet to an unoccupied space (PB times/Long Rest) with seasonal effect: Autumn (charm target), Winter (frighten target), Spring (teleport willing ally), Summer (deal fire damage equal to Charisma mod)."
+        'name': 'Fey Step',
+        'description': 'Bonus action to magically teleport up to 30 feet to an unoccupied space (PB times/Long Rest) with seasonal effect: Autumn (charm target), Winter (frighten target), Spring (teleport willing ally), Summer (deal fire damage equal to Charisma mod).'
       }
     ]
   },
   {
-    "id": "shadarkai",
-    "name": "Shadar-kai",
-    "type": "Humanoid",
-    "subtype": "Elf",
-    "speed": 30,
-    "senses": [
+    'id': 'shadarkai',
+    'name': 'Shadar-kai',
+    'type': 'Humanoid',
+    'subtype': 'Elf',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "necrotic"
+    'resistances': [
+      'necrotic'
     ],
-    "languages": [
-      "Common",
-      "Elvish"
+    'languages': [
+      'Common',
+      'Elvish'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CON": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fey Ancestry",
-        "description": "Advantage on saves against being Charmed; magic cannot put to sleep."
+        'name': 'Fey Ancestry',
+        'description': 'Advantage on saves against being Charmed; magic cannot put to sleep.'
       },
       {
-        "name": "Trance",
-        "description": "Meditates deeply for 4 hours instead of sleeping."
+        'name': 'Trance',
+        'description': 'Meditates deeply for 4 hours instead of sleeping.'
       },
       {
-        "name": "Necrotic Resistance",
-        "description": "Resistance to necrotic damage."
+        'name': 'Necrotic Resistance',
+        'description': 'Resistance to necrotic damage.'
       },
       {
-        "name": "Blessing of the Raven Queen",
-        "description": "Bonus action to magically teleport up to 30 feet (PB times/Long Rest); gains resistance to all damage until start of next turn."
+        'name': 'Blessing of the Raven Queen',
+        'description': 'Bonus action to magically teleport up to 30 feet (PB times/Long Rest); gains resistance to all damage until start of next turn.'
       }
     ]
   },
   {
-    "id": "sea_elf",
-    "name": "Elf (Sea)",
-    "type": "Humanoid",
-    "subtype": "Elf",
-    "speed": 30,
-    "senses": [
+    'id': 'sea_elf',
+    'name': 'Elf (Sea)',
+    'type': 'Humanoid',
+    'subtype': 'Elf',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "resistances": [
-      "cold"
+    'resistances': [
+      'cold'
     ],
-    "languages": [
-      "Common",
-      "Elvish",
-      "Aquan"
+    'languages': [
+      'Common',
+      'Elvish',
+      'Aquan'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CON": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Fey Ancestry",
-        "description": "Advantage on saves against being Charmed; magic cannot put to sleep."
+        'name': 'Fey Ancestry',
+        'description': 'Advantage on saves against being Charmed; magic cannot put to sleep.'
       },
       {
-        "name": "Child of the Sea",
-        "description": "Swimming speed of 30 feet and can breathe air and water."
+        'name': 'Child of the Sea',
+        'description': 'Swimming speed of 30 feet and can breathe air and water.'
       },
       {
-        "name": "Friend of the Sea",
-        "description": "Can communicate simple ideas to any beast that has an inborn swimming speed."
+        'name': 'Friend of the Sea',
+        'description': 'Can communicate simple ideas to any beast that has an inborn swimming speed.'
       }
     ]
   },
   {
-    "id": "astral_elf",
-    "name": "Elf (Astral)",
-    "type": "Humanoid",
-    "subtype": "Elf",
-    "speed": 30,
-    "senses": [
+    'id': 'astral_elf',
+    'name': 'Elf (Astral)',
+    'type': 'Humanoid',
+    'subtype': 'Elf',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Elvish",
-      "Celestial"
+    'languages': [
+      'Common',
+      'Elvish',
+      'Celestial'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "INT": 1
+    'statBonuses': {
+      'DEX': 2,
+      'INT': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Astral Fire",
-        "description": "Knows one of Sacred Flame, Dancing Lights, or Light (Int, Wis, or Cha)."
+        'name': 'Astral Fire',
+        'description': 'Knows one of Sacred Flame, Dancing Lights, or Light (Int, Wis, or Cha).'
       },
       {
-        "name": "Astral Trance",
-        "description": "Trance in 4 hours; gain proficiency in one skill and with one weapon or tool of choice after trance."
+        'name': 'Astral Trance',
+        'description': 'Trance in 4 hours; gain proficiency in one skill and with one weapon or tool of choice after trance.'
       },
       {
-        "name": "Starlight Step",
-        "description": "Bonus action to magically teleport up to 30 feet (PB times/Long Rest)."
+        'name': 'Starlight Step',
+        'description': 'Bonus action to magically teleport up to 30 feet (PB times/Long Rest).'
       }
     ]
   },
   {
-    "id": "gnome_deep",
-    "name": "Gnome (Deep / Svirfneblin)",
-    "type": "Humanoid",
-    "subtype": "Gnome",
-    "size": "Small",
-    "speed": 25,
-    "senses": [
+    'id': 'gnome_deep',
+    'name': 'Gnome (Deep / Svirfneblin)',
+    'type': 'Humanoid',
+    'subtype': 'Gnome',
+    'size': 'Small',
+    'speed': 25,
+    'senses': [
       {
-        "name": "Superior Darkvision",
-        "value": "120 ft."
+        'name': 'Superior Darkvision',
+        'value': '120 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Gnomish",
-      "Undercommon"
+    'languages': [
+      'Common',
+      'Gnomish',
+      'Undercommon'
     ],
-    "statBonuses": {
-      "INT": 2,
-      "DEX": 1
+    'statBonuses': {
+      'INT': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Gnome Cunning",
-        "description": "Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic."
+        'name': 'Gnome Cunning',
+        'description': 'Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.'
       },
       {
-        "name": "Svirfneblin Camouflage",
-        "description": "Advantage on Dexterity (Stealth) checks made to hide in rocky terrain or underground."
+        'name': 'Svirfneblin Camouflage',
+        'description': 'Advantage on Dexterity (Stealth) checks made to hide in rocky terrain or underground.'
       },
       {
-        "name": "Gift of the Svirfneblin",
-        "description": "Can cast Disguise Self (3rd) and Nondetection (5th) once per Long Rest (Intelligence)."
+        'name': 'Gift of the Svirfneblin',
+        'description': 'Can cast Disguise Self (3rd) and Nondetection (5th) once per Long Rest (Intelligence).'
       }
     ]
   },
   {
-    "id": "gnome_forest",
-    "name": "Gnome (Forest)",
-    "type": "Humanoid",
-    "subtype": "Gnome",
-    "size": "Small",
-    "speed": 25,
-    "senses": [
+    'id': 'gnome_forest',
+    'name': 'Gnome (Forest)',
+    'type': 'Humanoid',
+    'subtype': 'Gnome',
+    'size': 'Small',
+    'speed': 25,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Gnomish"
+    'languages': [
+      'Common',
+      'Gnomish'
     ],
-    "statBonuses": {
-      "INT": 2,
-      "DEX": 1
+    'statBonuses': {
+      'INT': 2,
+      'DEX': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Gnome Cunning",
-        "description": "Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic."
+        'name': 'Gnome Cunning',
+        'description': 'Advantage on all Intelligence, Wisdom, and Charisma saving throws against magic.'
       },
       {
-        "name": "Natural Illusionist",
-        "description": "Knows the Minor Illusion cantrip (Intelligence)."
+        'name': 'Natural Illusionist',
+        'description': 'Knows the Minor Illusion cantrip (Intelligence).'
       },
       {
-        "name": "Speak with Small Beasts",
-        "description": "Through sounds and gestures, can communicate simple ideas with Small or smaller beasts."
+        'name': 'Speak with Small Beasts',
+        'description': 'Through sounds and gestures, can communicate simple ideas with Small or smaller beasts.'
       }
     ]
   },
   {
-    "id": "halfling_lightfoot",
-    "name": "Halfling (Lightfoot)",
-    "type": "Humanoid",
-    "subtype": "Halfling",
-    "size": "Small",
-    "speed": 25,
-    "languages": [
-      "Common",
-      "Halfling"
+    'id': 'halfling_lightfoot',
+    'name': 'Halfling (Lightfoot)',
+    'type': 'Humanoid',
+    'subtype': 'Halfling',
+    'size': 'Small',
+    'speed': 25,
+    'languages': [
+      'Common',
+      'Halfling'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CHA": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CHA': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Lucky",
-        "description": "Reroll 1s on attack rolls, ability checks, and saving throws."
+        'name': 'Lucky',
+        'description': 'Reroll 1s on attack rolls, ability checks, and saving throws.'
       },
       {
-        "name": "Brave",
-        "description": "Advantage on saving throws against being Frightened."
+        'name': 'Brave',
+        'description': 'Advantage on saving throws against being Frightened.'
       },
       {
-        "name": "Naturally Stealthy",
-        "description": "Can attempt to hide even when obscured only by a creature that is at least one size larger."
+        'name': 'Naturally Stealthy',
+        'description': 'Can attempt to hide even when obscured only by a creature that is at least one size larger.'
       }
     ]
   },
   {
-    "id": "halfling_stout",
-    "name": "Halfling (Stout)",
-    "type": "Humanoid",
-    "subtype": "Halfling",
-    "size": "Small",
-    "speed": 25,
-    "resistances": [
-      "poison"
+    'id': 'halfling_stout',
+    'name': 'Halfling (Stout)',
+    'type': 'Humanoid',
+    'subtype': 'Halfling',
+    'size': 'Small',
+    'speed': 25,
+    'resistances': [
+      'poison'
     ],
-    "languages": [
-      "Common",
-      "Halfling"
+    'languages': [
+      'Common',
+      'Halfling'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CON": 1
+    'statBonuses': {
+      'DEX': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Lucky",
-        "description": "Reroll 1s on attack rolls, ability checks, and saving throws."
+        'name': 'Lucky',
+        'description': 'Reroll 1s on attack rolls, ability checks, and saving throws.'
       },
       {
-        "name": "Brave",
-        "description": "Advantage on saving throws against being Frightened."
+        'name': 'Brave',
+        'description': 'Advantage on saving throws against being Frightened.'
       },
       {
-        "name": "Stout Resilience",
-        "description": "Advantage on saving throws against poison, and resistance against poison damage."
+        'name': 'Stout Resilience',
+        'description': 'Advantage on saving throws against poison, and resistance against poison damage.'
       }
     ]
   },
   {
-    "id": "custom_lineage",
-    "name": "Custom Lineage",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'custom_lineage',
+    'name': 'Custom Lineage',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {},
-    "traits": [
+    'statBonuses': {},
+    'traits': [
       {
-        "name": "Feat",
-        "description": "Gain one feat of choice for which you qualify."
+        'name': 'Feat',
+        'description': 'Gain one feat of choice for which you qualify.'
       },
       {
-        "name": "Variable Trait",
-        "description": "Gain Darkvision 60 ft. or proficiency in one skill of choice."
+        'name': 'Variable Trait',
+        'description': 'Gain Darkvision 60 ft. or proficiency in one skill of choice.'
       }
     ]
   },
   {
-    "id": "autognome",
-    "name": "Autognome",
-    "type": "Construct",
-    "subtype": "Gnome",
-    "size": "Small",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'autognome',
+    'name': 'Autognome',
+    'type': 'Construct',
+    'subtype': 'Gnome',
+    'size': 'Small',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {},
-    "resistances": [
-      "poison",
-      "paralyzed"
+    'statBonuses': {},
+    'resistances': [
+      'poison',
+      'paralyzed'
     ],
-    "immunities": [
-      "disease"
+    'immunities': [
+      'disease'
     ],
-    "traits": [
+    'traits': [
       {
-        "name": "Armored Casing",
-        "description": "Base AC equals 13 + Dexterity modifier when not wearing armor."
+        'name': 'Armored Casing',
+        'description': 'Base AC equals 13 + Dexterity modifier when not wearing armor.'
       },
       {
-        "name": "Built for Success",
-        "description": "Can add a 1d4 to one attack roll, ability check, or saving throw after rolling (PB times/Long Rest)."
+        'name': 'Built for Success',
+        'description': 'Can add a 1d4 to one attack roll, ability check, or saving throw after rolling (PB times/Long Rest).'
       },
       {
-        "name": "Mechanical Nature",
-        "description": "Does not need to eat, drink, or breathe; immune to disease."
+        'name': 'Mechanical Nature',
+        'description': 'Does not need to eat, drink, or breathe; immune to disease.'
       }
     ]
   },
   {
-    "id": "giff",
-    "name": "Giff",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'giff',
+    'name': 'Giff',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {},
-    "traits": [
+    'statBonuses': {},
+    'traits': [
       {
-        "name": "Astral Spark",
-        "description": "Deal extra force damage equal to PB on simple or martial weapon hits (PB times/Long Rest)."
+        'name': 'Astral Spark',
+        'description': 'Deal extra force damage equal to PB on simple or martial weapon hits (PB times/Long Rest).'
       },
       {
-        "name": "Hippo Build",
-        "description": "Advantage on Strength-based ability checks and saving throws; counts as one size larger for carrying capacity."
+        'name': 'Hippo Build',
+        'description': 'Advantage on Strength-based ability checks and saving throws; counts as one size larger for carrying capacity.'
       }
     ]
   },
   {
-    "id": "hadozee",
-    "name": "Hadozee",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'hadozee',
+    'name': 'Hadozee',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {},
-    "traits": [
+    'statBonuses': {},
+    'traits': [
       {
-        "name": "Glide",
-        "description": "Can glide horizontally 5 feet for every 1 foot fallen, taking zero falling damage."
+        'name': 'Glide',
+        'description': 'Can glide horizontally 5 feet for every 1 foot fallen, taking zero falling damage.'
       },
       {
-        "name": "Dexterous Feet",
-        "description": "Can use a Bonus Action to manipulate an object, open/close doors, or stow an item using feet."
+        'name': 'Dexterous Feet',
+        'description': 'Can use a Bonus Action to manipulate an object, open/close doors, or stow an item using feet.'
       }
     ]
   },
   {
-    "id": "plasmoid",
-    "name": "Plasmoid",
-    "type": "Ooze",
-    "speed": 30,
-    "languages": [
-      "Common"
+    'id': 'plasmoid',
+    'name': 'Plasmoid',
+    'type': 'Ooze',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {},
-    "resistances": [
-      "acid",
-      "poison"
+    'statBonuses': {},
+    'resistances': [
+      'acid',
+      'poison'
     ],
-    "traits": [
+    'traits': [
       {
-        "name": "Amorphous",
-        "description": "Can squeeze through spaces as narrow as 1 inch wide without squeezing."
+        'name': 'Amorphous',
+        'description': 'Can squeeze through spaces as narrow as 1 inch wide without squeezing.'
       },
       {
-        "name": "Hold Breath",
-        "description": "Can hold breath for up to 1 hour."
+        'name': 'Hold Breath',
+        'description': 'Can hold breath for up to 1 hour.'
       },
       {
-        "name": "Shape Self",
-        "description": "Can extend a pseudopod up to 10 feet long as a Bonus Action to manipulate objects."
+        'name': 'Shape Self',
+        'description': 'Can extend a pseudopod up to 10 feet long as a Bonus Action to manipulate objects.'
       }
     ]
   },
   {
-    "id": "thrikreen",
-    "name": "Thri-kreen",
-    "type": "Monstrosity",
-    "speed": 30,
-    "senses": [
+    'id': 'thrikreen',
+    'name': 'Thri-kreen',
+    'type': 'Monstrosity',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Thri-kreen"
+    'languages': [
+      'Common',
+      'Thri-kreen'
     ],
-    "statBonuses": {},
-    "traits": [
+    'statBonuses': {},
+    'traits': [
       {
-        "name": "Chameleon Carapace",
-        "description": "Base AC 13 + Dex; can change color to gain Advantage on Stealth checks."
+        'name': 'Chameleon Carapace',
+        'description': 'Base AC 13 + Dex; can change color to gain Advantage on Stealth checks.'
       },
       {
-        "name": "Secondary Arms",
-        "description": "Has two smaller secondary arms to manipulate light objects and light weapons."
+        'name': 'Secondary Arms',
+        'description': 'Has two smaller secondary arms to manipulate light objects and light weapons.'
       },
       {
-        "name": "Sleepless Revitalization",
-        "description": "Remains fully conscious during a 4-hour rest."
-      }
-    ]
-  },
-  {
-    "id": "kender",
-    "name": "Kender",
-    "type": "Humanoid",
-    "size": "Small",
-    "speed": 30,
-    "languages": [
-      "Common"
-    ],
-    "statBonuses": {},
-    "traits": [
-      {
-        "name": "Fearless",
-        "description": "Immune to the Frightened condition."
-      },
-      {
-        "name": "Taunt",
-        "description": "Bonus action target within 60 ft must make Wis save (DC 8+PB+Cha) or have Disadvantage on attacks against targets other than you."
-      },
-      {
-        "name": "Kender Pockets",
-        "description": "Can pull random simple items from pockets (PB times/Long Rest)."
+        'name': 'Sleepless Revitalization',
+        'description': 'Remains fully conscious during a 4-hour rest.'
       }
     ]
   },
   {
-    "id": "loxodon",
-    "name": "Loxodon",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Loxodon"
+    'id': 'kender',
+    'name': 'Kender',
+    'type': 'Humanoid',
+    'size': 'Small',
+    'speed': 30,
+    'languages': [
+      'Common'
     ],
-    "statBonuses": {
-      "CON": 2,
-      "WIS": 1
+    'statBonuses': {},
+    'traits': [
+      {
+        'name': 'Fearless',
+        'description': 'Immune to the Frightened condition.'
+      },
+      {
+        'name': 'Taunt',
+        'description': 'Bonus action target within 60 ft must make Wis save (DC 8+PB+Cha) or have Disadvantage on attacks against targets other than you.'
+      },
+      {
+        'name': 'Kender Pockets',
+        'description': 'Can pull random simple items from pockets (PB times/Long Rest).'
+      }
+    ]
+  },
+  {
+    'id': 'loxodon',
+    'name': 'Loxodon',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Loxodon'
+    ],
+    'statBonuses': {
+      'CON': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Natural Armor",
-        "description": "Base AC equals 12 + Constitution modifier."
+        'name': 'Natural Armor',
+        'description': 'Base AC equals 12 + Constitution modifier.'
       },
       {
-        "name": "Trunk",
-        "description": "Can use trunk to grasp items, lift up to 5 times Strength score, or make unarmed strikes."
+        'name': 'Trunk',
+        'description': 'Can use trunk to grasp items, lift up to 5 times Strength score, or make unarmed strikes.'
       },
       {
-        "name": "Keen Smell",
-        "description": "Advantage on Perception, Survival, and Investigation checks that rely on smell."
+        'name': 'Keen Smell',
+        'description': 'Advantage on Perception, Survival, and Investigation checks that rely on smell.'
       }
     ]
   },
   {
-    "id": "simic_hybrid",
-    "name": "Simic Hybrid",
-    "type": "Humanoid",
-    "speed": 30,
-    "senses": [
+    'id': 'simic_hybrid',
+    'name': 'Simic Hybrid',
+    'type': 'Humanoid',
+    'speed': 30,
+    'senses': [
       {
-        "name": "Darkvision",
-        "value": "60 ft."
+        'name': 'Darkvision',
+        'value': '60 ft.'
       }
     ],
-    "languages": [
-      "Common",
-      "Elvish"
+    'languages': [
+      'Common',
+      'Elvish'
     ],
-    "statBonuses": {
-      "CON": 2
+    'statBonuses': {
+      'CON': 2
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Animal Enhancement",
-        "description": "Mutations include Manta Glide, Nimble Climber, Underwater Adaptation, Grappling Appendages, Carapace, or Acid Spit."
-      }
-    ]
-  },
-  {
-    "id": "vedalken",
-    "name": "Vedalken",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Vedalken"
-    ],
-    "statBonuses": {
-      "INT": 2,
-      "WIS": 1
-    },
-    "traits": [
-      {
-        "name": "Vedalken Dispassion",
-        "description": "Advantage on all Intelligence, Wisdom, and Charisma saving throws."
-      },
-      {
-        "name": "Tireless Precision",
-        "description": "Add 1d4 to checks with chosen skill and tool."
-      },
-      {
-        "name": "Partially Amphibious",
-        "description": "Can breathe underwater for up to 1 hour per rest."
+        'name': 'Animal Enhancement',
+        'description': 'Mutations include Manta Glide, Nimble Climber, Underwater Adaptation, Grappling Appendages, Carapace, or Acid Spit.'
       }
     ]
   },
   {
-    "id": "verdan",
-    "name": "Verdan",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Goblin"
+    'id': 'vedalken',
+    'name': 'Vedalken',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Vedalken'
     ],
-    "statBonuses": {
-      "CHA": 2,
-      "CON": 1
+    'statBonuses': {
+      'INT': 2,
+      'WIS': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Black Blood Healing",
-        "description": "Reroll 1s and 2s on hit dice spent during Short Rests."
+        'name': 'Vedalken Dispassion',
+        'description': 'Advantage on all Intelligence, Wisdom, and Charisma saving throws.'
       },
       {
-        "name": "Telepathic Insight",
-        "description": "Advantage on all Wisdom and Charisma saving throws."
+        'name': 'Tireless Precision',
+        'description': 'Add 1d4 to checks with chosen skill and tool.'
+      },
+      {
+        'name': 'Partially Amphibious',
+        'description': 'Can breathe underwater for up to 1 hour per rest.'
       }
     ]
   },
   {
-    "id": "locathah",
-    "name": "Locathah",
-    "type": "Humanoid",
-    "speed": 30,
-    "languages": [
-      "Common",
-      "Aquan"
+    'id': 'verdan',
+    'name': 'Verdan',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Goblin'
     ],
-    "statBonuses": {
-      "STR": 2,
-      "DEX": 1
+    'statBonuses': {
+      'CHA': 2,
+      'CON': 1
     },
-    "traits": [
+    'traits': [
       {
-        "name": "Natural Armor",
-        "description": "Base AC 12 + Dexterity modifier."
+        'name': 'Black Blood Healing',
+        'description': 'Reroll 1s and 2s on hit dice spent during Short Rests.'
       },
       {
-        "name": "Leviathan Will",
-        "description": "Advantage on saving throws against being Charmed, Frightened, Paralyzed, Poisoned, Stunned, or Sleep."
-      },
-      {
-        "name": "Limited Amphibiousness",
-        "description": "Can breathe air and water, but must be submerged in water at least once every 4 hours."
+        'name': 'Telepathic Insight',
+        'description': 'Advantage on all Wisdom and Charisma saving throws.'
       }
     ]
   },
   {
-    "id": "grung",
-    "name": "Grung",
-    "type": "Humanoid",
-    "size": "Small",
-    "speed": 25,
-    "languages": [
-      "Grung"
+    'id': 'locathah',
+    'name': 'Locathah',
+    'type': 'Humanoid',
+    'speed': 30,
+    'languages': [
+      'Common',
+      'Aquan'
     ],
-    "statBonuses": {
-      "DEX": 2,
-      "CON": 1
+    'statBonuses': {
+      'STR': 2,
+      'DEX': 1
     },
-    "immunities": [
-      "poison"
-    ],
-    "traits": [
+    'traits': [
       {
-        "name": "Poisonous Skin",
-        "description": "Any creature that grapples or touches grung with bare skin must succeed on a DC 12 Con save or become Poisoned for 1 minute."
+        'name': 'Natural Armor',
+        'description': 'Base AC 12 + Dexterity modifier.'
       },
       {
-        "name": "Standing Leap",
-        "description": "Long jump is up to 25 feet and high jump is up to 15 feet with or without a running start."
+        'name': 'Leviathan Will',
+        'description': 'Advantage on saving throws against being Charmed, Frightened, Paralyzed, Poisoned, Stunned, or Sleep.'
+      },
+      {
+        'name': 'Limited Amphibiousness',
+        'description': 'Can breathe air and water, but must be submerged in water at least once every 4 hours.'
+      }
+    ]
+  },
+  {
+    'id': 'grung',
+    'name': 'Grung',
+    'type': 'Humanoid',
+    'size': 'Small',
+    'speed': 25,
+    'languages': [
+      'Grung'
+    ],
+    'statBonuses': {
+      'DEX': 2,
+      'CON': 1
+    },
+    'immunities': [
+      'poison'
+    ],
+    'traits': [
+      {
+        'name': 'Poisonous Skin',
+        'description': 'Any creature that grapples or touches grung with bare skin must succeed on a DC 12 Con save or become Poisoned for 1 minute.'
+      },
+      {
+        'name': 'Standing Leap',
+        'description': 'Long jump is up to 25 feet and high jump is up to 15 feet with or without a running start.'
       }
     ]
   },

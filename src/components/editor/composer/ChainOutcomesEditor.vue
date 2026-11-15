@@ -30,7 +30,8 @@
         <!-- Row 1: When (Trigger), Target Filter & Sector Quadrant -->
         <div class="row q-col-gutter-xs items-center">
           <div class="col-12 col-sm-4">
-            <q-input v-help="$t('help.composer.outcomeWhen')"
+            <q-input
+v-help="$t('help.composer.outcomeWhen')"
               :model-value="outcome.trigger"
               dense
               outlined
@@ -43,7 +44,8 @@
             />
           </div>
           <div class="col-12 col-sm-4">
-            <q-input v-help="$t('help.composer.outcomeTarget')"
+            <q-input
+v-help="$t('help.composer.outcomeTarget')"
               :model-value="outcome.targetFilter ?? ''"
               dense
               outlined
@@ -55,7 +57,8 @@
             />
           </div>
           <div class="col-12 col-sm-4">
-            <catalog-select v-help="$t('help.composer.outcomeKind')"
+            <catalog-select
+v-help="$t('help.composer.outcomeKind')"
               :model-value="outcome.layoutSector || 'all'"
               :entries="sectorOptions"
               preserve-order
@@ -66,7 +69,8 @@
             />
           </div>
           <div class="col-12 q-mt-xs">
-            <mechanic-text-editor v-help="$t('help.composer.outcomeRider')"
+            <mechanic-text-editor
+v-help="$t('help.composer.outcomeRider')"
               :model-value="outcome.rider ?? ''"
               dense
               outlined
@@ -80,7 +84,7 @@
         <!-- A11.5 recipient, references and presentation -->
         <div class="row q-col-gutter-xs items-center q-mt-xs">
           <div class="col-12 col-sm-5">
-            <mechanic-text-editor scope="action" v-help="'Who this result applies to, e.g. “each creature in the area”.'" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(outcome.id, { recipient: String(value ?? '') || undefined })" />
+            <mechanic-text-editor v-help="'Who this result applies to, e.g. “each creature in the area”.'" scope="action" :model-value="outcome.recipient ?? ''" dense outlined dark label="Applies to (optional)" @update:model-value="(value: string | number | null) => setOutcome(outcome.id, { recipient: String(value ?? '') || undefined })" />
           </div>
           <div class="col-12 col-sm-4">
             <catalog-select v-help="'Results this one builds on, e.g. “half as much” on a success.'" :model-value="outcome.refs ?? []" :entries="refOptions(outcome.id)" multiple preserve-order :searchable="false" dark label="Builds on" @update:model-value="(value: unknown) => setOutcome(outcome.id, { refs: Array.isArray(value) ? value.map(String) : [] })" />
@@ -110,7 +114,8 @@
           </div>
           <template v-if="effect.kind !== 'text'">
             <div class="col">
-              <q-input v-help="$t('help.composer.outcomeDamage')"
+              <q-input
+v-help="$t('help.composer.outcomeDamage')"
                 :model-value="effect.formula ?? ''"
                 dense
                 outlined
@@ -121,7 +126,8 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="$t('help.composer.outcomeDamageType')"
+              <q-input
+v-help="$t('help.composer.outcomeDamageType')"
                 :model-value="effect.damageType ?? ''"
                 dense
                 outlined
@@ -133,7 +139,8 @@
             </div>
           </template>
           <div v-else class="col">
-            <mechanic-text-editor v-help="$t('help.composer.outcomeEffectText')"
+            <mechanic-text-editor
+v-help="$t('help.composer.outcomeEffectText')"
               :model-value="effect.text ?? ''"
               dense
               outlined
@@ -156,7 +163,8 @@
           </div>
           <div v-for="(dRow, rIdx) in outcome.diceTable" :key="rIdx" class="row q-col-gutter-xs items-center q-mb-xs">
             <div class="col-3">
-              <q-input v-help="$t('help.composer.rollBranchTrigger')"
+              <q-input
+v-help="$t('help.composer.rollBranchTrigger')"
                 :model-value="dRow.roll"
                 dense
                 outlined
@@ -167,7 +175,8 @@
               />
             </div>
             <div class="col">
-              <mechanic-text-editor v-help="$t('help.composer.rollBranchEffect')"
+              <mechanic-text-editor
+v-help="$t('help.composer.rollBranchEffect')"
                 :model-value="dRow.effect"
                 dense
                 outlined
@@ -219,7 +228,8 @@
     <template v-else>
       <div v-for="(effect, index) in effects" :key="index" class="row q-col-gutter-xs items-center q-mb-xs">
         <div class="col-12 col-sm-4">
-          <q-input v-help="$t('help.composer.caseCondition')"
+          <q-input
+v-help="$t('help.composer.caseCondition')"
             :model-value="effect.case"
             dense
             outlined
@@ -230,7 +240,8 @@
           />
         </div>
         <div class="col">
-          <mechanic-text-editor v-help="$t('help.composer.outcomeEffectText')"
+          <mechanic-text-editor
+v-help="$t('help.composer.outcomeEffectText')"
             :model-value="effect.effect"
             dense
             outlined

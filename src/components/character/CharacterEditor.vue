@@ -13,19 +13,20 @@
         <q-card-section class="q-gutter-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-md-6">
-              <q-input v-help="$t('help.character.name')" v-model="actor.name" label="Character Name" dense outlined />
+              <q-input v-model="actor.name" v-help="$t('help.character.name')" label="Character Name" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-help="$t('help.character.className')" v-model="actor.class" label="Class" dense outlined />
+              <q-input v-model="actor.class" v-help="$t('help.character.className')" label="Class" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-help="$t('help.character.subclass')" v-model="actor.subclass" label="Subclass" dense outlined />
+              <q-input v-model="actor.subclass" v-help="$t('help.character.subclass')" label="Subclass" dense outlined />
             </div>
           </div>
           <div class="row q-col-gutter-sm">
             <div class="col-4 col-md-2">
-              <q-input v-help="$t('help.character.level')"
-                v-model.number="actor.level"
+              <q-input
+v-model.number="actor.level"
+                v-help="$t('help.character.level')"
                 type="number"
                 min="1"
                 max="20"
@@ -35,13 +36,13 @@
               />
             </div>
             <div class="col-8 col-md-4">
-              <q-input v-help="$t('help.character.species')" v-model="actor.race" label="Species / Race" dense outlined />
+              <q-input v-model="actor.race" v-help="$t('help.character.species')" label="Species / Race" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-help="$t('help.character.background')" v-model="actor.background" label="Background" dense outlined />
+              <q-input v-model="actor.background" v-help="$t('help.character.background')" label="Background" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-help="$t('help.character.alignment')" v-model="actor.alignment" label="Alignment" dense outlined />
+              <q-input v-model="actor.alignment" v-help="$t('help.character.alignment')" label="Alignment" dense outlined />
             </div>
           </div>
 
@@ -50,8 +51,9 @@
             <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Hero Portrait & Avatar</div>
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-4">
-                <catalog-select v-help="$t('help.character.portraitPosition')"
-                  v-model="portrait.position"
+                <catalog-select
+v-model="portrait.position"
+                  v-help="$t('help.character.portraitPosition')"
                   :entries="portraitPositions"
                   preserve-order
                   :searchable="false"
@@ -59,8 +61,9 @@
                 />
               </div>
               <div class="col-12 col-sm-8">
-                <q-input v-help="$t('help.character.portraitUrl')"
-                  v-model="portrait.url"
+                <q-input
+v-model="portrait.url"
+                  v-help="$t('help.character.portraitUrl')"
                   label="Image URL or Data URI"
                   dense
                   outlined
@@ -84,8 +87,9 @@
                 </q-file>
               </div>
               <div class="col-12 col-sm-4">
-                <q-input v-help="$t('help.character.portraitCaption')"
-                  v-model="portrait.caption"
+                <q-input
+v-model="portrait.caption"
+                  v-help="$t('help.character.portraitCaption')"
                   label="Caption / Title"
                   dense
                   outlined
@@ -102,13 +106,13 @@
         <div class="text-caption q-mb-sm">Class, species and equipment names are references. Enter totals from your character's rules or keep the labelled estimates.</div>
         <div class="editor-fit-grid">
           <div class="editor-fit-cell">
-            <q-input v-help="'Record the character’s static Armor Class override shown in the vitals block; leave blank to auto-derive.'" :model-value="actor.combatVitals?.armorClass ?? null" @update:model-value="setVital('armorClass', $event)" label="Recorded Armor Class" type="number" min="0" clearable dense outlined />
-            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" @update:model-value="(value: string) => setVital('armorClassSource', value)" label="Armor Class source / notes" dense outlined class="q-mt-xs" />
+            <q-input v-help="'Record the character’s static Armor Class override shown in the vitals block; leave blank to auto-derive.'" :model-value="actor.combatVitals?.armorClass ?? null" label="Recorded Armor Class" type="number" min="0" clearable dense outlined @update:model-value="setVital('armorClass', $event)" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" label="Armor Class source / notes" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('armorClassSource', value)" />
             <div class="text-caption q-mt-xs" data-character-ac-provenance>{{ vitals.armorClass.value }} — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
           </div>
           <div class="editor-fit-cell">
-            <q-input v-help="'Record the character’s walking speed in feet for the vitals header; leave blank for baseline speed.'" :model-value="actor.combatVitals?.speed ?? null" @update:model-value="setVital('speed', $event)" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined />
-            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" @update:model-value="(value: string) => setVital('speedSource', value)" label="Speed source / notes" dense outlined class="q-mt-xs" />
+            <q-input v-help="'Record the character’s walking speed in feet for the vitals header; leave blank for baseline speed.'" :model-value="actor.combatVitals?.speed ?? null" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined @update:model-value="setVital('speed', $event)" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" label="Speed source / notes" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('speedSource', value)" />
             <div class="text-caption q-mt-xs" data-character-speed-provenance>{{ vitals.speed.value }} ft. — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
           </div>
         </div>
@@ -132,8 +136,8 @@
               class="col-4 col-md-2 text-center"
             >
               <q-input
-                v-help="'Base ability score (1–30) used to derive modifiers, saving throws, skills, and DC calculations.'"
                 v-model.number="actor.stats[stat]"
+                v-help="'Base ability score (1–30) used to derive modifiers, saving throws, skills, and DC calculations.'"
                 type="number"
                 min="1"
                 max="30"
@@ -269,8 +273,9 @@
         <q-card-section>
           <div class="row q-col-gutter-sm">
             <div class="col-4">
-              <q-input v-help="$t('help.character.hpCurrent')"
-                v-model.number="actor.hp.current"
+              <q-input
+v-model.number="actor.hp.current"
+                v-help="$t('help.character.hpCurrent')"
                 type="number"
                 label="Current HP"
                 dense
@@ -278,8 +283,9 @@
               />
             </div>
             <div class="col-4">
-              <q-input v-help="$t('help.character.hpMax')"
-                v-model.number="actor.hp.max"
+              <q-input
+v-model.number="actor.hp.max"
+                v-help="$t('help.character.hpMax')"
                 type="number"
                 label="Max HP"
                 dense
@@ -287,8 +293,9 @@
               />
             </div>
             <div class="col-4">
-              <q-input v-help="$t('help.character.hpTemp')"
-                v-model.number="actor.hp.temp"
+              <q-input
+v-model.number="actor.hp.temp"
+                v-help="$t('help.character.hpTemp')"
                 type="number"
                 label="Temp HP"
                 dense
@@ -298,8 +305,9 @@
           </div>
           <div class="row q-col-gutter-sm q-mt-xs">
             <div class="col-4">
-              <q-input v-help="$t('help.character.hdTotal')"
-                v-model.number="actor.hitDice.total"
+              <q-input
+v-model.number="actor.hitDice.total"
+                v-help="$t('help.character.hdTotal')"
                 type="number"
                 label="Total Hit Dice"
                 dense
@@ -307,8 +315,9 @@
               />
             </div>
             <div class="col-4">
-              <q-input v-help="$t('help.character.hdSpent')"
-                v-model.number="actor.hitDice.spent"
+              <q-input
+v-model.number="actor.hitDice.spent"
+                v-help="$t('help.character.hdSpent')"
                 type="number"
                 label="Spent Hit Dice"
                 dense
@@ -316,7 +325,8 @@
               />
             </div>
             <div class="col-4">
-              <catalog-select v-help="$t('help.character.hdDie')"
+              <catalog-select
+v-help="$t('help.character.hdDie')"
                 :model-value="String(actor.hitDice.die)"
                 :entries="hitDieOptions"
                 preserve-order
@@ -378,8 +388,9 @@
           <!-- Spellcasting Ability & Calculated Metrics -->
           <div class="row q-col-gutter-sm items-center q-mb-md">
             <div class="col-12 col-sm-4">
-              <catalog-select v-help="$t('help.character.castingAbility')"
-                v-model="spellcastingAbility"
+              <catalog-select
+v-model="spellcastingAbility"
+                v-help="$t('help.character.castingAbility')"
                 :entries="castingAbilityOptions"
                 preserve-order
                 :searchable="false"
@@ -412,8 +423,9 @@
                 <div class="text-caption text-weight-bold text-grey-4">Lvl {{ lvl }}</div>
                 <div class="row q-col-gutter-xs q-mt-xs">
                   <div class="col-6">
-                    <q-input v-help="$t('help.character.slotCurrent')"
-                      v-model.number="actor.spellSlots.current[lvl - 1]"
+                    <q-input
+v-model.number="actor.spellSlots.current[lvl - 1]"
+                      v-help="$t('help.character.slotCurrent')"
                       type="number"
                       min="0"
                       label="Cur"
@@ -422,8 +434,9 @@
                     />
                   </div>
                   <div class="col-6">
-                    <q-input v-help="$t('help.character.slotMax')"
-                      v-model.number="actor.spellSlots.max[lvl - 1]"
+                    <q-input
+v-model.number="actor.spellSlots.max[lvl - 1]"
+                      v-help="$t('help.character.slotMax')"
                       type="number"
                       min="0"
                       label="Max"
@@ -439,7 +452,8 @@
           <!-- Spells List -->
           <div class="row items-center justify-between q-mb-xs">
             <span class="text-caption text-weight-bold text-teal-3">Prepared & Known Spells</span>
-            <q-btn v-help="$t('help.character.addSpell')"
+            <q-btn
+v-help="$t('help.character.addSpell')"
               size="sm"
               color="primary"
               icon="add"
@@ -470,10 +484,11 @@
                 </q-checkbox>
               </div>
               <div class="col-5">
-                <q-input v-help="$t('help.character.spellName')" v-model="sp.name" label="Spell Name" dense outlined />
+                <q-input v-model="sp.name" v-help="$t('help.character.spellName')" label="Spell Name" dense outlined />
               </div>
               <div class="col-3">
-                <catalog-select v-help="$t('help.character.spellLevel')"
+                <catalog-select
+v-help="$t('help.character.spellLevel')"
                   :model-value="String(sp.level)"
                   :entries="spellLevelEntries"
                   preserve-order
@@ -483,7 +498,7 @@
                 />
               </div>
               <div class="col-3">
-                <mechanic-text-editor scope="character" v-help="$t('help.character.spellNotes')" v-model="sp.notes" label="Notes (e.g. Conc, 1 Action)" dense outlined />
+                <mechanic-text-editor v-model="sp.notes" v-help="$t('help.character.spellNotes')" scope="character" label="Notes (e.g. Conc, 1 Action)" dense outlined />
               </div>
               <div class="col-auto text-right">
                 <q-btn
@@ -513,7 +528,8 @@
       <q-card>
         <q-card-section class="q-gutter-y-sm">
           <div class="row justify-end">
-            <q-btn v-help="$t('help.character.addFeature')"
+            <q-btn
+v-help="$t('help.character.addFeature')"
               size="sm"
               color="primary"
               icon="add"
@@ -529,10 +545,10 @@
           >
             <div class="row q-col-gutter-xs items-center">
               <div class="col-6">
-                <q-input v-help="$t('help.character.featureName')" v-model="feat.name" label="Feature Name" dense outlined />
+                <q-input v-model="feat.name" v-help="$t('help.character.featureName')" label="Feature Name" dense outlined />
               </div>
               <div class="col-5">
-                <q-input v-help="$t('help.character.featureSource')" v-model="feat.source" label="Source" dense outlined />
+                <q-input v-model="feat.source" v-help="$t('help.character.featureSource')" label="Source" dense outlined />
               </div>
               <div class="col-1 text-right">
                 <q-btn
@@ -546,8 +562,9 @@
                 />
               </div>
             </div>
-            <mechanic-text-editor scope="character" v-help="$t('help.character.featureDescription')"
-              v-model="feat.description"
+            <mechanic-text-editor
+v-model="feat.description" v-help="$t('help.character.featureDescription')"
+              scope="character"
               type="textarea"
               rows="2"
               label="Description"
@@ -576,7 +593,8 @@
               Max Carry: <span class="text-weight-bold">{{ actor.stats.STR * 15 }} lb</span>
               <span v-if="totalCarriedWeight > actor.stats.STR * 5" class="text-warning q-ml-xs">(Encumbered)</span>
             </div>
-            <q-btn v-help="$t('help.character.addItem')"
+            <q-btn
+v-help="$t('help.character.addItem')"
               size="sm"
               color="primary"
               icon="add"
@@ -591,11 +609,12 @@
             style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
           >
             <div class="col-5">
-              <q-input v-help="$t('help.character.itemName')" v-model="item.name" label="Item Name" dense outlined />
+              <q-input v-model="item.name" v-help="$t('help.character.itemName')" label="Item Name" dense outlined />
             </div>
             <div class="col-2">
-              <q-input v-help="$t('help.character.itemQty')"
-                v-model.number="item.quantity"
+              <q-input
+v-model.number="item.quantity"
+                v-help="$t('help.character.itemQty')"
                 type="number"
                 label="Qty"
                 dense
@@ -603,8 +622,9 @@
               />
             </div>
             <div class="col-2">
-              <q-input v-help="$t('help.character.itemWeight')"
-                v-model.number="item.weight"
+              <q-input
+v-model.number="item.weight"
+                v-help="$t('help.character.itemWeight')"
                 type="number"
                 label="Weight (lb)"
                 dense
@@ -612,7 +632,7 @@
               />
             </div>
             <div class="col-2">
-              <q-checkbox v-help="$t('help.character.itemEquipped')" v-model="item.equipped" label="Eqp" dense size="xs" />
+              <q-checkbox v-model="item.equipped" v-help="$t('help.character.itemEquipped')" label="Eqp" dense size="xs" />
             </div>
             <div class="col-1 text-right">
               <q-btn

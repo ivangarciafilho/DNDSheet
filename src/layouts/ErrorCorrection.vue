@@ -73,13 +73,13 @@
             <div class="row q-col-gutter-xs">
               <div class="col-12 col-sm-6">
                 <q-btn
+                  v-help="$t('help.library.exportBackup')"
                   outline
                   color="cyan-4"
                   icon="download"
                   class="full-width"
                   no-caps
                   data-recovery-export-backup
-                  v-help="$t('help.library.exportBackup')"
                   @click="exportRepositoryBackup"
                 >
                   Download Repository Backup (.json)
@@ -87,13 +87,13 @@
               </div>
               <div class="col-12 col-sm-6">
                 <q-btn
+                  v-help="$t('help.library.importBackup')"
                   outline
                   color="amber-4"
                   icon="upload_file"
                   class="full-width"
                   no-caps
                   data-recovery-restore-backup
-                  v-help="$t('help.library.importBackup')"
                   @click="triggerRestoreBackup"
                 >
                   Restore Repository Backup (.json)

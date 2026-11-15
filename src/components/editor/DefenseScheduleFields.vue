@@ -1,8 +1,8 @@
 <template>
   <div class="row q-col-gutter-xs q-mt-xs" :data-defense-schedule="effect">
     <catalog-select
-      :model-value="schedule?.cadence ?? ''"
       v-help="'How often this defense rider triggers or refreshes.'"
+      :model-value="schedule?.cadence ?? ''"
       :entries="BASIC_RIDER_CADENCES"
       preserve-order
       clearable
@@ -12,8 +12,8 @@
       @update:model-value="value => update('cadence', value ? String(value) : null)"
     />
     <catalog-select
-      :model-value="schedule?.timing ?? ''"
       v-help="'Trigger window or action cost when this defense effect applies.'"
+      :model-value="schedule?.timing ?? ''"
       :entries="timingEntries"
       preserve-order
       allow-custom

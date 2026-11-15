@@ -2,6 +2,7 @@
   <div>
     <!-- 8. Initiative Tuning & Paragon Multi-Phase Gate -->
     <q-expansion-item
+      v-help="'Tune initiative bonus, advantage, lair count, start-of-combat riders, and Paragon stage pools.'"
       dense
       dense-toggle
       expand-separator
@@ -9,7 +10,6 @@
       style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
       icon="flash_on"
       label="Initiative Tuning & Paragon Phases"
-      v-help="'Tune initiative bonus, advantage, lair count, start-of-combat riders, and Paragon stage pools.'"
       caption="Proficiency, secondary ability, Lair count, spell triggers & Paragon phase pools"
     >
       <div class="q-pa-sm q-gutter-y-sm">
@@ -17,19 +17,19 @@
           <div class="col-12 col-sm-3">
             <q-checkbox
               v-model="initiativeConfig.proficient"
-              label="Add Proficiency Bonus"
               v-help="$t('help.checks.proficiency')"
+              label="Add Proficiency Bonus"
               dense
             />
           </div>
           <div class="col-12 col-sm-3">
             <catalog-select
+              v-help="'Second ability score that adds to or replaces Dexterity on Initiative rolls.'"
               :model-value="initiativeConfig.secondaryStat"
               :entries="SECONDARY_STAT_ENTRIES"
               preserve-order
               :searchable="false"
               label="Secondary Ability"
-              v-help="'Second ability score that adds to or replaces Dexterity on Initiative rolls.'"
               @update:model-value="(val) => (initiativeConfig.secondaryStat = String(val || 'none') as typeof initiativeConfig.secondaryStat)"
             />
           </div>
@@ -81,24 +81,24 @@
           <div class="col-12 col-sm-3">
             <q-checkbox
               v-model="initiativeConfig.cantBeSurprised"
-              label="Can't be Surprised"
               v-help="'Grants immunity to the Surprised condition at combat start.'"
+              label="Can't be Surprised"
               dense
             />
           </div>
           <div class="col-6 col-sm-2">
             <q-checkbox
               v-model="initiativeConfig.useLairInitiative"
-              label="Lair Initiative"
               v-help="'Enable a dedicated initiative count for Lair Actions (typically 20, losing ties).'"
+              label="Lair Initiative"
               dense
             />
           </div>
           <div v-if="initiativeConfig.useLairInitiative" class="col-6 col-sm-2">
             <formula-field
+              v-help="'Initiative count on which Lair Actions occur (typically 20).'"
               path="initiativeConfig.lairInitiative"
               label="Lair"
-              v-help="'Initiative count on which Lair Actions occur (typically 20).'"
               dense
               outlined
             />
@@ -119,8 +119,8 @@
           </div>
           <div v-if="initiativeConfig.specialTrigger === 'cast_custom'" class="col-12 col-sm-6">
             <q-input
-              v-help="$t('help.checks.initLowestDieSpell')"
               v-model="initiativeConfig.specialTriggerSpell"
+              v-help="$t('help.checks.initLowestDieSpell')"
               dense
               outlined
               label="Spell Name to Cast on Lowest Dice"
@@ -129,8 +129,8 @@
           </div>
           <div v-else-if="initiativeConfig.specialTrigger === 'custom'" class="col-12 col-sm-6">
             <mechanic-text-editor
-              v-help="$t('help.checks.initCustomNote')"
               v-model="initiativeConfig.customEffectNote"
+              v-help="$t('help.checks.initCustomNote')"
               dense
               outlined
               label="Custom Initiative Note"
@@ -223,27 +223,27 @@
             <div v-if="newRiderActionType === 'cast_spell'" class="col-12 col-sm-6">
               <q-input
                 v-model="newRiderSpellName"
+                v-help="'Spell automatically cast at the start of combat when this initiative rider triggers.'"
                 dense
                 outlined
                 label="Spell Name"
-                v-help="'Spell automatically cast at the start of combat when this initiative rider triggers.'"
                 placeholder="e.g. Thaumaturgy, Compelled Duel"
               />
             </div>
             <div v-else-if="newRiderActionType === 'regain_hp' || newRiderActionType === 'gain_temp_hp'" class="col-12 col-sm-6">
               <q-input
                 v-model="newRiderHpAmount"
+                v-help="'Hit Points or Temporary Hit Points amount or dice expression gained on this initiative trigger.'"
                 dense
                 outlined
                 :label="newRiderActionType === 'regain_hp' ? 'Hit Points Regained' : 'Temporary Hit Points Gained'"
-                v-help="'Hit Points or Temporary Hit Points amount or dice expression gained on this initiative trigger.'"
                 placeholder="e.g. 10 or 2d8+2"
               />
             </div>
             <div v-else-if="newRiderActionType === 'move_distance'" class="col-12 col-sm-6">
               <q-input
-                v-help="$t('help.checks.initDistance')"
                 v-model="newRiderMoveDistance"
+                v-help="$t('help.checks.initDistance')"
                 dense
                 outlined
                 label="Distance (e.g. 10ft)"
@@ -252,8 +252,8 @@
             </div>
             <div v-else-if="newRiderActionType === 'custom'" class="col-12 col-sm-6">
               <mechanic-text-editor
-                v-help="$t('help.checks.initCustomActionText')"
                 v-model="newRiderCustomText"
+                v-help="$t('help.checks.initCustomActionText')"
                 dense
                 outlined
                 label="Custom Action Text"
@@ -293,9 +293,9 @@
             <div class="row q-col-gutter-sm items-center">
               <div class="col-12 col-sm-3">
                 <formula-field
+                  v-help="'How many Hit Point pools or boss stages this Paragon creature possesses.'"
                   path="paragonConfig.poolCount"
                   label="Number of Stage Pools"
-                  v-help="'How many Hit Point pools or boss stages this Paragon creature possesses.'"
                   dense
                   outlined
                   @applied="updateParagonPoolHp"
@@ -304,20 +304,20 @@
               <div class="col-12 col-sm-3">
                 <q-input
                   v-model="paragonConfig.phaseName"
+                  v-help="'Label prefix used for stages on the stat block (such as Phase or Pool).'"
                   dense
                   outlined
                   label="Stage Naming (Phase/Pool)"
-                  v-help="'Label prefix used for stages on the stat block (such as Phase or Pool).'"
                   placeholder="Phase"
                 />
               </div>
               <div class="col-12 col-sm-6">
                 <mechanic-text-editor
                   v-model="paragonConfig.transitionEffect"
+                  v-help="'Effect triggered whenever the creature finishes one stage and enters the next.'"
                   dense
                   outlined
                   label="Stage Transition Fury / Trigger"
-                  v-help="'Effect triggered whenever the creature finishes one stage and enters the next.'"
                   placeholder="e.g. sheds all conditions and unleashes Bloodied roar"
                 />
               </div>
@@ -332,13 +332,13 @@
                 @focusin="materializeParagonRows"
               >
                 <formula-field
+                  v-help="'Initiative modifier or flat bonus used for this paragon phase turn.'"
                   :path="`paragonConfig.phaseConfigs[id=${encodeURIComponent(phaseCfg.id || `phase-${pIdx + 1}`)}].initiativeBonus`"
                   dense
                   outlined
                   clearable
                   :label="`${phaseCfg.name} Init Bonus`"
                   :placeholder="`+${(pIdx + 1) * 10}`"
-                  v-help="'Initiative modifier or flat bonus used for this paragon phase turn.'"
                 />
               </div>
             </div>

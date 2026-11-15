@@ -7,8 +7,8 @@
       </div>
       <div class="row q-col-gutter-xs items-center">
         <catalog-select v-model="spell" v-help="'Spell automatically granted by a class, subclass, or species feature.'" :entries="allSpellEntries" dark class="col-12" label="Granted spell" />
-        <catalog-select :model-value="origin" v-help="'Feature source granting this spell.'" :entries="origins" preserve-order :searchable="false" dark class="col-6 col-sm-4" label="Feature source" @update:model-value="value => (origin = value as CastingSpellGrant['origin'])" />
-        <catalog-select :model-value="kind" v-help="'Whether the granted spell is always prepared/known or eligible for free swaps.'" :entries="kinds" preserve-order :searchable="false" dark class="col-6 col-sm-4" label="Availability" @update:model-value="value => (kind = value as 'known' | 'prepared')" />
+        <catalog-select v-help="'Feature source granting this spell.'" :model-value="origin" :entries="origins" preserve-order :searchable="false" dark class="col-6 col-sm-4" label="Feature source" @update:model-value="value => (origin = value as CastingSpellGrant['origin'])" />
+        <catalog-select v-help="'Whether the granted spell is always prepared/known or eligible for free swaps.'" :model-value="kind" :entries="kinds" preserve-order :searchable="false" dark class="col-6 col-sm-4" label="Availability" @update:model-value="value => (kind = value as 'known' | 'prepared')" />
         <q-input v-model.number="minLevel" v-help="'Minimum class or source level required to unlock this grant.'" type="number" min="1" max="20" dense outlined dark class="col-6 col-sm-4" label="Unlock level" />
         <q-btn flat dense no-caps icon="add" label="Add grant" :disable="!spell || !Number.isInteger(minLevel) || minLevel < 1 || minLevel > 20" @click="add" />
       </div>

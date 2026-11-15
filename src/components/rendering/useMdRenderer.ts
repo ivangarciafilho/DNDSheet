@@ -4,7 +4,7 @@
 import { useMonsterStore } from 'src/stores/monster-store'
 import { resolvingMonsterView } from 'src/core/usecases/ResolveMonsterText'
 import { useTextRenderer } from './useTextRenderer'
-import { avgRoll, renderBonus, renderModifier } from './mathRendering'
+import { renderModifier } from './mathRendering'
 import { DndStat } from '../models'
 import { useI18n } from 'vue-i18n'
 import { useProcessTokens } from './useProcessTokens'

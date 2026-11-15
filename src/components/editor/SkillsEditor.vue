@@ -120,7 +120,8 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn v-help="$t('help.checks.skillDoubleUp')"
+                <q-btn
+v-help="$t('help.checks.skillDoubleUp')"
                   dense
                   round
                   size="sm"
@@ -130,7 +131,8 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn v-help="$t('help.checks.skillDoubleDown')"
+                <q-btn
+v-help="$t('help.checks.skillDoubleDown')"
                   dense
                   round
                   size="sm"
@@ -145,6 +147,7 @@
               <div class="row q-col-gutter-xs items-center">
                 <div v-if="skill.override" class="col-4">
                   <q-select
+                    v-help="'Type a fixed bonus instead of the computed one.'"
                     dense
                     outlined
                     :model-value="skill.overrideValue ?? 0"
@@ -153,8 +156,7 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Override" v-help="'Type a fixed bonus instead of the computed one.'"
+                    hide-selected label="Override"
                     new-value-mode="add-unique"
                     @input-value="(val) => (skill.overrideValue = validateNumber(val, 0))"
                     @update:model-value="(val) => (skill.overrideValue = validateNumber(val, 0))"
@@ -162,10 +164,10 @@
                 </div>
                 <div :class="skill.override ? 'col-8' : 'col-12'">
                   <mechanic-text-editor
+                    v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
                     dense
                     outlined
-                    :model-value="skill.condition || skill.conditional || ''"
-                    label="Condition / Trigger" v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
+                    :model-value="skill.condition || skill.conditional || ''" label="Condition / Trigger"
                     placeholder="e.g. in darkness, vs undead"
                     clearable
                     @update:model-value="(val) => { skill.condition = `${val ?? ''}`; skill.conditional = `${val ?? ''}` }"
@@ -292,7 +294,8 @@
                 >
                   <q-tooltip class="text-body2">{{ $t('editor.override') }}</q-tooltip>
                 </q-btn>
-                <q-btn v-help="$t('help.checks.skillDoubleUp')"
+                <q-btn
+v-help="$t('help.checks.skillDoubleUp')"
                   dense
                   round
                   size="sm"
@@ -302,7 +305,8 @@
                 >
                   <q-tooltip class="text-body2">Advantage</q-tooltip>
                 </q-btn>
-                <q-btn v-help="$t('help.checks.skillDoubleDown')"
+                <q-btn
+v-help="$t('help.checks.skillDoubleDown')"
                   dense
                   round
                   size="sm"
@@ -328,6 +332,7 @@
                 </div>
                 <div v-if="tool.override" class="col-3">
                   <q-select
+                    v-help="'Ability modifier used for this skill.'"
                     dense
                     outlined
                     :model-value="tool.overrideValue ?? 0"
@@ -336,8 +341,7 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Mod" v-help="'Ability modifier used for this skill.'"
+                    hide-selected label="Mod"
                     new-value-mode="add-unique"
                     @input-value="(val) => (tool.overrideValue = validateNumber(val, 0))"
                     @update:model-value="(val) => (tool.overrideValue = validateNumber(val, 0))"
@@ -345,10 +349,10 @@
                 </div>
                 <div :class="tool.override ? 'col-6' : 'col-9'">
                   <mechanic-text-editor
-                    dense
-                    outlined
                     v-model="tool.condition"
-                    label="Condition / Trigger" v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
+                    v-help="'When the bonus or advantage applies, e.g. “in dim light”.'"
+                    dense
+                    outlined label="Condition / Trigger"
                     placeholder="e.g. traps, locks only"
                     clearable
                   />
@@ -380,8 +384,8 @@
                 <span class="text-caption text-weight-bold text-primary">🔍 Search Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
-                    :model-value="movesToActionGroup('search')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
+                    :model-value="movesToActionGroup('search')"
                     dense
                     label="Move To Action Group"
                     @update:model-value="setMoveToActionGroup('search', $event)"
@@ -406,11 +410,11 @@
               </div>
               <div class="q-mb-xs">
                 <mechanic-text-editor
+                  v-model="passives.riders.search"
+                  v-help="'Extra wording for the Search action (Insight, Medicine, Perception, Survival).'"
                   dense
                   outlined
-                  dark
-                  v-model="passives.riders.search"
-                  label="Search Scope / Verbose Rider" v-help="'Extra wording for the Search action (Insight, Medicine, Perception, Survival).'"
+                  dark label="Search Scope / Verbose Rider"
                   placeholder="e.g. 60ft across Ethereal and Material Planes: Sense the Presence of Undeads..."
                 >
                   <template #append>
@@ -423,7 +427,7 @@
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
-                      <q-item v-for="(pr, prIdx) in riderPresets.search" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('search', pr)">
+                      <q-item v-for="(pr, prIdx) in riderPresets.search" :key="prIdx" v-close-popup clickable @click="applyRiderPreset('search', pr)">
                         <q-item-section class="text-caption">{{ pr }}</q-item-section>
                       </q-item>
                     </q-list>
@@ -438,19 +442,19 @@
                 <div class="col-3">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
-                      text-color="white"
-                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
+                      text-color="white" label="Auto"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
+                      v-help="'Type a fixed bonus instead of the computed one.'"
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
-                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
-                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'" label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -458,23 +462,24 @@
                 <div class="col-2">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Advantage: roll two d20s and keep the higher.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
+                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'" label="▲▲"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
+                      v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
+                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'" label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
                 </div>
-                <div class="col-4" v-if="getPassive(pKey).override">
+                <div v-if="getPassive(pKey).override" class="col-4">
                   <q-select
+                    v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     dense
                     outlined
                     :model-value="getPassive(pKey).overrideValue ?? 10"
@@ -483,18 +488,17 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
+                    hide-selected label="Score"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                   />
                 </div>
-                <div class="col-4" v-else>
+                <div v-else class="col-4">
                   <mechanic-text-editor
+                    v-model="getPassive(pKey).condition"
                     dense
                     outlined
-                    v-model="getPassive(pKey).condition"
                     placeholder="Qualifier"
                   />
                 </div>
@@ -509,8 +513,8 @@
                 <span class="text-caption text-weight-bold text-info">📖 Study Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
-                    :model-value="movesToActionGroup('study')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
+                    :model-value="movesToActionGroup('study')"
                     dense
                     label="Move To Action Group"
                     @update:model-value="setMoveToActionGroup('study', $event)"
@@ -535,11 +539,11 @@
               </div>
               <div class="q-mb-xs">
                 <mechanic-text-editor
+                  v-model="passives.riders.study"
+                  v-help="'Extra wording for the Study action (Arcana, History, Investigation, Nature, Religion).'"
                   dense
                   outlined
-                  dark
-                  v-model="passives.riders.study"
-                  label="Study Scope / Verbose Rider" v-help="'Extra wording for the Study action (Arcana, History, Investigation, Nature, Religion).'"
+                  dark label="Study Scope / Verbose Rider"
                   placeholder="e.g. Touch: Learn target's Alignment, and if its either Charmed or Possessed..."
                 >
                   <template #append>
@@ -552,7 +556,7 @@
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
-                      <q-item v-for="(pr, prIdx) in riderPresets.study" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('study', pr)">
+                      <q-item v-for="(pr, prIdx) in riderPresets.study" :key="prIdx" v-close-popup clickable @click="applyRiderPreset('study', pr)">
                         <q-item-section class="text-caption">{{ pr }}</q-item-section>
                       </q-item>
                     </q-list>
@@ -567,19 +571,19 @@
                 <div class="col-3">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
-                      text-color="white"
-                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
+                      text-color="white" label="Auto"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
+                      v-help="'Type a fixed bonus instead of the computed one.'"
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
-                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
-                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'" label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -587,23 +591,24 @@
                 <div class="col-2">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Advantage: roll two d20s and keep the higher.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
+                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'" label="▲▲"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
+                      v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
+                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'" label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
                 </div>
-                <div class="col-4" v-if="getPassive(pKey).override">
+                <div v-if="getPassive(pKey).override" class="col-4">
                   <q-select
+                    v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     dense
                     outlined
                     :model-value="getPassive(pKey).overrideValue ?? 10"
@@ -612,18 +617,17 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
+                    hide-selected label="Score"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                   />
                 </div>
-                <div class="col-4" v-else>
+                <div v-else class="col-4">
                   <mechanic-text-editor
+                    v-model="getPassive(pKey).condition"
                     dense
                     outlined
-                    v-model="getPassive(pKey).condition"
                     placeholder="Qualifier"
                   />
                 </div>
@@ -638,8 +642,8 @@
                 <span class="text-caption text-weight-bold text-amber-4">🗣️ Influence Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
-                    :model-value="movesToActionGroup('influence')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
+                    :model-value="movesToActionGroup('influence')"
                     dense
                     label="Move To Action Group"
                     @update:model-value="setMoveToActionGroup('influence', $event)"
@@ -665,11 +669,11 @@
               </div>
               <div class="q-mb-xs">
                 <mechanic-text-editor
+                  v-model="passives.riders.influence"
+                  v-help="'Extra wording for the Influence action (Deception, Intimidation, Performance, Persuasion, Animal Handling).'"
                   dense
                   outlined
-                  dark
-                  v-model="passives.riders.influence"
-                  label="Influence Scope / Verbose Rider" v-help="'Extra wording for the Influence action (Deception, Intimidation, Performance, Persuasion, Animal Handling).'"
+                  dark label="Influence Scope / Verbose Rider"
                   placeholder="e.g. De-escalate hostile creatures with DC 15 Charisma check..."
                 >
                   <template #append>
@@ -682,7 +686,7 @@
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
-                      <q-item v-for="(pr, prIdx) in riderPresets.influence" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('influence', pr)">
+                      <q-item v-for="(pr, prIdx) in riderPresets.influence" :key="prIdx" v-close-popup clickable @click="applyRiderPreset('influence', pr)">
                         <q-item-section class="text-caption">{{ pr }}</q-item-section>
                       </q-item>
                     </q-list>
@@ -697,19 +701,19 @@
                 <div class="col-3">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
-                      text-color="white"
-                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
+                      text-color="white" label="Auto"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
+                      v-help="'Type a fixed bonus instead of the computed one.'"
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
-                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
-                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'" label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -717,23 +721,24 @@
                 <div class="col-2">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Advantage: roll two d20s and keep the higher.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
+                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'" label="▲▲"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
+                      v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
+                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'" label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
                 </div>
-                <div class="col-4" v-if="getPassive(pKey).override">
+                <div v-if="getPassive(pKey).override" class="col-4">
                   <q-select
+                    v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     dense
                     outlined
                     :model-value="getPassive(pKey).overrideValue ?? 10"
@@ -742,18 +747,17 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
+                    hide-selected label="Score"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                   />
                 </div>
-                <div class="col-4" v-else>
+                <div v-else class="col-4">
                   <mechanic-text-editor
+                    v-model="getPassive(pKey).condition"
                     dense
                     outlined
-                    v-model="getPassive(pKey).condition"
                     placeholder="Qualifier"
                   />
                 </div>
@@ -768,8 +772,8 @@
                 <span class="text-caption text-weight-bold text-deep-purple-3">🥷 Hide Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
-                    :model-value="movesToActionGroup('hide')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
+                    :model-value="movesToActionGroup('hide')"
                     dense
                     label="Move To Action Group"
                     @update:model-value="setMoveToActionGroup('hide', $event)"
@@ -794,11 +798,11 @@
               </div>
               <div class="q-mb-xs">
                 <mechanic-text-editor
+                  v-model="passives.riders.hide"
+                  v-help="'Extra wording for the Hide action (Stealth).'"
                   dense
                   outlined
-                  dark
-                  v-model="passives.riders.hide"
-                  label="Hide Scope / Verbose Rider" v-help="'Extra wording for the Hide action (Stealth).'"
+                  dark label="Hide Scope / Verbose Rider"
                   placeholder="e.g. Can hide in dim light or darkness even while observed..."
                 >
                   <template #append>
@@ -811,7 +815,7 @@
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
-                      <q-item v-for="(pr, prIdx) in riderPresets.hide" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('hide', pr)">
+                      <q-item v-for="(pr, prIdx) in riderPresets.hide" :key="prIdx" v-close-popup clickable @click="applyRiderPreset('hide', pr)">
                         <q-item-section class="text-caption">{{ pr }}</q-item-section>
                       </q-item>
                     </q-list>
@@ -826,19 +830,19 @@
                 <div class="col-3">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       dense
                       size="xs"
                       :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
-                      text-color="white"
-                      label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
+                      text-color="white" label="Auto"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
+                      v-help="'Type a fixed bonus instead of the computed one.'"
                       dense
                       size="xs"
                       :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
-                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
-                      label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'" label="Ovr"
                       @click="getPassive(pKey).override = true"
                     />
                   </q-btn-group>
@@ -846,23 +850,24 @@
                 <div class="col-2">
                   <q-btn-group spread flat dense>
                     <q-btn
+                      v-help="'Advantage: roll two d20s and keep the higher.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'"
-                      label="▲▲" v-help="'Advantage: roll two d20s and keep the higher.'"
+                      :color="getPassive(pKey).advantage ? 'positive' : 'grey-9'" label="▲▲"
                       @click="getPassive(pKey).advantage = !getPassive(pKey).advantage; if (getPassive(pKey).advantage) getPassive(pKey).disadvantage = false"
                     />
                     <q-btn
+                      v-help="'Disadvantage: roll two d20s and keep the lower.'"
                       dense
                       size="xs"
-                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'"
-                      label="▼▼" v-help="'Disadvantage: roll two d20s and keep the lower.'"
+                      :color="getPassive(pKey).disadvantage ? 'negative' : 'grey-9'" label="▼▼"
                       @click="getPassive(pKey).disadvantage = !getPassive(pKey).disadvantage; if (getPassive(pKey).disadvantage) getPassive(pKey).advantage = false"
                     />
                   </q-btn-group>
                 </div>
-                <div class="col-4" v-if="getPassive(pKey).override">
+                <div v-if="getPassive(pKey).override" class="col-4">
                   <q-select
+                    v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
                     dense
                     outlined
                     :model-value="getPassive(pKey).overrideValue ?? 10"
@@ -871,18 +876,17 @@
                     map-options
                     use-input
                     fill-input
-                    hide-selected
-                    label="Score" v-help="'Passive score: 10 + the skill bonus (+5 with advantage, −5 with disadvantage).'"
+                    hide-selected label="Score"
                     new-value-mode="add-unique"
                     @input-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                     @update:model-value="(val) => (getPassive(pKey).overrideValue = validateNumber(val, 10))"
                   />
                 </div>
-                <div class="col-4" v-else>
+                <div v-else class="col-4">
                   <mechanic-text-editor
+                    v-model="getPassive(pKey).condition"
                     dense
                     outlined
-                    v-model="getPassive(pKey).condition"
                     placeholder="Qualifier"
                   />
                 </div>
@@ -897,8 +901,8 @@
                 <span class="text-caption text-weight-bold text-teal-4">🛠️ Use Tool Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
-                    :model-value="movesToActionGroup('tools')"
                     v-help="'Place this group beneath the section chosen by its Action / Bonus Action toggle. Uncheck to keep it among the skill rows.'"
+                    :model-value="movesToActionGroup('tools')"
                     dense
                     label="Move To Action Group"
                     @update:model-value="setMoveToActionGroup('tools', $event)"
@@ -923,11 +927,11 @@
               </div>
               <div class="q-mb-xs">
                 <mechanic-text-editor
+                  v-model="passives.riders.tools"
+                  v-help="'Extra wording for using a tool as an action.'"
                   dense
                   outlined
-                  dark
-                  v-model="passives.riders.tools"
-                  label="Use Tool Scope / Verbose Rider" v-help="'Extra wording for using a tool as an action.'"
+                  dark label="Use Tool Scope / Verbose Rider"
                   placeholder="e.g. Can craft or repair equipment during short rest..."
                 >
                   <template #append>
@@ -940,7 +944,7 @@
                 <div class="row items-center q-gutter-xs q-mt-xs">
                   <q-btn-dropdown dense flat size="xs" color="amber-4" icon="auto_awesome" label="Presets">
                     <q-list dense dark class="bg-grey-10">
-                      <q-item v-for="(pr, prIdx) in riderPresets.tools" :key="prIdx" clickable v-close-popup @click="applyRiderPreset('tools', pr)">
+                      <q-item v-for="(pr, prIdx) in riderPresets.tools" :key="prIdx" v-close-popup clickable @click="applyRiderPreset('tools', pr)">
                         <q-item-section class="text-caption">{{ pr }}</q-item-section>
                       </q-item>
                     </q-list>
@@ -1289,8 +1293,8 @@ export default defineComponent({
         { label: `10 + Mod (${10 + mod})`, value: 10 + mod },
         { label: `10 + Mod + PB (${10 + mod + pb})`, value: 10 + mod + pb },
         { label: `10 + Mod + 2x PB (${10 + mod + pb * 2})`, value: 10 + mod + pb * 2 },
-        { label: `15 (Keen Sense)`, value: 15 },
-        { label: `20 (Legendary)`, value: 20 },
+        { label: '15 (Keen Sense)', value: 15 },
+        { label: '20 (Legendary)', value: 20 },
       ]
     }
 

@@ -9,7 +9,8 @@
           data-toolbar-group="document"
           class="toolbar-group"
         >
-          <q-btn v-help="'Menu in the main layout.'"
+          <q-btn
+v-help="'Menu in the main layout.'"
             flat
             dense
             round
@@ -27,6 +28,7 @@
           </q-toolbar-title>
 
           <q-btn
+            v-help="$t('help.workspace.libraryOpen')"
             dense
             rounded
             unelevated
@@ -36,7 +38,6 @@
             no-caps
             aria-label="Open Creature Library"
             data-library-open
-            v-help="$t('help.workspace.libraryOpen')"
             @click="showLibrary = true"
           >
             <q-tooltip>Open Creature Library &amp; Local Backups</q-tooltip>
@@ -199,8 +200,8 @@
               <q-item
                 v-for="preset in workspacePresets"
                 :key="preset.id"
-                clickable
                 v-close-popup
+                clickable
                 :active="activeWorkspacePreset === preset.id"
                 :data-workspace-preset="preset.id"
                 @click="selectWorkspacePreset(preset.id)"
@@ -249,8 +250,8 @@
               <q-item
                 v-for="opt in themeOptions"
                 :key="opt.value"
-                clickable
                 v-close-popup
+                clickable
                 :active="editorStore.visualTheme === opt.value"
                 active-class="bg-deep-purple-10 text-white"
                 @click="editorStore.visualTheme = opt.value"

@@ -28,7 +28,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   })()`)
   assert.ok(Object.values(checks).every(Boolean), JSON.stringify(checks))
   await send('Page.reload'); await delay(500)
-  const reload = await evaluate(`(async()=>{for(let i=0;i<80;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');const t=m?.traits.find(x=>x.id==='rich-mechanic-witness');if(t)return /<(b|strong)>/.test(t.outcomes[0].effects[0].text)&&t.outcomes[0].extension.retain;await new Promise(r=>setTimeout(r,50))}return false})()`)
+  const reload = await evaluate('(async()=>{for(let i=0;i<80;i++){const m=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia?._s.get(\'monster\');const t=m?.traits.find(x=>x.id===\'rich-mechanic-witness\');if(t)return /<(b|strong)>/.test(t.outcomes[0].effects[0].text)&&t.outcomes[0].extension.retain;await new Promise(r=>setTimeout(r,50))}return false})()')
   assert.equal(reload,true,'Rich effect and extension must survive reload')
   console.log('Emergency rich mechanics browser checks:', JSON.stringify({...checks,reload}))
 }, {port:9357})

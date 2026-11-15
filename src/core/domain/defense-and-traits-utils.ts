@@ -194,7 +194,7 @@ export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (fiel
     return "Speech of Beast and Leaf (advantage to influence beasts and plants; beasts and plants understand its speech but can't reply)"
   }
   if (lowerName === 'tongue of the sun and moon' || lowerName.includes('monk')) {
-    return "Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)"
+    return 'Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)'
   }
 
   // 2. Animals (Speak with Animals)
@@ -221,7 +221,7 @@ export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (fiel
   if (lowerName === 'plants' || item.plantsConfig) {
     const cfg = item.plantsConfig || {}
     if (cfg.understandsOnly || item.understandsOnly) {
-      return `understands plants but can't speak`
+      return 'understands plants but can\'t speak'
     }
     const features: string[] = ['can communicate with plants']
     if (cfg.canQuestionPastDay !== false) {
@@ -240,7 +240,7 @@ export function formatLanguageItem(item: MonsterLanguageItem, formatValue: (fiel
   if (lowerName === 'undead' || item.undeadConfig) {
     const cfg = item.undeadConfig || {}
     if (cfg.understandsOnly || item.understandsOnly) {
-      return `understands languages of undead but can't speak`
+      return 'understands languages of undead but can\'t speak'
     }
     const features: string[] = []
     const range = cfg.telepathicRange && cfg.telepathicRange > 0 ? `${formatValue('undeadConfig.telepathicRange', cfg.telepathicRange)} ft.` : '60 ft.'
@@ -473,7 +473,7 @@ export function formatLanguagesList(items: MonsterLanguageItem[] | undefined, ar
   if (archetype === 'firbolg') {
     spoken.push("Speech of Beast and Leaf (advantage to influence beasts and plants; beasts and plants understand its speech but can't reply)")
   } else if (archetype === 'monk') {
-    spoken.push("Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)")
+    spoken.push('Tongue of the Sun and Moon (understands all spoken languages; any creature that understands a language understands its speech)')
   }
 
   if (Array.isArray(items)) {
@@ -1509,7 +1509,6 @@ export function composeAcAndDefenses(
     onHitText = 'On Hit Can make a Melee Attack as a Reaction'
   }
 
-  const saveStat = cfg.saveStat || 'Wisdom'
   let saveDc = cfg.saveDc ?? 13
   if (typeof saveDc === 'string' && /[+\-*/()]/.test(saveDc)) {
     const evalDc = evaluateSafeFormula(saveDc, { proficiency: pb, stats, avgHp: monster.AC * 10, cr, hd })

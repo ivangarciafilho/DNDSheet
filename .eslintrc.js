@@ -81,6 +81,8 @@ module.exports = {
     // The core 'no-unused-vars' rules (in the eslint:recommended ruleset)
     // does not work with type definitions
     'no-unused-vars': 'off',
+    // `const { dropped, ...kept } = x` is the house idiom for omitting keys.
+    '@typescript-eslint/no-unused-vars': ['warn', { ignoreRestSiblings: true }],
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',

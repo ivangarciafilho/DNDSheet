@@ -39,27 +39,27 @@
               <q-input
                 v-help="'Name of this targetable limb, wing, organ, or anatomical weak point.'"
                 :model-value="ap.name || ap.part"
-                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.name = s; ap.part = s; }"
                 dense
                 outlined
                 label="Body Part"
                 placeholder="e.g. Left Wing, Tail, Horn"
+                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.name = s; ap.part = s; }"
               />
             </div>
             <div class="col-2 col-sm-1">
               <formula-field
+                v-help="'Hit points required to disable or sever this body part.'"
                 :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].hp`"
                 label="Part HP"
-                v-help="'Hit points required to disable or sever this body part.'"
                 dense
                 outlined
               />
             </div>
             <div class="col-2 col-sm-1">
               <formula-field
+                v-help="'Armor Class used when targeting this part instead of main AC.'"
                 :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].ac`"
                 label="Part AC"
-                v-help="'Armor Class used when targeting this part instead of main AC.'"
                 dense
                 outlined
                 clearable
@@ -67,10 +67,10 @@
             </div>
             <div class="col-2 col-sm-2">
               <formula-field
+                v-help="'Minimum damage a single hit must deal before damaging this part.'"
                 :path="`anatomyParts[id=${encodeURIComponent(ap.id)}].threshold`"
                 label="Threshold"
                 placeholder="Dmg"
-                v-help="'Minimum damage a single hit must deal before damaging this part.'"
                 dense
                 outlined
                 clearable
@@ -80,11 +80,11 @@
               <q-input
                 v-help="'Mechanical penalty applied when this body part drops to 0 Hit Points.'"
                 :model-value="ap.breakEffect || ap.severEffect"
-                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.breakEffect = s; ap.severEffect = s; }"
                 dense
                 outlined
                 label="Severed / Broken Consequence"
                 placeholder="e.g. Loses fly speed, -2 AC"
+                @update:model-value="(val: string | number | null) => { const s = String(val ?? ''); ap.breakEffect = s; ap.severEffect = s; }"
               />
             </div>
             <div class="col-1 col-sm-2 text-right row items-center justify-end q-gutter-x-xs no-wrap">

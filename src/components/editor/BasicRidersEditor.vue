@@ -1,11 +1,12 @@
 <template>
   <q-expansion-item dense expand-separator :label="label" :data-basic-riders="scope">
     <div class="q-pa-sm q-gutter-y-sm">
-      <q-toggle v-if="hpGroup" v-help="'Display these Hit Points riders on their own indented subrow.'" :model-value="monster.hpRiderSubrows?.[hpGroup] ?? legacySplit"
+      <q-toggle
+v-if="hpGroup" v-help="'Display these Hit Points riders on their own indented subrow.'" :model-value="monster.hpRiderSubrows?.[hpGroup] ?? legacySplit"
         dense label="Show on separate lines" @update:model-value="monster.hpRiderSubrows = { ...monster.hpRiderSubrows, [hpGroup]: $event }" />
       <div v-for="(rider, index) in rows" :key="rider.id" class="row q-col-gutter-sm items-center">
-        <catalog-select :model-value="rider.cadence ?? ''" v-help="'How often this rider triggers or refreshes.'" :entries="BASIC_RIDER_CADENCES" preserve-order clearable :searchable="false" label="Cadence" class="col-12 col-sm-4" @update:model-value="value => (rider.cadence = value ? String(value) : '')" />
-        <catalog-select :model-value="rider.timing ?? ''" v-help="'Trigger window or action cost when the rider happens.'" :entries="timingEntries" preserve-order allow-custom clearable label="Timing" class="col-12 col-sm-4" @update:model-value="value => (rider.timing = value ? String(value) : '')" />
+        <catalog-select v-help="'How often this rider triggers or refreshes.'" :model-value="rider.cadence ?? ''" :entries="BASIC_RIDER_CADENCES" preserve-order clearable :searchable="false" label="Cadence" class="col-12 col-sm-4" @update:model-value="value => (rider.cadence = value ? String(value) : '')" />
+        <catalog-select v-help="'Trigger window or action cost when the rider happens.'" :model-value="rider.timing ?? ''" :entries="timingEntries" preserve-order allow-custom clearable label="Timing" class="col-12 col-sm-4" @update:model-value="value => (rider.timing = value ? String(value) : '')" />
         <q-btn v-help="'Remove this rider row.'" flat dense icon="delete_outline" color="negative" aria-label="Remove rider" @click="rows.splice(index, 1)" />
         <mechanic-text-editor v-model="rider.effect" v-help="'Rule text rendered for this rider in the statblock.'" autogrow dense outlined label="Effect" class="col-12" />
       </div>

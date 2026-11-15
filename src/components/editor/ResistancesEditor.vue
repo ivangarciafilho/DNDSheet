@@ -20,20 +20,20 @@
           <div class="row items-center q-gutter-x-sm">
             <q-checkbox
               v-model="monster.autoSortDefenses"
+              v-help="'List short entries before long ones.'"
               dark
               dense
-              size="xs"
-              label="Auto-Sort Concise First" v-help="'List short entries before long ones.'"
+              size="xs" label="Auto-Sort Concise First"
               class="text-caption text-grey-4"
             >
               <q-tooltip>When checked, automatically sorts shorter/concise resistances first and complex conditions last. When unchecked, strictly preserves your authored order.</q-tooltip>
             </q-checkbox>
             <q-checkbox
               v-model="monster.autoSplitDefenses"
+              v-help="'Break the defenses line automatically when it is too long.'"
               dark
               dense
-              size="xs"
-              label="Auto-Split on Line Overflow" v-help="'Break the defenses line automatically when it is too long.'"
+              size="xs" label="Auto-Split on Line Overflow"
               class="text-caption text-grey-4"
             >
               <q-tooltip>Automatically splits Damage and Conditions into separate dedicated rows if the text exceeds the line</q-tooltip>
@@ -45,11 +45,11 @@
           <div class="col-12 col-sm-4">
             <q-toggle
               v-model="monster.splitVulnRows"
+              v-help="'Show vulnerabilities on their own lines.'"
               dark
               dense
               size="xs"
-              color="negative"
-              label="Split Vulnerabilities Row" v-help="'Show vulnerabilities on their own lines.'"
+              color="negative" label="Split Vulnerabilities Row"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Vulnerabilities and dedicated row for Condition Vulnerabilities</q-tooltip>
@@ -58,11 +58,11 @@
           <div class="col-12 col-sm-4">
             <q-toggle
               v-model="monster.splitResRows"
+              v-help="'Show resistances on their own lines.'"
               dark
               dense
               size="xs"
-              color="warning"
-              label="Split Resistances Row" v-help="'Show resistances on their own lines.'"
+              color="warning" label="Split Resistances Row"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Resistances and dedicated row for Condition Resistances</q-tooltip>
@@ -71,11 +71,11 @@
           <div class="col-12 col-sm-4">
             <q-toggle
               v-model="monster.splitImmRows"
+              v-help="'Show immunities on their own lines.'"
               dark
               dense
               size="xs"
-              color="secondary"
-              label="Split Immunities Row" v-help="'Show immunities on their own lines.'"
+              color="secondary" label="Split Immunities Row"
               class="text-caption"
             >
               <q-tooltip>Dedicated row for Damage Immunities and dedicated row for Condition Immunities</q-tooltip>
@@ -169,7 +169,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-model="item.nonmagical" v-help="$t('help.defenses.nonmagicalOnly')" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <catalog-select
@@ -189,7 +189,8 @@
           <!-- Acquired Condition when taking Vulnerability Damage & Duration -->
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-5">
-              <catalog-select v-help="$t('help.defenses.acquiredCondition')"
+              <catalog-select
+v-help="$t('help.defenses.acquiredCondition')"
                 :model-value="item.acquiredCondition ?? ''"
                 :entries="acquiredConditionEntries"
                 allow-custom
@@ -212,8 +213,9 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <mechanic-text-editor v-help="$t('help.defenses.conditionTriggerNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.conditionTriggerNote')"
                 label="Note (e.g. while frozen)"
                 dense
                 outlined
@@ -289,7 +291,8 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-7">
-              <catalog-select v-help="$t('help.defenses.compelledWeakness')"
+              <catalog-select
+v-help="$t('help.defenses.compelledWeakness')"
                 :model-value="item.acquiredCondition ?? ''"
                 :entries="conditionVulnerabilityActionEntries"
                 allow-custom
@@ -301,8 +304,9 @@
               />
             </div>
             <div class="col-12 col-sm-5">
-              <mechanic-text-editor v-help="$t('help.defenses.weaknessNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.weaknessNote')"
                 label="Note / Duration"
                 dense
                 outlined
@@ -378,7 +382,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-model="item.nonmagical" v-help="$t('help.defenses.nonmagicalOnly')" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <catalog-select
@@ -399,10 +403,10 @@
             <div class="col-12 col-sm-5">
               <mechanic-select-editor
                 v-model="item.triggeredBenefit"
+                v-help="'What the creature gains when the trigger happens.'"
                 :options="benefitOptions"
                 use-input
-                new-value-mode="add-unique"
-                label="Triggered Benefit / Reaction" v-help="'What the creature gains when the trigger happens.'"
+                new-value-mode="add-unique" label="Triggered Benefit / Reaction"
                 dense
                 outlined
                 clearable
@@ -421,8 +425,9 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <mechanic-text-editor v-help="$t('help.defenses.resistanceNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.resistanceNote')"
                 label="Note (e.g. silvered)"
                 dense
                 outlined
@@ -510,8 +515,9 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <mechanic-text-editor v-help="$t('help.defenses.weaknessNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.weaknessNote')"
                 label="Note / Details"
                 dense
                 outlined
@@ -587,7 +593,7 @@
 
           <div class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col-12 col-sm-3">
-              <q-checkbox v-help="$t('help.defenses.nonmagicalOnly')" v-model="item.nonmagical" label="Nonmagical" dense @update:model-value="syncDefenses" />
+              <q-checkbox v-model="item.nonmagical" v-help="$t('help.defenses.nonmagicalOnly')" label="Nonmagical" dense @update:model-value="syncDefenses" />
             </div>
             <div class="col-12 col-sm-9">
               <catalog-select
@@ -607,10 +613,10 @@
             <div class="col-12 col-sm-5">
               <mechanic-select-editor
                 v-model="item.triggeredBenefit"
+                v-help="'What the creature gains when the trigger happens.'"
                 :options="benefitOptions"
                 use-input
-                new-value-mode="add-unique"
-                label="Triggered Benefit / Reaction" v-help="'What the creature gains when the trigger happens.'"
+                new-value-mode="add-unique" label="Triggered Benefit / Reaction"
                 dense
                 outlined
                 clearable
@@ -629,8 +635,9 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <mechanic-text-editor v-help="$t('help.defenses.immunityNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.immunityNote')"
                 label="Note (e.g. adamantine)"
                 dense
                 outlined
@@ -718,8 +725,9 @@
               />
             </div>
             <div class="col-12 col-sm-6">
-              <mechanic-text-editor v-help="$t('help.defenses.immunityNote')"
-                v-model="item.note"
+              <mechanic-text-editor
+v-model="item.note"
+                v-help="$t('help.defenses.immunityNote')"
                 label="Note (e.g. against charm spells)"
                 dense
                 outlined

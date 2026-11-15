@@ -28,16 +28,17 @@
         </span>
         <q-space />
         <q-btn
+          v-help="$t('help.library.create')"
           dense
           color="primary"
           icon="add"
           label="New Creature"
           no-caps
           data-library-create
-          v-help="$t('help.library.create')"
           @click="handleCreate"
         />
         <q-btn
+          v-help="$t('help.library.exportBackup')"
           dense
           outline
           color="secondary"
@@ -45,10 +46,10 @@
           label="Export Backup"
           no-caps
           data-library-export
-          v-help="$t('help.library.exportBackup')"
           @click="handleExportBackup"
         />
         <q-btn
+          v-help="$t('help.library.importBackup')"
           dense
           outline
           color="amber-4"
@@ -56,7 +57,6 @@
           label="Restore Backup"
           no-caps
           data-library-import
-          v-help="$t('help.library.importBackup')"
           @click="triggerImportInput"
         />
         <input
@@ -149,13 +149,13 @@
           <div class="col-12 col-sm-6 col-md-3">
             <q-input
               v-model="searchQuery"
+              v-help="$t('help.library.search')"
               dense
               outlined
               clearable
               debounce="40"
               placeholder="Search creatures..."
               data-library-search
-              v-help="$t('help.library.search')"
             >
               <template #prepend>
                 <q-icon name="search" />
@@ -165,32 +165,32 @@
           <div class="col-6 col-sm-3 col-md-2">
             <catalog-select
               v-model="selectedFolder"
+              v-help="$t('help.library.folderFilter')"
               clearable
               label="Folder"
               :entries="folderOptions"
               data-library-folder
-              v-help="$t('help.library.folderFilter')"
             />
           </div>
           <div class="col-6 col-sm-3 col-md-2">
             <catalog-select
               v-model="selectedTag"
+              v-help="$t('help.library.tagFilter')"
               clearable
               label="Tag"
               :entries="tagOptions"
               data-library-tag
-              v-help="$t('help.library.tagFilter')"
             />
           </div>
           <div class="col-12 col-sm-4 col-md-2">
             <catalog-select
               v-model="sortBy"
+              v-help="$t('help.library.sort')"
               preserve-order
               :searchable="false"
               label="Sort"
               :entries="sortOptions"
               data-library-sort
-              v-help="$t('help.library.sort')"
             />
           </div>
         </div>
@@ -316,6 +316,7 @@
 
                   <div class="col-auto row items-center q-gutter-xs">
                     <q-btn
+                      v-help="$t('help.library.open')"
                       dense
                       flat
                       color="primary"
@@ -323,10 +324,10 @@
                       label="Open"
                       no-caps
                       data-library-action="open"
-                      v-help="$t('help.library.open')"
                       @click.stop="openCreature(item.id)"
                     />
                     <q-btn
+                      v-help="$t('help.library.duplicate')"
                       dense
                       flat
                       color="secondary"
@@ -334,57 +335,56 @@
                       label="Duplicate"
                       no-caps
                       data-library-action="duplicate"
-                      v-help="$t('help.library.duplicate')"
                       @click.stop="duplicateRow(item.id)"
                     />
                     <q-btn
+                      v-help="$t('help.library.rename')"
                       dense
                       flat
                       icon="edit"
                       aria-label="Rename creature"
                       data-library-action="rename"
-                      v-help="$t('help.library.rename')"
                       @click.stop="startRename(item)"
                     />
                     <q-btn
+                      v-help="$t('help.library.organize')"
                       dense
                       flat
                       icon="label"
                       aria-label="Folder and tags"
                       data-library-action="organize"
-                      v-help="$t('help.library.organize')"
                       @click.stop="startOrganize(item)"
                     />
                     <q-btn
                       v-if="!item.trashed"
+                      v-help="$t('help.library.archive')"
                       dense
                       flat
                       :icon="item.archived ? 'unarchive' : 'archive'"
                       :aria-label="item.archived ? 'Unarchive creature' : 'Archive creature'"
                       data-library-action="archive"
-                      v-help="$t('help.library.archive')"
                       @click.stop="toggleArchive(item)"
                     />
                     <q-btn
+                      v-help="$t('help.library.trash')"
                       dense
                       flat
                       :color="item.trashed ? 'positive' : 'orange-5'"
                       :icon="item.trashed ? 'restore_from_trash' : 'delete_outline'"
                       :aria-label="item.trashed ? 'Restore from trash' : 'Move to trash'"
                       data-library-action="trash"
-                      v-help="$t('help.library.trash')"
                       @click.stop="toggleTrash(item)"
                     />
                     <template v-if="item.trashed">
                       <q-btn
                         v-if="confirmPurgeId !== item.id"
+                        v-help="$t('help.library.purge')"
                         dense
                         flat
                         color="negative"
                         icon="delete_forever"
                         aria-label="Delete permanently"
                         data-library-action="purge"
-                        v-help="$t('help.library.purge')"
                         @click.stop="confirmPurgeId = item.id"
                       />
                       <template v-else>

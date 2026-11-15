@@ -5,8 +5,8 @@
             <div class="q-pa-xs rounded-borders bg-grey-10 text-white" style="border: 1px dashed rgba(236, 72, 153, 0.6);">
               <div class="row items-center justify-between q-mb-xs">
                 <q-checkbox
-:model-value="metamagicEnabled"
-                  v-help="$t('help.casting.metamagicStudio')"
+v-help="$t('help.casting.metamagicStudio')"
+                  :model-value="metamagicEnabled"
                   data-metamagic-toggle
                   label="Metamagic Studio (Sorcery Points &amp; Enhancements)"
                   dense
@@ -25,8 +25,8 @@
                 </div>
                 <div class="col-12 col-sm-3">
                   <catalog-select
-                    :model-value="cadenceKey(monster.spellcasting.metamagic.refreshRate, 'long_rest')"
                     v-help="'When sorcery points come back.'"
+                    :model-value="cadenceKey(monster.spellcasting.metamagic.refreshRate, 'long_rest')"
                     :entries="cadenceOptions"
                     preserve-order
                     :searchable="false"
@@ -38,8 +38,8 @@
                 </div>
                 <div class="col-12 col-sm-6">
                   <catalog-select
-                    :model-value="monster.spellcasting.metamagic.options ?? []"
                     v-help="'Metamagic options the sorcerer knows; costs follow the selected rules edition.'"
+                    :model-value="monster.spellcasting.metamagic.options ?? []"
                     :entries="metamagicOptionsList"
                     preserve-order
                     multiple
@@ -124,10 +124,10 @@
     <q-expansion-item dense dense-toggle label="Spellcasting presentation">
       <div class="q-pa-sm">
         <mechanic-text-editor v-model="monster.spellcasting.notes" scope="spell" :label="$t('monster.spellcasting.notes')" dense outlined dark />
-        <q-checkbox v-help="'Replace the automatic class spellcasting header prose with custom text.'" v-model="monster.spellcasting.useCustomClassPreamble" label="Custom spellcasting introduction" dense />
+        <q-checkbox v-model="monster.spellcasting.useCustomClassPreamble" v-help="'Replace the automatic class spellcasting header prose with custom text.'" label="Custom spellcasting introduction" dense />
         <monster-text-editor v-if="monster.spellcasting.useCustomClassPreamble" :field="monster.spellcasting.customClassPreamble" i18n-label-key="editor.spellcasting.slot.preamble" token-category="spell" :show-reset="true" @update:model-value="value => monster.spellcasting.customClassPreamble=value" @reset="monster.spellcasting.customClassPreamble=$t('presets.classSpellcasting')" />
         <div class="row q-col-gutter-xs">
-          <q-checkbox v-help="'Enable 2024 Wizard or feature-based cantrip swapping after rests.'" v-model="monster.spellcasting.cantripSwitch" label="Switch cantrips" dense class="col-4" />
+          <q-checkbox v-model="monster.spellcasting.cantripSwitch" v-help="'Enable 2024 Wizard or feature-based cantrip swapping after rests.'" label="Switch cantrips" dense class="col-4" />
           <formula-field v-if="monster.spellcasting.cantripSwitch" v-help="'Number of cantrips that can be swapped.'" path="spellcasting.cantripSwitchCount" label="Count" class="col-4" />
           <catalog-select v-if="monster.spellcasting.cantripSwitch" v-help="'Cadence at which cantrips may be swapped.'" :model-value="cadenceKey(monster.spellcasting.cantripSwitchInterval, 'short_rest')" :entries="cadenceOptions" preserve-order :searchable="false" dark label="Per" class="col-4" @update:model-value="value => (monster.spellcasting.cantripSwitchInterval = String(value || 'short_rest'))" />
         </div>

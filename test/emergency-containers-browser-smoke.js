@@ -40,7 +40,7 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   })()`)
   assert.ok(Object.values(result).every(Boolean), JSON.stringify(result))
   await send('Page.reload'); await delay(700)
-  const reload = await evaluate(`(async()=>{for(let i=0;i<80;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia?._s.get('monster');if(m?.actions.some(x=>x.id==='container-action'))return [['action','actions'],['trait','traits'],['reaction','reactions'],['lair','lairActions']].every(([role,field])=>{const entry=m[field].find(x=>x.id==='container-'+role);return entry?.descriptionContainers?.length===2&&entry.descriptionContainers[0].text==='Witness '+role&&entry.descriptionContainers[1].table.rows.length===3&&entry.extension.retained});await new Promise(r=>setTimeout(r,50))}return false})()`)
+  const reload = await evaluate('(async()=>{for(let i=0;i<80;i++){const m=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia?._s.get(\'monster\');if(m?.actions.some(x=>x.id===\'container-action\'))return [[\'action\',\'actions\'],[\'trait\',\'traits\'],[\'reaction\',\'reactions\'],[\'lair\',\'lairActions\']].every(([role,field])=>{const entry=m[field].find(x=>x.id===\'container-\'+role);return entry?.descriptionContainers?.length===2&&entry.descriptionContainers[0].text===\'Witness \'+role&&entry.descriptionContainers[1].table.rows.length===3&&entry.extension.retained});await new Promise(r=>setTimeout(r,50))}return false})()')
   assert.equal(reload,true,'All role containers, table edits and unknown metadata survive reload')
   console.log('Additional container browser checks:', JSON.stringify({...result,reload}))
 }, {port:9358})

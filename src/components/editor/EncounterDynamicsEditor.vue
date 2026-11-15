@@ -16,7 +16,8 @@
           <div class="text-subtitle2 text-weight-bold text-warning">
             ⚡ Reactive Actions (Special Triggered Reactions)
           </div>
-          <q-btn v-help="$t('help.encounterDynamics.addReactive')"
+          <q-btn
+v-help="$t('help.encounterDynamics.addReactive')"
             dense
             outline
             size="sm"
@@ -37,8 +38,9 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-4 col-sm-4">
-              <q-input v-help="$t('help.encounterDynamics.reactiveName')"
-                v-model="ra.name"
+              <q-input
+v-model="ra.name"
+                v-help="$t('help.encounterDynamics.reactiveName')"
                 dense
                 outlined
                 label="Action Name"
@@ -46,8 +48,9 @@
               />
             </div>
             <div class="col-4 col-sm-4">
-              <mechanic-text-editor v-help="$t('help.encounterDynamics.reactiveTrigger')"
-                v-model="ra.trigger"
+              <mechanic-text-editor
+v-model="ra.trigger"
+                v-help="$t('help.encounterDynamics.reactiveTrigger')"
                 dense
                 outlined
                 label="Trigger Condition"
@@ -55,8 +58,9 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <mechanic-text-editor v-help="$t('help.encounterDynamics.reactiveLimit')"
-                v-model="ra.cost"
+              <mechanic-text-editor
+v-model="ra.cost"
+                v-help="$t('help.encounterDynamics.reactiveLimit')"
                 dense
                 outlined
                 label="Cost/Limit"
@@ -92,7 +96,8 @@
           <div class="text-subtitle2 text-weight-bold text-info">
             ⛓️ Combo Actions (Chained Strike Synergies)
           </div>
-          <q-btn v-help="$t('help.encounterDynamics.addCombo')"
+          <q-btn
+v-help="$t('help.encounterDynamics.addCombo')"
             dense
             outline
             size="sm"
@@ -113,8 +118,9 @@
         >
           <div class="row q-col-gutter-xs items-center justify-between no-wrap q-mb-xs">
             <div class="col-3 col-sm-3">
-              <q-input v-help="$t('help.encounterDynamics.comboName')"
-                v-model="ca.name"
+              <q-input
+v-model="ca.name"
+                v-help="$t('help.encounterDynamics.comboName')"
                 dense
                 outlined
                 label="Combo Name"
@@ -122,8 +128,9 @@
               />
             </div>
             <div class="col-3 col-sm-2">
-              <q-input v-help="$t('help.encounterDynamics.comboLead')"
-                v-model="ca.leadAction"
+              <q-input
+v-model="ca.leadAction"
+                v-help="$t('help.encounterDynamics.comboLead')"
                 dense
                 outlined
                 label="Lead Attack"
@@ -131,7 +138,8 @@
               />
             </div>
             <div class="col-2 col-sm-3">
-              <q-input v-help="$t('help.encounterDynamics.comboFollowup')"
+              <q-input
+v-help="$t('help.encounterDynamics.comboFollowup')"
                 :model-value="ca.followUpAction || ca.followup"
                 dense
                 outlined
@@ -141,8 +149,9 @@
               />
             </div>
             <div class="col-2 col-sm-2">
-              <mechanic-text-editor v-help="$t('help.encounterDynamics.comboCondition')"
-                v-model="ca.condition"
+              <mechanic-text-editor
+v-model="ca.condition"
+                v-help="$t('help.encounterDynamics.comboCondition')"
                 dense
                 outlined
                 label="Condition"
@@ -179,15 +188,17 @@
             <div class="text-subtitle2 text-weight-bold text-orange">
               ⏳ Runehammer Escalation Track
             </div>
-            <q-checkbox v-help="$t('help.encounterDynamics.trackEnabled')"
-              v-model="runehammerTrack.enabled"
+            <q-checkbox
+v-model="runehammerTrack.enabled"
+              v-help="$t('help.encounterDynamics.trackEnabled')"
               dense
               label="Enabled"
               color="orange"
             />
           </div>
-          <q-btn v-help="$t('help.encounterDynamics.addTrackEvent')"
-            v-if="runehammerTrack.enabled"
+          <q-btn
+v-if="runehammerTrack.enabled"
+            v-help="$t('help.encounterDynamics.addTrackEvent')"
             dense
             outline
             size="sm"
@@ -200,7 +211,8 @@
         <div v-if="runehammerTrack.enabled" class="q-gutter-y-xs q-mt-xs">
           <div class="row q-col-gutter-xs items-center">
             <div class="col-12 col-sm-4">
-              <q-select v-help="$t('help.encounterDynamics.trackDie')"
+              <q-select
+v-help="$t('help.encounterDynamics.trackDie')"
                 :model-value="runehammerTrack.timerDie || runehammerTrack.die"
                 :options="runehammerDieOptions"
                 dense
@@ -210,8 +222,9 @@
               />
             </div>
             <div class="col-12 col-sm-4">
-              <q-input v-help="$t('help.encounterDynamics.trackStartCount')"
-                v-model.number="runehammerTrack.currentCount"
+              <q-input
+v-model.number="runehammerTrack.currentCount"
+                v-help="$t('help.encounterDynamics.trackStartCount')"
                 type="number"
                 dense
                 outlined
@@ -228,8 +241,9 @@
             style="background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.06);"
           >
             <div class="col-2 col-sm-2">
-              <q-input v-help="$t('help.encounterDynamics.trackRound')"
-                v-model.number="ev.round"
+              <q-input
+v-model.number="ev.round"
+                v-help="$t('help.encounterDynamics.trackRound')"
                 type="number"
                 dense
                 outlined
@@ -237,8 +251,9 @@
               />
             </div>
             <div class="col-4 col-sm-3">
-              <q-input v-help="$t('help.encounterDynamics.trackEventTitle')"
-                v-model="ev.name"
+              <q-input
+v-model="ev.name"
+                v-help="$t('help.encounterDynamics.trackEventTitle')"
                 dense
                 outlined
                 label="Event Title"
@@ -246,7 +261,8 @@
               />
             </div>
             <div class="col-5 col-sm-6">
-              <mechanic-text-editor v-help="$t('help.encounterDynamics.trackEventEffect')"
+              <mechanic-text-editor
+v-help="$t('help.encounterDynamics.trackEventEffect')"
                 :model-value="ev.description || ev.effect"
                 dense
                 outlined

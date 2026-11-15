@@ -61,11 +61,11 @@ const result = await browserProbe(async ({ evaluate, send, delay }) => {
     await wait(() => search.getAttribute('aria-checked') === 'false' && header(), 'final unchecked preference')
     return { defaultOn: true, placementRemoved: true, medicineInSearch: true, actionRouting: true, bonusRouting: true, uncheckedHeader: true, retainedDetails: true, repeatToggle: true }
   })()`)
-  for (const [name, passed] of Object.entries(checks)) assert.equal(passed, true, name + ": " + JSON.stringify(checks))
+  for (const [name, passed] of Object.entries(checks)) assert.equal(passed, true, name + ': ' + JSON.stringify(checks))
 
   let persisted = false
   for (let attempt = 0; attempt < 50; attempt++) {
-    persisted = await evaluate(`Object.values(localStorage).some(value => value.includes('Emergency Skills Routing Witness') && value.includes('searchMoveToActionGroup') && value.includes('Emergency stabilization'))`)
+    persisted = await evaluate('Object.values(localStorage).some(value => value.includes(\'Emergency Skills Routing Witness\') && value.includes(\'searchMoveToActionGroup\') && value.includes(\'Emergency stabilization\'))')
     if (persisted) break
     await delay(80)
   }

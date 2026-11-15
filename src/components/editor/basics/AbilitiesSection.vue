@@ -14,30 +14,30 @@
       </div>
       <div class="editor-fit-wrap items-center">
         <q-btn
+          v-help="'Assign the standard 5e array (15, 14, 13, 12, 10, 8) across the six ability scores.'"
           size="xs"
           outline
           dense
           color="primary"
           label="Standard Array"
-          v-help="'Assign the standard 5e array (15, 14, 13, 12, 10, 8) across the six ability scores.'"
           @click="applyStandardArray"
         />
         <q-btn
+          v-help="$t('help.abilities.setAllEight')"
           size="xs"
           outline
           dense
           color="grey-5"
           label="All 8s"
-          v-help="$t('help.abilities.setAllEight')"
           @click="applyAllStats(8)"
         />
         <q-btn
+          v-help="$t('help.abilities.setAllTen')"
           size="xs"
           outline
           dense
           color="grey-5"
           label="All 10s"
-          v-help="$t('help.abilities.setAllTen')"
           @click="applyAllStats(10)"
         />
       </div>
@@ -49,13 +49,13 @@
       <q-btn
         v-for="arch in roleArchetypes"
         :key="arch.id"
+        v-help="arch.description"
         size="xs"
         :color="arch.color"
         outline
         dense
         :icon="arch.icon"
         :label="arch.label"
-        v-help="arch.description"
         @click="applyArchetype(arch)"
       />
     </div>
@@ -64,9 +64,9 @@
       <formula-field
         v-for="stat in statKeys"
         :key="stat"
+        v-help="'Base ability score; supports formulas and drives modifiers, saves, skills, and attack bonuses.'"
         :path="`stats.${stat}`"
         :label="stat"
-        v-help="'Base ability score; supports formulas and drives modifiers, saves, skills, and attack bonuses.'"
         class="col-4 col-sm-2"
         outlined
         dense

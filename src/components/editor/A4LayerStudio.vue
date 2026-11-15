@@ -23,16 +23,16 @@
         <!-- Quick 1-Click Homebrew Preset Adders -->
         <div class="col-12 col-sm-auto row items-center q-gutter-x-xs">
           <q-btn-dropdown
+            v-help="'Ready-made parchment backgrounds and masks.'"
             dense
             outline
             color="amber-4"
-            icon="auto_awesome"
-            label="Homebrew Presets" v-help="'Ready-made parchment backgrounds and masks.'"
+            icon="auto_awesome" label="Homebrew Presets"
             no-caps
             size="sm"
           >
             <q-list dense dark class="bg-grey-9 text-white">
-              <q-item clickable v-close-popup @click="addPreset('yellowed_parchment')">
+              <q-item v-close-popup clickable @click="addPreset('yellowed_parchment')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="history_edu" color="amber-4" size="xs" />
                 </q-item-section>
@@ -42,7 +42,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="addPreset('phb_parchment')">
+              <q-item v-close-popup clickable @click="addPreset('phb_parchment')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="menu_book" color="amber-5" size="xs" />
                 </q-item-section>
@@ -52,7 +52,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="addPreset('silvered_parchment')">
+              <q-item v-close-popup clickable @click="addPreset('silvered_parchment')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="auto_stories" color="grey-4" size="xs" />
                 </q-item-section>
@@ -64,7 +64,7 @@
 
               <q-separator dark />
 
-              <q-item clickable v-close-popup @click="addPreset('watercolor_splash')">
+              <q-item v-close-popup clickable @click="addPreset('watercolor_splash')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="brush" color="purple-4" size="xs" />
                 </q-item-section>
@@ -74,7 +74,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="addPreset('watercolor_bottom')">
+              <q-item v-close-popup clickable @click="addPreset('watercolor_bottom')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="waves" color="cyan-4" size="xs" />
                 </q-item-section>
@@ -86,7 +86,7 @@
 
               <q-separator dark />
 
-              <q-item clickable v-close-popup @click="addPreset('header_overlay')">
+              <q-item v-close-popup clickable @click="addPreset('header_overlay')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="border_top" color="amber-4" size="xs" />
                 </q-item-section>
@@ -96,7 +96,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-close-popup @click="addPreset('footer_overlay')">
+              <q-item v-close-popup clickable @click="addPreset('footer_overlay')">
                 <q-item-section avatar style="min-width: 24px;">
                   <q-icon name="border_bottom" color="amber-4" size="xs" />
                 </q-item-section>
@@ -109,10 +109,10 @@
           </q-btn-dropdown>
 
           <q-btn
+            v-help="'Add an image or colour layer to the A4 page.'"
             dense
             color="purple-7"
-            icon="add"
-            label="Add Layer" v-help="'Add an image or colour layer to the A4 page.'"
+            icon="add" label="Add Layer"
             no-caps
             size="sm"
             @click="showAddLayerForm = !showAddLayerForm"
@@ -143,17 +143,17 @@
             <div class="col-12 col-sm-4">
               <q-input
                 v-model="newLayerName"
+                v-help="'Name shown in the layer list.'"
                 dense
                 outlined
-                dark
-                label="Layer Name" v-help="'Name shown in the layer list.'"
+                dark label="Layer Name"
                 placeholder="e.g. Stained Parchment"
               />
             </div>
             <div class="col-12 col-sm-5">
               <q-file
                 v-model="newLayerFile"
-                label="Upload local texture (PNG/JPG)" v-help="'Upload a background texture from this device.'"
+                v-help="'Upload a background texture from this device.'" label="Upload local texture (PNG/JPG)"
                 dense
                 outlined
                 dark
@@ -168,28 +168,28 @@
             <div class="col-12 col-sm-6 q-mt-xs">
               <q-input
                 v-model="newLayerUrl"
+                v-help="'Web address or embedded image for this layer.'"
                 dense
                 outlined
-                dark
-                label="Or Image URL / Data URI" v-help="'Web address or embedded image for this layer.'"
+                dark label="Or Image URL / Data URI"
                 placeholder="/homebrew/backgrounds/Yellowed parchment background.jpg"
               />
             </div>
             <div class="col-6 col-sm-3 q-mt-xs">
               <catalog-select
                 v-model="newLayerBlend"
+                v-help="'How this layer mixes with the layers below.'"
                 :entries="blendModeOptions"
                 preserve-order
                 dark
                 label="Blend Mode"
-                v-help="'How this layer mixes with the layers below.'"
               />
             </div>
             <div class="col-6 col-sm-3 q-mt-xs text-right">
               <q-btn
+                v-help="'Create the layer with these settings.'"
                 color="purple-7"
-                icon="check"
-                label="Create Layer" v-help="'Create the layer with these settings.'"
+                icon="check" label="Create Layer"
                 no-caps
                 class="full-width"
                 :disable="!newLayerUrl && !newLayerFile"
@@ -382,11 +382,11 @@
                   <div class="col-12 col-sm-3">
                     <catalog-select
                       v-model="layer.blendMode"
+                      v-help="'How this layer mixes with the layers below.'"
                       :entries="blendModeOptions"
                       preserve-order
                       dark
                       label="Blend Mode"
-                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-9">
@@ -409,13 +409,13 @@
                       <div class="col-auto">
                         <q-input
                           v-model.number="editorStore.a4StatblockOpacity"
+                          v-help="'How see-through the layer is.'"
                           type="number"
                           min="0"
                           max="100"
                           dense
                           outlined
-                          dark
-                          label="Opacity (%)" v-help="'How see-through the layer is.'"
+                          dark label="Opacity (%)"
                           style="width: 85px;"
                         />
                       </div>
@@ -427,10 +427,10 @@
                     <radial-offset-controller
                       v-model:x="editorStore.a4StatblockOffsetX"
                       v-model:y="editorStore.a4StatblockOffsetY"
+                      v-help="'Drag to place the stat block on the page.'"
                       :min="-450"
                       :max="450"
-                      :step="2"
-                      label="Statblock Position Gizmo" v-help="'Drag to place the stat block on the page.'"
+                      :step="2" label="Statblock Position Gizmo"
                       unit="px"
                       color="amber"
                       icon="open_with"
@@ -439,13 +439,16 @@
 
                   <div class="col-12 col-sm-8">
                     <div class="text-caption text-amber-3">Overall font size · {{ editorStore.statblockFontScale }}%</div>
-                    <q-slider v-model="editorStore.statblockFontScale" v-help="'Scale text typography inside the stat block before fitting box dimensions.'" aria-label="Overall font size"
+                    <q-slider
+v-model="editorStore.statblockFontScale" v-help="'Scale text typography inside the stat block before fitting box dimensions.'" aria-label="Overall font size"
                       :min="65" :max="150" :step="1" color="amber-5" dense />
                     <div class="text-caption text-amber-3">Final width · {{ editorStore.a4StatblockFinalWidth }}%</div>
-                    <q-slider v-model="editorStore.a4StatblockFinalWidth" v-help="'Adjust horizontal box squeeze or expansion after font scaling.'" aria-label="Final width"
+                    <q-slider
+v-model="editorStore.a4StatblockFinalWidth" v-help="'Adjust horizontal box squeeze or expansion after font scaling.'" aria-label="Final width"
                       :min="25" :max="150" :step="1" color="amber-5" dense />
                     <div class="text-caption text-amber-3">Final height · {{ editorStore.a4StatblockFinalHeight }}%</div>
-                    <q-slider v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block height scaling on the A4 sheet.'" aria-label="Final height"
+                    <q-slider
+v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block height scaling on the A4 sheet.'" aria-label="Final height"
                       :min="25" :max="150" :step="1" color="amber-5" dense />
                     <div class="row items-center justify-between q-mb-sm">
                       <span class="text-caption">100% uses the natural size. The layer reduces text first, then scales the remaining difference.</span>
@@ -487,7 +490,7 @@
                   <div class="col-12 col-sm-6 q-mb-xs">
                     <q-file
                       v-model="portraitFileInput"
-                      label="Upload Creature Portrait Image" v-help="'Upload a portrait from this device; it stays in the browser.'"
+                      v-help="'Upload a portrait from this device; it stays in the browser.'" label="Upload Creature Portrait Image"
                       dense
                       outlined
                       dark
@@ -515,19 +518,19 @@
                   <div class="col-6 col-sm-4">
                     <catalog-select
                       v-model="portraitPositionModel"
+                      v-help="'Where the portrait sits relative to the stat block.'"
                       :entries="portraitPositionOptions"
                       preserve-order
                       :searchable="false"
                       dark
                       label="Layout Position"
-                      v-help="'Where the portrait sits relative to the stat block.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
                     <q-input
                       v-model.number="portraitWidthModel"
-                      type="number"
-                      label="Base Width (px)" v-help="'Portrait width before scaling.'"
+                      v-help="'Portrait width before scaling.'"
+                      type="number" label="Base Width (px)"
                       dense
                       outlined
                       dark
@@ -538,7 +541,7 @@
                   <div class="col-12 col-sm-4">
                     <q-input
                       v-model="portraitCaptionModel"
-                      label="Caption / Artist Credit" v-help="'Credit shown under the image.'"
+                      v-help="'Credit shown under the image.'" label="Caption / Artist Credit"
                       dense
                       outlined
                       dark
@@ -548,11 +551,11 @@
                   <div class="col-12 col-sm-4">
                     <catalog-select
                       v-model="layer.blendMode"
+                      v-help="'How this layer mixes with the layers below.'"
                       :entries="blendModeOptions"
                       preserve-order
                       dark
                       label="Blend Mode"
-                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-12 col-sm-4">
@@ -658,7 +661,7 @@
                   <div class="col-12 row items-center q-gutter-x-md q-my-xs">
                     <q-checkbox
                       v-model="layer.grayscaleAsAlpha"
-                      label="Use Grayscale as Alpha (Luminance Mask)" v-help="'Use the image brightness as transparency.'"
+                      v-help="'Use the image brightness as transparency.'" label="Use Grayscale as Alpha (Luminance Mask)"
                       dark
                       dense
                       color="cyan-4"
@@ -669,7 +672,7 @@
                     <q-checkbox
                       v-if="layer.grayscaleAsAlpha"
                       v-model="layer.grayscaleInvert"
-                      label="Invert Luminance" v-help="'Swap light and dark in the mask.'"
+                      v-help="'Swap light and dark in the mask.'" label="Invert Luminance"
                       dark
                       dense
                       color="cyan-4"
@@ -689,8 +692,8 @@
                   <!-- Watercolor Masking for Artwork -->
                   <div class="col-12">
                     <catalog-select
-                      :model-value="layer.maskUrl ?? ''"
                       v-help="'Apply an organic Homebrewery watercolor alpha mask to soften portrait edges.'"
+                      :model-value="layer.maskUrl ?? ''"
                       :entries="watercolorMaskOptions"
                       preserve-order
                       :searchable="false"
@@ -725,11 +728,11 @@
                   <div class="col-6 col-sm-4">
                     <catalog-select
                       v-model="layer.blendMode"
+                      v-help="'How this layer mixes with the layers below.'"
                       :entries="blendModeOptions"
                       preserve-order
                       dark
                       label="Blend Mode"
-                      v-help="'How this layer mixes with the layers below.'"
                     />
                   </div>
                   <div class="col-6 col-sm-4">
@@ -839,6 +842,7 @@
 
                   <div class="col-12 col-sm-12">
                     <catalog-select
+                      v-help="'Fade the layer edges like watercolour.'"
                       :model-value="layer.maskUrl ?? ''"
                       :entries="watercolorMaskOptions"
                       preserve-order
@@ -846,7 +850,6 @@
                       clearable
                       dark
                       label="Watercolor Edge Mask"
-                      v-help="'Fade the layer edges like watercolour.'"
                       @update:model-value="val => (layer.maskUrl = val ? String(val) : '')"
                     >
                       <template #prepend>
@@ -859,7 +862,7 @@
                   <div class="col-12 row items-center q-gutter-x-md q-my-xs">
                     <q-checkbox
                       v-model="layer.grayscaleAsAlpha"
-                      label="Use Grayscale as Alpha (Luminance Mask)" v-help="'Use the image brightness as transparency.'"
+                      v-help="'Use the image brightness as transparency.'" label="Use Grayscale as Alpha (Luminance Mask)"
                       dark
                       dense
                       color="purple-4"
@@ -870,7 +873,7 @@
                     <q-checkbox
                       v-if="layer.grayscaleAsAlpha"
                       v-model="layer.grayscaleInvert"
-                      label="Invert Luminance" v-help="'Swap light and dark in the mask.'"
+                      v-help="'Swap light and dark in the mask.'" label="Invert Luminance"
                       dark
                       dense
                       color="purple-4"
@@ -894,7 +897,7 @@
                     <div class="row items-center justify-between no-wrap">
                       <q-toggle
                         v-model="layer.showTextOverlay"
-                        label="Enable Layer Text Overlay (Header/Footer)" v-help="'Print text on this layer, such as a header or footer.'"
+                        v-help="'Print text on this layer, such as a header or footer.'" label="Enable Layer Text Overlay (Header/Footer)"
                         color="amber-7"
                         dense
                         dark
@@ -905,7 +908,7 @@
                       <div class="col-12 col-sm-6">
                         <q-input
                           v-model="layer.overlayText"
-                          label="Overlay Text (Header/Footer/Notes)" v-help="'Text printed on the layer.'"
+                          v-help="'Text printed on the layer.'" label="Overlay Text (Header/Footer/Notes)"
                           dense
                           outlined
                           dark
@@ -915,12 +918,12 @@
                       <div class="col-6 col-sm-3">
                         <catalog-select
                           v-model="layer.overlayTextAlign"
+                          v-help="'Left, centre or right text alignment.'"
                           :entries="overlayAlignOptions"
                           preserve-order
                           :searchable="false"
                           dark
                           label="Text Align"
-                          v-help="'Left, centre or right text alignment.'"
                         />
                       </div>
                       <div class="col-6 col-sm-3">
@@ -945,8 +948,8 @@
                       <div class="col-4 col-sm-4 q-mt-xs">
                         <q-input
                           v-model.number="layer.overlayTextOffsetX"
-                          type="number"
-                          label="Offset X (px)" v-help="'Move the layer left or right.'"
+                          v-help="'Move the layer left or right.'"
+                          type="number" label="Offset X (px)"
                           dense
                           outlined
                           dark
@@ -956,8 +959,8 @@
                       <div class="col-4 col-sm-4 q-mt-xs">
                         <q-input
                           v-model.number="layer.overlayTextOffsetY"
-                          type="number"
-                          label="Offset Y (px)" v-help="'Move the layer up or down.'"
+                          v-help="'Move the layer up or down.'"
+                          type="number" label="Offset Y (px)"
                           dense
                           outlined
                           dark
@@ -967,8 +970,8 @@
                       <div class="col-4 col-sm-4 q-mt-xs">
                         <q-input
                           v-model.number="layer.overlayTextFontSize"
-                          type="number"
-                          label="Font Size (pt)" v-help="'Text size in points.'"
+                          v-help="'Text size in points.'"
+                          type="number" label="Font Size (pt)"
                           dense
                           outlined
                           dark

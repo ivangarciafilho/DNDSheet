@@ -53,8 +53,8 @@
               :title="$t('editor.spellcasting.custom.level')"
             >
               <catalog-select
-                :model-value="String(scope.value)"
                 v-help="'Circle level from Cantrip (0) through 9th level for slot filtering.'"
+                :model-value="String(scope.value)"
                 :entries="spellLevelEntries"
                 preserve-order
                 :searchable="false"
@@ -95,8 +95,8 @@
               :title="$t('editor.spellcasting.custom.damage')"
             >
               <q-input
-                :model-value="scope.value"
                 v-help="'Average damage per round contributed by this spell during CR calculations.'"
+                :model-value="scope.value"
                 type="number"
                 min="0"
                 :label="$t('editor.spellcasting.custom.damage')"

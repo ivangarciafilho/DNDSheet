@@ -1,3 +1,7 @@
+## Build 253 — C3 lint burn-down
+
+ESLint warnings 2,733 to 282 with no template or behaviour change (42 Vue templates token-identical); dead imports and duplicate computeds removed; rest-sibling omission allowed. See docs/roadmap/DNDSheet-Build253-Lint-Burndown.md.
+
 ## Build 252 — Track C close-outs: paired range, gate parity, version
 
 Paired normal/long range end to end (BS-39), version 2.5.0 with a package-derived RC tag (C9), one browser suite for SPA and Pages plus legacy script removal (C12), Improved Initiative advantage and typed storage adapters (C10, partial). See docs/roadmap/DNDSheet-Build252-Track-C-Closeouts.md.

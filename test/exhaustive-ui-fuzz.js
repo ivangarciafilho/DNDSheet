@@ -3105,7 +3105,7 @@ async function runFuzz() {
     await pause(500)
   }
   const movePrompt=await chooseRole('a7-transition-proof','Mythic Action');await dialogButton('Cancel')
-  const canceledMove=await evalInPage(`() => JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').actions.find(a=>a.id==='a7-transition-proof'))`)
+  const canceledMove=await evalInPage('() => JSON.stringify(document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\').actions.find(a=>a.id===\'a7-transition-proof\'))')
   await chooseRole('a7-transition-proof','Mythic Action');await dialogButton('Change role')
   const moved=await evalInPage(`() => {
     const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
@@ -3114,7 +3114,7 @@ async function runFuzz() {
       reference:monster.multiattacks.find(a=>a.id==='a7-transition-combo').actions.includes('a7-transition-proof')};
   }`)
   const copyPrompt=await chooseRole('a7-transition-proof','Trait');await dialogButton('Cancel')
-  const canceledCopy=await evalInPage(`() => !document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').traits.some(t=>t.name==='Preserved Solar Strike')`)
+  const canceledCopy=await evalInPage('() => !document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\').traits.some(t=>t.name===\'Preserved Solar Strike\')')
   await chooseRole('a7-transition-proof','Trait');await dialogButton('Create copy')
   const copied=await evalInPage(`() => {
     const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');
@@ -3425,10 +3425,10 @@ async function runFuzz() {
   }`)
   await sendCdp('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 1, mobile: true })
   await pause(300)
-  step44.narrow = await evalInPage(`()=>{const chain=document.querySelector('[data-attack-composer="a8-attack-proof"]');return chain.scrollWidth<=chain.clientWidth+1&&getComputedStyle(chain.querySelector('.composer-chain__row')).flexDirection==='column';}`)
+  step44.narrow = await evalInPage('()=>{const chain=document.querySelector(\'[data-attack-composer="a8-attack-proof"]\');return chain.scrollWidth<=chain.clientWidth+1&&getComputedStyle(chain.querySelector(\'.composer-chain__row\')).flexDirection===\'column\';}')
   await sendCdp('Emulation.clearDeviceMetricsOverride')
   await reloadApp();await pause(1500)
-  Object.assign(step44,await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),attack=monster.attacks.find(a=>a.id==='a8-attack-proof');const persisted=attack?.range.standard===30&&attack?.additionalDamage[0].count===4;monster.deleteAttack('a8-attack-proof');return {persisted,cleaned:!monster.legendaryActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.mythicActions.actions.some(a=>a.actionId==='a8-attack-proof')&&!monster.multiattacks.some(ma=>ma.attacks.includes('a8-attack-proof'))};}`))
+  Object.assign(step44,await evalInPage('()=>{const monster=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\'),attack=monster.attacks.find(a=>a.id===\'a8-attack-proof\');const persisted=attack?.range.standard===30&&attack?.additionalDamage[0].count===4;monster.deleteAttack(\'a8-attack-proof\');return {persisted,cleaned:!monster.legendaryActions.actions.some(a=>a.actionId===\'a8-attack-proof\')&&!monster.mythicActions.actions.some(a=>a.actionId===\'a8-attack-proof\')&&!monster.multiattacks.some(ma=>ma.attacks.includes(\'a8-attack-proof\'))};}'))
   console.log('Step 44 result:',JSON.stringify(step44,null,2))
   if(step44.problems.length||step44.comparisons!==4||!step44.canceled||!step44.invalid||!step44.custom||!step44.intact||!step44.refs||!step44.persisted||!step44.specialOnly||!step44.cleaned||!step44.narrow)throw new Error('Step 44 failed: '+JSON.stringify(step44))
 
@@ -3468,9 +3468,9 @@ async function runFuzz() {
     return {problems,missing,repaired,removed,moved,renamed,comparisons,seeded,custom,retained,added,exports,intact:group().extension==='keep'&&group().actions.length===2&&monster.multiattacks.length===2&&monster.multiattackOptions.postscript==='Then it can move.'};
   }`)
   await sendCdp('Emulation.setDeviceMetricsOverride',{width:375,height:812,deviceScaleFactor:1,mobile:true});await pause(250)
-  step45.narrow=await evalInPage(`()=>{const root=document.querySelector('[data-multiattack-composer]');return root.scrollWidth<=root.clientWidth+1&&getComputedStyle(root.querySelector('.composer-chain__row')).flexDirection==='column';}`)
+  step45.narrow=await evalInPage('()=>{const root=document.querySelector(\'[data-multiattack-composer]\');return root.scrollWidth<=root.clientWidth+1&&getComputedStyle(root.querySelector(\'.composer-chain__row\')).flexDirection===\'column\';}')
   await sendCdp('Emulation.clearDeviceMetricsOverride');await reloadApp();await pause(1500)
-  Object.assign(step45,await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),group=monster.multiattacks.find(g=>g.id==='ma-proof');const persisted=group?.attacks.join(',')==='ma-claw,ma-bite,ma-bite'&&group?.actions.length===2&&monster.multiattackOptions.postscript==='Then it can move.'&&monster.multiattackOptions.customMultiattackRenderer.includes('Custom sequence.');monster.deleteAttack('ma-bite');monster.deleteAction('ma-roar');return {persisted,cleaned:!monster.multiattacks.some(g=>g.attacks.includes('ma-bite')||g.actions.includes('ma-roar'))};}`))
+  Object.assign(step45,await evalInPage('()=>{const monster=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\'),group=monster.multiattacks.find(g=>g.id===\'ma-proof\');const persisted=group?.attacks.join(\',\')===\'ma-claw,ma-bite,ma-bite\'&&group?.actions.length===2&&monster.multiattackOptions.postscript===\'Then it can move.\'&&monster.multiattackOptions.customMultiattackRenderer.includes(\'Custom sequence.\');monster.deleteAttack(\'ma-bite\');monster.deleteAction(\'ma-roar\');return {persisted,cleaned:!monster.multiattacks.some(g=>g.attacks.includes(\'ma-bite\')||g.actions.includes(\'ma-roar\'))};}'))
   step45.empty=await evalInPage(`async()=>{
     const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
     monster.$patch({multiattacks:[],attacks:[],actions:[],traits:[],reactions:[],lairActions:[]});await wait(150);
@@ -3512,7 +3512,7 @@ async function runFuzz() {
     return {plainRole,categoryOptions,canceledRole,retainedUnknown,vocabulary,grouped,bloodied,interval,singleSurface,problems,projections,exports,kept:action.limitedUse.extension==='keep'&&action.limitedUse.count===1&&action.description==='Authored witness effect.'};
   }`)
   await reloadApp();await pause(1500)
-  step46.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster'),action=monster.actions.find(a=>a.id==='cadence-witness');return action?.limitedUse.count===1&&action?.limitedUse.rate==='SHORT_REST'&&action?.limitedUse.extension==='keep'&&!document.querySelector('[data-composer-preview],[data-attack-preview],[data-multiattack-preview]');}`)
+  step46.persisted=await evalInPage('()=>{const monster=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\'),action=monster.actions.find(a=>a.id===\'cadence-witness\');return action?.limitedUse.count===1&&action?.limitedUse.rate===\'SHORT_REST\'&&action?.limitedUse.extension===\'keep\'&&!document.querySelector(\'[data-composer-preview],[data-attack-preview],[data-multiattack-preview]\');}')
   console.log('Step 46 result:',JSON.stringify(step46,null,2))
   if(step46.problems.length||step46.projections!==6||step46.exports!==3||Object.entries(step46).some(([key,value])=>!['problems','projections','exports'].includes(key)&&value!==true))throw new Error('Step 46 failed: '+JSON.stringify(step46))
 
@@ -3557,7 +3557,7 @@ async function runFuzz() {
     return {savedPhase,phase,ownHeading,cr,automaticParity,crAfterReorder,lairCr,sorting,added,costEdited,removedOnlyMembership,warning,repaired,retirementComplete:![...document.querySelectorAll('#editor > .q-list > .q-expansion-item')].some(el=>el.querySelector('.q-item__label')?.textContent.trim()==='Legendary Actions'),descriptionKept:action.description==='Deals {2d6} radiant damage.'};
   }`)
   await reloadApp();await pause(1500)
-  step48.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');return monster.actions.some(action=>action.id==='studio-policy'&&action.stagePool===1&&!action.customPreamble)&&monster.attacks.some(attack=>attack.id==='studio-link')&&monster.mythicActions.actions.some(member=>member.actionId==='studio-link')&&monster.legendaryActions.actions.some(member=>member.actionId==='studio-policy'&&member.cost===4&&member.extension==='keep');}`)
+  step48.persisted=await evalInPage('()=>{const monster=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\');return monster.actions.some(action=>action.id===\'studio-policy\'&&action.stagePool===1&&!action.customPreamble)&&monster.attacks.some(attack=>attack.id===\'studio-link\')&&monster.mythicActions.actions.some(member=>member.actionId===\'studio-link\')&&monster.legendaryActions.actions.some(member=>member.actionId===\'studio-policy\'&&member.cost===4&&member.extension===\'keep\');}')
   console.log('Step 48 result:',JSON.stringify(step48,null,2))
   if(!Object.values(step48).every(value=>value===true))throw new Error('Step 48 failed: '+JSON.stringify(step48))
 
@@ -3678,7 +3678,7 @@ async function runFuzz() {
     return {problems,resetClears,gapShown,rowContinues,gapCleared,nanSafe,rendered,themed,deleted,undone,markdown,json};
   }`)
   await reloadApp();await pause(1500)
-  step52.persisted=await evalInPage(`()=>{const monster=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster');const t=monster.randomTables?.[0];return !!t&&t.title==='Wild Surge'&&t.rows.length===2&&t.rows[1].text==='Frost creeps';}`)
+  step52.persisted=await evalInPage('()=>{const monster=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\');const t=monster.randomTables?.[0];return !!t&&t.title===\'Wild Surge\'&&t.rows.length===2&&t.rows[1].text===\'Frost creeps\';}')
   console.log('Step 52 result:',JSON.stringify(step52,null,2))
   if(step52.problems.length||!['resetClears','gapShown','rowContinues','gapCleared','nanSafe','rendered','themed','deleted','undone','markdown','json','persisted'].every(key=>step52[key]===true))throw new Error('Step 52 failed: '+JSON.stringify(step52))
   console.log('\n--- Step 53: Recovered initiative cancellation and accessible roll glyphs ---')
@@ -3755,20 +3755,20 @@ async function runFuzz() {
     await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.visualTheme='${theme}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
     const shot=await sendCdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(tableEvidence,tableRun+'-'+theme+'.png'),Buffer.from(shot.result.data,'base64'))
   }
-  await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.visualTheme='wotc';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
+  await evalInPage('async()=>{const editor=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'editor\');editor.visualTheme=\'wotc\';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}')
   await sendCdp('Emulation.setEmulatedMedia',{media:'print'})
-  const tablePrint=await evalInPage(`()=>{const table=document.querySelector('#render .random-table-grid');return {media:matchMedia('print').matches,keep:getComputedStyle(table.closest('.random-table')).breakInside,header:getComputedStyle(table.querySelector('thead')).display,row:getComputedStyle(table.querySelector('tbody tr')).breakInside,text:table.textContent}}`)
+  const tablePrint=await evalInPage('()=>{const table=document.querySelector(\'#render .random-table-grid\');return {media:matchMedia(\'print\').matches,keep:getComputedStyle(table.closest(\'.random-table\')).breakInside,header:getComputedStyle(table.querySelector(\'thead\')).display,row:getComputedStyle(table.querySelector(\'tbody tr\')).breakInside,text:table.textContent}}')
   if(!tablePrint.media||tablePrint.keep!=='avoid'||tablePrint.header!=='table-header-group'||tablePrint.row!=='avoid'||!tablePrint.text.includes('Frost')||!tablePrint.text.includes('Calm'))throw new Error('Table print: '+JSON.stringify(tablePrint))
   for(const orientation of ['portrait','landscape']){
     await evalInPage(`async()=>{const editor=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');editor.a4Orientation='${orientation}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
-    const printPage=await evalInPage(`()=>({page:getComputedStyle(document.body).page,notice:[...document.querySelectorAll('.q-notifications')].some(el=>getComputedStyle(el).display!=='none'),editorHidden:getComputedStyle(document.querySelector('#splitter > .q-splitter__before')).display==='none',sheetUnclipped:getComputedStyle(document.querySelector('#splitter > .q-splitter__after')).overflow==='visible'})`)
+    const printPage=await evalInPage('()=>({page:getComputedStyle(document.body).page,notice:[...document.querySelectorAll(\'.q-notifications\')].some(el=>getComputedStyle(el).display!==\'none\'),editorHidden:getComputedStyle(document.querySelector(\'#splitter > .q-splitter__before\')).display===\'none\',sheetUnclipped:getComputedStyle(document.querySelector(\'#splitter > .q-splitter__after\')).overflow===\'visible\'})')
     if(printPage.notice||!printPage.editorHidden||!printPage.sheetUnclipped||(orientation==='landscape'&&printPage.page!=='dndsheet-landscape'))throw new Error('Print orientation/notice: '+JSON.stringify(printPage))
     const pdf=await sendCdp('Page.printToPDF',{printBackground:true,preferCSSPageSize:true});if(!pdf.result?.data)throw new Error('Missing A4 table PDF');fs.writeFileSync(path.join(tableEvidence,tableRun+'-'+orientation+'.pdf'),Buffer.from(pdf.result.data,'base64'))
   }
   await sendCdp('Emulation.setEmulatedMedia',{media:''})
   const tableShot=await sendCdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});fs.writeFileSync(path.join(tableEvidence,tableRun+'-table.png'),Buffer.from(tableShot.result.data,'base64'))
   await reloadApp();await pause(1500)
-  const tableReload=await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').randomTables)`)
+  const tableReload=await evalInPage('()=>JSON.stringify(document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\').randomTables)')
   assert.deepEqual(JSON.parse(tableReload),JSON.parse(step54.after),'Imported table changed on reload')
   console.log('\n--- Step 55: Outcome sectors retain resolved mechanics, safe author text and containers ---')
   const step55=await evalInPage(`async()=>{
@@ -3798,7 +3798,7 @@ async function runFuzz() {
     return {problems,checks,projectionPreserves,undone,authored};
   }`)
   await reloadApp();await pause(1500)
-  const step55Reloaded=await evalInPage(`async()=>{for(let attempt=0;attempt<80;attempt++){const monster=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster'),action=monster?.actions.find(a=>a.id==='outcome-action'),reaction=monster?.reactions.find(a=>a.id==='outcome-reaction');if(action&&reaction)return JSON.parse(JSON.stringify([action,reaction]));await new Promise(resolve=>setTimeout(resolve,100));}throw new Error('Outcome witness did not hydrate after reload');}`)
+  const step55Reloaded=await evalInPage('async()=>{for(let attempt=0;attempt<80;attempt++){const monster=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia._s.get(\'monster\'),action=monster?.actions.find(a=>a.id===\'outcome-action\'),reaction=monster?.reactions.find(a=>a.id===\'outcome-reaction\');if(action&&reaction)return JSON.parse(JSON.stringify([action,reaction]));await new Promise(resolve=>setTimeout(resolve,100));}throw new Error(\'Outcome witness did not hydrate after reload\');}')
   assert.deepEqual(step55Reloaded,JSON.parse(step55.authored),'Step 55 outcome records survive hydration')
   step55.persisted=true
   delete step55.authored
@@ -3822,7 +3822,7 @@ async function runFuzz() {
     return {problems,switches,rulesUntouched,safeName,splitterOk};
   }`)
   // B7.6: both motion preferences are emulated explicitly, so the result never depends on this machine's Windows setting.
-  const motionProbe=`()=>{const el=document.createElement('div');el.className='a4-scale-stage';el.style.position='absolute';el.style.left='-9999px';document.body.appendChild(el);const d=getComputedStyle(el).transitionDuration;el.remove();return d.split(',').map(v=>parseFloat(v)||0);}`
+  const motionProbe='()=>{const el=document.createElement(\'div\');el.className=\'a4-scale-stage\';el.style.position=\'absolute\';el.style.left=\'-9999px\';document.body.appendChild(el);const d=getComputedStyle(el).transitionDuration;el.remove();return d.split(\',\').map(v=>parseFloat(v)||0);}'
   await sendCdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});await pause(150)
   const reducedDurations=await evalInPage(motionProbe)
   await sendCdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'no-preference'}]});await pause(150)
@@ -3831,7 +3831,7 @@ async function runFuzz() {
   step56.reducedMotion=reducedDurations.every(v=>v===0)&&normalDurations.some(v=>v>0)
   // 200 % zoom on a 1280 px window is a 640 px layout viewport.
   await sendCdp('Emulation.setDeviceMetricsOverride',{width:640,height:900,deviceScaleFactor:2,mobile:false});await pause(400)
-  step56.zoomNoOverflow=await evalInPage(`()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1`)
+  step56.zoomNoOverflow=await evalInPage('()=>document.documentElement.scrollWidth<=document.documentElement.clientWidth+1')
   await sendCdp('Emulation.clearDeviceMetricsOverride');await pause(300)
   step56.keyboard=await evalInPage(`async()=>{document.activeElement?.blur();document.body.focus();const seen=new Set();for(let i=0;i<40;i++){const ev=new KeyboardEvent('keydown',{key:'Tab',bubbles:true});document.dispatchEvent(ev);}
     const focusables=[...document.querySelectorAll('#editor input, #editor button, #editor [tabindex]:not([tabindex="-1"])')].filter(el=>!el.disabled&&el.offsetParent!==null);
@@ -3859,7 +3859,7 @@ async function runFuzz() {
     try{for(let i=0;i<60&&document.querySelector('.q-menu');i++)await wait(40);const menuButton=[...document.querySelectorAll('header button')].find(b=>b.querySelector('i')?.textContent.trim()==='download');menuButton.click();let item;for(let i=0;i<50&&!item;i++){item=[...document.querySelectorAll('.q-menu .q-item')].find(x=>x.textContent.trim()==='Export JSON (Tarrasque.io format)');if(!item)await wait(40)}if(!item)throw new Error('Missing Tarrasque export');item.click();for(let i=0;i<50&&!captured.length;i++)await wait(40);if(!captured.length)throw new Error('Missing Tarrasque file');return JSON.parse(await captured[0].text());}finally{URL.createObjectURL=nativeUrl;HTMLAnchorElement.prototype.click=nativeAnchor;}
   }`
   const exports57=[]
-  const state57=await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').$state)`)
+  const state57=await evalInPage('()=>JSON.stringify(document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\').$state)')
   for(const style of ['2014','2024'])for(const template of ['modern','classic']){
     await evalInPage(`async()=>{const e=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');e.style='${style}';e.visualTemplate='${template}';await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));}`)
     exports57.push(await evalInPage(capture57))
@@ -3887,9 +3887,9 @@ async function runFuzz() {
     header:typeof first57.languages==='string'&&first57.languages.includes('Celestial')&&!first57.languages.includes('<span'),
   }
   const repeated57=await evalInPage(capture57);checks57.repeat=JSON.stringify(repeated57)===JSON.stringify(exports57[3])
-  checks57.noMutation=state57===await evalInPage(`()=>JSON.stringify(document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('monster').$state)`)
+  checks57.noMutation=state57===await evalInPage('()=>JSON.stringify(document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'monster\').$state)')
   await reloadApp();await pause(1500)
-  const hydrated57=await evalInPage(`async()=>{for(let i=0;i<60;i++){const m=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('monster');const e=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia._s.get('editor');if(m?.actions.some(a=>a.id==='structured-action')&&e?.style==='2024'&&e?.visualTemplate==='classic'&&m.proficiencyOverride)return true;await new Promise(resolve=>setTimeout(resolve,50))}return false;}`)
+  const hydrated57=await evalInPage('async()=>{for(let i=0;i<60;i++){const m=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia._s.get(\'monster\');const e=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia._s.get(\'editor\');if(m?.actions.some(a=>a.id===\'structured-action\')&&e?.style===\'2024\'&&e?.visualTemplate===\'classic\'&&m.proficiencyOverride)return true;await new Promise(resolve=>setTimeout(resolve,50))}return false;}')
   const reloaded57=hydrated57?await evalInPage(capture57):null
   checks57.reload=JSON.stringify(reloaded57)===JSON.stringify(exports57[3])
   if(!checks57.reload)console.log('Reload export difference:',JSON.stringify({before:exports57[3],after:reloaded57}))
@@ -3903,7 +3903,7 @@ async function runFuzz() {
     const fill=(label,value)=>{const input=[...panel.querySelectorAll('input')].find(x=>x.getAttribute('aria-label')===label);if(!input)throw Error('Missing vital input '+label);input.value=value;input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new Event('change',{bubbles:true}));};
     fill('Recorded Armor Class','19');fill('Recorded Speed (ft.)','0');fill('Armor Class source / notes','Plate and shield');fill('Speed source / notes','Immobile form');await new Promise(r=>setTimeout(r,200));const recorded=[...panel.querySelectorAll('input')].find(x=>x.getAttribute('aria-label')==='Recorded Armor Class').value==='19'&&c.actor.combatVitals.armorClass===19&&c.actor.combatVitals.speed===0&&sheet().textContent.includes('Recorded value')&&sheet().textContent.includes('Immobile form');const readable=[...sheet().querySelectorAll('.character-vital-value')].length===3&&[...sheet().querySelectorAll('.character-vital-value')].every(n=>getComputedStyle(n).color==='rgb(88, 24, 13)')&&!!sheet().querySelector('.character-vital-sources');return {defaults,recorded,readable};}`)
   await reloadApp();await pause(1500)
-  step58.reload=await evalInPage(`async()=>{for(let i=0;i<60;i++){const p=document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia,c=p?._s.get('character'),sheet=document.querySelector('#char-splitter > .q-splitter__after');if(c?.actor.combatVitals?.armorClass===19&&c.actor.combatVitals.speed===0&&sheet?.textContent.includes('Plate and shield'))return true;await new Promise(r=>setTimeout(r,50))}return false;}`)
+  step58.reload=await evalInPage('async()=>{for(let i=0;i<60;i++){const p=document.querySelector(\'#q-app\')?.__vue_app__?.config.globalProperties.$pinia,c=p?._s.get(\'character\'),sheet=document.querySelector(\'#char-splitter > .q-splitter__after\');if(c?.actor.combatVitals?.armorClass===19&&c.actor.combatVitals.speed===0&&sheet?.textContent.includes(\'Plate and shield\'))return true;await new Promise(r=>setTimeout(r,50))}return false;}')
   console.log('Step 58 result:',JSON.stringify(step58));assert.ok(Object.values(step58).every(Boolean),'Character vital provenance failed: '+JSON.stringify(step58))
 
   consoleErrors.forEach((e) => console.error(e))

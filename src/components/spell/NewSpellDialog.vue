@@ -20,8 +20,8 @@
           ]"
         />
         <catalog-select
-          :model-value="String(level)"
           v-help="'Circle level from Cantrip (0) through 9th level for slot filtering and innate grouping.'"
+          :model-value="String(level)"
           class="col-6 q-pa-sm"
           :entries="spellLevelEntries"
           preserve-order
@@ -45,8 +45,8 @@
           @clear="classes = []"
         />
         <q-input
-          :model-value="damage"
           v-help="'Average damage per round used by the CR calculator when evaluating offensive spells.'"
+          :model-value="damage"
           class="col-6 q-pa-sm"
           type="number"
           min="0"

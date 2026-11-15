@@ -307,7 +307,7 @@ function renderSpellcastingHtmlPlates(
       return `<div class="sb-row${striped}"><div class="sb-cell sb-head">${escapeExportHtml(rateLabel)}:</div><div class="sb-cell sb-grow"><em>${escapeExportHtml(g.spells.join(', '))}</em></div></div>`
     }).join('')
     blocks.push(
-      `<div class="innate-spellcasting sb-plate">` +
+      '<div class="innate-spellcasting sb-plate">' +
       `<div class="sb-row"><div class="sb-cell sb-head">Innate Spellcasting <span class="sb-qual">(${escapeExportHtml(innateCtx.stat || 'INT')})</span></div>` +
       `<div class="sb-cell">Spell Save DC <span class="dnd-num">${innateAbility.save}</span></div>` +
       `<div class="sb-cell">Spell Attack <span class="dnd-num">${escapeExportHtml(renderBonus(innateAbility.attack))}</span></div></div>` +
@@ -333,7 +333,7 @@ function renderSpellcastingHtmlPlates(
         return `<div class="sb-row${striped}"><div class="sb-cell sb-head">${escapeExportHtml(row.heading)}</div><div class="sb-cell sb-grow">${spellList}</div></div>`
       }).join('')
       blocks.push(
-        `<div class="class-spellcasting sb-plate">` +
+        '<div class="class-spellcasting sb-plate">' +
         `<div class="sb-row"><div class="sb-cell sb-head">${escapeExportHtml(plate.title)} <span class="sb-qual">(${escapeExportHtml(plate.stat)})</span></div>` +
         `<div class="sb-cell sb-grow">Spell Save DC <span class="dnd-num">${escapeExportHtml(plate.save)}</span> · Spell Attack <span class="dnd-num">${escapeExportHtml(plate.attack)}</span></div></div>` +
         `${resourceRow}${metaRow}${levelRows}</div>`,

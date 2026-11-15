@@ -28,8 +28,9 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input v-help="$t('help.databaseStudio.varKey')"
-              v-model="newVarKey"
+            <q-input
+v-model="newVarKey"
+              v-help="$t('help.databaseStudio.varKey')"
               dense
               outlined
               dark
@@ -38,8 +39,9 @@
               class="col-12 col-sm-4"
               @keyup.enter="addVariable"
             />
-            <q-input v-help="$t('help.databaseStudio.varValue')"
-              v-model="newVarVal"
+            <q-input
+v-model="newVarVal"
+              v-help="$t('help.databaseStudio.varValue')"
               dense
               outlined
               dark
@@ -49,7 +51,8 @@
               @keyup.enter="addVariable"
             />
             <div class="col-12 col-sm-2">
-              <q-btn v-help="$t('help.databaseStudio.addVar')"
+              <q-btn
+v-help="$t('help.databaseStudio.addVar')"
                 dense
                 color="purple-5"
                 icon="add"
@@ -110,8 +113,9 @@
           </div>
 
           <div class="row q-col-gutter-xs items-center q-mb-sm">
-            <q-input v-help="$t('help.databaseStudio.macroKey')"
-              v-model="newMacroKey"
+            <q-input
+v-model="newMacroKey"
+              v-help="$t('help.databaseStudio.macroKey')"
               dense
               outlined
               dark
@@ -120,8 +124,9 @@
               class="col-12 col-sm-4"
               @keyup.enter="addMacro"
             />
-            <q-input v-help="$t('help.databaseStudio.macroBody')"
-              v-model="newMacroVal"
+            <q-input
+v-model="newMacroVal"
+              v-help="$t('help.databaseStudio.macroBody')"
               dense
               outlined
               dark
@@ -131,7 +136,8 @@
               @keyup.enter="addMacro"
             />
             <div class="col-12 col-sm-2">
-              <q-btn v-help="$t('help.databaseStudio.addMacro')"
+              <q-btn
+v-help="$t('help.databaseStudio.addMacro')"
                 dense
                 color="purple-5"
                 icon="add"
@@ -194,8 +200,9 @@
           </div>
 
           <div class="row q-gutter-x-sm items-center q-mb-md">
-            <q-input v-help="$t('help.databaseStudio.presetName')"
-              v-model="newPresetName"
+            <q-input
+v-model="newPresetName"
+              v-help="$t('help.databaseStudio.presetName')"
               dense
               outlined
               dark
@@ -203,7 +210,8 @@
               placeholder="e.g. Celestial Archon Lineage"
               class="col"
             />
-            <q-btn v-help="'Save Current Monster as Preset in the database studio.'"
+            <q-btn
+v-help="'Save Current Monster as Preset in the database studio.'"
               dense
               color="amber-4"
               text-color="grey-10"
@@ -228,7 +236,8 @@
                 </div>
               </div>
               <div class="row items-center q-gutter-x-xs">
-                <q-btn v-help="'Apply in the database studio.'"
+                <q-btn
+v-help="'Apply in the database studio.'"
                   dense
                   size="sm"
                   color="primary"
@@ -237,13 +246,13 @@
                   @click="applyPreset(preset)"
                 />
                 <q-btn
+                  v-if="!preset.isBuiltin"
                   flat
                   round
                   dense
                   size="xs"
                   icon="delete"
-                  color="negative"
-                  v-if="!preset.isBuiltin" @click="deletePreset(pIdx)"
+                  color="negative" @click="deletePreset(pIdx)"
                 />
               </div>
             </div>
@@ -260,14 +269,16 @@
           </div>
 
           <div class="row q-gutter-sm items-center q-mb-md">
-            <q-btn v-help="'Export Database JSON in the database studio.'"
+            <q-btn
+v-help="'Export Database JSON in the database studio.'"
               dense
               color="green-9"
               icon="download"
               label="Export Database JSON"
               @click="exportDatabase"
             />
-            <q-btn v-help="'Import Database JSON in the database studio.'"
+            <q-btn
+v-help="'Import Database JSON in the database studio.'"
               dense
               outline
               color="cyan-3"
@@ -284,8 +295,9 @@
             />
           </div>
 
-          <q-input v-help="$t('help.databaseStudio.jsonPayload')"
-            v-model="databaseJsonPreview"
+          <q-input
+v-model="databaseJsonPreview"
+            v-help="$t('help.databaseStudio.jsonPayload')"
             type="textarea"
             rows="6"
             outlined

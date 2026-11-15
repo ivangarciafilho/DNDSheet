@@ -20,7 +20,6 @@ import { defineComponent } from '@vue/runtime-core'
 
 export default defineComponent({
   name: 'LockToggleButton',
-  emits: ['click'],
   props: {
     locked: {
       type: Boolean,
@@ -35,6 +34,7 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: ['click'],
 })
 </script>
 

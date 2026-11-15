@@ -80,6 +80,7 @@
             <div class="row q-col-gutter-xs items-center">
               <div v-if="saves[stat]?.override" class="col-4">
                 <q-select
+                  v-help="'Type a fixed save bonus instead of the computed one.'"
                   dense
                   outlined
                   :model-value="saves[stat]?.overrideValue ?? 0"
@@ -88,8 +89,7 @@
                   map-options
                   use-input
                   fill-input
-                  hide-selected
-                  label="Override" v-help="'Type a fixed save bonus instead of the computed one.'"
+                  hide-selected label="Override"
                   new-value-mode="add-unique"
                   @input-value="(val) => (monster.saves[stat].overrideValue = validateNumber(val, 0))"
                   @update:model-value="(val) => (monster.saves[stat].overrideValue = validateNumber(val, 0))"
@@ -97,10 +97,10 @@
               </div>
               <div :class="saves[stat]?.override ? 'col-8' : 'col-12'">
                 <mechanic-text-editor
-                  dense
-                  outlined
                   v-model="monster.saves[stat].condition"
-                  label="Condition / Trigger" v-help="'When the save bonus or advantage applies, e.g. “against being frightened”.'"
+                  v-help="'When the save bonus or advantage applies, e.g. “against being frightened”.'"
+                  dense
+                  outlined label="Condition / Trigger"
                   placeholder="e.g. vs spells, vs poison"
                   clearable
                 />

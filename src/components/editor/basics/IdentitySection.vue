@@ -2,6 +2,7 @@
   <div>
     <!-- 1. Monster Portrait & A4 Composition -->
     <q-expansion-item
+      v-help="'Artwork placement, local upload, and A4 composition settings for this creature.'"
       dense
       dense-toggle
       expand-separator
@@ -9,24 +10,23 @@
       style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
       icon="photo_camera"
       label="Monster Portrait"
-      v-help="'Artwork placement, local upload, and A4 composition settings for this creature.'"
       caption="Add creature illustration to the left or right of the stat block"
     >
       <div class="q-pa-sm">
         <div class="row q-col-gutter-xs items-center">
           <catalog-select
             v-model="portrait.position"
+            v-help="$t('help.identity.portraitPosition')"
             :entries="PORTRAIT_POSITION_ENTRIES"
             :searchable="false"
             preserve-order
             label="Portrait Position"
-            v-help="$t('help.identity.portraitPosition')"
             class="col-12 col-sm-4"
           />
           <q-input
             v-model="portrait.url"
-            label="Image URL or Data URI"
             v-help="'Web address or embedded data URI for the monster portrait.'"
+            label="Image URL or Data URI"
             dense
             outlined
             class="col-12 col-sm-8"
@@ -38,8 +38,8 @@
           <div class="col-12 col-sm-6">
             <q-file
               v-model="portraitFile"
-              label="Upload local image (100% offline)"
               v-help="'Embed an image file from disk directly into this creature without network access.'"
+              label="Upload local image (100% offline)"
               dense
               outlined
               accept="image/*"
@@ -172,8 +172,8 @@
     <div class="row q-col-gutter-xs items-center">
       <q-input
         v-model="monster.name"
-        :label="$t('monster.name')"
         v-help="'Primary creature name printed in the stat block header and saved in the creature library.'"
+        :label="$t('monster.name')"
         class="col-12 col-sm-6"
         debounce="500"
         outlined
@@ -181,8 +181,8 @@
       />
       <q-input
         v-model="monster.nickname"
-        :label="$t('monster.nickname')"
         v-help="'Short informal name substituted wherever nickname tokens appear in traits or actions.'"
+        :label="$t('monster.nickname')"
         class="col-12 col-sm-6"
         debounce="500"
         outlined
@@ -194,11 +194,11 @@
     <div class="row q-col-gutter-xs items-center q-mt-xs">
       <catalog-select
         v-if="!monster.useCrDisplayOverride"
+        v-help="'Challenge Rating governing XP reward, default Proficiency Bonus, and CR presets.'"
         :model-value="monster.CR"
         :entries="CR_ENTRIES"
         preserve-order
         :label="$t('monster.cr')"
-        v-help="'Challenge Rating governing XP reward, default Proficiency Bonus, and CR presets.'"
         class="col-12 col-sm-6"
         @update:model-value="(value) => monster.setCR(typeof value === 'number' ? value : Number(value ?? 0))"
       >
@@ -214,8 +214,8 @@
       <q-input
         v-else
         v-model="monster.crOverride"
-        :label="$t('monster.cr')"
         v-help="'Custom text displayed instead of the standard Challenge Rating and XP calculation.'"
+        :label="$t('monster.cr')"
         class="col-12 col-sm-6"
         outlined
         dense
@@ -231,9 +231,9 @@
       </q-input>
 
       <formula-field
+        v-help="'Proficiency Bonus added to proficient saves, skills, and attacks unless overridden.'"
         path="proficiency"
         :label="$t('monster.proficiencyBonus')"
-        v-help="'Proficiency Bonus added to proficient saves, skills, and attacks unless overridden.'"
         class="col-12 col-sm-6"
         :disable="!monster.proficiencyOverride"
         outlined
@@ -252,11 +252,11 @@
 
       <div class="col-auto editor-fit-wrap">
         <q-btn-toggle
+          v-help="'Switch auto-calculated Proficiency Bonus between CR-based monster scaling and HD-based character scaling.'"
           :model-value="monster.proficiencyScale || 'monster'"
           :options="[{ label: 'Monster (CR)', value: 'monster' }, { label: 'Character (HD)', value: 'character' }]"
           :disable="monster.proficiencyOverride"
           aria-label="Proficiency scale"
-          v-help="'Switch auto-calculated Proficiency Bonus between CR-based monster scaling and HD-based character scaling.'"
           data-proficiency-scale
           dense
           no-caps
@@ -267,18 +267,18 @@
 
       <catalog-select
         v-if="!monster.useCrDisplayOverride"
+        v-help="'Challenge Rating when encountered inside its lair; select None if unchanged.'"
         :model-value="monster.lairCr"
         :entries="LAIR_CR_ENTRIES"
         preserve-order
         :label="$t('monster.lairCr')"
-        v-help="'Challenge Rating when encountered inside its lair; select None if unchanged.'"
         class="col-12 col-sm-4"
         @update:model-value="(value) => (monster.lairCr = typeof value === 'number' ? value : Number(value ?? -1))"
       />
       <mechanic-text-editor
         v-model="monster.lairCrNote"
-        :label="$t('monster.lairCrNote')"
         v-help="'Short qualifier printed beside lair CR in the header (for example in lair).'"
+        :label="$t('monster.lairCrNote')"
         :disable="monster.lairCr === -1"
         class="col-12 col-sm-8"
         debounce="500"
@@ -288,15 +288,15 @@
       <div class="col-12 editor-fit-wrap items-center q-my-xs">
         <q-toggle
           v-model="monster.showXp"
-          label="Show XP on Nameplate"
           v-help="'Disclose calculated XP value next to the Challenge Rating on the stat block nameplate.'"
+          label="Show XP on Nameplate"
           dense
           color="amber-9"
         />
         <q-toggle
           v-model="monster.compactNameplate"
-          label="Compact Nameplate Layout"
           v-help="'Fit creature name, type, alignment, and CR into fewer header lines.'"
+          label="Compact Nameplate Layout"
           dense
           color="amber-9"
         />
@@ -323,8 +323,8 @@
         @update:model-value="(val) => (monster.type = String(val || ''))"
       />
       <q-input
-        v-help="$t('help.identity.subtype')"
         v-model="monster.subtype"
+        v-help="$t('help.identity.subtype')"
         label="Subtype Tag"
         class="col-6 col-sm-2"
         outlined
@@ -332,12 +332,12 @@
         placeholder="e.g. shapechanger"
       />
       <catalog-select
+        v-help="'Optional species template; pre-populates typical traits, speeds, and senses.'"
         :model-value="selectedSpecies"
         :entries="SPECIES_ENTRIES"
         preserve-order
         clearable
         label="Species / Lineage"
-        v-help="'Optional species template; pre-populates typical traits, speeds, and senses.'"
         class="col-6 col-sm-3"
         @update:model-value="(val) => { const next = val ? String(val) : null; selectedSpecies = next; onSpeciesSelected(next) }"
       >

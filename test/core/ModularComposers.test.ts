@@ -2,20 +2,11 @@ import test from 'node:test'
 import assert from 'node:assert/strict'
 import {
   composePermutableAcString,
-  formatAcAttackerSave,
-  formatPermutableAcClause,
-  type PermutableAcCondition,
-} from '../../src/core/domain/ac-defense-composer.ts'
+  type PermutableAcCondition } from '../../src/core/domain/ac-defense-composer.ts'
 import {
-  composeHpSurvivalString,
-  formatHpSurvivalRule,
-  type HpSurvivalRule,
-} from '../../src/core/domain/hp-defense-composer.ts'
+  composeHpSurvivalString } from '../../src/core/domain/hp-defense-composer.ts'
 import {
-  composeSpeedWithRiders,
-  formatTraversalCunningRider,
-  type TraversalCunningRider,
-} from '../../src/core/domain/speeds-traversal.ts'
+  composeSpeedWithRiders } from '../../src/core/domain/speeds-traversal.ts'
 
 test('Modular Composers - Armor Class 8 Permutations Suite', () => {
   // Sample 1: Attacker Save with creature advantage and success/failure outcomes

@@ -42,6 +42,7 @@
             </div>
             <div v-if="sense.name !== 'Detect Magic'" class="col-auto row items-center q-gutter-xs">
               <q-select
+                v-help="'How far the sense reaches, in the unit chosen next to it.'"
                 :model-value="sense.range"
                 :options="senseRangePresets"
                 use-input
@@ -49,16 +50,15 @@
                 hide-selected
                 dense
                 outlined
-                label="Range"
-                  v-help="'How far the sense reaches, in the unit chosen next to it.'"
+                  label="Range"
                 style="width: 105px;"
                 new-value-mode="add-unique"
                 @input-value="(val) => (sense.range = validateNumber(val, 0))"
                 @update:model-value="(val) => (sense.range = validateNumber(val, 0))"
               />
               <catalog-select
-                :model-value="sense.rangeUnit"
                 v-help="'Feet for most senses; miles for very long ranges such as Life Sense.'"
+                :model-value="sense.rangeUnit"
                 :entries="rangeUnitEntries"
                 preserve-order
                 :searchable="false"
@@ -89,9 +89,9 @@
             <div class="col-auto">
               <q-checkbox
                 v-model="sense.blindBeyond"
+                v-help="'The creature is blind past this range, like a grimlock relying on blindsight.'"
                 dense
-                label="Blind beyond it (Grimlock / Grell)"
-                  v-help="'The creature is blind past this range, like a grimlock relying on blindsight.'"
+                  label="Blind beyond it (Grimlock / Grell)"
                 color="teal"
                 class="text-caption"
               />
@@ -99,9 +99,9 @@
             <div class="col-auto">
               <q-checkbox
                 v-model="sense.acrossPlanes"
+                v-help="'The sense also works into the Ethereal Plane, as with Ethereal Sight.'"
                 dense
-                label="Across Material & Ethereal planes"
-                  v-help="'The sense also works into the Ethereal Plane, as with Ethereal Sight.'"
+                  label="Across Material & Ethereal planes"
                 color="indigo"
                 class="text-caption"
               />
@@ -112,9 +112,9 @@
               <div class="col-auto">
                 <q-checkbox
                   v-model="sense.echolocation"
+                  v-help="'Blindsight from echolocation: it does not work while the creature is deafened.'"
                   dense
                   label="Echolocation / Can't while deafened (Bat)"
-                  v-help="'Blindsight from echolocation: it does not work while the creature is deafened.'"
                   color="teal"
                   class="text-caption"
                 />
@@ -126,17 +126,17 @@
               <div class="col-auto">
                 <q-checkbox
                   v-model="sense.devilsSight"
+                  v-help="'Sees normally in magical and nonmagical darkness within range.'"
                   dense
                   label="Ignore Magical Darkness (Devil's Sight)"
-                  v-help="'Sees normally in magical and nonmagical darkness within range.'"
                   color="purple"
                   class="text-caption"
                 />
               </div>
               <div class="col-12 col-sm-4">
                 <catalog-select
-                  :model-value="sense.lightImpairment ?? 'none'"
                   v-help="'Sunlight or bright-light sensitivity that blinds or hinders the creature.'"
+                  :model-value="sense.lightImpairment ?? 'none'"
                   :entries="lightImpairmentOptions"
                   preserve-order
                   :searchable="false"
@@ -150,8 +150,8 @@
             <template v-if="sense.name.toLowerCase().includes('sentience')">
               <div class="col-12 col-sm-5">
                 <catalog-select
-                  :model-value="sense.senseSentienceMode ?? 'location_intelligent'"
                   v-help="'What the sense detects: any thinking creature or only some kinds.'"
+                  :model-value="sense.senseSentienceMode ?? 'location_intelligent'"
                   :entries="senseSentienceOptions"
                   preserve-order
                   :searchable="false"
@@ -165,8 +165,8 @@
             <template v-if="sense.name.toLowerCase().includes('life') || sense.name.toLowerCase().includes('divine')">
               <div class="col-12 col-sm-4">
                 <catalog-select
-                  :model-value="sense.detectionMode ?? 'presence'"
                   v-help="'Presence only, or exact location of what it senses.'"
+                  :model-value="sense.detectionMode ?? 'presence'"
                   :entries="detectionModeOptions"
                   preserve-order
                   :searchable="false"
@@ -176,8 +176,8 @@
               </div>
               <div class="col-12 col-sm-8">
                 <catalog-select
-                  :model-value="sense.targetCreatureTypes ?? []"
                   v-help="'Creature types the sense reveals, such as celestials, fiends and undead.'"
+                  :model-value="sense.targetCreatureTypes ?? []"
                   :entries="creatureTypeEntries"
                   multiple
                   use-chips
@@ -188,8 +188,8 @@
               </div>
               <div class="col-12 col-sm-6">
                 <catalog-select
-                  :model-value="sense.perceivedStats ?? []"
                   v-help="'Facts the creature learns about a target it studies.'"
+                  :model-value="sense.perceivedStats ?? []"
                   :entries="perceivedStatsEntries"
                   preserve-order
                   multiple
@@ -201,8 +201,8 @@
               </div>
               <div class="col-12 col-sm-3">
                 <catalog-select
-                  :model-value="sense.perceptionPrecision ?? 'detailed'"
                   v-help="'How exact the learned facts are: rough, relative or exact.'"
+                  :model-value="sense.perceptionPrecision ?? 'detailed'"
                   :entries="perceptionPrecisionOptions"
                   preserve-order
                   :searchable="false"
@@ -212,8 +212,8 @@
               </div>
               <div class="col-12 col-sm-3">
                 <catalog-select
-                  :model-value="sense.observationRequirement ?? 'none'"
                   v-help="'Whether the creature must watch the target first, and how.'"
+                  :model-value="sense.observationRequirement ?? 'none'"
                   :entries="observationRequirementOptions"
                   preserve-order
                   :searchable="false"
@@ -233,9 +233,9 @@
               <div class="col-auto">
                 <q-checkbox
                   v-model="sense.requiresStudyAction"
+                  v-help="'The creature must take the Study action to use this sense.'"
                   dense
                   label="Requires Study action"
-                  v-help="'The creature must take the Study action to use this sense.'"
                   color="amber"
                   class="text-caption"
                 />
@@ -260,10 +260,10 @@
             <div class="col-12 col-sm">
               <mechanic-text-editor
                 v-model="sense.note"
+                v-help="'Any extra condition, written as it should read on the sheet.'"
                 dense
                 outlined
-                label="Condition / Custom Trigger"
-                  v-help="'Any extra condition, written as it should read on the sheet.'"
+                  label="Condition / Custom Trigger"
                 placeholder="e.g. while submerged, stone contact only"
               />
             </div>

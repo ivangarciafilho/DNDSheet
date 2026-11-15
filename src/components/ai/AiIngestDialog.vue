@@ -5,7 +5,7 @@
         <q-icon name="auto_awesome" size="sm" class="q-mr-sm" />
         <div class="text-h6">AI Statblock Ingest Studio</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn v-close-popup icon="close" flat round dense />
       </q-card-section>
 
       <q-card-section class="col scroll q-pt-md">
@@ -86,7 +86,7 @@
       <q-separator />
 
       <q-card-actions align="right" class="q-pa-md" style="background: rgba(255, 255, 255, 0.04); border-top: 1px solid rgba(255, 255, 255, 0.1);">
-        <q-btn flat label="Cancel" color="grey-5" v-close-popup />
+        <q-btn v-close-popup flat label="Cancel" color="grey-5" />
         <q-btn
           unelevated
           color="primary"

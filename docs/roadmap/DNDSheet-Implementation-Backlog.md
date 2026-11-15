@@ -1084,6 +1084,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 ### Track C · v2.6+ Forward Roadmap (Post-v2.5.0 & Build 251 Backlog Audit)
 
 > **Build 252** ([packet](DNDSheet-Build252-Track-C-Closeouts.md)): `C9` ✅ version `2.5.0` and spec statuses; `C12` ✅ one shared SPA/Pages browser suite and legacy scripts removed; `C10` ◐ (`BS-39` paired range ✅, Improved Initiative advantage ✅, stale TODOs cleared; remaining notes fold into `C5`/`C1b`).
+>
+> **Build 253** ([packet](DNDSheet-Build253-Lint-Burndown.md)): `C3` ◐ ESLint warnings `2,733 → 282` (−89.7 %; all auto-fixable cleared, unused `40 → 4`); the remainder is `any`/non-null (→ `C8`), intentional sanitized `v-html`, and per-component emits review.
+>
+> **Track C status after Build 253:** ✅ `C9`, `C12` · ◐ `C3`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C8`, `C11` · owner `C7` (`B5.7`, `H16`).
 
 > Track A and Track B executable engineering work is complete (`311/313` raw checkboxes; only owner-gated `B5.7` and `H16` open). This **Track C / v2.6+** planning queue merges Build 250 telemetry with the post-Build-251 multi-agent (`debate-council`) codebase and specification delta audit. *(Kept as a planning table outside the `[ABH]` checkbox ledger so Track A/B closure metrics stay invariant.)*
 

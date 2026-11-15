@@ -32,10 +32,10 @@
           <div class="col-4">
             <formula-field
               v-if="entryCollection && entryId && draftModel"
+              v-help="'How many attack or action rolls are made, distinct from targets and beams.'"
               :path="fieldPath('rollCount')"
               label="Roll Count"
               :draft-model="draftModel"
-              v-help="'How many attack or action rolls are made, distinct from targets and beams.'"
               dense
               outlined
               clearable
@@ -45,10 +45,10 @@
           <div class="col-4">
             <formula-field
               v-if="entryCollection && entryId && draftModel"
+              v-help="'Independent projectile or beam count (separate from target count).'"
               :path="fieldPath('beamCount')"
               label="Beams / Rays"
               :draft-model="draftModel"
-              v-help="'Independent projectile or beam count (separate from target count).'"
               dense
               outlined
               clearable
@@ -58,10 +58,10 @@
           <div class="col-4">
             <formula-field
               v-if="entryCollection && entryId && draftModel"
+              v-help="'Multiplier applied per hit without altering target or beam count.'"
               :path="fieldPath('damageMultiplier')"
               label="Dmg Multiplier"
               :draft-model="draftModel"
-              v-help="'Multiplier applied per hit without altering target or beam count.'"
               dense
               outlined
               clearable
@@ -74,23 +74,23 @@
           <div class="col-5">
             <catalog-select
               v-model="draft.source"
+              v-help="'Which progression stat drives tier scaling (Fixed, CR, Hit Dice, Level, or Custom).'"
               :entries="sourceOptions"
               preserve-order
               :searchable="false"
               dark
               label="Scaling Source"
-              v-help="'Which progression stat drives tier scaling (Fixed, CR, Hit Dice, Level, or Custom).'"
             />
           </div>
           <div class="col-7">
             <q-input
               v-model="draft.sourceLabel"
+              v-help="'Explains where the scaling count or multiplier comes from at the table.'"
               dense
               outlined
               dark
               label="Provenance Note"
               placeholder="e.g. Cantrip tiers by CR"
-              v-help="'Explains where the scaling count or multiplier comes from at the table.'"
             />
           </div>
         </div>
@@ -99,23 +99,23 @@
           <div class="col-5">
             <catalog-select
               v-model="draft.rollMode"
+              v-help="'Advantage or disadvantage specifically on attack rolls (kept separate from saves).'"
               :entries="modeOptions"
               preserve-order
               :searchable="false"
               dark
               label="Attack Roll Mode"
-              v-help="'Advantage or disadvantage specifically on attack rolls (kept separate from saves).'"
             />
           </div>
           <div class="col-7">
             <q-input
               v-model="draft.rollCondition"
+              v-help="'Optional condition under which attack roll advantage or disadvantage applies.'"
               dense
               outlined
               dark
               label="Roll Condition"
               placeholder="e.g. against Undead"
-              v-help="'Optional condition under which attack roll advantage or disadvantage applies.'"
             />
           </div>
         </div>
@@ -124,23 +124,23 @@
           <div class="col-5">
             <catalog-select
               v-model="draft.saveMode"
+              v-help="'Advantage or disadvantage specifically on target saving throws (kept separate from attack rolls).'"
               :entries="modeOptions"
               preserve-order
               :searchable="false"
               dark
               label="Target Save Mode"
-              v-help="'Advantage or disadvantage specifically on target saving throws (kept separate from attack rolls).'"
             />
           </div>
           <div class="col-7">
             <q-input
               v-model="draft.saveCondition"
+              v-help="'Optional condition under which target saving throws have advantage or disadvantage.'"
               dense
               outlined
               dark
               label="Save Condition"
               placeholder="e.g. if blinded"
-              v-help="'Optional condition under which target saving throws have advantage or disadvantage.'"
             />
           </div>
         </div>

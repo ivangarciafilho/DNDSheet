@@ -3,10 +3,8 @@ import { mechanicPlainText, mechanicRichHtml } from 'src/core/domain/mechanic-ri
 import { castingLearningSummary, hasCastingSources } from 'src/core/usecases/AutoSyncSpellcasting'
 import { buildCastingProjection } from 'src/core/domain/casting-projection'
 import { useSpellsStore } from 'src/stores/spells-store'
-import { castingResourceView, castingResourceSummary } from 'src/core/domain/casting-resource-view'
 import { entryMatchesStagePool } from 'src/core/domain/entry-display'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
-import { cadenceLabel } from 'src/core/domain/catalogs/cadence'
 import {
   formatDefenseItem,
   formatDefenseList,
@@ -20,8 +18,7 @@ import {
   composeInvulnerabilityRuling,
   resolveInvulnerabilityDisplayLocation,
   composeAcAndDefenses,
-  DynamicValueContext,
-} from 'src/core/domain/defense-and-traits-utils'
+  DynamicValueContext } from 'src/core/domain/defense-and-traits-utils'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { cleanPunctuation, formatDistanceUnit } from 'src/core/domain/number-grammar'
 import { CR } from 'src/data/CR'
@@ -61,7 +58,6 @@ import type {
 } from 'src/core/domain/skill-action-groups'
 import { advHtml, condHtml, escapeHtml, htmlToText, numHtml } from './advFormat'
 import { describePools } from 'src/core/domain/paragon-pools'
-import { spellNameWithCadence } from 'src/core/domain/spell-plate'
 import { formatSpeedActionRider } from 'src/core/domain/speeds-traversal'
 
 // rendering strings for whatever needs it; exports pass `web: false` for prose in every template

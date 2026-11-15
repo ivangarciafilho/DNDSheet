@@ -25,9 +25,9 @@ test('gate requires every named step once including typecheck, all successful', 
 
 
 test('global compiler errors and unrecognized output fail closed', () => {
-  assert.throws(() => parseCompilerOutput("error TS5103: Invalid value for ignoreDeprecations."), /unrecognized/)
-  assert.throws(() => parseCompilerOutput("src/a.ts(1,1): error TS2322: mismatch\ncompiler crashed"), /unrecognized/)
-  assert.equal(parseCompilerOutput("src/a.ts(1,1): error TS2322: mismatch\n  Detail.").length, 1)
+  assert.throws(() => parseCompilerOutput('error TS5103: Invalid value for ignoreDeprecations.'), /unrecognized/)
+  assert.throws(() => parseCompilerOutput('src/a.ts(1,1): error TS2322: mismatch\ncompiler crashed'), /unrecognized/)
+  assert.equal(parseCompilerOutput('src/a.ts(1,1): error TS2322: mismatch\n  Detail.').length, 1)
 })
 
 
@@ -70,7 +70,7 @@ test('compiler omitted-member counts do not create diagnostic churn', () => {
 
 test('a reordered string-literal union is the same diagnostic, a changed one is new', () => {
   const at = (message: string) => ({ file: 'src/a.vue', code: 'TS2322', message })
-  const baseline = [at(`Type 'string' is not assignable to type '"all" | "legendary" | "reaction" | "trait"'.`)]
-  assert.equal(compareDiagnostics([at(`Type 'string' is not assignable to type '"all" | "legendary" | "trait" | "reaction"'.`)], baseline).added.length, 0)
-  assert.equal(compareDiagnostics([at(`Type 'string' is not assignable to type '"all" | "legendary" | "trait" | "lair"'.`)], baseline).added.length, 1)
+  const baseline = [at('Type \'string\' is not assignable to type \'"all" | "legendary" | "reaction" | "trait"\'.')]
+  assert.equal(compareDiagnostics([at('Type \'string\' is not assignable to type \'"all" | "legendary" | "trait" | "reaction"\'.')], baseline).added.length, 0)
+  assert.equal(compareDiagnostics([at('Type \'string\' is not assignable to type \'"all" | "legendary" | "trait" | "lair"\'.')], baseline).added.length, 1)
 })
