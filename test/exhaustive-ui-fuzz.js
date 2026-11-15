@@ -2614,7 +2614,9 @@ async function runFuzz() {
       const ready = await evalInPage(`() => {
         const pinia = document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia;
         const editor = pinia?._s.get('editor');
-        return performance.timeOrigin !== ${JSON.stringify(previousOrigin)} && !!editor && !!pinia._s.get(editor.activeMode === 'character' ? 'character' : 'monster');
+        return performance.timeOrigin !== ${JSON.stringify(previousOrigin)} && !!editor && !!pinia._s.get(editor.activeMode === 'character' ? 'character' : 'monster') &&
+          !!document.querySelector('header button .mdi-folder-open') &&
+          !!(editor.activeMode === 'character' ? document.querySelector('#char-splitter') : document.querySelector('#render .statblock'));
       }`)
       if (ready) return
     }
