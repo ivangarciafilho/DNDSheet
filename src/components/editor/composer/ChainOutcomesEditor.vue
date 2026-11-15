@@ -102,7 +102,8 @@
               no-caps
               unelevated
               size="sm"
-              toggle-color="amber-9"
+              toggle-color="amber-4"
+              toggle-text-color="grey-10"
               color="grey-8"
               @update:model-value="(kind: 'damage' | 'text') => setEffect(outcome.id, effectIndex, { kind })"
             />

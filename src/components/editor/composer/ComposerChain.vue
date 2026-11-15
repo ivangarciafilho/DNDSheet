@@ -22,7 +22,7 @@
           v-if="row.row === 'trigger' && reaction"
           :model-value="reaction.triggerPlacement === 'end' ? 'end' : 'start'"
           data-trigger-placement
-          dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-9"
+          dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-9"
           :options="[{ label: 'Before text', value: 'start' }, { label: 'After text', value: 'end' }]"
           aria-label="Trigger placement in the printed text"
           @update:model-value="(value: string) => commit('trigger-placement', value)"

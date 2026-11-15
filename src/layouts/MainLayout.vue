@@ -44,12 +44,14 @@
 
           <q-btn
             dense
-            flat
+            unelevated
+            rounded
             no-caps
             size="sm"
-            class="save-status-pill"
+            class="save-status-pill q-px-sm"
             :data-save-status="repoStore.saveStatus"
-            :color="saveStatusColor"
+            color="grey-10"
+            :text-color="saveStatusColor"
             :icon="saveStatusIcon"
             :label="$q.screen.gt.xs ? saveStatusText : undefined"
             :aria-label="`Save status: ${saveStatusText}`"
@@ -132,7 +134,8 @@
             dense
             rounded
             unelevated
-            :color="editorStore.style === '2024' ? 'purple-9' : 'amber-9'"
+            :color="editorStore.style === '2024' ? 'purple-9' : 'amber-4'"
+            :text-color="editorStore.style === '2024' ? 'white' : 'grey-10'"
             :label="editorStore.style === '2024' ? 'D&D 2024' : 'D&D 2014'"
             class="text-weight-bold text-caption q-px-sm"
             @click="editorStore.style = editorStore.style === '2024' ? '2014' : '2024'"
@@ -143,10 +146,11 @@
           <!-- AI Ingest Studio -->
           <q-btn
             round
-            flat
+            unelevated
             dense
             icon="auto_awesome"
-            color="amber-4"
+            color="grey-10"
+            text-color="amber-3"
             @click="showAiIngest = true"
           >
             <q-tooltip>AI Statblock Ingest Studio</q-tooltip>
@@ -155,10 +159,11 @@
           <!-- Combat HUD -->
           <q-btn
             round
-            flat
+            unelevated
             dense
             icon="mdi-sword-cross"
-            color="deep-orange-4"
+            color="grey-10"
+            text-color="deep-orange-3"
             @click="showCombatHud = !showCombatHud"
           >
             <q-tooltip>Combat Tracker HUD</q-tooltip>
@@ -266,10 +271,12 @@
           <!-- A4 Sheet 1:1 Preview Toggle -->
           <q-btn
             round
-            flat
+            :flat="!editorStore.a4PreviewMode"
+            :unelevated="editorStore.a4PreviewMode"
             dense
             :icon="editorStore.a4PreviewMode ? 'picture_as_pdf' : 'description'"
-            :color="editorStore.a4PreviewMode ? 'amber-4' : 'grey-4'"
+            :color="editorStore.a4PreviewMode ? 'grey-10' : 'white'"
+            :text-color="editorStore.a4PreviewMode ? 'amber-3' : undefined"
             @click="editorStore.a4PreviewMode = !editorStore.a4PreviewMode"
           >
             <q-tooltip>Toggle A4 Sheet 1:1 Print Preview (210×297mm)</q-tooltip>
@@ -482,15 +489,15 @@ export default defineComponent({
     const saveStatusColor = computed(() => {
       switch (repoStore.saveStatus) {
         case 'saved':
-          return 'positive'
+          return 'green-3'
         case 'saving':
-          return 'info'
+          return 'cyan-3'
         case 'error':
-          return 'negative'
+          return 'red-3'
         case 'read_only':
-          return 'warning'
+          return 'amber-3'
         default:
-          return 'grey-5'
+          return 'grey-3'
       }
     })
 

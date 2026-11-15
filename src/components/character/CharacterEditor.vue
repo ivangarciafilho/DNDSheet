@@ -244,7 +244,8 @@
                   <span class="text-caption text-grey-5">({{ skill.stat }})</span>
                 </div>
                 <q-badge
-                  :color="actor.skills && actor.skills[skill.name]?.expertise ? 'amber-9' : actor.skills && actor.skills[skill.name]?.proficient ? 'teal-9' : 'grey-8'"
+                  :color="actor.skills && actor.skills[skill.name]?.expertise ? 'amber-4' : actor.skills && actor.skills[skill.name]?.proficient ? 'teal-9' : 'grey-8'"
+                  :text-color="actor.skills && actor.skills[skill.name]?.expertise ? 'grey-10' : 'white'"
                   class="text-weight-bold"
                 >
                   {{ formatMod(charStore.getSkillModifier(skill.name, skill.stat)) }}

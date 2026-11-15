@@ -191,14 +191,14 @@
               <div class="text-caption text-weight-bold text-grey-8">DEATH SAVES</div>
               <div class="text-caption q-mt-xs">
                 <div>
-                  <span class="text-positive text-weight-bold">
-                    <span v-for="i in 3" :key="`ds-s-${i}`" :class="actor.deathSaves.successes >= i ? 'text-positive' : 'text-grey-5'">● </span>
+                  <span class="text-green-9 text-weight-bold">
+                    <span v-for="i in 3" :key="`ds-s-${i}`" :class="actor.deathSaves.successes >= i ? 'text-green-9' : 'text-grey-8'">● </span>
                   </span>
                   Succ
                 </div>
                 <div>
                   <span class="text-negative text-weight-bold">
-                    <span v-for="i in 3" :key="`ds-f-${i}`" :class="actor.deathSaves.failures >= i ? 'text-negative' : 'text-grey-5'">✕ </span>
+                    <span v-for="i in 3" :key="`ds-f-${i}`" :class="actor.deathSaves.failures >= i ? 'text-negative' : 'text-grey-8'">✕ </span>
                   </span>
                   Fail
                 </div>
@@ -230,7 +230,7 @@
                   <span :class="{ 'text-weight-bold': actor.skills && actor.skills[skill.name]?.proficient }">
                     {{ skill.name }}
                   </span>
-                  <span class="text-grey-6 text-2xs">({{ skill.stat }})</span>
+                  <span class="text-grey-8 text-2xs">({{ skill.stat }})</span>
                 </div>
                 <span class="text-weight-bold">
                   {{ formatMod(charStore.getSkillModifier(skill.name, skill.stat)) }}
@@ -245,7 +245,7 @@
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs">
             FEATURES & TRAITS
           </div>
-          <div v-if="actor.features.length === 0" class="text-caption text-grey-6 text-italic">
+          <div v-if="actor.features.length === 0" class="text-caption text-grey-8 text-italic">
             No features added yet.
           </div>
           <div
@@ -283,15 +283,15 @@
           </div>
           <div class="row q-col-gutter-xs text-center q-mb-xs">
             <div class="col-4">
-              <div class="text-2xs text-grey-7">ABILITY</div>
+              <div class="text-2xs text-grey-8">ABILITY</div>
               <div class="text-caption text-weight-bolder">{{ actor.spellcasting?.ability || 'INT' }}</div>
             </div>
             <div class="col-4">
-              <div class="text-2xs text-grey-7">SAVE DC</div>
+              <div class="text-2xs text-grey-8">SAVE DC</div>
               <div class="text-caption text-weight-bolder text-red-10">{{ computedSpellSaveDc }}</div>
             </div>
             <div class="col-4">
-              <div class="text-2xs text-grey-7">ATTACK</div>
+              <div class="text-2xs text-grey-8">ATTACK</div>
               <div class="text-caption text-weight-bolder text-red-10">{{ formatMod(computedSpellAttackBonus) }}</div>
             </div>
           </div>
@@ -327,11 +327,11 @@
               <div>
                 <span v-if="sp.prepared" class="text-teal-9 text-weight-bold">★ </span>
                 <span class="text-weight-bold">{{ sp.name }}</span>
-                <span class="text-grey-7 text-2xs q-ml-xs">
+                <span class="text-grey-8 text-2xs q-ml-xs">
                   ({{ sp.level === 0 ? 'Cantrip' : `Lvl ${sp.level}` }})
                 </span>
               </div>
-              <div v-if="sp.notes" class="text-2xs text-grey-6 text-italic" v-html="printed(sp.notes)"></div>
+              <div v-if="sp.notes" class="text-2xs text-grey-8 text-italic" v-html="printed(sp.notes)"></div>
             </div>
           </div>
         </div>
@@ -342,11 +342,11 @@
             <div class="text-overline text-weight-bold text-red-10">
               EQUIPMENT
             </div>
-            <div class="text-caption text-grey-7">
+            <div class="text-caption text-grey-8">
               {{ totalWeight }} / {{ actor.stats.STR * 15 }} lb
             </div>
           </div>
-          <div v-if="actor.inventory.length === 0" class="text-caption text-grey-6 text-italic">
+          <div v-if="actor.inventory.length === 0" class="text-caption text-grey-8 text-italic">
             No items in inventory.
           </div>
           <q-list dense>
@@ -362,7 +362,7 @@
                 </q-item-label>
               </q-item-section>
               <q-item-section side>
-                <q-badge color="grey-6">x{{ item.quantity }}</q-badge>
+                <q-badge color="grey-8">x{{ item.quantity }}</q-badge>
               </q-item-section>
             </q-item>
           </q-list>
@@ -435,6 +435,7 @@ export default defineComponent({
 <style scoped>
 .parchment-bg {
   background-color: #fdf6e2;
+  color: #212121;
   border: 1px solid #d4c5a9;
   border-radius: 4px;
 }

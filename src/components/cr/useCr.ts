@@ -7,13 +7,13 @@ import type { Monster } from 'src/core/domain/types'
 import { renderBonus } from '../rendering/mathRendering'
 
 export const ACTION_COLOR: Record<string, string> = {
-  HP: 'green-8',
+  HP: 'green-9',
   Attack: 'red-10',
   Multiattack: 'red-10',
   LimitedMultiattack: 'red-10',
-  Action: 'amber-10',
+  Action: 'deep-orange-10',
   Trait: 'teal-10',
-  Legendary: 'cyan-8',
+  Legendary: 'cyan-10',
   Spell: 'purple-10',
   'Lair Action': 'blue-10',
 }

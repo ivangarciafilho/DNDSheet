@@ -147,8 +147,8 @@
                 <span class="text-strike text-grey-5">{{ rec.currentValue }}</span>
                 <span>→</span>
                 <strong class="text-primary">{{ rec.recommendedValue }}</strong>
-                <q-badge v-if="rec.sourceBacked" color="teal-7" label="Source-First" />
-                <q-badge v-if="rec.boundPath" color="amber-8" :label="`Bound: ${rec.boundPath}`" />
+                <q-badge v-if="rec.sourceBacked" color="teal-8" label="Source-First" />
+                <q-badge v-if="rec.boundPath" color="amber-4" text-color="grey-10" :label="`Bound: ${rec.boundPath}`" />
               </q-item-label>
               <q-item-label caption>
                 {{ rec.explanation }}
@@ -159,7 +159,7 @@
       </q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-pb-md">
-        <q-btn v-close-popup flat label="Cancel" color="grey-6" />
+        <q-btn v-close-popup flat label="Cancel" color="grey-4" />
         <q-btn
           unelevated
           color="primary"

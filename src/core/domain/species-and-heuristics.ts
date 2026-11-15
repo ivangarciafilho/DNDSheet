@@ -95,7 +95,7 @@ export const MONSTER_ROLE_ARCHETYPES: Record<string, MonsterRoleArchetype> = {
     id: 'controller',
     label: 'Controller',
     icon: 'psychology',
-    color: 'purple',
+    color: 'purple-3',
     stats: { STR: 8, DEX: 12, CON: 14, INT: 18, WIS: 16, CHA: 12 },
     description: 'High casting stat; alters the battlefield, inflicts conditions, and disables enemies.',
   },

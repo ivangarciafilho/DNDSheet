@@ -5,7 +5,7 @@
     icon="mdi-movie-open"
     label="Actions &amp; Traits Studio"
     caption="Unified studio for attacks, multiattack, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
-    header-class="bg-amber-10 text-white text-weight-bold"
+    header-class="bg-brown-8 text-white text-weight-bold"
   >
     <q-card class="bg-grey-10 text-white q-pa-sm">
       <!-- Category Filter Bar & Quick Add Header -->
@@ -17,7 +17,7 @@
             dense
             size="sm"
             :color="selectedCategory === cat.value ? cat.activeColor : 'grey-9'"
-            :text-color="selectedCategory === cat.value ? 'white' : 'grey-4'"
+            :text-color="selectedCategory === cat.value ? (cat.activeTextColor ?? 'white') : 'grey-4'"
             no-caps
             class="text-weight-bold"
             @click="selectedCategory = cat.value"
@@ -25,7 +25,7 @@
             <span>{{ cat.label }}</span>
             <span
               class="q-ml-xs text-weight-bolder"
-              :class="selectedCategory === cat.value ? 'text-amber-3' : 'text-grey-5'"
+              :class="selectedCategory === cat.value ? (cat.activeTextColor ? 'text-grey-10' : 'text-grey-2') : 'text-grey-4'"
             >
               ({{ cat.count }})
             </span>
@@ -34,7 +34,7 @@
 
         <div class="col-12 col-md-3 row justify-end">
           <q-btn-dropdown
-            color="positive"
+            color="green-9"
             dense
             no-caps
             icon="add"
@@ -147,7 +147,7 @@
               >
                 <q-tooltip>{{ isCategoryCollapsed(catGroup.role) ? 'Unfold Category Section' : 'Fold Category Section' }}</q-tooltip>
               </q-btn>
-              <q-badge :color="getRoleBadgeColor(catGroup.role)" class="text-weight-bold text-caption">
+              <q-badge :color="getRoleBadgeColor(catGroup.role)" :text-color="getRoleBadgeTextColor(catGroup.role)" class="text-weight-bold text-caption">
                 {{ catGroup.label }} ({{ catGroup.items.length }})
               </q-badge>
               <span v-if="isCategoryCollapsed(catGroup.role)" class="text-caption text-grey-5 q-ml-xs">
@@ -373,7 +373,8 @@
                     no-caps
                     unelevated
                     size="xs"
-                    toggle-color="amber-9"
+                    toggle-color="amber-4"
+                    toggle-text-color="grey-10"
                     color="grey-8"
                     @update:model-value="(val: 'text' | 'table') => setContainerKind(item, cIdx, val)"
                   />
@@ -628,16 +629,16 @@ export default defineComponent({
         (selectedCategory.value === 'all' && populated[role]))
     })
 
-    const categoryTabs = computed<Array<{ label: string; value: typeof selectedCategory.value; count: number; activeColor: string }>>(() => {
+    const categoryTabs = computed<Array<{ label: string; value: typeof selectedCategory.value; count: number; activeColor: string; activeTextColor?: string }>>(() => {
       const all = allEntries.value
       return [
-        { label: 'All', value: 'all', count: all.length + monster.multiattacks.length, activeColor: 'amber-9' },
+        { label: 'All', value: 'all', count: all.length + monster.multiattacks.length, activeColor: 'amber-4', activeTextColor: 'grey-10' },
         { label: 'Multiattack', value: 'multiattack', count: monster.multiattacks.length, activeColor: 'red-9' },
         { label: 'Attacks', value: 'attack', count: all.filter((e) => e.role === 'attack').length, activeColor: 'red-8' },
-        { label: 'Actions', value: 'action', count: all.filter((e) => e.role === 'action').length, activeColor: 'amber-8' },
-        { label: 'Bonus Actions', value: 'bonus_action', count: all.filter((e) => e.role === 'bonus_action').length, activeColor: 'orange-8' },
-        { label: 'Traits', value: 'trait', count: all.filter((e) => e.role === 'trait').length, activeColor: 'cyan-8' },
-        { label: 'Reactions', value: 'reaction', count: all.filter((e) => e.role === 'reaction').length, activeColor: 'blue-8' },
+        { label: 'Actions', value: 'action', count: all.filter((e) => e.role === 'action').length, activeColor: 'amber-8', activeTextColor: 'grey-10' },
+        { label: 'Bonus Actions', value: 'bonus_action', count: all.filter((e) => e.role === 'bonus_action').length, activeColor: 'orange-8', activeTextColor: 'grey-10' },
+        { label: 'Traits', value: 'trait', count: all.filter((e) => e.role === 'trait').length, activeColor: 'cyan-10' },
+        { label: 'Reactions', value: 'reaction', count: all.filter((e) => e.role === 'reaction').length, activeColor: 'blue-9' },
         { label: 'Legendary', value: 'legendary', count: all.filter((e) => e.role === 'legendary').length, activeColor: 'purple-8' },
         { label: 'Mythic', value: 'mythic', count: all.filter((e) => e.role === 'mythic').length, activeColor: 'deep-purple-8' },
         { label: 'Lair', value: 'lair', count: all.filter((e) => e.role === 'lair').length, activeColor: 'teal-8' },
@@ -694,7 +695,7 @@ export default defineComponent({
         title: decision.title,
         message: decision.message,
         cancel: { label: 'Cancel', flat: true },
-        ok: { label: decision.kind === 'copy' ? 'Create copy' : 'Change role', color: 'amber-9' },
+        ok: { label: decision.kind === 'copy' ? 'Create copy' : 'Change role', color: 'amber-4', textColor: 'grey-10' },
         persistent: true,
       }).onOk(() => {
         // Recompute from live data; never commit the stale preview's collection snapshots.
@@ -838,18 +839,19 @@ export default defineComponent({
       }
     }
 
-    const getRoleBadgeColor = (role: string): string => {
-      switch (role) {
-        case 'action': return 'amber-9'
-        case 'bonus_action': return 'orange-8'
-        case 'trait': return 'cyan-8'
-        case 'reaction': return 'blue-8'
-        case 'legendary': return 'purple-8'
-        case 'mythic': return 'deep-purple-8'
-        case 'lair': return 'teal-8'
-        default: return 'grey-7'
-      }
+    const roleBadgeStyles: Record<string, { color: string; textColor: string }> = {
+      action: { color: 'amber-4', textColor: 'grey-10' },
+      bonus_action: { color: 'orange-8', textColor: 'grey-10' },
+      trait: { color: 'cyan-10', textColor: 'white' },
+      reaction: { color: 'blue-9', textColor: 'white' },
+      legendary: { color: 'purple-8', textColor: 'white' },
+      mythic: { color: 'deep-purple-8', textColor: 'white' },
+      lair: { color: 'teal-8', textColor: 'white' },
     }
+
+    const getRoleBadgeColor = (role: string): string => roleBadgeStyles[role]?.color ?? 'grey-8'
+
+    const getRoleBadgeTextColor = (role: string): string => roleBadgeStyles[role]?.textColor ?? 'white'
 
     const getRoleLabel = (role: string): string => {
       switch (role) {
@@ -1022,6 +1024,7 @@ export default defineComponent({
       updateItemCost,
       deleteUnifiedItem,
       getRoleBadgeColor,
+      getRoleBadgeTextColor,
       getRoleLabel,
       getStoreCollectionField,
       getItemStoreIndex,

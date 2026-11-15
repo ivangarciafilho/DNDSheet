@@ -29,7 +29,7 @@
             <mechanic-text-editor v-help="$t('editor.randomTables.fallbackHelp')" :model-value="table.fallback ?? ''" dense outlined :label="$t('editor.randomTables.fallback')" class="col" @update:model-value="(v) => setFallback(table, v)" />
           </div>
           <div v-for="(d, i) in diagnoseTable(table)" :key="i" class="text-negative text-caption q-mt-xs" role="status">⚠ {{ d.message }}</div>
-          <div class="text-caption q-mt-xs text-grey-7">{{ tableToProse(table) }}</div>
+          <div class="text-caption q-mt-xs text-grey-4">{{ tableToProse(table) }}</div>
         </div>
         <q-btn v-help="$t('editor.randomTables.addHelp')" outline icon="add" :label="$t('editor.randomTables.add')" @click="monster.addRandomTable()" />
       </q-card-section>

@@ -148,7 +148,7 @@
         <div class="row justify-end q-gutter-xs">
           <q-btn v-if="hasConfig" v-close-popup flat dense no-caps size="sm" color="grey-4" label="Clear" @click="clearDraft" />
           <q-btn v-close-popup flat dense no-caps size="sm" color="grey-4" label="Cancel" />
-          <q-btn v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-9" label="Apply" />
+          <q-btn v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-4" text-color="grey-10" label="Apply" />
         </div>
       </form>
     </q-menu>

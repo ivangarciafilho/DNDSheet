@@ -8,7 +8,9 @@
       :options="filteredTemplateOptions"
       class="template-search"
       dense
-      standout
+      dark
+      bg-color="blue-10"
+      standout="bg-grey-10 text-white"
       option-value="templateName"
       option-label="templateName"
       emit-value

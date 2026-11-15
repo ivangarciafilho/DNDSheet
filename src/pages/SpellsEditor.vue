@@ -31,7 +31,7 @@
         <q-btn color="primary" class="q-mr-md" @click="downloadSpells">{{
           $t('editor.spellcasting.custom.export')
         }}</q-btn>
-        <q-btn color="positive" @click="addSpell">{{
+        <q-btn color="green-9" @click="addSpell">{{
           $t('editor.spellcasting.custom.create')
         }}</q-btn>
       </template>

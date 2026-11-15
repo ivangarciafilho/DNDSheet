@@ -123,13 +123,13 @@
         </div>
 
         <div v-else-if="kind === 'range'" class="column q-gutter-y-xs">
-          <q-btn-toggle v-model="draft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+          <q-btn-toggle v-model="draft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           <div class="row q-col-gutter-xs items-start">
             <div class="col-5">
               <q-input v-help="$t('help.composer.distance')" v-model="draft.distance" dense outlined dark autofocus label="Distance" />
             </div>
             <div class="col-auto self-center">
-              <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+              <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
             </div>
             <div class="col">
               <q-input v-help="$t('help.composer.unitOrShape')" v-model="draft.origin" dense outlined dark label="Of" placeholder="you" />
@@ -148,7 +148,7 @@
             <q-input v-help="$t('help.composer.size')" v-model="draft.distance" dense outlined dark label="Size" />
           </div>
           <div class="col-auto self-center">
-            <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-9" color="grey-8" />
+            <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           </div>
           <div class="col-12">
             <q-input v-help="$t('help.composer.origin')" v-model="draft.origin" dense outlined dark label="Originating from" placeholder="itself" />
@@ -164,7 +164,7 @@
         <div class="row justify-end q-gutter-xs q-mt-sm">
           <q-btn v-help="'Clear in the chain cell.'" v-if="clearable" flat dense no-caps size="sm" color="grey-4" label="Clear" @click="clear" />
           <q-btn v-help="'Cancel in the chain cell.'" v-close-popup flat dense no-caps size="sm" color="grey-4" label="Cancel" />
-          <q-btn v-help="'Apply in the chain cell.'" v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-9" label="Apply" :disable="!!error || numericDraftPending" />
+          <q-btn v-help="'Apply in the chain cell.'" v-close-popup type="submit" unelevated dense no-caps size="sm" color="amber-4" text-color="grey-10" label="Apply" :disable="!!error || numericDraftPending" />
         </div>
       </form>
     </q-menu>

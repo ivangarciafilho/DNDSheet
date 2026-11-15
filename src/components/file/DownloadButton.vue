@@ -76,14 +76,14 @@
       <q-card-section class="row items-center justify-between q-pb-sm">
         <div>
           <div class="text-h6">Export Preview &amp; Capabilities</div>
-          <div class="text-caption text-grey-7">
+          <div class="text-caption text-grey-4">
             Source rev #{{ exportPreviewResult.sourceRevision }} · {{ exportPreviewResult.capability.lossless ? 'Lossless Canonical Save' : 'Derived Projection' }}
           </div>
         </div>
         <q-chip
           dense
-          :color="exportPreviewResult.capability.supports2024Grammar ? 'positive' : 'warning'"
-          text-color="white"
+          :color="exportPreviewResult.capability.supports2024Grammar ? 'green-9' : 'amber-4'"
+          :text-color="exportPreviewResult.capability.supports2024Grammar ? 'white' : 'grey-10'"
         >
           {{ exportPreviewResult.capability.supports2024Grammar ? '2024 Grammar' : '2014 Schema' }}
         </q-chip>

@@ -213,7 +213,7 @@
       <div class="bot">
         <menu-hover>
           <template #default="{ activatorAttr, menuAttr }">
-            <q-chip v-bind="activatorAttr" color="green-8" icon="mdi-hospital"
+            <q-chip v-bind="activatorAttr" color="green-9" text-color="white" icon="mdi-hospital"
               >{{ Math.floor(crData.ehp.value) }} (CR
               {{ crData.hpCr.value.cr }})
               <q-menu v-bind="menuAttr" :offset="[0, 2]">
@@ -222,7 +222,7 @@
                     ><div class="text-h6">
                       {{ $t('editor.cr.ehp', [Math.floor(crData.ehp.value)]) }}
                     </div>
-                    <div class="text-subtitle2 text-grey-5">
+                    <div class="text-subtitle2 text-grey-4">
                       CR {{ crData.hpCr.value.cr }}:
                       {{ crData.hpCr.value.hpMin }} -
                       {{ crData.hpCr.value.hpMax }}
@@ -272,7 +272,7 @@
         </menu-hover>
         <menu-hover>
           <template #default="{ activatorAttr, menuAttr }">
-            <q-chip v-bind="activatorAttr" color="green-8" icon="shield"
+            <q-chip v-bind="activatorAttr" color="green-9" text-color="white" icon="shield"
               >{{ Math.floor(crData.eac.value) }} (
               {{ crData.acCrDelta.value }} CR)
               <q-menu v-bind="menuAttr" :offset="[0, 2]">
@@ -281,7 +281,7 @@
                     ><div class="text-h6">
                       {{ $t('editor.cr.eac', [Math.floor(crData.eac.value)]) }}
                     </div>
-                    <div class="text-subtitle2 text-grey-5">
+                    <div class="text-subtitle2 text-grey-4">
                       {{ crData.acCrExplain.value }}
                     </div>
                   </q-card-section>

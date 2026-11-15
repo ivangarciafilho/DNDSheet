@@ -5,7 +5,8 @@
       <div class="editor-fit-wrap items-center">
         <span class="text-subtitle2 text-weight-bold text-grey-4">Ability Scores</span>
         <q-badge
-          :color="pointBuyInfo.isValid ? (pointBuyInfo.remaining === 0 ? 'positive' : 'amber-8') : 'negative'"
+          :color="pointBuyInfo.isValid ? (pointBuyInfo.remaining === 0 ? 'green-9' : 'amber-4') : 'negative'"
+          :text-color="pointBuyInfo.isValid && pointBuyInfo.remaining > 0 ? 'grey-10' : 'white'"
           class="text-weight-bold text-caption"
         >
           Point Buy: {{ pointBuyInfo.remaining }} / 27 remaining

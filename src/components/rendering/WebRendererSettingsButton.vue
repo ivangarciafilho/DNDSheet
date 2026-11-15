@@ -185,18 +185,18 @@ export interface ThemeOption {
 }
 
 export const THEME_OPTIONS: ThemeOption[] = [
-  { label: 'Classic WotC Parchment', value: 'wotc', category: 'Standard', icon: 'auto_stories', color: 'amber-8' },
-  { label: 'Printer Friendly (B&W)', value: 'printer', category: 'Standard', icon: 'print', color: 'grey-8' },
-  { label: 'Lovecraftian Gothic-Golden', value: 'lovecraft_golden', category: 'Lovecraftian', icon: 'shield_moon', color: 'amber-5' },
-  { label: 'Lovecraftian Gothic-Silver', value: 'lovecraft_silver', category: 'Lovecraftian', icon: 'bedtime', color: 'blue-grey-4' },
-  { label: 'Lovecraftian Gothic-Toxic', value: 'lovecraft_toxic', category: 'Lovecraftian', icon: 'science', color: 'positive' },
-  { label: 'Lovecraftian Gothic-Spooky', value: 'lovecraft_spooky', category: 'Lovecraftian', icon: 'nights_stay', color: 'purple-4' },
-  { label: 'Lovecraftian Gothic-Galactic', value: 'lovecraft_galactic', category: 'Lovecraftian', icon: 'flare', color: 'indigo-4' },
-  { label: 'Lovecraftian Gothic-Fathomless', value: 'lovecraft_fathomless', category: 'Lovecraftian', icon: 'water_drop', color: 'cyan-4' },
-  { label: 'Dwarves-Anvil and Forge', value: 'dwarves_forge', category: 'Dwarven', icon: 'local_fire_department', color: 'deep-orange-5' },
-  { label: 'Dwarves-Aetherpunk', value: 'dwarves_aetherpunk', category: 'Dwarven', icon: 'precision_manufacturing', color: 'light-blue-4' },
-  { label: 'Decaying Elegancy-Art Nouveau', value: 'art_nouveau', category: 'Decaying Elegancy', icon: 'spa', color: 'green-7' },
-  { label: 'Decaying Elegancy-ArtDeco', value: 'art_deco', category: 'Decaying Elegancy', icon: 'diamond', color: 'yellow-7' },
+  { label: 'Classic WotC Parchment', value: 'wotc', category: 'Standard', icon: 'auto_stories', color: 'amber-4' },
+  { label: 'Printer Friendly (B&W)', value: 'printer', category: 'Standard', icon: 'print', color: 'grey-4' },
+  { label: 'Lovecraftian Gothic-Golden', value: 'lovecraft_golden', category: 'Lovecraftian', icon: 'shield_moon', color: 'amber-4' },
+  { label: 'Lovecraftian Gothic-Silver', value: 'lovecraft_silver', category: 'Lovecraftian', icon: 'bedtime', color: 'blue-grey-3' },
+  { label: 'Lovecraftian Gothic-Toxic', value: 'lovecraft_toxic', category: 'Lovecraftian', icon: 'science', color: 'green-3' },
+  { label: 'Lovecraftian Gothic-Spooky', value: 'lovecraft_spooky', category: 'Lovecraftian', icon: 'nights_stay', color: 'purple-2' },
+  { label: 'Lovecraftian Gothic-Galactic', value: 'lovecraft_galactic', category: 'Lovecraftian', icon: 'flare', color: 'indigo-2' },
+  { label: 'Lovecraftian Gothic-Fathomless', value: 'lovecraft_fathomless', category: 'Lovecraftian', icon: 'water_drop', color: 'cyan-3' },
+  { label: 'Dwarves-Anvil and Forge', value: 'dwarves_forge', category: 'Dwarven', icon: 'local_fire_department', color: 'deep-orange-3' },
+  { label: 'Dwarves-Aetherpunk', value: 'dwarves_aetherpunk', category: 'Dwarven', icon: 'precision_manufacturing', color: 'light-blue-3' },
+  { label: 'Decaying Elegancy-Art Nouveau', value: 'art_nouveau', category: 'Decaying Elegancy', icon: 'spa', color: 'green-3' },
+  { label: 'Decaying Elegancy-ArtDeco', value: 'art_deco', category: 'Decaying Elegancy', icon: 'diamond', color: 'amber-3' },
 ]
 
 export default defineComponent({

@@ -123,7 +123,7 @@
       <!-- Expandable Add Custom Layer Form (Direct inline, no popups) -->
       <q-slide-transition>
         <div v-show="showAddLayerForm" class="q-mb-md q-pa-sm bg-grey-9 rounded-borders" style="border: 1px dashed #a855f7;">
-          <div class="text-caption text-weight-bold text-purple-3 q-mb-xs flex items-center justify-between">
+          <div class="text-caption text-weight-bold text-purple-2 q-mb-xs flex items-center justify-between">
             <span>Add Custom Composition Layer</span>
             <q-btn flat round dense size="xs" icon="close" @click="showAddLayerForm = false" />
           </div>
@@ -210,15 +210,11 @@
         <q-card
           v-for="(layer, index) in displayLayers"
           :key="layer.id"
-          class="q-pa-xs rounded-borders"
-          :class="{
-            'bg-amber-10': layer.type === 'statblock',
-            'bg-cyan-10': layer.type === 'portrait',
-            'bg-grey-9': layer.type !== 'statblock' && layer.type !== 'portrait'
-          }"
+          class="q-pa-xs rounded-borders bg-grey-9"
           :style="{
+            border: '1px solid rgba(255, 255, 255, 0.12)',
             borderLeft: layer.type === 'statblock' ? '4px solid #f59e0b' : (layer.type === 'portrait' ? '4px solid #06b6d4' : (layer.type === 'foreground' ? '4px solid #a855f7' : '4px solid #3b82f6')),
-            border: '1px solid rgba(255, 255, 255, 0.12)'
+            backgroundColor: layer.type === 'statblock' ? '#2c2519' : (layer.type === 'portrait' ? '#17292e' : undefined)
           }"
         >
           <!-- Layer Main Row: Drag Order Buttons, Thumbnail, Name, Blend, Opacity, Visibility, Delete -->
@@ -291,21 +287,24 @@
                 </span>
                 <q-badge
                   v-if="layer.type === 'statblock'"
-                  color="amber-9"
+                  color="amber-4"
+                  text-color="grey-10"
                   class="text-weight-bold text-caption"
                 >
                   Statblock (Non-Removable)
                 </q-badge>
                 <q-badge
                   v-else-if="layer.type === 'portrait'"
-                  color="cyan-9"
+                  color="cyan-10"
+                  text-color="white"
                   class="text-weight-bold text-caption"
                 >
                   Portrait Artwork
                 </q-badge>
                 <q-badge
                   v-else
-                  :color="layer.type === 'background' ? 'blue-8' : 'purple-8'"
+                  :color="layer.type === 'background' ? 'blue-9' : 'purple-8'"
+                  text-color="white"
                   class="text-weight-bold text-caption"
                 >
                   {{ layer.type === 'background' ? 'Background Texture' : 'Foreground Frame' }}
@@ -344,7 +343,7 @@
                 dense
                 size="sm"
                 :icon="layer.visible ? 'visibility' : 'visibility_off'"
-                :color="layer.visible ? 'positive' : 'grey-6'"
+                :color="layer.visible ? 'green-4' : 'grey-4'"
                 @click="toggleLayerVisibility(layer)"
               >
                 <q-tooltip>{{ layer.visible ? 'Hide Layer' : 'Show Layer' }}</q-tooltip>
@@ -357,7 +356,7 @@
                 dense
                 size="sm"
                 icon="delete"
-                color="negative"
+                color="red-3"
                 @click="removeLayer(index)"
               >
                 <q-tooltip>Delete Layer</q-tooltip>

@@ -41,7 +41,7 @@
             <div class="text-subtitle2 text-weight-bold text-grey-4 q-mb-xs">Export Diagnostic Snapshots</div>
             <div class="row q-col-gutter-xs">
               <div class="col-6 col-sm-3">
-                <q-btn outline color="primary" class="full-width" @click="downloadFile">
+                <q-btn outline color="light-blue-3" class="full-width" @click="downloadFile">
                   Monster JSON
                 </q-btn>
               </div>
@@ -56,7 +56,7 @@
                 </q-btn>
               </div>
               <div class="col-6 col-sm-3">
-                <q-btn outline color="purple-4" class="full-width" @click="downloadTemplates">
+                <q-btn outline color="purple-2" class="full-width" @click="downloadTemplates">
                   Templates JSON
                 </q-btn>
               </div>
@@ -124,7 +124,7 @@
 
           <!-- Reset / Purge Section -->
           <q-card-section class="q-pt-none">
-            <div class="text-subtitle2 text-weight-bold text-negative q-mb-xs">Purge Corrupted Local Storage</div>
+            <div class="text-subtitle2 text-weight-bold text-red-3 q-mb-xs">Purge Corrupted Local Storage</div>
             <div class="row q-col-gutter-xs">
               <div class="col-6 col-sm-3">
                 <q-btn color="negative" class="full-width" @click="clear">

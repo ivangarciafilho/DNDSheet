@@ -196,7 +196,8 @@
       <div class="row items-center q-gutter-xs">
         <template v-if="editorStore?.a4PreviewMode">
           <q-badge
-            :color="a4PageOverflowPx > 0 ? 'amber-9' : 'positive'"
+            :color="a4PageOverflowPx > 0 ? 'amber-4' : 'green-9'"
+            :text-color="a4PageOverflowPx > 0 ? 'grey-10' : 'white'"
             class="text-weight-bold q-pa-xs"
           >
             <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : 'check_circle'" class="q-mr-xs" />

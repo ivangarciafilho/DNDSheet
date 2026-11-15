@@ -15,7 +15,7 @@
       <div v-if="error" role="alert" class="text-red-3 q-mb-sm">{{ error }}</div>
       <div class="row justify-end q-gutter-xs">
         <q-btn flat dense no-caps label="Cancel" @click="open = false" />
-        <q-btn type="submit" dense no-caps color="amber-9" label="Apply section settings" :disable="!!error || numericDraftPending" />
+        <q-btn type="submit" dense no-caps color="amber-4" text-color="grey-10" label="Apply section settings" :disable="!!error || numericDraftPending" />
       </div>
     </form>
     <span role="status" class="q-px-sm text-caption">{{ status }}</span>

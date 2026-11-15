@@ -8,7 +8,8 @@
     :placeholder="placeholder"
     :outlined="outlined"
     :dense="dense"
-    :dark="dark"
+    :dark="isDark"
+    :popup-content-class="isDark ? 'bg-grey-9 text-white' : undefined"
     :disable="disable"
     :clearable="clearable"
     :multiple="multiple"
@@ -47,7 +48,7 @@
         <div
           v-if="scope.opt.firstInGroup && scope.opt.group"
           class="catalog-select__group text-overline q-px-md q-pt-xs q-pb-none"
-          :class="dark ? 'text-grey-4' : 'text-grey-7'"
+          :class="isDark ? 'text-grey-4' : 'text-grey-7'"
           aria-hidden="true"
         >
           {{ scope.opt.group }}
@@ -84,6 +85,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useQuasar } from 'quasar'
 import type { QSelect } from 'quasar'
 import { canonicalCatalog, type CanonicalCatalogEntry, type CatalogId } from 'src/core/domain/catalogs/enumerations'
 import { buildCatalogOptions, filterCatalogOptions } from 'src/core/domain/catalogs/catalog-select-model'
@@ -105,7 +107,7 @@ const props = withDefaults(
     placeholder?: string
     outlined?: boolean
     dense?: boolean
-    dark?: boolean
+    dark?: boolean | null
     disable?: boolean
     hideBottomSpace?: boolean
     help?: string
@@ -117,11 +119,14 @@ const props = withDefaults(
     clearable: false,
     multiple: false,
     useChips: false,
-    dark: false,
+    dark: null,
     disable: false,
     hideBottomSpace: false,
   },
 )
+
+const $q = useQuasar()
+const isDark = computed(() => (props.dark === null || props.dark === undefined ? $q.dark.isActive : props.dark))
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | number | (string | number)[] | null]

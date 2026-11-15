@@ -202,31 +202,243 @@ await browserProbe(async ({ evaluate, send, delay }) => {
     }
   })()`)
 
+  const clickPoint = async (x, y) => {
+    await send('Input.dispatchMouseEvent', {
+      type: 'mousePressed',
+      x,
+      y,
+      button: 'left',
+      clickCount: 1,
+    })
+    await send('Input.dispatchMouseEvent', {
+      type: 'mouseReleased',
+      x,
+      y,
+      button: 'left',
+      clickCount: 1,
+    })
+  }
+
+  const pressEscape = async () => {
+    await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 })
+    await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape', windowsVirtualKeyCode: 27, nativeVirtualKeyCode: 27 })
+    await delay(120)
+  }
+
   // 2. Dispatch real CDP mouse click on CatalogSelect and measure open latency (<= 150 ms)
-  await send('Input.dispatchMouseEvent', {
-    type: 'mousePressed',
-    x: metrics.clickX,
-    y: metrics.clickY,
-    button: 'left',
-    clickCount: 1,
-  })
-  await send('Input.dispatchMouseEvent', {
-    type: 'mouseReleased',
-    x: metrics.clickX,
-    y: metrics.clickY,
-    button: 'left',
-    clickCount: 1,
-  })
+  await clickPoint(metrics.clickX, metrics.clickY)
   const catalogOpenMs = await evaluate('window.__catOpenPromise')
-  await send('Input.dispatchKeyEvent', { type: 'keyDown', key: 'Escape', code: 'Escape' })
-  await send('Input.dispatchKeyEvent', { type: 'keyUp', key: 'Escape', code: 'Escape' })
-  await delay(80)
+  await pressEscape()
+
+  // 3. Permanent WCAG AA contrast guard across dark UI chrome, expanded editor panels,
+  //    CatalogSelect listbox, and Character sheet parchment surface (dark + light OS media)
+  const scanUiContrast = async (label, selectors) =>
+    evaluate(`(() => {
+      const parseRgba = (s) => {
+        const m = String(s).match(/rgba?\\((\\d+),\\s*(\\d+),\\s*(\\d+)(?:,\\s*([\\d.]+))?\\)/)
+        return m ? { r: +m[1], g: +m[2], b: +m[3], a: m[4] === undefined ? 1 : +m[4] } : null
+      }
+      const composite = (fg, bg) => {
+        const a = fg.a ?? 1
+        return {
+          r: Math.round(fg.r * a + bg.r * (1 - a)),
+          g: Math.round(fg.g * a + bg.g * (1 - a)),
+          b: Math.round(fg.b * a + bg.b * (1 - a)),
+          a: 1,
+        }
+      }
+      const effectiveBg = (el) => {
+        const layers = []
+        for (let cur = el; cur; cur = cur.parentElement) {
+          const c = parseRgba(getComputedStyle(cur).backgroundColor)
+          if (c && c.a > 0) layers.push(c)
+        }
+        let base = document.body.classList.contains('body--dark')
+          ? { r: 18, g: 18, b: 18, a: 1 }
+          : { r: 255, g: 255, b: 255, a: 1 }
+        for (let i = layers.length - 1; i >= 0; i--) base = composite(layers[i], base)
+        return base
+      }
+      const lum = ({ r, g, b }) => {
+        const f = (c) => {
+          c /= 255
+          return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+        }
+        return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b)
+      }
+      const ratio = (c1, c2) => {
+        const l1 = lum(c1)
+        const l2 = lum(c2)
+        return Number(((Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05)).toFixed(2))
+      }
+      const groups = new Map()
+      const roots = ${JSON.stringify(selectors)}.flatMap((sel) => [...document.querySelectorAll(sel)])
+      let checkedTextNodes = 0
+      for (const root of roots) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT)
+        let node
+        while ((node = walker.nextNode())) {
+          const txt = (node.nodeValue || '').trim()
+          if (!txt) continue
+          const el = node.parentElement
+          if (!el || el.closest('#render')) continue
+          if (el.closest('[disabled], [aria-disabled="true"], .disabled')) continue
+          const st = getComputedStyle(el)
+          if (st.display === 'none' || st.visibility === 'hidden' || st.opacity === '0') continue
+          const rect = el.getBoundingClientRect()
+          if (rect.width === 0 || rect.height === 0) continue
+          const fgRaw = parseRgba(st.color)
+          if (!fgRaw) continue
+          checkedTextNodes++
+          const bg = effectiveBg(el)
+          const fg = fgRaw.a < 1 ? composite(fgRaw, bg) : fgRaw
+          const cr = ratio(fg, bg)
+          const fontSize = parseFloat(st.fontSize) || 14
+          const weight = parseInt(st.fontWeight, 10) || 400
+          const minRatio = fontSize >= 24 || (fontSize >= 18.66 && weight >= 700) ? 3.0 : 4.5
+          if (cr < minRatio) {
+            const key =
+              ${JSON.stringify(label)} + '|' + el.tagName + '|' + String(el.className || '').slice(0, 40) + '|' + st.color + '|' + bg.r + ',' + bg.g + ',' + bg.b
+            if (!groups.has(key)) {
+              groups.set(key, {
+                view: ${JSON.stringify(label)},
+                tag: el.tagName,
+                cls: String(el.className || '').slice(0, 60),
+                sample: txt.slice(0, 35),
+                fg: st.color,
+                bg: 'rgb(' + bg.r + ',' + bg.g + ',' + bg.b + ')',
+                cr,
+                minRatio,
+              })
+            }
+          }
+        }
+      }
+      return {
+        bodyDark: document.body.classList.contains('body--dark'),
+        checkedTextNodes,
+        menuCount: document.querySelectorAll('.q-menu .q-item').length,
+        violations: [...groups.values()],
+      }
+    })()`)
+
+  const catalogPoint = await evaluate(`(async () => {
+    document.querySelectorAll('#editor .q-expansion-item > .q-expansion-item__container > .q-item')
+      .forEach((el) => { if (el.getAttribute('aria-expanded') !== 'true') el.click() })
+    await new Promise((r) => setTimeout(r, 350))
+    document.querySelectorAll('#editor .q-expansion-item .q-expansion-item > .q-expansion-item__container > .q-item')
+      .forEach((el) => { if (el.getAttribute('aria-expanded') !== 'true') el.click() })
+    await new Promise((r) => setTimeout(r, 150))
+    const sel = document.querySelector('[data-editor-section="basics"] [data-catalog-select="creatureTypes"]')
+    const target = sel?.querySelector('.q-field__control') || sel
+    target.scrollIntoView({ block: 'center' })
+    await new Promise((r) => setTimeout(r, 100))
+    const r = target.getBoundingClientRect()
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+  })()`)
+  await clickPoint(catalogPoint.x, catalogPoint.y)
+  await evaluate(`(async () => {
+    for (let i = 0; i < 40; i++) {
+      if (document.querySelectorAll('.q-menu .q-item').length > 0) return true
+      await new Promise((r) => setTimeout(r, 25))
+    }
+    throw new Error('Timed out waiting for CatalogSelect .q-menu options')
+  })()`)
+
+  const uiViolations = []
+  const darkUi = await scanUiContrast('monster-dark-os', ['#main-nav', '#editor', '#footer', '.q-menu'])
+  assert.ok(darkUi.checkedTextNodes > 100, `Expected >100 checked text nodes in monster dark scan, got ${darkUi.checkedTextNodes}`)
+  assert.ok(darkUi.menuCount > 0, 'Expected open CatalogSelect .q-menu items during UI contrast scan')
+  assert.equal(darkUi.bodyDark, true, 'Expected body--dark to be active under dark OS media')
+  uiViolations.push(...darkUi.violations)
+
+  await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] })
+  await delay(250)
+  const lightOsUi = await scanUiContrast('monster-light-os', ['#main-nav', '#editor', '#footer', '.q-menu'])
+  assert.equal(lightOsUi.bodyDark, true, 'Expected body--dark to stay locked under light OS media')
+  uiViolations.push(...lightOsUi.violations)
+
+  await pressEscape()
+  await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'dark' }] })
+  await evaluate(`(() => {
+    const root = document.querySelector('#q-app')?.__vue_app__
+    root.config.globalProperties.$pinia._s.get('editor').activeMode = 'character'
+  })()`)
+  await delay(400)
+  await evaluate(`(() => {
+    document.querySelectorAll('#char-editor .q-expansion-item > .q-expansion-item__container > .q-item')
+      .forEach((el) => { if (el.getAttribute('aria-expanded') !== 'true') el.click() })
+  })()`)
+  await delay(350)
+  const charUi = await scanUiContrast('character-mode', ['#main-nav', '#char-editor', '#char-sheet', '#footer'])
+  assert.ok(charUi.checkedTextNodes > 50, `Expected >50 checked text nodes in character scan, got ${charUi.checkedTextNodes}`)
+  uiViolations.push(...charUi.violations)
+
+  await evaluate(`(() => {
+    const root = document.querySelector('#q-app')?.__vue_app__
+    const pinia = root.config.globalProperties.$pinia
+    pinia._s.get('editor').activeMode = 'monster'
+    pinia._s.get('editor').style = '2014'
+  })()`)
+  await delay(250)
+  const mode2014Ui = await scanUiContrast('monster-2014-header', ['header', '#main-nav'])
+  assert.ok(mode2014Ui.checkedTextNodes > 15, `Expected >15 checked text nodes in 2014 header, got ${mode2014Ui.checkedTextNodes}`)
+  uiViolations.push(...mode2014Ui.violations)
+
+  // Dismiss any overlapping toast notification before clicking top-bar dialogs
+  await evaluate(`(() => {
+    for (const b of document.querySelectorAll('.q-notification button')) {
+      if (/got it/i.test(b.textContent || '')) b.click()
+    }
+    document.querySelector('[data-library-open]')?.click()
+  })()`)
+  await delay(300)
+  const libUi = await scanUiContrast('library-dialog', ['.q-dialog .q-card'])
+  assert.ok(libUi.checkedTextNodes > 10, `Expected >10 checked text nodes in library dialog, got ${libUi.checkedTextNodes}`)
+  uiViolations.push(...libUi.violations)
+  await pressEscape()
+  await evaluate(`(() => {
+    const closeBtn = [...document.querySelectorAll('.q-dialog button')].find((b) => /done|close/i.test((b.textContent || '') + ' ' + (b.getAttribute('aria-label') || '')))
+    closeBtn?.click()
+  })()`)
+  await delay(200)
+
+  await evaluate(`(() => {
+    const btn = [...document.querySelectorAll('header button')].find((b) => (b.innerHTML || '').includes('sword'))
+    btn?.click()
+  })()`)
+  await delay(300)
+  const combatUi = await scanUiContrast('combat-drawer', ['.q-drawer'])
+  assert.ok(combatUi.checkedTextNodes >= 5, `Expected >=5 checked text nodes in combat drawer, got ${combatUi.checkedTextNodes}`)
+  uiViolations.push(...combatUi.violations)
+  await evaluate(`(() => {
+    const btn = [...document.querySelectorAll('.q-drawer button')].find((b) => /close/i.test((b.textContent || '') + ' ' + (b.getAttribute('aria-label') || '')))
+    btn?.click()
+  })()`)
+  await delay(200)
+
+  for (const route of ['#/templates', '#/spells', '#/reset']) {
+    await evaluate(`location.hash = ${JSON.stringify(route)}`)
+    await delay(300)
+    const routeUi = await scanUiContrast(route, ['.q-layout', '.q-page', '.q-card'])
+    assert.ok(routeUi.checkedTextNodes > 15, `Expected >15 checked text nodes in ${route}, got ${routeUi.checkedTextNodes}`)
+    uiViolations.push(...routeUi.violations)
+  }
+  await evaluate(`(() => {
+    location.hash = '#/'
+    const root = document.querySelector('#q-app')?.__vue_app__
+    const ed = root.config.globalProperties.$pinia._s.get('editor')
+    ed.activeMode = 'monster'
+    ed.style = '2024'
+  })()`)
+  await delay(250)
 
   const summary = {
     keystrokeP95Ms: Number(metrics.keystrokeP95.toFixed(2)),
     completionOpenMs: Number(metrics.completionOpenMs.toFixed(2)),
     catalogSelectOpenMs: Number(catalogOpenMs.toFixed(2)),
     headContrast: Number(metrics.headContrast.toFixed(2)),
+    uiContrastViolations: uiViolations.length,
   }
   console.log('Budget probe metrics:', JSON.stringify(summary))
 
@@ -234,4 +446,5 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   assert.ok(metrics.completionOpenMs <= 100, `Completion open ${metrics.completionOpenMs.toFixed(2)} ms > 100 ms`)
   assert.ok(catalogOpenMs <= 150, `CatalogSelect open ${catalogOpenMs.toFixed(2)} ms > 150 ms`)
   assert.ok(metrics.headContrast >= 4.5, `Head contrast ${metrics.headContrast.toFixed(2)} < 4.5`)
+  assert.equal(uiViolations.length, 0, `UI contrast violations detected: ${JSON.stringify(uiViolations)}`)
 })

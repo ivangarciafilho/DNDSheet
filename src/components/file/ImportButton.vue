@@ -37,7 +37,7 @@
         >
           <template #after>
             <q-btn
-              color="positive"
+              color="green-9"
               :disable="importInvalid || loadingData"
               :loading="loadingData"
               @click="loadData"

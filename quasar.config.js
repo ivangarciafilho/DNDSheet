@@ -109,7 +109,7 @@ module.exports = configure(function (ctx) {
       // Quasar Plugins
       plugins: ['Notify', 'Dialog'],
       config: {
-        dark: 'auto',
+        dark: true,
         brand: {
           warning: 'rgb(255 143 0)',
         },

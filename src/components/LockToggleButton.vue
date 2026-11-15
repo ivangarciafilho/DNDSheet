@@ -4,7 +4,7 @@
     dense
     round
     :icon="locked ? 'lock' : 'lock_open'"
-    :color="locked ? 'grey-8' : 'warning'"
+    :color="locked ? 'grey-4' : 'warning'"
     size="sm"
     class="q-ma-none lock-toggle-btn"
     @click.stop="$emit('click', $event)"

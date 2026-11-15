@@ -589,7 +589,17 @@
     white-space: nowrap;
   }
 
-  body.body--dark {
+  &:is(
+      .theme-lovecraft_golden,
+      .theme-lovecraft_silver,
+      .theme-lovecraft_toxic,
+      .theme-lovecraft_spooky,
+      .theme-lovecraft_galactic,
+      .theme-lovecraft_fathomless,
+      .theme-dwarves_forge,
+      .theme-dwarves_aetherpunk,
+      .theme-art_deco
+    ) {
     .sb-plate .spell-tag-badge,
     .spell-tag-badge.dnd-spell-comp,
     .dnd-spell-comp,

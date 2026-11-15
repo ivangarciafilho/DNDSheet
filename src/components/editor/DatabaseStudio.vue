@@ -98,7 +98,7 @@
               </div>
             </div>
           </div>
-          <div v-else class="text-caption text-grey-6 text-center q-pa-md">
+          <div v-else class="text-caption text-grey-4 text-center q-pa-md">
             No custom variables defined yet. Add variables above to evaluate dynamically in text.
           </div>
         </q-tab-panel>
@@ -182,7 +182,7 @@
               </div>
             </div>
           </div>
-          <div v-else class="text-caption text-grey-6 text-center q-pa-md">
+          <div v-else class="text-caption text-grey-4 text-center q-pa-md">
             No custom macros configured. Add macro templates above to streamline action building.
           </div>
         </q-tab-panel>
@@ -205,7 +205,8 @@
             />
             <q-btn v-help="'Save Current Monster as Preset in the database studio.'"
               dense
-              color="amber-9"
+              color="amber-4"
+              text-color="grey-10"
               icon="bookmark_add"
               label="Save Current Monster as Preset"
               :disable="!newPresetName.trim()"
@@ -247,7 +248,7 @@
               </div>
             </div>
           </div>
-          <div v-else class="text-caption text-grey-6 text-center q-pa-md">
+          <div v-else class="text-caption text-grey-4 text-center q-pa-md">
             No custom presets saved in your local database. Click above to save the current monster configuration.
           </div>
         </q-tab-panel>
@@ -261,7 +262,7 @@
           <div class="row q-gutter-sm items-center q-mb-md">
             <q-btn v-help="'Export Database JSON in the database studio.'"
               dense
-              color="positive"
+              color="green-9"
               icon="download"
               label="Export Database JSON"
               @click="exportDatabase"

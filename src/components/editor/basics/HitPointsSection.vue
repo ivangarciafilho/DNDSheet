@@ -230,7 +230,7 @@
                 </div>
               </div>
               <div class="col-12 col-sm-2 text-right">
-                <q-badge :color="phaseCfg.isBloodied ? 'red-7' : 'amber-8'" :text-color="phaseCfg.isBloodied ? 'white' : 'black'" class="text-weight-bold q-pa-xs">
+                <q-badge :color="phaseCfg.isBloodied ? 'red-8' : 'amber-8'" :text-color="phaseCfg.isBloodied ? 'white' : 'black'" class="text-weight-bold q-pa-xs">
                   {{ phaseCfg.name }}: {{ resolvePhaseRowPreview(phaseCfg) }}{{ isLastBloodiedPhase(pIdx) ? ' [Bloodied]' : '' }}
                 </q-badge>
               </div>

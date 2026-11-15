@@ -108,7 +108,7 @@
           <div class="col-12 q-py-md q-px-sm">
             <q-btn
               class="full-width"
-              color="positive"
+              color="green-9"
               @click="monster.addInnateSpellList"
               >{{ $t('editor.spellcasting.innate.addNew') }}</q-btn
             >

@@ -81,7 +81,8 @@
                   no-caps
                   size="sm"
                   class="q-px-xs"
-                  :color="effectiveSkillActionType(skill) === 'Bonus Action' ? 'amber-9' : 'blue-grey-8'"
+                  :color="effectiveSkillActionType(skill) === 'Bonus Action' ? 'amber-4' : (typeof skill.bonusAction === 'boolean' ? 'blue-grey-8' : 'blue-grey-3')"
+                  :text-color="typeof skill.bonusAction === 'boolean' ? (effectiveSkillActionType(skill) === 'Bonus Action' ? 'grey-10' : 'white') : undefined"
                   :outline="typeof skill.bonusAction !== 'boolean'"
                   :label="effectiveSkillActionType(skill)"
                   @click="toggleSkillActionType(skill)"
@@ -113,6 +114,7 @@
                   round
                   size="sm"
                   :color="skill.override ? 'warning' : 'grey-8'"
+                  :text-color="skill.override ? 'grey-10' : 'white'"
                   icon="handyman"
                   @click="skill.override = !skill.override"
                 >
@@ -252,7 +254,8 @@
                   no-caps
                   size="sm"
                   class="q-px-xs"
-                  :color="tool.bonusAction ? 'amber-9' : 'blue-grey-8'"
+                  :color="tool.bonusAction ? 'amber-4' : 'blue-grey-8'"
+                  :text-color="tool.bonusAction ? 'grey-10' : 'white'"
                   :label="tool.bonusAction ? 'Bonus Action' : 'Action'"
                   @click="tool.bonusAction = !tool.bonusAction"
                 >
@@ -283,6 +286,7 @@
                   round
                   size="sm"
                   :color="tool.override ? 'warning' : 'grey-8'"
+                  :text-color="tool.override ? 'grey-10' : 'white'"
                   icon="handyman"
                   @click="tool.override = !tool.override"
                 >
@@ -360,7 +364,7 @@
       <!-- Section 3: Action-Oriented Passive & Active Scope Checks (Search, Study, Hide, Influence) -->
       <div class="q-pa-xs">
         <div class="row items-center justify-between q-mb-xs">
-          <div class="text-subtitle2 text-weight-bold text-amber-8">
+          <div class="text-subtitle2 text-weight-bold text-amber-4">
             🎯 Action-Oriented Passive &amp; Active Scope Checks (Search, Study, Influence, Hide)
           </div>
           <div class="text-caption text-grey-5">
@@ -436,14 +440,16 @@
                     <q-btn
                       dense
                       size="xs"
-                      :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
+                      :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
+                      text-color="white"
                       label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
+                      :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
                       label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
@@ -517,7 +523,7 @@
                     rounded
                     unelevated
                     size="xs"
-                    toggle-color="info"
+                    toggle-color="cyan-10"
                     color="grey-9"
                     text-color="grey-4"
                     :options="[
@@ -563,14 +569,16 @@
                     <q-btn
                       dense
                       size="xs"
-                      :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
+                      :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
+                      text-color="white"
                       label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
+                      :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
                       label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
@@ -627,7 +635,7 @@
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
-                <span class="text-caption text-weight-bold text-amber-8">🗣️ Influence Checks</span>
+                <span class="text-caption text-weight-bold text-amber-4">🗣️ Influence Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('influence')"
@@ -644,7 +652,8 @@
                     rounded
                     unelevated
                     size="xs"
-                    toggle-color="amber-9"
+                    toggle-color="amber-4"
+                    toggle-text-color="grey-10"
                     color="grey-9"
                     text-color="grey-4"
                     :options="[
@@ -690,14 +699,16 @@
                     <q-btn
                       dense
                       size="xs"
-                      :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
+                      :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
+                      text-color="white"
                       label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
+                      :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
                       label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
@@ -754,7 +765,7 @@
           <div class="col-12 col-md-6">
             <div class="q-pa-xs rounded-borders" style="border: 1px solid rgba(255,255,255,0.1);">
               <div class="row items-center justify-between q-mb-xs flex-wrap q-gutter-xs">
-                <span class="text-caption text-weight-bold text-deep-purple-4">🥷 Hide Checks</span>
+                <span class="text-caption text-weight-bold text-deep-purple-3">🥷 Hide Checks</span>
                 <div class="row items-center q-gutter-x-xs editor-fit-wrap">
                   <q-checkbox
                     :model-value="movesToActionGroup('hide')"
@@ -817,14 +828,16 @@
                     <q-btn
                       dense
                       size="xs"
-                      :color="!getPassive(pKey).override ? 'positive' : 'grey-8'"
+                      :color="!getPassive(pKey).override ? 'green-9' : 'grey-8'"
+                      text-color="white"
                       label="Auto" v-help="'Use the bonus computed from the ability modifier and proficiency.'"
                       @click="getPassive(pKey).override = false"
                     />
                     <q-btn
                       dense
                       size="xs"
-                      :color="getPassive(pKey).override ? 'warning' : 'grey-8'"
+                      :color="getPassive(pKey).override ? 'amber-4' : 'grey-8'"
+                      :text-color="getPassive(pKey).override ? 'grey-10' : 'white'"
                       label="Ovr" v-help="'Type a fixed bonus instead of the computed one.'"
                       @click="getPassive(pKey).override = true"
                     />
@@ -898,7 +911,7 @@
                     rounded
                     unelevated
                     size="xs"
-                    toggle-color="teal-6"
+                    toggle-color="teal-8"
                     color="grey-9"
                     text-color="grey-4"
                     :options="[

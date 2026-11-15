@@ -69,7 +69,7 @@
       </q-card-section>
       <q-card-actions align="center">
         <q-btn
-          color="positive"
+          color="green-9"
           class="full-width"
           :label="$t('editor.regional.add')"
           @click="monster.addRegionalEffect"

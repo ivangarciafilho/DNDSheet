@@ -13,7 +13,7 @@
         <q-icon name="mdi-sword-cross" size="md" class="q-mr-sm" />
         <div>
           <div class="text-subtitle1 text-weight-bold">Combat HUD</div>
-          <div class="text-caption text-blue-1">
+          <div class="text-caption text-white">
             Round {{ combatStore.currentRound }} • Turn {{ combatStore.activeTurnIndex + 1 }}
           </div>
         </div>
@@ -53,7 +53,7 @@
         <q-btn
           size="sm"
           unelevated
-          color="positive"
+          color="green-9"
           icon="mdi-step-forward"
           label="Next"
           :disable="combatStore.sortedCombatants.length === 0"
@@ -75,7 +75,7 @@
 
       <!-- Combatants List -->
       <div class="col scroll q-pa-sm q-gutter-y-sm">
-        <div v-if="combatStore.sortedCombatants.length === 0" class="text-center q-pa-xl text-grey-6">
+        <div v-if="combatStore.sortedCombatants.length === 0" class="text-center q-pa-xl text-grey-4">
           <q-icon name="mdi-shield-sword" size="4rem" class="q-mb-sm" />
           <div class="text-body1">No combatants in active encounter.</div>
           <div class="text-caption">Click "Add Current Monster" or "Add Hero" to begin.</div>
@@ -93,7 +93,8 @@
           <q-card-section class="q-pa-sm">
             <div class="row items-center no-wrap">
               <q-badge
-                :color="idx === combatStore.activeTurnIndex ? 'amber-9' : 'blue-grey-7'"
+                :color="idx === combatStore.activeTurnIndex ? 'amber-4' : 'blue-grey-8'"
+                :text-color="idx === combatStore.activeTurnIndex ? 'grey-10' : 'white'"
                 class="text-weight-bolder q-mr-sm"
               >
                 Init {{ combatant.initiative }}
@@ -128,11 +129,11 @@
               <div class="row items-center text-caption justify-between">
                 <span>
                   <strong>HP:</strong> {{ combatant.currentHp }} / {{ combatant.maxHp }}
-                  <span v-if="combatant.tempHp > 0" class="text-blue-8 text-weight-bold">
+                  <span v-if="combatant.tempHp > 0" class="text-light-blue-3 text-weight-bold">
                     (+{{ combatant.tempHp }} temp)
                   </span>
                 </span>
-                <span :class="combatant.currentHp === 0 ? 'text-negative text-weight-bolder' : 'text-grey-7'">
+                <span :class="combatant.currentHp === 0 ? 'text-negative text-weight-bolder' : 'text-grey-4'">
                   {{ combatant.currentHp === 0 ? 'UNCONSCIOUS' : Math.round((combatant.currentHp / combatant.maxHp) * 100) + '%' }}
                 </span>
               </div>

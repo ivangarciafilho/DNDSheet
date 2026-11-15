@@ -60,7 +60,7 @@
           v-else-if="session.status === 'repaired'"
           dense
           rounded
-          class="bg-positive text-white q-mb-md"
+          class="bg-green-9 text-white q-mb-md"
           data-check-banner="repaired"
         >
           Safe repairs applied at revision #{{ session.sourceRevision }} in one undoable command.{{ session.issues.length > 0 ? ' Review remaining issues below.' : '' }}
@@ -171,9 +171,9 @@
             <q-item-section>
               <q-item-label class="text-weight-bold row items-center q-gutter-xs">
                 <span>{{ issue.code }}</span>
-                <q-badge :color="severityColor(issue.severity)" :label="issue.category" />
-                <q-badge v-if="issue.section" color="blue-grey-7" :label="issue.section" />
-                <q-badge v-if="issue.fixable" color="secondary" label="Safe Auto-Repair" />
+                <q-badge :color="severityColor(issue.severity)" :text-color="issue.severity === 'WARNING' ? 'grey-10' : 'white'" :label="issue.category" />
+                <q-badge v-if="issue.section" color="blue-grey-8" :label="issue.section" />
+                <q-badge v-if="issue.fixable" color="teal-8" label="Safe Auto-Repair" />
               </q-item-label>
               <q-item-label caption class="q-mt-xs">
                 {{ issue.message }}
@@ -199,11 +199,11 @@
       </q-card-section>
 
       <q-card-actions align="right" class="q-px-md q-pb-md">
-        <q-btn v-close-popup flat label="Close" color="grey-6" />
+        <q-btn v-close-popup flat label="Close" color="grey-4" />
         <q-btn
           v-if="fixableCount > 0"
           unelevated
-          color="secondary"
+          color="teal-8"
           icon="mdi-wrench"
           :disable="session.status === 'stale' || !session.repairPlan || session.repairPlan.fixedCount === 0"
           :label="`Apply ${fixableCount} Safe Repair(s)`"

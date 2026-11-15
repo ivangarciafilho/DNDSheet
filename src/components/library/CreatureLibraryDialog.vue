@@ -17,7 +17,7 @@
         </q-badge>
         <q-badge
           :color="saveBadgeColor"
-          text-color="white"
+          :text-color="saveBadgeTextColor"
           class="q-ml-xs"
           data-library-save-status
         >
@@ -276,13 +276,13 @@
                       </span>
                       <q-badge
                         v-if="repo.activeCreatureId === item.id"
-                        color="positive"
+                        color="green-9"
                         text-color="white"
                         label="Active"
                       />
                       <q-badge
-                        color="amber-9"
-                        text-color="white"
+                        color="amber-4"
+                        text-color="grey-10"
                         :label="`CR ${item.cr}`"
                       />
                       <q-badge
@@ -595,17 +595,21 @@ const saveStatusLabel = computed(() => {
 const saveBadgeColor = computed(() => {
   switch (repo.saveStatus) {
     case 'saved':
-      return 'positive'
+      return 'green-9'
     case 'saving':
-      return 'info'
+      return 'blue-9'
     case 'error':
-      return 'negative'
+      return 'red-9'
     case 'read_only':
-      return 'warning'
+      return 'amber-4'
     default:
       return 'grey-7'
   }
 })
+
+const saveBadgeTextColor = computed(() =>
+  repo.saveStatus === 'read_only' ? 'grey-10' : 'white',
+)
 
 watch(
   () => props.modelValue,
