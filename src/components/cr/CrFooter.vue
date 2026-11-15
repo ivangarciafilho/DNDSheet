@@ -252,7 +252,7 @@
                     >
                       <q-item-section avatar>
                         <q-avatar
-                          :color="crData.actionTypeColor(mod.type as any)"
+                          :color="crData.actionTypeColor(mod.type)"
                           font-size="14px"
                           >{{ mod.value }}</q-avatar
                         >
@@ -312,7 +312,7 @@
                     >
                       <q-item-section avatar>
                         <q-avatar
-                          :color="crData.actionTypeColor(mod.type as any)"
+                          :color="crData.actionTypeColor(mod.type)"
                           font-size="14px"
                           >{{ mod.value }}</q-avatar
                         >

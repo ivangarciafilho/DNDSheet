@@ -849,7 +849,7 @@ export const useMonsterStore = defineStore('monster', {
             recharge: '',
             legendaryOnly: true,
             limitedUse: { count: 0, rate: '' },
-            stat: 'none' as any,
+            stat: 'none',
             save: { override: false, overrideValue: 0 },
             range: '',
             effects: [],

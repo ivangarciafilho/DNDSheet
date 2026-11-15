@@ -78,7 +78,7 @@ export function bonusForSkill(monster: Monster, skill: MonsterSkill) {
   } else {
     const prof = monster?.proficiency ?? 2
     const profModifier = skill.expertise ? 2 : skill.proficient ? 1 : 0
-    const statKey = skill.skill?.stat || (skill.key ? (SKILL as any)[String(skill.key).toUpperCase()]?.stat : undefined)
+    const statKey = skill.skill?.stat || (skill.key ? (SKILL as Record<string, { stat: DndStat } | undefined>)[String(skill.key).toUpperCase()]?.stat : undefined)
     const statVal = statKey && monster?.stats ? monster.stats[statKey] ?? 10 : 10
     return statModifier(statVal) + prof * profModifier
   }

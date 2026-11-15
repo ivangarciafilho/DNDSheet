@@ -921,7 +921,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
     if (isModern && !context.customPreamble) {
       const asAction = context as unknown as MonsterAction
-      const isStructured = hasStructuredAbility(context as any)
+      const isStructured = hasStructuredAbility(context)
       if (isStructured) {
         const { ability, renderContext } = structuredRenderContext(asAction, monster)
         const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)

@@ -584,8 +584,8 @@ export default defineComponent({
             monster.customDatabase.presets = [...(monster.customDatabase.presets || []), ...parsed.presets]
           }
           $q.notify({ type: 'positive', message: 'Database imported successfully!' })
-        } catch (err: any) {
-          $q.notify({ type: 'negative', message: `Failed to import JSON: ${err.message}` })
+        } catch (err: unknown) {
+          $q.notify({ type: 'negative', message: `Failed to import JSON: ${err instanceof Error ? err.message : String(err)}` })
         }
       }
       reader.readAsText(file)

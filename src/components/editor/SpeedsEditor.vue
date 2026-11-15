@@ -303,7 +303,7 @@ v-model="monster.splitSpeedRiderRows"
             </div>
             <div class="col-12 col-sm-6 col-md-3">
               <q-checkbox
-                v-model="(speedTraversal as any).bonusActionHide"
+                v-model="speedTraversal.bonusActionHide"
                 v-help="'Can take the Hide action as a bonus action.'"
                 dense label="Bonus Action Hide"
                 color="primary"
@@ -362,9 +362,9 @@ v-model="monster.splitSpeedRiderRows"
               </mechanic-select-editor>
             </div>
 
-            <div v-if="(speedTraversal as any).bonusActionHide" class="col-12 col-sm-6 col-md-4 q-mt-xs">
+            <div v-if="speedTraversal.bonusActionHide" class="col-12 col-sm-6 col-md-4 q-mt-xs">
               <mechanic-select-editor
-                v-model="(speedTraversal as any).hideRider"
+                v-model="speedTraversal.hideRider"
                 v-help="'Extra effect when the creature Hides.'"
                 :options="disengageRiderPresets"
                 use-input

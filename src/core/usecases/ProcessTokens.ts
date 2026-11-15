@@ -189,25 +189,26 @@ export function processTokens(
 
   // 8. Context-specific tokens (traits, actions)
   if (options.context) {
-    const ctx = options.context as any
-    if (ctx.limitedUse) {
+    // Attacks have no limited use; traits, actions and reactions do.
+    const lu = 'limitedUse' in options.context ? options.context.limitedUse : undefined
+    if (lu) {
       text = text.replace(/\{trait\.limitedUse\}/gi, () => {
-        if (ctx.limitedUse.count > 0) {
-          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
+        if (lu.count > 0) {
+          return ` (${formatLimitedUses(lu.count, lu.rate)})`
         }
         return ''
       })
-      text = text.replace(/\{trait\.limitedUse\.count\}/gi, String(ctx.limitedUse.count))
-      text = text.replace(/\{trait\.limitedUse\.rate\}/gi, String(ctx.limitedUse.rate))
+      text = text.replace(/\{trait\.limitedUse\.count\}/gi, String(lu.count))
+      text = text.replace(/\{trait\.limitedUse\.rate\}/gi, String(lu.rate))
 
       text = text.replace(/\{action\.limitedUse\}/gi, () => {
-        if (ctx.limitedUse.count > 0) {
-          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
+        if (lu.count > 0) {
+          return ` (${formatLimitedUses(lu.count, lu.rate)})`
         }
         return ''
       })
-      text = text.replace(/\{action\.limitedUse\.count\}/gi, String(ctx.limitedUse.count))
-      text = text.replace(/\{action\.limitedUse\.rate\}/gi, String(ctx.limitedUse.rate))
+      text = text.replace(/\{action\.limitedUse\.count\}/gi, String(lu.count))
+      text = text.replace(/\{action\.limitedUse\.rate\}/gi, String(lu.rate))
     }
   }
 

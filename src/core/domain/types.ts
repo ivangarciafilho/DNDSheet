@@ -3,6 +3,7 @@ import type { CastingContribution, CastingSpellGrant, CastingRollOverride } from
 import type { SkillPassiveState } from './skill-passive-state.ts'
 import type { RandomTable } from './random-table'
 import type { ComposableInitiativeRider } from './initiative-composer'
+import type { MonsterPreset } from '../usecases/ApplyMonsterPreset.ts'
 
 export interface MonsterSenseItem {
   id: string
@@ -1305,7 +1306,7 @@ export interface Monster {
   splitDefenseRows?: { vulnerabilities?: boolean; resistances?: boolean; immunities?: boolean }
   /** Legacy tools action placement; superseded by passives.toolsActionType. */
   toolsActionType?: 'Action' | 'Bonus Action'
-  customDatabase?: { presets?: any[]; [key: string]: unknown }
+  customDatabase?: { presets?: MonsterPreset[]; [key: string]: unknown }
 }
 
 export interface TemplateMetadata<T> {

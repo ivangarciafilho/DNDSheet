@@ -1,3 +1,7 @@
+## Build 255 — C8 type debt, round 2
+
+any lines 45 to 29; ESLint warnings 206 to 149; all 31 src non-null assertions audited as guarded. See docs/roadmap/DNDSheet-Build255-Type-Debt-Round-Two.md.
+
 ## Build 254 — C8 type debt and library preset repairs
 
 any lines 112 to 45; the library preset lost initiative, bonus actions, HP notes, proficiency, HP override and spellcasting fields behind an any cast. Fixed through a tested applyMonsterPreset, with the built-in preset brought to the current schema. See docs/roadmap/DNDSheet-Build254-Type-Debt-and-Preset-Repairs.md.

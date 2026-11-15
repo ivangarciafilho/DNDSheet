@@ -87,4 +87,12 @@ module.exports = {
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
   },
+
+  overrides: [
+    {
+      // Tests assert presence first and then dereference; `!` there is the assertion, not a guess.
+      files: ['test/**'],
+      rules: { '@typescript-eslint/no-non-null-assertion': 'off' },
+    },
+  ],
 }

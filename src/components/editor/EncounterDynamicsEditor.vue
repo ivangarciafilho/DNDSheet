@@ -218,7 +218,7 @@ v-help="$t('help.encounterDynamics.trackDie')"
                 dense
                 outlined
                 label="Track Die (Timer / Escalation)"
-                @update:model-value="(val: string) => { runehammerTrack.timerDie = val as any; runehammerTrack.die = val as any; }"
+                @update:model-value="(val: string) => { runehammerTrack.timerDie = val; runehammerTrack.die = val; }"
               />
             </div>
             <div class="col-12 col-sm-4">

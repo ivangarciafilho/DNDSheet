@@ -34,6 +34,7 @@
 import { computed, defineComponent, onMounted, PropType, ref } from 'vue'
 import { MonsterContextType } from '../rendering/useProcessTokens'
 import { useI18n } from 'vue-i18n'
+import type { QEditor } from 'quasar'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useProcessTokens } from '../rendering/useProcessTokens'
 import { catalogFor, unresolvedMacros } from 'src/core/domain/macro-catalog'
@@ -68,7 +69,8 @@ export default defineComponent({
   setup(props, ctx) {
     const { t } = useI18n()
     const monster = useMonsterStore()
-    const editorRef = ref<any>(null)
+    // `caret` is QEditor's internal selection helper; it is not in Quasar's public typings.
+    const editorRef = ref<(QEditor & { caret?: { restore(): void } }) | null>(null)
     const browse = ref(false)
     const { processTokens: renderTokens } = useProcessTokens()
     const scope = computed<MacroScope>(() => SCOPE_OF[props.tokenCategory] ?? 'prose')
@@ -109,7 +111,7 @@ export default defineComponent({
     }
 
     const add = (token: string) => {
-      const edit = editorRef.value as any
+      const edit = editorRef.value
       browse.value = false
       if (edit && edit.caret) {
         edit.caret.restore()
@@ -132,7 +134,7 @@ export default defineComponent({
     })
 
     const contentEl = ref<HTMLElement | null>(null)
-    onMounted(() => { contentEl.value = editorRef.value?.getContentEl?.() ?? null })
+    onMounted(() => { contentEl.value = (editorRef.value?.getContentEl?.() as HTMLElement | undefined) ?? null })
     const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({
       scope: scope.value, query, limit: 8,
       customVariables: (monster as unknown as { customVariables?: Record<string, unknown> }).customVariables,
