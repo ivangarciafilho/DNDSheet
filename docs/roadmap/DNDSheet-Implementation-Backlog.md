@@ -1095,6 +1095,8 @@ The first post-A4 full run exposed three stale browser expectations and one real
 >
 > **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files ≥ 900 lines `20 → 19`. Next: `WebRenderer.vue` (2,983).
 >
+> **Build 259** ([packet](DNDSheet-Build259-Vitals-Child.md)): `C1b` ◐ vitals section (both layouts) to `StatblockVitals.vue` via a typed provide/inject view; `WebRenderer.vue` `1,440 → 1,143`; visual diff 104/104 identical.
+>
 > **Build 258** ([packet](DNDSheet-Build258-Template-Split-and-Visual-Regression.md)): `C6` ◐ `tools/qa/visual-diff.mjs` byte-exact screenshot regression (determinism 72/72, control 0/72, candidate 104/104); `C1b` ◐ scoped → namespaced styles, two child components, `WebRenderer.vue` `1,688 → 1,440`.
 >
 > **Track C status after Build 258:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C6`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C11` · owner `C7`.

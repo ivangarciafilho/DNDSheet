@@ -5,6 +5,8 @@ import type { DamageDefenseItem } from 'src/core/domain/types'
 import type { useMonsterStore as UseMonsterStore } from 'src/stores/monster-store'
 import { advHtml, escapeHtml } from './advFormat'
 
+export type DefenseRow = { key: string; title: string; scopeLabel: string; subTypeLabel: string; damageItems: string[]; conditionItems: string[]; items: string[]; formattedText: string; formattedProse: string; isVerbose: boolean }
+
 /** Vulnerability, resistance, immunity and condition lines (plain, split and cascading). Extracted verbatim from useTextRenderer (C1b). */
 export function useDefenseText(monster: ReturnType<typeof UseMonsterStore>) {
   const resistances = computed(() => {
@@ -59,7 +61,6 @@ export function useDefenseText(monster: ReturnType<typeof UseMonsterStore>) {
   const cascadingDefenses = computed(() => {
     // Each entry keeps plain text (sorting, verbosity) and HTML (adv/disadv grammar).
     type DefenseEntry = { text: string; html: string }
-    type DefenseRow = { key: string; title: string; scopeLabel: string; subTypeLabel: string; damageItems: string[]; conditionItems: string[]; items: string[]; formattedText: string; formattedProse: string; isVerbose: boolean }
     const getItems = (list: DamageDefenseItem[] | undefined, fallback: string[] | undefined): DefenseEntry[] => {
       if (Array.isArray(list) && list.length > 0) {
         const advList: { name: string; item: DamageDefenseItem }[] = []

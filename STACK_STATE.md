@@ -1,3 +1,7 @@
+## Build 259 — vitals section as a child component
+
+StatblockVitals.vue renders both layout branches from a typed provide/inject view (useStatblockVitalsView.ts); WebRenderer.vue 1,440 to 1,143; visual diff 104/104 identical. See docs/roadmap/DNDSheet-Build259-Vitals-Child.md.
+
 ## Build 258 — template split groundwork and visual regression
 
 New tools/qa/visual-diff.mjs (byte-exact screenshot regression; determinism 72/72, control 0/72, candidate 104/104). Scoped styles namespaced under .web-renderer-root; encounter dynamics and A4 toolbar moved to child components; WebRenderer.vue 1,688 to 1,440. See docs/roadmap/DNDSheet-Build258-Template-Split-and-Visual-Regression.md.
