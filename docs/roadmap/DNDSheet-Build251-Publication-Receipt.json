@@ -1,0 +1,137 @@
+{
+  "build": 251,
+  "version": "2.4.3",
+  "slug": "editor-contrast-and-ui-polish",
+  "date": "2026-11-15",
+  "branch": "build185-repairs",
+  "sourceCommit": "13ed663dbf2f8561d092228c2617d96b545b1c4d",
+  "baseCommit": "2694780738827e591fe7a8d75166d4f994689843",
+  "extendsBuild250Source": "f7219a79de85725e608280629929ac2a0432e6ef",
+  "pagesCommit": "baf9b4d088ceb933eea1d803f60e304a2724cdb8",
+  "tag": "rc-2.4.3-build-251-editor-contrast-and-ui-polish",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 10,
+    "inputFingerprint": "74f3b2e18620ecde6a3195206741397449baac3ab8b20f1671d529d44acbf624",
+    "coreTests": {
+      "passed": 678,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "subtests": 666
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 2740,
+      "fixableWarnings": 2416
+    },
+    "typecheck": {
+      "diagnostics": 48,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 635,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 554,
+      "total": 554,
+      "floorPercent": 100
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "spaBudgetProbe": {
+      "keystrokeP95Ms": 9.3,
+      "completionOpenMs": 28.7,
+      "catalogSelectOpenMs": 8.6,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "budgetProbe": {
+      "keystrokeP95Ms": 12.6,
+      "completionOpenMs": 39.3,
+      "catalogSelectOpenMs": 8.7,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "appScssImportant": {
+      "occurrences": 65,
+      "lines": 57,
+      "ceiling": 150
+    },
+    "timingsSeconds": {
+      "core": 4,
+      "lint": 18,
+      "typecheck": 35,
+      "build": 42,
+      "fuzz": 202,
+      "help": 195,
+      "spell": 10,
+      "pagesBuild": 40,
+      "pagesAssets": 0,
+      "pagesFuzz": 389
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "f695903883ed5802dcc8bc012df55a82bb7c85bb07b1f20e38b483bb2fad34ca",
+    "indexHtmlBytes": 1337,
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.f8cec1af.js",
+        "status": 200,
+        "bytes": 933822,
+        "sha256": "9c24988ea0e601fb4f69542943b741b3043cce1f6826deae2e04d1462078a154",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.35424311.css",
+        "status": 200,
+        "bytes": 674754,
+        "sha256": "b3081883309d3df0dac19b2a7eff57e0223721d5f665722573ac03a2fb180afc",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.33f6bcb8.js",
+        "status": 200,
+        "bytes": 833548,
+        "sha256": "2c302f68fe2d851557a6ebc92fc2b5ac7faeb6107e49791c448dd33c5fe8e45f",
+        "matchesLocal": true
+      }
+    ],
+    "liveBudgetProbe": {
+      "keystrokeP95Ms": 6.5,
+      "completionOpenMs": 29.1,
+      "catalogSelectOpenMs": 9.2,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    }
+  },
+  "closedTasks": [],
+  "closedSections": [],
+  "workloadStatus": {
+    "topLevelIds": { "total": 273, "checked": 271, "open": 2 },
+    "rawCheckboxes": { "total": 313, "checked": 311, "open": 2 },
+    "openOwnerGates": ["B5.7", "H16"]
+  },
+  "trackCExpanded": [
+    "C1a",
+    "C1b",
+    "C2",
+    "C3",
+    "C4",
+    "C5",
+    "C6",
+    "C7",
+    "C8",
+    "C9",
+    "C10",
+    "C11",
+    "C12"
+  ]
+}

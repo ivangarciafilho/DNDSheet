@@ -160,7 +160,9 @@ Remaining non-kit `<q-select>` controls audited across `src/` in Build 250 (`src
 
 ## `!important` Debt Reduction
 
-| Stylesheet | Baseline (Pre-R12) | Build 250 | Release Target | Status |
-|---|---|---|---|---|
-| `src/css/app.scss` | `505` | `44` | `< 150` | **Met (91.3% reduction)** |
-| `src/css/statblock-grammar.scss` | `258` (isolated surface ownership) | `258` | Scoped under `:is(#render, .composer-preview, body)` | **Isolated** |
+| Stylesheet | Baseline (Pre-R12) | Build 250 | Build 251 | Release Target | Status |
+|---|---|---|---|---|---|
+| `src/css/app.scss` | `505` | `44` | `65` (`57` lines) | `< 150` | **Met (87.1% reduction vs baseline; queued in `C11` to tokenize dark guards)** |
+| `src/css/statblock-grammar.scss` | `258` (isolated surface ownership) | `258` | `258` | Scoped under `:is(#render, .composer-preview, body)` | **Isolated** |
+
+> **Numeric Control Triage Note (Build 251):** Out of `56` numeric inputs tracked by `test/inventory.mjs` (`554/554` help-covered), `10` controls remain in the `review` bucket (`21` literal presentation, `13` literal character sheet, `7` binding-capable composer draft, `2` tracker state, `2` spell data, `1` CR annotation) and are queued in `Track C` item `C2` for explicit binding vs literal-exemption resolution.
