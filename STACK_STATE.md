@@ -1,3 +1,7 @@
+## Build 266 — C1b round 1: module splits
+
+Six domain and use-case modules split by an AST move that re-exports from the original (no importer changed); files of 900+ lines 11 → 5. See docs/roadmap/DNDSheet-Build266-C1b-Module-Splits.md.
+
 ## Build 265 — C1a editor panels split into sections
 
 Five editor panels now provide a typed state composable to verbatim-moved section components; files of 900+ lines 18 → 11. See docs/roadmap/DNDSheet-Build265-C1a-Editor-Sections.md.

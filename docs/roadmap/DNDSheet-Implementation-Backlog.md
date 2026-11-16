@@ -1108,6 +1108,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 > **Build 265** ([packet](DNDSheet-Build265-C1a-Editor-Sections.md)): `C1a` ✅ for the editor panels. SkillsEditor, ResistancesEditor, ActionsEditor, A4LayerStudio and LoreSection were split into state composables plus section components (ADR-0003); RadialOffsetController style and ChangelogContent archive were split out; files of 900+ lines went 18 → 11 (ratchet). `useBasicsContext.ts` moves to `C1b`.
 
 > **Track C status after Build 265:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C1b` (11 files: `species-and-heuristics`, `defense-and-traits-utils`, `types`, `monster-store`, `ExportStatblock`, `AutoSyncSpellcasting`, `useProcessTokens`, `formula`, `useBasicsContext`, plus the `app.scss` and `statblock-grammar.scss` stylesheets), `C5` (i18n/pt-BR) · follow-up: event-driven waits in browser tests.
+
+> **Build 266** ([packet](DNDSheet-Build266-C1b-Module-Splits.md)): `C1b` ◐ six domain and use-case modules split into sibling modules via an AST-driven, re-exporting move (no importer changed); files of 900+ lines 11 → 5. A module-init cycle was found and disarmed (leaf-module rule).
+
+> **Track C status after Build 266:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ◐ `C1b` (5 left: `monster-store.ts` → typed setup-store slices; `useProcessTokens.ts` and `useBasicsContext.ts` → dependency-passed sub-composables; `app.scss` and `statblock-grammar.scss` → in-place partials) · ☐ `C5`.
 >
 > **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
 >
