@@ -1,3 +1,7 @@
+## Build 265 — C1a editor panels split into sections
+
+Five editor panels now provide a typed state composable to verbatim-moved section components; files of 900+ lines 18 → 11. See docs/roadmap/DNDSheet-Build265-C1a-Editor-Sections.md.
+
 ## Build 264 — streamlined plate tangents and line stripes
 
 Plate heads are exactly one row line tall, so they meet line 2 edge to edge without overlap; multi-line descriptions stripe alternate lines in the theme tint. See docs/roadmap/DNDSheet-Build264-Streamlined-Tangents-and-Stripes.md.

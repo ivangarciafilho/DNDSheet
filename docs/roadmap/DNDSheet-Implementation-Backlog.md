@@ -1102,6 +1102,12 @@ The first post-A4 full run exposed three stale browser expectations and one real
 > **Build 262** ([packet](DNDSheet-Build262-Ratchet-and-C2-C4-C7-C11.md)): ✅ `C2` (0 unclassified inputs, guarded), ✅ `C4` (typecheck 48 → 0, zero-tolerance), ✅ `C7` (`B5.7` reset clears editor/combat; `H16` folder removed), ✅ `C11` (`app.scss` `!important` 65 → 21; dark/print exceptions isolated). New `tools/ratchet.mjs` gate guard: debt metrics may only fall.
 
 > **Track C status after Build 262:** ✅ `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C1a`, `C1b`, `C5` (coupled plan: 263 split+i18n keys, 264 pt-BR+generated changelog, 265 domain types).
+
+> **Builds 263–264** ([263](DNDSheet-Build263-Statblock-Layout-Fixes.md), [264](DNDSheet-Build264-Streamlined-Tangents-and-Stripes.md)): owner-reported stat block fixes (short Traits stay in one column, editor order drives render order, trigger-only reactions on one row, plate head tangent to line 2, alternating line stripes).
+
+> **Build 265** ([packet](DNDSheet-Build265-C1a-Editor-Sections.md)): `C1a` ✅ for the editor panels. SkillsEditor, ResistancesEditor, ActionsEditor, A4LayerStudio and LoreSection were split into state composables plus section components (ADR-0003); RadialOffsetController style and ChangelogContent archive were split out; files of 900+ lines went 18 → 11 (ratchet). `useBasicsContext.ts` moves to `C1b`.
+
+> **Track C status after Build 265:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C1b` (11 files: `species-and-heuristics`, `defense-and-traits-utils`, `types`, `monster-store`, `ExportStatblock`, `AutoSyncSpellcasting`, `useProcessTokens`, `formula`, `useBasicsContext`, plus the `app.scss` and `statblock-grammar.scss` stylesheets), `C5` (i18n/pt-BR) · follow-up: event-driven waits in browser tests.
 >
 > **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
 >
