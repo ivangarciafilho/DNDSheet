@@ -100,6 +100,7 @@
             <div
               v-if="hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')) && (monster.portrait?.position === 'left' || (!monster.portrait?.position && editorStore?.a4PreviewMode))"
               class="monster-portrait portrait-left"
+              :class="{ 'portrait-frameless': monster.portrait?.frameless }"
               :style="editorStore?.a4PreviewMode ? a4PortraitStyle : portraitStyle"
             >
               <div class="portrait-img-container relative-position" :style="portraitCropContainerStyle">
@@ -260,6 +261,7 @@
     <div
       v-if="hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')) && monster.portrait?.position === 'right'"
       class="monster-portrait portrait-right"
+      :class="{ 'portrait-frameless': monster.portrait?.frameless }"
       :style="editorStore?.a4PreviewMode ? a4PortraitStyle : portraitStyle"
     >
       <div class="portrait-img-container relative-position" :style="portraitCropContainerStyle">

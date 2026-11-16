@@ -1120,6 +1120,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 > **Build 268** ([packet](DNDSheet-Build268-C5-pt-BR-Help.md)): `C5` ◐ locale infrastructure, an opt-in English/Português switch, all 249 editor help texts and all 56 stat block help tips in pt-BR (BS-33), a coverage contract test (251/916 keys, floor only grows) and a browser smoke on SPA and Pages.
 
 > **Track C status after Build 268:** ✅ `C1a`, `C1b`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ◐ `C5` (next: hard-coded template labels → i18n keys, remaining namespaces, Quasar pt-BR lang pack, generated changelog) · follow-up: event-driven browser waits.
+
+> **Build 269** ([packet](DNDSheet-Build269-Owner-Requests-AC-Riders.md)): owner requests ✅. Text blocks and dice tables now reach the stat block in every projection, printed after the description. Frameless portrait toggle. Compact CR · Lair CR / PB rows. Natural Armor base (10 + DEX + bonus). AC rider list (cadence → timing → hit/miss → preset or custom effect), with automatic migration from the legacy pickers. Layer size strip inside the post-crop radial (linked scale or W/H).
+
+> **Track C status after Build 269:** unchanged: ✅ 12 of 13 · ◐ `C5`. Open follow-ups: event-driven browser waits; composer-structured entries keep text blocks between outcomes and prose (order not reported).
 >
 > **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
 >

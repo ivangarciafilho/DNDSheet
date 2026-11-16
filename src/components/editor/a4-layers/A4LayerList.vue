@@ -389,39 +389,6 @@ v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-sm-4">
-                <div class="text-caption text-cyan-3 flex justify-between">
-                  <span>Uniform Scale</span>
-                  <span>{{ editorStore.a4PortraitScale ?? 100 }}%</span>
-                </div>
-                <div class="row items-center q-col-gutter-xs">
-                  <div class="col">
-                    <q-slider
-                      v-model="editorStore.a4PortraitScale"
-                      v-help="'Scale portrait artwork uniformly around its focal point.'"
-                      :min="50"
-                      :max="200"
-                      :step="1"
-                      color="cyan-5"
-                      dense
-                    />
-                  </div>
-                  <div class="col-auto">
-                    <q-input
-                      v-model.number="editorStore.a4PortraitScale"
-                      v-help="'Exact uniform scale percentage applied to portrait artwork.'"
-                      type="number"
-                      min="50"
-                      max="200"
-                      dense
-                      outlined
-                      dark
-                      label="%"
-                      style="width: 70px;"
-                    />
-                  </div>
-                </div>
-              </div>
 
               <!-- 2 Radial Offset Controllers: Pre-Crop Focal Center & Post-Crop Layer Position -->
               <div class="col-12 col-sm-6 q-py-xs">
@@ -450,7 +417,17 @@ v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block
                   unit="px"
                   color="cyan"
                   icon="open_with"
-                />
+                >
+                  <layer-size-strip
+                    :scale="editorStore.a4PortraitScale ?? 100"
+                    :scale-x="layer.scaleX ?? 100"
+                    :scale-y="layer.scaleY ?? 100"
+                    color="cyan"
+                    @update:scale="(value: number) => (editorStore.a4PortraitScale = value)"
+                    @update:scale-x="(value: number) => (layer.scaleX = value)"
+                    @update:scale-y="(value: number) => (layer.scaleY = value)"
+                  />
+                </radial-offset-controller>
               </div>
 
               <image-layer-transform-controls :layer="layer" class="col-12" @change="patch => Object.assign(layer, patch)" />
@@ -566,39 +543,6 @@ v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-sm-4">
-                <div class="text-caption text-purple-3 flex justify-between">
-                  <span>Uniform Scale</span>
-                  <span>{{ layer.scale ?? 100 }}%</span>
-                </div>
-                <div class="row items-center q-col-gutter-xs">
-                  <div class="col">
-                    <q-slider
-                      v-model="layer.scale"
-                      v-help="'Uniformly scale this layer texture or overlay image on the page.'"
-                      :min="50"
-                      :max="200"
-                      :step="1"
-                      color="purple-4"
-                      dense
-                    />
-                  </div>
-                  <div class="col-auto">
-                    <q-input
-                      v-model.number="layer.scale"
-                      v-help="'Exact uniform scale percentage for this composition layer.'"
-                      type="number"
-                      min="50"
-                      max="200"
-                      dense
-                      outlined
-                      dark
-                      label="%"
-                      style="width: 70px;"
-                    />
-                  </div>
-                </div>
-              </div>
 
               <image-layer-transform-controls :layer="layer" class="col-12" @change="patch => Object.assign(layer, patch)" />
 
@@ -635,7 +579,17 @@ v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block
                   @update:y="(val: number) => layer.offsetY = val"
                   @update:crop-x="(val: { min: number; max: number }) => layer.cropX = val"
                   @update:crop-y="(val: { min: number; max: number }) => layer.cropY = val"
-                />
+                >
+                  <layer-size-strip
+                    :scale="layer.scale ?? 100"
+                    :scale-x="layer.scaleX ?? 100"
+                    :scale-y="layer.scaleY ?? 100"
+                    :color="layer.type === 'foreground' ? 'purple' : 'blue'"
+                    @update:scale="(value: number) => (layer.scale = value)"
+                    @update:scale-x="(value: number) => (layer.scaleX = value)"
+                    @update:scale-y="(value: number) => (layer.scaleY = value)"
+                  />
+                </radial-offset-controller>
               </div>
 
               <div class="col-12 col-sm-12">
@@ -789,6 +743,7 @@ v-model="editorStore.a4StatblockFinalHeight" v-help="'Adjust vertical stat block
 <script lang="ts">
 import { defineComponent } from 'vue'
 import ImageLayerTransformControls from '../widgets/ImageLayerTransformControls.vue'
+import LayerSizeStrip from '../widgets/LayerSizeStrip.vue'
 import RadialOffsetController from '../widgets/RadialOffsetController.vue'
 import GradientOverlayController from '../widgets/GradientOverlayController.vue'
 import CatalogSelect from '../../kit/CatalogSelect.vue'
@@ -796,7 +751,7 @@ import { injectA4LayerStudioState } from './useA4LayerStudioState'
 
 export default defineComponent({
   name: 'A4LayerList',
-  components: { ImageLayerTransformControls, RadialOffsetController, GradientOverlayController, CatalogSelect },
+  components: { LayerSizeStrip, ImageLayerTransformControls, RadialOffsetController, GradientOverlayController, CatalogSelect },
   setup() {
     return injectA4LayerStudioState()
   },

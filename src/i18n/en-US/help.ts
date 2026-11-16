@@ -12,6 +12,7 @@ export const HELP_MESSAGES = {
     portraitPosition: 'Place portrait artwork beside, above, or behind the stat block frame.',
     portraitWidth: 'Set portrait display width in pixels on the rendered sheet.',
     portraitCaption: 'Add an optional artist credit or caption below the portrait.',
+    portraitFrameless: 'Remove the frame (border, padding, and shadow) around the portrait so the artwork stands on its own.',
     portraitOverlap: 'Control how far A4 artwork overlaps the stat block column (0% side-by-side to 100% full cover).',
     statblockOpacity: 'Adjust backdrop opacity behind stat block text on exported A4 pages.',
     a4LayerStudio: 'Open A4 parchment, artwork, border, and watercolor mask layers for print layout.',
@@ -21,6 +22,7 @@ export const HELP_MESSAGES = {
     setAllTen: 'Reset all six ability scores to 10 (+0 modifier) as an average humanoid baseline.',
   },
   defenses: {
+    acNaturalBonus: 'Flat natural armor bonus added to 10 + Dexterity modifier (a hide, carapace, or scales).',
     acAbilityBonus: 'Add an ability modifier or proficiency bonus on top of armor or natural AC.',
     acDefenseItem: 'Include defensive gear or natural protection items in the armor source note.',
     acTemporary: 'Append conditional reaction or spell AC (such as Shield) to the AC parenthetical.',
@@ -32,6 +34,7 @@ export const HELP_MESSAGES = {
     acDamageTakenTrigger: 'Match a triggering damage type that activates or breaks this defense.',
     acCustomCondition: 'Write an extra condition phrase restricting when this defensive rule applies.',
     acSplitSubrows: 'Display multiple AC riders as indented sub-rows for easier scanning in play.',
+    acAddRider: 'Add an AC rider: pick its cadence, timing, whether it fires on a hit or a miss, and a preset effect or your own text.',
     acOnMiss: 'Trigger an automatic counter-effect whenever an attacker misses this creature.',
     acOnHit: 'Trigger an automatic retaliation or condition whenever an attacker lands a hit.',
     hpBloodiedDice: 'Set optional dice expression used to announce when this creature becomes Bloodied.',

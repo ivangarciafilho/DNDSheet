@@ -67,7 +67,7 @@
 
       <div class="row q-col-gutter-xs items-center">
         <!-- 1. Base -->
-        <div class="col-12 col-sm-4">
+        <div :class="acConfig.baseMode === 'natural' ? 'col-8 col-sm-3' : 'col-12 col-sm-4'">
           <catalog-select
             v-help="'Where the base Armor Class comes from: natural armor, worn armor, or a formula.'"
             :model-value="acConfig.baseMode"
@@ -75,6 +75,16 @@
             preserve-order
             label="Base AC Source"
             @update:model-value="(val) => { acConfig.baseMode = String(val || 'flat') as typeof acConfig.baseMode; onAcCompositorChanged() }"
+          />
+        </div>
+        <div v-if="acConfig.baseMode === 'natural'" class="col-4 col-sm-1" data-natural-armor-bonus>
+          <formula-field
+            v-help="$t('help.defenses.acNaturalBonus')"
+            path="acConfig.naturalBonus"
+            label="Bonus"
+            dense
+            outlined
+            @applied="onAcCompositorChanged"
           />
         </div>
 
@@ -380,93 +390,12 @@
           data-contextual-split-ac="true"
         />
       </div>
-      <div class="row q-col-gutter-xs items-center q-mt-xs">
-        <div class="col-12 col-sm-6">
-          <catalog-select
-            v-help="$t('help.defenses.acOnMiss')"
-            :model-value="acConfig.onMiss"
-            :entries="ON_MISS_ENTRIES"
-            preserve-order
-            label="On Miss Effect"
-            @update:model-value="(val) => { acConfig.onMiss = String(val || 'none') as typeof acConfig.onMiss; onAcCompositorChanged() }"
-          />
-        </div>
-        <div class="col-12 col-sm-6">
-          <catalog-select
-            v-help="$t('help.defenses.acOnHit')"
-            :model-value="acConfig.onHit"
-            :entries="ON_HIT_ENTRIES"
-            preserve-order
-            label="When Hit Effect"
-            @update:model-value="(val) => { acConfig.onHit = String(val || 'none') as typeof acConfig.onHit; onAcCompositorChanged() }"
-          />
-        </div>
-      </div>
-
-      <!-- On Miss Extra Inputs -->
-      <div v-if="acConfig.onMiss === 'hits_target_feet'" class="row q-col-gutter-xs items-center q-mt-xs">
-        <div class="col-12 col-sm-6">
-          <formula-field
-            v-help="'Maximum distance in feet to redirect a missed attack to another creature.'"
-            path="acConfig.onMissDistance"
-            label="Redirect Distance (ft)"
-            dense
-            outlined
-            @applied="onAcCompositorChanged"
-          />
-        </div>
-      </div>
-
-      <div v-if="acConfig.onMiss === 'damage_attacker'" class="row q-col-gutter-xs items-center q-mt-xs">
-        <div class="col-6 col-sm-3">
-          <formula-field
-            v-help="'Damage dealt back to the attacker when its attack misses.'"
-            path="acConfig.onMissDamageAmount"
-            label="Damage Amount"
-            dense
-            outlined
-            @applied="onAcCompositorChanged"
-          />
-        </div>
-        <div class="col-6 col-sm-3">
-          <catalog-select
-            v-help="'Damage type dealt back to an attacker on a miss.'"
-            :model-value="acConfig.onMissDamageType"
-            catalog-id="damageTypes"
-            label="Damage Type"
-            @update:model-value="(val) => { acConfig.onMissDamageType = String(val || 'fire'); onAcCompositorChanged() }"
-          />
-        </div>
-      </div>
-
-      <!-- When Hit Extra Inputs -->
-      <div v-if="acConfig.onHit === 'damage_attacker'" class="row q-col-gutter-xs items-center q-mt-xs">
-        <div class="col-6 col-sm-3">
-          <formula-field
-            v-help="'Damage dealt automatically to the attacker whenever a hit lands.'"
-            path="acConfig.onHitDamageAmount"
-            label="On Hit Damage"
-            dense
-            outlined
-            @applied="onAcCompositorChanged"
-          />
-        </div>
-        <div class="col-6 col-sm-3">
-          <catalog-select
-            v-help="'Damage type dealt automatically to the attacker whenever a hit lands.'"
-            :model-value="acConfig.onHitDamageType"
-            catalog-id="damageTypes"
-            label="On Hit Type"
-            @update:model-value="(val) => { acConfig.onHitDamageType = String(val || 'fire'); onAcCompositorChanged() }"
-          />
-        </div>
-      </div>
+      <!-- Build 269: AC riders (cadence -> timing -> on hit/miss -> effect) replace the single pickers -->
+      <ac-riders-editor @changed="onAcCompositorChanged" />
 
       <defense-schedule-fields v-if="acConfig.temporary && acConfig.temporary !== 'none'" effect="temporaryAc" label="Temporary AC" />
       <defense-schedule-fields v-if="acConfig.conditional && acConfig.conditional !== 'none'" effect="conditionalAc" label="Conditional AC" />
       <defense-schedule-fields v-if="acConfig.conditionMode && acConfig.conditionMode !== 'none'" effect="defensiveRule" label="Defensive rule" />
-      <defense-schedule-fields v-if="acConfig.onMiss && acConfig.onMiss !== 'none'" effect="onMiss" label="On miss" />
-      <defense-schedule-fields v-if="acConfig.onHit && acConfig.onHit !== 'none'" effect="onHit" label="On hit" />
 
       <!-- 6i. Composed Real-Time AC Result Preview -->
       <div class="row items-center justify-between q-mt-xs q-pa-xs rounded-borders bg-grey-9">
@@ -489,6 +418,7 @@ import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import FormulaField from 'src/components/kit/FormulaField.vue'
 import BasicRidersEditor from '../BasicRidersEditor.vue'
 import DefenseScheduleFields from '../DefenseScheduleFields.vue'
+import AcRidersEditor from './AcRidersEditor.vue'
 import MechanicTextEditor from '../MechanicTextEditor.vue'
 import {
   AC_ABILITY_BONUS_ENTRIES,
@@ -500,8 +430,6 @@ import {
   ATTACK_TYPE_ENTRIES,
   FULL_ABILITY_NAME_ENTRIES,
   LIGHT_LEVEL_ENTRIES,
-  ON_HIT_ENTRIES,
-  ON_MISS_ENTRIES,
   ON_SAVE_FAILURE_ENTRIES,
   ON_SAVE_SUCCESS_ENTRIES,
   PLURAL_CREATURE_TYPE_ENTRIES,

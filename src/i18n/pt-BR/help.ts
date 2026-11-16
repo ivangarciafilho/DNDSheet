@@ -17,6 +17,7 @@ export const HELP_MESSAGES_PT_BR: Translated<HelpMessages> = {
     portraitPosition: 'Posicione a arte do retrato ao lado, acima ou atrás da moldura do bloco de estatísticas.',
     portraitWidth: 'Define a largura de exibição do retrato, em pixels, na ficha renderizada.',
     portraitCaption: 'Adicione um crédito do artista ou legenda opcional abaixo do retrato.',
+    portraitFrameless: 'Remove a moldura (borda, margem interna e sombra) ao redor do retrato, deixando a arte sozinha.',
     portraitOverlap: 'Controla quanto a arte da página A4 sobrepõe a coluna do bloco (0% lado a lado a 100% cobertura total).',
     statblockOpacity: 'Ajusta a opacidade do fundo atrás do texto do bloco nas páginas A4 exportadas.',
     a4LayerStudio: 'Abre as camadas de pergaminho, arte, borda e máscara de aquarela da página A4 para impressão.',
@@ -26,6 +27,7 @@ export const HELP_MESSAGES_PT_BR: Translated<HelpMessages> = {
     setAllTen: 'Redefine os seis valores de atributo para 10 (modificador +0) como base de humanoide comum.',
   },
   defenses: {
+    acNaturalBonus: 'Bônus fixo de armadura natural somado a 10 + modificador de Destreza (couro, carapaça ou escamas).',
     acAbilityBonus: 'Soma um modificador de atributo ou o bônus de proficiência à CA de armadura ou natural.',
     acDefenseItem: 'Inclui equipamento defensivo ou proteção natural na nota de origem da armadura.',
     acTemporary: 'Acrescenta CA condicional de reação ou magia (como Escudo Arcano) ao parêntese da CA.',
@@ -37,6 +39,7 @@ export const HELP_MESSAGES_PT_BR: Translated<HelpMessages> = {
     acDamageTakenTrigger: 'Tipo de dano sofrido que ativa ou rompe esta defesa.',
     acCustomCondition: 'Escreva uma condição extra que restrinja quando esta regra defensiva se aplica.',
     acSplitSubrows: 'Mostra vários complementos de CA como sublinhas recuadas, para leitura rápida em jogo.',
+    acAddRider: 'Adiciona um complemento de CA: escolha a frequência, o momento, se dispara em um acerto ou erro, e um efeito pronto ou seu próprio texto.',
     acOnMiss: 'Dispara um contra-efeito automático sempre que um atacante erra esta criatura.',
     acOnHit: 'Dispara uma retaliação ou condição automática sempre que um atacante acerta.',
     hpBloodiedDice: 'Expressão de dados opcional usada para anunciar quando esta criatura fica Sangrando.',

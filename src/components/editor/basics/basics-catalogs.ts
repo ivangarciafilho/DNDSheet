@@ -143,6 +143,7 @@ export const MENTAL_SAVE_STAT_ENTRIES = toCatalogEntries(
 export const AC_BASE_ENTRIES = toCatalogEntries([
   { label: 'Current Flat AC', value: 'flat', category: 'Standard', icon: 'numbers', color: 'blue-4' },
   { label: '10 + DEX (Unarmored)', value: '10', category: 'Standard', icon: 'accessibility', color: 'blue-4' },
+  { label: 'Natural Armor (10 + DEX + bonus)', value: 'natural', category: 'Standard', icon: 'pets', color: 'green-5' },
   { label: 'Leather Armor (11 + DEX)', value: 'leather', category: 'Light Armor', icon: 'shield', color: 'brown-4' },
   { label: 'Studded Leather (12 + DEX)', value: 'studded_leather', category: 'Light Armor', icon: 'shield', color: 'brown-4' },
   { label: 'Hide (12 + DEX max 2)', value: 'hide', category: 'Medium Armor', icon: 'shield', color: 'orange-4' },

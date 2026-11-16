@@ -1,4 +1,5 @@
 import { computed, inject, provide, ref, watch, type InjectionKey } from 'vue'
+import type { MonsterPortrait } from 'src/core/domain/types'
 import { useQuasar } from 'quasar'
 import { v4 as uuidv4 } from 'uuid'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -261,9 +262,9 @@ export function createBasicsContext() {
     conditional: 'none',
   }
 
-  const defaultPortrait = {
+  const defaultPortrait: MonsterPortrait = {
     url: '',
-    position: 'none' as const,
+    position: 'none',
     width: 220,
     caption: '',
   }

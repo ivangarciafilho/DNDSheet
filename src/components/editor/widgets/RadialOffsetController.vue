@@ -336,6 +336,8 @@
         </div>
       </div>
     </div>
+    <!-- Optional extra controls that belong to this gizmo (Build 269: layer size strip) -->
+    <slot />
   </div>
 </template>
 

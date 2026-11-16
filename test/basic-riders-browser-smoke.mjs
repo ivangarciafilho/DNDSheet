@@ -69,8 +69,12 @@ await browserProbe(async ({ evaluate }) => {
       all.includes('(10/+0, Acrobatics, Athletics, Sleight of Hand, Stealth)') &&
       all.includes('(10/+0, Deception, Intimidation, Performance, Persuasion), (13/+3, Animal Handling)') &&
       all.includes("(11/+1, Weaver's Tools), (17/+7, Smith's Tools)");
-    const controlsPresent = Object.keys(schedules).every(key => document.querySelectorAll(
-      '[data-defense-schedule="' + key + '"] .q-select').length === 2);
+    // Build 269: On Miss / On Hit schedules live on their AC rider rows (migrated from the legacy picks).
+    const riderRows = [...document.querySelectorAll('[data-ac-rider]')];
+    const migratedRiders = (monster.acConfig.riders || []).map(r => [r.trigger, r.cadence, r.timing].join('|')).sort().join(',') ===
+      'hit|once_long_rest|As an Action,miss|once_round|As a Reaction';
+    const controlsPresent = Object.keys(schedules).filter(key => key !== 'onMiss' && key !== 'onHit').every(key => document.querySelectorAll(
+      '[data-defense-schedule="' + key + '"] .q-select').length === 2) && riderRows.length === 2 && migratedRiders;
     const scheduled = ['Once per Long Rest: As a Reaction: DT 5',
       'Once per round: As an Action: DR 2', 'Once per round: As a Reaction: On Miss',
       'Once per Long Rest: As an Action: On Hit', 'Once per Short Rest: As a Bonus Action:',

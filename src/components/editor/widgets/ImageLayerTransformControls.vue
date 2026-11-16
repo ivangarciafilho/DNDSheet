@@ -1,33 +1,5 @@
 <template>
   <div class="row q-col-gutter-xs items-center" role="group" aria-label="Image shape">
-    <div class="col-12 col-sm-6">
-      <div class="row justify-between text-caption">
-        <span>Image width</span>
-        <span>{{ layer.scaleX ?? 100 }}%</span>
-      </div>
-      <q-slider
-        v-help="'Stretch or compress this layer horizontally independently of vertical height.'"
-        :model-value="layer.scaleX ?? 100"
-        :min="25" :max="300" :step="1"
-        aria-label="Image width"
-        dense
-        @update:model-value="value => $emit('change', { scaleX: value ?? 100 })"
-      />
-    </div>
-    <div class="col-12 col-sm-6">
-      <div class="row justify-between text-caption">
-        <span>Image height</span>
-        <span>{{ layer.scaleY ?? 100 }}%</span>
-      </div>
-      <q-slider
-        v-help="'Stretch or compress this layer vertically independently of horizontal width.'"
-        :model-value="layer.scaleY ?? 100"
-        :min="25" :max="300" :step="1"
-        aria-label="Image height"
-        dense
-        @update:model-value="value => $emit('change', { scaleY: value ?? 100 })"
-      />
-    </div>
     <div class="col-12 row q-gutter-xs">
       <q-btn
         dense flat no-caps icon="rotate_right" label="Rotate 90°"

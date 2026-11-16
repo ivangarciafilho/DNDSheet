@@ -48,6 +48,10 @@ export function composeAcAndDefenses(
   const mode = cfg.baseMode || 'flat'
   if (mode === '10') {
     base = 10 + dexMod
+  } else if (mode === 'natural') {
+    // 5e natural armor: a hide or carapace adds a flat bonus on top of 10 + DEX.
+    base = 10 + dexMod + (Number(cfg.naturalBonus) || 0)
+    armorParts.push('natural armor')
   } else if (mode === 'leather') {
     base = 11 + dexMod
     armorParts.push('leather armor')
@@ -100,7 +104,7 @@ export function composeAcAndDefenses(
 
   // 2. Ability Bonus
   if (cfg.abilityBonus === 'STR') base += strMod
-  else if (cfg.abilityBonus === 'DEX' && mode !== '10' && !mode.includes('leather')) base += dexMod
+  else if (cfg.abilityBonus === 'DEX' && mode !== '10' && mode !== 'natural' && !mode.includes('leather')) base += dexMod
   else if (cfg.abilityBonus === 'CON') base += conMod
   else if (cfg.abilityBonus === 'WIS') base += wisMod
   else if (cfg.abilityBonus === 'INT') base += intMod
@@ -171,38 +175,17 @@ export function composeAcAndDefenses(
     ? cfg.conditionAttackTypes.join(', ')
     : 'Ranged Attacks'
 
-  // Decoupled On Miss logic
-  let onMissText = ''
-  if (cfg.onMiss === 'hits_attacker') {
-    onMissText = 'On Miss Hits the Attacker Instead'
-  } else if (cfg.onMiss === 'hits_target_range') {
-    onMissText = 'On Miss Hits Target within its Range'
-  } else if (cfg.onMiss === 'hits_target_feet') {
-    const dist = cfg.onMissDistance || 10
-    onMissText = `On Miss Hits another creature within ${dist}ft`
-  } else if (cfg.onMiss === 'damage_attacker') {
-    const dmgAmt = cfg.onMissDamageAmount || 5
-    const dmgType = cfg.onMissDamageType || 'Force'
-    onMissText = `On Miss Attacker takes ${dmgAmt} of ${dmgType} Damage`
-  } else if (cfg.onMiss === 'knocks_prone') {
-    onMissText = 'On Miss Knocks Prone'
-  }
-
-  // Decoupled When Hit logic
-  let onHitText = ''
-  if (cfg.onHit === 'damage_attacker') {
-    const dmgAmt = cfg.onHitDamageAmount ?? 5
-    const dmgType = cfg.onHitDamageType || 'Fire'
-    let hitBase = `On Hit: Attacker takes ${dmgAmt} of ${dmgType}`
-    if (cfg.onHitDoubleBloodied || cfg.doubleIfBloodied) {
-      hitBase += ", double if you're bloodied"
-    }
-    onHitText = hitBase
-  } else if (cfg.onHit === 'knocks_prone') {
-    onHitText = 'On Hit Attacker Knocks Prone'
-  } else if (cfg.onHit === 'retaliate_melee') {
-    onHitText = 'On Hit Can make a Melee Attack as a Reaction'
-  }
+  // Decoupled On Miss / When Hit logic (legacy single fields; the rider list below shares the wording)
+  let onMissText = acTriggerEffectText('miss', cfg.onMiss, { distance: cfg.onMissDistance, damageAmount: cfg.onMissDamageAmount, damageType: cfg.onMissDamageType })
+  let onHitText = acTriggerEffectText('hit', cfg.onHit, { damageAmount: cfg.onHitDamageAmount, damageType: cfg.onHitDamageType, doubleIfBloodied: Boolean(cfg.onHitDoubleBloodied || cfg.doubleIfBloodied) })
+  // Build 269: a list of AC riders, each with its own cadence -> timing -> trigger -> effect.
+  const acRiders = (cfg.riders ?? []).filter((rider) => rider && rider.effect && rider.effect !== 'none')
+  const riderRaw = acRiders.map((rider) => acTriggerEffectText(rider.trigger, rider.effect, rider)).filter(Boolean)
+  // Same rule as the legacy schedule: an explicit timing replaces the trailing "as a Reaction".
+  const riderScheduled = acRiders.map((rider) => {
+    const text = acTriggerEffectText(rider.trigger, rider.effect, rider)
+    return formatRiderSchedule(rider.timing ? text.replace(/ as a Reaction$/, '') : text, { cadence: rider.cadence, timing: rider.timing })
+  }).filter(Boolean)
 
   let saveDc = cfg.saveDc ?? 13
   if (typeof saveDc === 'string' && /[+\-*/()]/.test(saveDc)) {
@@ -428,7 +411,7 @@ export function composeAcAndDefenses(
   }
 
   // The legacy ACType projection stays free of schedule prefixes.
-  const rawConditions = [triggerDesc, onMissText, onHitText].filter(Boolean)
+  const rawConditions = [triggerDesc, onMissText, onHitText, ...riderRaw].filter(Boolean)
   const rawConditionNotes = triggerDesc ? [rawConditions.join(', ')] : rawConditions
   const generatedArmorDesc = [...armorParts, ...tempNotes, ...rawConditionNotes].join(', ')
   const scheduledTempNotes = tempNotes.map((text, index) => scheduled(index < temporaryCount ? 'temporaryAc' : 'conditionalAc', text))
@@ -442,10 +425,12 @@ export function composeAcAndDefenses(
     const ruleParts: string[] = [triggerDesc]
     if (onMissText) ruleParts.push(onMissText)
     if (onHitText) ruleParts.push(onHitText)
+    ruleParts.push(...riderScheduled)
     conditionNotes.push(ruleParts.join(', '))
   } else {
     if (onMissText) conditionNotes.push(onMissText)
     if (onHitText) conditionNotes.push(onHitText)
+    conditionNotes.push(...riderScheduled)
   }
 
   // Combine parenthetical descriptors
@@ -501,6 +486,7 @@ export function composeAcAndDefenses(
     if (triggerDesc) badges.push(triggerDesc)
     if (onMissText) badges.push(onMissText)
     if (onHitText) badges.push(onHitText)
+    badges.push(...riderScheduled)
 
     const fullText = isAbsoluteRule && absoluteRuleText
       ? absoluteRuleText
@@ -520,6 +506,7 @@ export function composeAcAndDefenses(
     badges.push(absoluteRuleText)
     if (onMissText && monster.defenseSchedules?.onMiss) badges.push(onMissText)
     if (onHitText && monster.defenseSchedules?.onHit) badges.push(onHitText)
+    badges.push(...riderScheduled)
     return {
       totalAc: base,
       armorTypeDesc: '',
@@ -545,4 +532,32 @@ export function composeAcAndDefenses(
     fullText,
     isAbsoluteRule: false,
   }
+}
+
+/** On Miss / When Hit effect wording shared by the legacy single fields and the AC rider list. */
+export function acTriggerEffectText(
+  trigger: 'hit' | 'miss',
+  effect: string | undefined,
+  p: { distance?: number | string; damageAmount?: number | string; damageType?: string; doubleIfBloodied?: boolean; text?: string } = {},
+): string {
+  if (!effect || effect === 'none') return ''
+  if (effect === 'custom') {
+    const text = p.text?.trim()
+    return text ? `${trigger === 'hit' ? 'On Hit' : 'On Miss'}: ${text}` : ''
+  }
+  if (trigger === 'miss') {
+    if (effect === 'hits_attacker') return 'On Miss Hits the Attacker Instead'
+    if (effect === 'hits_target_range') return 'On Miss Hits Target within its Range'
+    if (effect === 'hits_target_feet') return `On Miss Hits another creature within ${p.distance || 10}ft`
+    if (effect === 'damage_attacker') return `On Miss Attacker takes ${p.damageAmount || 5} of ${p.damageType || 'Force'} Damage`
+    if (effect === 'knocks_prone') return 'On Miss Knocks Prone'
+    return ''
+  }
+  if (effect === 'damage_attacker') {
+    const base = `On Hit: Attacker takes ${p.damageAmount ?? 5} of ${p.damageType || 'Fire'}`
+    return p.doubleIfBloodied ? `${base}, double if you're bloodied` : base
+  }
+  if (effect === 'knocks_prone') return 'On Hit Attacker Knocks Prone'
+  if (effect === 'retaliate_melee') return 'On Hit Can make a Melee Attack as a Reaction'
+  return ''
 }

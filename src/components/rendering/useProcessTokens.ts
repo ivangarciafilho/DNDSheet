@@ -300,7 +300,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const effectsStr = Array.isArray(context?.effects) && context.effects.length > 0
         ? context.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
         : ''
-      let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${context.description || ''}`, context, monster, 'action').trim())
+      // Text blocks and dice tables follow the description, as in every other projection (owner report, Build 269).
+      let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${context.description || ''} ${formatDescriptionContainers(context.descriptionContainers, monster.randomTables)}`, context, monster, 'action').trim())
 
       // Strip redundant leading saving throw or attack preamble if already shown in composite header cells
       if (context.stat && context.stat !== 'none') {
@@ -383,7 +384,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
         const effectsStr = outcomesHtml(ability, renderContext)
-        let desc = processTokens(`${effectsStr}${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
+        let desc = processTokens(`${effectsStr}${context.description || ''} ${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)}`, context, monster, 'reaction').trim()
         if (context.stat && context.stat !== 'none') {
           desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
         }
@@ -431,7 +432,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       const effectsStr = Array.isArray(asAction.effects) && asAction.effects.length > 0
         ? asAction.effects.map((e) => `<i>${e.case}:</i> ${e.effect}`).join(' ') + ' '
         : ''
-      let desc = processTokens(`${effectsStr}${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)} ${context.description || ''}`, context, monster, 'reaction').trim()
+      let desc = processTokens(`${effectsStr}${context.description || ''} ${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)}`, context, monster, 'reaction').trim()
       if (context.stat && context.stat !== 'none') {
         desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
       }

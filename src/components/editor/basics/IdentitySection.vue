@@ -71,6 +71,15 @@
               outlined
             />
           </div>
+          <div class="col-12 col-sm-auto flex items-center">
+            <q-toggle
+              v-model="portrait.frameless"
+              v-help="$t('help.identity.portraitFrameless')"
+              data-portrait-frameless
+              label="No frame"
+              dense
+            />
+          </div>
         </div>
 
         <!-- A4 Composition Heuristics: Artwork Occlusion & Background Opacity -->
@@ -199,7 +208,8 @@
         :entries="CR_ENTRIES"
         preserve-order
         :label="$t('monster.cr')"
-        class="col-12 col-sm-6"
+        class="col-auto"
+        style="width: 10.5rem"
         @update:model-value="(value) => monster.setCR(typeof value === 'number' ? value : Number(value ?? 0))"
       >
         <template #append>
@@ -216,7 +226,8 @@
         v-model="monster.crOverride"
         v-help="'Custom text displayed instead of the standard Challenge Rating and XP calculation.'"
         :label="$t('monster.cr')"
-        class="col-12 col-sm-6"
+        class="col-auto"
+        style="width: 10.5rem"
         outlined
         dense
       >
@@ -230,11 +241,36 @@
         </template>
       </q-input>
 
+      <catalog-select
+        v-if="!monster.useCrDisplayOverride"
+        v-help="'Challenge Rating when encountered inside its lair; select None if unchanged.'"
+        :model-value="monster.lairCr"
+        :entries="LAIR_CR_ENTRIES"
+        preserve-order
+        :label="$t('monster.lairCr')"
+        class="col-auto"
+        style="width: 8.5rem"
+        @update:model-value="(value) => (monster.lairCr = typeof value === 'number' ? value : Number(value ?? -1))"
+      />
+      <mechanic-text-editor
+        v-model="monster.lairCrNote"
+        v-help="'Short qualifier printed beside lair CR in the header (for example in lair).'"
+        :label="$t('monster.lairCrNote')"
+        :disable="monster.lairCr === -1"
+        class="col"
+        style="min-width: 9rem"
+        debounce="500"
+        outlined
+        dense
+      />
+      <!-- Proficiency and nameplate options share the second line -->
+      <div class="col-12 q-py-none"></div>
       <formula-field
         v-help="'Proficiency Bonus added to proficient saves, skills, and attacks unless overridden.'"
         path="proficiency"
         :label="$t('monster.proficiencyBonus')"
-        class="col-12 col-sm-6"
+        class="col-auto"
+        style="width: 8rem"
         :disable="!monster.proficiencyOverride"
         outlined
         dense
@@ -265,27 +301,7 @@
         />
       </div>
 
-      <catalog-select
-        v-if="!monster.useCrDisplayOverride"
-        v-help="'Challenge Rating when encountered inside its lair; select None if unchanged.'"
-        :model-value="monster.lairCr"
-        :entries="LAIR_CR_ENTRIES"
-        preserve-order
-        :label="$t('monster.lairCr')"
-        class="col-12 col-sm-4"
-        @update:model-value="(value) => (monster.lairCr = typeof value === 'number' ? value : Number(value ?? -1))"
-      />
-      <mechanic-text-editor
-        v-model="monster.lairCrNote"
-        v-help="'Short qualifier printed beside lair CR in the header (for example in lair).'"
-        :label="$t('monster.lairCrNote')"
-        :disable="monster.lairCr === -1"
-        class="col-12 col-sm-8"
-        debounce="500"
-        outlined
-        dense
-      />
-      <div class="col-12 editor-fit-wrap items-center q-my-xs">
+      <div class="col-12 col-sm editor-fit-wrap items-center">
         <q-toggle
           v-model="monster.showXp"
           v-help="'Disclose calculated XP value next to the Challenge Rating on the stat block nameplate.'"

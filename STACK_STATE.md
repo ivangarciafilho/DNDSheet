@@ -1,3 +1,7 @@
+## Build 269 — owner requests: AC riders, natural armor, frameless portrait, compact CR/PB, layer size strip, description containers fix
+
+See docs/roadmap/DNDSheet-Build269-Owner-Requests-AC-Riders.md.
+
 ## Build 268 — C5 round 1: pt-BR help and locale switch
 
 Opt-in English/Português switch in stat block settings (persisted); all editor help and stat block help tips in pt-BR; coverage contract and locale browser smoke. See docs/roadmap/DNDSheet-Build268-C5-pt-BR-Help.md.

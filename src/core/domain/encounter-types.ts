@@ -121,6 +121,8 @@ export interface MonsterPortrait {
   position: 'none' | 'left' | 'right' | 'top' | 'bottom'
   width?: number
   caption?: string
+  /** Drop the parchment frame (border, padding, shadow) around the picture. */
+  frameless?: boolean
 }
 
 export interface MonsterExtendedHp {

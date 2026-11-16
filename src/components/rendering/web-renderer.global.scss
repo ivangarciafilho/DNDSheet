@@ -35,6 +35,16 @@
 
 .monster-portrait {
   flex-shrink: 0;
+
+  // Owner toggle (Build 269): the doubled id outranks every theme's portrait frame, so no priority flag is needed.
+  #render#render &.portrait-frameless {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+    border-radius: 0;
+  }
+
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -108,11 +108,28 @@ export interface MonsterSpeedTraversal {
   }>
 }
 
+/** One AC rider (Build 269): cadence -> timing -> trigger (hit or miss) -> effect (preset or custom text). */
+export interface AcRider {
+  id: string
+  trigger: 'hit' | 'miss'
+  cadence?: string
+  timing?: string
+  effect: string
+  text?: string
+  distance?: number
+  damageAmount?: number | string
+  damageType?: string
+  doubleIfBloodied?: boolean
+}
+
 export interface MonsterAcConfig {
+  riders?: AcRider[]
   enabled?: boolean
   baseMode?: 'flat' | '10' | 'armor' | 'ability' | string
   baseArmor?: string
   baseAbility?: DndStat
+  /** Flat bonus for the `natural` base mode: AC = 10 + DEX + this value (Build 269). */
+  naturalBonus?: number
   abilityBonus?: 'none' | DndStat | 'level' | 'cr' | 'pb' | 'hd'
   defenseItem?: 'none' | 'shield' | 'animated_shield' | 'cloak_of_protection' | 'ring_of_protection' | 'defender' | 'bracers_of_defense' | 'custom'
   defenseItemCustomBonus?: number
