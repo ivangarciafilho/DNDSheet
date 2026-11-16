@@ -1,6 +1,10 @@
-import { HELP_MESSAGES } from './help'
+import { HELP_MESSAGES } from './help.ts'
 
 export default {
+  locale: {
+    label: 'Language',
+    hint: 'Help text is available in Portuguese; other interface text is still English.',
+  },
   app: {
     name: "Falindrith's Monster Maker",
     ogl: 'Open Gaming License 1.0',

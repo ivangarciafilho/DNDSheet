@@ -1,3 +1,5 @@
+import { STATBLOCK_HELP_PT_BR } from './statblock-help.pt-BR.ts'
+
 /**
  * Plain-language help attached to stable data-help keys in the rendered block.
  * Kept in the presentation layer: these descriptions explain what a field is,
@@ -77,7 +79,9 @@ export function statblockUsageHelpKey(usage: string | null | undefined): string 
   return 'recharge'
 }
 
-export function statblockHelpText(key: string | null | undefined): string {
+/** Help text for a data-help key in the active UI locale (pt-BR when chosen, English otherwise). */
+export function statblockHelpText(key: string | null | undefined, locale = 'en-US'): string {
   if (!key) return ''
-  return STATBLOCK_HELP[key as StatblockHelpKey] ?? ''
+  const table: Readonly<Record<string, string>> = locale === 'pt-BR' ? STATBLOCK_HELP_PT_BR : STATBLOCK_HELP
+  return table[key] ?? STATBLOCK_HELP[key as StatblockHelpKey] ?? ''
 }

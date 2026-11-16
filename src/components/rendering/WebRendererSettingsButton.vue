@@ -6,6 +6,19 @@
           <div class="text-h6 q-mb-md col-12">
             {{ $t('editor.renderSettings') }}
           </div>
+          <div class="col-12 flex items-center justify-between q-mb-sm" data-locale-switch>
+            <div class="text-body1 q-mr-md">{{ $t('locale.label') }}</div>
+            <q-btn-toggle
+              v-model="appLocale"
+              v-help="$t('locale.hint')"
+              :label="$t('locale.label')"
+              no-caps
+              :options="[
+                { label: 'English', value: 'en-US' },
+                { label: 'Português', value: 'pt-BR' },
+              ]"
+            ></q-btn-toggle>
+          </div>
           <div class="col-12 flex items-center justify-between">
             <div class="text-body1 q-mr-md">{{ $t('editor.columns') }}</div>
             <q-btn-toggle
@@ -168,6 +181,8 @@
 import { useEditorStore, VisualTheme } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { persistLocale, type AppLocale } from 'src/i18n/locale'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import {
   WORKSPACE_PRESETS,
@@ -214,6 +229,16 @@ export default defineComponent({
       icon: option.icon,
     }))
 
+    const { locale } = useI18n({ useScope: 'global' })
+    // C5: the UI language is a per-browser choice, persisted and applied without a reload.
+    const appLocale = computed<AppLocale>({
+      get: () => locale.value as AppLocale,
+      set: (value) => {
+        locale.value = value
+        persistLocale(value)
+      },
+    })
+
     const selectWorkspacePreset = (presetId: WorkspacePresetId) => {
       applyWorkspacePreset(editorStore as unknown as Record<string, unknown>, presetId)
     }
@@ -221,6 +246,7 @@ export default defineComponent({
     return {
       monsterStore,
       editorStore,
+      appLocale,
       themeOptions: THEME_OPTIONS,
       themeCatalogEntries,
       workspacePresets: WORKSPACE_PRESETS,

@@ -335,6 +335,7 @@ import type { SpellPlateLevel } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
 import { statblockHelpText } from './statblock-help'
+import { useI18n } from 'vue-i18n'
 import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
 
 export default defineComponent({
@@ -347,6 +348,7 @@ export default defineComponent({
     StatblockTraits,
   },
   setup() {
+    const { locale } = useI18n({ useScope: 'global' })
     const monster = useMonsterStore()
     const castingSpells = useSpellsStore()
     const editorStore = useEditorStore()
@@ -397,7 +399,7 @@ export default defineComponent({
 
     const showHelpTip = (target: HTMLElement) => {
       const key = target.dataset.help
-      const description = statblockHelpText(key)
+      const description = statblockHelpText(key, locale.value)
       if (!description) {
         if (activeHelpTarget.value !== target) hideHelpTip()
         return

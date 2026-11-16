@@ -1,3 +1,7 @@
+## Build 268 — C5 round 1: pt-BR help and locale switch
+
+Opt-in English/Português switch in stat block settings (persisted); all editor help and stat block help tips in pt-BR; coverage contract and locale browser smoke. See docs/roadmap/DNDSheet-Build268-C5-pt-BR-Help.md.
+
 ## Build 267 — C1b closed: no source file of 900+ lines
 
 Stylesheets split into partials (CSS byte-identical); useProcessTokens and useBasicsContext split by factory extraction; monster store state and state-only getters moved, CR getters typed through MonsterCrThis. See docs/roadmap/DNDSheet-Build267-C1b-Closed.md.
