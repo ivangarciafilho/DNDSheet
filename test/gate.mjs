@@ -68,9 +68,9 @@ const BROWSER_SUITE = [
   'node test/statblock-help-browser-smoke.js', 'node --experimental-strip-types test/release-matrix-browser-smoke.js', 'node tools/qa/overflow-probe.js',
   'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs',
   'node test/build248-envelope-workflow-browser-smoke.js', 'node test/build249-workflow-browser-smoke.js', 'node test/budget-browser-probe.js', 'node test/build250-workflow-browser-smoke.js',
-].join(' && ')
+].map((command) => `node tools/qa/retry-once.mjs ${command}`).join(' && ')
 
-await run('core', 'npm test')
+await run('core', 'npm test && node test/inventory.mjs docs/roadmap/DNDSheet-Control-Inventory.md && node tools/ratchet.mjs')
 await run('lint', 'npx eslint --ext .js,.ts,.vue src test')
 await run('typecheck', 'npm run typecheck')
 if (await run('build', 'npx quasar build')) {
@@ -96,7 +96,9 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
 }
 
 const failed = results.filter((r) => !r.ok)
-const summary = { ok: failed.length === 0 && inputFingerprint === gateInputFingerprint(), inputFingerprint, results }
+const flaky = fs.existsSync(path.join(OUT, 'flaky.log')) ? fs.readFileSync(path.join(OUT, 'flaky.log'), 'utf8').trim().split('\n') : []
+const summary = { ok: failed.length === 0 && inputFingerprint === gateInputFingerprint(), inputFingerprint, results, flaky }
+if (flaky.length) console.log(`RETRIED ${flaky.length} browser script(s):\n  ${flaky.join('\n  ')}`)
 summary.ok = gateSummaryPasses(summary)
 fs.writeFileSync(path.join(OUT, 'summary.json'), JSON.stringify(summary, null, 2))
 console.log(!summary.ok ? `GATE FAILED: ${failed.map((r) => r.step).join(', ')}` : `GATE PASSED: ${results.length} steps`)

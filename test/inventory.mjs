@@ -18,6 +18,10 @@ function classify(rel, model, block = '') {
   if (/ClassCastingEditor/.test(rel) && /slots\[/.test(block)) return 'literal: slot table (field-types exception)'
   if (/composer\//.test(rel)) return 'binding-capable: composer draft (owned by composer apply)'
   if (/^(ap|phaseCfg|lang)\./.test(model)) return 'binding-capable: blocked on identity migration'
+  // C2 triage: casting-rule authoring (multipliers, unlock levels, per-source amounts, resource caps) defines the rule, not a monster fact a formula could derive.
+  if (/Casting(Contribution|FeatureGrants|LearningContribution|SourceSpellRows)Editor|CastingSourceSpellRows|ClassCastingEditor/.test(rel)) return 'literal: casting rule authoring'
+  // C2 triage: random-table die bands are table structure; binding them to formulas would let a roll band move under the GM.
+  if (/RandomTablesEditor/.test(rel)) return 'literal: random-table band'
   return 'review'
 }
 const perFile = []
@@ -65,3 +69,9 @@ for (const n of numbers) out.push(`| \`${n.rel}\` | ${n.line} | \`${n.model || '
 const target = process.argv[2]
 if (target) fs.writeFileSync(target, out.join('\n') + '\n')
 else process.stdout.write(out.join('\n') + '\n')
+// C2 exit criterion: every number input carries an explicit class; a new unclassified one fails the gate.
+const unclassified = numbers.filter((n) => n.kind === 'review')
+if (unclassified.length) {
+  console.error(`C2: ${unclassified.length} unclassified number input(s):\n` + unclassified.map((n) => `  ${n.rel}:${n.line} ${n.model}`).join('\n'))
+  process.exit(1)
+}

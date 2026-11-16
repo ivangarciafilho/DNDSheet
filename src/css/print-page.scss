@@ -1,0 +1,74 @@
+// Print: A4 page geometry and chrome removal. !important overrides Quasar utility/inline styles at print time (C11 exception).
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 8mm;
+  }
+  @page dndsheet-portrait {
+    size: A4 portrait;
+    margin: 0;
+  }
+  @page dndsheet-landscape {
+    size: A4 landscape;
+    margin: 0;
+  }
+  body:has(.a4-page-sheet.a4-portrait) { page: dndsheet-portrait; }
+  body:has(.a4-page-sheet.a4-landscape) { page: dndsheet-landscape; }
+  .q-notifications, .q-dialog, .q-menu, .q-tooltip {
+    display: none !important;
+  }
+  body, #q-app {
+    background: #ffffff !important;
+  }
+  html, body, #q-app, .q-layout, .q-page-container, .q-page, .web-renderer-root {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  .q-page-container { padding: 0 !important; }
+  #render {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .q-header, .q-footer, .q-drawer, .a4-preview-toolbar, #editor, #char-editor, .q-splitter__separator {
+    display: none !important;
+  }
+  .a4-preview-viewport, .a4-scale-stage {
+    transform: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .a4-scale-stage {
+    display: block !important;
+    position: relative;
+    break-inside: avoid;
+    overflow: clip;
+    background-color: var(--a4-print-paper, #fbf2e3);
+    background-image: var(--a4-print-paper-image, none);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .a4-scale-stage:has(.a4-portrait) {
+    width: 210mm !important;
+    height: 297mm !important;
+  }
+  .a4-scale-stage:has(.a4-landscape) {
+    width: 297mm !important;
+    height: 210mm !important;
+  }
+  .a4-page-sheet {
+    position: absolute;
+    inset: 0 auto auto 0;
+    transform: var(--a4-print-transform, none);
+    transform-origin: top left;
+    break-inside: avoid;
+    overflow: visible;
+    box-shadow: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .a4-page-overflow-marker {
+    display: none !important;
+  }
+}

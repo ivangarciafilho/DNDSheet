@@ -173,6 +173,9 @@ export default defineComponent({
       try {
         localStorage.removeItem(key)
         if (window.indexedDB) await clearOverflowSnapshot(key)
+        // B5.7 (owner decision): editor and combat state describe the monster being reset, so they reset with it.
+        localStorage.removeItem('app.editor')
+        localStorage.removeItem('app.combat')
         window.location.assign(`${window.location.origin}${window.location.pathname}`)
       } catch {
         Notify.create({ type: 'negative', message: 'Could not clear all saved monster data. Browser storage may be blocked.' })

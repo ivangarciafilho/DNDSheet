@@ -1,0 +1,10 @@
+{
+  "importantAppScss": 21,
+  "importantDarkContrast": 15,
+  "importantTotal": 365,
+  "filesOver900Lines": 18,
+  "explicitAny": 22,
+  "todoFixme": 0,
+  "eslintDisables": 35,
+  "vHtml": 0
+}

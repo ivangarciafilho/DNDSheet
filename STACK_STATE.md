@@ -1,3 +1,7 @@
+## Build 262 — C2, C4, C7, C11 closed; quality ratchet
+
+Unclassified number inputs 10 → 0 (guarded); typecheck 48 → 0 via skipLibCheck, now zero-tolerance; reset clears editor/combat (B5.7) and DNDSheet-RC removed (H16); app.scss !important 65 → 21 with dark/print rules isolated. tools/ratchet.mjs fails the gate if any debt metric rises. See docs/roadmap/DNDSheet-Build262-Ratchet-and-C2-C4-C7-C11.md.
+
 ## Build 261 — C3, C6, C8, C10 closed; stored XSS fixed
 
 ESLint 0 warnings/0 errors; visual regression is gate step 11 against production; no any outside reviewed boundaries; 0 TODOs. A new XSS smoke found script injection through author text; fixed with the v-safe-html allow-list sanitizer (70 v-html replaced, v-html now a lint error); visual 104/104 identical. See docs/roadmap/DNDSheet-Build261-Closing-C3-C6-C8-C10.md.

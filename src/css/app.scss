@@ -1212,79 +1212,7 @@ $statblock-theme-frames: (
 }
 
 /* Print CSS */
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 8mm;
-  }
-  @page dndsheet-portrait {
-    size: A4 portrait;
-    margin: 0;
-  }
-  @page dndsheet-landscape {
-    size: A4 landscape;
-    margin: 0;
-  }
-  body:has(.a4-page-sheet.a4-portrait) { page: dndsheet-portrait; }
-  body:has(.a4-page-sheet.a4-landscape) { page: dndsheet-landscape; }
-  .q-notifications, .q-dialog, .q-menu, .q-tooltip {
-    display: none !important;
-  }
-  body, #q-app {
-    background: #ffffff !important;
-  }
-  html, body, #q-app, .q-layout, .q-page-container, .q-page, .web-renderer-root {
-    height: auto !important;
-    min-height: 0 !important;
-    overflow: visible !important;
-  }
-  .q-page-container { padding: 0 !important; }
-  #render {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .q-header, .q-footer, .q-drawer, .a4-preview-toolbar, #editor, #char-editor, .q-splitter__separator {
-    display: none !important;
-  }
-  .a4-preview-viewport, .a4-scale-stage {
-    transform: none !important;
-    width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  .a4-scale-stage {
-    display: block !important;
-    position: relative;
-    break-inside: avoid;
-    overflow: clip;
-    background-color: var(--a4-print-paper, #fbf2e3);
-    background-image: var(--a4-print-paper-image, none);
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
-  }
-  .a4-scale-stage:has(.a4-portrait) {
-    width: 210mm !important;
-    height: 297mm !important;
-  }
-  .a4-scale-stage:has(.a4-landscape) {
-    width: 297mm !important;
-    height: 210mm !important;
-  }
-  .a4-page-sheet {
-    position: absolute;
-    inset: 0 auto auto 0;
-    transform: var(--a4-print-transform, none);
-    transform-origin: top left;
-    break-inside: avoid;
-    overflow: visible;
-    box-shadow: none !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-  .a4-page-overflow-marker {
-    display: none !important;
-  }
-}
+@import './print-page.scss';
 
 /* ── Flat spellcasting plate: | crimson header | parchment cell | parchment cell | ── */
 .statblock .sc-plate {
@@ -1340,13 +1268,7 @@ $statblock-theme-frames: (
 .outcome-sector.outcome-horizontal { display: flex; flex-wrap: wrap; gap: .35em; align-items: baseline; }
 
 
-@media print {
-  #splitter, #char-splitter { display: block !important; height: auto !important; overflow: visible !important; }
-  #splitter > .q-splitter__before, #char-splitter > .q-splitter__before { display: none !important; }
-  #splitter > .q-splitter__after, #char-splitter > .q-splitter__after { width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
-  #splitter > .q-splitter__after > .q-pa-md, #char-splitter > .q-splitter__after > .q-pa-md { padding: 0 !important; }
-  .a4-preview-viewport { display: block !important; overflow: visible !important; border: none !important; background: transparent !important; }
-}
+@import './print-studio.scss';
 
 /* B7.6: reduce motion only on the app's own transitions. A global rule broke Quasar's menu focus hand-off and
    tooltip tracking (Build216), so Quasar internals are deliberately left alone. Keep this list in step with any new
@@ -1370,59 +1292,4 @@ $statblock-theme-frames: (
   margin-inline-start: 1em;
 }
 
-/* High-contrast Material/Quasar token overrides scoped to dark studio UI surfaces */
-body.body--dark :is(#editor, #char-editor, #footer, .q-dialog .q-card, .q-drawer, .q-menu) {
-  .text-primary:not(.bg-primary):not(.q-checkbox__inner):not(.q-radio__inner):not(.q-toggle__inner):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #64b5f6 !important;
-  }
-
-  .q-field--dark.q-field--highlighted .q-field__label,
-  .q-field--dark.q-field--highlighted .q-field__control {
-    color: #64b5f6 !important;
-  }
-
-  .text-negative:not(.bg-negative):not(.bg-red-1):not(.bg-red-1 *):not(.bg-red-2):not(.bg-amber-1):not(.bg-amber-1 *):not(.bg-warning):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #f7a19a !important;
-  }
-
-  .text-accent:not(.bg-accent):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #ce93d8 !important;
-  }
-
-  .text-purple:not(.bg-purple):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #ce93d8 !important;
-  }
-
-  .q-item--active:not([class*="bg-"]) {
-    color: #90caf9 !important;
-  }
-
-  .text-positive:not(.bg-positive):not(.bg-green-1 *):not(.bg-amber-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #81c784 !important;
-  }
-
-  .text-teal:not(.bg-teal):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #80cbc4 !important;
-  }
-
-  .text-indigo:not(.bg-indigo):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #b3bce8 !important;
-  }
-
-  .text-blue-grey:not(.bg-blue-grey):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #b0bec5 !important;
-  }
-
-  .text-grey-6:not(.parchment-bg):not(.parchment-bg *):not(.character-sheet-card *):not(.bg-white *):not(.bg-grey-1 *):not(.bg-grey-2 *),
-  .text-grey-7:not(.parchment-bg):not(.parchment-bg *):not(.character-sheet-card *):not(.bg-white *):not(.bg-grey-1 *):not(.bg-grey-2 *) {
-    color: #bdbdbd !important;
-  }
-
-  .bg-positive:not(.text-grey-10):not(.text-dark):not(.text-black) {
-    background-color: #2e7d32 !important;
-  }
-
-  .bg-info:not(.text-grey-10):not(.text-dark):not(.text-black) {
-    background-color: #0277bd !important;
-  }
-}
+@import './dark-contrast.scss';

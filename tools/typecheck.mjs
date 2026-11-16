@@ -25,8 +25,9 @@ try {
   fs.mkdirSync(reportDirectory, { recursive: true })
   fs.writeFileSync(path.join(reportDirectory, 'typecheck-current.json'), JSON.stringify({ baselineCommit: baseline.commit, compiler: { typescript: '6.0.3', vueTsc: '3.3.14' }, total: diagnostics.length, added: comparison.added, resolved: comparison.resolved, perFile }, null, 2) + '\n')
   console.log(`Typecheck: ${diagnostics.length} diagnostics; ${comparison.added.length} new; ${comparison.resolved} resolved (approved baseline ${baseline.diagnostics.length}, Build213 ${baseline.commit}).`)
-  for (const diagnostic of comparison.added) console.error(`${diagnostic.file}: ${diagnostic.code}: ${diagnostic.message}`)
-  process.exitCode = comparison.added.length ? 1 : 0
+  // C4 (Build 262): src is clean and third-party .d.ts are skipped (skipLibCheck), so any diagnostic is a regression.
+  for (const diagnostic of diagnostics) console.error(`${diagnostic.file}: ${diagnostic.code}: ${diagnostic.message}`)
+  process.exitCode = diagnostics.length ? 1 : 0
 } catch (error) {
   console.error(`Typecheck guard failed: ${error.message}`)
   process.exitCode = 1

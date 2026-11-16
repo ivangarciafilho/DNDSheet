@@ -1,0 +1,8 @@
+// Print: collapse the studio splitter so only the A4 preview prints. !important beats Quasar inline sizing (C11 exception).
+@media print {
+  #splitter, #char-splitter { display: block !important; height: auto !important; overflow: visible !important; }
+  #splitter > .q-splitter__before, #char-splitter > .q-splitter__before { display: none !important; }
+  #splitter > .q-splitter__after, #char-splitter > .q-splitter__after { width: 100% !important; height: auto !important; max-height: none !important; overflow: visible !important; }
+  #splitter > .q-splitter__after > .q-pa-md, #char-splitter > .q-splitter__after > .q-pa-md { padding: 0 !important; }
+  .a4-preview-viewport { display: block !important; overflow: visible !important; border: none !important; background: transparent !important; }
+}
