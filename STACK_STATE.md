@@ -1,3 +1,7 @@
+## Build 263 — stat block layout and ordering fixes
+
+Short Traits sections stay in one column; moving a trait turns off the alphabetical sort so editor order is render order; trigger-only reactions put the trigger beside the name; plate text reaches the left edge on line 2. See docs/roadmap/DNDSheet-Build263-Statblock-Layout-Fixes.md.
+
 ## Build 262 — C2, C4, C7, C11 closed; quality ratchet
 
 Unclassified number inputs 10 → 0 (guarded); typecheck 48 → 0 via skipLibCheck, now zero-tolerance; reset clears editor/combat (B5.7) and DNDSheet-RC removed (H16); app.scss !important 65 → 21 with dark/print rules isolated. tools/ratchet.mjs fails the gate if any debt metric rises. See docs/roadmap/DNDSheet-Build262-Ratchet-and-C2-C4-C7-C11.md.

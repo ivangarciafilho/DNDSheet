@@ -324,7 +324,9 @@
         height: auto !important;
         line-height: 1.25 !important;
         padding: 3px 8px !important;
-        margin: -3px 8px 1px -8px !important;
+        // The float must end within the first text line, or line 2 also wraps beside it and the body
+        // only reaches the plate's left edge on line 3. Bottom = -3px + 24px head + margin <= one line.
+        margin: -3px 8px calc(1.42 * 0.85rem * var(--statblock-font-scale, 1) - 22px) -8px !important;
         border-top: 0 !important;
         border-left: 0 !important;
         border-right: 1px solid var(--sb-rule) !important;
@@ -808,6 +810,12 @@
 
 .statblock h3.section {
   break-after: avoid-column;
+}
+
+/* Keep a whole Traits section in one column when it is short enough to move as a unit; a long
+   section (9+ entries) may still split so it cannot force one column far taller than the other. */
+.statblock .traits:not(:has(> :nth-child(9))) {
+  break-inside: avoid-column;
 }
 
 @media print {

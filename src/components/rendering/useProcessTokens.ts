@@ -949,6 +949,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
             duration,
             mechanics,
             scope,
+            // A reaction whose header holds only its name puts the trigger beside the name.
+            streamline: !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0 && !effectsStr.includes('action-outcomes-grid'),
           },
           withTrigger(desc)
         )
@@ -994,6 +996,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
           duration,
           mechanics,
           scope,
+          // A reaction whose header holds only its name puts the trigger beside the name.
+          streamline: !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0,
         },
         withTrigger(desc)
       )

@@ -1731,6 +1731,8 @@ export const useMonsterStore = defineStore('monster', {
       const tmp = targetArray[dest]
       targetArray[dest] = targetArray[source]
       targetArray[source] = tmp
+      // Reordering is an explicit order, so it ends the alphabetical sort the renderer would otherwise impose.
+      if (target === 'traits') this.alphaTraits = false
     },
     moveItemUp(target: SwappableField, source: number) {
       if (source <= 0) return
