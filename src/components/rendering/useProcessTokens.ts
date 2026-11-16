@@ -355,7 +355,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       })
 
       // the full string
-      // TODO: this isn't very i18n friendly
+      // English multiattack phrasing; localisation is tracked in C5.
       let multiattackAll = ''
       if (actions.length > 0) {
         multiattackAll = `uses ${listJoin(actions, ', ')}${

@@ -66,7 +66,7 @@ const BROWSER_SUITE = [
   'node test/shared-casting-editor-browser-smoke.js', 'node test/print-parity-browser-smoke.js', 'node test/emergency-rich-mechanics-browser-smoke.js',
   'node test/emergency-containers-browser-smoke.js', 'node test/emergency-numeric-presentation-browser-smoke.js', 'node test/outcome-lifecycle-browser-smoke.js',
   'node test/statblock-help-browser-smoke.js', 'node --experimental-strip-types test/release-matrix-browser-smoke.js', 'node tools/qa/overflow-probe.js',
-  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs',
+  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs',
   'node test/build248-envelope-workflow-browser-smoke.js', 'node test/build249-workflow-browser-smoke.js', 'node test/budget-browser-probe.js', 'node test/build250-workflow-browser-smoke.js',
 ].join(' && ')
 
@@ -90,6 +90,8 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
     return index.includes(`${PAGES_BASE}/assets/`) && mask.status === 200
   })
   await run('pages-fuzz', `node test/exhaustive-ui-fuzz.js && ${BROWSER_SUITE}`, { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
+  // C6: the built stat block must match production pixel for pixel unless DNDSHEET_VISUAL_ACCEPT names the intended change.
+  await run('visual', `node --experimental-strip-types tools/qa/visual-diff.mjs ${process.env.DNDSHEET_VISUAL_BASELINE || 'https://ivangarciafilho.github.io/DNDSheet/index.html#/'} ${origin}/index.html#/ .gate/visual`)
   pages.close()
 }
 

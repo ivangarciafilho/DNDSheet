@@ -139,7 +139,7 @@ test('normalizeContainer preserves randomTableId across containers and sub-regio
 })
 
 test('outcomesHtml renders linked random table into outcome sector', () => {
-  const ability: any = {
+  const ability = {
     outcomes: [
       {
         trigger: 'hit',
@@ -151,7 +151,7 @@ test('outcomesHtml renders linked random table into outcome sector', () => {
     ],
   }
 
-  const html = outcomesHtml(ability, { randomTables: [SAMPLE_CONFUSION_TABLE] } as any)
+  const html = outcomesHtml(ability, { randomTables: [SAMPLE_CONFUSION_TABLE] } as never)
   assert.ok(html.includes('class="outcome-sector outcome-horizontal"'))
   assert.ok(html.includes('<table class="outcome-dice-table random-table">'))
   assert.ok(html.includes('<th scope="col">1d10</th>'))

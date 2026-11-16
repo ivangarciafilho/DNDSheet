@@ -139,7 +139,7 @@
           <div v-if="monster.showXp" class="compact-col xp cn-xp">{{ xpCompact }} XP</div>
         </div>
         <div class="compact-plate-row row-2 compact-nameplate-row-2">
-          <div class="compact-col init" v-html="compactInitiativeDisplay"></div>
+          <div v-safe-html="compactInitiativeDisplay" class="compact-col init"></div>
         </div>
       </div>
       <div v-else class="monster-nameplate-panel unified-top-plate">
@@ -186,8 +186,8 @@
               <div
                 v-for="(initCell, iIdx) in sanitizedInitiativeCells"
                 :key="'init-cell-' + iIdx"
+                v-safe-html="initCell"
                 class="top-plate-init-cell init-cell"
-                v-html="initCell"
               ></div>
             </div>
           </div>
@@ -197,11 +197,11 @@
       <span class="name dnd-cascade-title" data-help="armor-class" tabindex="0">{{ blockStyle.mm2024 ? 'AC' : 'Armor Class' }}</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-if="monster?.splitAcRiderRows && sanitizedAcBadges.length > 1">
-          <span class="dnd-cascade-badge" v-html="sanitizedAcBadges[0]"></span>
+          <span v-safe-html="sanitizedAcBadges[0]" class="dnd-cascade-badge"></span>
         </template>
         <template v-else>
           <template v-for="(acBadge, aIdx) in sanitizedAcBadges" :key="'ac-badge-' + aIdx">
-            <span class="dnd-cascade-badge" v-html="acBadge"></span>
+            <span v-safe-html="acBadge" class="dnd-cascade-badge"></span>
             <span v-if="aIdx < sanitizedAcBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
@@ -214,21 +214,21 @@
         class="dnd-vitals-indented-subrow"
       >
         <span class="dnd-subrow-bullet">↳</span>
-        <span class="dnd-subrow-content" v-html="acRider"></span>
+        <span v-safe-html="acRider" class="dnd-subrow-content"></span>
       </div>
     </template>
     <div class="skill hp dnd-cascade-panel dnd-cellular-row dnd-hp-cascade-row" :class="{ 'sb-striped': hpStripe, 'is-striped': hpStripe }">
       <span class="name dnd-cascade-title" data-help="hit-points" tabindex="0">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-for="(badge, index) in hpInlineBadges" :key="index">
-          <span class="dnd-cascade-badge" v-html="badge"></span>
+          <span v-safe-html="badge" class="dnd-cascade-badge"></span>
           <span v-if="index < hpInlineBadges.length - 1" class="text-grey-7 q-mr-xs">; </span>
         </template>
       </div>
     </div>
     <div v-for="(rider, index) in hpSubrowBadges" :key="index" class="dnd-vitals-indented-subrow">
       <span class="dnd-subrow-bullet">↳</span>
-      <span class="dnd-subrow-content" v-html="rider"></span>
+      <span v-safe-html="rider" class="dnd-subrow-content"></span>
     </div>
     <statblock-vitals />
 
@@ -313,7 +313,6 @@
 import type { HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, StyleValue, watch } from 'vue'
-import type { CSSProperties } from 'vue'
 import { useA4Composition } from './useA4Composition'
 import StatblockEncounterDynamics from './StatblockEncounterDynamics.vue'
 import A4PreviewToolbar from './A4PreviewToolbar.vue'
@@ -328,15 +327,13 @@ import { buildCastingProjection } from 'src/core/domain/casting-projection'
 import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
 import { useTextRenderer } from './useTextRenderer'
 import { useProcessTokens } from './useProcessTokens'
-import { useEditorStore, type A4CompositionLayer } from 'src/stores/editor-store'
+import { useEditorStore } from 'src/stores/editor-store'
 import { CR } from 'src/data/CR'
 import { getSpellTagString } from 'src/core/domain/spell-metadata'
 import { buildInnateSpellPlate, spellLevelLead } from 'src/core/domain/spell-plate'
 import type { SpellPlateLevel } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
-import { appAsset } from 'src/core/domain/asset-url'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
-import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import { statblockHelpText } from './statblock-help'
 import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
 

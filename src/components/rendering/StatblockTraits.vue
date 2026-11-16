@@ -7,9 +7,9 @@
     <div
       v-for="(trait, idx) in sanitizedGroupedTraits.standard"
       :key="'trait-std-' + idx"
+      v-safe-html="trait"
       class="trait"
       :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-      v-html="trait"
     ></div>
 
     <!-- Dedicated Recharge Sections -->
@@ -18,29 +18,29 @@
       <div
         v-for="(trait, idx) in sec.traits"
         :key="'trait-sec-' + idx"
+        v-safe-html="trait"
         class="trait"
         :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-        v-html="trait"
       ></div>
     </template>
 
     <!-- Conditionals Sub-Sections -->
     <template v-for="cond in sanitizedGroupedTraits.conditionals" :key="'cond-' + cond.trigger">
-      <h4 class="sub-section-header">Conditionals (<span v-html="mechanicRichHtml(cond.trigger)"></span>)</h4>
+      <h4 class="sub-section-header">Conditionals (<span v-safe-html="mechanicRichHtml(cond.trigger)"></span>)</h4>
       <div
         v-for="(trait, idx) in cond.traits"
         :key="'trait-cond-' + idx"
+        v-safe-html="trait"
         class="trait"
         :class="{ 'sb-striped': trait && trait.length > 110 && !trait.includes('sb-plate') }"
-        v-html="trait"
       ></div>
     </template>
 
     <!-- Mythic Trait -->
     <div
       v-if="monster.mythicActions.actions.length > 0"
+      v-safe-html="mythicTrait"
       class="trait"
-      v-html="mythicTrait"
     ></div>
 
     <!-- Innate and class casting share the plate grammar but retain separate resource semantics. -->

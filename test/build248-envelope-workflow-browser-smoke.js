@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { browserProbe } from '../tools/qa/browser-probe.mjs'
 
-await browserProbe(async ({ evaluate, send, delay }) => {
+await browserProbe(async ({ evaluate, delay }) => {
   const result = await evaluate(`(async () => {
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const until = async (fn, label, timeoutMs = 6000, onTimeout = null) => {

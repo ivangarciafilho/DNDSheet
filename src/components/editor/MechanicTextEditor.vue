@@ -1,7 +1,7 @@
 <template>
   <div class="mechanic-text-editor" :class="$attrs.class" :style="$attrs.style as StyleValue" data-enter-local>
     <q-input v-if="!rich" ref="inputRef" v-bind="$attrs" :model-value="modelValue" :label="label" @update:model-value="onInput" @keydown="onKeydown" @blur="closeSuggest">
-      <template v-for="(_, name) in forwardedSlots" #[name]="scope"><slot :name="name" v-bind="scope || {}" /></template>
+      <template v-for="(_, name) in forwardedSlots" #[name]="slotScope"><slot :name="name" v-bind="slotScope || {}" /></template>
       <template #append>
         <slot name="append" />
         <q-btn type="button" flat dense size="sm" icon="data_object" :disable="Boolean($attrs.disable || $attrs.readonly)" :aria-label="'Insert a formula or macro into '+label" data-macro-browse @click.stop="browse = true">
@@ -42,9 +42,11 @@
   </div>
 </template>
 <script lang="ts">
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- StyleValue types a template binding the linter cannot see
 import type { PropType, StyleValue } from 'vue'
 import { computed, defineComponent, nextTick, ref, useSlots, watch } from 'vue'
 import { hasMechanicFormatting, mechanicPlainText, mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
+import { safeHtml } from 'src/core/adapters/safe-html'
 import { catalogFor, insertMacro, openMacroAt, unresolvedMacros } from 'src/core/domain/macro-catalog'
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -74,7 +76,8 @@ export default defineComponent({
     const inputRef = ref<{ $el?: HTMLElement } | null>(null), editorRef = ref<{ runCmd?: (cmd: string, value?: string) => void; focus?: () => void; getContentEl?: () => HTMLElement } | null>(null)
     const forwardedSlots = Object.fromEntries(Object.entries(slots).filter(([name]) => name !== 'append'))
     const rich = computed(() => props.forceRich || formatting.value || hasMechanicFormatting(props.modelValue))
-    const editorValue = computed(() => mechanicRichHtml(props.modelValue))
+    // q-editor loads its value as live HTML: sanitize before it reaches the contenteditable.
+    const editorValue = computed(() => safeHtml(mechanicRichHtml(props.modelValue)))
     const toolbar = [['bold', 'italic', 'underline', 'strike'], ['subscript', 'superscript'], ['unordered', 'ordered'], ['undo', 'redo', 'removeFormat']]
     const emitValue = (value: string) => emit('update:modelValue', value)
 

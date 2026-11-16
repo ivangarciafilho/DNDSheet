@@ -81,8 +81,8 @@
         <div class="row items-center justify-between q-px-xs q-mb-xs">
           <q-toggle
             v-model="monster.splitHpRiderRows"
-            dark
             v-help="'Display every Hit Point rider group on its own indented sub-row beneath Hit Points.'"
+            dark
             dense
             size="xs"
             color="red-4"

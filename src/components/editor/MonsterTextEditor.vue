@@ -2,7 +2,7 @@
   <div class="column full-width">
     <q-editor
       ref="editorRef"
-      :model-value="($props.modelValue !== undefined ? $props.modelValue : $props.field) ?? ''"
+      :model-value="safeHtml(($props.modelValue !== undefined ? $props.modelValue : $props.field) ?? '')"
       :toolbar="toolbarOptions"
       :definitions="toolbarDefinitions"
       class="full-width q-ma-xs"
@@ -35,9 +35,11 @@ import { computed, defineComponent, onMounted, PropType, ref } from 'vue'
 import { MonsterContextType } from '../rendering/useProcessTokens'
 import { useI18n } from 'vue-i18n'
 import type { QEditor } from 'quasar'
+import { safeHtml } from 'src/core/adapters/safe-html'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useProcessTokens } from '../rendering/useProcessTokens'
 import { catalogFor, unresolvedMacros } from 'src/core/domain/macro-catalog'
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- MacroEntry types a template handler the linter cannot see
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import MacroBrowseMenu from './MacroBrowseMenu.vue'
 import MacroSuggestPopup from './MacroSuggestPopup.vue'
@@ -151,6 +153,8 @@ export default defineComponent({
       displayTitle,
       throttledUpdate,
       toolbarOptions,
+      // q-editor loads its value as live HTML: a stored payload must not run in the editor.
+      safeHtml,
       toolbarDefinitions,
     }
   },

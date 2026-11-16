@@ -54,7 +54,7 @@
 
       <q-separator />
 
-      <q-card-section style="max-height: 50vh" class="scroll" v-html="oglText">
+      <q-card-section v-safe-html="oglText" style="max-height: 50vh" class="scroll">
       </q-card-section>
 
       <q-separator />

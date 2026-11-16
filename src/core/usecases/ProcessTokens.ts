@@ -29,13 +29,13 @@ export interface ProcessTokensOptions {
   contextType?: string
 }
 
-function getProperty(obj: any, path: string): any {
+function getProperty(obj: unknown, path: string): unknown {
   if (!obj || !path) return undefined
   const parts = path.split('.')
-  let current = obj
+  let current: unknown = obj
   for (const part of parts) {
     if (current == null) return undefined
-    current = current[part]
+    current = (current as Record<string, unknown>)[part]
   }
   return current
 }

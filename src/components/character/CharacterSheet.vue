@@ -254,7 +254,7 @@
             class="q-mb-xs"
           >
             <span class="text-weight-bold text-body2">{{ feat.name }}:</span>
-            <span class="text-body2 text-grey-9 q-ml-xs" v-html="printed(feat.description)"></span>
+            <span v-safe-html="printed(feat.description)" class="text-body2 text-grey-9 q-ml-xs"></span>
           </div>
         </div>
       </div>
@@ -331,7 +331,7 @@
                   ({{ sp.level === 0 ? 'Cantrip' : `Lvl ${sp.level}` }})
                 </span>
               </div>
-              <div v-if="sp.notes" class="text-2xs text-grey-8 text-italic" v-html="printed(sp.notes)"></div>
+              <div v-if="sp.notes" v-safe-html="printed(sp.notes)" class="text-2xs text-grey-8 text-italic"></div>
             </div>
           </div>
         </div>

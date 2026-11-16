@@ -126,7 +126,7 @@ export function renderBonus(number: number, spaces = false) {
   }${num}`
 }
 
-export function safeToWords(val: any, fallback = 'one'): string {
+export function safeToWords(val: unknown, fallback = 'one'): string {
   const num = typeof val === 'number' ? val : parseInt(String(val), 10)
   if (!Number.isFinite(num)) return fallback
   try {
@@ -136,7 +136,7 @@ export function safeToWords(val: any, fallback = 'one'): string {
   }
 }
 
-export function safeToOrdinal(val: any, fallback = '1st'): string {
+export function safeToOrdinal(val: unknown, fallback = '1st'): string {
   const num = typeof val === 'number' ? val : parseInt(String(val), 10)
   if (!Number.isFinite(num)) return fallback
   try {

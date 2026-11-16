@@ -120,7 +120,7 @@ export const useSpellsStore = defineStore('spells', {
     },
   },
   persist: {
-    // TODO: change to match custom spell location from v1
+    // Kept as is: renaming the key would orphan every saved custom spell list.
     key: 'app.spells',
   },
 })

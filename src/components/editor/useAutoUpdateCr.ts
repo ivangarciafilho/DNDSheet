@@ -2,6 +2,7 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { useI18n } from 'vue-i18n'
 import { DndStat, MonsterAction, MonsterCrAnnotation } from '../models'
 import { avgRoll, renderBonus } from '../rendering/mathRendering'
+import { isMultitarget } from 'src/core/domain/cr-targeting'
 
 export function useAutoUpdateCr() {
   const monster = useMonsterStore()
@@ -41,8 +42,7 @@ export function useAutoUpdateCr() {
 
     annotation.maxDamage = maxDamage
 
-    // TODO: see if this can be detected a bit later (prefixes to damage, mention of attack radius?)
-    annotation.multitarget = false
+    annotation.multitarget = isMultitarget(action)
 
     // saves
     const save = RegExp(/\{DC:(\w{3})\}/gi)

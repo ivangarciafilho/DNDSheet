@@ -34,7 +34,7 @@
       />
       <div class="col-12 col-sm-4 text-right">
         <q-badge color="blue-8" class="text-weight-bold q-pa-xs">
-          Preview: AC {{ computedCompositorAc }} <span v-if="computedCompositorType" v-html="`(${mechanicRichHtml(computedCompositorType)})`"></span>
+          Preview: AC {{ computedCompositorAc }} <span v-if="computedCompositorType" v-safe-html="`(${mechanicRichHtml(computedCompositorType)})`"></span>
         </q-badge>
       </div>
     </div>
@@ -475,7 +475,7 @@
           Composed AC &amp; Defensive Ruling:
         </div>
         <q-badge color="cyan-4" outline class="text-subtitle2 text-weight-bold q-pa-xs">
-          <span v-html="mechanicRichHtml(composedAcPreview)"></span>
+          <span v-safe-html="mechanicRichHtml(composedAcPreview)"></span>
         </q-badge>
       </div>
     </div>

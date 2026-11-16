@@ -19,7 +19,7 @@ test('gradient-curve: evaluateGradientCurve respects boundary values and monoton
 
 test('gradient-curve: formatCurvedGradientCss formats all directions and interpolates curved stops', () => {
   assert.strictEqual(formatCurvedGradientCss(undefined), 'none')
-  assert.strictEqual(formatCurvedGradientCss({ enabled: false } as any), 'none')
+  assert.strictEqual(formatCurvedGradientCss({ enabled: false }), 'none')
 
   const linearCss = formatCurvedGradientCss({
     enabled: true,
@@ -79,7 +79,7 @@ test('ability-grammar: scopePhrase renders target count with default target/targ
     customPreamble: false,
     bonusAction: false,
     crAnnotation: { maxDamage: 0, maxSave: 0, maxModifier: 0, multitarget: false, ehpMultiplier: 1, ehpModifier: 0, acModifier: 0, include: true },
-    targeting: { count: 2, kind: '' as any, qualifier: '' },
+    targeting: { count: 2, kind: '', qualifier: '' },
   })
   assert.strictEqual(inferred.targeting?.count, 2)
   assert.strictEqual(inferred.targeting?.kind, 'target')
@@ -102,7 +102,7 @@ test('defense-and-traits-utils: composeAcAndDefenses splits each AC rider into i
       onHitDamageAmount: 5,
       onHitDamageType: 'Fire',
     },
-  } as any)
+  } as never)
   // Base AC badge + 4 separate rider badges = 5 badges
   assert.strictEqual(acResult.badges.length, 5)
   assert.ok(acResult.badges[0].includes('14'))

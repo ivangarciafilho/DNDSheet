@@ -149,7 +149,8 @@ export default defineComponent({
     const applyIngestedMonster = () => {
       if (ingestResult.value.success && ingestResult.value.monster) {
         historyStore.pushSnapshot('Before AI Ingestion')
-        monsterStore.$patch(ingestResult.value.monster as any)
+        // The ingest result is a complete Monster; $patch merges it over the store state.
+        monsterStore.$patch(ingestResult.value.monster as unknown as import('pinia')._DeepPartial<typeof monsterStore.$state>)
         historyStore.pushSnapshot(`AI Ingest: ${ingestResult.value.monster.name}`)
 
         $q.notify({

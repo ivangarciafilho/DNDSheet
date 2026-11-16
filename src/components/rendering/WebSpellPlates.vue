@@ -6,7 +6,7 @@
         <div class="sb-cell" data-help="spell-save-dc" tabindex="0">Spell Save DC <strong>{{ innateSpellPlate.save }}</strong></div>
         <div class="sb-cell" data-help="spell-attack" tabindex="0">Spell Attack <strong>{{ innateSpellPlate.attack }}</strong></div>
       </div>
-      <div v-if="innateSpellPlate.processedNotes" class="sb-body sb-striped zebra-stripe-text" v-html="innateSpellPlate.processedNotes"></div>
+      <div v-if="innateSpellPlate.processedNotes" v-safe-html="innateSpellPlate.processedNotes" class="sb-body sb-striped zebra-stripe-text"></div>
       <div
         v-for="(group, groupIndex) in innateSpellPlate.groups"
         :key="'innate-level-' + groupIndex"
@@ -107,7 +107,7 @@
           </div>
         </div>
       </div>
-      <div v-if="useCustomClassPreamble && sanitizedClassSpellcastingPreamble" class="sb-body sb-striped zebra-stripe-text" v-html="sanitizedClassSpellcastingPreamble"></div>
+      <div v-if="useCustomClassPreamble && sanitizedClassSpellcastingPreamble" v-safe-html="sanitizedClassSpellcastingPreamble" class="sb-body sb-striped zebra-stripe-text"></div>
     </div>
   </div>
 </template>

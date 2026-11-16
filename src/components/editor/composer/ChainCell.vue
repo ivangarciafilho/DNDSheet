@@ -234,6 +234,8 @@ export default defineComponent({
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
+    // No default on purpose: Boolean in the type list makes an absent value `false`, which boolean cells rely on.
+    // eslint-disable-next-line vue/require-default-prop
     value: { type: [String, Number, Boolean, Object, Array, Symbol] as PropType<unknown>, required: false },
     numericPath: { type: String, default: undefined },
     numericDraftModel: { type: Function as PropType<(cellId: string) => object>, default: undefined },

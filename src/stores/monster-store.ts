@@ -551,7 +551,7 @@ export const useMonsterStore = defineStore('monster', {
           this.spellcasting?.multiclass?.classes ||
           this.spellcasting?.multiclass?.extraClasses ||
           []
-        ).flatMap((c: any) => c.spells || [])
+        ).flatMap((c: { spells?: string[] }) => c.spells || [])
         const allStandard = Array.from(new Set([...(this.spellcasting?.standard || []), ...extraSpells]))
 
         return allStandard.filter(
@@ -669,7 +669,7 @@ export const useMonsterStore = defineStore('monster', {
             0
           )
 
-          // TODO: if I decide to have a variable number of rounds, change this
+          // DMG CR method: offense is averaged over the first three rounds of combat.
           const maxTurns = 3
 
           // find the actions and map to a temp data stucture
@@ -717,7 +717,7 @@ export const useMonsterStore = defineStore('monster', {
                 : 0
             })
 
-            // TODO: i18n
+            // English label; localisation is tracked in C5.
             const name = `Multiattack: ${[
               ...attackNames,
               ...unlimitedActionNames,
@@ -1079,7 +1079,7 @@ export const useMonsterStore = defineStore('monster', {
       // there's a few spellcasting lists... let's combine them
       const standardList = Array.isArray(this.spellcasting.standard)
         ? (Array.isArray(this.spellcasting.standard[0])
-            ? (this.spellcasting.standard as any).flat().map((s: any) => typeof s === 'string' ? s : s?.name).filter(Boolean)
+            ? (this.spellcasting.standard as unknown as unknown[][]).flat().map((s) => typeof s === 'string' ? s : (s as { name?: string } | null)?.name).filter((s): s is string => Boolean(s))
             : this.spellcasting.standard)
         : []
       const atWillLists = (this.spellcasting.atWill || []).map((a) => a.spells || [])

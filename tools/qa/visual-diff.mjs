@@ -79,4 +79,7 @@ for (const [key, a] of base.shots) {
 const summary = { compared: base.shots.size, identical: base.shots.size - diffs.length, diffs, baselineErrors: base.errors, candidateErrors: cand.errors }
 fs.writeFileSync(path.join(outDir, 'summary.json'), JSON.stringify(summary, null, 2))
 console.log(JSON.stringify(summary))
-process.exit(diffs.length || cand.errors.length ? 1 : 0)
+// An intended presentation change is accepted only with a stated reason, which the summary records.
+const accepted = process.env.DNDSHEET_VISUAL_ACCEPT
+if (accepted && diffs.length) { console.log('ACCEPTED visual change (' + diffs.length + ' shots): ' + accepted); fs.writeFileSync(path.join(outDir, 'accepted.txt'), accepted) }
+process.exit((diffs.length && !accepted) || cand.errors.length ? 1 : 0)

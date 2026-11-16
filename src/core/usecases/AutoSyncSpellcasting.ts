@@ -1174,6 +1174,7 @@ function slugSourceId(prefix: string, name: string, index: number): string {
 }
 
 export function migrateCastingSources(spellcasting: Record<string, unknown> = {}): CastingSource[] {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy spellcasting payloads are untyped JSON; this function is their migration boundary
   const sc = spellcasting as Record<string, any>
   const existing = Array.isArray(sc.castingSources) ? (sc.castingSources as CastingSource[]) : null
   if (existing && existing.length > 0) {
@@ -1250,6 +1251,7 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
   }
 
   if (Array.isArray(sc.classes) && sc.classes.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy spellcasting payloads are untyped JSON; this function is their migration boundary
     sc.classes.forEach((cls: any, i: number) => {
       appendClassSource(
         {
@@ -1299,6 +1301,7 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy spellcasting payloads are untyped JSON; this function is their migration boundary
   const hasAtWill = Array.isArray(sc.atWill) && sc.atWill.some((group: any) => Array.isArray(group?.spells) ? group.spells.length > 0 : Boolean(group))
   const hasInnateNotes = typeof sc.atWillNotes === 'string' && sc.atWillNotes.trim().length > 0
   if (hasAtWill || hasInnateNotes) {
@@ -1310,6 +1313,7 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
       } else if (item && typeof item === 'object') {
         const cadence = String(item.count || item.cadence || '').trim()
         const names = Array.isArray(item.spells)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- legacy spellcasting payloads are untyped JSON; this function is their migration boundary
           ? item.spells.map((s: any) => (typeof s === 'string' ? s : s?.name)).filter(Boolean)
           : []
         if (cadence && cadence.toLowerCase() !== 'at will') {

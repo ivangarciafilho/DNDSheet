@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { createHash } from 'node:crypto'
-export const GATE_STEPS = Object.freeze(['core', 'lint', 'typecheck', 'build', 'fuzz', 'help', 'spell', 'pages-build', 'pages-assets', 'pages-fuzz'])
+export const GATE_STEPS = Object.freeze(['core', 'lint', 'typecheck', 'build', 'fuzz', 'help', 'spell', 'pages-build', 'pages-assets', 'pages-fuzz', 'visual'])
 export function gateSummaryPasses(summary) {
   return summary?.ok === true && Array.isArray(summary.results) && summary.results.length === GATE_STEPS.length && GATE_STEPS.every(step => summary.results.filter(r => r.step === step && r.ok === true && r.code === 0).length === 1)
 }

@@ -1095,6 +1095,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 >
 > **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files ≥ 900 lines `20 → 19`. Next: `WebRenderer.vue` (2,983).
 >
+> **Build 261** ([packet](DNDSheet-Build261-Closing-C3-C6-C8-C10.md)): ✅ `C3` (ESLint 0/0), ✅ `C6` (`visual` gate step vs production), ✅ `C8` (no `any` outside reviewed boundaries; lint-enforced), ✅ `C10` (0 TODOs; multi-target CR detection). Security: stored XSS via author text fixed with the `v-safe-html` allow-list sanitizer; XSS smoke in the gate.
+>
+> **Track C status after Build 261:** ✅ `C3`, `C6`, `C8`, `C9`, `C10`, `C12` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C11` · owner `C7`.
+>
 > **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
 >
 > **Track C status after Build 260:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C6`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C11` · owner `C7`.

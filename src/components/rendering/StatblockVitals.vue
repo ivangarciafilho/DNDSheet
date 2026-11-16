@@ -11,7 +11,7 @@
         <span class="name dnd-cascade-title" :data-help="defSec.key" tabindex="0">{{ defSec.scopeLabel }}</span>
         <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
         <div class="dnd-defense-unified-body">
-          <span class="dnd-defense-prose-text" v-html="defSec.formattedProse"></span>
+          <span v-safe-html="defSec.formattedProse" class="dnd-defense-prose-text"></span>
         </div>
       </div>
     </template>
@@ -22,13 +22,13 @@
       <div class="dnd-cascade-badges-wrap">
         <template v-if="(monster?.splitSpeedRiderRows || monster.speedTraversal?.splitRiderRows) && speedRiderBadges.length > 0">
           <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'sp-base-' + spIdx">
-            <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
+            <span v-safe-html="mechanicRichHtml(spBadge)" class="dnd-cascade-badge"></span>
             <span v-if="spIdx < speedBaseBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
         <template v-else>
           <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-            <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
+            <span v-safe-html="mechanicRichHtml(spBadge)" class="dnd-cascade-badge"></span>
             <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
@@ -41,7 +41,7 @@
         class="dnd-vitals-indented-subrow"
       >
         <span class="dnd-subrow-bullet">↳</span>
-        <span class="dnd-subrow-content" v-html="mechanicRichHtml(spRider)"></span>
+        <span v-safe-html="mechanicRichHtml(spRider)" class="dnd-subrow-content"></span>
       </div>
     </template>
 
@@ -53,7 +53,7 @@
           v-for="(sBadge, sIdx) in sensesBadges"
           :key="'sense-badge-' + sIdx"
           class="dnd-cascade-badge"
-        ><span v-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+        ><span v-safe-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
       </div>
     </div>
 
@@ -65,7 +65,7 @@
           v-for="(lBadge, lIdx) in languagesBadges"
           :key="'lang-badge-' + lIdx"
           class="dnd-cascade-badge"
-        ><span v-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+        ><span v-safe-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
       </div>
       <span v-else class="dnd-cascade-badge">&mdash;</span>
     </div>
@@ -83,15 +83,15 @@
         <div class="stat one">
           {{ statsAndSavesByKey.STR?.stat?.toLowerCase() ?? 'str' }}
         </div>
-        <div class="score one" v-html="statsAndSavesByKey.STR?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.STR?.renderedScore ?? '10'" class="score one"></div>
         <div class="mod one">{{ statsAndSavesByKey.STR?.renderedModifier ?? '+0' }}</div>
-        <div class="save one" v-html="statsAndSavesByKey.STR?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.STR?.renderedSave ?? '+0'" class="save one"></div>
         <div class="stat two">
           {{ statsAndSavesByKey.INT?.stat?.toLowerCase() ?? 'int' }}
         </div>
-        <div class="score two" v-html="statsAndSavesByKey.INT?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.INT?.renderedScore ?? '10'" class="score two"></div>
         <div class="mod two">{{ statsAndSavesByKey.INT?.renderedModifier ?? '+0' }}</div>
-        <div class="save two" v-html="statsAndSavesByKey.INT?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.INT?.renderedSave ?? '+0'" class="save two"></div>
       </div>
       <div class="stat-table">
         <div class="header-label mod">{{ $t('editor.mod') }}</div>
@@ -99,15 +99,15 @@
         <div class="stat one">
           {{ statsAndSavesByKey.DEX?.stat?.toLowerCase() ?? 'dex' }}
         </div>
-        <div class="score one" v-html="statsAndSavesByKey.DEX?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.DEX?.renderedScore ?? '10'" class="score one"></div>
         <div class="mod one">{{ statsAndSavesByKey.DEX?.renderedModifier ?? '+0' }}</div>
-        <div class="save one" v-html="statsAndSavesByKey.DEX?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.DEX?.renderedSave ?? '+0'" class="save one"></div>
         <div class="stat two">
           {{ statsAndSavesByKey.WIS?.stat?.toLowerCase() ?? 'wis' }}
         </div>
-        <div class="score two" v-html="statsAndSavesByKey.WIS?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.WIS?.renderedScore ?? '10'" class="score two"></div>
         <div class="mod two">{{ statsAndSavesByKey.WIS?.renderedModifier ?? '+0' }}</div>
-        <div class="save two" v-html="statsAndSavesByKey.WIS?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.WIS?.renderedSave ?? '+0'" class="save two"></div>
       </div>
       <div class="stat-table">
         <div class="header-label mod">{{ $t('editor.mod') }}</div>
@@ -115,15 +115,15 @@
         <div class="stat one">
           {{ statsAndSavesByKey.CON?.stat?.toLowerCase() ?? 'con' }}
         </div>
-        <div class="score one" v-html="statsAndSavesByKey.CON?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.CON?.renderedScore ?? '10'" class="score one"></div>
         <div class="mod one">{{ statsAndSavesByKey.CON?.renderedModifier ?? '+0' }}</div>
-        <div class="save one" v-html="statsAndSavesByKey.CON?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.CON?.renderedSave ?? '+0'" class="save one"></div>
         <div class="stat two">
           {{ statsAndSavesByKey.CHA?.stat?.toLowerCase() ?? 'cha' }}
         </div>
-        <div class="score two" v-html="statsAndSavesByKey.CHA?.renderedScore ?? '10'"></div>
+        <div v-safe-html="statsAndSavesByKey.CHA?.renderedScore ?? '10'" class="score two"></div>
         <div class="mod two">{{ statsAndSavesByKey.CHA?.renderedModifier ?? '+0' }}</div>
-        <div class="save two" v-html="statsAndSavesByKey.CHA?.renderedSave ?? '+0'"></div>
+        <div v-safe-html="statsAndSavesByKey.CHA?.renderedSave ?? '+0'" class="save two"></div>
       </div>
     </div>
 
@@ -137,7 +137,7 @@
       :class="{ 'sb-striped': vitalsStripingMap['gear'], 'is-striped': vitalsStripingMap['gear'] }"
     >
       <span class="name dnd-cascade-title" data-help="gear" tabindex="0">{{ $t('monster.gear') }}</span>
-      <div class="dnd-cascade-badges-wrap" v-html="inventory"></div>
+      <div v-safe-html="inventory" class="dnd-cascade-badges-wrap"></div>
     </div>
 
     <!-- Passives / Checks 2024 -->
@@ -145,7 +145,7 @@
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="['cascade-skill-' + group.scopeLabel.toLowerCase(), { 'sb-striped': shouldStripeVital(group.scopeLabel, group.skills) }]">
         <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()" tabindex="0">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
         <span v-if="group.subTypeLabel && group.subTypeLabel !== 'Action'" class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
-        <div class="dnd-cascade-badges-wrap" v-html="group.skills"></div>
+        <div v-safe-html="group.skills" class="dnd-cascade-badges-wrap"></div>
       </div>
     </template>
   </template>
@@ -157,13 +157,13 @@
       <div class="dnd-cascade-badges-wrap">
         <template v-if="monster.splitSpeedRiderRows && speedRiderBadges.length > 0">
           <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'speed-base-14-' + spIdx">
-            <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
+            <span v-safe-html="mechanicRichHtml(spBadge)" class="dnd-cascade-badge"></span>
             <span v-if="spIdx < speedBaseBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
         <template v-else>
           <template v-for="(spBadge, spIdx) in speedBadges" :key="'speed-badge-' + spIdx">
-            <span class="dnd-cascade-badge" v-html="mechanicRichHtml(spBadge)"></span>
+            <span v-safe-html="mechanicRichHtml(spBadge)" class="dnd-cascade-badge"></span>
             <span v-if="spIdx < speedBadges.length - 1" class="text-grey-7 q-mr-xs">, </span>
           </template>
         </template>
@@ -178,7 +178,7 @@
       >
         <span class="dnd-subrow-bullet" aria-hidden="true">↳</span>
         <div class="dnd-cascade-badges-wrap">
-          <span class="dnd-cascade-badge" v-html="mechanicRichHtml(riderBadge)"></span>
+          <span v-safe-html="mechanicRichHtml(riderBadge)" class="dnd-cascade-badge"></span>
         </div>
       </div>
     </template>
@@ -186,14 +186,14 @@
       <div v-for="stat in stats" :key="stat.stat" class="stat-container">
         <div class="stat-name">{{ stat.stat }}</div>
         <div class="stat">
-          <div class="score" v-html="stat.renderedScore"></div>
+          <div v-safe-html="stat.renderedScore" class="score"></div>
           <div class="modifier">({{ stat.renderedModifier }})</div>
         </div>
       </div>
     </div>
     <div v-if="editorStore?.visualTemplate !== 'modern' && saves !== ''" class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': shouldStripeVital('Saving Throws', saves) }">
       <span class="name dnd-cascade-title" data-help="saves" tabindex="0">{{ $t('monster.saves') }}</span>
-      <div class="dnd-cascade-badges-wrap" v-html="saves"></div>
+      <div v-safe-html="saves" class="dnd-cascade-badges-wrap"></div>
     </div>
     <template v-for="defSec in cascadingDefenses" :key="defSec.key">
       <div
@@ -204,7 +204,7 @@
         <span class="name dnd-cascade-title" :data-help="defSec.key" tabindex="0">{{ defSec.scopeLabel }}</span>
         <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
         <div class="dnd-defense-unified-body">
-          <span class="dnd-defense-prose-text" v-html="defSec.formattedProse"></span>
+          <span v-safe-html="defSec.formattedProse" class="dnd-defense-prose-text"></span>
         </div>
       </div>
     </template>
@@ -215,7 +215,7 @@
           v-for="(sBadge, sIdx) in sensesBadges"
           :key="'sense-badge-' + sIdx"
           class="dnd-cascade-badge"
-        ><span v-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+        ><span v-safe-html="mechanicRichHtml(sBadge)"></span><span v-if="sIdx < sensesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
       </div>
     </div>
     <div class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': languagesStripe }">
@@ -225,7 +225,7 @@
           v-for="(lBadge, lIdx) in languagesBadges"
           :key="'lang-badge-' + lIdx"
           class="dnd-cascade-badge"
-        ><span v-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
+        ><span v-safe-html="mechanicRichHtml(lBadge)"></span><span v-if="lIdx < languagesBadges.length - 1" class="text-grey-7 q-mr-xs">,</span></span>
       </div>
       <span v-else class="dnd-cascade-badge">&mdash;</span>
     </div>
@@ -233,7 +233,7 @@
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="['cascade-skill-' + group.scopeLabel.toLowerCase(), { 'sb-striped': shouldStripeVital(group.scopeLabel, group.skills) }]">
         <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()" tabindex="0">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
         <span v-if="group.subTypeLabel && group.subTypeLabel !== 'Action'" class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
-        <div class="dnd-cascade-badges-wrap" v-html="group.skills"></div>
+        <div v-safe-html="group.skills" class="dnd-cascade-badges-wrap"></div>
       </div>
     </template>
   </template>

@@ -42,8 +42,8 @@ export function castingResourceSummary(source:SpellcastingSourcesInput,stats:Rec
   return sourceCounts.join('; ')||undefined
  }
  const parts:string[]=[]
- const slots=(values:number[],label:string)=>{const count=values.reduce((a,b)=>a+b,0),highest=values.reduce((max,n,i)=>n?i+1:max,0);if(count)parts.push(count+' Shared Spell Slots through '+ordinalLabel(highest)+' level')}
- slots(result.standardSlots,'Spell Slots')
+ const slots=(values:number[])=>{const count=values.reduce((a,b)=>a+b,0),highest=values.reduce((max,n,i)=>n?i+1:max,0);if(count)parts.push(count+' Shared Spell Slots through '+ordinalLabel(highest)+' level')}
+ slots(result.standardSlots)
  const pactSources = entries.filter(entry => castingResourceView(entry, result).pactPool)
  const recoveries = [...new Set(pactSources.map(pactRecovery))]
  const pact = pactResourceSummary(result.warlockSlots || [], recoveries.length === 1 ? recoveries[0] : recoveries.length > 1 ? 'hidden' : undefined)

@@ -331,7 +331,7 @@ test('defense-and-traits-utils - formatMinimalistRegen & formatMinimalistDeathPr
         enabled: true,
         name: 'Until X Critical Hits',
         critHitThreshold: 3,
-      } as any,
+      } as never,
       ctx
     ),
     'Immortal (Until being hit by 3 Critical Hits)'

@@ -1,3 +1,7 @@
+## Build 261 — C3, C6, C8, C10 closed; stored XSS fixed
+
+ESLint 0 warnings/0 errors; visual regression is gate step 11 against production; no any outside reviewed boundaries; 0 TODOs. A new XSS smoke found script injection through author text; fixed with the v-safe-html allow-list sanitizer (70 v-html replaced, v-html now a lint error); visual 104/104 identical. See docs/roadmap/DNDSheet-Build261-Closing-C3-C6-C8-C10.md.
+
 ## Build 260 — traits and actions as child components
 
 StatblockTraits.vue and StatblockActions.vue render from a typed body view (useStatblockBodyView.ts); WebRenderer.vue 1,143 to 866 lines, under 900; visual diff 104/104 identical. See docs/roadmap/DNDSheet-Build260-Traits-and-Actions-Children.md.

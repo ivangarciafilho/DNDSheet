@@ -7,7 +7,7 @@
           <q-input v-help="'Override the slot or cast count displayed for this spell level row.'" :model-value="amount(level)" type="number" min="0" dense outlined dark clearable :data-level-amount="level" label="Amount" :placeholder="map(levelMap)[level] === null ? 'Hidden' : 'Automatic'" class="col-3" @click.stop @update:model-value="value => setMap(levelMap, level, numberOrUndefined(value))"><template #append><q-btn flat dense size="xs" :icon="map(levelMap)[level] === null ? 'visibility_off' : 'visibility'" :aria-label="map(levelMap)[level] === null ? 'Use automatic amount' : 'Hide amount'" @click.stop="setMap(levelMap, level, map(levelMap)[level] === null ? undefined : null)" /></template></q-input>
           <div class="col-4" @click.stop><catalog-select v-help="'Override recovery cadence shown on this spell level group.'" :model-value="recovery(level)" :entries="cadenceOptions" preserve-order :searchable="false" dark :data-level-cadence="level" label="Cadence" @update:model-value="value => setMap(cadenceMap, level, value ? String(value) : undefined)" /></div>
           <span class="col text-subtitle2 text-amber-3">{{ level === 0 ? 'Cantrips' : 'Level ' + level }} <small class="text-grey-4">{{ assigned(level).length }} assigned{{ granted(level).length ? ' · ' + granted(level).length + ' granted' : '' }}</small></span>
-          <q-checkbox v-help="'Mark all spells in this level group as castable using a Bonus Action.'" :model-value="!!map(bonusMap)[level]" :data-level-bonus="level" dense dark label="Bonus Action" class="col-auto" @click.stop @update:model-value="value => setMap(bonusMap, level, value)" />
+          <q-checkbox v-help="'Mark all spells in this level group as castable using a Bonus Action.'" :model-value="!!flags(bonusMap)[level]" :data-level-bonus="level" dense dark label="Bonus Action" class="col-auto" @click.stop @update:model-value="value => setMap(bonusMap, level, value)" />
         </div>
       </template>
       <div class="q-pa-sm">
@@ -53,17 +53,21 @@ const props=defineProps<{source:RowSource;primary?:boolean;combinedLevel?:number
 const emit=defineEmits<{patch:[value:Partial<RowSource>]}>()
 const store=useSpellsStore(),levels=Array.from({length:10},(_,i)=>i),cadenceOptions=CADENCE_OPTIONS,queries=reactive<Record<number,string>>({})
 const actionOptions=[{label:'Inherit row',value:'inherit'},{label:'Action',value:'action'},{label:'Bonus Action',value:'bonus'}]
-function spellActionValue(spellId:string) {const raw=map(spellBonusMap.value)[spellId];return raw===undefined?'inherit':raw?'bonus':'action'}
+function spellActionValue(spellId:string) {const raw=flags(spellBonusMap.value)[spellId];return raw===undefined?'inherit':raw?'bonus':'action'}
 const selection=computed(()=>({className:props.source.className||props.source.class||'',subclass:props.source.subclass,level:props.source.level,rulesEdition:props.source.rulesEdition,contribution:props.source.contribution,automaticGrants:props.source.automaticGrants,spellGrants:props.source.spellGrants,bypassSlotFilter:props.source.bypassSlotFilter||props.source.bypassSlotLevelFilter}))
 const levelMap=computed(()=>props.primary?'levelAmountMap':'levelAmounts'),cadenceMap=computed(()=>props.primary?'levelCadenceMap':'levelCadences'),bonusMap=computed(()=>props.primary?'bonusActionLevelMap':'levelBonusAction'),spellAmountMap=computed(()=>props.primary?'spellAmountMap':'spellAmounts'),spellBonusMap=computed(()=>props.primary?'spellBonusActionMap':'spellBonusAction'),spellCadenceMap='spellCadenceMap'
-function map(name:string):Record<string,any> { return (props.source as unknown as Record<string,any>)[name] || {} }
-function setMap(name:string,key:string|number,value:unknown) { const next={...map(name)};if(value===undefined||value==='')delete next[key];else next[key]=value;emit('patch',{[name]:next}) }
+// Level and spell maps hold numbers, cadence keys or booleans, keyed by level or spell id.
+type RowMapValue=string|number|undefined
+// Bonus-action maps hold booleans per level or spell id.
+function flags(name:string):Record<string,boolean|undefined> { return ((props.source as unknown as Record<string,unknown>)[name] as Record<string,boolean|undefined> | undefined) || {} }
+function map(name:string):Record<string,RowMapValue> { return ((props.source as unknown as Record<string,unknown>)[name] as Record<string,RowMapValue> | undefined) || {} }
+function setMap(name:string,key:string|number,value:unknown) { const next={...map(name)};if(value===undefined||value==='')delete next[key];else next[key]=value as RowMapValue;emit('patch',{[name]:next}) }
 function numberOrUndefined(value:unknown) { return value===null||value===''||value===undefined?undefined:Math.max(0,Math.trunc(Number(value)||0)) }
 function granted(level:number) {return sourceAssignedAtLevel(store.allSpellOptions,sourceGrantedSpells(selection.value,props.combinedLevel,props.sourceCount),level)}
 function assigned(level:number) {return sourceAssignedAtLevel(store.allSpellOptions,props.primary?props.source.standard||[]:props.source.spells||[],level)}
 function setSpells(level:number,values:string[]) {const field=props.primary?'standard':'spells';emit('patch',{[field]:replaceSourceLevelSpells(store.allSpellOptions,props.source[field]||[],level,values)})}
 function amount(level:number) {return map(levelMap.value)[level]}
-function recovery(level:number) {return spellRowRecovery(level,map(cadenceMap.value)[level],{...props.source,className:selection.value.className})}
+function recovery(level:number) {return spellRowRecovery(level,map(cadenceMap.value)[level] as string|undefined,{...props.source,className:selection.value.className})}
 function unavailable(level:number) {return !selection.value.bypassSlotFilter && level>(sourceSpellCeiling(selection.value,props.combinedLevel,props.sourceCount)??9) && assigned(level).length===0}
 function options(level:number) {return sourceSpellOptions(store.allSpellOptions,selection.value,level,props.combinedLevel,props.sourceCount).filter(option=>!queries[level]||option.label.toLowerCase().includes(queries[level]))}
 </script>

@@ -8,8 +8,8 @@
     <div
       v-for="va in villainActionsList"
       :key="va.id"
+      v-safe-html="va.rendered"
       class="action villain"
-      v-html="va.rendered"
     ></div>
   </div>
 
@@ -19,8 +19,8 @@
     <div
       v-for="ba in bloodiedActionsList"
       :key="ba.id"
+      v-safe-html="ba.rendered"
       class="action bloodied"
-      v-html="ba.rendered"
     ></div>
   </div>
 
@@ -30,8 +30,8 @@
     <div
       v-for="ra in reactiveActionsList"
       :key="ra.id"
+      v-safe-html="ra.rendered"
       class="action reactive"
-      v-html="ra.rendered"
     ></div>
   </div>
 
@@ -41,8 +41,8 @@
     <div
       v-for="ca in comboActionsList"
       :key="ca.id"
+      v-safe-html="ca.rendered"
       class="action combo"
-      v-html="ca.rendered"
     ></div>
   </div>
 
@@ -52,8 +52,8 @@
     <div
       v-for="ap in anatomyPartsList"
       :key="ap.id"
+      v-safe-html="ap.rendered"
       class="action anatomy"
-      v-html="ap.rendered"
     ></div>
   </div>
 
@@ -63,8 +63,8 @@
     <div
       v-for="ev in runehammerTrackData.events"
       :key="ev.id"
+      v-safe-html="ev.rendered"
       class="action track-event"
-      v-html="ev.rendered"
     ></div>
   </div>
 </template>

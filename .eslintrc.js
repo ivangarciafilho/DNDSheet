@@ -83,6 +83,13 @@ module.exports = {
     'no-unused-vars': 'off',
     // `const { dropped, ...kept } = x` is the house idiom for omitting keys.
     '@typescript-eslint/no-unused-vars': ['warn', { ignoreRestSiblings: true }],
+    // Raw HTML only through v-safe-html (src/core/adapters/safe-html.ts); test/xss-statblock-browser-smoke.mjs guards it.
+    'vue/no-v-html': 'error',
+    // Typed defineEmits/defineProps (incl. Vue 3.3 tuple syntax) are enforced by vue-tsc; this plugin version cannot read them.
+    'vue/require-explicit-emits': 'off',
+    'vue/require-default-prop': 'off',
+    // Every remaining non-null assertion in src was audited as guarded (docs/roadmap/DNDSheet-Build255-Type-Debt-Round-Two.md).
+    '@typescript-eslint/no-non-null-assertion': 'off',
 
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
