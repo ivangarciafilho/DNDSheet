@@ -1,0 +1,482 @@
+
+/* Dark themes: the qualifier chips need a darker wash on light accents */
+:is(#render, .composer-preview) .statblock:is(
+    .theme-lovecraft_golden,
+    .theme-lovecraft_silver,
+    .theme-lovecraft_toxic,
+    .theme-lovecraft_fathomless,
+    .theme-dwarves_aetherpunk,
+    .theme-art_deco
+  )
+  .sb-cell.sb-head
+  :is(.sb-qual.phase-cell, .sb-qual.recharge-cell, .sb-qual.availability-cell) {
+  background: rgba(0, 0, 0, 0.16);
+}
+
+/* Spell plates use the same theme tokens; authored tags appear once in their data text. */
+:is(#render, .composer-preview, .statblock) {
+  .class-spellcasting,
+  .innate-spellcasting {
+    margin-block: 6px !important;
+
+    /* Seamless interleaved row striping across the plate */
+    .sb-row.sb-striped,
+    .sb-row.is-striped {
+      background: var(--sb-stripe, rgba(122, 31, 18, 0.10)) !important;
+
+      > .sb-cell:not(.sb-head) {
+        background: transparent !important;
+      }
+    }
+
+    .sb-spell-resource-row,
+    .sb-spell-metamagic-row {
+      .sb-cell {
+        font-size: calc(0.8rem * var(--statblock-font-scale, 1));
+        font-weight: 500;
+        line-height: 1.4;
+      }
+    }
+
+    .sb-spells-unified-cell,
+    .sb-spells-restricted-cell {
+      padding: 0 !important;
+      background: transparent !important;
+      display: flex !important;
+      flex-direction: column !important;
+      width: 100% !important;
+
+      .spell-level-line {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding: 2px 6px !important;
+        line-height: 1.35 !important;
+        min-height: 0 !important;
+        border-bottom: none !important;
+        background: transparent;
+
+        &:last-child {
+          border-bottom: none !important;
+        }
+
+        &.is-striped,
+        &:nth-child(even) {
+          background: var(--sb-stripe, rgba(122, 31, 18, 0.10)) !important;
+        }
+
+        &:nth-child(odd):not(.is-striped) {
+          background: transparent !important;
+        }
+
+        &.zebra-stripe-text {
+          background-image: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 1.45rem,
+            var(--sb-stripe, rgba(122, 31, 18, 0.10)) 1.45rem,
+            var(--sb-stripe, rgba(122, 31, 18, 0.10)) 2.9rem,
+            transparent 2.9rem,
+            transparent 4.35rem,
+            var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
+            var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
+          ) !important;
+          background-attachment: local !important;
+        }
+      }
+    }
+
+    .sb-spells-restricted-cell {
+      background: rgba(88, 24, 13, 0.03) !important;
+
+      .restricted-cell-header {
+        border-bottom: 1px solid var(--sb-rule, rgba(122, 31, 18, 0.2)) !important;
+        background: rgba(88, 24, 13, 0.06) !important;
+        padding: 3px 8px !important;
+      }
+    }
+  }
+
+  .sb-plate .spell-tag-badge,
+  .spell-tag-badge.dnd-spell-comp,
+  .dnd-spell-comp,
+  .sb-qual.sb-comp {
+    display: inline-block;
+    margin-inline-start: 0.25em;
+    color: #6a1b9a !important;
+    font-size: 0.82em;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  &:is(
+      .theme-lovecraft_golden,
+      .theme-lovecraft_silver,
+      .theme-lovecraft_toxic,
+      .theme-lovecraft_spooky,
+      .theme-lovecraft_galactic,
+      .theme-lovecraft_fathomless,
+      .theme-dwarves_forge,
+      .theme-dwarves_aetherpunk,
+      .theme-art_deco
+    ) {
+    .sb-plate .spell-tag-badge,
+    .spell-tag-badge.dnd-spell-comp,
+    .dnd-spell-comp,
+    .sb-qual.sb-comp {
+      color: #ce93d8 !important;
+    }
+  }
+
+  .sb-qual.school-cell {
+    font-style: italic;
+    font-weight: 600;
+    opacity: 0.95;
+    margin-right: 2px;
+  }
+
+  .sb-plate .spell-tag-badge::before,
+  .sb-plate .spell-tag-badge::after {
+    content: none !important;
+  }
+
+  .sb-plate .spell-cadence-badge {
+    display: inline-block;
+    margin-inline-start: 0.35em;
+    padding: 1px 5px;
+    border: 1px solid var(--sb-rule);
+    border-radius: 3px;
+    background: var(--sb-body-bg);
+    color: var(--sb-cell-ink);
+    font-size: 0.72em;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .sb-plate .sb-spell {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .sb-plate .sb-spells-inline {
+    background: var(--sb-cell-bg) !important;
+    color: var(--sb-cell-ink) !important;
+    padding: 3px 8px !important;
+    display: inline-block !important;
+    line-height: 1.45 !important;
+    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
+    font-weight: 500;
+
+    .spell-inline-item {
+      display: inline;
+    }
+    .spell-name {
+      font-weight: 400;
+      font-style: italic;
+    }
+    .spell-tag-badge {
+      font-size: 0.8em;
+      opacity: 0.85;
+      font-style: italic;
+    }
+    .spell-sep {
+      color: inherit;
+      margin-right: 2px;
+    }
+  }
+
+  .sb-plate .sb-spell-head {
+    white-space: nowrap !important;
+    font-size: calc(0.82rem * var(--statblock-font-scale, 1));
+    font-weight: 700;
+  }
+}
+
+/* Rich tooltips (stat block + editor): readable width, consistent color code */
+.q-tooltip.dnd-tip {
+  font-size: calc(0.8rem * var(--statblock-font-scale, 1));
+  line-height: 1.35;
+  background: #1f1b18;
+  color: #f3ead7;
+  border: 1px solid #7a1f12;
+  padding: 6px 10px;
+
+  b,
+  strong {
+    color: #ffd54f;
+  }
+}
+
+/* Lightweight help for the read-only stat block. The host is teleported to body
+   so clipping and transformed A4 preview containers cannot hide it. */
+.statblock-help-tip {
+  z-index: 10000;
+  box-sizing: border-box;
+  max-width: min(340px, calc(100vw - 20px));
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  padding: 8px 12px;
+  border: 1.5px solid #8a2010;
+  border-radius: 6px;
+  background: #231c19;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  color: #f7ede1;
+  font-size: calc(0.84rem * var(--statblock-font-scale, 1));
+  line-height: 1.45;
+  pointer-events: none;
+
+  .tip-title {
+    color: #e5b358;
+    font-weight: 700;
+    margin-bottom: 3px;
+    font-size: calc(0.88rem * var(--statblock-font-scale, 1));
+    display: block;
+  }
+  .tip-body {
+    color: #f7ede1;
+  }
+  .tip-detail {
+    color: #b5c7d3;
+    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
+    margin-top: 4px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    padding-top: 3px;
+  }
+}
+
+[data-help]:focus-visible {
+  outline: 2px solid #1769aa;
+  outline-offset: 2px;
+}
+
+/* Modular Sectorized Action Outcomes Grid & Dice Tables */
+.action-outcomes-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 4px !important;
+  margin: 4px 0 !important;
+  width: 100% !important;
+
+  .outcome-sector {
+    background: rgba(115, 24, 21, 0.04) !important;
+    border: 1px solid rgba(115, 24, 21, 0.22) !important;
+    border-radius: 3px !important;
+    padding: 3px 6px !important;
+    font-size: 0.9em !important;
+    line-height: 1.35 !important;
+
+    .outcome-target-badge {
+      display: inline-block;
+      font-weight: 700;
+      color: #731815;
+      background: rgba(115, 24, 21, 0.08);
+      padding: 0 4px;
+      border-radius: 2px;
+      margin-right: 4px;
+    }
+  }
+}
+
+.outcome-dice-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 4px 0 !important;
+  font-size: 0.86em !important;
+
+  th, td {
+    border: 1px solid rgba(115, 24, 21, 0.25) !important;
+    padding: 2px 6px !important;
+  }
+  th {
+    background: rgba(115, 24, 21, 0.1) !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    color: #731815 !important;
+  }
+}
+
+/* A11.9 random tables: theme tokens (--sb-*) so all 12 themes and print share one rule set. */
+.statblock .random-table-grid {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0;
+  font-size: 0.9em;
+
+  th, td {
+    border: 1px solid var(--sb-rule, rgba(122, 31, 18, 0.35));
+    padding: 2px 6px;
+    vertical-align: top;
+  }
+  th {
+    background: var(--sb-head-bg, #7a200d);
+    color: var(--sb-head-ink, #fff8ec);
+    font-weight: 700;
+    text-align: left;
+  }
+  tbody tr:nth-child(even) td { background: var(--sb-stripe, transparent); }
+  .random-table-range { white-space: nowrap; font-variant-numeric: tabular-nums; }
+}
+
+/* Balance the sheet around complete entries. The multicolumn container can
+   grow to accommodate the tallest entry before print scales the sheet. */
+.statblock :is(.trait, .action, .attack, .reaction, .legendary, .sb-plate,
+               .random-table, table, .dnd-cascade-panel, .dnd-section-card) {
+  break-inside: avoid-column;
+}
+
+.statblock h3.section {
+  break-after: avoid-column;
+}
+
+/* Keep a whole Traits section in one column when it is short enough to move as a unit; a long
+   section (9+ entries) may still split so it cannot force one column far taller than the other. */
+.statblock .traits:not(:has(> :nth-child(9))) {
+  break-inside: avoid-column;
+}
+
+@media print {
+  .statblock .random-table { break-inside: avoid; }
+  .statblock .random-table-grid thead { display: table-header-group; }
+  .statblock .random-table-grid tr { break-inside: avoid; }
+  .statblock .random-table-grid th {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* Total Elimination of Pill Borders around AC, HP, Speed, Defenses, Senses, Languages, Passives & Spells */
+#render .statblock,
+.composer-preview .statblock,
+.statblock,
+.statblock.theme-wotc {
+  .skill.dnd-cellular-row,
+  .skill.dnd-cascade-panel {
+    display: block !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 2px !important;
+    padding: 1px 0 !important;
+    margin: 1px 0 !important;
+    line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
+    text-indent: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+
+    &:not(.sb-striped):not(.is-striped):not(.zebra-stripe-text) {
+      background: transparent !important;
+    }
+
+    &.sb-striped,
+    &.is-striped {
+      background-color: var(--sb-stripe, rgba(122, 31, 18, 0.09)) !important;
+      padding: 1px 0 !important;
+      border-radius: 2px !important;
+    }
+
+    &.zebra-stripe-text {
+      background-color: transparent !important;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 1.45rem,
+        var(--sb-stripe, rgba(122, 31, 18, 0.10)) 1.45rem,
+        var(--sb-stripe, rgba(122, 31, 18, 0.10)) 2.9rem,
+        transparent 2.9rem,
+        transparent 4.35rem,
+        var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
+        var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
+      ) !important;
+      background-attachment: local !important;
+    }
+
+    .dnd-cascade-title,
+    .name.dnd-cascade-title,
+    span.name.dnd-cascade-title {
+      display: inline !important;
+      min-width: 0 !important;
+      background: transparent !important;
+      border: none !important;
+      border-right: none !important;
+      padding: 0 4px 0 0 !important;
+      margin: 0 !important;
+      text-indent: 0 !important;
+      font-size: calc(0.92rem * var(--statblock-font-scale, 1)) !important;
+      font-weight: 800 !important;
+      color: #58180d !important;
+      text-transform: none !important;
+      letter-spacing: normal !important;
+      text-shadow: none !important;
+      border-radius: 0 !important;
+      flex-shrink: 0;
+
+      &::after {
+        content: ':';
+        margin-left: 1px;
+      }
+    }
+
+    .dnd-cascade-subtitle {
+      background: #58180d !important;
+      color: #fdf1dc !important;
+      border: none !important;
+      border-radius: 3px !important;
+      padding: 1px 5px !important;
+      margin: 0 5px !important;
+      font-size: calc(0.72rem * var(--statblock-font-scale, 1)) !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      line-height: 1.1 !important;
+      vertical-align: middle !important;
+    }
+
+    .dnd-cascade-badges-wrap,
+    .dnd-defense-unified-body {
+      display: inline !important;
+      background: transparent !important;
+      border: none !important;
+      padding: 0 !important;
+      vertical-align: baseline;
+
+      .dnd-cascade-badge,
+      .dnd-defense-prose-text {
+        display: inline !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        vertical-align: baseline !important;
+      }
+    }
+  }
+
+  /* Prevent plate wrappers from receiving leaking striped background */
+  .action:has(.sb-plate),
+  .trait:has(.sb-plate),
+  .reaction:has(.sb-plate),
+  .legendary:has(.sb-plate),
+  .action.sb-striped:has(.sb-plate),
+  .trait.sb-striped:has(.sb-plate),
+  .reaction.sb-striped:has(.sb-plate) {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+
+  /* Clean, compact spell level rows without split vertical borders */
+  .sb-spell-row {
+    .sb-cell.sb-spell-head {
+      border-right: none !important;
+    }
+    .sb-cell.sb-spells-inline {
+      border-left: none !important;
+    }
+  }
+}

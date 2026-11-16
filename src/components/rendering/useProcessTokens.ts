@@ -1,13 +1,10 @@
-import { innateCastingContext, resolveCastingAbility } from 'src/core/domain/casting-ability'
+import { innateCastingContext } from 'src/core/domain/casting-ability'
 import { formatReactionAvailability } from 'src/core/domain/entry-display'
 import { formatNumericPresentation } from 'src/core/domain/numeric-presentation'
 import { sanitizeProsePunctuation } from 'src/core/domain/number-grammar'
 import { outcomesHtml } from 'src/core/domain/outcome-rendering'
 import { descriptionContainersHtml } from 'src/core/domain/description-containers'
 import { structuredAttackBonus } from 'src/core/domain/structured-attack'
-import { formatLimitedUses } from 'src/core/domain/cadence'
-import { countMultiattackReferences } from 'src/core/domain/multiattack-composer'
-import { actionRecharge } from 'src/core/domain/action-usage'
 import { exportMarkup } from 'src/core/domain/export-markup'
 import { computeTraitTag } from 'src/core/domain/defense-and-traits-utils'
 import { MaybeRef } from '@vueuse/core'
@@ -20,21 +17,20 @@ import {
   MonsterReaction,
   MonsterTrait,
 } from '../models'
-import { renderBonus, saveForAction, safeToWords, safeToOrdinal } from './mathRendering'
+import { renderBonus, saveForAction } from './mathRendering'
 import _ from 'lodash'
 import { useI18n } from 'vue-i18n'
 
 import { useClasses } from 'src/data/CLASS'
 import { useEditorStore } from 'src/stores/editor-store'
 import { processTokens as coreProcessTokens } from 'src/core/usecases/ProcessTokens'
-import { boldNumbers, phaseLabel, plateHtml } from './plate'
-import type { PlateCell, PlateRow } from './plate'
-import { statblockUsageHelpKey } from './statblock-help'
-import { formulaContextForMonster } from 'src/core/domain/formula-context'
-import { abilityHeader, abilityIdentity, hasStructuredAbility, inferAbility, mechanicsPhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
+import { boldNumbers } from './plate'
+import { abilityHeader, abilityIdentity, hasStructuredAbility, mechanicsPhrase, scopePhrase, text2024 } from 'src/core/domain/ability-grammar'
 import type { Monster as DomainMonster } from 'src/core/domain/types'
-import type { LairAction, ReactionAvailabilitySet } from 'src/core/domain/types'
+import type { LairAction } from 'src/core/domain/types'
 import { listJoin } from './list-join'
+import { createEntryTokenProcessors } from './useEntryTokens'
+import { createPlateEntryHelpers } from './usePlateEntries'
 
 export type MonsterContext =
   | MonsterTrait
@@ -60,6 +56,27 @@ export type MonsterContextType =
 
 export { listJoin }
 
+export interface PlateEntrySpec {
+  stagePool?: string | number
+  phaseText?: string
+  availability?: string
+  name: string
+  scores?: string
+  /** Recharge / uses / cost, e.g. "Recharge 4–12", "3/Day", "Costs 2 Actions". */
+  usage?: string
+  /** School and tier, e.g. "Evocation Cantrip". */
+  discipline?: string
+  components?: string[]
+  /** Shown only when it is not Instantaneous. */
+  duration?: string
+  /** Attack roll or saving throw cells. */
+  mechanics?: string[]
+  /** Targets, range and area cells. */
+  scope?: string[]
+  extra?: string[]
+  streamline?: boolean
+}
+
 /**
  * `web: false` is the text projection used by exports: entries render as prose in every visual
  * template, because Modern Modular plates are web markup that no text format can carry.
@@ -79,334 +96,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
     const state = '$state' in monster ? monster.$state : monster
     return coreProcessTokens(input, state as Monster)
   }
-
-  const processTraitTokens = (input: string, context: MonsterTrait) => {
-    if (!context) return input;
-    // consolidated trait tag
-    const tag = computeTraitTag(context)
-    const limitedUse = tag
-      ? ` (${tag})`
-      : context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate
-      ? ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
-      : ''
-    input = input.replace(
-      /{trait.limitedUse}/gi,
-      limitedUse
-    )
-
-    // localize the rate string
-    input = input.replace(
-      /{trait.limitedUse.rate}/gi,
-      context.limitedUse?.rate ? context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : '' : ''
-    )
-
-    return input
-  }
-
-  const processSpellTokens = (
-    input: string,
-    context: Monster['spellcasting'],
-    monster: ReturnType<typeof useMonsterStore>
-  ) => {
-    const ability = resolveCastingAbility(context, monster.stats, monster.proficiency)
-    // level but ordinal
-    input = input.replace(
-      /\{spellcasting.ordinal\}/gi,
-      safeToOrdinal(context.level)
-    )
-
-    // stat
-    input = input.replace(
-      /\{spellcasting.stat\}/gi,
-      t(`statFull.${context.stat}`)
-    )
-
-    // spell save
-    input = input.replace(/\{spellcasting.save\}/gi, `DC ${ability.save}`)
-
-    // spell attack
-    input = input.replace(
-      /\{spellcasting.attack\}/gi,
-      renderBonus(ability.attack)
-    )
-
-    // ability modifier
-    input = input.replace(
-      /\{spellcasting.ability\}/gi,
-      renderBonus(ability.modifier)
-    )
-
-    // class
-    if (context.class && context.class in classes.SrdClass.value) {
-      input = input.replace(
-        /\{spellcasting.class\}/gi,
-        t(`class.${context.class}`)
-      )
-    } else {
-      input = input.replace(/\{spellcasting.class\}/gi, context.class ?? '')
-    }
-
-    return input
-  }
-
-  const processAttackTokens = (
-    input: string,
-    context: DndAttack,
-    monster: ReturnType<typeof useMonsterStore>
-  ) => {
-    const prefix = `attacks[id=${encodeURIComponent(context.id)}]`
-    const formatted = (field: string, text: string | number): string => {
-      const presentation = webProjection ? monster.bindings?.[`${prefix}.${field}`]?.presentation : undefined
-      return presentation ? formatNumericPresentation(text, presentation) : String(text)
-    }
-    // Resolve a dice expression first, then format its semantic components. HTML never enters the parser.
-    const diceDisplay = (field: string, count: number, die: number, modifier = 0): string => {
-      const raw = `{${count}d${die}${modifier === 0 ? '' : renderBonus(modifier)}}`
-      const style = webProjection && ['count','dice','modifier.overrideValue'].some(key => monster.bindings?.[`${prefix}.${field}.${key}`]?.presentation)
-      if (!style) return raw
-      const resolved = coreProcessTokens(raw, ((monster as unknown as { $state?: DomainMonster }).$state ?? monster) as unknown as DomainMonster)
-      const parts = /^(.*?) \((\d+)d(\d+)(.*?)\)$/.exec(resolved)
-      if (!parts) return formatted(field + '.count', resolved)
-      return `${parts[1]} (${formatted(field + '.count', parts[2])}d${formatted(field + '.dice', parts[3])}${parts[4] ? formatted(field + '.modifier.overrideValue', parts[4]) : ''})`
-    }
-    input = input.replace(/\{attack.save\}/gi, formatted('save', context.save ?? ''))
-    // attack is a... complicated bit of rendering
-    // attack distance
-    const distance =
-      editorStore.style === '2024'
-        ? t('editor.attack.distance', [t(`range.${context.distance}`)])
-        : t('editor.attack.distance2014', [
-            t(`range.${context.distance}`),
-            t(`kind.${context.kind}`),
-          ])
-
-    input = input.replace(/\{attack.distance\}/gi, `${distance}`)
-
-    // attack modifier
-    input = input.replace(
-      /\{attack.modifier\}/gi,
-      formatted('modifier.overrideValue', renderBonus(monster.attackModifier(context.id)))
-    )
-
-    // range
-    const meleeRange = t('editor.attack.meleeRange', [formatted('range.reach', context.range.reach)])
-    const rangeRange = t('editor.attack.rangeRange', [
-      formatted('range.standard', context.range.standard),
-      formatted('range.long', context.range.long),
-    ])
-    const bothRange = t('editor.attack.bothRange', [
-      formatted('range.reach', context.range.reach),
-      formatted('range.standard', context.range.standard),
-      formatted('range.long', context.range.long),
-    ])
-
-    input = input.replace(
-      /\{attack.range\}/gi,
-      context.distance === 'MELEE'
-        ? meleeRange
-        : context.distance === 'RANGED'
-        ? rangeRange
-        : bothRange
-    )
-
-    // targets
-    if (context.targets > 1 || editorStore.style !== '2024') {
-      input = input.replace(
-        /\{attack.targets\}/gi,
-        `, ${t(
-          'editor.attack.targets',
-          {
-            count: formatted('targets', safeToWords(context.targets)),
-          },
-          context.targets
-        )}`
-      )
-    } else {
-      input = input.replace(/\{attack.targets\}/gi, '')
-    }
-
-    // primary damage
-    const damageModifier = monster.attackDamageModifier(context.id)
-    const primary = t('editor.attack.damage', [
-      `${diceDisplay('damage', context.damage.count, context.damage.dice, damageModifier)} ${context.damage.type}`,
-    ])
-    input = input.replace(/\{attack.damage\}/gi, primary)
-
-    // conditional damage
-    const conditionalDamageModifier = monster.conditionalDamageModifier(
-      context.id
-    )
-    const conditional = t('editor.attack.damage', [
-      `${diceDisplay('alternateDamage', context.alternateDamage.count, context.alternateDamage.dice, conditionalDamageModifier)} ${context.alternateDamage.type}`,
-    ])
-    input = input.replace(
-      /\{attack.conditionalDamage\}/gi,
-      context.alternateDamage.active
-        ? t('editor.attack.conditionalDamage', [
-            conditional,
-            context.alternateDamage.condition,
-          ])
-        : ''
-    )
-
-    // additional damage
-    const additional = context.additionalDamage.map((d) => {
-      const damage = `${diceDisplay(`additionalDamage[id=${encodeURIComponent(d.id)}]`, d.count, d.dice)} ${d.type}`
-
-      if (d.note !== '') {
-        return `${t('editor.attack.damage', [damage])} ${d.note}`
-      } else {
-        return t('editor.attack.damage', [damage])
-      }
-    })
-    input = input.replace(
-      /\{attack.additionalDamage\}/gi,
-      context.additionalDamage.length > 0
-        ? t('editor.attack.additionalDamage', [listJoin(additional, ', ')])
-        : ''
-    )
-
-    return input
-  }
-
-  const formatActionOrReactionUsage = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
-    const rechargeVal = actionRecharge(context).replace(/^Recharge\s+/i, '')
-    if (rechargeVal) return ` ${t('editor.action.recharge', [rechargeVal])}`
-    if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate && context.limitedUse.rate !== 'RECHARGE') {
-      return ` (${formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)})`
-    }
-    return ''
-  }
-
-  const processActionTokens = (input: string, context: MonsterAction) => {
-    if (!context) return input;
-    // format the effects
-    // we run this replacement first, because the effects can have other tokens in them
-        const effects = Array.isArray(context?.effects)
-      ? context.effects
-          .map((e) => `<i>${e.case}:</i> ${e.effect}`)
-          .join(' ')
-      : ''
-    input = input.replace(/\{action.effects\}/gi, effects)
-
-    const limitedUseStr = formatActionOrReactionUsage(context)
-    input = input.replace(/\{action.limitedUse\}/gi, limitedUseStr)
-
-    // localize the rate string
-    input = input.replace(
-      /\{action.limitedUse.rate\}/gi,
-      context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''
-    )
-
-    return input
-  }
-
-  const processReactionTokens = (input: string, context: MonsterReaction) => {
-    if (!context) return input;
-    const limitedUse = formatActionOrReactionUsage(context)
-
-    input = input.replace(
-      /\{reaction.limitedUse\}/gi,
-      limitedUse
-    )
-
-    // localize the rate string
-    input = input.replace(
-      /\{reaction.limitedUse.rate\}/gi,
-      context.limitedUse?.rate ? t(`recharge.${context.limitedUse.rate}`) : ''
-    )
-
-    return input
-  }
-
-  const processMultiattackTokens = (
-    input: string,
-    context: Monster['multiattacks'],
-    monster: ReturnType<typeof useMonsterStore>
-  ) => {
-    // multiattack is a rather unique renderer at the moment
-    // we're going to construct a different data structure while rendering (this might form the basis
-    // of the planned revision in 2.1)
-    const renderedMa: { attacks: string[]; actions: string[]; full: string }[] =
-      []
-
-    for (const ma of context) {
-      // map attacks
-      // render attacks
-      const attacks = countMultiattackReferences(ma.attacks).map(([id, count]) => {
-        return t(
-          'editor.multiattack.attack',
-          { a: `${safeToWords(count)} ${monster.attackName(id)}` },
-          count
-        )
-      })
-
-      // map actions
-      // render actions
-      const actions = countMultiattackReferences(ma.actions).map(([id, count]) => {
-        return t(
-          'editor.multiattack.action',
-          {
-            a: monster.actionName(id),
-            count: safeToWords(count),
-          },
-          count
-        )
-      })
-
-      // the full string
-      // English multiattack phrasing; localisation is tracked in C5.
-      let multiattackAll = ''
-      if (actions.length > 0) {
-        multiattackAll = `uses ${listJoin(actions, ', ')}${
-          attacks.length > 0 ? ` followed by ${listJoin(attacks, ', ')}` : ''
-        }`
-      } else {
-        multiattackAll = `makes ${listJoin(attacks, ', ')}`
-      }
-
-      renderedMa.push({
-        attacks,
-        actions,
-        full: multiattackAll,
-      })
-    }
-
-    // render everything
-    const multiattackAll = `{NAME} ${renderedMa
-      .map((ma) => ma.full)
-      .join(' or ')}`
-
-    // ok so now the renderedMa object is the context
-    input = input.replace(/\{multiattack.all\}/gi, multiattackAll)
-
-    input = input.replace(
-      /\{multiattack.postscript\}/gi,
-      monster.multiattackOptions.postscript
-    )
-
-    // context tokens accessible via "rendered"
-    const generic = RegExp(/\{(?:multiattack).([\w\d\[\].]+)}/gi)
-    input = input.replace(generic, (match, prop) => {
-      const value = _.get({ rendered: renderedMa }, prop)
-
-      return value
-    })
-
-    return input
-  }
-
-  const processLegendaryTokens = (
-    input: string,
-    context: Monster['legendaryActions']
-  ) => {
-    input = input.replace(
-      /\{legendaryActions.actions\}/gi,
-      t('editor.action.plural', context.count)
-    )
-
-    return input
-  }
+  const { processTraitTokens, processSpellTokens, processAttackTokens, processActionTokens, processReactionTokens, processMultiattackTokens, processLegendaryTokens } = createEntryTokenProcessors({ t, classes, editorStore, webProjection })
 
   const processContextTokens = (
     input: string,
@@ -495,242 +185,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
 
     return input
   }
-
-  interface PlateEntrySpec {
-    stagePool?: string | number
-    phaseText?: string
-    availability?: string
-    name: string
-    scores?: string
-    /** Recharge / uses / cost, e.g. "Recharge 4–12", "3/Day", "Costs 2 Actions". */
-    usage?: string
-    /** School and tier, e.g. "Evocation Cantrip". */
-    discipline?: string
-    components?: string[]
-    /** Shown only when it is not Instantaneous. */
-    duration?: string
-    /** Attack roll or saving throw cells. */
-    mechanics?: string[]
-    /** Targets, range and area cells. */
-    scope?: string[]
-    extra?: string[]
-    streamline?: boolean
-  }
-
-  /**
-   * Header cell = | Phase · Usage · Discipline · NAME (components) duration |
-   * then | mechanics | scope | extra | data cells, then the body.
-   */
-  const buildPlateEntry = (
-    monster: ReturnType<typeof useMonsterStore>,
-    spec: PlateEntrySpec,
-    body: string
-  ): string => {
-    const quals: string[] = []
-    const phase = spec.phaseText?.trim() || phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
-    if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase" tabindex="0">${phase}</span>`)
-    // Authored tags ("Recharges after {PB} rounds") resolve like any other mechanic text.
-    const printedUsage = spec.usage?.includes('{') ? processMonsterTokens(spec.usage, monster) : spec.usage
-    if (printedUsage?.trim()) {
-      const helpKey = statblockUsageHelpKey(printedUsage)
-      const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
-      quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${printedUsage.trim()}</span>`)
-    }
-    if (spec.availability?.trim()) {
-      quals.push(`<span class="sb-qual availability-cell" data-help="availability" tabindex="0">${spec.availability.trim()}</span>`)
-    }
-    const classification = spec.discipline?.trim()
-    const comps = Array.isArray(spec.components) && spec.components.length > 0
-      ? spec.components.join(', ')
-      : ''
-    const spellMetaParts: string[] = []
-    if (classification) {
-      spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`)
-    }
-    if (comps) {
-      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell dnd-spell-comp" data-help="spell-components" tabindex="0">(${comps})</span>`)
-    }
-    const spellMetaSuffix = spellMetaParts.length > 0 ? `, ${spellMetaParts.join(' ')}` : ''
-    const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}${spellMetaSuffix}</span>`
-    const headerCells: PlateCell[] = [
-      { html: nameHtml, head: true, cls: 'action-composite-pill name-cell' }
-    ]
-
-    if (spec.scores?.trim()) {
-      headerCells.push({
-        html: `<span class="sb-scores scores-cell">${spec.scores.trim()}</span>`,
-        cls: 'scores-cell'
-      })
-    }
-
-    const duration = spec.duration?.trim() && !/^instantaneous$/i.test(spec.duration.trim())
-      ? spec.duration.trim()
-      : ''
-    if (duration) {
-      headerCells.push({
-        html: `<span class="sb-qual duration-cell">${duration}</span>`,
-        cls: 'duration-cell'
-      })
-    }
-
-    const mechItems = (spec.mechanics ?? [])
-      .filter((m) => m?.trim())
-      .map((m) => m.replace(/\b(Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma|STR|DEX|CON|INT|WIS|CHA)\s+Save\s+(?!(?:DC\b))(<span[^>]*>\d+<\/span>|\d+)/i, '$1 Save DC $2'))
-    const scopeItems = (spec.scope ?? []).filter((s) => s?.trim())
-    const rows: PlateRow[] = [
-      { cells: headerCells, cls: 'action-composite-header' }
-    ]
-
-    const isSpellLike = Boolean(classification || comps || duration)
-
-    if (isSpellLike) {
-      for (const m of mechItems) {
-        headerCells.push({ html: m, cls: 'mech-cell' })
-      }
-      const row2Cells: PlateCell[] = []
-      for (const s of scopeItems) {
-        row2Cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
-      }
-      for (const e of spec.extra ?? []) {
-        if (e?.trim()) row2Cells.push({ html: e, cls: 'meta-cell' })
-      }
-      if (row2Cells.length > 0) {
-        rows.push({ cells: row2Cells, cls: 'action-composite-details' })
-      }
-    } else {
-      const row2Cells: PlateCell[] = []
-      for (const s of scopeItems) {
-        row2Cells.push({ html: s, cls: 'scope-cell target-cell', help: 'scope' })
-      }
-      for (const m of mechItems) {
-        row2Cells.push({ html: m, cls: 'mech-cell' })
-      }
-      for (const e of spec.extra ?? []) {
-        if (e?.trim()) row2Cells.push({ html: e, cls: 'meta-cell' })
-      }
-
-      if (row2Cells.length > 0) {
-        if (!spec.scores && headerCells.length === 1) {
-          // Simple/physical attacks like Slam: combine name and reach/targeting on Row 1
-          rows[0].cells = [...headerCells, ...row2Cells]
-        } else {
-          rows.push({ cells: row2Cells, cls: 'action-composite-details' })
-        }
-      }
-    }
-
-    if (spec.streamline && rows.length === 1 && rows[0].cells.length === 1 && !classification && !comps && !duration && !spec.scores && body.trim()) {
-      const plainBody = body.replace(/<[^>]+>/g, '').trim()
-      const singleLineCls = plainBody.length <= 55 ? ' sb-single-line' : ''
-      headerCells.push({
-        html: boldNumbers(body),
-        cls: 'sb-body sb-grow action-body-text'
-      })
-      return plateHtml({ rows, body: '', cls: `sb-trait-streamlined${singleLineCls}` })
-    }
-
-    // An entry whose only content is one text cell beside the name (mechanics or scope prose merged
-    // into row 1, or a skill group's scores) must wrap under the name, not drop into its own column.
-    const merged = rows[0].cells
-    if (rows.length === 1 && !body.trim() && merged.length === 2 && merged[0].head && !classification && !comps && !duration) {
-      const text = merged[1]
-      const plainText = String(text.html ?? '').replace(/<[^>]+>/g, '').trim()
-      if (plainText) {
-        rows[0].cells = [merged[0], { ...text, cls: `sb-body sb-grow action-body-text ${text.cls ?? ''}`.trim() }]
-        const singleLineCls = plainText.length <= 55 ? ' sb-single-line' : ''
-        return plateHtml({ rows, body: '', cls: `sb-trait-streamlined${singleLineCls}` })
-      }
-    }
-
-    return plateHtml({ rows, body })
-  }
-
-  const usageText = (context: { recharge?: string; rechargeMin?: number; rechargeMax?: number; limitedUse?: { count: number; rate: string; recharge?: string } }): string => {
-    const recharge = actionRecharge(context)
-    if (recharge) return /^recharge/i.test(recharge) ? recharge : `Recharge ${recharge}`
-    if (context.limitedUse && context.limitedUse.count > 0 && context.limitedUse.rate) {
-      return formatLimitedUses(context.limitedUse.count, context.limitedUse.rate)
-    }
-    return ''
-  }
-
-  // Structured (A6) abilities carry their mechanics in fields, not prose, so every template and
-  // section must render them through the shared grammar or they collapse to a bare name.
-  const structuredRenderContext = (context: MonsterAction, monster: ReturnType<typeof useMonsterStore>) => {
-    const ability = inferAbility(context)
-    const formulaContext = formulaContextForMonster(monster as unknown as DomainMonster)
-    const attackBonus = structuredAttackBonus(context, monster as unknown as DomainMonster)
-    const saveDc = context.stat && context.stat !== 'none'
-      ? saveForAction(monster, context.stat, context.save)
-      : undefined
-    const collection = (['actions','traits','reactions'] as const).find(key => monster[key]?.some(entry => entry.id === context.id))
-    const prefix = collection && context.id ? `${collection}[id=${encodeURIComponent(context.id)}]` : undefined
-    const formatValue = webProjection && prefix ? (field: string, text: string) => {
-      const presentation = monster.bindings?.[`${prefix}.${field}`]?.presentation
-      return presentation ? formatNumericPresentation(text, presentation) : text
-    } : undefined
-    return { ability, renderContext: { attackBonus, saveDc, formulaContext, randomTables: monster.randomTables, formatValue, compactScope: webProjection } }
-  }
-
-  /** Modern Modular plate; `usage` is the recharge/uses chip, or the legendary cost. */
-  const structuredActionPlate = (
-    context: MonsterAction,
-    monster: ReturnType<typeof useMonsterStore>,
-    usage: string
-  ): string => {
-    const { ability, renderContext } = structuredRenderContext(context, monster)
-    const mechanics = mechanicsPhrase(ability, renderContext).map(boldNumbers)
-    const scopeText = scopePhrase(ability, renderContext)
-    const scope = scopeText ? [boldNumbers(scopeText)] : []
-    const effectsStr = outcomesHtml(ability, renderContext)
-    const containersStr = formatDescriptionContainers(context.descriptionContainers, monster.randomTables)
-    let desc = sanitizeProsePunctuation(processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'action').trim())
-
-    if (context.stat && context.stat !== 'none') {
-      desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
-    }
-    if (ability.attackSource) {
-      desc = desc.replace(/^<i>(?:Melee|Ranged|Melee or Ranged)\s+(?:Weapon|Spell)\s+Attack(?: Roll)?:<\/i>\s*[+-]?\d+\s*to hit,\s*[^.]+\.\s*/i, '')
-    }
-
-    const { discipline, components, duration } = abilityHeader(context)
-    const canStreamline = !discipline && !components?.length && !duration && scope.length === 0 && mechanics.length === 0 && !effectsStr.includes('action-outcomes-grid')
-    return buildPlateEntry(
-      monster,
-      {
-        stagePool: context.stagePool,
-        name: context.name,
-        usage,
-        discipline,
-        components,
-        duration,
-        mechanics,
-        scope,
-        streamline: canStreamline,
-      },
-      desc
-    )
-  }
-
-  /** Classic WotC line: the bold-italic lead, then the 2024 rules text with italic clause labels. */
-  const structuredActionLine = (
-    context: MonsterAction,
-    monster: ReturnType<typeof useMonsterStore>,
-    lead: string
-  ): string => {
-    const { renderContext } = structuredRenderContext(context, monster)
-    return processTokens(`${lead} ${text2024(context, renderContext, { markup: 'html', componentsInLead: true })}`, context, monster, 'action')
-  }
-
-  const entryBadge = (
-    context: { stagePool?: string | number; availability?: ReactionAvailabilitySet } | undefined,
-    monster: ReturnType<typeof useMonsterStore>
-  ): string => {
-    if (!context) return ''
-    const { poolsLabel, conditionLabel } = formatReactionAvailability(context, monster.paragonConfig?.phaseName)
-    const parts = [poolsLabel, conditionLabel].filter(Boolean)
-    return parts.length > 0 ? `<span class="dnd-pool-badge">[${parts.join(' · ')}]</span> ` : ''
-  }
+  const { buildPlateEntry, usageText, structuredRenderContext, structuredActionPlate, structuredActionLine, entryBadge } = createPlateEntryHelpers({ webProjection, processMonsterTokens, processTokens, formatDescriptionContainers })
 
   const processTrait = (
     contextRef: MaybeRef<MonsterTrait>,

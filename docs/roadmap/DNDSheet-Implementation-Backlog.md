@@ -1112,6 +1112,10 @@ The first post-A4 full run exposed three stale browser expectations and one real
 > **Build 266** ([packet](DNDSheet-Build266-C1b-Module-Splits.md)): `C1b` ◐ six domain and use-case modules split into sibling modules via an AST-driven, re-exporting move (no importer changed); files of 900+ lines 11 → 5. A module-init cycle was found and disarmed (leaf-module rule).
 
 > **Track C status after Build 266:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ◐ `C1b` (5 left: `monster-store.ts` → typed setup-store slices; `useProcessTokens.ts` and `useBasicsContext.ts` → dependency-passed sub-composables; `app.scss` and `statblock-grammar.scss` → in-place partials) · ☐ `C5`.
+
+> **Build 267** ([packet](DNDSheet-Build267-C1b-Closed.md)): `C1b` ✅ no source file of 900+ lines (5 → 0). Stylesheets were split into in-place partials with byte-identical CSS; composables were split by factory extraction; the monster store's state and state-only getters were moved, and its CR getters now take a typed `this`. The ratchet records 0.
+
+> **Track C status after Build 267:** ✅ `C1a`, `C1b`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C5` (pt-BR help/UI + locale switch + coverage test + generated changelog) · follow-up: event-driven waits in browser tests (flake seen in Builds 262 and 267).
 >
 > **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
 >

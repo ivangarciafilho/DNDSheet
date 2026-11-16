@@ -1,3 +1,7 @@
+## Build 267 — C1b closed: no source file of 900+ lines
+
+Stylesheets split into partials (CSS byte-identical); useProcessTokens and useBasicsContext split by factory extraction; monster store state and state-only getters moved, CR getters typed through MonsterCrThis. See docs/roadmap/DNDSheet-Build267-C1b-Closed.md.
+
 ## Build 266 — C1b round 1: module splits
 
 Six domain and use-case modules split by an AST move that re-exports from the original (no importer changed); files of 900+ lines 11 → 5. See docs/roadmap/DNDSheet-Build266-C1b-Module-Splits.md.

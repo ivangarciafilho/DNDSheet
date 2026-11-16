@@ -7,7 +7,8 @@ const files = walk('src').filter((f) => /\.(ts|vue|scss|css)$/.test(f)).map((f) 
 const count = (re, pick = () => true) => files.filter(pick).reduce((n, f) => n + (f.text.match(re) || []).length, 0)
 const code = (f) => /\.(ts|vue)$/.test(f.rel)
 const metrics = {
-  importantAppScss: count(/!important/g, (f) => f.rel === 'src/css/app.scss'),
+  // app.scss and its in-place partials (Build 267) count as one stylesheet.
+  importantAppScss: count(/!important/g, (f) => /^src\/css\/(app|_app-\d+)\.scss$/.test(f.rel)),
   importantDarkContrast: count(/!important/g, (f) => f.rel === 'src/css/dark-contrast.scss'),
   importantTotal: count(/!important/g),
   filesOver900Lines: files.filter((f) => f.text.split('\n').length >= 900).length,

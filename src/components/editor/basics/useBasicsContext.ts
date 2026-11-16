@@ -5,8 +5,6 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { useEditorStore } from 'src/stores/editor-store'
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
 import { DICE_SELECT, DIE_LOOKUP } from 'src/data/DICE'
-import { ALL_OFFICIAL_LANGUAGES } from 'src/data/LANGUAGES'
-import { entryBindingPrefix, withoutEntryBindings } from 'src/core/domain/entry-bindings'
 import { avgHP } from 'src/core/domain/math-utils'
 import {
   calculatePointBuySpent,
@@ -15,13 +13,7 @@ import {
   SPECIES_CATALOG,
   type MonsterRoleArchetype,
 } from 'src/core/domain/species-and-heuristics'
-import {
-  formatLanguagesList,
-  formatMinimalistRegen,
-  formatMinimalistDeathPrevention,
-  resolveDynamicNumericSource,
-  composeAcAndDefenses,
-} from 'src/core/domain/defense-and-traits-utils'
+import { formatMinimalistRegen, formatMinimalistDeathPrevention, resolveDynamicNumericSource, composeAcAndDefenses } from 'src/core/domain/defense-and-traits-utils'
 import {
   ComposableInitiativeRider,
   InitiativeAdvantageMode,
@@ -29,16 +21,10 @@ import {
   formatInitiativeRider,
   formatInitiativeRiders,
 } from 'src/core/domain/initiative-composer'
-import {
-  defaultCrAnnotation,
-  MonsterAcConfig,
-  MonsterExtendedHp,
-  MonsterInitiativeConfig,
-  MonsterLanguageItem,
-  ParagonConfig,
-  ParagonPhaseConfig,
-} from '../../models'
+import { defaultCrAnnotation, MonsterAcConfig, MonsterExtendedHp, MonsterInitiativeConfig, ParagonConfig } from '../../models'
 import { validateNumber } from '../numberInput'
+import { createLanguageEntries } from './useLanguageEntries'
+import { createParagonPhases } from './useParagonPhases'
 
 const AC_SECONDARY_MODES = new Set([
   'parry',
@@ -588,144 +574,7 @@ export function createBasicsContext() {
     }
     reader.readAsDataURL(file)
   }
-
-  const defaultSourcesByIdx = ['half_hp', 'quarter_hp', 'eighth_hp']
-
-  const ensureParagonPhaseConfigs = () => {
-    const p = monster.paragonConfig
-    if (!p) return []
-    const count = Math.max(1, p.poolCount || 1)
-    if (count <= 1) {
-      p.enabled = false
-      return []
-    }
-    p.enabled = true
-    const pName = p.phaseName?.trim() || 'Phase'
-    if (!Array.isArray(p.phaseConfigs)) p.phaseConfigs = []
-    while (p.phaseConfigs.length < count) {
-      const idx = p.phaseConfigs.length
-      p.phaseConfigs.push({
-        id: `phase-${idx + 1}`,
-        name: idx === count - 1 ? 'Final' : `${pName} ${idx + 2}`,
-        source: (defaultSourcesByIdx[idx] || 'flat') as ParagonPhaseConfig['source'],
-        hpOverride: p.bloodiedPerPhase?.[idx] ?? null,
-        diceFormula: '4d10',
-        initiativeBonus: (idx + 1) * 10,
-      })
-    }
-    if (p.phaseConfigs.length > count) {
-      const dropped = p.phaseConfigs.splice(count)
-      let nextBindings = monster.bindings
-      for (const cfg of dropped) {
-        if (cfg?.id) {
-          nextBindings = withoutEntryBindings(nextBindings, entryBindingPrefix('paragonConfig.phaseConfigs', cfg.id))
-        }
-      }
-      monster.bindings = nextBindings
-    }
-    p.phaseConfigs.forEach((cfg, idx) => {
-      if (!cfg.id) cfg.id = `phase-${idx + 1}`
-      const isAuto = !cfg.name || cfg.name === 'Final' || /^(Phase|Stage|Pool) \d+$/i.test(cfg.name)
-      if (isAuto) cfg.name = idx === count - 1 ? 'Final' : `${pName} ${idx + 2}`
-    })
-    return p.phaseConfigs
-  }
-
-  const isLastBloodiedPhase = (pIdx: number): boolean => {
-    const p = monster.paragonConfig
-    if (!p || !Array.isArray(p.phaseConfigs) || !p.phaseConfigs[pIdx]?.isBloodied) return false
-    for (let i = pIdx + 1; i < p.phaseConfigs.length; i++) {
-      if (p.phaseConfigs[i]?.isBloodied) return false
-    }
-    return true
-  }
-
-  const paragonPhaseRows = computed<ParagonPhaseConfig[]>(() => {
-    const p = monster.paragonConfig
-    if (!p) return []
-    const count = Math.max(1, p.poolCount || 1)
-    if (count <= 1) return []
-    const stored = Array.isArray(p.phaseConfigs) ? p.phaseConfigs : []
-    if (stored.length === count) return stored
-    const pName = p.phaseName?.trim() || 'Phase'
-    const rows = stored.slice(0, count).map((cfg) => ({ ...cfg }))
-    while (rows.length < count) {
-      const idx = rows.length
-      rows.push({
-        id: `phase-${idx + 1}`,
-        name: '',
-        source: (defaultSourcesByIdx[idx] || 'flat') as ParagonPhaseConfig['source'],
-        hpOverride: p.bloodiedPerPhase?.[idx] ?? null,
-        diceFormula: '4d10',
-        initiativeBonus: (idx + 1) * 10,
-      })
-    }
-    rows.forEach((cfg, idx) => {
-      if (!cfg.id) cfg.id = `phase-${idx + 1}`
-      const isAuto = !cfg.name || cfg.name === 'Final' || /^(Phase|Stage|Pool) \d+$/i.test(cfg.name)
-      if (isAuto) cfg.name = idx === count - 1 ? 'Final' : `${pName} ${idx + 2}`
-    })
-    return rows
-  })
-
-  const materializeParagonRows = () => {
-    const p = monster.paragonConfig
-    if (!p || Math.max(1, p.poolCount || 1) <= 1) return
-    if (Array.isArray(p.phaseConfigs) && p.phaseConfigs.length === p.poolCount) return
-    ensureParagonPhaseConfigs()
-  }
-
-  const resolvePhaseRowPreview = (cfg: ParagonPhaseConfig): string => {
-    if (cfg.hpOverride != null && cfg.hpOverride > 0 && cfg.source === 'flat') {
-      return `${cfg.hpOverride}`
-    }
-    return resolveDynamicNumericSource(cfg.source || 'half_hp', cfg.hpOverride ?? 10, cfg.diceFormula, numericContext())
-  }
-
-  const syncParagonPhaseRows = () => {
-    materializeParagonRows()
-    const p = monster.paragonConfig
-    if (!p || !Array.isArray(p.phaseConfigs)) return
-    p.bloodiedPerPhase = p.phaseConfigs.map((cfg) => Number(resolvePhaseRowPreview(cfg)) || 10)
-  }
-
-  const onTogglePhaseBloodied = (pIdx: number, val: boolean) => {
-    materializeParagonRows()
-    const p = monster.paragonConfig
-    if (!p || !Array.isArray(p.phaseConfigs)) return
-    if (val) {
-      for (let i = pIdx; i < p.phaseConfigs.length; i++) p.phaseConfigs[i].isBloodied = true
-    } else {
-      for (let i = 0; i <= pIdx; i++) {
-        if (p.phaseConfigs[i]) p.phaseConfigs[i].isBloodied = false
-      }
-    }
-    syncParagonPhaseRows()
-  }
-
-  const updateParagonPoolHp = () => {
-    const p = monster.paragonConfig
-    if (!p) return
-    const count = Math.max(1, p.poolCount || 1)
-    if (count <= 1) {
-      p.enabled = false
-      p.poolHp = []
-      let nextBindings = monster.bindings
-      for (const cfg of p.phaseConfigs || []) {
-        if (cfg?.id) {
-          nextBindings = withoutEntryBindings(nextBindings, entryBindingPrefix('paragonConfig.phaseConfigs', cfg.id))
-        }
-      }
-      monster.bindings = nextBindings
-      p.phaseConfigs = []
-      p.bloodiedPerPhase = []
-      return
-    }
-    p.enabled = true
-    p.poolHp = Array(count).fill(Math.max(1, Math.floor(monster.avgHp / count)))
-    ensureParagonPhaseConfigs()
-    syncParagonPhaseRows()
-  }
+  const { isLastBloodiedPhase, paragonPhaseRows, materializeParagonRows, resolvePhaseRowPreview, syncParagonPhaseRows, onTogglePhaseBloodied, updateParagonPoolHp } = createParagonPhases({ monster, numericContext })
 
   const updateStat = (stat: keyof typeof monster.stats, value: number | string | null) => {
     if (stat === 'CON') {
@@ -734,118 +583,7 @@ export function createBasicsContext() {
       monster.stats[stat] = validateNumber(value, 10)
     }
   }
-
-  const availableLanguageEntries = computed(() => {
-    const existing = new Set((monster.languagesList || []).map((l) => l.name.toLowerCase().trim()))
-    return ALL_OFFICIAL_LANGUAGES
-      .filter((l) => !existing.has(l.toLowerCase().trim()))
-      .slice()
-      .sort((a, b) => a.localeCompare(b))
-      .map((name) => ({ value: name, label: name, group: 'Languages' }))
-  })
-
-  const syncLanguagesToString = () => {
-    monster.languages = formatLanguagesList(monster.languagesList, monster.specialCommunicationArchetype)
-  }
-
-  const onLanguageSelected = (val: unknown) => {
-    if (typeof val !== 'string' || !val.trim()) return
-    const name = val.trim()
-    const lower = name.toLowerCase()
-    if ((monster.languagesList || []).some((l) => l.name.toLowerCase().trim() === lower)) return
-    const isTele = lower.includes('telepathy')
-    const item: MonsterLanguageItem = {
-      id: uuidv4(),
-      name,
-      understandsOnly: false,
-      telepathy: isTele,
-      telepathyRange: isTele ? 120 : undefined,
-      broadcast: false,
-      noReply: false,
-      languageRequirement: 'none',
-      creatureTarget: 'all',
-      simpleConceptsOnly: false,
-      acrossPlanes: false,
-      multiverseWide: false,
-      learnDesires: false,
-      readThoughts: false,
-      senseEmotions: false,
-      senseAlignment: false,
-      senseIntentions: false,
-      detectSincerity: false,
-      accessMemories: false,
-      shareOwnSenses: false,
-      probeCreatureSenses: false,
-      probeRequiresSave: false,
-      probeSaveType: 'WIS',
-      probeSaveDc: 13,
-      probeSaveAwareness: 'unaware_on_fail',
-      sensoryRequiresSave: false,
-      sensorySaveType: 'WIS',
-      sensorySaveDc: 13,
-      syncSaves: true,
-      requiresSave: false,
-      saveType: 'WIS',
-      saveDc: 13,
-      saveAwareness: 'unaware_on_fail',
-      disruptedByPsychicDamage: false,
-      telepathicAwareness: false,
-      concentration: 'none',
-      animalHandling: (lower === 'handle animals' || lower.includes('animal handling'))
-        ? {
-            enabled: true,
-            dc: 10,
-            peacefulOutcome: 'calm/cease aggression',
-            commandOutcome: 'convey basic commands',
-            recruitOutcome: 'recruit aid/bond',
-            customNotes: '',
-          }
-        : undefined,
-      animalsConfig: lower === 'animals' ? { simpleConceptsOnly: true, specificSubtype: '', note: '' } : undefined,
-      plantsConfig: lower === 'plants' ? { canQuestionPastDay: true, difficultTerrainNegotiation: false, note: '' } : undefined,
-      undeadConfig: lower === 'undead' ? { commandMindless: true, telepathicRange: 60, note: '' } : undefined,
-      deadConfig: lower.startsWith('dead')
-        ? { maxQuestions: 5, corpseMustHaveMouth: true, answersCryptic: false, deadWithinYears: '', note: '' }
-        : undefined,
-    }
-    if (!Array.isArray(monster.languagesList)) monster.languagesList = []
-    monster.languagesList.push(item)
-    syncLanguagesToString()
-  }
-
-  const removeLanguage = (index: number) => {
-    const language = monster.languagesList?.[index]
-    if (!language) return
-    monster.$patch((state) => {
-      state.bindings = withoutEntryBindings(state.bindings, entryBindingPrefix('languagesList', language.id))
-      state.languagesList?.splice(index, 1)
-    })
-    syncLanguagesToString()
-  }
-
-  const getAnimalHandling = (lang: MonsterLanguageItem) =>
-    (lang.animalHandling ??= {
-      enabled: true,
-      dc: 10,
-      peacefulOutcome: 'calm/cease aggression',
-      commandOutcome: 'convey basic commands',
-      recruitOutcome: 'recruit aid/bond',
-      customNotes: '',
-    })
-  const getAnimalsConfig = (lang: MonsterLanguageItem) =>
-    (lang.animalsConfig ??= { simpleConceptsOnly: true, specificSubtype: '', note: '' })
-  const getPlantsConfig = (lang: MonsterLanguageItem) =>
-    (lang.plantsConfig ??= { canQuestionPastDay: true, difficultTerrainNegotiation: false, note: '' })
-  const getUndeadConfig = (lang: MonsterLanguageItem) =>
-    (lang.undeadConfig ??= { commandMindless: true, telepathicRange: 60, note: '' })
-  const getDeadConfig = (lang: MonsterLanguageItem) =>
-    (lang.deadConfig ??= {
-      maxQuestions: 5,
-      corpseMustHaveMouth: true,
-      answersCryptic: false,
-      deadWithinYears: '',
-      note: '',
-    })
+  const { availableLanguageEntries, syncLanguagesToString, onLanguageSelected, removeLanguage, getAnimalHandling, getAnimalsConfig, getPlantsConfig, getUndeadConfig, getDeadConfig } = createLanguageEntries({ monster })
 
   // Keep singleton watchers mounted once in the container context
   const registerWatchers = () => {

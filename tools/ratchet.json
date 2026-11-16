@@ -2,7 +2,7 @@
   "importantAppScss": 21,
   "importantDarkContrast": 15,
   "importantTotal": 365,
-  "filesOver900Lines": 5,
+  "filesOver900Lines": 0,
   "explicitAny": 22,
   "todoFixme": 0,
   "eslintDisables": 35,
