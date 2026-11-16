@@ -1,0 +1,1 @@
+import{b as o}from"./index.686009a8.js";import{M as i,v as r}from"./MechanicTextEditor.1e031cba.js";import"./QTooltip.3889f9b8.js";import"./QMenu.b27f9fa8.js";import"./ResolveMonsterText.d5f90df8.js";import"./use-fullscreen.8f3d1adf.js";var s=o(({app:t})=>{t.component("MechanicTextEditor",i),t.directive("safe-html",r)});export{s as default};
