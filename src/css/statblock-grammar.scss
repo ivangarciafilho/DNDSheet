@@ -309,10 +309,15 @@
     .sb-row {
       display: flow-root !important;
       position: relative !important;
-      background: var(--sb-cell-bg) !important;
+      // Line stripes (set below for multi-line prose) sit over the cell colour, offset by the row padding.
+      background: var(--sb-line-stripes, none) 0 3px / 100% calc(100% - 6px) no-repeat, var(--sb-cell-bg) !important;
       padding: 3px 8px !important;
       line-height: 1.42 !important;
       min-height: 24px !important;
+      // The body is inline, so the row's own strut (row font x 1.42) sets the line pitch, not the body font.
+      // Pin the row font and derive one line from it; the head and the stripes share it as their tangent.
+      font-size: calc(1rem * var(--statblock-font-scale, 1));
+      --sb-line: calc(1.42 * 1rem * var(--statblock-font-scale, 1));
 
       > .sb-cell.sb-head {
         float: left !important;
@@ -320,13 +325,13 @@
         align-items: center !important;
         vertical-align: top !important;
         white-space: nowrap !important;
-        min-height: 24px !important;
-        height: auto !important;
-        line-height: 1.25 !important;
-        padding: 3px 8px !important;
-        // The float must end within the first text line, or line 2 also wraps beside it and the body
-        // only reaches the plate's left edge on line 3. Bottom = -3px + 24px head + margin <= one line.
-        margin: -3px 8px calc(1.42 * 0.85rem * var(--statblock-font-scale, 1) - 22px) -8px !important;
+        // The head covers the row's 3px top padding plus exactly one text line, so its bottom edge is
+        // tangent to line 2: line 2 starts at the plate's left edge and nothing overlaps the head.
+        min-height: 0 !important;
+        height: calc(var(--sb-line) + 3px) !important;
+        line-height: 1 !important;
+        padding: 0 8px !important;
+        margin: -3px 8px 0 -8px !important;
         border-top: 0 !important;
         border-left: 0 !important;
         border-right: 1px solid var(--sb-rule) !important;
@@ -350,6 +355,13 @@
           display: inline !important;
         }
       }
+    }
+
+    // Long prose: alternate text lines take the theme stripe so the eye keeps its place across lines.
+    &:not(.sb-single-line) .sb-row {
+      --sb-line-stripes: repeating-linear-gradient(to bottom,
+        transparent 0 var(--sb-line),
+        var(--sb-stripe, rgba(122, 31, 18, 0.055)) var(--sb-line) calc(2 * var(--sb-line)));
     }
 
     &.sb-single-line .sb-row > .sb-cell.sb-head {

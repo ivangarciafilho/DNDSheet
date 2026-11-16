@@ -1,3 +1,7 @@
+## Build 264 — streamlined plate tangents and line stripes
+
+Plate heads are exactly one row line tall, so they meet line 2 edge to edge without overlap; multi-line descriptions stripe alternate lines in the theme tint. See docs/roadmap/DNDSheet-Build264-Streamlined-Tangents-and-Stripes.md.
+
 ## Build 263 — stat block layout and ordering fixes
 
 Short Traits sections stay in one column; moving a trait turns off the alphabetical sort so editor order is render order; trigger-only reactions put the trigger beside the name; plate text reaches the left edge on line 2. See docs/roadmap/DNDSheet-Build263-Statblock-Layout-Fixes.md.
