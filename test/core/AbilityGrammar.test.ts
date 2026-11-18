@@ -294,3 +294,24 @@ test('outcomePhrase strips whitespace before colon in outcome labels', () => {
   assert.ok(phrases[0].startsWith('On Success:'))
   assert.ok(!phrases[0].includes('On Success :'))
 })
+
+test('BS-39: rangePhrase formats paired normal and long range accurately', () => {
+  const paired = action({
+    actionType: 'weapon_attack',
+    attackReach: 'ranged',
+    attackSource: 'weapon',
+    targeting: {
+      count: 1,
+      kind: 'target',
+      range: { distance: 80, longDistance: 320, unit: 'ft', relation: 'range' },
+    },
+  })
+  const projection = inferAbility(paired)
+  const rendered = scopePhrase(projection)
+  assert.ok(rendered.includes('range 80/320 ft.'))
+
+  const legacyPaired = inferAbility(action({ actionType: 'weapon_attack', range: 'range 80/320 ft.', targetsText: 'one target' }))
+  assert.strictEqual(legacyPaired.targeting?.range?.distance, 80)
+  assert.strictEqual(legacyPaired.targeting?.range?.longDistance, 320)
+  assert.ok(scopePhrase(legacyPaired).includes('range 80/320 ft.'))
+})

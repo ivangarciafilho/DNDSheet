@@ -19,7 +19,7 @@ export function supportsNumericPresentation(path: string, model?: unknown): bool
     if (config && (config.enabled === true || ['baseMode','abilityBonus','defenseItem','temporary','conditional','conditionMode'].some(key => config[key] && config[key] !== (key === 'baseMode' ? 'flat' : 'none')))) return false
   }
   return /^(?:AC|HP\.(?:HD|type|modifier)|stats\.(?:STR|DEX|CON|INT|WIS|CHA)|saves\.(?:STR|DEX|CON|INT|WIS|CHA)\.overrideValue|paragonConfig\.poolCount|extendedHp\.(?:bloodiedOverride|damageThreshold|damageReduction|tempHp\.amount|regeneration\.amount))$/.test(path)
-    || /^(?:actions|traits|reactions)\[id=[^\]]+\]\.(?:attackBonus|save\.overrideValue|targeting\.(?:count|range\.distance|area\.distance))$/.test(path)
+    || /^(?:actions|traits|reactions)\[id=[^\]]+\]\.(?:attackBonus|save\.overrideValue|targeting\.(?:count|range\.(?:distance|longDistance)|area\.distance))$/.test(path)
     || /^attacks\[id=[^\]]+\]\.(?:modifier\.overrideValue|targets|range\.(?:reach|standard|long)|(?:damage|alternateDamage)\.(?:count|dice|modifier\.overrideValue)|additionalDamage\[id=[^\]]+\]\.(?:count|dice))$/.test(path)
     || /^speeds\[id=[^\]]+\]\.speed$/.test(path)
     || /^sensesList\[id=[^\]]+\]\.(?:range|observationMinutes)$/.test(path)

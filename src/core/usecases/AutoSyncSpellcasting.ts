@@ -1173,8 +1173,49 @@ function slugSourceId(prefix: string, name: string, index: number): string {
   return clean ? `${prefix}-${clean}` : `${prefix}-${index + 1}`
 }
 
+interface LegacySpellClassEntry {
+  id?: string
+  class?: string
+  className?: string
+  subclass?: string
+  level?: number
+  stat?: DndStat
+  ability?: DndStat
+}
+
+interface LegacyAtWillEntry {
+  count?: number | string
+  cadence?: string
+  spells?: Array<string | { name?: string }>
+}
+
+interface LegacySpellcastingInput {
+  castingSources?: CastingSource[]
+  classes?: LegacySpellClassEntry[]
+  class?: string
+  subclass?: string
+  level?: number
+  stat?: DndStat
+  innateStat?: DndStat
+  save?: { override?: boolean; overrideValue?: number }
+  attack?: { override?: boolean; overrideValue?: number }
+  modifier?: { override?: boolean; overrideValue?: number }
+  slots?: number[]
+  multiclass?: {
+    enabled?: boolean
+    secondaryClass?: string
+    secondarySubclass?: string
+    secondaryLevel?: number
+    secondaryStat?: DndStat
+    secondarySaveDc?: number
+    secondarySpellAttack?: number
+  }
+  atWill?: Array<string | LegacyAtWillEntry>
+  atWillNotes?: string
+}
+
 export function migrateCastingSources(spellcasting: Record<string, unknown> = {}): CastingSource[] {
-  const sc = spellcasting as Record<string, any>
+  const sc = spellcasting as LegacySpellcastingInput
   const existing = Array.isArray(sc.castingSources) ? (sc.castingSources as CastingSource[]) : null
   if (existing && existing.length > 0) {
     return existing.map((src, idx) => ({
@@ -1250,12 +1291,12 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
   }
 
   if (Array.isArray(sc.classes) && sc.classes.length > 0) {
-    sc.classes.forEach((cls: any, i: number) => {
+    sc.classes.forEach((cls: LegacySpellClassEntry, i: number) => {
       appendClassSource(
         {
           id: cls.id,
           className: cls.class || cls.className,
-          subclass: cls.subclass ?? (i === 0 ? sc.subclass : undefined),
+          subclass: cls.subclass ?? (i === 0 ? (sc.subclass as string | undefined) : undefined),
           level: cls.level,
           ability: cls.stat || cls.ability,
         },
@@ -1299,7 +1340,7 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
     }
   }
 
-  const hasAtWill = Array.isArray(sc.atWill) && sc.atWill.some((group: any) => Array.isArray(group?.spells) ? group.spells.length > 0 : Boolean(group))
+  const hasAtWill = Array.isArray(sc.atWill) && sc.atWill.some((group: string | LegacyAtWillEntry) => (typeof group === 'object' && group !== null && Array.isArray(group.spells) ? group.spells.length > 0 : Boolean(group)))
   const hasInnateNotes = typeof sc.atWillNotes === 'string' && sc.atWillNotes.trim().length > 0
   if (hasAtWill || hasInnateNotes) {
     const atWillNames: string[] = []
@@ -1310,7 +1351,7 @@ export function migrateCastingSources(spellcasting: Record<string, unknown> = {}
       } else if (item && typeof item === 'object') {
         const cadence = String(item.count || item.cadence || '').trim()
         const names = Array.isArray(item.spells)
-          ? item.spells.map((s: any) => (typeof s === 'string' ? s : s?.name)).filter(Boolean)
+          ? item.spells.map((s: string | { name?: string }) => (typeof s === 'string' ? s : s?.name || '')).filter(Boolean)
           : []
         if (cadence && cadence.toLowerCase() !== 'at will') {
           perDaySpells[cadence] = [...(perDaySpells[cadence] || []), ...names]

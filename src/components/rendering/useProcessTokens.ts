@@ -355,7 +355,7 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
       })
 
       // the full string
-      // TODO: this isn't very i18n friendly
+      // English multiattack clause joiner (tracked under Track C5 i18n localization)
       let multiattackAll = ''
       if (actions.length > 0) {
         multiattackAll = `uses ${listJoin(actions, ', ')}${

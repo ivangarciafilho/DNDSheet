@@ -16,6 +16,8 @@ function classify(rel, model, block = '') {
   if (/CrAnnotationCard/.test(rel)) return 'literal: CR annotation'
   if (/runehammerTrack|ev\.round/.test(model)) return 'literal: tracker state'
   if (/ClassCastingEditor/.test(rel) && /slots\[/.test(block)) return 'literal: slot table (field-types exception)'
+  if (/RandomTablesEditor/.test(rel)) return 'literal: random table roll bounds'
+  if (/CastingContributionEditor|CastingFeatureGrantsEditor|CastingLearningContributionEditor|CastingSourceSpellRows|ClassCastingEditor/.test(rel)) return 'literal: casting source & progression rule'
   if (/composer\//.test(rel)) return 'binding-capable: composer draft (owned by composer apply)'
   if (/^(ap|phaseCfg|lang)\./.test(model)) return 'binding-capable: blocked on identity migration'
   return 'review'
@@ -33,7 +35,7 @@ for (const file of files) {
       let stop = index
       while (stop < lines.length - 1 && stop < index + 12 && !/\/>\s*$|<\/q-input>/.test(lines[stop])) stop++
       const block = lines.slice(start, stop + 1).join(' ')
-      const model = block.match(/v-model(?:\.number)?="([^"]+)"/)?.[1] || ''
+      const model = block.match(/v-model(?:\.number)?="([^"]+)"/)?.[1] || block.match(/:model-value="([^"]+)"/)?.[1] || ''
       const label = block.match(/\blabel="([^"]+)"/)?.[1] || block.match(/:label="([^"]+)"/)?.[1] || ''
       numbers.push({ rel, line: index + 1, model, label, kind: classify(rel, model, block) })
     }

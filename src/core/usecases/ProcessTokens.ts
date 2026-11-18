@@ -29,13 +29,13 @@ export interface ProcessTokensOptions {
   contextType?: string
 }
 
-function getProperty(obj: any, path: string): any {
-  if (!obj || !path) return undefined
+function getProperty(obj: unknown, path: string): unknown {
+  if (!obj || typeof obj !== 'object' || !path) return undefined
   const parts = path.split('.')
-  let current = obj
+  let current: unknown = obj
   for (const part of parts) {
-    if (current == null) return undefined
-    current = current[part]
+    if (current == null || typeof current !== 'object') return undefined
+    current = (current as Record<string, unknown>)[part]
   }
   return current
 }
@@ -189,25 +189,26 @@ export function processTokens(
 
   // 8. Context-specific tokens (traits, actions)
   if (options.context) {
-    const ctx = options.context as any
-    if (ctx.limitedUse) {
+    const ctx = options.context as { limitedUse?: { count: number; rate: string } }
+    const limitedUse = ctx.limitedUse
+    if (limitedUse) {
       text = text.replace(/\{trait\.limitedUse\}/gi, () => {
-        if (ctx.limitedUse.count > 0) {
-          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
+        if (limitedUse.count > 0) {
+          return ` (${formatLimitedUses(limitedUse.count, limitedUse.rate)})`
         }
         return ''
       })
-      text = text.replace(/\{trait\.limitedUse\.count\}/gi, String(ctx.limitedUse.count))
-      text = text.replace(/\{trait\.limitedUse\.rate\}/gi, String(ctx.limitedUse.rate))
+      text = text.replace(/\{trait\.limitedUse\.count\}/gi, String(limitedUse.count))
+      text = text.replace(/\{trait\.limitedUse\.rate\}/gi, String(limitedUse.rate))
 
       text = text.replace(/\{action\.limitedUse\}/gi, () => {
-        if (ctx.limitedUse.count > 0) {
-          return ` (${formatLimitedUses(ctx.limitedUse.count, ctx.limitedUse.rate)})`
+        if (limitedUse.count > 0) {
+          return ` (${formatLimitedUses(limitedUse.count, limitedUse.rate)})`
         }
         return ''
       })
-      text = text.replace(/\{action\.limitedUse\.count\}/gi, String(ctx.limitedUse.count))
-      text = text.replace(/\{action\.limitedUse\.rate\}/gi, String(ctx.limitedUse.rate))
+      text = text.replace(/\{action\.limitedUse\.count\}/gi, String(limitedUse.count))
+      text = text.replace(/\{action\.limitedUse\.rate\}/gi, String(limitedUse.rate))
     }
   }
 

@@ -7,8 +7,8 @@ import type { Monster, MonsterAction, MonsterReaction } from '../domain/types.ts
 
 export const CURRENT_MONSTER_VERSION = 11
 
-export function migrateMonsterSchema(raw: any): Monster {
-  const monster = JSON.parse(JSON.stringify(raw))
+export function migrateMonsterSchema(raw: unknown): Monster {
+  const monster = JSON.parse(JSON.stringify(raw ?? {}))
 
   if (!monster.saveVersion) {
     monster.saveVersion = 1
@@ -303,7 +303,7 @@ export function migrateMonsterSchema(raw: any): Monster {
       if (trait.crAnnotation.ehpModifier === undefined) trait.crAnnotation.ehpModifier = 0
       if (trait.crAnnotation.acModifier === undefined) trait.crAnnotation.acModifier = 0
     }
-    if ((trait.limitedUse?.count as any) === '') trait.limitedUse.count = 0
+    if ((trait.limitedUse?.count as unknown) === '') trait.limitedUse.count = 0
   }
 
   for (const action of monster.actions || []) {
@@ -314,7 +314,7 @@ export function migrateMonsterSchema(raw: any): Monster {
       if (action.crAnnotation.ehpModifier === undefined) action.crAnnotation.ehpModifier = 0
       if (action.crAnnotation.acModifier === undefined) action.crAnnotation.acModifier = 0
     }
-    if ((action.limitedUse?.count as any) === '') action.limitedUse.count = 0
+    if ((action.limitedUse?.count as unknown) === '') action.limitedUse.count = 0
   }
 
   // Normalize portrait

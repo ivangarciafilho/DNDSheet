@@ -492,7 +492,9 @@ export interface InvulnerabilityConfig {
   damageTypesFilter?: string[]
   customRule?: string
   firstXCount?: number
+  attackCount?: number
   disruption?: string
+  disruptedBy?: string
   customDisruption?: string
   displayLocation?: 'ac' | 'hp'
   combiner?: 'and' | 'or'
@@ -677,6 +679,7 @@ export type AbilityNumber = number | string
 
 export interface RangeSpec {
   distance: AbilityNumber
+  longDistance?: AbilityNumber
   unit: 'ft' | 'mi'
   relation?: 'within' | 'reach' | 'range'
   origin?: string
@@ -1291,7 +1294,7 @@ export interface Monster {
   splitSpeedRiderRows?: boolean
   splitHpRiderRows?: boolean
   splitAcRiderRows?: boolean
-  customDatabase?: { presets?: any[]; [key: string]: unknown }
+  customDatabase?: { presets?: unknown[]; [key: string]: unknown }
 }
 
 export interface TemplateMetadata<T> {

@@ -1733,17 +1733,17 @@ sequenceDiagram
 | SB-01 | Plate grammar for abilities | 📖 Reads right | A3 ✅ · A16 cleanup | ✅ |
 | SB-02 | Check rows: Search · Study · Influence · Hide | 📖 | A1 ✅ | ✅ |
 | SB-03 | Formula engine, references and text macros | 🔗 Numbers know their source | A2 ✅ | ✅ |
-| SB-04 | Spellcasting plate | 📖 | A4 | ☐ |
-| SB-05 | Row grammar for the top block + head tooltips | 📖 💡 | A5 | ☐ |
+| SB-04 | Spellcasting plate | 📖 | A4 | ✅ build 248 |
+| SB-05 | Row grammar for the top block + head tooltips | 📖 💡 | A5 | ✅ build 248 |
 | AU-01 | Ability composer model and render grammar | ✍ Composes like sentences | A6 | ✅ build 136 |
-| AU-02 | NumericBinding fields (reference pickers + custom formula) | 🔗 | A9 · A11 | ☐ |
-| AU-03 | Actions Studio: composer chain and one Actions module | ✍ | A7 · A8 | ◐ A7 in progress |
-| AU-04 | Inline intellisense and macro menus | 💡 | A10 | ☐ |
-| AU-05 | Spellcasting authoring accuracy | ✍ 📚 | A12 | ☐ |
-| UX-01 | CatalogSelect — one dropdown anatomy | 💡 | A13 → A14–A16 | ☐ |
-| UX-02 | HelpTip — rich tooltips on every control | 💡 | A13 → A14–A16 | ☐ |
-| UX-03 | Fit — no cropped, overlapping or overflowing UI | 💡 | A14–A16 | ☐ |
-| QA-01 | Overhaul verification harness | 🛡 | A17 (+ every loop) | ◐ |
+| AU-02 | NumericBinding fields (reference pickers + custom formula) | 🔗 | A9 · A11 | ✅ build 249 |
+| AU-03 | Actions Studio: composer chain and one Actions module | ✍ | A7 · A8 | ✅ build 248 |
+| AU-04 | Inline intellisense and macro menus | 💡 | A10 | ✅ build 247 |
+| AU-05 | Spellcasting authoring accuracy | ✍ 📚 | A12 | ✅ build 248 |
+| UX-01 | CatalogSelect — one dropdown anatomy | 💡 | A13 → A14–A16 | ✅ build 250 |
+| UX-02 | HelpTip — rich tooltips on every control | 💡 | A13 → A14–A16 | ✅ build 250 |
+| UX-03 | Fit — no cropped, overlapping or overflowing UI | 💡 | A14–A16 | ✅ build 250 |
+| QA-01 | Overhaul verification harness | 🛡 | A17 (+ every loop) | ✅ build 250 (`v2.5.0-statblock`) |
 
 ---
 
@@ -2006,7 +2006,7 @@ Tests: `test/core/SpellPlate.test.ts` (7 domain tests; suite is 111/111), catalo
 
 > **The designer's sentence becomes data: reach, source, bonus, targets, range, outcomes — and the plate, the preview and the text export all read from it.**
 
-**Status** ☐ pending · **Loop** A6 · **Requirements** `CMP-001…008`, `COMP-001…003` · fixes DEF-05
+**Status** ✅ shipped (build 136, verified build 248) · **Loop** A6 · **Requirements** `CMP-001…008`, `COMP-001…003` · fixes DEF-05
 
 **🎯 Value** — "Soul Barrage" is authored once and renders as `Ranged Spell Attack +7 │ 3 creatures which you can see within 120ft of you` on screen and as `Ranged Attack Roll: +7, range 120 ft.` in 2024-style text, without retyping.
 
@@ -2095,7 +2095,7 @@ Tests: `test/core/AbilityGrammar.test.ts` (≈ 20 cases), regression of `Process
 
 > **Any number that has a source can be bound to it: pick `PB`, `CHA_MOD`, `HIT_DICE`… from grouped, explained lists, or write a formula once — the value stays right forever.**
 
-**Status** ☐ pending · **Loops** A9 (kit + 18 fields) · A11 (remaining numeric inputs) · **Requirements** `BND-001…009`, `REF-001…003`, `SEL-001…004` · fixes DEF-09
+**Status** ✅ shipped (build 249) · **Loops** A9 (kit + 18 fields) · A11 (remaining numeric inputs) · **Requirements** `BND-001…009`, `REF-001…003`, `SEL-001…004` · fixes DEF-09
 
 **🎯 Value** — Changing CHA from 20 to 22 updates every bound DC and attack bonus in one render; no recalculation by hand, no stale numbers.
 
@@ -2280,7 +2280,7 @@ sequenceDiagram
 
 > **Type `{` anywhere and the catalog opens at your caret with live values; the toolbar menus list the same catalog, grouped and explained — the bottom strip disappears.**
 
-**Status** ☐ pending · **Loop** A10 · **Requirements** `ITL-001…008`, `HELP-001`, `NFR-002`
+**Status** ✅ shipped (build 247) · **Loop** A10 · **Requirements** `ITL-001…008`, `HELP-001`, `NFR-002`
 
 **🎯 Value** — Macros are discovered where they are typed, with their current value, and inserted without leaving the keyboard.
 
@@ -2334,7 +2334,7 @@ sequenceDiagram
 
 > **Pick any casting class and subclass, see only the spells it can take, watch an honest prepared counter, and get subclass spells added for you — always prepared, never miscounted.**
 
-**Status** ☐ pending · **Loop** A12 · **Requirements** `SPELL-001…008`, `G-3`, `G-4` · fixes DEF-06, DEF-07, BS-07
+**Status** ✅ shipped (build 248) · **Loop** A12 · **Requirements** `SPELL-001…008`, `G-3`, `G-4` · fixes DEF-06, DEF-07, BS-07
 
 **🎯 Value** — A caster's spell list is legal, complete for SRD content, clearly custom elsewhere, and its counts are true.
 
@@ -2387,7 +2387,7 @@ sequenceDiagram
 
 > **Every dropdown is a catalog: grouped by scope, alphabetical inside groups, iconed, colour-coded, explained per option, searchable — and its side effects live in composables, not in the control.**
 
-**Status** ☐ pending · **Loops** A13 (kit) → A14–A16 (sweeps) · **Requirements** `SEL-001…008`, `HELP-001`, `NFR-002`
+**Status** ✅ shipped (build 250) · **Loops** A13 (kit) → A14–A16 (sweeps) · **Requirements** `SEL-001…008`, `HELP-001`, `NFR-002`
 
 **🎯 Value** — A designer never scrolls an unordered list again; every choice says what it means and what it will change.
 
@@ -2427,7 +2427,7 @@ sequenceDiagram
 
 > **Short labels on the surface, the full story one hover or focus away: what it is, how it is computed right now, where the rule comes from.**
 
-**Status** ☐ pending · **Loops** A13 (kit, dictionary, audit) → A14–A16 (coverage to 100 %) · **Requirements** `TIP-001…007`, `HELP-001…002`, `NFR-002`
+**Status** ✅ shipped (build 250, 100% floor) · **Loops** A13 (kit, dictionary, audit) → A14–A16 (coverage to 100 %) · **Requirements** `TIP-001…007`, `HELP-001…002`, `NFR-002`
 
 **🎯 Value** — The editor teaches the rules while it is used; nothing needs a manual.
 
@@ -2473,7 +2473,7 @@ sequenceDiagram
 
 > **At any supported width and at 200 % zoom, every label is whole, every control reachable, nothing overlaps.**
 
-**Status** ☐ pending · **Loops** A14–A16 (with the panel sweeps) · **Requirements** `FIT-001…005`, `VIS-001`, `UX-002`
+**Status** ✅ shipped (build 250) · **Loops** A14–A16 (with the panel sweeps) · **Requirements** `FIT-001…005`, `VIS-001`, `UX-002`
 
 **🎯 Value** — The editor stops fighting the designer: no "Actio…", no chips spilling out of their row.
 
@@ -2766,15 +2766,15 @@ stateDiagram-v2
 | Release | Promise | Loops | Status |
 |---|---|---|:--:|
 | **R1 · Reads right** | Every part of the stat block follows one grammar | A0 · A1 · A2 · A3 · A4 · **A5** | ✅ 6 / 6 |
-| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ◐ 31 / 36 tasks (A6 ✅ · A7 ✅ · A8 ◐) |
-| **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ☐ |
-| **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ☐ |
-| **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ☐ |
-| **R6 · Overhaul release** | Verified, documented, tagged | A17 | ☐ |
-| **R7 · Creator confidence** | Identity, checks, tuner | B1 · B2 · B3 | ☐ |
-| **R8 · Portable output** | Export preview and capability report | B4 | ☐ |
-| **R9 · Keep and reuse** | Repository, recovery, library | B5 · B6 | ☐ |
-| **R10 · Honest breadth** | Workspace, provenance, combat, character, docs | B7 · B8 · B9 · B10 | ☐ |
+| **R2 · Composes like sentences** | Abilities are structured; one Actions Studio | A6 · A7 · A8 | ✅ 36 / 36 (A6 ✅ · A7 ✅ · A8 ✅) |
+| **R3 · Numbers know their source** | Bindings, formulas and caret intellisense | A9 · A10 · A11 | ✅ 29 / 29 (A9 ✅ · A10 ✅ · A11 ✅) |
+| **R4 · Spellcasting you can trust** | Subclasses, counters, expanded spells | A12 | ✅ 11 / 11 (A12 ✅) |
+| **R5 · Explains itself** | One select anatomy, tooltips on everything, nothing cropped | A13 · A14 · A15 · A16 | ✅ 25 / 25 (A13 ✅ · A14 ✅ · A15 ✅ · A16 ✅) |
+| **R6 · Overhaul release** | Verified, documented, tagged | A17 | ✅ 10 / 10 (A17 ✅ · Build 250 tag `v2.5.0-statblock`) |
+| **R7 · Creator confidence** | Identity, checks, tuner | B1 · B2 · B3 | ✅ 15 / 15 (B1 ✅ · B2 ✅ · B3 ✅) |
+| **R8 · Portable output** | Export preview and capability report | B4 | ✅ 5 / 5 (B4 ✅) |
+| **R9 · Keep and reuse** | Repository, recovery, library | B5 · B6 | ✅ 10 / 11 (`B5.7` owner-gated; B5 ✅ · B6 ✅) |
+| **R10 · Honest breadth** | Workspace, provenance, combat, character, docs | B7 · B8 · B9 · B10 | ✅ 15 / 15 (B7 ✅ · B8 ✅ · B9 ✅ · B10 ✅) |
 
 | Loop | Name | Feature | Depends on | Effort (days) | Status |
 |---|---|---|---|---:|:--:|
@@ -2786,26 +2786,26 @@ stateDiagram-v2
 | **A5** | **Row grammar + head tooltips** | SB-05 | A4 | 1–2 | ✅ shipped; one-page A4 print and 12-theme evidence |
 | A6 | Ability composer model | AU-01 | A3 | 2–4 | ✅ build 136 |
 | A7 | Composer chain + templates | AU-03 | A6 | 3–5 | ✅ `49edfdf` build 148 |
-| A8 | One Actions module | AU-03 | A7 | 3–5 | ◐ build 149 (A8.10, A8.12) |
-| A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ☐ |
-| A10 | Caret intellisense + macro menus | AU-04 | A9 | 3–4 | ☐ |
-| A11 | Binding sweep (remaining numbers) | AU-02 | A9 | 1–3 | ☐ |
-| A12 | Spellcasting authoring accuracy | AU-05 | A4, A9 | 4–6 | ☐ |
-| A13 | Interaction kit: CatalogSelect, HelpTip, audits | UX-01, UX-02 | A9 | 3–4 | ☐ |
-| A14 | Sweep 1: Basics split + kit + fit | UX-01…03 | A13 | 4–6 | ☐ |
-| A15 | Sweep 2: casting, checks, senses, defenses | UX-01…03 | A13, A12 | 3–4 | ☐ |
-| A16 | Sweep 3: studio, A4, toolbar, CSS cleanup | UX-01…03 | A13, A8 | 3–4 | ☐ |
-| A17 | Overhaul hardening + release | QA-01 | A4–A16 | 2–3 | ☐ |
-| B1 | Identity and revision | F-00 | A17 | 5–10 | ☐ |
-| B2 | Checks and safe repair | F-05 | B1 | 5–10 | ☐ |
-| B3 | CR breakdown + tuner | F-06 | B1 | 3–7 | ☐ |
-| B4 | Export capability report | F-08 | B1, A6 | 5–10 | ☐ |
-| B5 | Repository and recovery | F-07 | B1 | 8–15 | ☐ |
-| B6 | Library | F-02 | B5 | 3–6 | ☐ |
-| B7 | Workspace: toolbar, navigator, narrow, presets | F-01/03/12 | A16 | 4–8 | ☐ |
-| B8 | Rules provenance | F-09 | B1 | 2–4 | ☐ |
-| B9 | Combat identity | F-10 | B1 | 2–5 | ☐ |
-| B10 | Character truth + final docs | F-11 | all | 2–5 | ☐ |
+| A8 | One Actions module | AU-03 | A7 | 3–5 | ✅ build 248 |
+| A9 | NumericBinding fields | AU-02 | A2 | 3–5 | ✅ build 249 |
+| A10 | Caret intellisense + macro menus | AU-04 | A9 | 3–4 | ✅ build 247 |
+| A11 | Binding sweep (remaining numbers) | AU-02 | A9 | 1–3 | ✅ build 249 |
+| A12 | Spellcasting authoring accuracy | AU-05 | A4, A9 | 4–6 | ✅ build 248 |
+| A13 | Interaction kit: CatalogSelect, HelpTip, audits | UX-01, UX-02 | A9 | 3–4 | ✅ build 249 |
+| A14 | Sweep 1: Basics split + kit + fit | UX-01…03 | A13 | 4–6 | ✅ build 250 |
+| A15 | Sweep 2: casting, checks, senses, defenses | UX-01…03 | A13, A12 | 3–4 | ✅ build 250 |
+| A16 | Sweep 3: studio, A4, toolbar, CSS cleanup | UX-01…03 | A13, A8 | 3–4 | ✅ build 250 |
+| A17 | Overhaul hardening + release | QA-01 | A4–A16 | 2–3 | ✅ build 250 (`v2.5.0-statblock`) |
+| B1 | Identity and revision | F-00 | A17 | 5–10 | ✅ build 248 |
+| B2 | Checks and safe repair | F-05 | B1 | 5–10 | ✅ build 248 |
+| B3 | CR breakdown + tuner | F-06 | B1 | 3–7 | ✅ build 248 |
+| B4 | Export capability report | F-08 | B1, A6 | 5–10 | ✅ build 248 |
+| B5 | Repository and recovery | F-07 | B1 | 8–15 | ✅ build 249 (`B5.7` owner-gated) |
+| B6 | Library | F-02 | B5 | 3–6 | ✅ build 249 |
+| B7 | Workspace: toolbar, navigator, narrow, presets | F-01/03/12 | A16 | 4–8 | ✅ build 249 |
+| B8 | Rules provenance | F-09 | B1 | 2–4 | ✅ build 248 |
+| B9 | Combat identity | F-10 | B1 | 2–5 | ✅ build 248 |
+| B10 | Character truth + final docs | F-11 | all | 2–5 | ✅ build 250 |
 
 ### 11.2 Dependency graph
 
@@ -2984,45 +2984,45 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 |---|---|---|---|:--:|
 | BS-01 | Ownership of the plate work-in-progress | It was this overhaul's own A3 work; committed `c543615` | A3 | ✅ closed |
 | BS-02 | App runs from the current tree | Dev server on 9100 renders the fixture without errors | A3 | ✅ closed |
-| BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ☐ |
-| BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ☐ |
-| BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ☐ |
+| BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ✅ build 222 (A17.7) |
+| BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ✅ build 248 (10-step gate) |
+| BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ✅ build 248 (10-step gate) |
 | BS-06 | Persisted-state hydration with new optional keys | Migration and AI-ingest round trips preserve fields; full saved-browser reload remains broader regression coverage | A6, A9 | ◐ |
-| BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ☐ |
-| BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ☐ |
+| BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ✅ build 248 (A12) |
+| BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ✅ build 248 (0 console warnings) |
 | BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Inventory: 44 structured attacks; 28 legacy actions without structured fields; no committed Seraph fixture | A6 | ✅ |
 | BS-10 | AI-ingested actions lack new fields | Ingest fixture carries optional structured action fields through migration | A6 | ✅ |
-| BS-11 | HTML/print exports embed plates without grammar CSS | Export HTML, open standalone | B4 | ☐ |
+| BS-11 | HTML/print exports embed plates without grammar CSS | Export HTML, open standalone | B4 | ✅ build 248 |
 | BS-12 | Classic (non-modern) template intentionally untouched? | Preserve classic template unchanged in A5 | A5 | ✅ |
-| BS-13 | Text exports still print a legacy "Skills" line | Export Markdown | B4 | ☐ |
+| BS-13 | Text exports still print a legacy "Skills" line | Export Markdown | B4 | ✅ build 248 |
 | BS-14 | Name of the row for custom skill keys | Use “Other checks” | A5 | ✅ |
-| BS-15 | Macro rendering cost on very long texts | Profile 5 000-char description | A17 | ☐ |
-| BS-16 | Decimal numbers in formulas | Out of scope (integers only) — confirm | A9 | ☐ |
-| BS-17 | Spell template bugs: doubled parentheses now **verified** (DEF-17); "Level3" spacing still unverified | Render FX-SP fixtures before refactor | A4 | ◐ |
-| BS-18 | Multiclass head title format | Ask owner; propose "Warlock 5 / Sorcerer 10" | A4 | ☐ |
+| BS-15 | Macro rendering cost on very long texts | Profile 5 000-char description | A17 | ✅ build 250 |
+| BS-16 | Decimal numbers in formulas | Out of scope (integers only) — confirm | A9 | ✅ build 249 |
+| BS-17 | Spell template bugs: doubled parentheses now **verified** (DEF-17); "Level3" spacing still unverified | Render FX-SP fixtures before refactor | A4 | ✅ build 248 |
+| BS-18 | Multiclass head title format | Ask owner; propose "Warlock 5 / Sorcerer 10" | A4 | ✅ build 247 |
 | BS-19 | Print stylesheet interaction with plates/rows | A5 print preview and exported PDF verified as one A4 page; retain A17 release regression gate | A5, A17 | ✅ A5 |
 | BS-20 | Ability/saves grid stays a grid | Preserve the existing grid | A5 | ✅ |
-| BS-21 | Bottom "Intellisense" strip still present | Inspect `ActionsEditor` around L408 | A10 | ☐ |
+| BS-21 | Bottom "Intellisense" strip still present | Inspect `ActionsEditor` around L408 | A10 | ✅ build 248 |
 | BS-22 | `<1d0>` in the owner's composer example | Recorded default `1d10`; no automatic dice correction added | A6 | ✅ |
 | BS-23 | Economy chip (`BONUS ACTION`) inside plates outside their section | Recorded default: economy stays in its section header | A6 | ✅ |
-| BS-24 | Font Awesome 6 loaded via Quasar extras | Check `quasar.config.js` `extras` | A9 | ☐ |
-| BS-25 | Field paths into arrays need stable ids | Design `attacks[id=…]` paths | A9 | ☐ |
+| BS-24 | Font Awesome 6 loaded via Quasar extras | Check `quasar.config.js` `extras` | A9 | ✅ build 249 |
+| BS-25 | Field paths into arrays need stable ids | Design `attacks[id=…]` paths | A9 | ✅ build 249 |
 | BS-26 | Home for villain actions | Retain dedicated Villain/Bloodied panel; distinct round/bloodied models, no fabricated seven-role conversion | A8.0 | ✅ decision |
 | BS-27 | CR annotation cards inside the studio | Keep per-entry cards in studio; trait card shipped, action/lair cards required before retirement; global estimator stays separate | A8.0/A8.5 | ✅ decision |
-| BS-28 | `QEditor.getContentEl()` available on Quasar ^2.16 | Quasar API docs | A10 | ☐ |
-| BS-29 | PHB'24 prepared-spells table per class | Research (SRD 5.2.1 class tables) | A12 | ☐ |
-| BS-30 | Multiclass slot table 2014 vs 2024 | Research | A12 | ☐ |
-| BS-31 | Multi-value selects (languages, conditions) chips wrap | UX-03 probe | A13 | ☐ |
-| BS-32 | Cost of ~700 `v-help` directives | Measure; prefer delegated host for lists | A13 | ☐ |
-| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ☐ |
-| BS-34 | Dense inputs with long labels | Overflow probe | A14 | ☐ |
-| BS-35 | A4 studio fixed canvas | Exempt with scroll affordance | A16 | ☐ |
-| BS-36 | Headless Chrome available for e2e on the device | Locate binary, version | A17 | ☐ |
-| BS-37 | Screenshot storage policy | Keep out of git; small PNGs only under `docs/evidence/` | A17 | ☐ |
-| BS-38 | Stores holding monster copies (templates, combat) need ids | Inventory | B1 | ☐ |
-| BS-39 | Current range model stores only one distance and cannot represent a normal/long range pair | Decide model, migration/backward compatibility, labels, projection/export behavior; add round-trip tests before claiming paired range | A7/A8 | ☐ |
-| BS-40 | Composer previews also carry the `.statblock` class: confirm the delegated help host, print rules and any global `.statblock` selectors ignore or deliberately include previews (browser tests were scoped to `#render .statblock` in build 142) | Probe help hover/focus inside a preview; list global selectors | A13 | ☐ |
-| BS-41 | Improved Initiative and Tarrasque exports build actions, bonus actions, reactions and traits from raw descriptions, so structured mechanics and reaction triggers are missing there; Tarrasque legendary entries and header values bypass the export boundary | Move them onto the shared prose projection and boundary; add per-target format tests | B4 | ☐ |
+| BS-28 | `QEditor.getContentEl()` available on Quasar ^2.16 | Quasar API docs | A10 | ✅ build 247 |
+| BS-29 | PHB'24 prepared-spells table per class | Research (SRD 5.2.1 class tables) | A12 | ✅ build 248 |
+| BS-30 | Multiclass slot table 2014 vs 2024 | Research | A12 | ✅ build 248 |
+| BS-31 | Multi-value selects (languages, conditions) chips wrap | UX-03 probe | A13 | ✅ build 249 |
+| BS-32 | Cost of ~700 `v-help` directives | Measure; prefer delegated host for lists | A13 | ✅ build 250 |
+| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ☐ (queued in C5) |
+| BS-34 | Dense inputs with long labels | Overflow probe | A14 | ✅ build 250 |
+| BS-35 | A4 studio fixed canvas | Exempt with scroll affordance | A16 | ✅ build 250 |
+| BS-36 | Headless Chrome available for e2e on the device | Locate binary, version | A17 | ✅ build 248 |
+| BS-37 | Screenshot storage policy | Keep out of git; small PNGs only under `docs/evidence/` | A17 | ✅ build 248 |
+| BS-38 | Stores holding monster copies (templates, combat) need ids | Inventory | B1 | ✅ build 248 |
+| BS-39 | Current range model stores only one distance and cannot represent a normal/long range pair | Decide model, migration/backward compatibility, labels, projection/export behavior; add round-trip tests before claiming paired range | A7/A8 | ✅ build 252 (types + rangePhrase + test) |
+| BS-40 | Composer previews also carry the `.statblock` class: confirm the delegated help host, print rules and any global `.statblock` selectors ignore or deliberately include previews (browser tests were scoped to `#render .statblock` in build 142) | Probe help hover/focus inside a preview; list global selectors | A13 | ✅ build 249 |
+| BS-41 | Improved Initiative and Tarrasque exports build actions, bonus actions, reactions and traits from raw descriptions, so structured mechanics and reaction triggers are missing there; Tarrasque legendary entries and header values bypass the export boundary | Move them onto the shared prose projection and boundary; add per-target format tests | B4 | ✅ build 248 |
 
 ### 13.3 Decision log
 

@@ -1,6 +1,35 @@
 <template>
   <q-timeline color="secondary">
     <q-timeline-entry
+      title="v2.5.0 (Builds 250–252)"
+      subtitle="Statblock Overhaul, Workspace Kit & Contrast Polish - 11/2026"
+      icon="auto_awesome"
+      color="positive"
+    >
+      <div class="text-body2">
+        <ul>
+          <li>
+            Modular 6-panel Basics editor decomposition (<code>Identity</code>,
+            <code>Abilities</code>, <code>Defenses</code>, <code>Paragon</code>,
+            <code>HitPoints</code>, <code>Lore</code>), site-wide
+            <code>CatalogSelect</code>, and 100% <code>v-help</code> tooltip
+            coverage (554/554 controls).
+          </li>
+          <li>
+            Dark-mode WCAG contrast overhaul across dropdown popups, ruleset
+            badges, library dialogs, theme selectors, and recovery views with
+            automated <code>scanUiContrast</code> gate enforcement.
+          </li>
+          <li>
+            Paired normal/long <code>RangeSpec</code> support (BS-39), Improved
+            Initiative <code>InitiativeAdvantage</code> export, Open5e legendary
+            action cost and attack description fixes, and core/store TypeScript
+            strictness improvements.
+          </li>
+        </ul>
+      </div>
+    </q-timeline-entry>
+    <q-timeline-entry
       title="v2.4.3"
       subtitle="Maintenance - 5/17/2026"
       icon="build"

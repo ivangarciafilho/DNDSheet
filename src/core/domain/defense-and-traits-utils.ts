@@ -1122,7 +1122,7 @@ export function composeInvulnerabilityRuling(
       mainClause = mainClause ? `${mainClause}; ${inv.customLogic.trim()}` : inv.customLogic.trim()
     }
 
-    const dStr = formatDisrupt(inv.disruption || (inv as any).disruptedBy, inv.customDisruption)
+    const dStr = formatDisrupt(inv.disruption || inv.disruptedBy, inv.customDisruption)
     const customNote = inv.customDisruption?.trim() && inv.disruption !== 'custom' ? `; ${inv.customDisruption.trim()}` : ''
     const customRuleNote = inv.customRule?.trim() ? `; ${inv.customRule.trim()}` : ''
 
@@ -1135,8 +1135,8 @@ export function composeInvulnerabilityRuling(
     only_crits_hit: 'Only Critical Hits can Hit you',
     only_first_attack: 'Only 1st attack in a Round can Hit you',
     only_1st_attack_hits: 'Only 1st attack in a Round can Hit you',
-    first_x_miss: `First ${inv.firstXCount || (inv as any).attackCount || 1} attacks in a round Miss you`,
-    first_x_attacks_miss: `First ${inv.firstXCount || (inv as any).attackCount || 1} attacks in a round Miss you`,
+    first_x_miss: `First ${inv.firstXCount || inv.attackCount || 1} attacks in a round Miss you`,
+    first_x_attacks_miss: `First ${inv.firstXCount || inv.attackCount || 1} attacks in a round Miss you`,
     attacker_not_attacked: 'Only attacks from an attacker which did not attack you since your previous turn can Hit you',
     different_attacker_only: 'Only attacks from an attacker which did not attack you since your previous turn can Hit you',
     no_adv_miss: 'Attacks without Advantage Miss you',
@@ -1154,7 +1154,7 @@ export function composeInvulnerabilityRuling(
     diff_damage_type: 'Takes damage only from a type different from last damage type taken',
   }
   const ruleStr = ruleMap[rule] || inv.customRule || rule
-  const dStr = formatDisrupt(inv.disruption || (inv as any).disruptedBy, inv.customDisruption)
+  const dStr = formatDisrupt(inv.disruption || inv.disruptedBy, inv.customDisruption)
   const customNote = inv.customDisruption?.trim() && inv.disruption !== 'custom' ? `; ${inv.customDisruption.trim()}` : ''
   return `Invulnerable (${ruleStr}${dStr ? `; disrupted by ${dStr}` : ''}${customNote})`
 }
@@ -1191,7 +1191,7 @@ export function formatMinimalistDeathPrevention(
 
   // 2. Until X Critical Hits
   if (dp.dcRule === 'until_x_crits' || dp.name === 'Until X Critical Hits') {
-    const crits = dp.critHitsToKill || (dp as any).critHitThreshold || 3
+    const crits = dp.critHitsToKill || dp.critHitThreshold || 3
     const ex = Array.isArray(dp.exceptions) && dp.exceptions.length > 0 ? dp.exceptions.join(' or ') : ''
     const note = dp.customNote ? dp.customNote.trim() : ''
     const exceptionsStr = [ex, note].filter(Boolean).join(', ')
@@ -1327,6 +1327,8 @@ export function composeAcAndDefenses(
     HP?: { HD: number }
     acConfig?: MonsterAcConfig
     defenseSchedules?: Partial<Record<DefenseEffect, RiderSchedule>>
+    spellcasting?: { stat?: string }
+    splitAcRiderRows?: boolean
   }
 ): AcComposedResult {
   const cfg = monster.acConfig || {}
@@ -1517,7 +1519,7 @@ export function composeAcAndDefenses(
   }
 
   if (cfg.saveDcSource === 'spell_save_dc' && monster.proficiency) {
-    const spellStat = (monster as any).spellcasting?.stat || 'INT'
+    const spellStat = monster.spellcasting?.stat || 'INT'
     const statMod = mod(spellStat)
     saveDc = 8 + pb + statMod
   } else if (cfg.saveDcSource === 'special_save_dc' && cfg.saveStat) {
@@ -1780,7 +1782,7 @@ export function composeAcAndDefenses(
     generatedArmorDesc].filter(Boolean).join(', ')
 
   const badges: string[] = []
-  const splitRows = Boolean((monster as any).splitAcRiderRows)
+  const splitRows = Boolean(monster.splitAcRiderRows)
 
   if (splitRows && formattedCopy && savedAcType) {
     const fullText = `${base} (${savedAcType})`

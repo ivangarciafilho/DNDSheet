@@ -157,6 +157,7 @@ for (const name of ['rollCount', 'beamCount', 'damageMultiplier']) {
   register(`${attack}.rollScaling.${name}`, 'count', 'attack', { ...optional, min: 1, max: 99 })
 }
 register(`${action}.targeting.range.distance`, 'distance', 'movement', { unit: 'record.targeting.range.unit' })
+register(`${action}.targeting.range.longDistance`, 'distance', 'movement', { ...optional, unit: 'record.targeting.range.unit' })
 register(`${action}.targeting.area.distance`, 'distance', 'movement', { ...optional, unit: 'record.targeting.area.unit' })
 for (const collection of ['traits','reactions']) {
  const prefix=collection+'[id=*]'
@@ -167,6 +168,7 @@ for (const collection of ['traits','reactions']) {
  register(prefix+'.rollScaling.beamCount','count','attack',{...optional,min:1,max:99})
  register(prefix+'.rollScaling.damageMultiplier','count','attack',{...optional,min:1,max:99})
  register(prefix+'.targeting.range.distance','distance','movement',{unit:'record.targeting.range.unit'})
+ register(prefix+'.targeting.range.longDistance','distance','movement',{...optional,unit:'record.targeting.range.unit'})
  register(prefix+'.targeting.area.distance','distance','movement',{...optional,unit:'record.targeting.area.unit'})
  for(const name of ['rechargeMin','rechargeMax']) register(prefix+'.'+name,'count','challenge',{...optional,min:1,max:100})
 }

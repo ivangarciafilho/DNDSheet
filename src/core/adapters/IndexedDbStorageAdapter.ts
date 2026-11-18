@@ -72,7 +72,7 @@ export class IndexedDbStorageAdapter implements StoragePort {
   async saveMonster(monster: Monster): Promise<void> {
     this.assertIndexedDbAvailable()
 
-    const id = (monster as any).id || (monster as any).name || 'unnamed'
+    const id = monster.id || monster.name || 'unnamed'
     const payload = {
       ...monster,
       id,
@@ -106,17 +106,18 @@ export class IndexedDbStorageAdapter implements StoragePort {
 
         req.onsuccess = () => {
           const list = req.result || []
-          const summaries: MonsterSummary[] = list.map((m: any) => {
-            const crObj = CR[m.CR] || { cr: '0', numeric: 0 }
+          const summaries: MonsterSummary[] = list.map((m: Record<string, unknown>) => {
+            const crIndex = typeof m.CR === 'number' ? m.CR : 0
+            const crObj = CR[crIndex] || { cr: '0', numeric: 0 }
             return {
-              id: m.id,
-              name: m.nickname || m.name || 'Unnamed Monster',
+              id: String(m.id ?? ''),
+              name: String(m.nickname || m.name || 'Unnamed Monster'),
               cr: crObj.cr,
               numericCr: crObj.numeric,
-              type: m.type || 'unknown',
-              size: m.size || 'Medium',
-              alignment: m.alignment || 'unaligned',
-              updatedAt: m.updatedAt || 0,
+              type: String(m.type || 'unknown'),
+              size: String(m.size || 'Medium'),
+              alignment: String(m.alignment || 'unaligned'),
+              updatedAt: typeof m.updatedAt === 'number' ? m.updatedAt : 0,
               format: m.format === '2024' ? '2024' : '2014',
             }
           })
@@ -158,7 +159,7 @@ export class IndexedDbStorageAdapter implements StoragePort {
         const req = store.getAll()
 
         req.onsuccess = () => {
-          const list = (req.result || []).map((item: any) => migrateMonsterSchema(item))
+          const list = (req.result || []).map((item: unknown) => migrateMonsterSchema(item))
           resolve(JSON.stringify(list, null, 2))
         }
         req.onerror = () => reject(req.error)

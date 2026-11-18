@@ -18,10 +18,9 @@ import _ from 'lodash'
 import { useTemplateSubtitles } from 'src/components/rendering/useTemplateSubtitles'
 
 // Updates the v1 templates in place
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function updateV1Templates(old: any) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Object.values(old).forEach((o: any) => {
+export function updateV1Templates(old: DndTemplate[] | Record<string, unknown>) {
+  Object.values(old).forEach((raw) => {
+    const o = raw as { type?: string }
     if (o.type === 'Action') {
       const action = o as ActionTemplate
       action.customPreamble = false
@@ -109,17 +108,17 @@ export const useTemplatesStore = defineStore('templates', {
         const monsterStore = useMonsterStore()
 
         // get the template and strip out the extra data
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const templateInstance: any = _.cloneDeep(this.allTemplates[name])
+        const rawTemplate = _.cloneDeep(this.allTemplates[name]) as unknown as Record<string, unknown>
 
         // delete the extras
-        const type = templateInstance.type
-        delete templateInstance.icon
-        delete templateInstance.templateName
-        delete templateInstance.type
+        const type = rawTemplate.type as DndTemplate['type']
+        delete rawTemplate.icon
+        delete rawTemplate.templateName
+        delete rawTemplate.type
 
         // add an id
-        templateInstance.id = v4()
+        rawTemplate.id = v4()
+        const templateInstance = rawTemplate as unknown
 
         // reassert type based on type
         if (type === 'Attack') {
@@ -168,8 +167,7 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(action) as unknown as ActionTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      Reflect.deleteProperty(template, 'id')
       template.type = 'Action'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Action : icon
       template.templateName = templateName
@@ -181,8 +179,7 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(attack) as unknown as AttackTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      Reflect.deleteProperty(template, 'id')
       template.type = 'Attack'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Attack : icon
       template.templateName = templateName
@@ -193,8 +190,7 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(trait) as unknown as TraitTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      Reflect.deleteProperty(template, 'id')
       template.type = 'Trait'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Trait : icon
       template.templateName = templateName
@@ -209,8 +205,7 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(reaction) as unknown as ReactionTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      delete (template as any).id // remove the id
+      Reflect.deleteProperty(template, 'id')
       template.type = 'Reaction'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Reaction : icon
       template.templateName = templateName

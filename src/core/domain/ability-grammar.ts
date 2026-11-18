@@ -118,12 +118,13 @@ const inferReach = (range: string | undefined): AttackReach | undefined => {
   return undefined
 }
 
-const parseDistance = (input: string | undefined): { distance: number; unit: 'ft' | 'mi'; relation?: 'within' | 'reach' | 'range' } | undefined => {
-  const match = String(input ?? '').trim().match(/^(?:(within|reach|range)\s+)?(\d+(?:\.\d+)?)\s*(ft\.?|feet|foot|mi\.?|miles?)$/i)
+const parseDistance = (input: string | undefined): { distance: number; longDistance?: number; unit: 'ft' | 'mi'; relation?: 'within' | 'reach' | 'range' } | undefined => {
+  const match = String(input ?? '').trim().match(/^(?:(within|reach|range)\s+)?(\d+(?:\.\d+)?)(?:\/(\d+(?:\.\d+)?))?\s*(ft\.?|feet|foot|mi\.?|miles?)$/i)
   if (!match) return undefined
-  const unitText = match[3].toLowerCase()
+  const unitText = match[4].toLowerCase()
   return {
     distance: Number(match[2]),
+    ...(match[3] !== undefined ? { longDistance: Number(match[3]) } : {}),
     unit: unitText.startsWith('mi') ? 'mi' : 'ft',
     relation: match[1]?.toLowerCase() as 'within' | 'reach' | 'range' | undefined,
   }
@@ -247,6 +248,7 @@ const normalizeTargeting = (input: unknown): AbilityTargeting | undefined => {
   if (isRecord(input.range) && validAbilityNumber(input.range.distance) && (input.range.unit === 'ft' || input.range.unit === 'mi')) {
     result.range = {
       distance: input.range.distance,
+      longDistance: validAbilityNumber(input.range.longDistance) ? input.range.longDistance : undefined,
       unit: input.range.unit,
       relation: input.range.relation === 'within' || input.range.relation === 'reach' || input.range.relation === 'range'
         ? input.range.relation
@@ -390,13 +392,14 @@ const normalizeKind = (kind: string, count: { text: string; number?: number } | 
   return value
 }
 
-const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: AbilityRenderContext): string => {
+const formatDistance = (distance: number | string, unit: 'ft' | 'mi', context: AbilityRenderContext, longDistance?: number | string): string => {
   const value = valueText(distance, context, 'number', 'targeting.range.distance')
-  return `${value} ${unit === 'ft' ? 'ft.' : Number(plainValueText(distance, context)) === 1 ? 'mile' : 'miles'}`.trim()
+  const pair = longDistance !== undefined ? `/${valueText(longDistance, context, 'number', 'targeting.range.longDistance')}` : ''
+  return `${value}${pair} ${unit === 'ft' ? 'ft.' : Number(plainValueText(distance, context)) === 1 ? 'mile' : 'miles'}`.trim()
 }
 
 export const rangePhrase = (range: NonNullable<AbilityTargeting['range']>, context: AbilityRenderContext = {}): string => {
-  const distance = formatDistance(range.distance, range.unit, context)
+  const distance = formatDistance(range.distance, range.unit, context, range.longDistance)
   const relation = range.relation
   const lead = relation ? `${relation} ` : ''
   const origin = range.origin?.trim() ? ` of ${range.origin.trim()}` : ''

@@ -41,8 +41,16 @@ export function useAutoUpdateCr() {
 
     annotation.maxDamage = maxDamage
 
-    // TODO: see if this can be detected a bit later (prefixes to damage, mention of attack radius?)
-    annotation.multitarget = false
+    const hasStructuredAoe = Boolean(
+      action?.areaShape ||
+        action?.targeting?.area?.shape ||
+        action?.targeting?.count === 'all' ||
+        (typeof action?.targeting?.count === 'number' && action.targeting.count > 1)
+    )
+    const hasProseAoe = /\b(?:each creature|all creatures|\d+-foot[\s-](?:cone|cube|cylinder|line|radius|sphere|emanation))\b/i.test(
+      description
+    )
+    annotation.multitarget = hasStructuredAoe || hasProseAoe
 
     // saves
     const save = RegExp(/\{DC:(\w{3})\}/gi)

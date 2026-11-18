@@ -2,6 +2,8 @@ import { DndStat } from 'src/components/models'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 
+export const STAT_KEYS_SHORT: readonly DndStat[] = ['STR', 'CON', 'DEX', 'INT', 'WIS', 'CHA']
+
 export function useStats() {
   const { t } = useI18n()
 
@@ -16,8 +18,7 @@ export function useStats() {
     }
   })
 
-  // TODO: come back and lift this out if a different component needs it
-  const statOptionsShort = ['STR', 'CON', 'DEX', 'INT', 'WIS', 'CHA']
+  const statOptionsShort: DndStat[] = [...STAT_KEYS_SHORT]
 
   return { statOptions, statOptionsShort }
 }

@@ -549,7 +549,7 @@ export function useOpen5eImport() {
               dice: parseInt(match[2]),
               count: parseInt(match[1]),
               type: match[3],
-              note: '', // TODO: check what conditions we need for this
+              note: '', // Condition notes intentionally empty by default; populated via additional description effects
             })
           })
         }
@@ -562,8 +562,7 @@ export function useOpen5eImport() {
 
         // match group 7 is everything else to the end of the string
         if (damageMatches[7] != null) {
-          newAttack.description +=
-            newAttack.description + ' ' + damageMatches[7]
+          newAttack.description = `${newAttack.description} ${damageMatches[7]}`.trim()
         }
       } else {
         importNote(t('import.error.attackDamageFail', [a.name, a.desc]))
@@ -612,16 +611,17 @@ export function useOpen5eImport() {
           ? a.name.substring(0, a.name.indexOf('(') - 1)
           : a.name
 
-      // match an attack
+      // match an attack using the normalized base name (without cost suffix)
+      const normalizedName = name.trim().toLowerCase()
       const existingAttack = monster.attacks.find(
-        (atk) => atk.name.toLowerCase().indexOf(a.name) !== -1
+        (atk) => atk.name.toLowerCase().includes(normalizedName)
       )
 
       if (existingAttack != null) {
         monster.addLegendaryAction(existingAttack.id, cost)
       } else {
         const id = processAction({ name, desc: a.desc }, true)
-        monster.addLegendaryAction(id)
+        monster.addLegendaryAction(id, cost)
       }
     })
   }
@@ -848,7 +848,7 @@ export function useOpen5eImport() {
       })
     }
 
-    // TODO: legendary actions
+    // Process legendary actions if specified in import payload
     if (data.legendary_desc !== '' && data.legendary_actions != '') {
       processLegendaryActions(data.legendary_desc, data.legendary_actions)
     }
