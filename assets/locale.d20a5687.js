@@ -1,1 +1,0 @@
-const a=["en-US","pt-BR"],o="en-US",c="app.locale",s=t=>a.includes(t);function l(){var t;try{const e=(t=globalThis.localStorage)==null?void 0:t.getItem(c);return s(e)?e:o}catch{return o}}function n(t){var e;try{(e=globalThis.localStorage)==null||e.setItem(c,t)}catch{}}export{o as F,n as p,l as s};
