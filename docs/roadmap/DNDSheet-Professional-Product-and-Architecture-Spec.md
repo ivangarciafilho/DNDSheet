@@ -2984,12 +2984,12 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 |---|---|---|---|:--:|
 | BS-01 | Ownership of the plate work-in-progress | It was this overhaul's own A3 work; committed `c543615` | A3 | ✅ closed |
 | BS-02 | App runs from the current tree | Dev server on 9100 renders the fixture without errors | A3 | ✅ closed |
-| BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ☐ |
-| BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ☐ |
-| BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ☐ |
+| BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ✅ build 222 (A17.7) |
+| BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ✅ build 248 (11-step gate) |
+| BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ✅ build 248 (11-step gate) |
 | BS-06 | Persisted-state hydration with new optional keys | Migration and AI-ingest round trips preserve fields; full saved-browser reload remains broader regression coverage | A6, A9 | ◐ |
-| BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ☐ |
-| BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ☐ |
+| BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ✅ build 248 (A12) |
+| BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ✅ build 248 (0 console warnings) |
 | BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Inventory: 44 structured attacks; 28 legacy actions without structured fields; no committed Seraph fixture | A6 | ✅ |
 | BS-10 | AI-ingested actions lack new fields | Ingest fixture carries optional structured action fields through migration | A6 | ✅ |
 | BS-11 | HTML/print exports embed plates without grammar CSS | Export HTML, open standalone | B4 | ✅ build 248 |
@@ -3014,7 +3014,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-30 | Multiclass slot table 2014 vs 2024 | Research | A12 | ✅ build 248 |
 | BS-31 | Multi-value selects (languages, conditions) chips wrap | UX-03 probe | A13 | ✅ build 249 |
 | BS-32 | Cost of ~700 `v-help` directives | Measure; prefer delegated host for lists | A13 | ✅ build 250 |
-| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ☐ (queued in C5) |
+| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ✅ build 268 (`pt-BR` 100% help) · build 270 (58.0% total keys) |
 | BS-34 | Dense inputs with long labels | Overflow probe | A14 | ✅ build 250 |
 | BS-35 | A4 studio fixed canvas | Exempt with scroll affordance | A16 | ✅ build 250 |
 | BS-36 | Headless Chrome available for e2e on the device | Locate binary, version | A17 | ✅ build 248 |

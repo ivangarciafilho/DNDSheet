@@ -1,3 +1,22 @@
+## Build 270 — `C5` Round 2 `pt-BR` i18n (`533 / 919`), `C8` ratchet burn-down, `C9`/`C10` convergence & backlog grooming
+
+> **Branch HEAD (code release):** `e913cc1` (`build185-repairs`) · **Build:** `270` (`v2.5.0`) · **Published `gh-pages`:** `38e7284` (`rc-2.5.0-build-270-c5-i18n-ratchet-and-backlog-convergence`)
+> **Packet & Receipt:** [`DNDSheet-Build270-C5-i18n-Ratchet-and-Backlog-Convergence.md`](file:///F:/AI_Resources/DNDSheet/docs/roadmap/DNDSheet-Build270-C5-i18n-Ratchet-and-Backlog-Convergence.md) · [`DNDSheet-Build270-Publication-Receipt.json`](file:///F:/AI_Resources/DNDSheet/docs/roadmap/DNDSheet-Build270-Publication-Receipt.json)
+
+1. **`C5` Round 2 `pt-BR` Localization (`251 -> 533 / 919` keys = `58.0%`, `+282` keys):** Translated `src/i18n/pt-BR/index.ts` across 14 namespaces (`app`, `monster` 78 keys, `import` 19, `skill` 19, `damageType` 32, `attackType` 13, `condition` 17, `recharge` 31, `statFull` 6, `class` 12, `range` 3, `kind` 2, `presets` 13 parameterized templates, `changelog`) while preserving `editor` omission for `test/locale-browser-smoke.mjs` fallback parity; raised `PT_BR_MIN_KEYS = 533` in `test/core/I18nCoverage.test.ts` (`4 / 4` pass).
+2. **`C8` Quality Ratchet Burn-Down (`explicitAny: 22 -> 9`, `eslintDisables: 35 -> 23`):** Replaced explicit `any` types and `eslint-disable` comments in `AutoSyncSpellcasting.ts`, `spells-store.ts`, `templates-store.ts`, `download.ts`, `useOpen5eImport.ts`, `MainLayout.vue`, and `shims-vue.d.ts`; updated `tools/ratchet.json` (`importantAppScss: 21`, `importantDarkContrast: 15`, `importantTotal: 365`, `filesOver900Lines: 0`, `explicitAny: 9`, `todoFixme: 0`, `eslintDisables: 23`, `vHtml: 0`).
+3. **`C10` / `C9` Repairs & Release Metadata Sync:** Fixed Open5e attack trailing description duplication and normalized legendary action attack matching + `cost` forwarding in `useOpen5eImport.ts`; added `longDistance` (`BS-39` paired range) to `supportsNumericPresentation` (`numeric-presentation.ts`); exported `STAT_KEYS_SHORT` (`STAT.ts`); bumped `build.json` (`261 -> 270`); prepended `v2.5.0 (Builds 250–270)` in `ChangelogContent.vue`.
+4. **Full 11-Step Gate & Live Parity (`e913cc1` -> `38e7284`):** `npm run gate` passed `11 / 11` steps (`flaky: []`, `core: 701 / 701` with `689` subtests, `audit:help: 556 / 556`, `lint: 0 / 0`, `typecheck: 0` diagnostics, `visual: 104 / 104` identical vs Build 269 `47a0839`), and HTTP `200` SHA-256 parity matched local `dist-pages/`.
+5. **Backlog Convergence & Fine-Grained Grooming:** Closed Track B/H owner-gate ledger drift (`313 / 313` raw checkboxes = `100.0%` after Build 262 closed `B5.7` & `H16`), reconciled Builds `252–269` Track C completions (`12 / 13` `✅`, only `C5` `◐`), and decomposed remaining Track C / Track D debt into fine-grained sub-tasks (`C5.R3`–`C5.R7`, `C8.R4`–`C8.R6`, `C12.R2`–`C12.R4`, `D1.1`–`D4.3`) with interleaved risk/caveat/gap checks.
+
+---
+
+## Builds 252–269 — Remote Track C Convergence & Owner-Gate Closure
+
+- Reconciled from `gh/build185-repairs` (`47a0839`, live `gh-pages` Build 269 `7e2abbb`): closed **12 / 13** Track C items (`C1a`–`C4`, `C6`–`C12`), closed remaining Track B/H owner gates (`B5.7` & `H16`) in Build 262 (`313 / 313` raw `[ABH]` checkboxes complete), decomposed monolithic editor/layout files (`filesOver900Lines: 0`), eliminated `todoFixme: 0` and `vHtml: 0`, and established the `C5` `pt-BR` foundation (`251 / 919` keys) prior to Build 270.
+
+---
+
 ## Build 251 — Editor dark-theme contrast repair, live parity & Track C delta audit
 
 The [Build 251 packet](DNDSheet-Build251-Editor-Contrast-and-Accessibility.md) (source `13ed663`, Pages `baf9b4d`, base `2694780` on Build 250 `f7219a7`, RC tag `rc-2.4.3-build-251-editor-contrast-and-ui-polish`, 10/10 gate with `678/678` core tests, `0` ESLint errors / `2,740` warnings, `48` third-party `node_modules` typecheck diagnostics / `0` in `src/` / `0` new, `help` coverage `100.0%` `554/554`, `src/css/app.scss` `!important` `65` occurrences across `57` lines [`< 150` ceiling], budget probe `12.6 ms` keystroke p95 / `39.3 ms` completion / `8.7 ms` `CatalogSelect` open / `12.11:1` head contrast / `0` UI contrast violations, live Pages HTML & core chunks SHA-256 verified) fixes live dark-on-dark and white-on-white editor contrast defects (`quasar.config.js` `dark: true`, `CatalogSelect.vue` `dark: null` + dark menu class, `MainLayout.vue` `D&D 2014`, `CreatureLibraryDialog.vue`, `WebRendererSettingsButton.vue`, `ErrorCorrection.vue`, explicit `green-9` solid buttons) and permanently guards contrast across chrome/dialogs/routes in `test/budget-browser-probe.js`. Track A & Track B closure counts stay invariant (`267 / 269` `count-tasks` IDs, `271 / 273` top-level IDs, `311 / 313` raw checkboxes; only owner gates `B5.7` and `H16` remain open), while **Track C / v2.6+** below expands with `C1a`, `C1b`, and `C8`–`C12` from the post-Build-251 codebase/spec delta audit.
@@ -393,15 +412,15 @@ Proof:273core(+6),productionbuild,48browser scenarios zero console/runtime error
 | R6 · Overhaul release | A17 ✅ | 9 / 9 | ✅ |
 | R7 · Creator confidence | B1 ✅ · B2 ✅ · B3 ✅ | 17 / 17 | ✅ |
 | R8 · Portable output | B4 ✅ | 10 / 10 | ✅ |
-| R9 · Keep and reuse | B5 ◐ · B6 ✅ | 11 / 12 | ◐ (`B5.7` owner-gated) |
+| R9 · Keep and reuse | B5 ✅ · B6 ✅ | 12 / 12 | ✅ (`B5.7` closed in Build 262) |
 | R10 · Honest breadth | B7 ✅ · B8 ✅ · B9 ✅ · B10 ✅ | 15 / 15 | ✅ |
-| **Total (Canonical v2 loops + H)** | **28 loops** (Track A ✅ + Track B `B5.7` owner-gated + Recovery H `H16` owner-gated) | **311 / 313 raw checkboxes (`267 / 269` count-tasks IDs; `271 / 273` top-level)** | **99.4% complete** (`2` owner gates left; see `## Build 250`) |
+| **Total (Canonical v2 loops + H)** | **28 loops** (Track A ✅ + Track B ✅ + Recovery H ✅; `B5.7` & `H16` closed in Build 262) | **313 / 313 raw checkboxes (`269 / 269` count-tasks IDs; `273 / 273` top-level)** | **100.0% complete** |
 
 ```mermaid
 pie showData
   title Loops by state
-  "Shipped" : 27
-  "Owner-gated (B5 / H)" : 1
+  "Shipped" : 28
+  "Owner-gated (B5 / H)" : 0
   "Pending Track A" : 0
   "Pending Track B" : 0
 ```
@@ -1081,83 +1100,89 @@ The first post-A4 full run exposed three stale browser expectations and one real
 
 ---
 
-### Track C · v2.6+ Forward Roadmap (Post-v2.5.0 & Build 251 Backlog Audit)
+### Track C · v2.6+ Convergence Rollup & Remaining Backlog (Updated Build 270)
 
-> **Build 252** ([packet](DNDSheet-Build252-Track-C-Closeouts.md)): `C9` ✅ version `2.5.0` and spec statuses; `C12` ✅ one shared SPA/Pages browser suite and legacy scripts removed; `C10` ◐ (`BS-39` paired range ✅, Improved Initiative advantage ✅, stale TODOs cleared; remaining notes fold into `C5`/`C1b`).
->
-> **Build 253** ([packet](DNDSheet-Build253-Lint-Burndown.md)): `C3` ◐ ESLint warnings `2,733 → 282` (−89.7 %; all auto-fixable cleared, unused `40 → 4`); the remainder is `any`/non-null (→ `C8`), intentional sanitized `v-html`, and per-component emits review.
->
-> **Track C status after Build 253:** ✅ `C9`, `C12` · ◐ `C3`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C8`, `C11` · owner `C7` (`B5.7`, `H16`).
->
-> **Build 254** ([packet](DNDSheet-Build254-Type-Debt-and-Preset-Repairs.md)): `C8` ◐ `any` lines `112 → 45`; removing casts exposed 7 silent data losses in the built-in library preset, fixed through a tested `applyMonsterPreset`. ESLint `282 → 206`.
->
-> **Track C status after Build 254:** ✅ `C9`, `C12` · ◐ `C3`, `C8`, `C10` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
->
-> **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files ≥ 900 lines `20 → 19`. Next: `WebRenderer.vue` (2,983).
->
-> **Build 261** ([packet](DNDSheet-Build261-Closing-C3-C6-C8-C10.md)): ✅ `C3` (ESLint 0/0), ✅ `C6` (`visual` gate step vs production), ✅ `C8` (no `any` outside reviewed boundaries; lint-enforced), ✅ `C10` (0 TODOs; multi-target CR detection). Security: stored XSS via author text fixed with the `v-safe-html` allow-list sanitizer; XSS smoke in the gate.
->
-> **Track C status after Build 261:** ✅ `C3`, `C6`, `C8`, `C9`, `C10`, `C12` · ☐ `C1a`, `C1b`, `C2`, `C4`, `C5`, `C11` · owner `C7`.
+> Track A, Track B, and Recovery H are **100.0% complete** (`313 / 313` raw checkboxes; owner gates `B5.7` and `H16` closed in Build 262). Track C and Track D below track post-v2.5.0 engineering convergence and next-horizon work **without adding `[ ]`/`[x]` checkboxes outside the `[ABH]` ledger**, keeping Track A/B closure metrics invariant.
 
-> **Build 262** ([packet](DNDSheet-Build262-Ratchet-and-C2-C4-C7-C11.md)): ✅ `C2` (0 unclassified inputs, guarded), ✅ `C4` (typecheck 48 → 0, zero-tolerance), ✅ `C7` (`B5.7` reset clears editor/combat; `H16` folder removed), ✅ `C11` (`app.scss` `!important` 65 → 21; dark/print exceptions isolated). New `tools/ratchet.mjs` gate guard: debt metrics may only fall.
+#### Chronological Convergence History (Builds `252 → 270`)
 
-> **Track C status after Build 262:** ✅ `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C1a`, `C1b`, `C5` (coupled plan: 263 split+i18n keys, 264 pt-BR+generated changelog, 265 domain types).
+- **Build 252** ([packet](DNDSheet-Build252-Track-C-Closeouts.md)): `C9` ✅ (`2.5.0` version/spec reconciliation); `C12` ✅ (shared SPA/Pages browser suite, legacy scripts removed); `C10` ◐ (`BS-39` paired range ✅, Improved Initiative advantage ✅, stale TODOs cleared).
+- **Build 253** ([packet](DNDSheet-Build253-Lint-Burndown.md)): `C3` ◐ ESLint warnings `2,733 → 282` (`−89.7%`; auto-fixables cleared, unused `40 → 4`).
+- **Build 254** ([packet](DNDSheet-Build254-Type-Debt-and-Preset-Repairs.md)): `C8` ◐ `any` lines `112 → 45`; removing casts exposed 7 silent preset data losses, fixed via tested `applyMonsterPreset`; ESLint `282 → 206`.
+- **Build 255** ([packet](DNDSheet-Build255-Type-Debt-Round-Two.md)): `C8` ◐ `any` `45 → 29`; all 31 `src` non-null assertions audited as guarded; ESLint `206 → 149`.
+- **Build 256** ([packet](DNDSheet-Build256-Split-useTextRenderer.md)): `C1b` ◐ `useTextRenderer.ts` `2,037 → 871` lines across six verbatim-moved sub-composables; files `≥ 900` lines `20 → 19`.
+- **Build 257** ([packet](DNDSheet-Build257-Split-WebRenderer.md)): `C1b` ◐ `WebRenderer.vue` `2,983 → 1,688` (styles extracted with byte-identical CSS; A4 composition moved to `useA4Composition.ts`).
+- **Build 258** ([packet](DNDSheet-Build258-Template-Split-and-Visual-Regression.md)): `C6` ◐ `tools/qa/visual-diff.mjs` byte-exact screenshot regression (`72/72` determinism, `104/104` parity); `C1b` ◐ `WebRenderer.vue` `1,688 → 1,440`.
+- **Build 259** ([packet](DNDSheet-Build259-Vitals-Child.md)): `C1b` ◐ vitals extracted to `StatblockVitals.vue`; `WebRenderer.vue` `1,440 → 1,143`; `104/104` visual parity.
+- **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits/actions extracted to `StatblockTraits.vue` / `StatblockActions.vue`; `WebRenderer.vue` `1,143 → 866` (`< 900`); `104/104` visual parity.
+- **Build 261** ([packet](DNDSheet-Build261-Closing-C3-C6-C8-C10.md)): `C3` ✅ (`0 / 0` ESLint), `C6` ✅ (`visual` gate step), `C8` ✅ (lint-enforced `no-explicit-any` outside reviewed boundaries), `C10` ✅ (`0` TODOs, multi-target CR detection); stored XSS closed via `v-safe-html` allow-list sanitizer.
+- **Build 262** ([packet](DNDSheet-Build262-Ratchet-and-C2-C4-C7-C11.md)): `C2` ✅ (`0` `review` numeric inputs), `C4` ✅ (`typecheck` `48 → 0`), `C7` ✅ (`B5.7` reset & `H16` closed), `C11` ✅ (`app.scss` `!important` `65 → 21`); `tools/ratchet.mjs` introduced.
+- **Builds 263–264** ([263](DNDSheet-Build263-Statblock-Layout-Fixes.md), [264](DNDSheet-Build264-Streamlined-Tangents-and-Stripes.md)): owner-reported stat block layout fixes (short Traits, editor-driven render order, single-row trigger reactions, tangent heads, alternating line stripes).
+- **Build 265** ([packet](DNDSheet-Build265-C1a-Editor-Sections.md)): `C1a` ✅ for editor panels (`SkillsEditor`, `ResistancesEditor`, `ActionsEditor`, `A4LayerStudio`, `LoreSection`, `RadialOffsetController`, `ChangelogContent` split; files `≥ 900` lines `18 → 11`).
+- **Build 266** ([packet](DNDSheet-Build266-C1b-Module-Splits.md)): `C1b` ◐ six domain/use-case modules split via AST move; files `≥ 900` lines `11 → 5`; module-init leaf rule established.
+- **Build 267** ([packet](DNDSheet-Build267-C1b-Closed.md)): `C1b` ✅ `filesOver900Lines` reduced `5 → 0` (stylesheets split to partials, composables & `monster-store` slices extracted).
+- **Build 268** ([packet](DNDSheet-Build268-C5-pt-BR-Help.md)): `C5` ◐ opt-in `en-US`/`pt-BR` switcher, `249` editor help + `56` stat-block tips in `pt-BR` (`BS-33`), `I18nCoverage.test.ts` (`251 / 916`), `locale-browser-smoke.mjs` gate check.
+- **Build 269** ([packet](DNDSheet-Build269-Owner-Requests-AC-Riders.md)): text blocks/dice tables in every projection, frameless portrait toggle, compact CR · Lair CR / PB row, Natural Armor (`10 + DEX + bonus`), AC rider list with legacy migration, radial layer size strip.
+- **Build 270** ([packet](DNDSheet-Build270-C5-i18n-Ratchet-and-Backlog-Convergence.md)): `C5` ◐ (`251 → 533 / 919 = 58.0%`, `PT_BR_MIN_KEYS = 533`), `C8` ratchet burn-down (`explicitAny: 22 → 9`, `eslintDisables: 35 → 23`), `C10`/`C9` repairs (Open5e attack trailing text & legendary action cost/matching, `longDistance` in `supportsNumericPresentation`, `STAT_KEYS_SHORT`, `build.json` `261 → 270`, `ChangelogContent` `v2.5.0`), `11 / 11` gate (`701 / 701` core, `104 / 104` visual) & live Pages SHA-256 parity.
 
-> **Builds 263–264** ([263](DNDSheet-Build263-Statblock-Layout-Fixes.md), [264](DNDSheet-Build264-Streamlined-Tangents-and-Stripes.md)): owner-reported stat block fixes (short Traits stay in one column, editor order drives render order, trigger-only reactions on one row, plate head tangent to line 2, alternating line stripes).
+#### Track C Master Convergence Matrix (`12 / 13` Complete, `1` In Progress)
 
-> **Build 265** ([packet](DNDSheet-Build265-C1a-Editor-Sections.md)): `C1a` ✅ for the editor panels. SkillsEditor, ResistancesEditor, ActionsEditor, A4LayerStudio and LoreSection were split into state composables plus section components (ADR-0003); RadialOffsetController style and ChangelogContent archive were split out; files of 900+ lines went 18 → 11 (ratchet). `useBasicsContext.ts` moves to `C1b`.
-
-> **Track C status after Build 265:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C1b` (11 files: `species-and-heuristics`, `defense-and-traits-utils`, `types`, `monster-store`, `ExportStatblock`, `AutoSyncSpellcasting`, `useProcessTokens`, `formula`, `useBasicsContext`, plus the `app.scss` and `statblock-grammar.scss` stylesheets), `C5` (i18n/pt-BR) · follow-up: event-driven waits in browser tests.
-
-> **Build 266** ([packet](DNDSheet-Build266-C1b-Module-Splits.md)): `C1b` ◐ six domain and use-case modules split into sibling modules via an AST-driven, re-exporting move (no importer changed); files of 900+ lines 11 → 5. A module-init cycle was found and disarmed (leaf-module rule).
-
-> **Track C status after Build 266:** ✅ `C1a`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ◐ `C1b` (5 left: `monster-store.ts` → typed setup-store slices; `useProcessTokens.ts` and `useBasicsContext.ts` → dependency-passed sub-composables; `app.scss` and `statblock-grammar.scss` → in-place partials) · ☐ `C5`.
-
-> **Build 267** ([packet](DNDSheet-Build267-C1b-Closed.md)): `C1b` ✅ no source file of 900+ lines (5 → 0). Stylesheets were split into in-place partials with byte-identical CSS; composables were split by factory extraction; the monster store's state and state-only getters were moved, and its CR getters now take a typed `this`. The ratchet records 0.
-
-> **Track C status after Build 267:** ✅ `C1a`, `C1b`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ☐ `C5` (pt-BR help/UI + locale switch + coverage test + generated changelog) · follow-up: event-driven waits in browser tests (flake seen in Builds 262 and 267).
-
-> **Build 268** ([packet](DNDSheet-Build268-C5-pt-BR-Help.md)): `C5` ◐ locale infrastructure, an opt-in English/Português switch, all 249 editor help texts and all 56 stat block help tips in pt-BR (BS-33), a coverage contract test (251/916 keys, floor only grows) and a browser smoke on SPA and Pages.
-
-> **Track C status after Build 268:** ✅ `C1a`, `C1b`, `C2`, `C3`, `C4`, `C6`, `C7`, `C8`, `C9`, `C10`, `C11`, `C12` · ◐ `C5` (next: hard-coded template labels → i18n keys, remaining namespaces, Quasar pt-BR lang pack, generated changelog) · follow-up: event-driven browser waits.
-
-> **Build 269** ([packet](DNDSheet-Build269-Owner-Requests-AC-Riders.md)): owner requests ✅. Text blocks and dice tables now reach the stat block in every projection, printed after the description. Frameless portrait toggle. Compact CR · Lair CR / PB rows. Natural Armor base (10 + DEX + bonus). AC rider list (cadence → timing → hit/miss → preset or custom effect), with automatic migration from the legacy pickers. Layer size strip inside the post-crop radial (linked scale or W/H).
-
-> **Track C status after Build 269:** unchanged: ✅ 12 of 13 · ◐ `C5`. Open follow-ups: event-driven browser waits; composer-structured entries keep text blocks between outcomes and prose (order not reported).
->
-> **Build 260** ([packet](DNDSheet-Build260-Traits-and-Actions-Children.md)): `C1b` ◐ traits and actions to `StatblockTraits.vue` / `StatblockActions.vue` via a typed body view; `WebRenderer.vue` `1,143 → 866` (under 900); visual diff 104/104 identical.
->
-> **Track C status after Build 260:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C6`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C11` · owner `C7`.
->
-> **Build 259** ([packet](DNDSheet-Build259-Vitals-Child.md)): `C1b` ◐ vitals section (both layouts) to `StatblockVitals.vue` via a typed provide/inject view; `WebRenderer.vue` `1,440 → 1,143`; visual diff 104/104 identical.
->
-> **Build 258** ([packet](DNDSheet-Build258-Template-Split-and-Visual-Regression.md)): `C6` ◐ `tools/qa/visual-diff.mjs` byte-exact screenshot regression (determinism 72/72, control 0/72, candidate 104/104); `C1b` ◐ scoped → namespaced styles, two child components, `WebRenderer.vue` `1,688 → 1,440`.
->
-> **Track C status after Build 258:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C6`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C11` · owner `C7`.
->
-> **Build 257** ([packet](DNDSheet-Build257-Split-WebRenderer.md)): `C1b` ◐ `WebRenderer.vue` `2,983 → 1,688` (styles to `src` files with byte-identical CSS; A4 composition to `useA4Composition.ts`). Template split is next.
->
-> **Track C status after Build 256:** ✅ `C9`, `C12` · ◐ `C1b`, `C3`, `C8`, `C10` · ☐ `C1a`, `C2`, `C4`, `C5`, `C6`, `C11` · owner `C7`.
->
-> **Build 255** ([packet](DNDSheet-Build255-Type-Debt-Round-Two.md)): `C8` ◐ `any` `45 → 29`; all 31 `src` non-null assertions audited as guarded; test-only `no-non-null-assertion` override. ESLint `206 → 149`. Remaining `C8` is typed payload schemas for the untyped boundaries (file load, v1 migration, export builders).
-
-> Track A and Track B executable engineering work is complete (`311/313` raw checkboxes; only owner-gated `B5.7` and `H16` open). This **Track C / v2.6+** planning queue merges Build 250 telemetry with the post-Build-251 multi-agent (`debate-council`) codebase and specification delta audit. *(Kept as a planning table outside the `[ABH]` checkbox ledger so Track A/B closure metrics stay invariant.)*
-
-| Candidate ID | Telemetry / Trigger | Proposed Scope | Priority |
+| Candidate ID | Build 251 Baseline / Trigger | Build 270 Status & Verified Evidence | Open Remainder / Follow-Up |
 |---|---|---|---|
-| `C1a` | Large UI editor panels `> 1,000` LOC (`A4LayerStudio.vue` `1,543`, `SkillsEditor.vue` `1,410`, `ResistancesEditor.vue` `1,138`, `ActionsEditor.vue` `1,037`, plus `useBasicsContext.ts` `1,012`) | Apply `ADR-0003` `provide*Context` + subsection module pattern (`BasicsEditor.vue` went `4,445 -> 31` LOC) | P1 |
-| `C1b` | Oversized renderer, domain & store monoliths `>= 1,400` LOC (`WebRenderer.vue` `2,988` [also `20` `!important`, `12` `any`], `species-and-heuristics.ts` `2,765`, `useTextRenderer.ts` `2,037`, `defense-and-traits-utils.ts` `1,854`, `types.ts` `1,768`, `monster-store.ts` `1,750`, `ExportStatblock.ts` `1,558`, `AutoSyncSpellcasting.ts` `1,433`, `useProcessTokens.ts` `1,406`) | Split god modules into cohesive domain/renderer submodules (`RenderPipeline`, `SpeciesCatalog`, `DefenseRules`, decomposed domain types) | P1 |
-| `C8` | Explicit TypeScript `any` annotations (`116` `: any` / `as any` / `<any>` lines across `31` `src/` files, led by `useTextRenderer.ts` `31`, `WebRenderer.vue` `12`, `DatabaseStudio.vue` `9`, `defense-and-traits-utils.ts` `7`, `templates-store.ts` `7`) | Replace untyped renderer, storage, and database-studio adapters with discriminated unions and strict interfaces | P1 |
-| `C9` | Spec, version & changelog drift (`package.json` `version: "2.4.3"` vs tag `v2.5.0-statblock`, `GenericFooter.vue:91` changelog `TODO`, and `DNDSheet-Professional-Product-and-Architecture-Spec.md` leaving shipped `R3–R10`, `A9–B10`, `BS-11`, `BS-41`, `SB-04/05`, `AU-02/04/05`, `UX-01..03` marked `☐`) | Reconcile `package.json`, `ChangelogContent.vue`, `GenericFooter.vue`, and `Spec.md` `✅` markers (keeping genuinely open items like `BS-33`, `BS-39`, `BS-03` explicitly `☐`) | P1 |
-| `C10` | Active feature/import `TODO`s & schema gaps (`useOpen5eImport.ts:851` `// TODO: legendary actions` & `:552` condition notes, `useImprovedInitRenderer.ts:66` hardcoded `InitiativeAdvantage = false // TODO`, `TemplateSearch.vue:77` unlinked search `TODO`, `types.ts:678-683` single-distance `RangeSpec` vs `BS-39` paired normal/long range, `spells-store.ts:123`, `monster-store.ts:672`, `useAutoUpdateCr.ts:44`) | Implement Open5e legendary actions/condition notes, wire `InitiativeAdvantage`, hook `TemplateSearch` filter, settle `BS-39` paired range schema, and burn down active code `TODO`s | P1 |
-| `C2` | Remaining inline `<q-select>` cell pickers & `10` `review` numeric controls (`SkillsEditor` ×6, `SpeedsEditor` ×4, `SavesEditor`, `SensesEditor`, `EncounterDynamicsEditor`; `56` number inputs in `test/inventory.mjs`, `10` `review`) | Triage `10` `review` numeric inputs into `binding-capable` vs documented `literal` exemptions; evaluate lightweight compact `CatalogSelect` preset + lint guard tied to Exemption Registry | P2 |
-| `C3` | ESLint warning baseline (`2,740` warnings, `2,416` auto-fixable, `0` errors across `src/` & `test/`) | Burn down quote/style/non-null assertion warnings (`--fix` pass + incremental strictness) | P2 |
-| `C5` | `A16` / `B7` / `B8` prerequisites met (`BS-33` EN-only help today; `monster-store.ts:720` & `useProcessTokens.ts:358` i18n `TODO`s) | Localize `HELP_MESSAGES` in `src/i18n`, add optional focused side-help drawer, & 2014↔2024 rules converter with loss report | P2 |
-| `C11` | Dark-mode contrast override debt (`src/css/app.scss` `!important` `44 -> 65` across `57` lines during Build 251 contrast fixes) | Replace `!important` dark-mode selectors with semantic Quasar `--q-*` / surface theme tokens (`< 30` `!important` target) and optionally expose a first-class high-contrast Light Studio toggle | P2 |
-| `C12` | Gate script parity & legacy test script hygiene (`test/gate.mjs` `help` vs `pages-fuzz` script matrix; `30+` files in `test/` including legacy `capture-candidate180..182.js`, `verify-candidate182-dom.js`, `debug-statblock.js`, `test-clip.js`, `emergency-*.js`) | Align `pages-fuzz` / `help` browser smoke parity in `test/gate.mjs` and archive/prune superseded candidate scripts | P2 |
-| `C4` | `48` third-party `node_modules` Volar/Vue typecheck diagnostics (`0` in `src/`) | Upgrade pinned `@volar`/`vue-tsc` toolchain cleanly in `tools/typecheck-runtime` | P3 |
-| `C6` | `A17` prerequisite met | Add automated pixel-diff visual regression suite & per-document presentation presets alongside `tools/qa/shots.mjs` | P3 |
-| `C7` | Owner gates (`B5.7`, `H16`) | Execute `ErrorCorrection.vue` `/reset` policy decision (`B5.7`) & `DNDSheet-RC/` archive disposition (`H16`) once approved | Owner Gate |
+| `C1a` | Large UI editor panels `> 1,000` LOC | ✅ Closed (Build 265, `tools/ratchet.json` `filesOver900Lines: 0`) | None |
+| `C1b` | Oversized renderer, domain & store monoliths | ✅ Closed (Builds 256–260, 266–267; `filesOver900Lines: 0`) | None |
+| `C2` | Inline `<q-select>` pickers & `10` `review` numeric controls | ✅ Closed (Build 262; `0` `review` numeric inputs in `audit:help`) | None |
+| `C3` | `2,740` ESLint warnings baseline | ✅ Closed (Build 261; `0` errors / `0` warnings verified Build 270) | None |
+| `C4` | `48` third-party `node_modules` Volar diagnostics | ✅ Closed (Build 262; `0` diagnostics verified Build 270) | None |
+| `C5` | Help/UI i18n (`BS-33` EN-only at Build 251) | ◐ Partial (Builds 268 & 270: `533 / 919 = 58.0%` `pt-BR`, `4/4` i18n tests) | `386` keys (`editor`, `character`, `cr`, `error`, templates), inline `v-help`, Quasar lang pack, changelog i18n (`C5.R3`–`C5.R7`) |
+| `C6` | Visual regression automation | ✅ Closed (Builds 258 & 261; `visual` gate `104 / 104` identical Build 270) | Document per-doc presentation presets (`D4.1`) |
+| `C7` | Owner gates (`B5.7`, `H16`) | ✅ Closed (Build 262; reset behavior & folder cleanup resolved) | None |
+| `C8` | `116` explicit `any` lines (`22` `explicitAny` / `35` disables post-261) | ✅ Target met Build 261; further burned down Build 270 (`explicitAny: 22 → 9`, `eslintDisables: 35 → 23`) | Burn down remaining `8` real TS `any`s + `1` regex false positive & non-`.d.ts` disables (`C8.R4`–`C8.R6`) |
+| `C9` | Spec, version & changelog drift (`2.4.3` vs `2.5.0`) | ✅ Closed Build 252 & synced Build 270 (`build.json` `270`, `ChangelogContent.vue` `v2.5.0`, `Spec.md` synced) | Automate release-note generation (`D4.3`) |
+| `C10` | Active feature/import `TODO`s & schema gaps (`BS-39`, Open5e) | ✅ Closed Build 261 + hardened Build 270 (`longDistance`, Open5e attack/legendary fixes, `todoFixme: 0`) | Edge-case Open5e condition-note regression fixtures (`D3.1`) |
+| `C11` | Dark-mode contrast override debt (`app.scss` `!important`: `65`) | ✅ Closed Build 262; ratchet locked (`importantAppScss: 21`, `importantDarkContrast: 15`, `importantTotal: 365`, `0` contrast violations) | Light-mode vs Dark-mode semantic token consolidation (`D2.2`–`D2.3`) |
+| `C12` | Gate script parity & legacy test script hygiene | ✅ Closed Build 252; unified `11`-step `npm run gate` active | Event-driven browser waits, saved-reload persistence (`BS-06`), container order (`C12.R2`–`C12.R4`) |
+
+#### Fine-Grained Remaining Backlog & Interleaved Risk / Caveat / Gap Matrix (`23` Sub-Tasks + `10` Interleaved Guard Checks)
+
+| Order / ID | Scope & Target Files / Symbols | Precedence & Done Criteria |
+|---|---|---|
+| **`C5.R3`** | Extract hard-coded `label="..."` and inline `v-help="'...'"` literals across decomposed editor panels (`src/components/editor/basics/`, `SkillsEditor`, `ActionsEditor`, `SensesEditor.vue`) into `src/i18n/en-US/index.ts`. | P1 · Zero untranslated hard-coded form labels or raw inline `v-help` prose strings in editor panels; `audit:help` remains `100.0%` (`556 / 556`). |
+| *⚠️ Gap `C5.R3→C5.R4`* | Inline `v-help="'...'"` extraction can silently drop tooltip keys or alter string punctuation; `SensesEditor.vue:153` (`v-help="'What the sense detects: any thinking creature or only some kinds.'"`) also triggers `tools/ratchet.mjs` `explicitAny` regex false-positive. | Verify key lookup parity in `audit:help` before adding translations. |
+| **`C5.R4`** | Translate the `editor` namespace in `src/i18n/pt-BR/index.ts` and update `test/locale-browser-smoke.mjs` fallback key check in lockstep. | P1 · `editor` keys `100%` translated in `pt-BR`; `locale-browser-smoke.mjs` passes on both `help` and `pages-fuzz`. |
+| *⚠️ Caveat `C5.R4→C5.R5`* | `test/locale-browser-smoke.mjs:20` explicitly asserts `fallback === 'Stat Block Settings'` from `g.$t('editor.renderSettings')` to prove untranslated fallback behavior; translating `editor.*` without updating that assertion breaks `npm run gate`. | Update smoke fallback test to a dedicated untranslated sentinel or fallback test helper in the same commit. |
+| **`C5.R5`** | Translate remaining namespaces (`character`, `cr`, `error`, template categories) in `src/i18n/pt-BR/index.ts` and raise `PT_BR_MIN_KEYS` in `test/core/I18nCoverage.test.ts` toward `919 / 919`. | P1 · `100%` key coverage across all `en-US` namespaces; all parameterized `{...}` / `{0}` / `{1}` tokens preserved. |
+| *⚠️ Risk `C5.R5→C5.R6`* | Dropping, renaming, or reordering interpolation placeholders (`{0}`, `{name}`) inside `pt-BR` templates fails silently at runtime instead of throwing compile errors. | Assert placeholder-token set equality per key in `I18nCoverage.test.ts`. |
+| **`C5.R6`** | Wire `quasar/lang/pt-BR` dynamically alongside app `locale` changes so Quasar built-in dialog, pagination, and empty-state strings localize with the UI. | P2 · Selecting `Português (BR)` updates Quasar component chrome alongside custom i18n keys. |
+| *⚠️ Gap `C5.R6→C5.R7`* | Naive static import of all Quasar lang packs bloats the main bundle and can regress `pages-assets` size/parse budget under slow connections. | Load only needed `en-US` / `pt-BR` lang objects cleanly and verify `pages-assets` + `budget-browser-probe`. |
+| **`C5.R7`** | Localize or structurally generate `src/components/ChangelogContent.vue` from structured release metadata. | P3 · Changelog entries track release metadata cleanly without duplicating manual prose blocks. |
+| **`C8.R4`** | Remove the `4` stale `eslint-disable ... no-explicit-any` comments in `src/stores/templates-store.ts` (`170, 183, 195, 211`) and review `tools/ratchet.mjs` `explicitAny` regex sensitivity (after `SensesEditor.vue:153` moves to i18n). | P2 · Zero stale disables in `templates-store.ts`; `eslintDisables` ratcheted `23 -> 19`. |
+| *⚠️ Risk `C8.R4→C8.R5`* | Altering `tools/ratchet.mjs` matching rules changes longitudinal baselines if undocumented in `tools/ratchet.json` and the build packet. | Keep regex edits strictly additive/safer or extract `SensesEditor.vue:153` first so the ratchet stays comparable. |
+| **`C8.R5`** | Replace the `8` real TS `any`s across `6` files (`useFileLoader.ts:26, 83, 88` [`3`], `ChainCell.vue:254` [`1`], `useMdRenderer.ts:242` [`1`], `useImprovedInitRenderer.ts:38` [`1`], `useHomebrewery3Renderer.ts:230` [`1`], `useTarrasqueRenderer.ts:35` [`1`]) plus their `8` paired disables. | P1 · `0` real TS `any` annotations in `src/`; `explicitAny` ratcheted down toward `0`–`1` and `eslintDisables` down by `8`. |
+| *⚠️ Caveat `C8.R5→C8.R6`* | Build `254` showed that removing `any` casts at loader/preset boundaries can unmask silent field drops unless backed by schema guards. | Pair every boundary typing change in `useFileLoader.ts` & exporters with roundtrip JSON/preset core tests. |
+| **`C8.R6`** | Resolve remaining non-`.d.ts` `eslint-disable` comments (`useV1Updater.ts:28, 77` `no-non-null-assertion`, `CLASS.ts:154` `no-unused-vars`, `SCHEMA.ts:17` `no-explicit-any`, `ChainCell.vue:238` `require-default-prop`, `MechanicTextEditor.vue:45` & `MonsterTextEditor.vue:42`), leaving only the `4` intentional `.d.ts` disables (`env.d.ts`, `quasar.d.ts`, `shims-vue.d.ts`, `store-flag.d.ts`). | P2 · Only `.d.ts` ambient declaration disables remain (`eslintDisables` `<= 4`–`6`). |
+| *⚠️ Risk `C8.R6→C12.R2`* | Removing `useV1Updater.ts` non-null assertions without explicit guards risks `TypeError` crashes on malformed or partial legacy v1 `.monster` files. | Add null/shape guards and malformed v1 fixture tests before lifting assertions. |
+| **`C12.R2`** | Convert fixed `delay()` / `setTimeout` waits in browser smokes (`locale-browser-smoke.mjs`, `build250-workflow`, `exhaustive-ui-fuzz.js`) into bounded condition-polling / event-driven waits. | P1 · Zero timer-race flakes across repeated `help` & `pages-fuzz` gate runs (eliminates flake seen in Builds `262` & `267`). |
+| *⚠️ Gap `C12.R2→C12.R3`* | Condition-polling helpers without strict upper-bound timeouts can stall the gate instead of failing fast with state diagnostics. | Require bounded timeouts (`<= 5–10s`) and emit active route/DOM diagnostics on timeout. |
+| **`C12.R3`** | Add saved-browser reload E2E coverage proving non-default IndexedDB / LocalStorage mutations persist across full `page.reload()` (`Spec.md` `BS-06` `◐`). | P1 · `BS-06` promoted to `✅`; reload E2E verifies mutated monster fields survive reload. |
+| *⚠️ Gap `C12.R3→C12.R4`* | Reloading without mutating beyond defaults can pass falsely by re-hydrating starter template data. | Assert non-default name, CR/HP, and custom traits survive hard reload. |
+| **`C12.R4`** | Audit and resolve `descriptionContainers` ordering between outcomes and prose in composer-structured entries (Build `269` packet follow-up). | P2 · Deterministic container ordering documented, tested across renderers, and visually verified (`104 / 104`). |
+| *⚠️ Caveat `C12.R4→D1`* | Reordering container output changes multi-exporter snapshots across Markdown, Homebrewery v3, Improved Initiative, and Tarrasque renderers. | Validate exporter fixtures and run full `visual` comparison against production before shipping. |
+| **`D1.1`** | Audit `2014` vs `2024` stat block field & rule differences against `Spec.md` rules policy matrix (`rulesEdition`). | P2 · Complete conversion mapping table covering unrepresentable or lossy fields. |
+| **`D1.2`** | Implement deterministic `2014 ↔ 2024` rules converter emitting an explicit loss/adjustment report before mutating the store. | P2 · Non-destructive preview/diff + lossless undo path via `monster-store`. |
+| **`D1.3`** | Add roundtrip core test suite verifying bidirectional `2014 ↔ 2024` conversions and irreversible field warnings. | P2 · Automated coverage for spellcasting placement, PB/CR formulas, and legendary/bonus action shifts. |
+| *⚠️ Gap `D1→D2`* | Silent conversion without loss reporting violates creator-confidence guarantees (`R7` / `BS` honesty specs). | Block silent mutation whenever unmapped fields exist without user confirmation. |
+| **`D2.1`** | Build optional focused side-help drawer synchronized to active editor section or focused control (`C5` / `BS-33` UI enhancement). | P3 · Drawer displays current control's i18n help text without stealing focus or covering editor inputs. |
+| **`D2.2`** | Extend automated contrast & keyboard-focus trap audit (`budget-browser-probe`) to high-contrast Light Studio styling & open dialogs/menus. | P2 · Zero WCAG contrast regressions across both Light and Dark editor surfaces. |
+| **`D2.3`** | Consolidate dark-mode vs light-mode CSS custom properties to drive `importantAppScss` (`21`) and `importantDarkContrast` (`15`) further down. | P2 · Ratchet metrics decrease with zero visual drift in `visual-diff`. |
+| *⚠️ Caveat `D2→D3`* | Light-mode overrides touched carelessly can re-introduce dark-on-dark `<q-select>` text bugs fixed in Build `251`. | Gate every CSS token cleanup behind Dark + Light contrast probes. |
+| **`D3.1`** | Expand Open5e / SRD importer regression fixtures (`useOpen5eImport.ts`) covering condition notes, multi-attack shapes, and legendary costs (extending Build `270`). | P1 · Full roundtrip fixture coverage for complex multi-action SRD monsters. |
+| **`D3.2`** | Add exporter parity & visual checks for Build `269` features (frameless portrait, AC riders, Natural Armor `10 + DEX + bonus`, radial size strip). | P2 · Web, Markdown, Homebrewery v3, Improved Initiative, and Tarrasque renderers match intended projection. |
+| **`D3.3`** | Enforce typed schema validation at file-import and v1-migration boundaries (`useFileLoader.ts`, `useV1Updater.ts`) paired with `C8.R5`–`C8.R6`. | P2 · Invalid saves surface structured recovery/error banners instead of partial store corruption. |
+| *⚠️ Risk `D3→D4`* | Strict schema rejection without graceful coercion could lock out slightly malformed historical community `.monster` JSON exports. | Support non-fatal coercion warnings alongside strict validation. |
+| **`D4.1`** | Document & validate per-document print/PDF/letter margin and presentation presets (`C6` follow-up). | P3 · Predictable print/A4 clipping bounds verified across `Fit inventory` views. |
+| **`D4.2`** | Track bundle sizes and SPA runtime probe budgets (`keystroke p95`, `completion`, `CatalogSelect` open latency) in release receipts / ratchet alerts. | P3 · Regression alert triggers before UI interaction latency exceeds `25–40 ms` thresholds. |
+| **`D4.3`** | Automate release-note / changelog generation helper feeding `ChangelogContent.vue` and `docs/roadmap/` release packets (`C5.R7` + `C9`). | P3 · Single source of truth eliminates manual `package.json` / `build.json` / changelog version drift. |
 
 ---
 

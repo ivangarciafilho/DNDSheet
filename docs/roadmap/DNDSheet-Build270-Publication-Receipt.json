@@ -1,0 +1,141 @@
+{
+  "build": 270,
+  "version": "2.5.0",
+  "slug": "c5-i18n-ratchet-and-backlog-convergence",
+  "date": "2026-11-18",
+  "branch": "build185-repairs",
+  "sourceCommit": "e913cc1",
+  "baseCommit": "47a0839",
+  "pagesCommit": "38e7284",
+  "tag": "rc-2.5.0-build-270-c5-i18n-ratchet-and-backlog-convergence",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 11,
+    "flaky": [],
+    "inputFingerprint": "cc1362e695e63531389ba7baa7c72b8ebd3809f3951c247305df14a33a86280e",
+    "coreTests": {
+      "passed": 701,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "subtests": 689
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "typecheck": {
+      "diagnostics": 0,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 683,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 556,
+      "total": 556,
+      "floorPercent": 100
+    },
+    "ptBrI18n": {
+      "covered": 533,
+      "total": 919,
+      "percent": 58.0,
+      "floor": 533
+    },
+    "ratchet": {
+      "importantAppScss": 21,
+      "importantDarkContrast": 15,
+      "importantTotal": 365,
+      "filesOver900Lines": 0,
+      "explicitAny": 9,
+      "todoFixme": 0,
+      "eslintDisables": 23,
+      "vHtml": 0
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "spaBudgetProbe": {
+      "keystrokeP95Ms": 9.3,
+      "completionOpenMs": 28.6,
+      "catalogSelectOpenMs": 8.3,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "budgetProbe": {
+      "keystrokeP95Ms": 9.1,
+      "completionOpenMs": 26.6,
+      "catalogSelectOpenMs": 17.8,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "visualDiff": {
+      "compared": 104,
+      "identical": 104,
+      "diffs": 0
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 19,
+      "typecheck": 20,
+      "build": 29,
+      "fuzz": 191,
+      "help": 254,
+      "spell": 11,
+      "pagesBuild": 28,
+      "pagesAssets": 0,
+      "pagesFuzz": 499,
+      "visual": 215
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "1970faa8348202685339af4422553a60cbdf16e4a3d6227902d0480dd6ada1db",
+    "indexHtmlBytes": 1337,
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.57421510.js",
+        "status": 200,
+        "bytes": 981004,
+        "sha256": "d7b6009597630b6dd78b4c5a5d8ac439ba92ac2a7c0f67bec4bb173c31b7598f",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.5ce6c1ee.css",
+        "status": 200,
+        "bytes": 675358,
+        "sha256": "9708247403594cc60e412e5f5fa28e1a7ff120c821586d4d78b1c0090b539d32",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.86034d09.js",
+        "status": 200,
+        "bytes": 847431,
+        "sha256": "66e4707acf0c95e66de72d914a84592c6d8d02c1d37eb9b3b9df6c25ebe39a81",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/i18n.e19a1fd8.js",
+        "status": 200,
+        "bytes": 238,
+        "sha256": "24669fd325373d8870c44cb3663225634ee995d9efa340a1039fcb69b99b4f7f",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "workloadStatus": {
+    "topLevelIds": { "total": 273, "checked": 273, "open": 0 },
+    "rawCheckboxes": { "total": 313, "checked": 313, "open": 0 },
+    "openOwnerGates": []
+  },
+  "trackCStatus": {
+    "closed": ["C1a", "C1b", "C2", "C3", "C4", "C6", "C7", "C8", "C9", "C10", "C11", "C12"],
+    "inProgress": ["C5"],
+    "build270DeliveredItems": 25
+  }
+}
