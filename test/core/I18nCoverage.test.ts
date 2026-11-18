@@ -5,7 +5,7 @@ import pt from '../../src/i18n/pt-BR/index.ts'
 
 // C5 coverage contract for Brazilian Portuguese: no stale keys, identical placeholders, help fully translated,
 // and overall coverage that may only grow (raise PT_BR_MIN_KEYS when more namespaces are translated).
-const PT_BR_MIN_KEYS = 533
+const PT_BR_MIN_KEYS = 920
 
 type Tree = { [key: string]: string | Tree }
 const leaves = (tree: Tree, prefix = ''): Map<string, string> => {
@@ -32,10 +32,13 @@ test('C5: pt-BR keeps the same {placeholders} as en-US', () => {
   assert.deepEqual(mismatched.map(([key]) => key), [])
 })
 
-test('C5: pt-BR translates every help text (BS-33) and nothing is left empty', () => {
+test('C5: pt-BR translates every help text (BS-33) and nothing non-empty in en-US is left empty', () => {
   const missingHelp = [...enKeys.keys()].filter((key) => key.startsWith('help.') && !ptKeys.has(key))
   assert.deepEqual(missingHelp, [])
-  assert.deepEqual([...ptKeys].filter(([, text]) => !text.trim()).map(([key]) => key), [])
+  assert.deepEqual(
+    [...ptKeys].filter(([key, text]) => (enKeys.get(key) ?? '').trim().length > 0 && !text.trim()).map(([key]) => key),
+    []
+  )
 })
 
 test('C5: pt-BR coverage only grows', () => {

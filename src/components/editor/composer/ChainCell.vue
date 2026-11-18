@@ -35,13 +35,13 @@
       <form class="chain-editor" :aria-label="`Edit ${cell.label}`" @submit.prevent="apply" @keydown="holdEnter" @keyup="applyOnEnter">
         <div class="chain-editor__title">{{ cell.label }}</div>
 
-        <mechanic-text-editor v-if="kind === 'text' && cell.id === 'trigger'" v-model="draft" dense outlined dark :label="cell.label" />
-        <mechanic-text-editor v-else-if="kind === 'text'" v-model="draft" scope="action" dense outlined dark autofocus :label="cell.label" :hint="hint" />
+        <mechanic-text-editor v-if="kind === 'text' && cell.id === 'trigger'" v-model="textDraft" dense outlined dark :label="cell.label" />
+        <mechanic-text-editor v-else-if="kind === 'text'" v-model="textDraft" scope="action" dense outlined dark autofocus :label="cell.label" :hint="hint" />
 
         <formula-field v-else-if="kind === 'number' && numericPath && isolatedNumericModel" v-help="'Enter a number or bind a formula reference for this rule cell.'" data-enter-local :path="numericPath" :label="cell.label" :draft-model="isolatedNumericModel" @applied="value => draft = value" @draft-state="value => numericDraftPending = value" />
         <q-input
           v-else-if="kind === 'number'"
-          v-model="draft"
+          v-model="numberDraft"
           v-help="'Enter a whole numeric override or leave blank to use the creature default.'"
           type="number"
           dense
@@ -77,7 +77,7 @@
         </div>
 
         <template v-else-if="kind === 'suggest'">
-          <q-input v-model="draft" v-help="'Select a suggested 5e duration, target, or rule term below, or type a custom phrase.'" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a categorized suggestion below or type your own" />
+          <q-input v-model="textDraft" v-help="'Select a suggested 5e duration, target, or rule term below, or type a custom phrase.'" dense outlined dark autofocus :label="cell.label" :list="listId" hint="Pick a categorized suggestion below or type your own" />
           <datalist :id="listId">
             <option v-for="option in spec.options" :key="option" :value="option" />
           </datalist>
@@ -102,7 +102,7 @@
         </template>
 
         <div v-else-if="kind === 'multi'" class="chain-checks">
-          <q-checkbox v-for="option in multiOptions" :key="option" v-model="draft" v-help="'Toggle whether this option is active in the action clause.'" :val="option" :label="option" dense dark />
+          <q-checkbox v-for="option in multiOptions" :key="option" v-model="multiDraft" v-help="'Toggle whether this option is active in the action clause.'" :val="option" :label="option" dense dark />
           <div v-if="spec.allowCustom" class="row q-col-gutter-xs items-center q-mt-xs">
             <div class="col">
               <q-input v-model="customEntry" v-help="$t('help.composer.customOption')" dense outlined dark label="Other" data-enter-local @keydown.enter.prevent="addCustom" />
@@ -115,52 +115,52 @@
 
         <div v-else-if="kind === 'count'" class="row q-col-gutter-xs items-center">
           <div class="col">
-            <q-input v-model="draft.count" v-help="$t('help.composer.amount')" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
+            <q-input v-model="boxDraft.count" v-help="$t('help.composer.amount')" dense outlined dark autofocus label="How many" hint="A number, all, or a formula such as PB" />
           </div>
           <div class="col-auto">
-            <q-toggle v-model="draft.mode" v-help="'Turn on or off up to for the chain cell.'" true-value="up_to" false-value="exact" label="up to" dark dense />
+            <q-toggle v-model="boxDraft.mode" v-help="'Turn on or off up to for the chain cell.'" true-value="up_to" false-value="exact" label="up to" dark dense />
           </div>
         </div>
 
         <div v-else-if="kind === 'range'" class="column q-gutter-y-xs">
-          <q-btn-toggle v-model="draft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
+          <q-btn-toggle v-model="boxDraft.relation" v-help="'Choose whether range is within distance, beyond minimum reach, or anywhere.'" :options="relationOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           <div class="row q-col-gutter-xs items-start">
             <div class="col-5">
-              <q-input v-model="draft.distance" v-help="$t('help.composer.distance')" dense outlined dark autofocus label="Distance" />
+              <q-input v-model="boxDraft.distance" v-help="$t('help.composer.distance')" dense outlined dark autofocus label="Distance" />
             </div>
-            <div v-if="draft.relation !== 'reach'" class="col-3">
-              <q-input v-model="draft.longDistance" v-help="'Optional long range for ranged attacks: 80 with long 320 prints 80/320 ft.'" data-range-long dense outlined dark label="Long" />
+            <div v-if="boxDraft.relation !== 'reach'" class="col-3">
+              <q-input v-model="boxDraft.longDistance" v-help="'Optional long range for ranged attacks: 80 with long 320 prints 80/320 ft.'" data-range-long dense outlined dark label="Long" />
             </div>
             <div class="col-auto self-center">
-              <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
+              <q-btn-toggle v-model="boxDraft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
             </div>
             <div class="col">
-              <q-input v-model="draft.origin" v-help="$t('help.composer.unitOrShape')" dense outlined dark label="Of" placeholder="you" />
+              <q-input v-model="boxDraft.origin" v-help="$t('help.composer.unitOrShape')" dense outlined dark label="Of" placeholder="you" />
             </div>
           </div>
         </div>
 
         <div v-else-if="kind === 'area'" class="row q-col-gutter-xs items-start">
           <div class="col-12 col-sm-5">
-            <q-input v-model="draft.shape" v-help="$t('help.composer.shape')" dense outlined dark autofocus label="Shape" :list="listId" />
+            <q-input v-model="boxDraft.shape" v-help="$t('help.composer.shape')" dense outlined dark autofocus label="Shape" :list="listId" />
             <datalist :id="listId">
               <option v-for="shape in areaShapes" :key="shape" :value="shape" />
             </datalist>
           </div>
           <div class="col-5 col-sm-3">
-            <q-input v-model="draft.distance" v-help="$t('help.composer.size')" dense outlined dark label="Size" />
+            <q-input v-model="boxDraft.distance" v-help="$t('help.composer.size')" dense outlined dark label="Size" />
           </div>
           <div class="col-auto self-center">
-            <q-btn-toggle v-model="draft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
+            <q-btn-toggle v-model="boxDraft.unit" v-help="'Choose whether this range or area dimension is measured in feet or miles.'" :options="unitOptions" dense no-caps unelevated size="sm" toggle-color="amber-4" toggle-text-color="grey-10" color="grey-8" />
           </div>
           <div class="col-12">
-            <q-input v-model="draft.origin" v-help="$t('help.composer.origin')" dense outlined dark label="Originating from" placeholder="itself" />
+            <q-input v-model="boxDraft.origin" v-help="$t('help.composer.origin')" dense outlined dark label="Originating from" placeholder="itself" />
           </div>
         </div>
 
-        <action-usage-editor v-else-if="kind === 'action-usage'" ref="usageEditor" v-model="draft" />
-        <trait-cadence-editor v-else-if="kind === 'trait-cadence'" v-model="draft" />
-        <chain-outcomes-editor v-else-if="kind === 'outcomes' || kind === 'effects'" v-model="draft" :mode="kind" />
+        <action-usage-editor v-else-if="kind === 'action-usage'" ref="usageEditor" v-model="usageDraft" />
+        <trait-cadence-editor v-else-if="kind === 'trait-cadence'" v-model="cadenceDraft" />
+        <chain-outcomes-editor v-else-if="kind === 'outcomes' || kind === 'effects'" v-model="outcomesDraft" :mode="kind" />
 
         <div v-if="error" class="chain-editor__error" role="alert">{{ error }}</div>
 
@@ -189,6 +189,8 @@ import type { DndStat } from 'src/core/domain/types'
 import ChainOutcomesEditor from './ChainOutcomesEditor.vue'
 import FormulaField from 'src/components/kit/FormulaField.vue'
 import type { NumericBinding } from 'src/core/domain/formula'
+import type { ActionUsageDraft } from 'src/core/domain/action-usage'
+import type { TraitCadenceDraft } from 'src/core/domain/trait-composer'
 
 type EditorKind = 'text' | 'number' | 'select' | 'suggest' | 'multi' | 'count' | 'range' | 'area' | 'outcomes' | 'effects' | 'trait-cadence' | 'action-usage'
 
@@ -234,9 +236,7 @@ export default defineComponent({
     cell: { type: Object as PropType<ChainCellView>, required: true },
     spec: { type: Object as PropType<ComposerCellSpec>, required: true },
     /** The editor's starting value, read fresh from the store each time the editor opens. */
-    // No default on purpose: Boolean in the type list makes an absent value `false`, which boolean cells rely on.
-    // eslint-disable-next-line vue/require-default-prop
-    value: { type: [String, Number, Boolean, Object, Array, Symbol] as PropType<unknown>, required: false },
+    value: { type: [String, Number, Boolean, Object, Array, Symbol] as PropType<unknown>, required: true },
     numericPath: { type: String, default: undefined },
     numericDraftModel: { type: Function as PropType<(cellId: string) => object>, default: undefined },
     allowClear: { type: Boolean, default: true },
@@ -250,8 +250,34 @@ export default defineComponent({
     const open = ref(false)
     const numericDraftPending = ref(false)
     const isolatedNumericModel = ref<(object & { bindings?: Record<string, NumericBinding> }) | undefined>()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- the draft's shape depends on the cell kind
-    const draft = ref<any>('')
+    const draft = ref<unknown>('')
+    const textDraft = computed<string>({
+      get: () => (typeof draft.value === 'string' ? draft.value : String(draft.value ?? '')),
+      set: (value) => { draft.value = value ?? '' },
+    })
+    const numberDraft = computed<string | number | null>({
+      get: () => (typeof draft.value === 'number' || typeof draft.value === 'string' ? draft.value : String(draft.value ?? '')),
+      set: (value) => { draft.value = value ?? '' },
+    })
+    const multiDraft = computed<string[]>({
+      get: () => (Array.isArray(draft.value) ? (draft.value as string[]) : []),
+      set: (value) => { draft.value = value },
+    })
+    const boxDraft = computed<Record<string, string | number | null | undefined>>(() =>
+      isRecord(draft.value) ? (draft.value as Record<string, string | number | null | undefined>) : {}
+    )
+    const usageDraft = computed<ActionUsageDraft>({
+      get: () => draft.value as ActionUsageDraft,
+      set: (value) => { draft.value = value },
+    })
+    const cadenceDraft = computed<TraitCadenceDraft>({
+      get: () => draft.value as TraitCadenceDraft,
+      set: (value) => { draft.value = value },
+    })
+    const outcomesDraft = computed<unknown>({
+      get: () => draft.value,
+      set: (value) => { draft.value = value },
+    })
     const customEntry = ref('')
     const optionList = ref<HTMLElement | null>(null)
 
@@ -515,6 +541,13 @@ export default defineComponent({
       listId,
       open,
       draft,
+      textDraft,
+      numberDraft,
+      multiDraft,
+      boxDraft,
+      usageDraft,
+      cadenceDraft,
+      outcomesDraft,
       customEntry,
       optionList,
       kind,

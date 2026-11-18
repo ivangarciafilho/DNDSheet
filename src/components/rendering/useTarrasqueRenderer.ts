@@ -9,6 +9,20 @@ import { useTextRenderer } from './useTextRenderer'
 import { tarrasqueDamageDice, tarrasqueEntry, tarrasqueText } from 'src/core/domain/tarrasque-export'
 import { structuredAttackBonus } from 'src/core/domain/structured-attack'
 
+type TarrasqueEntry = ReturnType<typeof tarrasqueEntry> & {
+  damage_dice?: string
+  damage_bonus?: number
+}
+
+interface TarrasqueCreature extends Record<string, unknown> {
+  speed_json: Record<string, number>
+  special_abilities: TarrasqueEntry[]
+  actions: TarrasqueEntry[]
+  legendary_actions?: TarrasqueEntry[]
+  reactions?: TarrasqueEntry[]
+  spellList?: string[]
+}
+
 const statMap = {
   STR: 'strength',
   DEX: 'dexterity',
@@ -30,9 +44,7 @@ export function useTarrasqueRenderer() {
 
   // Tarrasque.io also uses JSON so we'll corral the 5emm monster data into tarrasque's format
   const renderTarrasqueJson = () => {
-    // listen i'm not writing an interface for this i'm guessing at the types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tio: any = {}
+    const tio: Partial<TarrasqueCreature> = {}
 
     // basics
     tio.name = monster.name
@@ -49,9 +61,10 @@ export function useTarrasqueRenderer() {
     )}`
     tio.speed = tarrasqueText(renderer.speeds.value)
 
-    tio.speed_json = {}
+    const speedJson: Record<string, number> = {}
+    tio.speed_json = speedJson
     monster.speeds.forEach((s) => {
-      tio.speed_json[s.type ?? 'unknown'] = s.speed
+      speedJson[s.type ?? 'unknown'] = s.speed
     })
 
     // stats
@@ -94,18 +107,20 @@ export function useTarrasqueRenderer() {
 
     // Pair each shared prose projection with its source record. Names are not identity:
     // duplicate names and cadence-prefixed leads must not redirect numeric metadata.
-    tio.special_abilities = monster.traits.map((trait) =>
+    const specialAbilities: TarrasqueEntry[] = monster.traits.map((trait) =>
       tarrasqueEntry(processTrait(trait, monster), trait.name, trait.crAnnotation?.maxModifier ?? 0)
     )
+    tio.special_abilities = specialAbilities
     for (const lair of monster.lairActions || []) {
-      tio.special_abilities.push({ name: 'Lair Action', desc: tarrasqueText(processLairAction(lair, monster)), attack_bonus: 0 })
+      specialAbilities.push({ name: 'Lair Action', desc: tarrasqueText(processLairAction(lair, monster)), attack_bonus: 0 })
     }
 
     // The existing target contract merges bonus actions into actions and retains
     // physical attack fields. Only their description now comes from shared prose.
-    tio.actions = []
+    const actions: TarrasqueEntry[] = []
+    tio.actions = actions
     if (monster.multiattacks.length > 0) {
-      tio.actions.push({
+      actions.push({
         name: 'Multiattack',
         desc: tarrasqueText(processTokens('{multiattack.all}. {multiattack.postscript}', monster.multiattacks, monster, 'multiattack')),
         attack_bonus: 0,
@@ -113,14 +128,14 @@ export function useTarrasqueRenderer() {
     }
     // Keep every physical definition: legendary references otherwise lose their dice/bonus source.
     for (const attack of monster.attacks) {
-      tio.actions.push({
+      actions.push({
         ...tarrasqueEntry(processAttack(attack, monster), attack.name, monster.attackModifier(attack.id)),
         damage_dice: tarrasqueDamageDice(attack),
         damage_bonus: monster.attackDamageModifier(attack.id),
       })
     }
     for (const action of monster.actions.filter((entry) => !entry.legendaryOnly)) {
-      tio.actions.push(tarrasqueEntry(
+      actions.push(tarrasqueEntry(
         processAction(action, monster),
         action.name,
         structuredAttackBonus(action, monster) ?? action.crAnnotation?.maxModifier ?? 0
@@ -138,11 +153,11 @@ export function useTarrasqueRenderer() {
     // Retain the rule as a labeled special ability using the existing target shape.
     if (monster.mythicActions.actions.length > 0) {
       const mythicTrait = renderer.mythicTrait.value
-      if (mythicTrait.trim()) tio.special_abilities.push(tarrasqueEntry(mythicTrait))
+      if (mythicTrait.trim()) specialAbilities.push(tarrasqueEntry(mythicTrait))
       const mythicEntries = monster.mythicActions.actions.map((member) =>
         processLegendaryAction(member.actionId, member.cost, monster)
       )
-      tio.special_abilities.push({
+      specialAbilities.push({
         name: 'Mythic Actions',
         desc: tarrasqueText([renderer.mythicPreamble.value, ...mythicEntries].join('\n')),
         attack_bonus: 0,
@@ -161,7 +176,7 @@ export function useTarrasqueRenderer() {
       const preamble = renderer.classSpellcastingPreamble.value
       const renderedSpellcasting = `${preamble}\n• ${renderedRows.join('\n• ')}`
 
-      tio.special_abilities.push({
+      specialAbilities.push({
         name: t('editor.spellcasting.class.label'),
         desc: tarrasqueText(renderedSpellcasting),
         attack_bonus: 0,
@@ -175,7 +190,7 @@ export function useTarrasqueRenderer() {
         .map((list) => `${list.renderedLabel}: ${list.renderedSpells}`)
         .join('\n• ')
 
-      tio.special_abilities.push({
+      specialAbilities.push({
         name: t('editor.spellcasting.innate.label'),
         desc: tarrasqueText(
           `${renderer.innateSpellcastingPreamble.value}\n• ${atWillRendered}`

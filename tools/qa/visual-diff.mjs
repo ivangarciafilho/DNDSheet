@@ -30,7 +30,7 @@ fs.mkdirSync(outDir, { recursive: true })
 // VDIFF_CONTROL=1 nudges the candidate by 1px so a run can prove the comparison detects change.
 async function capture(url, port, control = false) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'vdiff-'))
-  const chrome = spawn(CHROME, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', '--force-device-scale-factor=1', '--window-size=1500,1400', url])
+  const chrome = spawn(CHROME, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', '--force-device-scale-factor=1', '--window-size=1500,1400', 'about:blank'])
   const shots = new Map(); const errors = []
   try {
     let target
@@ -41,10 +41,24 @@ async function capture(url, port, control = false) {
     ws.addEventListener('message', ev => { const m = JSON.parse(String(ev.data)); if (m.method === 'Runtime.exceptionThrown') errors.push(m.params.exceptionDetails.exception?.description || m.params.exceptionDetails.text); if (m.id && pending.has(m.id)) { pending.get(m.id)(m); pending.delete(m.id) } })
     const cdp = (method, params = {}) => new Promise(r => { const n = ++id; pending.set(n, r); ws.send(JSON.stringify({ id: n, method, params })) })
     const evaluate = async expr => { const r = await cdp('Runtime.evaluate', { expression: `(${expr})()`, awaitPromise: true, returnByValue: true }); if (r.result?.exceptionDetails) throw new Error(JSON.stringify(r.result.exceptionDetails).slice(0, 400)); return r.result?.result?.value }
-    await cdp('Runtime.enable'); await cdp('Page.enable')
+    await cdp('Runtime.enable'); await cdp('Page.enable'); await cdp('Page.navigate', { url })
     // no caret blink, no transitions: screenshots must be stable
     const freeze = `()=>{if(!document.getElementById('vdiff-freeze')){const s=document.createElement('style');s.id='vdiff-freeze';s.textContent='*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}'+(CONTROL?'#render .statblock{padding-left:1px!important}':'');document.head.appendChild(s)}}`.replace('CONTROL', String(control))
-    const ready = async () => { for (let i = 0; i < 100; i++) { if (await evaluate('()=>!!document.querySelector("#render .statblock")')) break; await sleep(150) } await evaluate('async()=>{const d=document.querySelector(".q-dialog");if(d&&d.textContent.includes("Changelog")){([...d.querySelectorAll("button")].find(b=>b.textContent.includes("Done"))||d.querySelector("button"))?.click();await new Promise(r=>setTimeout(r,400))}}'); await evaluate(freeze); await evaluate('async()=>{await document.fonts.ready}'); await sleep(400) }
+    const ready = async () => {
+      let ok = false
+      for (let i = 0; i < 200; i++) {
+        if (await evaluate('()=>location.protocol.startsWith("http")&&!!document.querySelector("#render .statblock")')) { ok = true; break }
+        await sleep(150)
+      }
+      if (!ok) {
+        const href = await evaluate('()=>location.href').catch(() => 'unknown')
+        throw new Error(`Timed out waiting for ready statblock at ${url} (href=${href}, errors=${JSON.stringify(errors)})`)
+      }
+      await evaluate('async()=>{const d=document.querySelector(".q-dialog");if(d&&d.textContent.includes("Changelog")){([...d.querySelectorAll("button")].find(b=>b.textContent.includes("Done"))||d.querySelector("button"))?.click();await new Promise(r=>setTimeout(r,400))}}')
+      await evaluate(freeze)
+      await evaluate('async()=>{await document.fonts.ready}')
+      await sleep(400)
+    }
     await ready()
     for (const fx of FIXTURES) {
       const monster = migrateMonsterSchema(JSON.parse(fs.readFileSync(path.join(root, `test/fixtures/monsters/${fx.split('+')[0]}.json`), 'utf8')))

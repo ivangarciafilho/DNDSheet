@@ -19,7 +19,7 @@
       <template #macros>
         <q-btn dense no-caps no-wrap unelevated size="sm" icon="data_object" label="Insert" :aria-label="`Insert a formula or macro${displayTitle ? ' into ' + displayTitle : ''}`" data-macro-browse @click="browse = true">
           <q-tooltip>Formulas, references, rolls and macros, filtered to what this text can use.</q-tooltip>
-          <macro-browse-menu v-model="browse" :scope="scope" @pick="(entry: MacroEntry) => add(entry.insert)" />
+          <macro-browse-menu v-model="browse" :scope="scope" @pick="onPickMacro" />
         </q-btn>
       </template>
     </q-editor>
@@ -39,7 +39,6 @@ import { safeHtml } from 'src/core/adapters/safe-html'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useProcessTokens } from '../rendering/useProcessTokens'
 import { catalogFor, unresolvedMacros } from 'src/core/domain/macro-catalog'
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- MacroEntry types a template handler the linter cannot see
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
 import MacroBrowseMenu from './MacroBrowseMenu.vue'
 import MacroSuggestPopup from './MacroSuggestPopup.vue'
@@ -143,12 +142,15 @@ export default defineComponent({
       customMacros: (monster as unknown as { customMacros?: Record<string, unknown> }).customMacros,
     }))
 
+    const onPickMacro = (entry: MacroEntry) => add(entry.insert)
+
     return {
       richSuggest,
       editorRef,
       browse,
       scope,
       add,
+      onPickMacro,
       unknown,
       displayTitle,
       throttledUpdate,

@@ -1,8 +1,8 @@
 <template>
   <q-timeline color="secondary">
     <q-timeline-entry
-      title="v2.5.0 (Builds 250–270)"
-      subtitle="Statblock Overhaul, Modular Architecture & Bilingual Help - 11/2026"
+      title="v2.5.0 (Builds 250–271)"
+      subtitle="Statblock Overhaul, Full pt-BR UI, Rules Converter & Zero-Any Hardening - 11/2026"
       icon="auto_awesome"
       color="positive"
     >
@@ -11,18 +11,21 @@
           <li>
             Modular editor & domain decomposition (Builds 256–267: 0 files over
             900 lines), site-wide <code>CatalogSelect</code>, and 100%
-            <code>v-help</code> tooltip coverage (554/554 controls).
+            <code>v-help</code> tooltip coverage (556/556 controls).
           </li>
           <li>
-            Opt-in English/Português (<code>pt-BR</code>) help tips and monster
-            terminology, dark-mode WCAG contrast overhaul, AC rider composer
-            with Natural Armor base, frameless portrait toggle, and
-            <code>BS-39</code> paired normal/long range support.
+            100% Brazilian Portuguese (<code>pt-BR</code>) UI & help dictionary
+            (920/920 keys) with Quasar locale synchronization, dark-mode WCAG
+            contrast overhaul, AC rider composer with Natural Armor base,
+            frameless portrait toggle, and <code>BS-39</code> paired range
+            support.
           </li>
           <li>
-            Open5e legendary action cost and attack description fixes, stored
-            XSS sanitization, and quality ratchet (0 ESLint errors/warnings, 0
-            typecheck diagnostics).
+            Deterministic <code>2014 ↔ 2024</code> rules edition converter with
+            loss report, stored-state browser reload E2E verification
+            (<code>BS-06</code>), Open5e attack/legendary fixes, and quality
+            ratchet at 0 explicit <code>any</code>s and 0 app lint
+            suppression comments.
           </li>
         </ul>
       </div>

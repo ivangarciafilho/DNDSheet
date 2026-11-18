@@ -154,6 +154,9 @@ export const HELP_MESSAGES_PT_BR: Translated<HelpMessages> = {
     chipShove: 'Empurra inimigos adjacentes 1,5 m ao passar por eles em alta velocidade.',
     chipEthereal: 'Passa brevemente ao Plano Etéreo durante o movimento para atravessar barreiras.',
   },
+  senses: {
+    sentienceScope: 'Escolha se o sentido detecta qualquer criatura pensante ou apenas tipos específicos.',
+  },
   actions: {
     sortTraitsAlpha: 'Ordena os Traços passivos em ordem alfabética no bloco renderizado.',
     collapseAll: 'Recolhe de uma vez todas as gavetas abertas de ações, traços e reações.',

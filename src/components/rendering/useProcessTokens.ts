@@ -384,7 +384,8 @@ export function useProcessTokens(options: { web?: boolean } = {}) {
         const scopeText = scopePhrase(ability, renderContext)
         const scope = scopeText ? [boldNumbers(scopeText)] : []
         const effectsStr = outcomesHtml(ability, renderContext)
-        let desc = processTokens(`${effectsStr}${context.description || ''} ${formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)}`, context, monster, 'reaction').trim()
+        const containersStr = formatDescriptionContainers(asAction.descriptionContainers, monster.randomTables)
+        let desc = processTokens(`${effectsStr}${containersStr ? containersStr + ' ' : ''}${context.description || ''}`, context, monster, 'reaction').trim()
         if (context.stat && context.stat !== 'none') {
           desc = desc.replace(/^<i>[^<]*Saving Throw:<\/i>\s*DC\s*\d+(?:,\s*[^.]+)?\.\s*/i, '')
         }

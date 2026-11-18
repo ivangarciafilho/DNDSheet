@@ -9,6 +9,7 @@ import { useMonsterSessionStore } from 'src/stores/monster-session'
 import { importCharacter } from 'src/core/domain/character-import'
 import { useSpellsStore } from 'src/stores/spells-store'
 import { useI18n } from 'vue-i18n'
+import { inspectMonsterPayload, stripDangerousKeys } from 'src/core/domain/file-payload-guard'
 import { readSheetPresentation, readSheetSpells } from './native-monster-file'
 
 export function useFileLoader() {
@@ -17,16 +18,14 @@ export function useFileLoader() {
   const { t } = useI18n()
 
   const loadFile = (file: File) => {
-    // we'll want to validate the loaded json against a schema eventually
     const reader = new FileReader()
     reader.addEventListener('load', (e) => {
       try {
         if (e.target != null && e.target.result != null) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const monster: any = JSON.parse(e.target.result.toString())
+          const raw: unknown = JSON.parse(e.target.result.toString())
 
           // B4.17: a .character.json file loads into the character sheet instead of failing as a monster.
-          const character = importCharacter(monster)
+          const character = importCharacter(raw)
           if (character) {
             useCharacterStore().actor = character
             useEditorStore().activeMode = 'character'
@@ -35,21 +34,22 @@ export function useFileLoader() {
           }
 
           // validate
-          if (!monster || !Object.hasOwn(SCHEMA, monster.saveVersion)) {
+          const inspection = inspectMonsterPayload(raw, Object.keys(SCHEMA))
+          if (!inspection.ok) {
             $q.notify({
               type: 'negative',
               message: t('io.error.version'),
             })
           } else {
-            const valid = validate(monster, SCHEMA[monster.saveVersion])
+            const valid = validate(inspection.record, SCHEMA[inspection.saveVersion])
 
             if (valid.valid) {
-              loadMonster(monster)
+              loadMonster(inspection.record)
             } else {
               $q.notify({
                 message: t('io.error.validation', [
-                  monster.saveVersion,
-                  valid.errors.map((e) => e.stack).join(', '),
+                  inspection.saveVersion,
+                  valid.errors.map((err) => err.stack).join(', '),
                 ]),
                 type: 'negative',
               })
@@ -79,17 +79,20 @@ export function useFileLoader() {
     reader.readAsText(file)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const updateMonster = (monster: any) => {
+  const updateMonster = (monster: object) => {
     // File import, live validation and stored-library loading share one migration authority.
     Object.assign(monster, migrateMonsterSchema(monster))
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const loadMonster = (data: any) => {
-    const { sheetPresentation, sheetCustomSpells, ...record } = data
-    delete record.__proto__
-    delete record.constructor
-    delete record.prototype
+  const loadMonster = (data: unknown) => {
+    const clean = stripDangerousKeys(data)
+    if (!clean) {
+      $q.notify({
+        message: t('io.error.unknown'),
+        type: 'negative',
+      })
+      return
+    }
+    const { sheetPresentation, sheetCustomSpells, ...record } = clean
     const monster = migrateMonsterSchema(record)
     const valid = validate(monster, SCHEMA[CURRENT_MONSTER_VERSION])
 

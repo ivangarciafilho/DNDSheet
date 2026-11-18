@@ -25,8 +25,7 @@ export function useV1Updater() {
           noDismiss: true,
           handler: () => {
             download(
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              localStorage.getItem('app.customSpells')!,
+              localStorage.getItem('app.customSpells') ?? '[]',
               'v1-spells.5emms.json',
               'application/json'
             )
@@ -74,8 +73,7 @@ export function useV1Updater() {
           noDismiss: true,
           handler: () => {
             download(
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              localStorage.getItem('app.customTemplates')!,
+              localStorage.getItem('app.customTemplates') ?? '{}',
               'v1-templates.5emmt.json',
               'application/json'
             )

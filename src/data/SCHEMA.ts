@@ -14,10 +14,9 @@ import v11 from './schema/5emm-v11.json'
 import spellsV1 from './schema/spells-v1.json'
 import spellsV2 from './schema/spells-v2.json'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SPELL_SCHEMA: Record<string, any> = {
-  v1: spellsV1,
-  v2: spellsV2,
+export const SPELL_SCHEMA: Record<string, Schema> = {
+  v1: spellsV1 as unknown as Schema,
+  v2: spellsV2 as unknown as Schema,
 }
 
 export const SCHEMA: Record<string, Schema> = {

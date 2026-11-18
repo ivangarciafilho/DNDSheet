@@ -150,7 +150,7 @@
             <template v-if="sense.name.toLowerCase().includes('sentience')">
               <div class="col-12 col-sm-5">
                 <catalog-select
-                  v-help="'What the sense detects: any thinking creature or only some kinds.'"
+                  v-help="$t('help.senses.sentienceScope')"
                   :model-value="sense.senseSentienceMode ?? 'location_intelligent'"
                   :entries="senseSentienceOptions"
                   preserve-order

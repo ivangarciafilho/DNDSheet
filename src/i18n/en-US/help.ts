@@ -149,6 +149,9 @@ export const HELP_MESSAGES = {
     chipShove: 'Push adjacent foes 5 ft. when sweeping past during high-speed movement.',
     chipEthereal: 'Shift briefly into the Ethereal Plane during movement to bypass barriers.',
   },
+  senses: {
+    sentienceScope: 'Choose whether the sense detects every thinking creature or only specific kinds.',
+  },
   actions: {
     sortTraitsAlpha: 'Sort passive Traits alphabetically on the rendered stat block.',
     collapseAll: 'Collapse all expanded action, trait, and reaction drawers at once.',

@@ -7,7 +7,54 @@ import { avgRoll, renderBonus, statModifier } from './mathRendering'
 import { useProcessTokens } from './useProcessTokens'
 import { useTextRenderer } from './useTextRenderer'
 import { creatureTypeLine, splitEntryLead } from 'src/core/domain/export-markup'
+import type { Monster } from 'src/core/domain/types'
 import slugify from 'slugify'
+
+interface ImprovedInitNamedValue {
+  Name: string
+  Modifier: number
+}
+
+interface ImprovedInitEntry {
+  Name: string
+  Content: string
+}
+
+interface ImprovedInitCreature {
+  Id?: string
+  Name?: string
+  Path?: string
+  Link?: string
+  SearchHint?: string
+  FilterDimensions?: { Level: string; Source: string; Type: string }
+  LastUpdateMs?: number
+  Version?: string
+  Source?: string
+  Type?: string
+  HP?: { Value: number; Notes: string }
+  InitiativeModifier?: number
+  InitiativeAdvantage?: boolean
+  Speed: string[]
+  AC?: { Value: number; Notes: string }
+  Abilities: Record<string, number>
+  Saves: ImprovedInitNamedValue[]
+  DamageVulnerabilities?: Monster['vulnerabilities']
+  DamageResistances?: Monster['resistances']
+  DamageImmunities?: Monster['immunities']
+  ConditionImmunities?: Monster['conditions']
+  Skills: ImprovedInitNamedValue[]
+  Senses: string[]
+  Languages?: string[]
+  Challenge?: string
+  Traits?: ImprovedInitEntry[]
+  Actions: ImprovedInitEntry[]
+  LegendaryActions?: ImprovedInitEntry[]
+  MythicActions?: ImprovedInitEntry[]
+  Reactions?: ImprovedInitEntry[]
+  Description?: string
+  Player?: string
+  ImageURL?: string
+}
 
 const statMap = {
   STR: 'Str',
@@ -33,9 +80,7 @@ export function useImprovedInitRenderer() {
     // manifest
     const iiManifest = [slugify(monster.name)]
 
-    // listen i'm not writing an interface for this i'm guessing at the types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const ii: any = {}
+    const ii: Partial<ImprovedInitCreature> = {}
 
     // basics
     ii.Id = iiManifest[0] // slugified id
@@ -64,32 +109,35 @@ export function useImprovedInitRenderer() {
     }
     ii.InitiativeModifier = statModifier(monster.stats.DEX)
     ii.InitiativeAdvantage = Boolean(monster.initiativeConfig?.advantage)
-    ii.Speed = []
+    const speedList: string[] = []
+    ii.Speed = speedList
     monster.speeds.forEach((s) => {
-      ii.Speed.push(`${s.type ?? 'walk'} ${s.speed} ft.`)
+      speedList.push(`${s.type ?? 'walk'} ${s.speed} ft.`)
     })
     ii.AC = {
       Value: monster.AC,
       Notes: monster.ACType,
     }
 
-    ii.Abilities = {}
-    ii.Saves = []
+    const abilities: Record<string, number> = {}
+    const saves: ImprovedInitNamedValue[] = []
+    ii.Abilities = abilities
+    ii.Saves = saves
 
     // stats
     for (const stat in monster.stats) {
-      ii.Abilities[statMap[stat as DndStat]] = monster.stats[stat as DndStat]
+      abilities[statMap[stat as DndStat]] = monster.stats[stat as DndStat]
 
       // save, only add if proficient or overridden
       const save = monster.saves[stat as DndStat]
 
       if (save.override) {
-        ii.Saves.push({
+        saves.push({
           Name: statMap[stat as DndStat],
           Modifier: save.overrideValue,
         })
       } else if (save.proficient) {
-        ii.Saves.push({
+        saves.push({
           Name: statMap[stat as DndStat],
           Modifier: monster.defaultSaveBonus(stat as DndStat),
         })
@@ -102,18 +150,19 @@ export function useImprovedInitRenderer() {
     ii.ConditionImmunities = monster.conditions
 
     // skills
-    ii.Skills = []
+    const skills: ImprovedInitNamedValue[] = []
+    ii.Skills = skills
     // convert to lower case and replace ' ' with '_' (idk if this is how it actually works)S
     for (const skill of monster.skills) {
       const key = skill.skill.label
 
       if (skill.override) {
-        ii.Skills.push({
+        skills.push({
           Name: key,
           Modifier: skill.overrideValue,
         })
       } else {
-        ii.Skills.push({
+        skills.push({
           Name: key,
           Modifier: monster.defaultSkillBonus(skill),
         })
@@ -121,16 +170,17 @@ export function useImprovedInitRenderer() {
     }
 
     // immunities, resistances, senses, languages
-    ii.Senses = []
+    const senses: string[] = []
+    ii.Senses = senses
     Object.entries(monster.senses).forEach(([sense, range]) => {
       if (range > 0) {
-        ii.Senses.push(`${sense} ${range} ft.`)
+        senses.push(`${sense} ${range} ft.`)
       }
     })
-    ii.Senses.push(`passive Perception ${monster.computedPassivePerception}`)
+    senses.push(`passive Perception ${monster.computedPassivePerception}`)
 
     if (monster.sensesNotes) {
-      ii.Senses.push(
+      senses.push(
         processTokens(monster.sensesNotes, undefined, monster, 'none')
       )
     }
@@ -155,11 +205,12 @@ export function useImprovedInitRenderer() {
     ii.Traits = poolEntries(renderer.traits.value)
 
     // actions includes multiattack, regular attack, and extra actions
-    ii.Actions = []
+    const actions: ImprovedInitEntry[] = []
+    ii.Actions = actions
 
     // tarrasque io likes to have multiattack first looks like
     if (monster.multiattacks.length > 0) {
-      ii.Actions.push({
+      actions.push({
         Name: 'Multiattack',
         Content: stripTags(
           processTokens(
@@ -173,7 +224,7 @@ export function useImprovedInitRenderer() {
     }
 
     // attacks, actions and bonus actions, in stat-block order
-    ii.Actions.push(...poolEntries(renderer.attacks.value), ...poolEntries(renderer.actions.value), ...poolEntries(renderer.bonusActions.value))
+    actions.push(...poolEntries(renderer.attacks.value), ...poolEntries(renderer.actions.value), ...poolEntries(renderer.bonusActions.value))
 
     ii.LegendaryActions = poolEntries(renderer.legendaryActions.value)
     ii.MythicActions = poolEntries(renderer.mythicActions.value)
@@ -191,7 +242,7 @@ export function useImprovedInitRenderer() {
       const preamble = renderer.classSpellcastingPreamble.value
       const renderedSpellcasting = `${preamble}\n• ${renderedRows.join('\n• ')}`
 
-      ii.Actions.push({
+      actions.push({
         Name: t('editor.spellcasting.class.label'),
         // Plain-text target: tags removed above leave runs of spaces behind.
         Content: stripTags(renderedSpellcasting).replace(/[ \t]{2,}/g, ' '),
@@ -205,7 +256,7 @@ export function useImprovedInitRenderer() {
         .map((list) => `${list.renderedLabel}: ${list.renderedSpells}`)
         .join('\n• ')
 
-      ii.Actions.push({
+      actions.push({
         Name: t('editor.spellcasting.innate.label'),
         Content: stripTags(
           `${renderer.innateSpellcastingPreamble.value}\n• ${atWillRendered}`

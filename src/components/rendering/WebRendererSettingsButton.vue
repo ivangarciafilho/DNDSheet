@@ -183,6 +183,7 @@ import { useMonsterStore } from 'src/stores/monster-store'
 import { computed, defineComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { persistLocale, type AppLocale } from 'src/i18n/locale'
+import { syncQuasarLang } from 'src/i18n/quasar-lang'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import {
   WORKSPACE_PRESETS,
@@ -236,6 +237,7 @@ export default defineComponent({
       set: (value) => {
         locale.value = value
         persistLocale(value)
+        syncQuasarLang(value)
       },
     })
 

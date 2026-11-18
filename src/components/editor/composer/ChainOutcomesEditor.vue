@@ -274,7 +274,7 @@ export default defineComponent({
   name: 'ChainOutcomesEditor',
   components: { MechanicTextEditor, CatalogSelect },
   props: {
-    modelValue: { type: Array as PropType<unknown[]>, required: true },
+    modelValue: { type: [Array, String, Number, Boolean, Object] as PropType<unknown>, required: true },
     mode: { type: String as PropType<'outcomes' | 'effects'>, default: 'outcomes' },
   },
   emits: ['update:modelValue'],

@@ -167,7 +167,6 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(action) as unknown as ActionTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (template as { id?: string }).id // remove the id
       template.type = 'Action'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Action : icon
@@ -180,7 +179,6 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(attack) as unknown as AttackTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (template as { id?: string }).id // remove the id
       template.type = 'Attack'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Attack : icon
@@ -192,7 +190,6 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(trait) as unknown as TraitTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (template as { id?: string }).id // remove the id
       template.type = 'Trait'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Trait : icon
@@ -208,7 +205,6 @@ export const useTemplatesStore = defineStore('templates', {
       const template = _.cloneDeep(reaction) as unknown as ReactionTemplate
 
       // now we have to make it comply
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       delete (template as { id?: string }).id // remove the id
       template.type = 'Reaction'
       template.icon = icon === '' ? DEFAULT_TEMPLATE_ICON.Reaction : icon

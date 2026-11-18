@@ -1,5 +1,5 @@
 <template>
-  <div class="mechanic-text-editor" :class="$attrs.class" :style="$attrs.style as StyleValue" data-enter-local>
+  <div class="mechanic-text-editor" :class="$attrs.class" :style="rootStyle" data-enter-local>
     <q-input v-if="!rich" ref="inputRef" v-bind="$attrs" :model-value="modelValue" :label="label" @update:model-value="onInput" @keydown="onKeydown" @blur="closeSuggest">
       <template v-for="(_, name) in forwardedSlots" #[name]="slotScope"><slot :name="name" v-bind="slotScope || {}" /></template>
       <template #append>
@@ -42,7 +42,6 @@
   </div>
 </template>
 <script lang="ts">
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- StyleValue types a template binding the linter cannot see
 import type { PropType, StyleValue } from 'vue'
 import { computed, defineComponent, nextTick, ref, useSlots, watch } from 'vue'
 import { hasMechanicFormatting, mechanicPlainText, mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
@@ -71,7 +70,8 @@ export default defineComponent({
     scope: { type: String as PropType<MacroScope>, default: 'mechanic' },
   },
   emits: ['update:modelValue'],
-  setup(props, { emit }) {
+  setup(props, { attrs, emit }) {
+    const rootStyle = computed<StyleValue>(() => attrs.style as StyleValue)
     const formatting = ref(false), browse = ref(false), slots = useSlots()
     const inputRef = ref<{ $el?: HTMLElement } | null>(null), editorRef = ref<{ runCmd?: (cmd: string, value?: string) => void; focus?: () => void; getContentEl?: () => HTMLElement } | null>(null)
     const forwardedSlots = Object.fromEntries(Object.entries(slots).filter(([name]) => name !== 'append'))
@@ -163,7 +163,7 @@ export default defineComponent({
     watch([rich, editorRef], () => void nextTick(() => { contentEl.value = rich.value ? editorRef.value?.getContentEl?.() ?? null : null }), { immediate: true })
     const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({ scope: props.scope, query, limit: 8, ...custom() }))
 
-    return { listId, richSuggest, formatting, browse, rich, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
+    return { listId, richSuggest, formatting, browse, rich, rootStyle, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
   },
 })
 </script>

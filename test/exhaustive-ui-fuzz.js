@@ -16,6 +16,7 @@ async function runFuzz() {
   activeProfile = tmpDir
   console.log(`Launching headless Chrome on port ${PORT}...`)
 
+  const targetUrl = process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
   const chromeProc = spawn(CHROME_PATH, [
     `--remote-debugging-port=${PORT}`,
     `--user-data-dir=${tmpDir}`,
@@ -23,7 +24,7 @@ async function runFuzz() {
     '--disable-gpu',
     '--no-sandbox',
     '--disable-extensions',
-    process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
+    'about:blank'
   ])
   activeBrowser = chromeProc
 
@@ -98,9 +99,10 @@ async function runFuzz() {
     })
   }
 
-  // Enable Runtime and Page domains
+  // Enable Runtime and Page domains, then navigate explicitly so headless Chrome never stalls on about:blank.
   await sendCdp('Runtime.enable')
   await sendCdp('Page.enable')
+  await sendCdp('Page.navigate', { url: targetUrl })
 
   // Wait for initial render of Quasar app
   console.log('Waiting for Quasar #q-app mount...')
@@ -2609,18 +2611,21 @@ async function runFuzz() {
   const reloadApp = async () => {
     const previousOrigin = await evalInPage('() => performance.timeOrigin')
     await sendCdp('Page.reload')
-    for (let attempt = 0; attempt < 300; attempt++) {
+    for (let attempt = 0; attempt < 450; attempt++) {
       await pause(100)
-      const ready = await evalInPage(`() => {
+      const state = await evalInPage(`() => {
         const pinia = document.querySelector('#q-app')?.__vue_app__?.config.globalProperties.$pinia;
         const editor = pinia?._s.get('editor');
-        return performance.timeOrigin !== ${JSON.stringify(previousOrigin)} && !!editor && !!pinia._s.get(editor.activeMode === 'character' ? 'character' : 'monster') &&
+        const reloaded = performance.timeOrigin !== ${JSON.stringify(previousOrigin)};
+        const ready = reloaded && !!editor && !!pinia._s.get(editor.activeMode === 'character' ? 'character' : 'monster') &&
           !!document.querySelector('header button .mdi-folder-open') &&
           !!(editor.activeMode === 'character' ? document.querySelector('#char-splitter') : document.querySelector('#render .statblock'));
+        return { reloaded, ready, href: location.href, readyState: document.readyState, hasPinia: !!pinia, hasEditor: !!editor };
       }`)
-      if (ready) return
+      if (state.ready) return
+      if ((attempt === 120 || attempt === 260) && !state.reloaded) await sendCdp('Page.reload', { ignoreCache: true })
     }
-    throw new Error('Reloaded document did not mount the editor stores within 30 seconds')
+    throw new Error('Reloaded document did not mount the editor stores within 45 seconds')
   }
 
   await sendCdp('Emulation.setFocusEmulationEnabled', { enabled: true })

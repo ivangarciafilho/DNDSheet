@@ -3,7 +3,7 @@ import { HELP_MESSAGES } from './help.ts'
 export default {
   locale: {
     label: 'Language',
-    hint: 'Help text is available in Portuguese; other interface text is still English.',
+    hint: 'Interface and help text are available in English and Brazilian Portuguese.',
   },
   app: {
     name: "Falindrith's Monster Maker",

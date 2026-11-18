@@ -226,12 +226,12 @@ ${mdFormatter(renderer.regionalEffectPreamble.value)}`
   // formatted for the Homebrewery system, version 3
   // https://homebrewery.naturalcrit.com/
   const renderMarkdownV3 = (twoCol = false) => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const s: any = {}
+    const s = {} as Record<DndStat, { score: number; bonus: string }>
     for (const stat in monster.stats) {
-      s[stat] = {
-        score: monster.stats[stat as DndStat],
-        bonus: renderModifier(monster.stats[stat as DndStat]),
+      const key = stat as DndStat
+      s[key] = {
+        score: monster.stats[key],
+        bonus: renderModifier(monster.stats[key]),
       }
     }
 

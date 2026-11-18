@@ -101,7 +101,16 @@ export async function browserProbe(
       await delay(100)
     }
     if (!ready) throw Error('Rendered app unavailable: ' + JSON.stringify(exceptions))
-    const result = await run({ send, evaluate, delay })
+    const waitFor = async (predicateExpression, { timeoutMs = 8000, intervalMs = 50, label = predicateExpression } = {}) => {
+      const deadline = Date.now() + timeoutMs
+      while (Date.now() < deadline) {
+        const value = await evaluate(predicateExpression)
+        if (value) return value
+        await delay(intervalMs)
+      }
+      throw Error(`waitFor timed out after ${timeoutMs}ms: ${label}`)
+    }
+    const result = await run({ send, evaluate, delay, waitFor })
     if (exceptions.length) throw Error(JSON.stringify(exceptions))
     return result
   } finally {
