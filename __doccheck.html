@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Doc check</title>
+<style>
+  body { font: 13px/1.4 system-ui, sans-serif; margin: 12px; background: #fff; color: #111; }
+  .ok { color: #1d6b29; } .bad { color: #a8211a; font-weight: 600; }
+  pre { white-space: pre-wrap; background: #f6f6f6; padding: 6px; margin: 4px 0 10px; }
+</style>
+</head>
+<body>
+<h1>Mermaid check</h1>
+<div id="out">running…</div>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.esm.min.mjs'
+  mermaid.initialize({ startOnLoad: false, securityLevel: 'strict' })
+  const params = new URLSearchParams(location.search)
+  const files = (params.get('files') || 'DNDSheet-Professional-Product-and-Architecture-Spec.md').split(',')
+  const out = document.getElementById('out')
+  const results = []
+  for (const f of files) {
+    const res = await fetch('/docs/roadmap/' + f + '?t=' + Date.now())
+    const md = await res.text()
+    const lines = md.split('\n')
+    let inBlock = false, start = 0, buf = []
+    const blocks = []
+    lines.forEach((ln, i) => {
+      if (!inBlock && ln.trim() === '```mermaid') { inBlock = true; start = i + 2; buf = [] }
+      else if (inBlock && ln.trim() === '```') { inBlock = false; blocks.push({ line: start, code: buf.join('\n') }) }
+      else if (inBlock) buf.push(ln)
+    })
+    for (const b of blocks) {
+      try {
+        await mermaid.parse(b.code)
+        results.push({ file: f, line: b.line, ok: true, kind: b.code.trim().split(/\s/)[0] })
+      } catch (e) {
+        results.push({ file: f, line: b.line, ok: false, kind: b.code.trim().split(/\s/)[0], error: String(e && (e.message || e)).slice(0, 600) })
+      }
+    }
+  }
+  window.__docResults = results
+  const bad = results.filter(r => !r.ok)
+  out.innerHTML = `<p>${results.length} diagrams, <span class="${bad.length ? 'bad' : 'ok'}">${bad.length} failing</span></p>` +
+    bad.map(r => `<div class="bad">${r.file}:${r.line} (${r.kind})</div><pre>${r.error.replace(/</g, '&lt;')}</pre>`).join('')
+</script>
+</body>
+</html>
