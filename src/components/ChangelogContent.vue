@@ -1,6 +1,33 @@
 <template>
   <q-timeline color="secondary">
     <q-timeline-entry
+      title="v2.5.0 (Builds 250–270)"
+      subtitle="Statblock Overhaul, Modular Architecture & Bilingual Help - 11/2026"
+      icon="auto_awesome"
+      color="positive"
+    >
+      <div class="text-body2">
+        <ul>
+          <li>
+            Modular editor & domain decomposition (Builds 256–267: 0 files over
+            900 lines), site-wide <code>CatalogSelect</code>, and 100%
+            <code>v-help</code> tooltip coverage (554/554 controls).
+          </li>
+          <li>
+            Opt-in English/Português (<code>pt-BR</code>) help tips and monster
+            terminology, dark-mode WCAG contrast overhaul, AC rider composer
+            with Natural Armor base, frameless portrait toggle, and
+            <code>BS-39</code> paired normal/long range support.
+          </li>
+          <li>
+            Open5e legendary action cost and attack description fixes, stored
+            XSS sanitization, and quality ratchet (0 ESLint errors/warnings, 0
+            typecheck diagnostics).
+          </li>
+        </ul>
+      </div>
+    </q-timeline-entry>
+    <q-timeline-entry
       title="v2.4.3"
       subtitle="Maintenance - 5/17/2026"
       icon="build"

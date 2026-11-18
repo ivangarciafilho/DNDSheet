@@ -421,8 +421,7 @@ export default defineComponent({
     const dataParamFound = route.query.data != null
 
     const showDataLoad = ref(false)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const queryData: any = ref({})
+    const queryData = ref<Record<string, unknown>>({})
 
     const loadDataParam = async () => {
       try {

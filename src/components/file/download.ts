@@ -21,7 +21,6 @@ export function download(
   setTimeout(() => URL.revokeObjectURL(url), 0)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function saveJson(data: any, filename: string) {
+export function saveJson(data: unknown, filename: string) {
   download(JSON.stringify(data), filename, 'application/json')
 }

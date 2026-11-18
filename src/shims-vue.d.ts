@@ -8,8 +8,8 @@ declare module '*.vue' {
 
 declare module 'json-url' {
   interface Codec {
-    compress: (obj: any) => Promise<string>
-    decompress: (str: any) => Promise<unknown>
+    compress: (obj: unknown) => Promise<string>
+    decompress: (str: unknown) => Promise<unknown>
   }
 
   const jsonurl: (codecName: string) => Codec

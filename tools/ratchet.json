@@ -3,8 +3,8 @@
   "importantDarkContrast": 15,
   "importantTotal": 365,
   "filesOver900Lines": 0,
-  "explicitAny": 22,
+  "explicitAny": 9,
   "todoFixme": 0,
-  "eslintDisables": 35,
+  "eslintDisables": 23,
   "vHtml": 0
 }

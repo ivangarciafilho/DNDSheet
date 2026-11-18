@@ -5,7 +5,7 @@ import pt from '../../src/i18n/pt-BR/index.ts'
 
 // C5 coverage contract for Brazilian Portuguese: no stale keys, identical placeholders, help fully translated,
 // and overall coverage that may only grow (raise PT_BR_MIN_KEYS when more namespaces are translated).
-const PT_BR_MIN_KEYS = 251
+const PT_BR_MIN_KEYS = 533
 
 type Tree = { [key: string]: string | Tree }
 const leaves = (tree: Tree, prefix = ''): Map<string, string> => {

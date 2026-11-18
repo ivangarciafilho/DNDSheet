@@ -562,8 +562,7 @@ export function useOpen5eImport() {
 
         // match group 7 is everything else to the end of the string
         if (damageMatches[7] != null) {
-          newAttack.description +=
-            newAttack.description + ' ' + damageMatches[7]
+          newAttack.description = `${newAttack.description} ${damageMatches[7]}`.trim()
         }
       } else {
         importNote(t('import.error.attackDamageFail', [a.name, a.desc]))
@@ -612,16 +611,17 @@ export function useOpen5eImport() {
           ? a.name.substring(0, a.name.indexOf('(') - 1)
           : a.name
 
-      // match an attack
+      // match an attack using the normalized base name (without cost suffix)
+      const normalizedName = name.trim().toLowerCase()
       const existingAttack = monster.attacks.find(
-        (atk) => atk.name.toLowerCase().indexOf(a.name) !== -1
+        (atk) => atk.name.toLowerCase().includes(normalizedName)
       )
 
       if (existingAttack != null) {
         monster.addLegendaryAction(existingAttack.id, cost)
       } else {
         const id = processAction({ name, desc: a.desc }, true)
-        monster.addLegendaryAction(id)
+        monster.addLegendaryAction(id, cost)
       }
     })
   }
@@ -649,8 +649,7 @@ export function useOpen5eImport() {
 
     // core stats
     Object.entries(StatMap).forEach(([stat, dataKey]) => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      monster.stats[stat as DndStat] = (data as any)[dataKey]
+      monster.stats[stat as DndStat] = (data as unknown as Record<string, number>)[dataKey]
     })
 
     // let's parse hp
@@ -680,8 +679,7 @@ export function useOpen5eImport() {
     Object.entries(StatMap).forEach(([stat, dataKey]) => {
       const saveKey = `${dataKey}_save`
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const save: number | null = (data as any)[saveKey]
+      const save: number | null = (data as unknown as Record<string, number | null>)[saveKey]
 
       if (save != null) {
         // assume proficiency

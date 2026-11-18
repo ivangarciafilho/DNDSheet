@@ -106,12 +106,11 @@ export const useSpellsStore = defineStore('spells', {
         const old = JSON.parse(oldCustom)
 
         // remove unused fields and assign to new format
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        old.forEach((s: any) => {
+        old.forEach((s: Record<string, unknown> & { name: string; class: string[] }) => {
           delete s.levelDisplay
-          s.class = s.class.map((s: string) => _.upperCase(s))
+          s.class = s.class.map((cls: string) => _.upperCase(cls))
 
-          this.customSpells[s.name] = s as DndSpell
+          this.customSpells[s.name] = (s as unknown) as DndSpell
         })
 
         // delete the old key
