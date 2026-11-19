@@ -1,1 +1,0 @@
-import{b as e,c as o,m as l}from"./index.57421510.js";import{s as r,F as c}from"./locale.d20a5687.js";var m=e(({app:a})=>{const s=o({locale:r(),fallbackLocale:c,fallbackWarn:!1,missingWarn:!1,messages:l});a.use(s)});export{m as default};
