@@ -2987,7 +2987,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-03 | `STACK_STATE.md` historic claims | Re-run its claims; rewrite as evidence-backed | A17 | ✅ build 222 (A17.7) |
 | BS-04 | CDP e2e status at HEAD | `npm run test:e2e` once at A4 start (baseline) | A4 | ✅ build 248 (11-step gate) |
 | BS-05 | Production build status at HEAD | `npx quasar build` at A4 start | A4 | ✅ build 248 (11-step gate) |
-| BS-06 | Persisted-state hydration with new optional keys | Migration and AI-ingest round trips preserve fields; full saved-browser reload remains broader regression coverage | A6, A9 | ◐ |
+| BS-06 | Persisted-state hydration with new optional keys | Full saved-browser `Page.reload` E2E (`test/locale-browser-smoke.mjs` on SPA & Pages) proves mutated name, CR, HD, custom trait, Natural Armor `naturalBonus`, `acConfig.riders`, and `pt-BR` locale survive hard reload | A6, A9 | ✅ build 271 |
 | BS-07 | Primary subclass is component-local (`ref('')`) and may not persist | Set subclass, reload, inspect `app.monster` | A12 | ✅ build 248 (A12) |
 | BS-08 | Other i18n warnings beyond `monster.spellcasting.stat` | Console scan on fixture load | A4 | ✅ build 248 (0 console warnings) |
 | BS-09 | Template data (`src/data/templates`) uses legacy action shapes | Inventory: 44 structured attacks; 28 legacy actions without structured fields; no committed Seraph fixture | A6 | ✅ |

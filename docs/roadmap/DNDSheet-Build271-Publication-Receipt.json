@@ -1,0 +1,150 @@
+{
+  "build": 271,
+  "version": "2.5.0",
+  "slug": "c5-complete-zero-any-and-rules-conversion",
+  "date": "2026-11-18",
+  "branch": "build185-repairs",
+  "sourceCommit": "ef06142",
+  "baseCommit": "9fe255f",
+  "pagesCommit": "5b22089",
+  "tag": "rc-2.5.0-build-271-c5-complete-zero-any-and-rules-conversion",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 11,
+    "flaky": [],
+    "inputFingerprint": "68cc92a3b57f28ebeb75207b9690f31474c63ebed98bca42d7d1b958f4153351",
+    "coreTests": {
+      "passed": 707,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "subtests": 695
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "typecheck": {
+      "diagnostics": 0,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 683,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 556,
+      "total": 556,
+      "floorPercent": 100
+    },
+    "ptBrI18n": {
+      "covered": 920,
+      "total": 920,
+      "percent": 100.0,
+      "floor": 920,
+      "quasarLangSynced": true
+    },
+    "ratchet": {
+      "importantAppScss": 21,
+      "importantDarkContrast": 15,
+      "importantTotal": 365,
+      "filesOver900Lines": 0,
+      "explicitAny": 0,
+      "todoFixme": 0,
+      "eslintDisables": 4,
+      "vHtml": 0
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "spaBudgetProbe": {
+      "keystrokeP95Ms": 8.6,
+      "completionOpenMs": 26.6,
+      "catalogSelectOpenMs": 10.4,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "budgetProbe": {
+      "keystrokeP95Ms": 10.7,
+      "completionOpenMs": 33.9,
+      "catalogSelectOpenMs": 10.7,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "visualDiff": {
+      "compared": 104,
+      "identical": 104,
+      "diffs": 0
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 19,
+      "typecheck": 26,
+      "build": 43,
+      "fuzz": 189,
+      "help": 244,
+      "spell": 10,
+      "pagesBuild": 43,
+      "pagesAssets": 0,
+      "pagesFuzz": 441,
+      "visual": 205
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "677de687b74b318378a7b7d63889be5b15004be1951c484c1af593e5992e2c76",
+    "indexHtmlBytes": 1337,
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.ea89b4fb.js",
+        "status": 200,
+        "bytes": 999802,
+        "sha256": "488ace616c9caa18de2daad121afd044321f98fe127113b0feefe4817cb20a1f",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.5ce6c1ee.css",
+        "status": 200,
+        "bytes": 675358,
+        "sha256": "9708247403594cc60e412e5f5fa28e1a7ff120c821586d4d78b1c0090b539d32",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.3a2345b5.js",
+        "status": 200,
+        "bytes": 848219,
+        "sha256": "ea5081cf699a36917d9cf8e7fc78d8df0f182c1e93c6b9e904959cd10fb6381c",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/i18n.b9826fd0.js",
+        "status": 200,
+        "bytes": 265,
+        "sha256": "157f7b652faad6c8a595fcbefe9b8bce71ef371d2b7a0d713aebd4bb49cbc678",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/quasar-lang.101b5b46.js",
+        "status": 200,
+        "bytes": 2938,
+        "sha256": "182b3421d9d3d2b97c5f138543ffb4dda6b91e385ce616d8a4aaadac0e82eb55",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "workloadStatus": {
+    "topLevelIds": { "total": 273, "checked": 273, "open": 0 },
+    "rawCheckboxes": { "total": 313, "checked": 313, "open": 0 },
+    "specBlindspots": { "total": 42, "closed": 42, "open": 0 },
+    "openOwnerGates": []
+  },
+  "trackCStatus": {
+    "closed": ["C1a", "C1b", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"],
+    "inProgress": [],
+    "build271DeliveredItems": 24
+  }
+}
