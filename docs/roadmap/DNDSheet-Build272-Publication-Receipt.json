@@ -1,0 +1,159 @@
+{
+  "build": 272,
+  "version": "2.5.0",
+  "slug": "track-d-e-complete-rules-dialog-and-ratchet",
+  "date": "2026-11-23",
+  "branch": "build185-repairs",
+  "sourceCommit": "7663992",
+  "baseCommit": "1b83654",
+  "pagesCommit": "1af0b90",
+  "tag": "rc-2.5.0-build-272-track-d-e-complete-rules-dialog-and-ratchet",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 11,
+    "flaky": [],
+    "inputFingerprint": "1d9c4f091918755247f694c293a3eecbd785b9513d652a5e1e17e986ed34e921",
+    "coreTests": {
+      "passed": 713,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "subtests": 701
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "typecheck": {
+      "diagnostics": 0,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 683,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 556,
+      "total": 556,
+      "floorPercent": 100
+    },
+    "ptBrI18n": {
+      "covered": 967,
+      "total": 967,
+      "percent": 100.0,
+      "floor": 958,
+      "quasarLangSynced": true
+    },
+    "ratchet": {
+      "importantAppScss": 18,
+      "importantDarkContrast": 13,
+      "importantTotal": 361,
+      "filesOver900Lines": 0,
+      "explicitAny": 0,
+      "todoFixme": 0,
+      "eslintDisables": 4,
+      "vHtml": 0
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "spaBudgetProbe": {
+      "keystrokeP95Ms": 8.6,
+      "completionOpenMs": 26.3,
+      "catalogSelectOpenMs": 0,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "budgetProbe": {
+      "keystrokeP95Ms": 9.1,
+      "completionOpenMs": 27.8,
+      "catalogSelectOpenMs": 0,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "visualDiff": {
+      "compared": 104,
+      "identical": 104,
+      "diffs": 0
+    },
+    "timingsSeconds": {
+      "core": 5,
+      "lint": 13,
+      "typecheck": 15,
+      "build": 29,
+      "fuzz": 194,
+      "help": 275,
+      "spell": 9,
+      "pagesBuild": 28,
+      "pagesAssets": 0,
+      "pagesFuzz": 497,
+      "visual": 203
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "33e7db08fbff9da0f3bd7cc4e2b207f3a79093b2b52d50d169ea61ccc9da86a4",
+    "indexHtmlBytes": 1337,
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.66944fac.js",
+        "status": 200,
+        "bytes": 1004911,
+        "sha256": "101d9b5ca9ad3507793002b4b2b3fd89ee5409dc8978df7a29fb40ee1637e3c9",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.e8275f67.css",
+        "status": 200,
+        "bytes": 675247,
+        "sha256": "db5379c6f8fed91d66d833db4a91616183bd5d5929eacf0282cbe03ed19678f0",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.2c4abafb.js",
+        "status": 200,
+        "bytes": 849929,
+        "sha256": "f8886a7ab061e8cc267588066c9dcf9edb6cd758c4600a4a96b518a2b01a3dac",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/i18n.869e2a35.js",
+        "status": 200,
+        "bytes": 265,
+        "sha256": "a262955cdfd18f428188515dd3097247ca5fab270343082218c66f55030e4fcf",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/quasar-lang.81d129a1.js",
+        "status": 200,
+        "bytes": 2938,
+        "sha256": "2f0b3e06e5c3a122d6be1d9a31f7b61a727bbf7fe3ac813b730ed5d12260e98b",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "workloadStatus": {
+    "topLevelIds": { "total": 273, "checked": 273, "open": 0 },
+    "rawCheckboxes": { "total": 313, "checked": 313, "open": 0 },
+    "specBlindspots": { "total": 42, "closed": 42, "open": 0 },
+    "openOwnerGates": []
+  },
+  "trackCStatus": {
+    "closed": ["C1a", "C1b", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"],
+    "inProgress": []
+  },
+  "trackDEStatus": {
+    "closedSubTasks": 15,
+    "openSubTasks": 0,
+    "percentComplete": 100.0,
+    "build272DeliveredItems": 24
+  },
+  "trackFQueue": {
+    "groomedSubTasks": 12,
+    "interleavedGuards": 6
+  }
+}
