@@ -1,1 +1,0 @@
-import{b as o,c as l,m as c}from"./index.ea89b4fb.js";import{s as n,a as r,F as t}from"./quasar-lang.101b5b46.js";var f=o(({app:s})=>{const a=n();r(a);const e=l({locale:a,fallbackLocale:t,fallbackWarn:!1,missingWarn:!1,messages:c});s.use(e)});export{f as default};
