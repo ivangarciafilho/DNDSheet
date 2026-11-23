@@ -11,6 +11,7 @@ export const monsterState = {
       bindings: {},
       nickname: '',
       saveVersion: MONSTER_VERSION,
+      provenance: undefined as Monster['provenance'],
       useArticleInToken: false,
       alphaTraits: true,
       size: 'Medium',

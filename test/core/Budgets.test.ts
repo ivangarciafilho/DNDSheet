@@ -259,3 +259,23 @@ test('A17.5: production SPA bundle assets stay within budget when dist/spa exist
   assert.ok(maxJs < 1_500_000, `Largest JS bundle ${maxJs} bytes exceeds 1.5 MB ceiling`)
   assert.ok(maxCss < 900_000, `Largest CSS bundle ${maxCss} bytes exceeds 900 KB ceiling`)
 })
+
+test('D4.2: runtime interaction latency budgets and CSS ratchet ceilings stay within locked limits', () => {
+  const RUNTIME_INTERACTION_BUDGETS = Object.freeze({
+    keystrokeP95MaxMs: 25,
+    completionOpenMaxMs: 40,
+    catalogSelectOpenMaxMs: 40,
+    resolverP95MaxMs: 10,
+    minContrastRatio: 4.5,
+  })
+  assert.ok(RUNTIME_INTERACTION_BUDGETS.keystrokeP95MaxMs <= 25)
+  assert.ok(RUNTIME_INTERACTION_BUDGETS.minContrastRatio >= 4.5)
+
+  const ratchet = JSON.parse(fs.readFileSync('tools/ratchet.json', 'utf8')) as Record<string, number>
+  assert.ok(ratchet.importantAppScss <= 18, `Expected importantAppScss <= 18, got ${ratchet.importantAppScss}`)
+  assert.ok(ratchet.importantDarkContrast <= 13, `Expected importantDarkContrast <= 13, got ${ratchet.importantDarkContrast}`)
+  assert.ok(ratchet.importantTotal <= 361, `Expected importantTotal <= 361, got ${ratchet.importantTotal}`)
+  assert.equal(ratchet.explicitAny, 0)
+  assert.equal(ratchet.filesOver900Lines, 0)
+  assert.equal(ratchet.vHtml, 0)
+})

@@ -32,6 +32,8 @@ export function stripDangerousKeys(raw: unknown): Record<string, unknown> | null
 
 /** Validates envelope shape and schema version before delegating to jsonschema / migration. */
 export function inspectMonsterPayload(raw: unknown, knownVersions: readonly string[]): PayloadInspection {
+  if (!isPlainRecord(raw)) return { ok: false, reason: 'not_object' }
+  const strippedKeys = Object.keys(raw).filter((k) => DANGEROUS_KEYS.has(k))
   const clean = stripDangerousKeys(raw)
   if (!clean) return { ok: false, reason: 'not_object' }
 
@@ -41,8 +43,15 @@ export function inspectMonsterPayload(raw: unknown, knownVersions: readonly stri
   }
 
   const warnings: string[] = []
+  if (strippedKeys.length > 0) {
+    warnings.push(`Stripped unsafe prototype key(s): ${strippedKeys.join(', ')}.`)
+  }
   if (typeof rawVersion === 'number') {
     warnings.push(`Coerced numeric saveVersion (${rawVersion}) to schema key "${String(rawVersion)}".`)
+  }
+  const acConfig = isPlainRecord(clean.acConfig) ? clean.acConfig : null
+  if (acConfig && typeof acConfig.onMiss === 'string' && acConfig.onMiss && acConfig.onMiss !== 'none') {
+    warnings.push(`Legacy acConfig.onMiss ("${acConfig.onMiss}") will migrate to AC rider list.`)
   }
   const saveVersion = String(rawVersion)
   if (!knownVersions.includes(saveVersion)) {

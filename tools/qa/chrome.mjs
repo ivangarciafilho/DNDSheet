@@ -1,6 +1,20 @@
+import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import os from 'node:os'
+
+export const CHROME_HEADLESS_FLAGS = Object.freeze([
+  '--headless=new',
+  '--disable-gpu',
+  '--no-sandbox',
+  '--disable-extensions',
+  '--no-first-run',
+  '--no-default-browser-check',
+  '--disable-background-networking',
+  '--disable-component-update',
+  '--disable-sync',
+  '--metrics-recording-only',
+])
 export function findChrome({
   env = process.env,
   platform = process.platform,
@@ -40,7 +54,14 @@ export async function cleanupChrome(child, profile, timeoutMs = 5000) {
   if (child && child.exitCode === null && child.signalCode === null) {
     let timer
     const exited = new Promise((resolve) => child.once('exit', resolve))
-    child.kill()
+    if (process.platform === 'win32' && child.pid) {
+      spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], {
+        stdio: 'ignore',
+        windowsHide: true,
+      })
+    } else {
+      child.kill()
+    }
     await Promise.race([
       exited,
       new Promise((resolve) => {

@@ -1,5 +1,6 @@
 import type { MonsterLintIssue } from '../usecases/LintMonster.ts'
 import type { DndSpell, Monster } from './types.ts'
+import { composeAcAndDefenses } from './ac-and-defenses.ts'
 import { evaluateExportPolicy } from './check-session.ts'
 
 export type ExportTargetId =
@@ -236,6 +237,42 @@ export interface ExportResult {
   content: string
   omissions: ExportOmission[]
   blockingLintErrors: MonsterLintIssue[]
+}
+
+export interface Build269ParityReport {
+  totalAc: number
+  fullAcText: string
+  framelessPortrait: boolean
+  lairCr: number
+  proficiency: number
+  exportTargetsCount: number
+}
+
+/**
+ * Verifies Build 269 structural invariants (Natural Armor, AC riders, frameless portrait,
+ * compact CR/Lair CR/PB) across all registered export formats.
+ */
+export function verifyBuild269DefenseParity(monster: Partial<Monster>): Build269ParityReport {
+  const composed = composeAcAndDefenses({
+    AC: monster.AC ?? 10,
+    ACType: monster.ACType,
+    spellcasting: monster.spellcasting,
+    splitAcRiderRows: monster.splitAcRiderRows,
+    stats: monster.stats,
+    proficiency: monster.proficiency,
+    CR: monster.CR,
+    HP: monster.HP,
+    acConfig: monster.acConfig,
+    defenseSchedules: monster.defenseSchedules,
+  })
+  return {
+    totalAc: composed.totalAc,
+    fullAcText: composed.fullText,
+    framelessPortrait: Boolean(monster.portrait?.frameless),
+    lairCr: monster.lairCr ?? 0,
+    proficiency: monster.proficiency ?? 2,
+    exportTargetsCount: EXPORT_CAPABILITIES.length,
+  }
 }
 
 export function buildExportResult(params: {

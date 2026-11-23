@@ -41,8 +41,8 @@
           <q-icon name="auto_awesome" color="amber-9" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>AI Ingest Studio</q-item-label>
-          <q-item-label caption>Import LLM statblocks</q-item-label>
+          <q-item-label>{{ $t('studio.drawer.aiIngestLabel') }}</q-item-label>
+          <q-item-label caption>{{ $t('studio.drawer.aiIngestCaption') }}</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -51,8 +51,8 @@
           <q-icon name="mdi-sword-cross" color="deep-orange" />
         </q-item-section>
         <q-item-section>
-          <q-item-label>Combat Tracker HUD</q-item-label>
-          <q-item-label caption>Live battle HP & conditions</q-item-label>
+          <q-item-label>{{ $t('studio.drawer.combatHudLabel') }}</q-item-label>
+          <q-item-label caption>{{ $t('studio.drawer.combatHudCaption') }}</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -116,7 +116,7 @@
       <q-separator />
 
       <q-card-actions align="right">
-        <q-btn v-close-popup flat label="Done" color="primary" />
+        <q-btn v-close-popup flat :label="$t('studio.drawer.done')" color="primary" />
       </q-card-actions>
     </q-card>
   </q-dialog>

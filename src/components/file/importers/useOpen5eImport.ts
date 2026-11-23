@@ -24,6 +24,12 @@ import { useSpellsStore } from 'src/stores/spells-store'
 import { useClasses } from 'src/data/CLASS'
 import { useAutoUpdateCr } from 'src/components/editor/useAutoUpdateCr'
 import { useRechargeTimes } from 'src/data/RECHARGE_TIME'
+import {
+  parseOpen5eActionHeader,
+  parseOpen5eAttackDamage,
+  parseOpen5eAttackHeader,
+  parseOpen5eLegendaryCost,
+} from 'src/core/domain/open5e-parse'
 
 export function useOpen5eImport() {
   const monster = useMonsterStore()
@@ -98,41 +104,19 @@ export function useOpen5eImport() {
   }
 
   const processAction = (a: Open5eAction, legendaryOnly = false) => {
-    // plain actions aren't too bad
-    // theoretically we should replace the DCs with the relevant stat but that's work and we'd be guessing.
+    const parsed = parseOpen5eActionHeader(a.name, a.desc)
     const newAction = defaultAction()
-    newAction.name = a.name
-    newAction.description = a.desc
-
-    // check for recharge
-    const recharge = RegExp(/[\w\d\s]*\(recharge (\d-\d)\)/gi)
-    const matches = recharge.exec(a.name)
-    if (matches != null) {
-      newAction.recharge = matches[1]
-      newAction.name = a.name.substring(0, a.name.indexOf('(') - 1)
+    newAction.name = parsed.name
+    newAction.recharge = parsed.recharge
+    if (parsed.limitedUseCount > 0) {
+      newAction.limitedUse.count = parsed.limitedUseCount
+      newAction.limitedUse.rate = parsed.limitedUseRate
     }
-
-    // check for limited use
-    const limited = RegExp(/\((\d+)\/(\w+)\)/gi)
-    const limitedMatches = limited.exec(a.name)
-    if (limitedMatches != null) {
-      newAction.limitedUse.count = parseInt(limitedMatches[1])
-      newAction.limitedUse.rate = limitedMatches[2].toUpperCase()
-      newAction.name = a.name.substring(0, a.name.indexOf('(') - 1)
-    }
-
-    // replace dice strings
-    newAction.description = replaceFormattingStrings(newAction.description)
+    newAction.description = replaceFormattingStrings(a.desc)
     newAction.legendaryOnly = legendaryOnly
+    newAction.bonusAction = parsed.bonusAction
 
     autoUpdateCr(newAction.description, newAction.crAnnotation)
-
-    // is this a bonus action
-    const isBonusAction =
-      newAction.description.match(/^as a bonus action/gi) != null
-    if (isBonusAction) {
-      newAction.bonusAction = true
-    }
 
     monster.actions.push(newAction)
 
@@ -419,164 +403,68 @@ export function useOpen5eImport() {
   }
 
   const processAttack = (a: Open5eAction) => {
-    // attacks are going to be an interesting regex test
     const newAttack = defaultAttack()
-
-    // starting with the attack basics
-    const attackInfo = RegExp(
-      /(Melee|Ranged|Melee or Ranged) (Weapon|Spell) Attack: ([+-]\d+) to hit, (?:reach|range) (\d+|\d+\/\d+) ft\.(?: or (?:reach|range) (\d+)\/(\d+) ft\.)?, (\w+) (?:targets?|creatures?)\./gi
-    )
-
-    const infoMatches = attackInfo.exec(a.desc)
-    if (infoMatches != null) {
-      // run the basics
-      // match 1 is the type
-      // uppercase conversion
-      console.log(
-        `[Import] Attack parsing stage 1, info string "${infoMatches[0]}"`
-      )
-
-      const dist = infoMatches[1].toUpperCase()
-      newAttack.distance =
-        dist === 'MELEE OR RANGED' ? 'BOTH' : (dist as DndAttack['distance'])
-
-      // kind, uppercase conversion
-      const kind = infoMatches[2].toUpperCase()
-      newAttack.kind = kind as DndAttack['kind']
-
-      // modifier is tough, we need to search through the possible attack modifiers and pick a stat,
-      // otherwise we need to override it
-      const attackStat = guessAttackBonus(
-        parseInt(infoMatches[3]),
-        newAttack.kind
-      )
-      if (attackStat != undefined) {
-        newAttack.modifier.stat = attackStat
-        newAttack.modifier.proficient = true
-      } else {
-        newAttack.modifier.stat = newAttack.kind === 'SPELL' ? 'WIS' : 'STR'
-        newAttack.modifier.override = true
-        newAttack.modifier.overrideValue = parseInt(infoMatches[3])
-      }
-
-      // range
-      const range = infoMatches[4]
-
-      // condition on split range or not
-      if (range.includes('/')) {
-        // split
-        const parts = range.split('/')
-
-        const short = parseInt(parts[0])
-        const long = parseInt(parts[1])
-
-        newAttack.range.reach = short
-        newAttack.range.standard = short
-        newAttack.range.long = long
-      } else {
-        // single
-        newAttack.range.standard = parseInt(range)
-        newAttack.range.reach = parseInt(range)
-      }
-
-      if (infoMatches[5] != null && infoMatches[6] != null) {
-        // versatile
-        newAttack.range.standard = parseInt(infoMatches[5])
-        newAttack.range.long = parseInt(infoMatches[6])
-      }
-
-      // target count
-      const targets = wordToNumber[infoMatches[7]]
-      if (targets != null) {
-        newAttack.targets = targets
-      } else {
-        importNote(t('import.error.targets', [a.name, infoMatches[7]]))
-      }
-
-      // next, parse the damage
-      const damageInfo = RegExp(
-        /Hit: \d+ \((\d+)d(\d+)\s*([+-]\s*\d+)?\) (\w+) damage\.?(\s?,?\s?plus [^\.]+\.)?(?:,\s?(and [^\.]+\.?))?(.*)/gi
-      )
-      const damageMatches = damageInfo.exec(a.desc)
-      if (damageMatches != null) {
-        // complicated
-        console.log(
-          `[Import] Attack parsing stage 2, damage string "${damageMatches[0]}"`
-        )
-        // first match is the damage die count, second is the damage die type
-        newAttack.damage.count = parseInt(damageMatches[1])
-        newAttack.damage.dice = parseInt(damageMatches[2])
-
-        // optional modifier
-        if (damageMatches[3] != null) {
-          newAttack.damage.modifier.stat = newAttack.modifier.stat
-
-          // ok now check if the damage modifier actually lines up
-          const targetDamageMod = parseInt(damageMatches[3].replaceAll(' ', ''))
-          if (
-            statModifier(monster.stats[newAttack.damage.modifier.stat]) !==
-            targetDamageMod
-          ) {
-            // override if not equal, usually the modifier is based off the attack's attack mod stat
-            // but sometimes it's not. we'll assume it is and not do another guess so we just override here
-            // to match if needed
-            newAttack.damage.modifier.override = true
-            newAttack.damage.modifier.overrideValue = targetDamageMod
-          }
-        } else {
-          // override needed for 0 modifier
-          newAttack.damage.modifier.override = true
-          newAttack.damage.modifier.overrideValue = 0
-        }
-
-        // match group 4 is the primary damage type
-        // it is possible for this to be missing if the "plus" has the same damage type but if
-        // that's the case, then don't put it in plus honestly
-        newAttack.damage.type = damageMatches[4]
-
-        // match group 5 is the "plus [x] damage" strings, if any
-        if (damageMatches[5] != null) {
-          // match damage strings
-          console.log(`[Import] parsing additional damage ${damageMatches[5]}`)
-          const additionalDamage = [
-            ...damageMatches[5].matchAll(/\((\d+)d(\d+)\) (\w+) damage/gi),
-          ]
-
-          // should be straight forward from here
-          additionalDamage.forEach((match) => {
-            newAttack.additionalDamage.push({
-              id: v4(),
-              dice: parseInt(match[2]),
-              count: parseInt(match[1]),
-              type: match[3],
-              note: '', // Condition notes intentionally empty by default; populated via additional description effects
-            })
-          })
-        }
-
-        // match group 6 is the "and" additional effect, put it in the notes
-        if (damageMatches[6] != null) {
-          newAttack.description =
-            newAttack.description + `, ${damageMatches[6]}`
-        }
-
-        // match group 7 is everything else to the end of the string
-        if (damageMatches[7] != null) {
-          newAttack.description = `${newAttack.description} ${damageMatches[7]}`.trim()
-        }
-      } else {
-        importNote(t('import.error.attackDamageFail', [a.name, a.desc]))
-      }
-
-      newAttack.name = a.name
-
-      // replace dice strings in description
-      newAttack.description = replaceFormattingStrings(newAttack.description)
-      monster.attacks.push(newAttack)
-    } else {
+    const hdr = parseOpen5eAttackHeader(a.desc)
+    if (hdr == null) {
       importNote(t('import.error.attackFail', [a.name, a.desc]))
       return
     }
+
+    newAttack.distance = hdr.distance
+    newAttack.kind = hdr.kind
+    const attackStat = guessAttackBonus(hdr.toHit, newAttack.kind)
+    if (attackStat != undefined) {
+      newAttack.modifier.stat = attackStat
+      newAttack.modifier.proficient = true
+    } else {
+      newAttack.modifier.stat = newAttack.kind === 'SPELL' ? 'WIS' : 'STR'
+      newAttack.modifier.override = true
+      newAttack.modifier.overrideValue = hdr.toHit
+    }
+
+    newAttack.range.reach = hdr.reach
+    newAttack.range.standard = hdr.standard
+    newAttack.range.long = hdr.long
+
+    const targets = wordToNumber[hdr.targetWord]
+    if (targets != null) {
+      newAttack.targets = targets
+    } else {
+      importNote(t('import.error.targets', [a.name, hdr.targetWord]))
+    }
+
+    const dmg = parseOpen5eAttackDamage(a.desc)
+    if (dmg != null) {
+      newAttack.damage.count = dmg.count
+      newAttack.damage.dice = dmg.dice
+      if (dmg.modifier != null) {
+        newAttack.damage.modifier.stat = newAttack.modifier.stat
+        if (statModifier(monster.stats[newAttack.damage.modifier.stat]) !== dmg.modifier) {
+          newAttack.damage.modifier.override = true
+          newAttack.damage.modifier.overrideValue = dmg.modifier
+        }
+      } else {
+        newAttack.damage.modifier.override = true
+        newAttack.damage.modifier.overrideValue = 0
+      }
+
+      newAttack.damage.type = dmg.type
+      for (const extra of dmg.additionalDamage) {
+        newAttack.additionalDamage.push({ id: v4(), ...extra })
+      }
+      if (dmg.andClause) {
+        newAttack.description = `${newAttack.description}, ${dmg.andClause}`
+      }
+      if (dmg.trailing) {
+        newAttack.description = `${newAttack.description} ${dmg.trailing}`.trim()
+      }
+    } else {
+      importNote(t('import.error.attackDamageFail', [a.name, a.desc]))
+    }
+
+    newAttack.name = a.name
+    newAttack.description = replaceFormattingStrings(newAttack.description)
+    monster.attacks.push(newAttack)
   }
 
   const processLegendaryActions = (desc: string, actions: Open5eAction[]) => {
@@ -598,18 +486,7 @@ export function useOpen5eImport() {
 
     // action iteration
     actions.forEach((a) => {
-      // name check
-      const actionCount = new RegExp(/\(costs (\d+) actions?\)/gi)
-      const actionCountMatches = actionCount.exec(a.name)
-
-      const cost =
-        actionCountMatches != null ? parseInt(actionCountMatches[1]) : 1
-
-      // name adjustment
-      const name =
-        actionCountMatches != null
-          ? a.name.substring(0, a.name.indexOf('(') - 1)
-          : a.name
+      const { cost, baseName: name } = parseOpen5eLegendaryCost(a.name)
 
       // match an attack using the normalized base name (without cost suffix)
       const normalizedName = name.trim().toLowerCase()

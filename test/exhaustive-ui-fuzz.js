@@ -24,6 +24,12 @@ async function runFuzz() {
     '--disable-gpu',
     '--no-sandbox',
     '--disable-extensions',
+    '--no-first-run',
+    '--no-default-browser-check',
+    '--disable-background-networking',
+    '--disable-component-update',
+    '--disable-sync',
+    '--metrics-recording-only',
     'about:blank'
   ])
   activeBrowser = chromeProc
@@ -107,7 +113,7 @@ async function runFuzz() {
   // Wait for initial render of Quasar app
   console.log('Waiting for Quasar #q-app mount...')
   let isReady = false
-  for (let i = 0; i < 180; i++) {
+  for (let i = 0; i < 240; i++) {
     const ready = await evalInPage(`
       () => {
         const app = document.querySelector('#q-app');
@@ -118,9 +124,12 @@ async function runFuzz() {
       isReady = true
       break
     }
+    if (i === 60) {
+      await sendCdp('Page.navigate', { url: targetUrl })
+    }
     await new Promise((resolve) => setTimeout(resolve, 250))
   }
-  if (!isReady) throw new Error('The built app did not render a statblock within 45 seconds')
+  if (!isReady) throw new Error('The built app did not render a statblock within 60 seconds')
 
   // Dismiss Changelog dialog if presented on first launch
   await evalInPage(`

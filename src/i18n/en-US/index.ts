@@ -1,6 +1,8 @@
 import { HELP_MESSAGES } from './help.ts'
+import { STUDIO_MESSAGES } from './studio.ts'
 
 export default {
+  studio: STUDIO_MESSAGES,
   locale: {
     label: 'Language',
     hint: 'Interface and help text are available in English and Brazilian Portuguese.',

@@ -54,7 +54,32 @@ const result = await browserProbe(async ({ send, evaluate, waitFor }) => {
     }
   })()`)
 
-  return { beforeReload, afterReload }
+  // D1.5: Open RulesConversionDialog, apply conversion, verify provenance change and single-step undo rollback
+  await evaluate("(()=>{const b=[...document.querySelectorAll('button')].find(x=>x.querySelector('.q-icon')?.textContent.trim()==='settings');if(b)b.click()})()")
+  await waitFor("!!document.querySelector('[data-open-rules-converter]')", { label: 'rules converter trigger in settings menu' })
+  await evaluate("document.querySelector('[data-open-rules-converter]').click()")
+  await waitFor("!!document.querySelector('[data-rules-conversion-dialog]')", { label: 'RulesConversionDialog visible' })
+  await evaluate("document.querySelector('[data-convert-target=\"2014\"]')?.click()")
+  await evaluate("document.querySelector('[data-confirm-rules-conversion]')?.click()")
+  await waitFor("!document.querySelector('[data-rules-conversion-dialog]')", { label: 'RulesConversionDialog closed after apply' })
+  const conversionRoundtrip = await evaluate(`(()=>{
+    const p = document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia
+    const m = p._s.get('monster')
+    const ed = p._s.get('editor')
+    const h = p._s.get('history')
+    const appliedStyle = ed.style
+    const appliedRuleset = m.provenance?.ruleset
+    const undoWorked = h.canUndo
+    if (undoWorked) h.undo()
+    return {
+      appliedStyle,
+      appliedRuleset,
+      undoWorked,
+      revertedRuleset: m.provenance?.ruleset ?? 'unset',
+    }
+  })()`)
+
+  return { beforeReload, afterReload, conversionRoundtrip }
 })
 
 assert.equal(result.beforeReload.locale, 'pt-BR')
@@ -76,4 +101,9 @@ assert.equal(result.afterReload.hd, 14)
 assert.equal(result.afterReload.hasTrait, true)
 assert.equal(result.afterReload.acNaturalBonus, 4)
 assert.equal(result.afterReload.acRidersCount, 1)
+assert.equal(result.conversionRoundtrip.appliedStyle, '2014')
+assert.equal(result.conversionRoundtrip.appliedRuleset, '2014')
+assert.equal(result.conversionRoundtrip.undoWorked, true)
+assert.notEqual(result.conversionRoundtrip.revertedRuleset, '2014')
 console.log('Locale & BS-06 reload checks:', JSON.stringify(result.afterReload))
+console.log('RulesConversionDialog roundtrip:', JSON.stringify(result.conversionRoundtrip))

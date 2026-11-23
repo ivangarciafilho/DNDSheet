@@ -39,6 +39,16 @@
       <template v-if="preview.unknown.length">Not recognised: {{ preview.unknown.join(', ') }}</template>
       <template v-else>Prints: {{ preview.text }}</template>
     </div>
+    <div v-if="tokenPills.length" class="mechanic-text-editor__pills" data-macro-token-pills>
+      <span
+        v-for="pill in tokenPills"
+        :key="pill.token"
+        class="mechanic-text-editor__pill"
+        :class="pill.valid ? 'is-valid' : 'is-unresolved'"
+        :data-macro-pill="pill.token"
+        :data-macro-pill-valid="String(pill.valid)"
+      >{{ pill.token }}</span>
+    </div>
   </div>
 </template>
 <script lang="ts">
@@ -48,6 +58,7 @@ import { hasMechanicFormatting, mechanicPlainText, mechanicRichHtml } from 'src/
 import { safeHtml } from 'src/core/adapters/safe-html'
 import { catalogFor, insertMacro, openMacroAt, unresolvedMacros } from 'src/core/domain/macro-catalog'
 import type { MacroEntry, MacroScope } from 'src/core/domain/macro-catalog'
+import { extractMacroTokenPills } from 'src/core/domain/macro-pill-preview'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useCharacterStore } from 'src/stores/character-store'
 import { resolveCharacterText } from 'src/core/usecases/ResolveMonsterText'
@@ -159,11 +170,15 @@ export default defineComponent({
       else if (event.key === 'Escape') { closeSuggest(); event.stopPropagation() }
     }
 
+    const tokenPills = computed(() =>
+      extractMacroTokenPills(String(props.modelValue ?? ''), preview.value?.unknown ?? []),
+    )
+
     const contentEl = ref<HTMLElement | null>(null)
     watch([rich, editorRef], () => void nextTick(() => { contentEl.value = rich.value ? editorRef.value?.getContentEl?.() ?? null : null }), { immediate: true })
     const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({ scope: props.scope, query, limit: 8, ...custom() }))
 
-    return { listId, richSuggest, formatting, browse, rich, rootStyle, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
+    return { listId, richSuggest, formatting, browse, rich, rootStyle, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, tokenPills, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
   },
 })
 </script>
@@ -174,6 +189,10 @@ export default defineComponent({
 .mechanic-text-editor__formatted :deep(.q-editor__content) { overflow-wrap:anywhere; }
 .mechanic-text-editor__preview { margin-top:2px; font-size:0.72rem; line-height:1.3; opacity:0.72; overflow-wrap:anywhere; }
 .mechanic-text-editor__preview.is-unresolved { color:#f2a65a; opacity:1; }
+.mechanic-text-editor__pills { display:flex; flex-wrap:wrap; gap:4px; margin-top:3px; }
+.mechanic-text-editor__pill { font-family:monospace; font-size:0.68rem; padding:1px 5px; border-radius:4px; }
+.mechanic-text-editor__pill.is-valid { background:rgba(59, 130, 246, 0.2); color:#93c5fd; border:1px solid rgba(96, 165, 250, 0.35); }
+.mechanic-text-editor__pill.is-unresolved { background:rgba(245, 158, 11, 0.2); color:#fcd34d; border:1px solid rgba(251, 191, 36, 0.45); }
 </style>
 <style>
 .macro-suggest-menu { max-height: 280px; }

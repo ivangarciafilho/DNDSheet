@@ -417,6 +417,41 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   })()`)
   await delay(200)
 
+  // D2.2: Scan FocusedHelpBar and RulesConversionDialog contrast + Escape keyboard close
+  const helpBarUi = await scanUiContrast('focused-help-bar', ['[data-focused-help-bar]'])
+  assert.ok(helpBarUi.checkedTextNodes >= 2, `Expected >=2 text nodes in FocusedHelpBar, got ${helpBarUi.checkedTextNodes}`)
+  uiViolations.push(...helpBarUi.violations)
+
+  await evaluate(`(() => {
+    const settingsBtn = [...document.querySelectorAll('header button')].find((b) => b.querySelector('.q-icon')?.textContent?.trim() === 'settings')
+    settingsBtn?.click()
+  })()`)
+  await delay(250)
+  await evaluate(`(() => {
+    document.querySelector('[data-open-rules-converter]')?.click()
+  })()`)
+  await evaluate(`(async () => {
+    for (let i = 0; i < 40; i++) {
+      const dlg = document.querySelector('[data-rules-conversion-dialog]')
+      if (dlg && parseFloat(getComputedStyle(dlg).opacity) > 0.9 && dlg.getBoundingClientRect().height > 80) return true
+      await new Promise((r) => setTimeout(r, 30))
+    }
+    throw new Error('Timed out waiting for visible RulesConversionDialog')
+  })()`)
+  await delay(100)
+  const rulesDialogUi = await scanUiContrast('rules-conversion-dialog', ['[data-rules-conversion-dialog]'])
+  assert.ok(rulesDialogUi.checkedTextNodes >= 6, `Expected >=6 text nodes in RulesConversionDialog, got ${rulesDialogUi.checkedTextNodes}`)
+  uiViolations.push(...rulesDialogUi.violations)
+  await pressEscape()
+  const rulesDialogClosed = await evaluate(`(async () => {
+    for (let i = 0; i < 40; i++) {
+      if (!document.querySelector('[data-rules-conversion-dialog]')) return true
+      await new Promise((r) => setTimeout(r, 30))
+    }
+    return false
+  })()`)
+  assert.equal(rulesDialogClosed, true, 'Expected Escape to dismiss RulesConversionDialog')
+
   for (const route of ['#/templates', '#/spells', '#/reset']) {
     await evaluate(`location.hash = ${JSON.stringify(route)}`)
     await delay(300)

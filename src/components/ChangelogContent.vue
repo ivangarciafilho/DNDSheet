@@ -1,31 +1,15 @@
 <template>
   <q-timeline color="secondary">
     <q-timeline-entry
-      title="v2.5.0 (Builds 250–271)"
-      subtitle="Statblock Overhaul, Full pt-BR UI, Rules Converter & Zero-Any Hardening - 11/2026"
+      :title="latestRelease.title"
+      :subtitle="latestRelease.subtitle"
       icon="auto_awesome"
       color="positive"
     >
       <div class="text-body2">
         <ul>
-          <li>
-            Modular editor & domain decomposition (Builds 256–267: 0 files over
-            900 lines), site-wide <code>CatalogSelect</code>, and 100%
-            <code>v-help</code> tooltip coverage (556/556 controls).
-          </li>
-          <li>
-            100% Brazilian Portuguese (<code>pt-BR</code>) UI & help dictionary
-            (920/920 keys) with Quasar locale synchronization, dark-mode WCAG
-            contrast overhaul, AC rider composer with Natural Armor base,
-            frameless portrait toggle, and <code>BS-39</code> paired range
-            support.
-          </li>
-          <li>
-            Deterministic <code>2014 ↔ 2024</code> rules edition converter with
-            loss report, stored-state browser reload E2E verification
-            (<code>BS-06</code>), Open5e attack/legendary fixes, and quality
-            ratchet at 0 explicit <code>any</code>s and 0 app lint
-            suppression comments.
+          <li v-for="(bullet, idx) in latestRelease.bullets" :key="idx">
+            {{ bullet }}
           </li>
         </ul>
       </div>
@@ -521,12 +505,23 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { computed, defineComponent } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { LATEST_RELEASE_METADATA } from 'src/data/RELEASE_NOTES'
 import GithubIssueLink from './GithubIssueLink.vue'
 import ChangelogArchive from './ChangelogArchive.vue'
 
 export default defineComponent({
   name: 'ChangelogContent',
   components: { GithubIssueLink, ChangelogArchive },
+  setup() {
+    const { locale } = useI18n({ useScope: 'global' })
+    const latestRelease = computed(() =>
+      locale.value === 'pt-BR'
+        ? LATEST_RELEASE_METADATA.locales['pt-BR']
+        : LATEST_RELEASE_METADATA.locales['en-US'],
+    )
+    return { latestRelease }
+  },
 })
 </script>

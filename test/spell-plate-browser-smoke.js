@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { findChrome } from '../tools/qa/chrome.mjs'
+import { findChrome, cleanupChrome, CHROME_HEADLESS_FLAGS } from '../tools/qa/chrome.mjs'
 import { spawn } from 'node:child_process'
 import fs from 'node:fs'
 import http from 'node:http'
@@ -9,17 +9,13 @@ import path from 'node:path'
 const CHROME_PATH = findChrome()
 const CHROME_PORT = 9225
 const APP_URL = process.env.DNDSHEET_E2E_URL || 'http://localhost:8080/#/'
-const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dn-sheet-spell-'))
+const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'dndsheet-probe-'))
 const chrome = spawn(CHROME_PATH, [
   `--remote-debugging-port=${CHROME_PORT}`,
   `--user-data-dir=${profile}`,
-  '--headless=new',
-  '--disable-gpu',
-  '--no-sandbox',
-  '--disable-extensions',
-  APP_URL,
+  ...CHROME_HEADLESS_FLAGS,
+  'about:blank',
 ])
-const chromeExited = new Promise((resolve) => chrome.once('close', resolve))
 
 let ws
 
@@ -64,6 +60,7 @@ try {
 
   await send('Runtime.enable')
   await send('Page.enable')
+  await send('Page.navigate', { url: APP_URL })
 
   let appReady = false
   // 30 s budget (120 x 250 ms): first loads stall behind antivirus scans of fresh builds.
@@ -259,13 +256,7 @@ try {
   console.log(`Spell plate browser smoke passed across ${result.length} themes: ${themes.join(', ')}`)
 } finally {
   ws?.close()
-  chrome.kill()
-  await Promise.race([chromeExited, delay(2000)])
-  try {
-    fs.rmSync(profile, { recursive: true, force: true })
-  } catch {
-    // Chrome may keep profile files locked briefly after its process exits.
-  }
+  await cleanupChrome(chrome, profile)
 }
 
 async function waitForPageTarget() {

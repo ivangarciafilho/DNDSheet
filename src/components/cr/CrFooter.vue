@@ -376,6 +376,20 @@
           {{ lintIssues.length === 0 ? 'Statblock Linter: Healthy' : `Statblock Linter: ${lintIssues.length} issue(s)` }}
         </q-tooltip>
       </q-btn>
+
+      <q-btn
+        flat
+        dense
+        round
+        size="sm"
+        icon="content_copy"
+        color="white"
+        aria-label="Copy CR breakdown summary"
+        data-copy-cr-breakdown
+        @click="copyCrBreakdown"
+      >
+        <q-tooltip class="text-body2">{{ $t('studio.crBreakdown.copyButton') }}</q-tooltip>
+      </q-btn>
     </div>
 
     <auto-tune-dialog v-model="showAutoTune" />
@@ -385,6 +399,8 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from 'vue'
+import { copyToClipboard, useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { useCr } from './useCr'
 import MenuHover from '../MenuHover.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
@@ -392,6 +408,7 @@ import { useSpellsStore } from 'src/stores/spells-store'
 import AutoTuneDialog from './AutoTuneDialog.vue'
 import MonsterLintDialog from './MonsterLintDialog.vue'
 import { lintMonster } from 'src/core/usecases/LintMonster'
+import { buildCrBreakdownSummary } from 'src/core/domain/cr-breakdown'
 import type { Monster } from 'src/core/domain/types'
 
 export default defineComponent({
@@ -402,6 +419,8 @@ export default defineComponent({
     MonsterLintDialog,
   },
   setup() {
+    const $q = useQuasar()
+    const { t } = useI18n()
     const monsterStore = useMonsterStore()
     const spellsStore = useSpellsStore()
     const crData = useCr()
@@ -419,6 +438,26 @@ export default defineComponent({
       return lintIssues.value.filter((i) => i.severity === 'ERROR').length
     })
 
+    const copyCrBreakdown = () => {
+      const summary = buildCrBreakdownSummary({
+        name: monsterStore.name,
+        finalCr: String(crData.estimatedCr.value.cr),
+        offensiveCr: String(crData.offensiveCr.value.cr),
+        defensiveCr: String(crData.defensiveCr.value.cr),
+        dpr: crData.damagePerRound.value,
+        maxAttack: String(crData.maxAttackRender.value),
+        maxDc: Number(crData.maxDc.value),
+        avgHp: monsterStore.avgHp,
+        ac: monsterStore.AC,
+      })
+      void copyToClipboard(summary.markdown).then(() => {
+        $q.notify({
+          type: 'positive',
+          message: t('studio.crBreakdown.copiedToast'),
+        })
+      })
+    }
+
     return {
       crData,
       damageInfo,
@@ -427,6 +466,7 @@ export default defineComponent({
       showLint,
       lintIssues,
       lintErrors,
+      copyCrBreakdown,
       monsterStore,
       avgHp: computed(() => monsterStore.avgHp),
       ac: computed(() => monsterStore.AC),

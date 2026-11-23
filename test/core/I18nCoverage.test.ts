@@ -3,9 +3,9 @@ import assert from 'node:assert/strict'
 import en from '../../src/i18n/en-US/index.ts'
 import pt from '../../src/i18n/pt-BR/index.ts'
 
-// C5 coverage contract for Brazilian Portuguese: no stale keys, identical placeholders, help fully translated,
-// and overall coverage that may only grow (raise PT_BR_MIN_KEYS when more namespaces are translated).
-const PT_BR_MIN_KEYS = 920
+// C5 / E1.2 coverage contract for Brazilian Portuguese: no stale keys, identical placeholders,
+// balanced braces, help/studio translations distinct from English, and full key coverage.
+const PT_BR_MIN_KEYS = 958
 
 type Tree = { [key: string]: string | Tree }
 const leaves = (tree: Tree, prefix = ''): Map<string, string> => {
@@ -45,5 +45,27 @@ test('C5: pt-BR coverage only grows', () => {
   const covered = [...ptKeys.keys()].filter((key) => enKeys.has(key)).length
   assert.ok(covered >= PT_BR_MIN_KEYS, `pt-BR covers ${covered}/${enKeys.size} keys; floor is ${PT_BR_MIN_KEYS}`)
   console.log(`# pt-BR coverage: ${covered}/${enKeys.size} (${((covered / enKeys.size) * 100).toFixed(1)} %)`)
+})
+
+test('E1.2: balanced i18n braces and translated studio/help entries', () => {
+  const countBraces = (s: string, ch: string) => s.split(ch).length - 1
+  for (const [label, map] of [
+    ['en-US', enKeys],
+    ['pt-BR', ptKeys],
+  ] as const) {
+    for (const [key, value] of map) {
+      assert.equal(
+        countBraces(value, '{'),
+        countBraces(value, '}'),
+        `Unbalanced braces in ${label} key "${key}": ${value}`,
+      )
+    }
+  }
+  const untranslatedLong = [...ptKeys].filter(([key, value]) => {
+    if (!key.startsWith('studio.') && !key.startsWith('help.')) return false
+    const enValue = enKeys.get(key) ?? ''
+    return enValue.trim().length > 16 && value.trim() === enValue.trim()
+  })
+  assert.deepEqual(untranslatedLong.map(([key]) => key), [])
 })
 

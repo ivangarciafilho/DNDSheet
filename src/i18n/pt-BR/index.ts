@@ -1,7 +1,9 @@
 import { HELP_MESSAGES_PT_BR } from './help.ts'
+import { STUDIO_MESSAGES_PT_BR } from './studio.ts'
 
 // Brazilian Portuguese — 100% coverage across all en-US namespaces (enforced by test/core/I18nCoverage.test.ts).
 export default {
+  studio: STUDIO_MESSAGES_PT_BR,
   locale: {
     label: 'Idioma',
     hint: 'Os textos da interface e de ajuda estão disponíveis em inglês e português (Brasil).',

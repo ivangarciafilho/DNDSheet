@@ -44,6 +44,12 @@ export function useFileLoader() {
             const valid = validate(inspection.record, SCHEMA[inspection.saveVersion])
 
             if (valid.valid) {
+              if (inspection.warnings.length > 0) {
+                $q.notify({
+                  type: 'warning',
+                  message: t('studio.fileLoader.coercionWarning', [inspection.warnings.join(' ')]),
+                })
+              }
               loadMonster(inspection.record)
             } else {
               $q.notify({

@@ -99,3 +99,47 @@ export function detectActiveWorkspacePreset(
   }
   return 'custom'
 }
+
+export interface PrintPresetMarginBounds {
+  presetId: WorkspacePresetId
+  orientation: 'portrait' | 'landscape'
+  widthMm: number
+  heightMm: number
+  paddingPx: string
+}
+
+/**
+ * Resolves effective presentation fields with explicit precedence:
+ * `document override > workspace preset > default ('screen')`.
+ */
+export function resolveEffectivePresentationPreset(
+  documentOverride: Partial<WorkspacePresentationSlice> | null | undefined,
+  workspaceState: Partial<WorkspacePresentationSlice>,
+): WorkspacePresentationSlice {
+  const detected = detectActiveWorkspacePreset(workspaceState)
+  const base = workspacePresetById(detected === 'custom' ? 'screen' : detected).patch
+  return {
+    visualTemplate: documentOverride?.visualTemplate ?? workspaceState.visualTemplate ?? base.visualTemplate,
+    visualTheme: documentOverride?.visualTheme ?? workspaceState.visualTheme ?? base.visualTheme,
+    a4PreviewMode: documentOverride?.a4PreviewMode ?? workspaceState.a4PreviewMode ?? base.a4PreviewMode,
+    a4CompactDensity: documentOverride?.a4CompactDensity ?? workspaceState.a4CompactDensity ?? base.a4CompactDensity,
+    a4StatblockOpacity: documentOverride?.a4StatblockOpacity ?? workspaceState.a4StatblockOpacity ?? base.a4StatblockOpacity,
+    condenseImmunities: documentOverride?.condenseImmunities ?? workspaceState.condenseImmunities ?? base.condenseImmunities,
+    a4Layout: documentOverride?.a4Layout ?? workspaceState.a4Layout ?? base.a4Layout,
+  }
+}
+
+/** Returns deterministic A4 paper dimensions and margin padding for print presets. */
+export function getPrintPresetMarginBounds(
+  presetId: WorkspacePresetId,
+  orientation: 'portrait' | 'landscape' = 'portrait',
+): PrintPresetMarginBounds {
+  const portrait = orientation === 'portrait'
+  return {
+    presetId,
+    orientation,
+    widthMm: portrait ? 210 : 297,
+    heightMm: portrait ? 297 : 210,
+    paddingPx: presetId === 'ink_saver' ? '22px 20px 24px 20px' : '38px 36px 42px 36px',
+  }
+}

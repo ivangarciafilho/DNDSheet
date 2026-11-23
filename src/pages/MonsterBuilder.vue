@@ -59,6 +59,7 @@
         <div id="editor" class="q-pa-md editor-fit" style="width: 100%">
           <database-studio class="q-mb-sm" />
           <section-strip />
+          <focused-help-bar />
           <q-list bordered separator class="rounded-borders">
             <a4-layer-studio />
             <basics-editor />
@@ -109,6 +110,7 @@ import RegionalEffectsEditor from 'src/components/editor/RegionalEffectsEditor.v
 import RandomTablesEditor from 'src/components/editor/RandomTablesEditor.vue'
 import InventoryEditor from 'src/components/editor/InventoryEditor.vue'
 import DatabaseStudio from 'src/components/editor/DatabaseStudio.vue'
+import FocusedHelpBar from 'src/components/editor/FocusedHelpBar.vue'
 import SectionStrip from 'src/components/editor/SectionStrip.vue'
 import CharacterEditor from 'src/components/character/CharacterEditor.vue'
 import CharacterSheet from 'src/components/character/CharacterSheet.vue'
@@ -119,6 +121,7 @@ export default defineComponent({
   components: {
     BasicsEditor,
     DatabaseStudio,
+    FocusedHelpBar,
     SectionStrip,
     A4LayerStudio,
     WebRenderer,

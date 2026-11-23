@@ -615,8 +615,7 @@
 
   /* Printer friendly clean white paper */
   &.theme-printer {
-    background-color: #ffffff !important;
-    background-image: none !important;
+    background: #ffffff none !important;
     color: #000000 !important;
     border: 1px solid #000000 !important;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
@@ -668,8 +667,7 @@
   }
 
   .statblock.has-custom-bg-opacity {
-    background-color: var(--a4-sb-bg-color, rgba(253, 241, 220, 0.9)) !important;
-    background-image: none !important;
+    background: var(--a4-sb-bg-color, rgba(253, 241, 220, 0.9)) none !important;
   }
 
   .a4-book-header {
@@ -800,11 +798,10 @@
 // Ensure interactive append controls (such as lock toggle buttons) remain clickable inside disabled fields
 .q-field--disabled {
   .q-field__append,
-  .q-field__prepend {
+  .q-field__prepend,
+  .q-field__append *,
+  .q-field__prepend * {
     pointer-events: auto !important;
-    * {
-      pointer-events: auto !important;
-    }
   }
 }
 

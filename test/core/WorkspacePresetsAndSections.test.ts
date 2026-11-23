@@ -9,6 +9,8 @@ import { WORKSPACE_SECTIONS, workspaceSectionById } from '../../src/core/domain/
 import {
   applyWorkspacePreset,
   detectActiveWorkspacePreset,
+  getPrintPresetMarginBounds,
+  resolveEffectivePresentationPreset,
   WORKSPACE_PRESETS,
 } from '../../src/core/domain/workspace-presets.ts'
 
@@ -67,4 +69,19 @@ test('B7.4: Screen, Ink saver, and Art plate presets touch only presentation fie
 
   editorState.visualTheme = 'lovecraft_golden'
   assert.equal(detectActiveWorkspacePreset(editorState), 'custom')
+})
+
+test('D4.1: presentation precedence honors document override > workspace > default and A4 bounds stay deterministic', () => {
+  const resolved = resolveEffectivePresentationPreset(
+    { visualTheme: 'printer', a4CompactDensity: true },
+    { visualTemplate: 'modern', visualTheme: 'art_nouveau', a4PreviewMode: true },
+  )
+  assert.equal(resolved.visualTheme, 'printer')
+  assert.equal(resolved.a4CompactDensity, true)
+  assert.equal(resolved.visualTemplate, 'modern')
+
+  const inkBounds = getPrintPresetMarginBounds('ink_saver', 'landscape')
+  assert.equal(inkBounds.widthMm, 297)
+  assert.equal(inkBounds.heightMm, 210)
+  assert.equal(inkBounds.paddingPx, '22px 20px 24px 20px')
 })

@@ -34,7 +34,8 @@ async function capture(url, port, control = false) {
   const shots = new Map(); const errors = []
   try {
     let target
-    for (let i = 0; i < 40 && !target; i++) { await sleep(400); try { target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find(t => t.type === 'page') } catch {} }
+    for (let i = 0; i < 100 && !target; i++) { await sleep(400); try { target = (await (await fetch(`http://127.0.0.1:${port}/json`)).json()).find(t => t.type === 'page') } catch {} }
+    if (!target) throw new Error('Chrome CDP /json page target missing on port ' + port + ' for ' + url)
     const ws = new WebSocket(target.webSocketDebuggerUrl)
     await new Promise(r => ws.addEventListener('open', r, { once: true }))
     let id = 0; const pending = new Map()

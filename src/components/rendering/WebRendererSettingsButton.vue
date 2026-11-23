@@ -51,8 +51,23 @@
               ]"
             ></q-btn-toggle>
           </div>
+          <div class="col-12 q-mb-xs">
+            <q-btn
+              v-help="$t('studio.rulesConversion.openHint')"
+              dense
+              outline
+              no-caps
+              size="sm"
+              icon="swap_horiz"
+              color="blue-4"
+              class="full-width"
+              :label="$t('studio.rulesConversion.openButton')"
+              data-open-rules-converter
+              @click="showRulesConverter = true"
+            />
+          </div>
           <div class="col-12 q-mb-sm">
-            <div class="text-body1 q-mb-xs">View Preset</div>
+            <div class="text-body1 q-mb-xs">{{ $t('studio.settings.viewPreset') }}</div>
             <div class="row q-gutter-xs" data-workspace-presets>
               <q-btn
                 v-for="preset in workspacePresets"
@@ -71,18 +86,18 @@
             </div>
           </div>
           <div class="col-12 flex items-center justify-between q-my-xs">
-            <div class="text-body1 q-mr-md">Visual Template</div>
+            <div class="text-body1 q-mr-md">{{ $t('studio.settings.visualTemplate') }}</div>
             <q-btn-toggle
               v-model="editorStore.visualTemplate"
               v-help="'Choose Classic parchment prose layout or Modular block-and-badge card styling.'"
               :options="[
-                { label: 'Classic', value: 'classic' },
-                { label: 'Modular', value: 'modern' },
+                { label: $t('studio.settings.classic'), value: 'classic' },
+                { label: $t('studio.settings.modular'), value: 'modern' },
               ]"
             ></q-btn-toggle>
           </div>
           <div class="col-12 q-my-sm">
-            <div class="text-body1 q-mb-xs">Art Direction / Theme</div>
+            <div class="text-body1 q-mb-xs">{{ $t('studio.settings.artDirection') }}</div>
             <catalog-select
               v-model="editorStore.visualTheme"
               v-help="'Select the visual art direction, paper palette, and ornamental border theme for the stat block.'"
@@ -115,7 +130,7 @@
           <div class="col-12 flex items-center justify-between q-mb-xs">
             <div class="text-subtitle2 text-weight-bold flex items-center">
               <q-icon name="description" color="primary" class="q-mr-xs" size="18px" />
-              A4 Sheet Preview (1:1)
+              {{ $t('studio.settings.a4Preview') }}
             </div>
             <q-toggle
               v-model="editorStore.a4PreviewMode"
@@ -127,7 +142,7 @@
 
           <template v-if="editorStore.a4PreviewMode">
             <div class="col-12 flex items-center justify-between q-my-xs">
-              <div class="text-caption text-weight-medium">Orientation</div>
+              <div class="text-caption text-weight-medium">{{ $t('studio.settings.orientation') }}</div>
               <q-btn-toggle
                 v-model="editorStore.a4Orientation"
                 v-help="'Choose Portrait or Landscape A4 print page orientation.'"
@@ -137,14 +152,14 @@
                 toggle-color="primary"
                 size="sm"
                 :options="[
-                  { label: 'Portrait', value: 'portrait', icon: 'portrait' },
-                  { label: 'Landscape', value: 'landscape', icon: 'landscape' },
+                  { label: $t('studio.settings.portrait'), value: 'portrait', icon: 'portrait' },
+                  { label: $t('studio.settings.landscape'), value: 'landscape', icon: 'landscape' },
                 ]"
               />
             </div>
 
             <div class="col-12 flex items-center justify-between q-my-xs">
-              <div class="text-caption text-weight-medium">Layout</div>
+              <div class="text-caption text-weight-medium">{{ $t('studio.settings.layout') }}</div>
               <q-btn-toggle
                 v-model="editorStore.a4Layout"
                 v-help="'Choose A4 sheet layout between stat block and art/notes panels.'"
@@ -168,23 +183,25 @@
               class="col-12 q-my-xs"
               dense
               color="primary"
-              label="Compact A4 Spacing"
+              :label="$t('studio.settings.compactA4')"
             />
           </template>
         </div>
       </div>
     </q-menu>
+    <rules-conversion-dialog v-model="showRulesConverter" />
   </q-btn>
 </template>
 
 <script lang="ts">
 import { useEditorStore, VisualTheme } from 'src/stores/editor-store'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { computed, defineComponent } from 'vue'
+import { computed, defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { persistLocale, type AppLocale } from 'src/i18n/locale'
 import { syncQuasarLang } from 'src/i18n/quasar-lang'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
+import RulesConversionDialog from 'src/components/editor/RulesConversionDialog.vue'
 import {
   WORKSPACE_PRESETS,
   applyWorkspacePreset,
@@ -217,10 +234,11 @@ export const THEME_OPTIONS: ThemeOption[] = [
 
 export default defineComponent({
   name: 'WebRendererSettingsButton',
-  components: { CatalogSelect },
+  components: { CatalogSelect, RulesConversionDialog },
   setup() {
     const monsterStore = useMonsterStore()
     const editorStore = useEditorStore()
+    const showRulesConverter = ref(false)
     const activeWorkspacePreset = computed(() => detectActiveWorkspacePreset(editorStore))
     const themeCatalogEntries = THEME_OPTIONS.map((option) => ({
       value: option.value,
@@ -248,6 +266,7 @@ export default defineComponent({
     return {
       monsterStore,
       editorStore,
+      showRulesConverter,
       appLocale,
       themeOptions: THEME_OPTIONS,
       themeCatalogEntries,

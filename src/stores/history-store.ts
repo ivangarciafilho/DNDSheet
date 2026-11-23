@@ -44,7 +44,18 @@ export const useHistoryStore = defineStore('history', () => {
       const entry = ledger.undo(currentState)
       updateFlags()
       if (entry) {
-        monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
+        monsterStore.$patch(state => {
+          for (const key of Object.keys(state)) {
+            if (!Object.hasOwn(entry.snapshot, key) && key !== 'bindings') {
+              delete (state as unknown as Record<string, unknown>)[key]
+            }
+          }
+          Object.assign(state, entry.snapshot, {
+            bindings: entry.snapshot.bindings ?? {},
+            provenance: entry.snapshot.provenance,
+          })
+        })
+        monsterStore.provenance = entry.snapshot.provenance
         updateFlags()
         return true
       }
@@ -66,7 +77,18 @@ export const useHistoryStore = defineStore('history', () => {
       const entry = ledger.redo(currentState)
       updateFlags()
       if (entry) {
-        monsterStore.$patch(state => Object.assign(state, entry.snapshot, { bindings: entry.snapshot.bindings ?? {} }))
+        monsterStore.$patch(state => {
+          for (const key of Object.keys(state)) {
+            if (!Object.hasOwn(entry.snapshot, key) && key !== 'bindings') {
+              delete (state as unknown as Record<string, unknown>)[key]
+            }
+          }
+          Object.assign(state, entry.snapshot, {
+            bindings: entry.snapshot.bindings ?? {},
+            provenance: entry.snapshot.provenance,
+          })
+        })
+        monsterStore.provenance = entry.snapshot.provenance
         updateFlags()
         return true
       }

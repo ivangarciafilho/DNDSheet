@@ -2,10 +2,7 @@
 // so only !important can win; scoped to studio surfaces and kept out of parchment/sheet cards.
 /* High-contrast Material/Quasar token overrides scoped to dark studio UI surfaces */
 body.body--dark :is(#editor, #char-editor, #footer, .q-dialog .q-card, .q-drawer, .q-menu) {
-  .text-primary:not(.bg-primary):not(.q-checkbox__inner):not(.q-radio__inner):not(.q-toggle__inner):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #64b5f6 !important;
-  }
-
+  .text-primary:not(.bg-primary):not(.q-checkbox__inner):not(.q-radio__inner):not(.q-toggle__inner):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
   .q-field--dark.q-field--highlighted .q-field__label,
   .q-field--dark.q-field--highlighted .q-field__control {
     color: #64b5f6 !important;
@@ -15,10 +12,7 @@ body.body--dark :is(#editor, #char-editor, #footer, .q-dialog .q-card, .q-drawer
     color: #f7a19a !important;
   }
 
-  .text-accent:not(.bg-accent):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #ce93d8 !important;
-  }
-
+  .text-accent:not(.bg-accent):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
   .text-purple:not(.bg-purple):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
     color: #ce93d8 !important;
   }
