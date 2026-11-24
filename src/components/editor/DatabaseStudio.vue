@@ -191,6 +191,7 @@ v-help="$t('help.databaseStudio.addMacro')"
           <div v-else class="text-caption text-grey-4 text-center q-pa-md">
             No custom macros configured. Add macro templates above to streamline action building.
           </div>
+          <built-in-macro-library class="q-mt-sm" />
         </q-tab-panel>
 
         <!-- Species & Feature Presets Panel -->
@@ -314,6 +315,7 @@ v-model="databaseJsonPreview"
 
 <script lang="ts">
 import { defineComponent, ref, computed } from 'vue'
+import BuiltInMacroLibrary from './BuiltInMacroLibrary.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
 import { useQuasar } from 'quasar'
 import { applyMonsterPreset, type MonsterPreset } from 'src/core/usecases/ApplyMonsterPreset'
@@ -415,6 +417,7 @@ export const BUILTIN_PRESETS: MonsterPreset[] = [
 
 export default defineComponent({
   name: 'DatabaseStudio',
+  components: { BuiltInMacroLibrary },
   setup() {
     const monster = useMonsterStore()
     const $q = useQuasar()

@@ -1568,3 +1568,19 @@ Delivered **22 tasks across 5 cohesive domains** closing A11.5 items a, b, c; ga
 - [x] **B223.T4** Speed notation distance normalization (`40ft` -> `40 ft.`, `5ft` -> `5 ft.`).
 - [x] **B223.W1** Expanded 2024 core rules conditions glossary (`grappled`, `prone`, `incapacitated`, `restrained`, `invisible`) in `statblock-help.ts`.
 - [x] **B223.Q1** Dedicated unit test suite `test/core/DescriptionContainers.test.ts` (5 tests) and extended `NumberGrammar.test.ts` and `StatblockHelp.test.ts` suites.
+
+## Build 274 — owner requests closed and groomed follow-ups
+
+- [x] **OR274-1** Stat-block-only preview outside A4 (portrait off-screen, PNG keeps it)
+- [x] **OR274-2** Attack presets in Add Entry (melee/ranged × weapon/spell) as ready composer Actions
+- [x] **OR274-3** IntelliSense keeps suggesting while a braced formula is composed; formula drafts too
+- [x] **OR274-4** Macro catalog `100 → 181` with a resolve-every-insert guard
+- [x] **OR274-5** Compact numeric fields; natural armor bonus registered (guard test for every `<formula-field path>`)
+- [x] **OR274-6** One-card Armor Class compositor
+- [x] **OR274-7** One-card Hit Points module; Death Throes in Mortality; `onHeal` riders
+- [x] **OR274-8** Built-in library in Database & Custom Presets Studio
+- [x] **OR274-9** Stat block tooltips removed; guided, grouped, colour-coded dropdowns
+- [ ] **G274-1** Hand-tuned icons/tooltips for AC defensive-mechanic, HP source and mortality catalogs · S
+- [ ] **G274-2** `compact` on remaining short numeric fields (spell slots, legendary count, composer DCs) · S
+- [ ] **G274-3** Attack presets in the composer role switcher · S
+- [ ] **G274-4** CR-aware attack preset damage · M

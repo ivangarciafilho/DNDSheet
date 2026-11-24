@@ -54,8 +54,10 @@
           {{ scope.opt.group }}
         </div>
         <q-item v-bind="scope.itemProps" :disable="Boolean(scope.opt.disable)" :data-catalog-option="String(scope.opt.value)">
-          <q-item-section v-if="scope.opt.icon" avatar style="min-width: 28px;">
-            <q-icon :name="scope.opt.icon" :color="scope.opt.color || 'amber-4'" size="xs" />
+          <q-item-section avatar style="min-width: 28px;">
+            <q-icon v-if="scope.opt.icon" :name="scope.opt.icon" :color="scope.opt.color || 'amber-4'" size="xs" />
+            <!-- Build 274: no icon still shows the group's color, so scopes read at a glance. -->
+            <span v-else class="catalog-select__dot q-ml-xs" :class="'bg-' + (scope.opt.color || 'grey-6')" aria-hidden="true"></span>
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -195,4 +197,5 @@ function onUpdate(val: unknown) {
   letter-spacing: 0.06em;
   pointer-events: none;
 }
+.catalog-select__dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
 </style>

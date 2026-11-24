@@ -1,12 +1,27 @@
 <template>
-  <div>
-    <!-- 7. Hit Points & Hit Dice -->
-    <div class="row q-col-gutter-xs items-center q-mt-xs">
+  <!-- Build 274: one Hit Points module. Hit Dice, survival defenses, mortality (with Death Throes)
+       and the module-wide damage / regain riders live in the same card. -->
+  <section class="compositor-card hp-compositor q-mt-sm" data-hp-compositor>
+    <header class="compositor-card__head">
+      <q-icon name="favorite" size="20px" class="text-red-4" />
+      <div class="compositor-card__title">
+        <span class="text-weight-bold text-red-3">Hit Points</span>
+        <span class="text-caption text-grey-5">Hit Dice, survival defenses, mortality &amp; riders</span>
+      </div>
+      <q-space />
+      <q-badge color="red-9" class="text-weight-bold q-pa-xs" data-hp-headline>
+        HP {{ monster.avgHp }} ({{ monster.HP.HD }}d{{ String(monster.HP.type).replace(/^d/i, '') }}{{ monster.HP.modifier ? (monster.HP.modifier > 0 ? ' + ' : ' − ') + Math.abs(monster.HP.modifier) : '' }})
+      </q-badge>
+    </header>
+
+    <div class="compositor-step">
+    <div class="compositor-step__label"><q-icon name="casino" size="14px" />Hit Dice</div>
+    <div class="compositor-step__body">
       <formula-field
         v-help="'Number of Hit Dice rolled for average and rolled Hit Points.'"
         path="HP.HD"
         :label="$t('monster.hp.hd')"
-        class="col-12 col-sm-4"
+        compact
         outlined
         dense
         @applied="(value: number | string) => monster.setHpModifier(value, monster.stats.CON)"
@@ -29,7 +44,7 @@
         v-help="'Hit Die size (auto-synced to creature size unless unlocked for manual override).'"
         path="HP.type"
         :label="$t('monster.hp.type')"
-        class="col-12 col-sm-4"
+        compact
         :disable="!monster.hpDieTypeOverride"
         outlined
         dense
@@ -49,7 +64,7 @@
         path="HP.modifier"
         :disable="!monster.hpModifierOverride"
         :label="$t('monster.hp.modifier')"
-        class="col-12 col-sm-4"
+        compact
         outlined
         dense
         @applied="(value: number | string) => (monster.HP.modifier = Number(value) || 0)"
@@ -64,18 +79,19 @@
         </template>
       </formula-field>
     </div>
+    </div>
 
-    <!-- 9. Hit Points Defenses & Survival -->
+    <!-- Survival defenses (collapsible; opens by default) -->
     <q-expansion-item
       v-help="'Configure Bloodied thresholds, Damage Threshold/Reduction, Regeneration, and Mortality rules.'"
       dense
       dense-toggle
       expand-separator
-      class="q-mt-sm rounded-borders"
-      style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
-      icon="favorite_border"
-      label="Hit Points Defenses & Survival"
-      caption="Bloodied, Damage Threshold/Reduction, Regeneration & Immortality"
+      default-opened
+      class="q-mt-xs rounded-borders"
+      icon="health_and_safety"
+      label="Survival & defenses"
+      caption="Bloodied, Damage Threshold/Reduction, Regeneration & Mortality"
     >
       <div class="q-pa-sm q-gutter-y-sm">
         <div class="row items-center justify-between q-px-xs q-mb-xs">
@@ -800,14 +816,19 @@
             </div>
           </div>
           <defense-schedule-fields v-if="deathPrevention.enabled && deathPrevention.name !== 'Mortal'" effect="deathPrevention" label="Death prevention" />
+          <basic-riders-editor scope="deathThroes" label="On death riders (Death Throes)" />
         </div>
       </div>
 
-      <basic-riders-editor scope="hp" label="Hit point riders" />
-      <basic-riders-editor scope="deathThroes" label="Death Throes" />
-      <basic-riders-editor scope="onDamage" label="On Damage" />
     </q-expansion-item>
-  </div>
+
+    <div class="compositor-step compositor-step--riders" data-hp-riders>
+      <div class="compositor-step__label"><q-icon name="bolt" size="14px" />Hit Point riders</div>
+      <basic-riders-editor scope="onDamage" label="When it takes damage" />
+      <basic-riders-editor scope="onHeal" label="When it regains hit points" />
+      <basic-riders-editor scope="hp" label="Other Hit Point riders" />
+    </div>
+  </section>
 </template>
 
 <script setup lang="ts">
@@ -858,3 +879,5 @@ const {
   isLastBloodiedPhase,
 } = useBasicsContext()
 </script>
+
+<style src="./compositor-card.css"></style>

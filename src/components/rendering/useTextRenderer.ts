@@ -196,7 +196,7 @@ export function useTextRenderer(options: { web?: boolean } = {}) {
     const ext = monster.extendedHp
     const dp = ext?.deathPrevention
 
-    const authored = (['hp', 'deathThroes', 'onDamage'] as const).flatMap(group =>
+    const authored = (['hp', 'deathThroes', 'onDamage', 'onHeal'] as const).flatMap(group =>
       basicRiderText(group).map(text => ({ group, text: mechanicRichHtml(text) })))
     // Preserve authored triggers even when the base HP is hidden.
     if (dp?.enabled && dp.name !== 'Mortal') {

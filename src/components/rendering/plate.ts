@@ -52,20 +52,16 @@ export function shouldStripe(html: string): boolean {
 
 // Plates reach the page through sanitizeWebString, which escapes every tag and restores only
 // tags whose text holds no '&'. Attribute values therefore stay plain, entity-free text.
-const plainAttr = (value: string) =>
-  value.replace(/&/g, ' and ').replace(/"/g, "'").replace(/[<>]/g, '').replace(/\s+/g, ' ').trim()
-
 const helpKey = (value: string) => value.toLowerCase().replace(/[^a-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '')
 
 export function plateCellHtml(cell: PlateCell): string {
   const cls = ['sb-cell', cell.head ? 'sb-head' : '', cell.grow ? 'sb-grow' : '', cell.cls ?? ''].filter(Boolean).join(' ')
-  const tipText = cell.tip ? plainAttr(cell.tip) : ''
+  // Build 274: the stat block carries no tooltips; `tip` stays on the model for exports, never as a title.
   const helpText = cell.help ? helpKey(cell.help) : cell.head ? 'entry-name' : ''
-  const tip = tipText ? ` title="${tipText}"` : ''
-  const help = helpText ? ` data-help="${helpText}" tabindex="0"` : ''
+  const help = helpText ? ` data-help="${helpText}"` : ''
   // Cells are flex containers for vertical centring; one inline wrapper keeps their text, numbers
   // and chips in a single flow so tags never become separate, gap-spaced flex items (`20 -foot`).
-  return `<div class="${cls}"${tip}${help}><span class="sb-text">${cell.html}</span></div>`
+  return `<div class="${cls}"${help}><span class="sb-text">${cell.html}</span></div>`
 }
 
 export function plateRowHtml(row: PlateRow): string {

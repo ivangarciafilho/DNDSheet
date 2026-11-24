@@ -118,7 +118,7 @@ export default defineComponent({
     const nativeInput = (): HTMLInputElement | HTMLTextAreaElement | null =>
       (inputRef.value?.$el?.querySelector('input,textarea') as HTMLInputElement | HTMLTextAreaElement | null) ?? null
 
-    const suggestOpen = ref(false), active = ref(0), open = ref<{ query: string; start: number } | undefined>()
+    const suggestOpen = ref(false), active = ref(0), open = ref<{ query: string; start: number; compose?: true } | undefined>()
     const suggestions = ref<MacroEntry[]>([])
     const listId = nextListId()
     watch([suggestOpen, active, rich], () => void nextTick(() => syncComboboxAria(rich.value ? null : nativeInput(), suggestOpen.value, listId, active.value)))
@@ -128,7 +128,7 @@ export default defineComponent({
       const caret = el?.selectionStart ?? text.length
       open.value = openMacroAt(text, caret)
       if (!open.value) return closeSuggest()
-      suggestions.value = catalogFor({ scope: props.scope, query: open.value.query, limit: 8, ...custom() })
+      suggestions.value = catalogFor({ scope: props.scope, query: open.value.query, compose: open.value.compose, limit: 8, ...custom() })
       active.value = 0
       suggestOpen.value = suggestions.value.length > 0
     }
@@ -176,7 +176,7 @@ export default defineComponent({
 
     const contentEl = ref<HTMLElement | null>(null)
     watch([rich, editorRef], () => void nextTick(() => { contentEl.value = rich.value ? editorRef.value?.getContentEl?.() ?? null : null }), { immediate: true })
-    const richSuggest = useRichMacroAutocomplete(contentEl, query => catalogFor({ scope: props.scope, query, limit: 8, ...custom() }))
+    const richSuggest = useRichMacroAutocomplete(contentEl, (query, compose) => catalogFor({ scope: props.scope, query, compose, limit: 8, ...custom() }))
 
     return { listId, richSuggest, formatting, browse, rich, rootStyle, editorValue, toolbar, forwardedSlots, emitValue, mechanicRichHtml, inputRef, editorRef, preview, tokenPills, suggestOpen, suggestions, active, onInput, onKeydown, pick, insertEntry, closeSuggest }
   },

@@ -3,8 +3,7 @@
     <catalog-select
       v-help="'How often this defense rider triggers or refreshes.'"
       :model-value="schedule?.cadence ?? ''"
-      :entries="BASIC_RIDER_CADENCES"
-      preserve-order
+      :entries="BASIC_RIDER_CADENCE_ENTRIES"
       clearable
       :searchable="false"
       :label="label + ' cadence'"
@@ -14,8 +13,7 @@
     <catalog-select
       v-help="'Trigger window or action cost when this defense effect applies.'"
       :model-value="schedule?.timing ?? ''"
-      :entries="timingEntries"
-      preserve-order
+      :entries="BASIC_RIDER_TIMING_ENTRIES"
       allow-custom
       clearable
       :label="label + ' timing'"
@@ -29,11 +27,10 @@
 import { computed } from 'vue'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { BASIC_RIDER_CADENCES, BASIC_RIDER_TIMINGS, type DefenseEffect, type RiderSchedule } from 'src/core/domain/basic-riders'
+import { BASIC_RIDER_CADENCE_ENTRIES, BASIC_RIDER_TIMING_ENTRIES, type DefenseEffect, type RiderSchedule } from 'src/core/domain/basic-riders'
 
 const props = defineProps<{ effect: DefenseEffect; label: string }>()
 const monster = useMonsterStore()
-const timingEntries = BASIC_RIDER_TIMINGS.map((timing) => ({ value: timing, label: timing }))
 const schedule = computed(() => monster.defenseSchedules?.[props.effect])
 
 function update(field: keyof RiderSchedule, value: string | null) {

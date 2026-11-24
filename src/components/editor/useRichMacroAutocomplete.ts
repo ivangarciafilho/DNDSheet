@@ -9,7 +9,7 @@ import { nextListId, syncComboboxAria } from './comboboxAria'
  * places the popup at the caret rectangle, and inserts through execCommand so the editor's own
  * input pipeline (and undo stack) records the change.
  */
-export function useRichMacroAutocomplete(content: Ref<HTMLElement | null>, entriesFor: (query: string) => MacroEntry[]) {
+export function useRichMacroAutocomplete(content: Ref<HTMLElement | null>, entriesFor: (query: string, compose?: boolean) => MacroEntry[]) {
   const open = ref(false), active = ref(0), x = ref(0), y = ref(0)
   const entries = ref<MacroEntry[]>([])
   let target: { node: Text; start: number; end: number } | undefined
@@ -26,7 +26,7 @@ export function useRichMacroAutocomplete(content: Ref<HTMLElement | null>, entri
     const offset = selection.anchorOffset
     const found = openMacroAt(node.textContent ?? '', offset)
     if (!found) return close()
-    entries.value = entriesFor(found.query)
+    entries.value = entriesFor(found.query, found.compose)
     if (entries.value.length === 0) return close()
     target = { node: node as Text, start: found.start, end: offset }
     const rect = selection.getRangeAt(0).getBoundingClientRect()

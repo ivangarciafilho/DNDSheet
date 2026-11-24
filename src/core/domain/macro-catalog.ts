@@ -48,6 +48,20 @@ const ROLLS: MacroEntry[] = [
   { insert: '{1d8 + STR_MOD}', label: 'Damage roll with modifier', group: 'Rolls', kind: 'roll', tip: 'Average and dice: "8 (1d8 + 3)". Change the dice and the modifier freely.' },
   { insert: '{2d6}', label: 'Plain dice roll', group: 'Rolls', kind: 'roll', tip: 'Average and dice: "7 (2d6)".' },
   { insert: '{8 + PB + CHA_MOD}', label: 'Computed number', group: 'Rolls', kind: 'roll', tip: 'Any arithmetic over references resolves to a number.' },
+  // Build 274: weapon damage by die size, each tied to the ability a creature would swing or shoot with.
+  ...([['1d4', 'DEX', 'Dagger, claw (Tiny)'], ['1d6', 'DEX', 'Shortsword, shortbow, bite (Small)'], ['1d10', 'STR', 'Halberd, heavy crossbow, slam'], ['1d12', 'STR', 'Greataxe, lance'], ['2d6', 'STR', 'Greatsword, maul, bite (Large)'],
+    ['2d8', 'STR', 'Large creature claw or slam'], ['2d10', 'STR', 'Huge creature bite'], ['3d8', 'STR', 'Huge creature slam'],
+    ['3d10', 'STR', 'Gargantuan creature bite'], ['4d6', 'STR', 'Gargantuan creature stomp'], ['1d8', 'DEX', 'Longbow, light crossbow (DEX)']] as const)
+    .map(([dice, stat, tip]): MacroEntry => ({ insert: `{${dice} + ${stat}_MOD}`, label: `${dice} + ${stat} damage`, group: 'Weapon damage', kind: 'roll', tip })),
+  { insert: '{1d10 + SPELL_MOD}', label: 'Spell bolt with modifier', group: 'Spell damage', kind: 'roll', tip: 'A cantrip-style bolt plus the spellcasting modifier.' },
+  { insert: '{2d8 + SPELL_MOD}', label: 'Touch spell with modifier', group: 'Spell damage', kind: 'roll', tip: 'A melee spell attack payload.' },
+  { insert: '{3d6}', label: '3d6 area damage', group: 'Spell damage', kind: 'roll', tip: 'A burning hands or thunderwave-sized area.' },
+  { insert: '{8d6}', label: '8d6 area damage', group: 'Spell damage', kind: 'roll', tip: 'A fireball-sized area.' },
+  { insert: '{10 + PB}', label: '10 + proficiency', group: 'Computed values', kind: 'roll', tip: 'A flat value that grows with Challenge Rating.' },
+  { insert: '{PB * 2}', label: 'Twice proficiency', group: 'Computed values', kind: 'roll', tip: 'Common for temporary hit points or healing.' },
+  { insert: '{5 * PB}', label: 'Five times proficiency', group: 'Computed values', kind: 'roll', tip: 'Common for damage absorbed or temporary hit points.' },
+  { insert: '{HP / 2}', label: 'Half hit points', group: 'Computed values', kind: 'roll', tip: 'Half the hit point maximum (the Bloodied line).' },
+  { insert: '{8 + PB + SPELL_MOD}', label: 'Spell save DC formula', group: 'Computed values', kind: 'roll', tip: 'The raw spell save DC arithmetic.' },
 ]
 
 const CONTEXT: MacroEntry[] = [
@@ -59,7 +73,48 @@ const CONTEXT: MacroEntry[] = [
   { insert: '{multiattack.all}', label: 'All multiattack entries', group: 'This action', kind: 'context', tip: 'Every multiattack option, joined.', scopes: ['action'] },
 ]
 
+const CONDITIONS = [
+  ['blinded', 'CON'], ['charmed', 'WIS'], ['deafened', 'CON'], ['frightened', 'WIS'], ['incapacitated', 'CON'], ['invisible', 'WIS'],
+  ['paralyzed', 'CON'], ['petrified', 'CON'], ['poisoned', 'CON'], ['restrained', 'STR'], ['stunned', 'CON'], ['unconscious', 'CON'],
+] as const
+const AREAS = [
+  ['15-foot Cone', 'DEX'], ['30-foot Cone', 'DEX'], ['60-foot Cone', 'DEX'], ['60-foot-long, 5-foot-wide Line', 'DEX'], ['100-foot-long, 5-foot-wide Line', 'DEX'],
+  ['10-foot Cube', 'CON'], ['20-foot-radius Sphere', 'DEX'], ['10-foot-radius, 40-foot-high Cylinder', 'CON'], ['10-foot Emanation', 'CON'], ['30-foot Emanation', 'WIS'],
+] as const
+
+const DAMAGE_TYPES = ['acid', 'bludgeoning', 'cold', 'fire', 'force', 'lightning', 'necrotic', 'piercing', 'poison', 'psychic', 'radiant', 'slashing', 'thunder'] as const
+
 const SNIPPETS: MacroEntry[] = [
+  ...DAMAGE_TYPES.map((type): MacroEntry => ({ insert: `plus {2d6} ${type} damage`, label: `Extra ${type} damage`, group: 'Damage riders', kind: 'snippet', tip: `Adds a ${type} damage rider to a hit or failed save.`, scopes: PROSE })),
+  ...CONDITIONS.map(([condition, stat]): MacroEntry => ({ insert: `must succeed on a {DC:${stat}} saving throw or have the ${condition[0].toUpperCase() + condition.slice(1)} condition until the end of its next turn.`, label: `${condition[0].toUpperCase() + condition.slice(1)} (save ends next turn)`, group: 'Conditions', kind: 'snippet', tip: `A ${condition} rider with a saving throw.`, scopes: PROSE })),
+  ...AREAS.map(([area, stat]): MacroEntry => ({ insert: `Each creature in a ${area} must make a {DC:${stat}} saving throw.`, label: `${area} area save`, group: 'Areas', kind: 'snippet', tip: 'An area saving throw lead.', scopes: PROSE })),
+  { insert: 'Failure: {2d6} damage. Success: Half damage.', label: 'Failure / half on success', group: 'Outcomes', kind: 'snippet', tip: '2024 save outcome pair.', scopes: PROSE },
+  { insert: 'Failure: {2d6} damage. Success: No effect.', label: 'Failure / no effect on success', group: 'Outcomes', kind: 'snippet', tip: 'Save-or-nothing outcome pair.', scopes: PROSE },
+  { insert: 'Hit: {1d8 + STR_MOD} damage.', label: 'Hit damage line', group: 'Outcomes', kind: 'snippet', tip: 'Attack hit outcome.', scopes: PROSE },
+  { insert: 'Miss: Half damage.', label: 'Half damage on a miss', group: 'Outcomes', kind: 'snippet', tip: 'Graze-style miss outcome.', scopes: PROSE },
+  { insert: 'Melee Spell Attack: {SPELL_ATK} to hit, reach 5 ft., one target.', label: 'Melee spell attack', group: 'Delivery', kind: 'snippet', tip: 'A complete spell attack lead.', scopes: PROSE },
+  { insert: 'Ranged Spell Attack: {SPELL_ATK} to hit, range 120 ft., one target.', label: 'Ranged spell attack', group: 'Delivery', kind: 'snippet', tip: 'A complete spell attack lead.', scopes: PROSE },
+  { insert: '{NAME} makes two attacks.', label: 'Multiattack lead', group: 'Traits & actions', kind: 'snippet', tip: 'Opening line of a Multiattack.', scopes: PROSE },
+  { insert: 'If {NAME} fails a saving throw, it can choose to succeed instead.', label: 'Legendary Resistance', group: 'Traits & actions', kind: 'snippet', tip: 'Legendary Resistance body (add uses per day).', scopes: PROSE },
+  { insert: '{NAME} has Advantage on saving throws against spells and other magical effects.', label: 'Magic Resistance', group: 'Traits & actions', kind: 'snippet', tip: 'Magic Resistance body.', scopes: PROSE },
+  { insert: '{NAME} has Advantage on an attack roll against a creature if at least one of its allies is within 5 feet of the creature and the ally doesn\'t have the Incapacitated condition.', label: 'Pack Tactics', group: 'Traits & actions', kind: 'snippet', tip: 'Pack Tactics body.', scopes: PROSE },
+  { insert: '{NAME} regains {PB * 2} hit points at the start of each of its turns if it has at least 1 hit point.', label: 'Regeneration', group: 'Traits & actions', kind: 'snippet', tip: 'Regeneration body.', scopes: PROSE },
+  { insert: '{NAME} gains {5 * PB} temporary hit points.', label: 'Gain temporary hit points', group: 'Traits & actions', kind: 'snippet', tip: 'Temporary hit points scaled by proficiency.', scopes: PROSE },
+  { insert: 'When {NAME} is hit by an attack, it adds {PB} to its AC against that attack, possibly causing it to miss.', label: 'Parry (reaction)', group: 'Traits & actions', kind: 'snippet', tip: 'Parry reaction body.', scopes: PROSE },
+  { insert: '{NAME} moves up to half its Speed without provoking Opportunity Attacks.', label: 'Disengaging move', group: 'Traits & actions', kind: 'snippet', tip: 'Common legendary action body.', scopes: PROSE },
+  { insert: 'The target is pushed up to 10 feet straight away from {NAME}.', label: 'Push 10 feet', group: 'Conditions', kind: 'snippet', tip: 'Forced movement rider.', scopes: PROSE },
+  { insert: 'and the target has the Grappled condition (escape {DC:STR}).', label: 'Grappled 2024 (escape DC)', group: 'Conditions', kind: 'snippet', tip: '2024 grapple rider.', scopes: PROSE },
+  { insert: 'The target\'s Speed is reduced by 10 feet until the start of {NAME}\'s next turn.', label: 'Slowed 10 feet', group: 'Conditions', kind: 'snippet', tip: 'Speed reduction rider.', scopes: PROSE },
+  { insert: 'The target can\'t regain hit points until the start of {NAME}\'s next turn.', label: 'No healing', group: 'Conditions', kind: 'snippet', tip: 'Healing denial rider.', scopes: PROSE },
+  { insert: 'must succeed on a {DC:CON} saving throw or gain 1 Exhaustion level.', label: 'Exhaustion level', group: 'Conditions', kind: 'snippet', tip: '2024 Exhaustion rider.', scopes: PROSE },
+  { insert: 'At the end of each of its turns, the target repeats the save, ending the effect on itself on a success.', label: 'Repeat the save each turn', group: 'Outcomes', kind: 'snippet', tip: 'Save-ends clause.', scopes: PROSE },
+  { insert: '{NAME} casts one of the following spells, requiring no Material components and using its spellcasting ability (spell save {SPELL_DC}):', label: 'Spellcasting lead (2024)', group: 'Traits & actions', kind: 'snippet', tip: '2024 Spellcasting action lead.', scopes: PROSE },
+  { insert: 'If damage reduces {NAME} to 0 hit points, it makes a Constitution saving throw with a DC of 5 plus the damage taken, unless the damage is Radiant or from a Critical Hit. On a successful save, {NAME} drops to 1 hit point instead.', label: 'Undead Fortitude', group: 'Traits & actions', kind: 'snippet', tip: 'Undead Fortitude body.', scopes: PROSE },
+  { insert: '{NAME} can breathe air and water.', label: 'Amphibious', group: 'Traits & actions', kind: 'snippet', tip: 'Amphibious body.', scopes: PROSE },
+  { insert: '{NAME} deals double damage to objects and structures.', label: 'Siege Monster', group: 'Traits & actions', kind: 'snippet', tip: 'Siege Monster body.', scopes: PROSE },
+  { insert: 'While in sunlight, {NAME} has Disadvantage on ability checks and attack rolls.', label: 'Sunlight Sensitivity', group: 'Traits & actions', kind: 'snippet', tip: 'Sunlight Sensitivity body.', scopes: PROSE },
+  { insert: '{NAME} can climb difficult surfaces, including along ceilings, without needing to make an ability check.', label: 'Spider Climb', group: 'Traits & actions', kind: 'snippet', tip: 'Spider Climb body.', scopes: PROSE },
+
   { insert: 'Melee Weapon Attack: {A:STR} to hit, reach 5 ft., one target.', label: 'Melee weapon attack', group: 'Delivery', kind: 'snippet', tip: 'A complete attack lead.', scopes: PROSE },
   { insert: 'Ranged Weapon Attack: {A:DEX} to hit, range 80/320 ft., one target.', label: 'Ranged weapon attack', group: 'Delivery', kind: 'snippet', tip: 'A complete attack lead.', scopes: PROSE },
   { insert: 'Each creature in a 20-foot-radius sphere must make a {DC:DEX} saving throw.', label: 'Area saving throw', group: 'Delivery', kind: 'snippet', tip: 'An area save lead.', scopes: PROSE },
@@ -77,6 +132,8 @@ export interface CatalogOptions {
   customVariables?: Record<string, unknown>
   customMacros?: Record<string, unknown>
   limit?: number
+  /** Inside a braced formula: offer bare references and variables only (no braces, no prose). */
+  compose?: boolean
 }
 
 const customEntries = (values: Record<string, unknown> | undefined, group: string, kind: MacroKind): MacroEntry[] =>
@@ -106,6 +163,8 @@ export function catalogFor(options: CatalogOptions = {}): MacroEntry[] {
     ...customEntries(options.customMacros, 'Your macros', 'custom'),
     ...MACRO_CATALOG,
   ].filter((entry) => inScope(entry, scope) && (!query || entry.kind !== 'snippet'))
+    .filter((entry) => !options.compose || entry.kind === 'reference' || entry.kind === 'custom')
+    .map((entry) => (options.compose ? { ...entry, insert: entry.insert.replace(/^\{|\}$/g, '') } : entry))
   const ranked = entries.map((entry, index) => ({ entry, index, score: rank(entry, query) })).filter((item) => item.score >= 0)
   ranked.sort((left, right) => left.score - right.score || left.index - right.index)
   return ranked.slice(0, options.limit ?? ranked.length).map((item) => item.entry)
@@ -122,11 +181,17 @@ export function catalogGroups(entries: readonly MacroEntry[]): { group: string; 
  * The open "{query" before the caret, if any: autocomplete triggers on an unclosed brace.
  * Returns the query and where the brace starts.
  */
-export function openMacroAt(text: string, caret: number): { query: string; start: number } | undefined {
+export function openMacroAt(text: string, caret: number): { query: string; start: number; compose?: true } | undefined {
   const before = text.slice(0, caret)
-  const match = /\{([\w.:+\- ]{0,40})$/.exec(before)
-  if (!match || match[1].includes('}')) return undefined
-  return { query: match[1].trim(), start: before.length - match[0].length }
+  const brace = before.lastIndexOf('{')
+  if (brace < 0) return undefined
+  const body = before.slice(brace + 1)
+  if (body.length > 80 || !/^[\w.: +\-*/(),]*$/.test(body)) return undefined
+  // A single word is a token query; once an operator appears the caret is composing a formula,
+  // so suggest for the identifier being typed and keep suggesting after every operator (Build 274).
+  if (/^[\w.:]*$/.test(body.trim()) && !/[+\-*/(),]/.test(body)) return { query: body.trim(), start: brace }
+  const fragment = /([A-Za-z_][\w.]*)$/.exec(body)?.[1] ?? ''
+  return { query: fragment, start: caret - fragment.length, compose: true }
 }
 
 /** Replace the open "{query" (from `start` to `caret`) with `insert`; returns text and new caret. */

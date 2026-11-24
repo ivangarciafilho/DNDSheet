@@ -38,16 +38,16 @@ export function createPlateEntryHelpers({ webProjection, processMonsterTokens, p
   ): string => {
     const quals: string[] = []
     const phase = spec.phaseText?.trim() || phaseLabel(monster.paragonConfig?.phaseName, spec.stagePool)
-    if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase" tabindex="0">${phase}</span>`)
+    if (phase) quals.push(`<span class="sb-qual phase-cell" data-help="phase">${phase}</span>`)
     // Authored tags ("Recharges after {PB} rounds") resolve like any other mechanic text.
     const printedUsage = spec.usage?.includes('{') ? processMonsterTokens(spec.usage, monster) : spec.usage
     if (printedUsage?.trim()) {
       const helpKey = statblockUsageHelpKey(printedUsage)
-      const helpAttrs = helpKey ? ` data-help="${helpKey}" tabindex="0"` : ''
+      const helpAttrs = helpKey ? ` data-help="${helpKey}"` : ''
       quals.push(`<span class="sb-qual recharge-cell"${helpAttrs}>${printedUsage.trim()}</span>`)
     }
     if (spec.availability?.trim()) {
-      quals.push(`<span class="sb-qual availability-cell" data-help="availability" tabindex="0">${spec.availability.trim()}</span>`)
+      quals.push(`<span class="sb-qual availability-cell" data-help="availability">${spec.availability.trim()}</span>`)
     }
     const classification = spec.discipline?.trim()
     const comps = Array.isArray(spec.components) && spec.components.length > 0
@@ -55,10 +55,10 @@ export function createPlateEntryHelpers({ webProjection, processMonsterTokens, p
       : ''
     const spellMetaParts: string[] = []
     if (classification) {
-      spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level" tabindex="0">${classification}</span>`)
+      spellMetaParts.push(`<span class="sb-qual school-cell" data-help="spell-school-level">${classification}</span>`)
     }
     if (comps) {
-      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell dnd-spell-comp" data-help="spell-components" tabindex="0">(${comps})</span>`)
+      spellMetaParts.push(`<span class="sb-qual sb-comp component-cell dnd-spell-comp" data-help="spell-components">(${comps})</span>`)
     }
     const spellMetaSuffix = spellMetaParts.length > 0 ? `, ${spellMetaParts.join(' ')}` : ''
     const nameHtml = `${quals.join(' ')}${quals.length ? ' ' : ''}<span class="sb-name cell-main-text">${spec.name}${spellMetaSuffix}</span>`

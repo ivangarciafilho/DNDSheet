@@ -546,6 +546,8 @@ export default defineComponent({
       const width = isA4 ? page.offsetWidth : Math.max(page.offsetWidth, 1120)
       Object.assign(copy.style, { position: 'absolute', inset: '0 auto auto -100000px', width: width + 'px', pointerEvents: 'none' })
       copy.inert = true
+      // The preview parks the portrait off-screen; the exported image still carries it.
+      for (const el of copy.querySelectorAll('.portrait-offstage')) el.classList.remove('portrait-offstage')
       page.after(copy)
       try {
         const fonts = [copy, ...copy.querySelectorAll<HTMLElement>('*')].flatMap(element => {

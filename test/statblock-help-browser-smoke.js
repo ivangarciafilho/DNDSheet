@@ -194,76 +194,16 @@ try {
     fs.writeFileSync(path.join(evidenceDir, 'a4-portrait.pdf'), Buffer.from(printDocument.result.data, 'base64'))
   }
 
-  const reposition = await evaluate(`async () => {
+  // Build 274 (owner request): the stat block shows no hover or focus tooltips.
+  const quiet = await evaluate(`async () => {
     const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-    const tip = document.querySelector('#statblock-help-tip')
-    const initial = { top: tip.style.top, left: tip.style.left }
-    // Build170+ titles are inline spans (forced inline), and inline boxes ignore transforms: move the row that carries the title.
-    const mover = target.closest('.dnd-cellular-row, .sb-row') || target
-    mover.style.transform = 'translateY(32px)'
-    document.dispatchEvent(new Event('scroll', { bubbles: true }))
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-    const afterScroll = tip.style.top
-    mover.style.transform = 'translateX(24px)'
-    window.dispatchEvent(new Event('resize'))
-    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
-    const afterResize = tip.style.left
-    mover.style.removeProperty('transform')
-    return { initial, afterScroll, afterResize }
-  }`)
-  assert.notEqual(reposition.afterScroll, reposition.initial.top, 'Scroll should reposition an open tooltip with its target')
-  assert.notEqual(reposition.afterResize, reposition.initial.left, 'Resize should reposition an open tooltip with its target')
-
-  await evaluate(`() => {
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
-    target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
-  }`)
-  const hover = await evaluate(`() => {
-    const tip = document.querySelector('#statblock-help-tip')
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
-    const rect = tip?.getBoundingClientRect()
-    return { text: tip?.textContent, described: target?.getAttribute('aria-describedby'), visible: target?.dataset.helpVisible, inside: Boolean(rect && rect.left >= 0 && rect.top >= 0 && rect.right <= innerWidth && rect.bottom <= innerHeight) }
-  }`)
-  assert.match(hover.text || '', /Armor Class/)
-  assert.match(hover.text || '', /Values:\s*\S/)
-  assert.equal(hover.described, 'statblock-help-tip')
-  assert.equal(hover.visible, 'true')
-  assert.equal(hover.inside, true, 'Tooltip should be clamped to viewport')
-
-  await evaluate(`() => {
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
-    target.focus()
-    document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }))
-  }`)
-  const afterEscape = await evaluate('() => ({ tip: Boolean(document.querySelector(\'#statblock-help-tip\')), described: document.querySelector(\'#render .statblock [data-help=armor-class]\')?.hasAttribute(\'aria-describedby\') })')
-  assert.deepEqual(afterEscape, { tip: false, described: false }, 'Escape should dismiss the tooltip and its ARIA reference')
-
-  const keyboardFocus = await evaluate(`() => {
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
-    target.focus()
-    return document.activeElement === target
-  }`)
-  assert.equal(keyboardFocus, true, 'The help head should be keyboard focusable')
-  await evaluate(`() => {
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
     target.dispatchEvent(new FocusEvent('focusin', { bubbles: true }))
+    await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)))
+    return { tip: Boolean(document.querySelector('#statblock-help-tip, .statblock-help-tip')), described: target.hasAttribute('aria-describedby'), tabStop: target.hasAttribute('tabindex') }
   }`)
-  const focusHelp = await evaluate('() => ({ tip: Boolean(document.querySelector(\'#statblock-help-tip\')), described: document.querySelector(\'#render .statblock [data-help=armor-class]\')?.getAttribute(\'aria-describedby\') })')
-  assert.deepEqual(focusHelp, { tip: true, described: 'statblock-help-tip' }, 'Focus should expose a programmatic description')
-  await evaluate(`() => {
-    const target = document.querySelector('#render .statblock [data-help=armor-class]')
-    target.dispatchEvent(new FocusEvent('focusout', { bubbles: true, relatedTarget: document.body }))
-    target.dispatchEvent(new PointerEvent('pointerover', { bubbles: true, pointerType: 'mouse' }))
-    target.remove()
-  }`)
-  const afterDetach = await evaluate(`async () => {
-    await new Promise((resolve) => setTimeout(resolve, 50))
-    return !document.querySelector('.statblock-help-tip')
-  }`)
-  assert.equal(afterDetach, true, 'Detaching the active target should clear its tooltip and ARIA state')
-  console.log('Statblock UI smoke passed: shared row grammar, 12 theme contrast probes, hover/focus help, viewport repositioning, Escape, detached-target cleanup')
+  assert.deepEqual(quiet, { tip: false, described: false, tabStop: false }, 'The stat block must not raise tooltips or keep empty tab stops')
+  console.log('Statblock UI smoke passed: shared row grammar, 12 theme contrast probes, print ink, no stat block tooltips')
 } finally {
   ws?.close()
   chrome.kill()

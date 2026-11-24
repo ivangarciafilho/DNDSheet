@@ -67,7 +67,7 @@ const BROWSER_SUITE = [
   'node test/shared-casting-editor-browser-smoke.js', 'node test/print-parity-browser-smoke.js', 'node test/emergency-rich-mechanics-browser-smoke.js',
   'node test/emergency-containers-browser-smoke.js', 'node test/emergency-numeric-presentation-browser-smoke.js', 'node test/outcome-lifecycle-browser-smoke.js',
   'node test/statblock-help-browser-smoke.js', 'node --experimental-strip-types test/release-matrix-browser-smoke.js', 'node tools/qa/overflow-probe.js',
-  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs', 'node test/locale-browser-smoke.mjs', 'node test/description-containers-browser-smoke.mjs', 'node test/build269-features-browser-smoke.mjs', 'node test/character-2024-browser-smoke.mjs',
+  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs', 'node test/locale-browser-smoke.mjs', 'node test/description-containers-browser-smoke.mjs', 'node test/build269-features-browser-smoke.mjs', 'node test/build274-features-browser-smoke.mjs', 'node test/character-2024-browser-smoke.mjs',
   'node test/build248-envelope-workflow-browser-smoke.js', 'node test/build249-workflow-browser-smoke.js', 'node test/budget-browser-probe.js', 'node test/build250-workflow-browser-smoke.js',
 ].map((command) => `node tools/qa/retry-once.mjs ${command}`).join(' && ')
 

@@ -101,6 +101,7 @@ const secondaryAcModes = Object.freeze([
   'versus_bps', 'versus_creature_types', 'creature_type', 'attack_type', 'has_temp_hp', 'took_damage_since',
   'while_concentrating', 'asleep_unconscious',
 ])
+register('acConfig.naturalBonus', 'bonus', 'combat', { ...optional, editableWhen: [eq('acConfig.baseMode', 'natural')] })
 register('acConfig.defenseItemCustomBonus', 'bonus', 'combat', { ...optional, editableWhen: [eq('acConfig.defenseItem', 'custom')] })
 register('acConfig.temporaryCustomBonus', 'bonus', 'combat', { ...optional, editableWhen: [eq('acConfig.temporary', 'parry_custom')] })
 register('acConfig.conditionalBonus', 'bonus', 'combat', { ...optional, editableWhen: [{ path: 'acConfig.conditional', oneOf: ['all_attacks_beyond_first', 'first_y_attacks'] }] })

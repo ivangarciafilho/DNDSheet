@@ -101,7 +101,7 @@
             <div
               v-if="hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')) && (monster.portrait?.position === 'left' || (!monster.portrait?.position && editorStore?.a4PreviewMode))"
               class="monster-portrait portrait-left"
-              :class="{ 'portrait-frameless': monster.portrait?.frameless }"
+              :class="{ 'portrait-frameless': monster.portrait?.frameless, 'portrait-offstage': !editorStore?.a4PreviewMode }"
               :style="editorStore?.a4PreviewMode ? a4PortraitStyle : portraitStyle"
             >
               <div class="portrait-img-container relative-position" :style="portraitCropContainerStyle">
@@ -150,18 +150,18 @@
           <div class="monster-cr-badge-cluster top-plate-cluster cr-cluster">
             <div class="cr-composite-pill top-plate-table">
               <div class="cr-region cr-main-region top-plate-col">
-                <span class="region-label top-plate-header" data-help="challenge-rating" tabindex="0">CR</span>
+                <span class="region-label top-plate-header" data-help="challenge-rating">CR</span>
                 <span class="region-val top-plate-cell">{{ crDisplay }}</span>
               </div>
               <div class="region-divider"></div>
               <div class="cr-region cr-sub-region top-plate-col">
-                <span class="region-label top-plate-header" data-help="proficiency-bonus" tabindex="0">PB</span>
+                <span class="region-label top-plate-header" data-help="proficiency-bonus">PB</span>
                 <span class="region-val top-plate-cell">+{{ monster.proficiency }}</span>
               </div>
               <template v-if="monster.showXp">
                 <div class="region-divider"></div>
                 <div class="cr-region cr-sub-region top-plate-col">
-                  <span class="region-label top-plate-header" data-help="experience-points" tabindex="0">XP</span>
+                  <span class="region-label top-plate-header" data-help="experience-points">XP</span>
                   <span class="region-val top-plate-cell" :title="xpFormatted + ' XP'">{{ xpCompact }}</span>
                 </div>
               </template>
@@ -183,7 +183,7 @@
 
           <!-- Right Cluster: Initiative Header (Row 1) & Dynamic Initiative Cells (Row 2) -->
           <div class="top-plate-cluster init-cluster">
-            <div class="top-plate-init-header" data-help="initiative" tabindex="0">{{ $t('skill.INITIATIVE') }}</div>
+            <div class="top-plate-init-header" data-help="initiative">{{ $t('skill.INITIATIVE') }}</div>
             <div class="top-plate-init-cells">
               <div
                 v-for="(initCell, iIdx) in sanitizedInitiativeCells"
@@ -196,7 +196,7 @@
         </div>
       </div>
     <div class="skill ac dnd-cascade-panel dnd-cellular-row dnd-ac-cascade-row" :class="{ 'sb-striped': acStripe, 'is-striped': acStripe }">
-      <span class="name dnd-cascade-title" data-help="armor-class" tabindex="0">{{ blockStyle.mm2024 ? 'AC' : 'Armor Class' }}</span>
+      <span class="name dnd-cascade-title" data-help="armor-class">{{ blockStyle.mm2024 ? 'AC' : 'Armor Class' }}</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-if="monster?.splitAcRiderRows && sanitizedAcBadges.length > 1">
           <span v-safe-html="sanitizedAcBadges[0]" class="dnd-cascade-badge"></span>
@@ -220,7 +220,7 @@
       </div>
     </template>
     <div class="skill hp dnd-cascade-panel dnd-cellular-row dnd-hp-cascade-row" :class="{ 'sb-striped': hpStripe, 'is-striped': hpStripe }">
-      <span class="name dnd-cascade-title" data-help="hit-points" tabindex="0">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
+      <span class="name dnd-cascade-title" data-help="hit-points">{{ blockStyle.mm2024 ? 'HP' : 'Hit Points' }}</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-for="(badge, index) in hpInlineBadges" :key="index">
           <span v-safe-html="badge" class="dnd-cascade-badge"></span>
@@ -262,7 +262,7 @@
     <div
       v-if="hasPortrait && (!editorStore?.a4PreviewMode || (resolvedA4Layout !== 'stacked' && resolvedA4Layout !== 'statblock_only')) && monster.portrait?.position === 'right'"
       class="monster-portrait portrait-right"
-      :class="{ 'portrait-frameless': monster.portrait?.frameless }"
+      :class="{ 'portrait-frameless': monster.portrait?.frameless, 'portrait-offstage': !editorStore?.a4PreviewMode }"
       :style="editorStore?.a4PreviewMode ? a4PortraitStyle : portraitStyle"
     >
       <div class="portrait-img-container relative-position" :style="portraitCropContainerStyle">
@@ -283,6 +283,7 @@
   <div
     v-if="hasPortrait && monster.portrait?.position === 'bottom'"
     class="a4-hero-banner a4-footer-banner"
+    :class="{ 'portrait-offstage': !editorStore?.a4PreviewMode }"
   >
     <div class="portrait-img-container" :style="portraitCropContainerStyle">
       <img :src="monster.portrait?.url" :alt="monster.name" class="a4-hero-img" :style="portraitImgStyle" />
@@ -296,26 +297,12 @@
     </div>
 
   </div>
-  <Teleport to="body">
-    <div
-      v-if="activeHelpTip"
-      id="statblock-help-tip"
-      ref="helpTipElement"
-      class="statblock-help-tip"
-      role="tooltip"
-      :style="helpTipStyle"
-    >
-      <div v-if="activeHelpTip.title" class="tip-title">{{ activeHelpTip.title }}</div>
-      <div class="tip-body">{{ activeHelpTip.text }}</div>
-      <div v-if="activeHelpTip.detail" class="tip-detail">{{ activeHelpTip.detail }}</div>
-    </div>
-  </Teleport>
 </template>
 
 <script lang="ts">
 import type { HpRiderGroup } from 'src/core/domain/basic-riders'
 import { mechanicRichHtml } from 'src/core/domain/mechanic-rich-text'
-import { computed, defineComponent, inject, nextTick, onBeforeUnmount, onMounted, provide, ref, StyleValue, watch } from 'vue'
+import { computed, defineComponent, inject, provide, ref, StyleValue, watch } from 'vue'
 import { useA4Composition } from './useA4Composition'
 import StatblockEncounterDynamics from './StatblockEncounterDynamics.vue'
 import A4PreviewToolbar from './A4PreviewToolbar.vue'
@@ -337,8 +324,6 @@ import { buildInnateSpellPlate, spellLevelLead } from 'src/core/domain/spell-pla
 import type { SpellPlateLevel } from 'src/core/domain/spell-plate'
 import { effectiveAdvantage } from 'src/core/domain/skill-action-groups'
 import { formatInitiativeRiders } from 'src/core/domain/initiative-composer'
-import { statblockHelpText } from './statblock-help'
-import { useI18n } from 'vue-i18n'
 import { resolveSpellcastingPlacement } from 'src/core/domain/export-contract'
 
 export default defineComponent({
@@ -351,16 +336,10 @@ export default defineComponent({
     StatblockTraits,
   },
   setup() {
-    const { locale } = useI18n({ useScope: 'global' })
     const monster = useMonsterStore()
     const castingSpells = useSpellsStore()
     const editorStore = useEditorStore()
     const renderRoot = ref<HTMLElement | null>(null)
-    const helpTipElement = ref<HTMLElement | null>(null)
-    const activeHelpTip = ref<{ title?: string; text: string; detail?: string } | null>(null)
-    const activeHelpTarget = ref<HTMLElement | null>(null)
-    const helpTipStyle = ref<Record<string, string>>({ position: 'fixed', left: '12px', top: '12px' })
-    let helpTipObserver: MutationObserver | null = null
     const spellRuleParts = (rule: string) => {
       const tokens = /\b(\d+(?:st|nd|rd|th)?|Short or Long Rest|Short Rest|Long Rest|Downtime|Bonus Action|Reaction|Cast|Artificer|Bard|Cleric|Druid|Paladin|Ranger|Sorcerer|Warlock|Wizard)\b/gi
       return rule.split(tokens).map((text, index) => ({ text, kind: index % 2 === 0 ? 'text' : /^\d/.test(text) ? 'number' : 'term' }))
@@ -370,125 +349,6 @@ export default defineComponent({
       typeof useTextRenderer
     >
 
-    const findHelpTarget = (eventTarget: EventTarget | null): HTMLElement | null => {
-      if (!(eventTarget instanceof Element)) return null
-      const target = eventTarget.closest<HTMLElement>('[data-help]')
-      return target && renderRoot.value?.contains(target) ? target : null
-    }
-
-    const positionHelpTip = () => {
-      const target = activeHelpTarget.value
-      if (!target?.isConnected) return
-      const rect = target.getBoundingClientRect()
-      const margin = 10
-      const width = helpTipElement.value?.offsetWidth || Math.min(320, window.innerWidth - margin * 2)
-      const height = helpTipElement.value?.offsetHeight || 72
-      const left = Math.max(margin, Math.min(rect.left + (rect.width - width) / 2, window.innerWidth - width - margin))
-      let top = rect.top - height - 8
-      if (top < margin) top = rect.bottom + 8
-      top = Math.max(margin, Math.min(top, window.innerHeight - height - margin))
-      helpTipStyle.value = { position: 'fixed', left: `${left}px`, top: `${top}px` }
-    }
-
-    const hideHelpTip = () => {
-      const target = activeHelpTarget.value
-      if (target?.getAttribute('aria-describedby') === 'statblock-help-tip') {
-        target.removeAttribute('aria-describedby')
-      }
-      target?.removeAttribute('data-help-visible')
-      activeHelpTarget.value = null
-      activeHelpTip.value = null
-    }
-
-    const showHelpTip = (target: HTMLElement) => {
-      const key = target.dataset.help
-      const description = statblockHelpText(key, locale.value)
-      if (!description) {
-        if (activeHelpTarget.value !== target) hideHelpTip()
-        return
-      }
-      // Plate rows keep values in sibling cells; Build170+ vitals panels keep them in one badges wrap.
-      const row = target.matches('.sb-head') ? target.closest('.sb-row') : null
-      const panel = !row && target.matches('.dnd-cascade-title') ? target.closest('.dnd-cellular-row') : null
-      const valueCells = row
-        ? [...row.querySelectorAll<HTMLElement>(':scope > .sb-cell:not(.sb-head)')]
-        : panel
-          ? [...panel.querySelectorAll<HTMLElement>(':scope > .dnd-cascade-badges-wrap')]
-          : []
-      const rowValues = valueCells
-        .map((cell) => cell.textContent?.replace(/\s+/g, ' ').trim())
-        .filter((value): value is string => Boolean(value))
-        .join(' · ')
-        .slice(0, 180)
-      const title = key ? key.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : ''
-      if (activeHelpTarget.value !== target) hideHelpTip()
-      activeHelpTarget.value = target
-      activeHelpTip.value = { title, text: description, detail: rowValues ? `Values: ${rowValues}` : undefined }
-      target.setAttribute('aria-describedby', 'statblock-help-tip')
-      target.setAttribute('data-help-visible', 'true')
-      nextTick(positionHelpTip)
-    }
-
-    const handleHelpPointerOver = (event: Event) => {
-      const target = findHelpTarget(event.target)
-      if (target) showHelpTip(target)
-    }
-
-    const handleHelpPointerOut = (event: Event) => {
-      const target = findHelpTarget(event.target)
-      if (!target || target !== activeHelpTarget.value) return
-      const nextTarget = findHelpTarget((event as PointerEvent).relatedTarget)
-      if (nextTarget === target || document.activeElement === target) return
-      hideHelpTip()
-    }
-
-    const handleHelpFocusIn = (event: FocusEvent) => {
-      const target = findHelpTarget(event.target)
-      if (target) showHelpTip(target)
-    }
-
-    const handleHelpFocusOut = (event: FocusEvent) => {
-      const target = findHelpTarget(event.target)
-      if (!target || target !== activeHelpTarget.value) return
-      const nextTarget = findHelpTarget(event.relatedTarget)
-      if (nextTarget === target || target.matches(':hover')) return
-      hideHelpTip()
-    }
-
-    const handleHelpKeydown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && activeHelpTip.value) hideHelpTip()
-    }
-
-    onMounted(() => {
-      const root = renderRoot.value
-      root?.addEventListener('pointerover', handleHelpPointerOver)
-      root?.addEventListener('pointerout', handleHelpPointerOut)
-      root?.addEventListener('focusin', handleHelpFocusIn)
-      root?.addEventListener('focusout', handleHelpFocusOut)
-      root?.addEventListener('keydown', handleHelpKeydown)
-      if (root) {
-        helpTipObserver = new MutationObserver(() => {
-          if (activeHelpTarget.value && !activeHelpTarget.value.isConnected) hideHelpTip()
-        })
-        helpTipObserver.observe(root, { childList: true, subtree: true })
-      }
-      window.addEventListener('resize', positionHelpTip)
-      document.addEventListener('scroll', positionHelpTip, true)
-    })
-
-    onBeforeUnmount(() => {
-      const root = renderRoot.value
-      root?.removeEventListener('pointerover', handleHelpPointerOver)
-      root?.removeEventListener('pointerout', handleHelpPointerOut)
-      root?.removeEventListener('focusin', handleHelpFocusIn)
-      root?.removeEventListener('focusout', handleHelpFocusOut)
-      root?.removeEventListener('keydown', handleHelpKeydown)
-      helpTipObserver?.disconnect()
-      helpTipObserver = null
-      window.removeEventListener('resize', positionHelpTip)
-      document.removeEventListener('scroll', positionHelpTip, true)
-      hideHelpTip()
-    })
 
     const columns = computed<StyleValue>(() => {
       return {
@@ -759,9 +619,6 @@ export default defineComponent({
       resolvedSpellPlacement,
       spellPlatesBind,
       mechanicRichHtml,
-      helpTipElement,
-      activeHelpTip,
-      helpTipStyle,
       monster,
       editorStore,
       xpFormatted,

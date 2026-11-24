@@ -37,15 +37,15 @@ test('plate: empty cells and empty rows are dropped', () => {
 
 // sanitizeWebString escapes every tag and restores only tags whose text holds no '&',
 // so attribute values must never contain characters that need HTML entities.
-test('plate: tooltips and help keys stay entity-free so the web sanitizer keeps the tag', () => {
+test('plate: help keys stay entity-free and cells carry no tooltip so the web sanitizer keeps the tag', () => {
   const row = plateRowHtml({ cells: [{ html: 'x', tip: 'say "hi" <b> & co', help: 'Recharge Die!' }, { html: '  ' }] })
-  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" title="say \'hi\' b and co" data-help="recharge-die" tabindex="0"><span class="sb-text">x</span></div></div>')
+  assert.strictEqual(row, '<div class="sb-row"><div class="sb-cell" data-help="recharge-die"><span class="sb-text">x</span></div></div>')
   const html = plateHtml({
     rows: [{ cells: [{ html: 'a', head: true, tip: '<script>&amp;"' }, { html: 'b', tip: 'Tom & Jerry' }] }],
     body: 'body',
   })
   for (const tag of html.match(/<[^>]*>/g) ?? []) assert.ok(!tag.includes('&'), `entity inside tag: ${tag}`)
-  assert.match(plateHtml({ rows: [{ cells: [{ html: 'name', head: true }] }] }), /data-help="entry-name" tabindex="0"/)
+  assert.match(plateHtml({ rows: [{ cells: [{ html: 'name', head: true }] }] }), /data-help="entry-name">/)
 })
 
 // Cells are flex containers (vertical centring); a single inline wrapper keeps `20-foot`,
@@ -58,7 +58,7 @@ test('plate: cell content flows inside one inline wrapper', () => {
   )
   const head = plateHtml({ rows: [{ cells: [{ html: '<span class="sb-qual">Recharge 5–6</span> <span class="sb-name">Breath</span>', head: true }] }] })
   assert.strictEqual((head.match(/class="sb-text"/g) ?? []).length, 1)
-  assert.match(head, /tabindex="0"><span class="sb-text"><span class="sb-qual">Recharge 5–6<\/span> <span class="sb-name">Breath<\/span><\/span><\/div>/)
+  assert.match(head, /data-help="entry-name"><span class="sb-text"><span class="sb-qual">Recharge 5–6<\/span> <span class="sb-name">Breath<\/span><\/span><\/div>/)
 })
 
 test('plate: long bodies get reading stripes, measured on visible text', () => {

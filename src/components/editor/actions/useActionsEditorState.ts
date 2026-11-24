@@ -14,6 +14,7 @@ import type { ActionTemplate } from 'src/core/domain/action-templates'
 import type { ActionComposerRole } from 'src/core/domain/action-composer'
 import type { HeaderRole } from 'src/core/domain/role-headers'
 import { roleTransition } from 'src/core/domain/role-transition'
+import { ATTACK_PRESETS, attackPresetAction } from 'src/core/domain/attack-presets'
 
 export interface UnifiedEntry {
   id: string
@@ -205,6 +206,14 @@ export function useActionsEditorState() {
     } else {
       monster.addAction()
     }
+  }
+
+  // Build 274: an attack starter is a composer Action with kind, range and hit damage already set.
+  const addAttackPreset = (kind: string) => {
+    monster.addAction()
+    const latest = monster.actions[monster.actions.length - 1]
+    if (latest) Object.assign(latest, attackPresetAction(kind))
+    selectedCategory.value = 'action'
   }
 
   const changeItemRole = (item: UnifiedEntry, newRole: string) => {
@@ -518,6 +527,8 @@ export function useActionsEditorState() {
   }
 
   return {
+    ATTACK_PRESETS,
+    addAttackPreset,
     collapsedMap,
     collapsedCategoryMap,
     groupedEntriesByCategory,

@@ -38,3 +38,6 @@ deployed-site-reference/
 
 /.gate
 /dist-pages
+
+# graphify code map: commit the map, not its extraction cache
+graphify-out/cache/

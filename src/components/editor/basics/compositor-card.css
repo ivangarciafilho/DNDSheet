@@ -1,0 +1,62 @@
+/* Build 274: shared grammar for the Armor Class and Hit Points modules.
+   A card owns one stat line; each step is a labelled band; fields flow and wrap,
+   short numbers keep a fixed width (FormulaField compact) while pickers share the rest. */
+.compositor-card {
+  --cc-accent: #3b82f6;
+  border: 1.5px solid var(--cc-accent);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--cc-accent) 7%, transparent);
+  padding: 6px 8px 8px;
+}
+.compositor-card.hp-compositor { --cc-accent: #ef4444; }
+
+.compositor-card__head,
+.compositor-card__result {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.compositor-card__title { display: flex; flex-direction: column; line-height: 1.2; }
+
+.compositor-card__result {
+  margin-top: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.compositor-step {
+  --cc-step: var(--cc-accent);
+  margin-top: 6px;
+  padding: 4px 6px 6px;
+  border-top: 1px solid color-mix(in srgb, var(--cc-step) 35%, transparent);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--cc-step) 6%, transparent);
+}
+.compositor-step__label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--cc-step) 70%, #ffffff);
+}
+.compositor-step__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 6px;
+}
+.compositor-step__body > * { min-width: 0; }
+.compositor-step__grow { flex: 1 1 11rem; }
+
+.compositor-step--bloodied { --cc-step: #ef4444; }
+.compositor-step--dt { --cc-step: #3b82f6; }
+.compositor-step--dr { --cc-step: #10b981; }
+.compositor-step--regen { --cc-step: #14b8a6; }
+.compositor-step--mortality { --cc-step: #f59e0b; }
+.compositor-step--riders { --cc-step: #a855f7; }

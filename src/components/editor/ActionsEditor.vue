@@ -44,7 +44,16 @@
           >
             <q-list class="bg-grey-9 text-white">
               <q-item v-close-popup clickable @click="addNewEntry('multiattack')"><q-item-section>Add Multiattack Option</q-item-section></q-item>
-              <q-item v-close-popup clickable @click="addNewEntry('attack')"><q-item-section>Add Attack</q-item-section></q-item>
+              <q-item-label header class="text-grey-5 q-py-xs">Attacks · ready in the composer</q-item-label>
+              <q-item v-for="preset in ATTACK_PRESETS" :key="preset.kind" v-close-popup clickable :data-add-attack-preset="preset.kind" @click="addAttackPreset(preset.kind)">
+                <q-item-section avatar><q-icon :name="preset.icon" :color="preset.color" /></q-item-section>
+                <q-item-section><q-item-label>Add {{ preset.label }}</q-item-label><q-item-label caption class="text-grey-5">{{ preset.tip }}</q-item-label></q-item-section>
+              </q-item>
+              <q-item v-close-popup clickable @click="addNewEntry('attack')">
+                <q-item-section avatar><q-icon name="mdi-table-cog" color="grey-5" /></q-item-section>
+                <q-item-section><q-item-label>Add Classic Attack</q-item-label><q-item-label caption class="text-grey-5">Legacy attack form with separate damage fields.</q-item-label></q-item-section>
+              </q-item>
+              <q-separator dark />
               <q-item v-close-popup clickable @click="addNewEntry('action')">
                 <q-item-section avatar><q-icon name="mdi-sword" color="amber-5" /></q-item-section>
                 <q-item-section>Add Action</q-item-section>

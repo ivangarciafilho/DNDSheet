@@ -31,6 +31,15 @@ export interface BuildCatalogOptionsConfig {
 }
 
 const DEFAULT_CUSTOM_GROUP = 'Custom / Saved'
+
+// Build 274: options without their own color take a stable color from their group, so every
+// dropdown reads as color-coded scopes even before a catalog is hand-tuned.
+const GROUP_PALETTE = ['blue-5', 'teal-5', 'amber-6', 'deep-purple-4', 'red-5', 'green-6', 'orange-6', 'cyan-6', 'pink-5', 'indigo-4', 'lime-7', 'brown-4'] as const
+export function groupColor(group: string): string {
+  let hash = 0
+  for (const char of group) hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+  return GROUP_PALETTE[hash % GROUP_PALETTE.length]
+}
 const ALPHA_COLLATOR = new Intl.Collator(undefined, { sensitivity: 'base' })
 
 function compareAlpha(a: string, b: string): number {
@@ -90,7 +99,7 @@ export function buildCatalogOptions(config: BuildCatalogOptionsConfig): CatalogO
       group,
       badge: entry.badge,
       icon: entry.icon,
-      color: entry.color,
+      color: entry.color ?? groupColor(group),
       tooltip: entry.tooltip,
       disable: entry.disable,
       meta: entry.meta,

@@ -24,8 +24,7 @@
       <catalog-select
         v-help="'How often this AC rider triggers or refreshes.'"
         :model-value="rider.cadence ?? ''"
-        :entries="BASIC_RIDER_CADENCES"
-        preserve-order
+        :entries="BASIC_RIDER_CADENCE_ENTRIES"
         clearable
         :searchable="false"
         label="Cadence"
@@ -35,8 +34,7 @@
       <catalog-select
         v-help="'Trigger window or action cost when this AC rider applies.'"
         :model-value="rider.timing ?? ''"
-        :entries="timingEntries"
-        preserve-order
+        :entries="BASIC_RIDER_TIMING_ENTRIES"
         allow-custom
         clearable
         label="Timing"
@@ -121,7 +119,7 @@ import { computed, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
 import { useMonsterStore } from 'src/stores/monster-store'
-import { BASIC_RIDER_CADENCES, BASIC_RIDER_TIMINGS } from 'src/core/domain/basic-riders'
+import { BASIC_RIDER_CADENCE_ENTRIES, BASIC_RIDER_TIMING_ENTRIES } from 'src/core/domain/basic-riders'
 import type { AcRider } from 'src/core/domain/types'
 import { ON_HIT_ENTRIES, ON_MISS_ENTRIES } from './basics-catalogs'
 
@@ -129,7 +127,6 @@ import { ON_HIT_ENTRIES, ON_MISS_ENTRIES } from './basics-catalogs'
 // cadence -> timing -> trigger -> effect (preset wording or custom text) and prints in the AC line.
 const monster = useMonsterStore()
 const emit = defineEmits<{ changed: [] }>()
-const timingEntries = BASIC_RIDER_TIMINGS.map((timing) => ({ value: timing, label: timing }))
 const custom = { value: 'custom', label: 'Custom text…' }
 const HIT_EFFECTS = [...ON_HIT_ENTRIES.filter((entry) => entry.value !== 'none'), custom]
 const MISS_EFFECTS = [...ON_MISS_ENTRIES.filter((entry) => entry.value !== 'none'), custom]

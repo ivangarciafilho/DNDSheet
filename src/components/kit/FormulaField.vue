@@ -1,5 +1,5 @@
 <template>
-  <div class="formula-field" :data-formula-field="path">
+  <div class="formula-field" :class="{ 'formula-field--compact': compact, 'formula-field--locked': locked }" :data-formula-field="path">
     <div v-if="!editing" class="row no-wrap items-start">
     <q-select
 class="col" :model-value="source" :display-value="display" :options="options" :label="label" :dense="dense" :outlined="outlined"
@@ -9,6 +9,7 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
         <q-btn flat round dense size="xs" :icon="binding ? 'fa-solid fa-link' : 'fa-solid fa-hashtag'" :aria-label="`Calculation for ${label}`" @click.stop>
           <q-menu><div class="q-pa-sm formula-field__help"><strong>{{ binding ? 'Live binding' : 'Typed value' }}</strong><p>{{ resolved.trace }}</p><span>{{ error || 'Changes to referenced values update this field automatically.' }}</span></div></q-menu>
         </q-btn>
+        <q-icon v-if="locked" name="lock" size="14px" class="formula-field__lock" :aria-label="lockedText"><q-tooltip>{{ lockedText }}</q-tooltip></q-icon>
         <slot name="prepend" />
       </template>
       <template #append>
@@ -42,7 +43,7 @@ class="col" :model-value="source" :display-value="display" :options="options" :l
         <q-btn flat dense no-caps color="primary" label="Apply" :disable="!!error || !draft.trim()" :aria-label="`Apply formula for ${label}`" @click="commitDraft" />
       </div>
     </div>
-    <div v-if="!disable && !inspection?.editable" class="text-caption" role="status">{{ inspection?.blockedRepresentation || 'This value is controlled by its current mode.' }}</div>
+    <span v-if="locked" class="formula-field__status" role="status">{{ lockedText }}</span>
   </div>
 </template>
 <script setup lang="ts">
@@ -56,7 +57,7 @@ import { useBindings } from './useBindings'
 import { normalizeNumericPresentation, supportsNumericPresentation } from 'src/core/domain/numeric-presentation'
 import type { NumericPresentation } from 'src/core/domain/numeric-presentation'
 
-const props = withDefaults(defineProps<{ path: string; label: string; dense?: boolean; outlined?: boolean; disable?: boolean; draftModel?: object }>(), { dense: true, outlined: true, disable: false, draftModel: undefined })
+const props = withDefaults(defineProps<{ path: string; label: string; dense?: boolean; outlined?: boolean; disable?: boolean; draftModel?: object; compact?: boolean }>(), { dense: true, outlined: true, disable: false, draftModel: undefined, compact: false })
 const emit = defineEmits<{ (event: 'applied', value: number): void; (event: 'draft-state', pending: boolean): void }>()
 const { monster, inspection, binding, value, source, context, resolved, error, draftError, toBinding, preview, apply, applyText, detach } = useBindings(toRef(props, 'path'), toRef(props, 'draftModel'))
 const canFormat = computed(() => supportsNumericPresentation(props.path, props.draftModel ?? monster.$state))
@@ -71,6 +72,9 @@ const editing = ref(false), draft = ref(''), query = ref(''), previewText = ref(
 // nested formula editor still holds an unfinished or invalid draft.
 watch(() => editing.value || !!error.value, pending => emit('draft-state', pending), { immediate: true, flush: 'sync' })
 const disabled = computed(() => props.disable || !inspection.value?.editable)
+// A mode-locked value says so through a lock icon and tooltip, not a caption line that costs a row.
+const locked = computed(() => !props.disable && !inspection.value?.editable)
+const lockedText = computed(() => inspection.value?.blockedRepresentation || (inspection.value ? 'This value is set by the current mode. Change the mode to edit it.' : `${props.path} is not an editable numeric field.`))
 const display = computed(() => binding.value ? `${source.value} = ${String(value.value ?? '')}` : String(value.value ?? ''))
 interface Option { label: string; value: string; icon: string; color: string; tip?: string; preview?: string; header?: boolean; disable?: boolean }
 const options = computed<Option[]>(() => {
@@ -126,7 +130,8 @@ const onDraftInput = () => {
   checkDraft()
   void nextTick(() => {
     const caret = draftEl()?.selectionStart ?? draft.value.length
-    refOpen = openIdentifierAt(draft.value, caret)
+    // After an operator or bracket, keep offering references for the next operand (Build 274).
+    refOpen = openIdentifierAt(draft.value, caret) ?? (/[+\-*/(,]\s*$/.test(draft.value.slice(0, caret)) ? { query: '', start: caret } : undefined)
     refSuggestions.value = refOpen ? formulaReferences(refOpen.query, id => isReferenceAllowedForField(props.path, id)) : []
     refActive.value = 0
     refSuggestOpen.value = refSuggestions.value.length > 0 && !refSuggestions.value.some(entry => entry.insert === refOpen?.query.toUpperCase())
@@ -159,6 +164,11 @@ const cancel = () => { editing.value = false; draftError.value = ''; previewText
 </script>
 <style scoped>
 .formula-field { min-width: 0; }
+/* Build 274: short numbers (AC, DC, bonuses, dice counts) take a fixed, clickable width instead of a grid column. */
+.formula-field--compact { flex: 0 0 auto; width: 11.5rem; max-width: 100%; }
+.formula-field--compact :deep(.q-field__native) { min-width: 2.5ch; }
+.formula-field__lock { opacity: 0.7; }
+.formula-field__status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .formula-field__group { font-weight: 600; opacity: 1 !important; }
 .formula-field__help { max-width: 25rem; line-height: 1.5; }
 .formula-field__draft { min-width: 0; }

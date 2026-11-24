@@ -211,48 +211,6 @@
   }
 }
 
-/* Lightweight help for the read-only stat block. The host is teleported to body
-   so clipping and transformed A4 preview containers cannot hide it. */
-.statblock-help-tip {
-  z-index: 10000;
-  box-sizing: border-box;
-  max-width: min(340px, calc(100vw - 20px));
-  max-height: calc(100vh - 20px);
-  overflow: auto;
-  padding: 8px 12px;
-  border: 1.5px solid #8a2010;
-  border-radius: 6px;
-  background: #231c19;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
-  color: #f7ede1;
-  font-size: calc(0.84rem * var(--statblock-font-scale, 1));
-  line-height: 1.45;
-  pointer-events: none;
-
-  .tip-title {
-    color: #e5b358;
-    font-weight: 700;
-    margin-bottom: 3px;
-    font-size: calc(0.88rem * var(--statblock-font-scale, 1));
-    display: block;
-  }
-  .tip-body {
-    color: #f7ede1;
-  }
-  .tip-detail {
-    color: #b5c7d3;
-    font-size: calc(0.8rem * var(--statblock-font-scale, 1));
-    margin-top: 4px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    padding-top: 3px;
-  }
-}
-
-[data-help]:focus-visible {
-  outline: 2px solid #1769aa;
-  outline-offset: 2px;
-}
-
 /* Modular Sectorized Action Outcomes Grid & Dice Tables */
 .action-outcomes-grid {
   display: grid;

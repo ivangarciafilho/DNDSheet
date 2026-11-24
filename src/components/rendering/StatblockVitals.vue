@@ -8,7 +8,7 @@
         :class="['cascade-' + defSec.key, { 'zebra-stripe-text': defSec.isVerbose || isDefenseStriped(defSec.key), 'sb-striped': isDefenseStriped(defSec.key), 'is-striped': isDefenseStriped(defSec.key) }]"
         :data-defense-title="defSec.title"
       >
-        <span class="name dnd-cascade-title" :data-help="defSec.key" tabindex="0">{{ defSec.scopeLabel }}</span>
+        <span class="name dnd-cascade-title" :data-help="defSec.key">{{ defSec.scopeLabel }}</span>
         <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
         <div class="dnd-defense-unified-body">
           <span v-safe-html="defSec.formattedProse" class="dnd-defense-prose-text"></span>
@@ -18,7 +18,7 @@
 
     <!-- Speed -->
     <div class="skill speed dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': speedStripe, 'is-striped': speedStripe }">
-      <span class="name dnd-cascade-title" data-help="speed" tabindex="0">Speed</span>
+      <span class="name dnd-cascade-title" data-help="speed">Speed</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-if="(monster?.splitSpeedRiderRows || monster.speedTraversal?.splitRiderRows) && speedRiderBadges.length > 0">
           <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'sp-base-' + spIdx">
@@ -47,7 +47,7 @@
 
     <!-- Senses -->
     <div v-if="sensesBadges.length > 0" class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': sensesStripe, 'is-striped': sensesStripe }">
-      <span class="name dnd-cascade-title" data-help="senses" tabindex="0">{{ $t('monster.senses') }}</span>
+      <span class="name dnd-cascade-title" data-help="senses">{{ $t('monster.senses') }}</span>
       <div class="dnd-cascade-badges-wrap">
         <span
           v-for="(sBadge, sIdx) in sensesBadges"
@@ -59,7 +59,7 @@
 
     <!-- Languages placed directly adjacent to Senses -->
     <div class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': languagesStripe, 'is-striped': languagesStripe }">
-      <span class="name dnd-cascade-title" data-help="languages" tabindex="0">{{ $t('monster.languages') }}</span>
+      <span class="name dnd-cascade-title" data-help="languages">{{ $t('monster.languages') }}</span>
       <div v-if="languagesBadges.length > 0" class="dnd-cascade-badges-wrap">
         <span
           v-for="(lBadge, lIdx) in languagesBadges"
@@ -136,14 +136,14 @@
       class="skill dnd-cascade-panel dnd-cellular-row"
       :class="{ 'sb-striped': vitalsStripingMap['gear'], 'is-striped': vitalsStripingMap['gear'] }"
     >
-      <span class="name dnd-cascade-title" data-help="gear" tabindex="0">{{ $t('monster.gear') }}</span>
+      <span class="name dnd-cascade-title" data-help="gear">{{ $t('monster.gear') }}</span>
       <div v-safe-html="inventory" class="dnd-cascade-badges-wrap"></div>
     </div>
 
     <!-- Passives / Checks 2024 -->
     <template v-for="group in actionPassivesGroups" :key="group.name">
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="['cascade-skill-' + group.scopeLabel.toLowerCase(), { 'sb-striped': shouldStripeVital(group.scopeLabel, group.skills) }]">
-        <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()" tabindex="0">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
+        <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
         <span v-if="group.subTypeLabel && group.subTypeLabel !== 'Action'" class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
         <div v-safe-html="group.skills" class="dnd-cascade-badges-wrap"></div>
       </div>
@@ -153,7 +153,7 @@
   <!-- MM2014 Classic Order -->
   <template v-else>
     <div class="skill speed dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': speedStripe }">
-      <span class="name dnd-cascade-title" data-help="speed" tabindex="0">Speed</span>
+      <span class="name dnd-cascade-title" data-help="speed">Speed</span>
       <div class="dnd-cascade-badges-wrap">
         <template v-if="monster.splitSpeedRiderRows && speedRiderBadges.length > 0">
           <template v-for="(spBadge, spIdx) in speedBaseBadges" :key="'speed-base-14-' + spIdx">
@@ -192,7 +192,7 @@
       </div>
     </div>
     <div v-if="editorStore?.visualTemplate !== 'modern' && saves !== ''" class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': shouldStripeVital('Saving Throws', saves) }">
-      <span class="name dnd-cascade-title" data-help="saves" tabindex="0">{{ $t('monster.saves') }}</span>
+      <span class="name dnd-cascade-title" data-help="saves">{{ $t('monster.saves') }}</span>
       <div v-safe-html="saves" class="dnd-cascade-badges-wrap"></div>
     </div>
     <template v-for="defSec in cascadingDefenses" :key="defSec.key">
@@ -201,7 +201,7 @@
         :class="['cascade-' + defSec.key, { 'zebra-stripe-text': defSec.isVerbose || shouldStripeVital(defSec.scopeLabel, defSec.formattedProse), 'sb-striped': shouldStripeVital(defSec.scopeLabel, defSec.formattedProse) }]"
         :data-defense-title="defSec.title"
       >
-        <span class="name dnd-cascade-title" :data-help="defSec.key" tabindex="0">{{ defSec.scopeLabel }}</span>
+        <span class="name dnd-cascade-title" :data-help="defSec.key">{{ defSec.scopeLabel }}</span>
         <span v-if="defSec.subTypeLabel" class="dnd-cascade-subtitle">{{ defSec.subTypeLabel }}</span>
         <div class="dnd-defense-unified-body">
           <span v-safe-html="defSec.formattedProse" class="dnd-defense-prose-text"></span>
@@ -209,7 +209,7 @@
       </div>
     </template>
     <div v-if="sensesBadges.length > 0" class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': sensesStripe }">
-      <span class="name dnd-cascade-title" data-help="senses" tabindex="0">{{ $t('monster.senses') }}</span>
+      <span class="name dnd-cascade-title" data-help="senses">{{ $t('monster.senses') }}</span>
       <div class="dnd-cascade-badges-wrap">
         <span
           v-for="(sBadge, sIdx) in sensesBadges"
@@ -219,7 +219,7 @@
       </div>
     </div>
     <div class="skill dnd-cascade-panel dnd-cellular-row" :class="{ 'sb-striped': languagesStripe }">
-      <span class="name dnd-cascade-title" data-help="languages" tabindex="0">{{ $t('monster.languages') }}</span>
+      <span class="name dnd-cascade-title" data-help="languages">{{ $t('monster.languages') }}</span>
       <div v-if="languagesBadges.length > 0" class="dnd-cascade-badges-wrap">
         <span
           v-for="(lBadge, lIdx) in languagesBadges"
@@ -231,7 +231,7 @@
     </div>
     <template v-for="group in actionPassivesGroups" :key="group.name">
       <div class="skill dnd-cascade-panel dnd-cellular-row" :class="['cascade-skill-' + group.scopeLabel.toLowerCase(), { 'sb-striped': shouldStripeVital(group.scopeLabel, group.skills) }]">
-        <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()" tabindex="0">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
+        <span class="name dnd-cascade-title" :data-help="group.tip ? undefined : group.scopeLabel.toLowerCase()">{{ group.scopeLabel }}<q-tooltip v-if="group.tip" class="dnd-tip" max-width="320px">{{ group.tip }}</q-tooltip></span>
         <span v-if="group.subTypeLabel && group.subTypeLabel !== 'Action'" class="dnd-cascade-subtitle">{{ group.subTypeLabel }}</span>
         <div v-safe-html="group.skills" class="dnd-cascade-badges-wrap"></div>
       </div>

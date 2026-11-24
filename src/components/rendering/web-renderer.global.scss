@@ -33,6 +33,15 @@
   width: 100%;
 }
 
+// Build 274: the editor preview shows only the stat block; the portrait stays mounted off-screen so PNG export and A4 mode keep it.
+#render#render .portrait-offstage,
+.statblock-container .portrait-offstage {
+  position: absolute;
+  left: -100000px;
+  top: 0;
+  visibility: hidden;
+}
+
 .monster-portrait {
   flex-shrink: 0;
 
