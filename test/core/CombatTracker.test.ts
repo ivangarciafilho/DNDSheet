@@ -246,3 +246,35 @@ test('B9.1/B9.2/B9.3: Duplicate monsters get distinct IDs, snapshots isolate sou
   assert.strictEqual(reloaded.combatants.find((c: { id: string }) => c.id === g1.id).sourceSnapshot.ac, 15)
   assert.strictEqual(reloaded.activeCombatantId, g1.id)
 })
+
+test('F1.2 + Risk F1.2->F1.3: batchAddCombatantsPreserveTurn assigns unique IDs, numbered ordinals, zero aliasing, and stable turn', async () => {
+  const { batchAddCombatantsPreserveTurn, createCombatantFromMonster: fromMonster, removeCombatantPreserveTurn, sortInitiative: sortInit } = await import('../../src/core/usecases/CombatTracker.ts')
+  const m = defaultMonster()
+  m.name = 'Goblin'
+  m.AC = 15
+  m.HP = { HD: 2, type: 6, modifier: 0 }
+
+  const g1 = fromMonster(m, 12)
+  const g2 = fromMonster(m, 12)
+  const g3 = fromMonster(m, 18)
+  const res1 = batchAddCombatantsPreserveTurn([], [g1, g2, g3], null, 0)
+  assert.strictEqual(res1.combatants.length, 3)
+  assert.deepStrictEqual(
+    res1.combatants.map((c) => c.name),
+    ['Goblin #1', 'Goblin #2', 'Goblin #3'],
+  )
+  assert.strictEqual(new Set(res1.combatants.map((c) => c.id)).size, 3)
+
+  // Highest initiative (Goblin #3 @ 18) owns active turn
+  const activeId = res1.activeCombatantId
+  assert.strictEqual(activeId, res1.combatants[2].id)
+
+  // Mutating original monster after batch add never mutates snapshots
+  m.AC = 25
+  assert.strictEqual(res1.combatants[0].sourceSnapshot?.ac, 15)
+
+  // Removing a slower combatant preserves active turn ID and clean initiative sort
+  const afterRemove = removeCombatantPreserveTurn(res1.combatants, res1.combatants[0].id, res1.activeTurnIndex, 1, activeId)
+  assert.strictEqual(afterRemove.activeCombatantId, activeId)
+  assert.strictEqual(sortInit(afterRemove.combatants)[afterRemove.activeTurnIndex].id, activeId)
+})

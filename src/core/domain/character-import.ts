@@ -1,3 +1,5 @@
+import { normalizeCharacter2024Fields } from './character-2024.ts'
+import { stripDangerousKeys } from './file-payload-guard.ts'
 import { defaultCharacterActor, type CharacterActor } from './types.ts'
 
 const STATS = ['STR', 'DEX', 'CON', 'INT', 'WIS', 'CHA'] as const
@@ -17,13 +19,16 @@ export function looksLikeCharacter(raw: unknown): raw is Record<string, unknown>
  */
 export function importCharacter(raw: unknown): CharacterActor | null {
   if (!looksLikeCharacter(raw)) return null
+  const clean = stripDangerousKeys(raw)
+  if (!clean) return null
   const base = defaultCharacterActor()
-  const merged = { ...base, ...JSON.parse(JSON.stringify(raw)) } as CharacterActor
+  const merged = { ...base, ...JSON.parse(JSON.stringify(clean)) } as CharacterActor
   const stats = raw.stats as Record<string, number>
   merged.stats = { ...base.stats }
   for (const stat of STATS) merged.stats[stat] = Math.min(30, Math.max(1, Math.round(stats[stat])))
   merged.level = Math.min(20, Math.max(1, Math.round(Number(raw.level))))
   if (typeof merged.id !== 'string' || !merged.id) merged.id = base.id
   if (typeof merged.name !== 'string') merged.name = base.name
+  normalizeCharacter2024Fields(merged)
   return merged
 }

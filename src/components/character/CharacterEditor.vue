@@ -4,7 +4,7 @@
     <q-expansion-item
       group="char-group"
       icon="person"
-      label="Character Identity & Portrait"
+      :label="$t('studio.character.identityHeading')"
       default-opened
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
@@ -13,13 +13,13 @@
         <q-card-section class="q-gutter-sm">
           <div class="row q-col-gutter-sm">
             <div class="col-12 col-md-6">
-              <q-input v-model="actor.name" v-help="$t('help.character.name')" label="Character Name" dense outlined />
+              <q-input v-model="actor.name" v-help="$t('help.character.name')" :label="$t('studio.character.nameLabel')" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.class" v-help="$t('help.character.className')" label="Class" dense outlined />
+              <q-input v-model="actor.class" v-help="$t('help.character.className')" :label="$t('studio.character.classLabel')" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.subclass" v-help="$t('help.character.subclass')" label="Subclass" dense outlined />
+              <q-input v-model="actor.subclass" v-help="$t('help.character.subclass')" :label="$t('studio.character.subclassLabel')" dense outlined />
             </div>
           </div>
           <div class="row q-col-gutter-sm">
@@ -30,25 +30,25 @@ v-model.number="actor.level"
                 type="number"
                 min="1"
                 max="20"
-                label="Level"
+                :label="$t('studio.character.levelLabel')"
                 dense
                 outlined
               />
             </div>
             <div class="col-8 col-md-4">
-              <q-input v-model="actor.race" v-help="$t('help.character.species')" label="Species / Race" dense outlined />
+              <q-input v-model="actor.race" v-help="$t('help.character.species')" :label="$t('studio.character.speciesLabel')" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.background" v-help="$t('help.character.background')" label="Background" dense outlined />
+              <q-input v-model="actor.background" v-help="$t('help.character.background')" :label="$t('studio.character.backgroundLabel')" dense outlined />
             </div>
             <div class="col-6 col-md-3">
-              <q-input v-model="actor.alignment" v-help="$t('help.character.alignment')" label="Alignment" dense outlined />
+              <q-input v-model="actor.alignment" v-help="$t('help.character.alignment')" :label="$t('studio.character.alignmentLabel')" dense outlined />
             </div>
           </div>
 
           <!-- Portrait Configuration -->
           <div class="q-mt-md q-pa-sm rounded-borders" style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);">
-            <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Hero Portrait & Avatar</div>
+            <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">{{ $t('studio.character.portraitHeading') }}</div>
             <div class="row q-col-gutter-xs items-center">
               <div class="col-12 col-sm-4">
                 <catalog-select
@@ -57,14 +57,14 @@ v-model="portrait.position"
                   :entries="portraitPositions"
                   preserve-order
                   :searchable="false"
-                  label="Portrait Position"
+                  :label="$t('studio.character.portraitPosition')"
                 />
               </div>
               <div class="col-12 col-sm-8">
                 <q-input
 v-model="portrait.url"
                   v-help="$t('help.character.portraitUrl')"
-                  label="Image URL or Data URI"
+                  :label="$t('studio.character.portraitUrl')"
                   dense
                   outlined
                   clearable
@@ -75,7 +75,7 @@ v-model="portrait.url"
               <div class="col-12 col-sm-8">
                 <q-file
                   v-model="portraitFile"
-                  label="Upload local image (100% offline)"
+                  :label="$t('studio.character.portraitUpload')"
                   dense
                   outlined
                   accept="image/*"
@@ -90,7 +90,7 @@ v-model="portrait.url"
                 <q-input
 v-model="portrait.caption"
                   v-help="$t('help.character.portraitCaption')"
-                  label="Caption / Title"
+                  :label="$t('studio.character.portraitCaption')"
                   dense
                   outlined
                 />
@@ -101,18 +101,20 @@ v-model="portrait.caption"
       </q-card>
     </q-expansion-item>
 
-    <q-expansion-item group="char-group" icon="shield" label="Armor Class & Speed" header-class="text-weight-bold text-teal-4" class="q-mb-sm rounded-borders border-subtle">
+    <character2024-section />
+
+    <q-expansion-item group="char-group" icon="shield" :label="$t('studio.character.acSpeedHeading')" header-class="text-weight-bold text-teal-4" class="q-mb-sm rounded-borders border-subtle">
       <q-card><q-card-section>
-        <div class="text-caption q-mb-sm">Class, species and equipment names are references. Enter totals from your character's rules or keep the labelled estimates.</div>
+        <div class="text-caption q-mb-sm">{{ $t('studio.character.acSpeedNotice') }}</div>
         <div class="editor-fit-grid">
           <div class="editor-fit-cell">
-            <q-input v-help="'Record the character’s static Armor Class override shown in the vitals block; leave blank to auto-derive.'" :model-value="actor.combatVitals?.armorClass ?? null" label="Recorded Armor Class" type="number" min="0" clearable dense outlined @update:model-value="setVital('armorClass', $event)" />
-            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" label="Armor Class source / notes" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('armorClassSource', value)" />
+            <q-input v-help="'Record the character’s static Armor Class override shown in the vitals block; leave blank to auto-derive.'" :model-value="actor.combatVitals?.armorClass ?? null" :label="$t('studio.character.recordedAc')" type="number" min="0" clearable dense outlined @update:model-value="setVital('armorClass', $event)" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.armorClassSource ?? ''" :label="$t('studio.character.acSourceNotes')" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('armorClassSource', value)" />
             <div class="text-caption q-mt-xs" data-character-ac-provenance>{{ vitals.armorClass.value }} — {{ vitals.armorClass.label }}: {{ vitals.armorClass.provenance }}</div>
           </div>
           <div class="editor-fit-cell">
-            <q-input v-help="'Record the character’s walking speed in feet for the vitals header; leave blank for baseline speed.'" :model-value="actor.combatVitals?.speed ?? null" label="Recorded Speed (ft.)" type="number" min="0" clearable dense outlined @update:model-value="setVital('speed', $event)" />
-            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" label="Speed source / notes" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('speedSource', value)" />
+            <q-input v-help="'Record the character’s walking speed in feet for the vitals header; leave blank for baseline speed.'" :model-value="actor.combatVitals?.speed ?? null" :label="$t('studio.character.recordedSpeed')" type="number" min="0" clearable dense outlined @update:model-value="setVital('speed', $event)" />
+            <mechanic-text-editor scope="character" :model-value="actor.combatVitals?.speedSource ?? ''" :label="$t('studio.character.speedSourceNotes')" dense outlined class="q-mt-xs" @update:model-value="(value: string) => setVital('speedSource', value)" />
             <div class="text-caption q-mt-xs" data-character-speed-provenance>{{ vitals.speed.value }} ft. — {{ vitals.speed.label }}: {{ vitals.speed.provenance }}</div>
           </div>
         </div>
@@ -123,7 +125,7 @@ v-model="portrait.caption"
     <q-expansion-item
       group="char-group"
       icon="fitness_center"
-      label="Ability Scores & Modifiers"
+      :label="$t('studio.character.abilitiesHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
@@ -162,14 +164,14 @@ v-model="portrait.caption"
     <q-expansion-item
       group="char-group"
       icon="verified"
-      label="Saving Throws & Skills"
+      :label="$t('studio.character.savesSkillsHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
       <q-card>
         <q-card-section>
           <!-- Saving Throws -->
-          <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Saving Throws (Proficiency Bonus: +{{ actor.proficiency }})</div>
+          <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">{{ $t('studio.character.savingThrowsLabel', [actor.proficiency]) }}</div>
           <div class="row q-col-gutter-xs q-mb-md">
             <div
               v-for="stat in abilityKeys"
@@ -199,11 +201,11 @@ v-model="portrait.caption"
 
           <!-- Skills -->
           <div class="row items-center justify-between q-mb-xs">
-            <span class="text-caption text-weight-bold text-teal-3">Skills (18 Standard 5e Skills)</span>
+            <span class="text-caption text-weight-bold text-teal-3">{{ $t('studio.character.skillsHeading') }}</span>
             <q-input
               v-model="skillFilter"
               v-help="'Filter the 18 character skills by skill name or governing ability score.'"
-              placeholder="Filter skills..."
+              :placeholder="$t('studio.character.filterSkills')"
               dense
               outlined
               style="max-width: 180px;"
@@ -265,7 +267,7 @@ v-model="portrait.caption"
     <q-expansion-item
       group="char-group"
       icon="favorite"
-      label="Hit Points & Defenses"
+      :label="$t('studio.character.hpDefensesHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
@@ -277,7 +279,7 @@ v-model="portrait.caption"
 v-model.number="actor.hp.current"
                 v-help="$t('help.character.hpCurrent')"
                 type="number"
-                label="Current HP"
+                :label="$t('studio.character.hpCurrent')"
                 dense
                 outlined
               />
@@ -287,7 +289,7 @@ v-model.number="actor.hp.current"
 v-model.number="actor.hp.max"
                 v-help="$t('help.character.hpMax')"
                 type="number"
-                label="Max HP"
+                :label="$t('studio.character.hpMax')"
                 dense
                 outlined
               />
@@ -297,7 +299,7 @@ v-model.number="actor.hp.max"
 v-model.number="actor.hp.temp"
                 v-help="$t('help.character.hpTemp')"
                 type="number"
-                label="Temp HP"
+                :label="$t('studio.character.hpTemp')"
                 dense
                 outlined
               />
@@ -309,7 +311,7 @@ v-model.number="actor.hp.temp"
 v-model.number="actor.hitDice.total"
                 v-help="$t('help.character.hdTotal')"
                 type="number"
-                label="Total Hit Dice"
+                :label="$t('studio.character.hdTotal')"
                 dense
                 outlined
               />
@@ -319,7 +321,7 @@ v-model.number="actor.hitDice.total"
 v-model.number="actor.hitDice.spent"
                 v-help="$t('help.character.hdSpent')"
                 type="number"
-                label="Spent Hit Dice"
+                :label="$t('studio.character.hdSpent')"
                 dense
                 outlined
               />
@@ -331,7 +333,7 @@ v-help="$t('help.character.hdDie')"
                 :entries="hitDieOptions"
                 preserve-order
                 :searchable="false"
-                label="Hit Die Type (d)"
+                :label="$t('studio.character.hdDie')"
                 @update:model-value="(val) => (actor.hitDice.die = Number(val ?? 8))"
               />
             </div>
@@ -340,7 +342,7 @@ v-help="$t('help.character.hdDie')"
           <div class="row q-col-gutter-sm q-mt-xs items-center">
             <div class="col-6">
               <div class="q-pa-xs rounded-borders text-center" style="background: rgba(76, 175, 80, 0.1); border: 1px solid rgba(76, 175, 80, 0.3);">
-                <span class="text-caption text-weight-bold text-positive">Death Save Successes: {{ actor.deathSaves.successes }} / 3</span>
+                <span class="text-caption text-weight-bold text-positive">{{ $t('studio.character.deathSaveSucc', [actor.deathSaves.successes]) }}</span>
                 <div class="row justify-center q-gutter-xs q-mt-xs">
                   <q-btn
                     v-for="i in 3"
@@ -356,7 +358,7 @@ v-help="$t('help.character.hdDie')"
             </div>
             <div class="col-6">
               <div class="q-pa-xs rounded-borders text-center" style="background: rgba(244, 67, 54, 0.1); border: 1px solid rgba(244, 67, 54, 0.3);">
-                <span class="text-caption text-weight-bold text-negative">Death Save Failures: {{ actor.deathSaves.failures }} / 3</span>
+                <span class="text-caption text-weight-bold text-negative">{{ $t('studio.character.deathSaveFail', [actor.deathSaves.failures]) }}</span>
                 <div class="row justify-center q-gutter-xs q-mt-xs">
                   <q-btn
                     v-for="i in 3"
@@ -379,7 +381,7 @@ v-help="$t('help.character.hdDie')"
     <q-expansion-item
       group="char-group"
       icon="menu_book"
-      label="Spellcasting & Spell Slots"
+      :label="$t('studio.character.spellcastingHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
@@ -394,25 +396,25 @@ v-model="spellcastingAbility"
                 :entries="castingAbilityOptions"
                 preserve-order
                 :searchable="false"
-                label="Spellcasting Ability"
+                :label="$t('studio.character.castingAbility')"
               />
             </div>
             <div class="col-6 col-sm-4 text-center">
               <div class="q-pa-xs rounded-borders" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
-                <div class="text-caption text-grey-4">Spell Save DC</div>
+                <div class="text-caption text-grey-4">{{ $t('studio.character.spellSaveDc') }}</div>
                 <div class="text-h6 text-weight-bold text-teal-3">{{ computedSpellSaveDc }}</div>
               </div>
             </div>
             <div class="col-6 col-sm-4 text-center">
               <div class="q-pa-xs rounded-borders" style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);">
-                <div class="text-caption text-grey-4">Spell Attack Bonus</div>
+                <div class="text-caption text-grey-4">{{ $t('studio.character.spellAttackBonus') }}</div>
                 <div class="text-h6 text-weight-bold text-teal-3">{{ formatMod(computedSpellAttackBonus) }}</div>
               </div>
             </div>
           </div>
 
           <!-- Spell Slots Matrix (Levels 1 to 9) -->
-          <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">Spell Slots Matrix</div>
+          <div class="text-caption text-weight-bold text-teal-3 q-mb-xs">{{ $t('studio.character.spellSlotsMatrix') }}</div>
           <div class="row q-col-gutter-xs q-mb-md">
             <div
               v-for="lvl in 9"
@@ -428,7 +430,7 @@ v-model.number="actor.spellSlots.current[lvl - 1]"
                       v-help="$t('help.character.slotCurrent')"
                       type="number"
                       min="0"
-                      label="Cur"
+                      :label="$t('studio.character.curSlot')"
                       dense
                       outlined
                     />
@@ -439,7 +441,7 @@ v-model.number="actor.spellSlots.max[lvl - 1]"
                       v-help="$t('help.character.slotMax')"
                       type="number"
                       min="0"
-                      label="Max"
+                      :label="$t('studio.character.maxSlot')"
                       dense
                       outlined
                     />
@@ -451,19 +453,19 @@ v-model.number="actor.spellSlots.max[lvl - 1]"
 
           <!-- Spells List -->
           <div class="row items-center justify-between q-mb-xs">
-            <span class="text-caption text-weight-bold text-teal-3">Prepared & Known Spells</span>
+            <span class="text-caption text-weight-bold text-teal-3">{{ $t('studio.character.preparedKnownSpells') }}</span>
             <q-btn
 v-help="$t('help.character.addSpell')"
               size="sm"
               color="primary"
               icon="add"
-              label="Add Spell"
+              :label="$t('studio.character.addSpell')"
               @click="charStore.addSpell()"
             />
           </div>
 
           <div v-if="!actor.spells || actor.spells.length === 0" class="text-caption text-grey-5 text-italic q-my-sm">
-            No spells registered. Click "Add Spell" to track cantrips and leveled spells.
+            {{ $t('studio.character.noSpells') }}
           </div>
 
           <div
@@ -484,7 +486,7 @@ v-help="$t('help.character.addSpell')"
                 </q-checkbox>
               </div>
               <div class="col-5">
-                <q-input v-model="sp.name" v-help="$t('help.character.spellName')" label="Spell Name" dense outlined />
+                <q-input v-model="sp.name" v-help="$t('help.character.spellName')" :label="$t('studio.character.spellName')" dense outlined />
               </div>
               <div class="col-3">
                 <catalog-select
@@ -493,12 +495,12 @@ v-help="$t('help.character.spellLevel')"
                   :entries="spellLevelEntries"
                   preserve-order
                   :searchable="false"
-                  label="Level"
+                  :label="$t('studio.character.levelLabel')"
                   @update:model-value="(val) => (sp.level = Number(val ?? 0))"
                 />
               </div>
               <div class="col-3">
-                <mechanic-text-editor v-model="sp.notes" v-help="$t('help.character.spellNotes')" scope="character" label="Notes (e.g. Conc, 1 Action)" dense outlined />
+                <mechanic-text-editor v-model="sp.notes" v-help="$t('help.character.spellNotes')" scope="character" :label="$t('studio.character.spellNotes')" dense outlined />
               </div>
               <div class="col-auto text-right">
                 <q-btn
@@ -521,7 +523,7 @@ v-help="$t('help.character.spellLevel')"
     <q-expansion-item
       group="char-group"
       icon="auto_awesome"
-      label="Features & Traits"
+      :label="$t('studio.character.featuresHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
@@ -533,7 +535,7 @@ v-help="$t('help.character.addFeature')"
               size="sm"
               color="primary"
               icon="add"
-              label="Add Feature"
+              :label="$t('studio.character.addFeature')"
               @click="charStore.addFeature()"
             />
           </div>
@@ -545,10 +547,10 @@ v-help="$t('help.character.addFeature')"
           >
             <div class="row q-col-gutter-xs items-center">
               <div class="col-6">
-                <q-input v-model="feat.name" v-help="$t('help.character.featureName')" label="Feature Name" dense outlined />
+                <q-input v-model="feat.name" v-help="$t('help.character.featureName')" :label="$t('studio.character.featureName')" dense outlined />
               </div>
               <div class="col-5">
-                <q-input v-model="feat.source" v-help="$t('help.character.featureSource')" label="Source" dense outlined />
+                <q-input v-model="feat.source" v-help="$t('help.character.featureSource')" :label="$t('studio.character.featureSource')" dense outlined />
               </div>
               <div class="col-1 text-right">
                 <q-btn
@@ -567,7 +569,7 @@ v-model="feat.description" v-help="$t('help.character.featureDescription')"
               scope="character"
               type="textarea"
               rows="2"
-              label="Description"
+              :label="$t('studio.character.featureDescription')"
               dense
               outlined
               class="q-mt-xs"
@@ -581,7 +583,7 @@ v-model="feat.description" v-help="$t('help.character.featureDescription')"
     <q-expansion-item
       group="char-group"
       icon="backpack"
-      label="Inventory & Equipment"
+      :label="$t('studio.character.inventoryHeading')"
       header-class="text-weight-bold text-teal-4"
       class="q-mb-sm rounded-borders border-subtle"
     >
@@ -591,14 +593,14 @@ v-model="feat.description" v-help="$t('help.character.featureDescription')"
             <div class="text-caption text-grey-4">
               Total Weight: <span class="text-weight-bold text-teal-3">{{ totalCarriedWeight }} lb</span> |
               Max Carry: <span class="text-weight-bold">{{ actor.stats.STR * 15 }} lb</span>
-              <span v-if="totalCarriedWeight > actor.stats.STR * 5" class="text-warning q-ml-xs">(Encumbered)</span>
+              <span v-if="totalCarriedWeight > actor.stats.STR * 5" class="text-warning q-ml-xs">{{ $t('studio.character.encumbered') }}</span>
             </div>
             <q-btn
 v-help="$t('help.character.addItem')"
               size="sm"
               color="primary"
               icon="add"
-              label="Add Item"
+              :label="$t('studio.character.addItem')"
               @click="charStore.addItem()"
             />
           </div>
@@ -609,14 +611,14 @@ v-help="$t('help.character.addItem')"
             style="background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.12);"
           >
             <div class="col-5">
-              <q-input v-model="item.name" v-help="$t('help.character.itemName')" label="Item Name" dense outlined />
+              <q-input v-model="item.name" v-help="$t('help.character.itemName')" :label="$t('studio.character.itemName')" dense outlined />
             </div>
             <div class="col-2">
               <q-input
 v-model.number="item.quantity"
                 v-help="$t('help.character.itemQty')"
                 type="number"
-                label="Qty"
+                :label="$t('studio.character.itemQty')"
                 dense
                 outlined
               />
@@ -626,13 +628,13 @@ v-model.number="item.quantity"
 v-model.number="item.weight"
                 v-help="$t('help.character.itemWeight')"
                 type="number"
-                label="Weight (lb)"
+                :label="$t('studio.character.itemWeight')"
                 dense
                 outlined
               />
             </div>
             <div class="col-2">
-              <q-checkbox v-model="item.equipped" v-help="$t('help.character.itemEquipped')" label="Eqp" dense size="xs" />
+              <q-checkbox v-model="item.equipped" v-help="$t('help.character.itemEquipped')" :label="$t('studio.character.itemEquipped')" dense size="xs" />
             </div>
             <div class="col-1 text-right">
               <q-btn
@@ -655,14 +657,17 @@ v-model.number="item.weight"
 <script lang="ts">
 import { characterVitals } from 'src/core/domain/character-truth'
 import { computed, defineComponent, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCharacterStore } from 'src/stores/character-store'
 import { DndStat, DND_SKILLS } from 'src/core/domain/types'
 import CatalogSelect from 'src/components/kit/CatalogSelect.vue'
+import Character2024Section from './Character2024Section.vue'
 
 export default defineComponent({
   name: 'CharacterEditor',
-  components: { CatalogSelect },
+  components: { CatalogSelect, Character2024Section },
   setup() {
+    const { t } = useI18n()
     const charStore = useCharacterStore()
     const setVital = (field: 'armorClass' | 'speed' | 'armorClassSource' | 'speedSource', value: string | number | null) => {
       const next = { ...charStore.actor.combatVitals }
@@ -686,12 +691,12 @@ export default defineComponent({
     }
     const portrait = charStore.actor.portrait
 
-    const portraitPositions = [
-      { label: 'None (Hidden)', value: 'none' },
-      { label: 'Top of Sheet', value: 'top' },
-      { label: 'Left Column', value: 'left' },
-      { label: 'Right Column', value: 'right' },
-    ]
+    const portraitPositions = computed(() => [
+      { label: t('studio.character.portraitPosNone'), value: 'none' },
+      { label: t('studio.character.portraitPosTop'), value: 'top' },
+      { label: t('studio.character.portraitPosLeft'), value: 'left' },
+      { label: t('studio.character.portraitPosRight'), value: 'right' },
+    ])
 
     const onPortraitFileSelected = (file: File | null) => {
       if (!file) return

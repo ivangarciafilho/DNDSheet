@@ -836,4 +836,25 @@
   margin-inline-start: 1em;
 }
 
+.a4-page-break-guide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 2px dashed rgba(183, 28, 28, 0.72);
+  pointer-events: none;
+  z-index: 25;
+
+  > span {
+    position: absolute;
+    right: 8px;
+    top: -11px;
+    background: #b71c1c;
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+}
+
 @import './dark-contrast.scss';

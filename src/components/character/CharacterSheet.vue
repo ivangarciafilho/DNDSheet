@@ -20,16 +20,21 @@
       <div class="row items-center justify-between">
         <div>
           <div class="text-h4 text-weight-bolder text-red-10 font-nodesto">
-            {{ actor.name || 'Unnamed Adventurer' }}
+            {{ actor.name || $t('studio.character.unnamedHero') }}
           </div>
           <div class="text-subtitle1 text-grey-9">
-            Level {{ actor.level }} {{ actor.subclass ? actor.subclass + ' ' : '' }}{{ actor.class }} • {{ actor.race }}
+            {{ actor.level }} · {{ actor.subclass ? actor.subclass + ' ' : '' }}{{ actor.class }} • {{ actor.race }}
           </div>
         </div>
         <div class="text-right">
-          <q-badge color="red-9" class="text-subtitle2 q-pa-xs">
-            Proficiency +{{ actor.proficiency }}
-          </q-badge>
+          <div class="row items-center justify-end q-gutter-xs">
+            <q-badge v-if="actor.provenance?.ruleset" color="teal-9" class="text-caption q-pa-xs" data-character-ruleset-badge>
+              {{ actor.provenance.ruleset === '2024' ? $t('studio.character.rules2024Short') : $t('studio.character.rules2014Short') }}
+            </q-badge>
+            <q-badge color="red-9" class="text-subtitle2 q-pa-xs">
+              {{ $t('studio.character.proficiencyBadge', [actor.proficiency]) }}
+            </q-badge>
+          </div>
           <div class="text-caption text-grey-8 q-mt-xs">
             {{ actor.background }} • {{ actor.alignment }}
           </div>
@@ -78,7 +83,7 @@
         <!-- Saving Throws Box -->
         <div class="parchment-inner q-pa-xs q-mb-sm">
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs text-center">
-            SAVING THROWS
+            {{ $t('studio.character.sheetSavingThrows') }}
           </div>
           <div
             v-for="stat in abilityKeys"
@@ -103,18 +108,18 @@
         <!-- Passive Senses -->
         <div class="parchment-inner q-pa-xs text-center">
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs">
-            PASSIVE SENSES
+            {{ $t('studio.character.sheetPassiveSenses') }}
           </div>
           <div class="row items-center justify-between q-px-xs text-caption">
-            <span>Passive Perception</span>
+            <span>{{ $t('studio.character.passivePerception') }}</span>
             <span class="text-weight-bold">{{ 10 + charStore.getSkillModifier('Perception', 'WIS') }}</span>
           </div>
           <div class="row items-center justify-between q-px-xs text-caption">
-            <span>Passive Investigation</span>
+            <span>{{ $t('studio.character.passiveInvestigation') }}</span>
             <span class="text-weight-bold">{{ 10 + charStore.getSkillModifier('Investigation', 'INT') }}</span>
           </div>
           <div class="row items-center justify-between q-px-xs text-caption">
-            <span>Passive Insight</span>
+            <span>{{ $t('studio.character.passiveInsight') }}</span>
             <span class="text-weight-bold">{{ 10 + charStore.getSkillModifier('Insight', 'WIS') }}</span>
           </div>
         </div>
@@ -126,16 +131,16 @@
         <div class="row q-col-gutter-xs text-center q-mb-sm">
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
-              <div class="text-caption text-weight-bold text-grey-8">ARMOR CLASS</div>
+              <div class="text-caption text-weight-bold text-grey-8">{{ $t('studio.character.sheetAc') }}</div>
               <div class="text-h5 text-weight-bold character-vital-value">
                 {{ vitals.armorClass.value }}
               </div>
-              <div class="text-caption text-grey-8" data-character-ac-provenance>{{ vitals.armorClass.kind === 'recorded' ? 'Recorded' : 'Estimate' }}</div>
+              <div class="text-caption text-grey-8" data-character-ac-provenance>{{ vitals.armorClass.kind === 'recorded' ? $t('studio.character.recordedLabel') : $t('studio.character.estimateLabel') }}</div>
             </div>
           </div>
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
-              <div class="text-caption text-weight-bold text-grey-8">INITIATIVE</div>
+              <div class="text-caption text-weight-bold text-grey-8">{{ $t('studio.character.sheetInitiative') }}</div>
               <div class="text-h5 text-weight-bold character-vital-value">
                 {{ formatMod(charStore.getModifier('DEX')) }}
               </div>
@@ -143,9 +148,9 @@
           </div>
           <div class="col-4">
             <div class="vital-box parchment-inner q-pa-xs">
-              <div class="text-caption text-weight-bold text-grey-8">SPEED</div>
+              <div class="text-caption text-weight-bold text-grey-8">{{ $t('studio.character.sheetSpeed') }}</div>
               <div class="text-h5 text-weight-bold character-vital-value">{{ vitals.speed.value }} ft.</div>
-              <div class="text-caption text-grey-8" data-character-speed-provenance>{{ vitals.speed.kind === 'recorded' ? 'Recorded' : 'Estimate' }}</div>
+              <div class="text-caption text-grey-8" data-character-speed-provenance>{{ vitals.speed.kind === 'recorded' ? $t('studio.character.recordedLabel') : $t('studio.character.estimateLabel') }}</div>
             </div>
           </div>
         </div>
@@ -158,8 +163,8 @@
         <!-- HP Box -->
         <div class="parchment-inner q-pa-sm q-mb-sm">
           <div class="row justify-between text-caption text-weight-bold text-grey-8">
-            <span>HIT POINTS</span>
-            <span>Max: {{ actor.hp.max }}</span>
+            <span>{{ $t('studio.character.sheetHp') }}</span>
+            <span>{{ $t('studio.character.sheetMax', [actor.hp.max]) }}</span>
           </div>
           <div class="text-center text-h4 text-weight-bolder text-green-10 q-my-xs">
             {{ actor.hp.current }}
@@ -180,7 +185,7 @@
         <div class="row q-col-gutter-xs q-mb-sm">
           <div class="col-6">
             <div class="parchment-inner q-pa-xs text-center">
-              <div class="text-caption text-weight-bold text-grey-8">HIT DICE</div>
+              <div class="text-caption text-weight-bold text-grey-8">{{ $t('studio.character.sheetHitDice') }}</div>
               <div class="text-subtitle1 text-weight-bold">
                 {{ actor.hitDice.total - actor.hitDice.spent }} / {{ actor.hitDice.total }}d{{ actor.hitDice.die || 10 }}
               </div>
@@ -188,19 +193,19 @@
           </div>
           <div class="col-6">
             <div class="parchment-inner q-pa-xs text-center">
-              <div class="text-caption text-weight-bold text-grey-8">DEATH SAVES</div>
+              <div class="text-caption text-weight-bold text-grey-8">{{ $t('studio.character.sheetDeathSaves') }}</div>
               <div class="text-caption q-mt-xs">
                 <div>
                   <span class="text-green-9 text-weight-bold">
                     <span v-for="i in 3" :key="`ds-s-${i}`" :class="actor.deathSaves.successes >= i ? 'text-green-9' : 'text-grey-8'">● </span>
                   </span>
-                  Succ
+                  {{ $t('studio.character.sheetSucc') }}
                 </div>
                 <div>
                   <span class="text-negative text-weight-bold">
                     <span v-for="i in 3" :key="`ds-f-${i}`" :class="actor.deathSaves.failures >= i ? 'text-negative' : 'text-grey-8'">✕ </span>
                   </span>
-                  Fail
+                  {{ $t('studio.character.sheetFail') }}
                 </div>
               </div>
             </div>
@@ -210,7 +215,7 @@
         <!-- Skills List -->
         <div class="parchment-inner q-pa-xs q-mb-sm">
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs text-center">
-            SKILLS
+            {{ $t('studio.character.sheetSkills') }}
           </div>
           <div class="row q-col-gutter-none">
             <div
@@ -241,12 +246,12 @@
         </div>
 
         <!-- Features list -->
-        <div class="parchment-inner q-pa-sm">
+        <div class="parchment-inner q-pa-sm q-mb-sm">
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs">
-            FEATURES & TRAITS
+            {{ $t('studio.character.sheetFeatures') }}
           </div>
           <div v-if="actor.features.length === 0" class="text-caption text-grey-8 text-italic">
-            No features added yet.
+            {{ $t('studio.character.sheetNoFeatures') }}
           </div>
           <div
             v-for="feat in actor.features"
@@ -255,6 +260,24 @@
           >
             <span class="text-weight-bold text-body2">{{ feat.name }}:</span>
             <span v-safe-html="printed(feat.description)" class="text-body2 text-grey-9 q-ml-xs"></span>
+          </div>
+        </div>
+
+        <div v-if="actor.originFeats && actor.originFeats.length > 0" class="parchment-inner q-pa-sm q-mb-sm" data-character-origin-feats>
+          <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs">
+            {{ $t('studio.character.sheetOriginFeats') }}
+          </div>
+          <div v-for="feat in actor.originFeats" :key="feat.id" class="q-mb-xs text-body2">
+            <span class="text-weight-bold">{{ feat.name }}</span><span v-if="feat.notes" class="text-grey-9">: {{ feat.notes }}</span>
+          </div>
+        </div>
+
+        <div v-if="actor.weaponMasteries && actor.weaponMasteries.length > 0" class="parchment-inner q-pa-sm" data-character-weapon-masteries>
+          <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs">
+            {{ $t('studio.character.sheetWeaponMasteries') }}
+          </div>
+          <div v-for="wm in actor.weaponMasteries" :key="wm.id" class="q-mb-xs text-body2">
+            <span class="text-weight-bold">{{ wm.weapon }}</span> ({{ wm.mastery }})<span v-if="wm.notes" class="text-grey-9"> — {{ wm.notes }}</span>
           </div>
         </div>
       </div>
@@ -279,26 +302,26 @@
         <!-- Spellcasting & Slots Box -->
         <div class="parchment-inner q-pa-xs q-mb-sm">
           <div class="text-overline text-weight-bold text-red-10 border-bottom-subtle q-mb-xs text-center">
-            SPELLCASTING
+            {{ $t('studio.character.sheetSpellcasting') }}
           </div>
           <div class="row q-col-gutter-xs text-center q-mb-xs">
             <div class="col-4">
-              <div class="text-2xs text-grey-8">ABILITY</div>
+              <div class="text-2xs text-grey-8">{{ $t('studio.character.sheetAbility') }}</div>
               <div class="text-caption text-weight-bolder">{{ actor.spellcasting?.ability || 'INT' }}</div>
             </div>
             <div class="col-4">
-              <div class="text-2xs text-grey-8">SAVE DC</div>
+              <div class="text-2xs text-grey-8">{{ $t('studio.character.sheetSaveDc') }}</div>
               <div class="text-caption text-weight-bolder text-red-10">{{ computedSpellSaveDc }}</div>
             </div>
             <div class="col-4">
-              <div class="text-2xs text-grey-8">ATTACK</div>
+              <div class="text-2xs text-grey-8">{{ $t('studio.character.sheetAttack') }}</div>
               <div class="text-caption text-weight-bolder text-red-10">{{ formatMod(computedSpellAttackBonus) }}</div>
             </div>
           </div>
 
           <!-- Spell Slots Grid -->
           <div v-if="hasSpellSlots" class="border-top-subtle q-pt-xs q-mt-xs">
-            <div class="text-2xs text-weight-bold text-grey-8 text-center q-mb-xs">SPELL SLOTS</div>
+            <div class="text-2xs text-weight-bold text-grey-8 text-center q-mb-xs">{{ $t('studio.character.sheetSpellSlots') }}</div>
             <div class="row q-col-gutter-xs text-center">
               <template v-for="lvl in 9" :key="`sheet-slot-${lvl}`">
                 <div
@@ -318,7 +341,7 @@
 
           <!-- Spells List -->
           <div v-if="actor.spells && actor.spells.length > 0" class="border-top-subtle q-pt-xs q-mt-xs">
-            <div class="text-2xs text-weight-bold text-grey-8 q-mb-xs">SPELLS</div>
+            <div class="text-2xs text-weight-bold text-grey-8 q-mb-xs">{{ $t('studio.character.sheetSpells') }}</div>
             <div
               v-for="sp in actor.spells"
               :key="sp.id"
@@ -328,7 +351,7 @@
                 <span v-if="sp.prepared" class="text-teal-9 text-weight-bold">★ </span>
                 <span class="text-weight-bold">{{ sp.name }}</span>
                 <span class="text-grey-8 text-2xs q-ml-xs">
-                  ({{ sp.level === 0 ? 'Cantrip' : `Lvl ${sp.level}` }})
+                  ({{ sp.level === 0 ? $t('studio.character.cantripLabel') : $t('studio.character.levelOrdinal', [sp.level]) }})
                 </span>
               </div>
               <div v-if="sp.notes" v-safe-html="printed(sp.notes)" class="text-2xs text-grey-8 text-italic"></div>
@@ -340,14 +363,14 @@
         <div class="parchment-inner q-pa-sm q-mb-sm">
           <div class="row items-center justify-between border-bottom-subtle q-mb-xs">
             <div class="text-overline text-weight-bold text-red-10">
-              EQUIPMENT
+              {{ $t('studio.character.sheetEquipment') }}
             </div>
             <div class="text-caption text-grey-8">
               {{ totalWeight }} / {{ actor.stats.STR * 15 }} lb
             </div>
           </div>
           <div v-if="actor.inventory.length === 0" class="text-caption text-grey-8 text-italic">
-            No items in inventory.
+            {{ $t('studio.character.sheetNoEquipment') }}
           </div>
           <q-list dense>
             <q-item

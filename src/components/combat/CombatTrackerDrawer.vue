@@ -12,9 +12,9 @@
       <div class="bg-primary text-white q-pa-md row items-center no-wrap">
         <q-icon name="mdi-sword-cross" size="md" class="q-mr-sm" />
         <div>
-          <div class="text-subtitle1 text-weight-bold">Combat HUD</div>
+          <div class="text-subtitle1 text-weight-bold">{{ $t('studio.combat.title') }}</div>
           <div class="text-caption text-white">
-            Round {{ combatStore.currentRound }} • Turn {{ combatStore.activeTurnIndex + 1 }}
+            {{ $t('studio.combat.roundTurn', [combatStore.currentRound, combatStore.activeTurnIndex + 1]) }}
           </div>
         </div>
         <q-space />
@@ -28,7 +28,7 @@
           unelevated
           color="primary"
           icon="add"
-          label="Add Current Monster"
+          :label="$t('studio.combat.addMonster')"
           @click="combatStore.addMonsterCombatant()"
         />
         <q-btn
@@ -36,7 +36,7 @@
           outline
           color="secondary"
           icon="person_add"
-          label="Add Hero"
+          :label="$t('studio.combat.addHero')"
           @click="promptAddHero"
         />
         <q-space />
@@ -48,18 +48,18 @@
           :disable="combatStore.sortedCombatants.length === 0"
           @click="combatStore.prevTurn()"
         >
-          <q-tooltip>Previous Turn</q-tooltip>
+          <q-tooltip>{{ $t('studio.combat.prevTurn') }}</q-tooltip>
         </q-btn>
         <q-btn
           size="sm"
           unelevated
           color="green-9"
           icon="mdi-step-forward"
-          label="Next"
+          :label="$t('studio.combat.next')"
           :disable="combatStore.sortedCombatants.length === 0"
           @click="combatStore.nextTurn()"
         >
-          <q-tooltip>Next Turn</q-tooltip>
+          <q-tooltip>{{ $t('studio.combat.nextTurn') }}</q-tooltip>
         </q-btn>
         <q-btn
           size="sm"
@@ -69,16 +69,18 @@
           icon="restart_alt"
           @click="combatStore.resetEncounter()"
         >
-          <q-tooltip>Clear Encounter</q-tooltip>
+          <q-tooltip>{{ $t('studio.combat.clear') }}</q-tooltip>
         </q-btn>
       </div>
+
+      <encounter-budget-panel />
 
       <!-- Combatants List -->
       <div class="col scroll q-pa-sm q-gutter-y-sm">
         <div v-if="combatStore.sortedCombatants.length === 0" class="text-center q-pa-xl text-grey-4">
           <q-icon name="mdi-shield-sword" size="4rem" class="q-mb-sm" />
-          <div class="text-body1">No combatants in active encounter.</div>
-          <div class="text-caption">Click "Add Current Monster" or "Add Hero" to begin.</div>
+          <div class="text-body1">{{ $t('studio.combat.emptyTitle') }}</div>
+          <div class="text-caption">{{ $t('studio.combat.emptyHint') }}</div>
         </div>
 
         <q-card
@@ -110,7 +112,7 @@
                 data-combat-snapshot-badge
               >
                 AC {{ combatant.sourceSnapshot.ac }}<template v-if="combatant.sourceRevision"> · rev #{{ combatant.sourceRevision }}</template>
-                <q-tooltip>Captured snapshot ({{ combatant.sourceKind || 'source' }}). Edits to the live sheet never alter active combatants.</q-tooltip>
+                <q-tooltip>{{ $t('studio.combat.snapshotTooltip', [combatant.sourceKind || 'source']) }}</q-tooltip>
               </q-badge>
               <q-space />
               <q-btn
@@ -134,7 +136,7 @@
                   </span>
                 </span>
                 <span :class="combatant.currentHp === 0 ? 'text-negative text-weight-bolder' : 'text-grey-4'">
-                  {{ combatant.currentHp === 0 ? 'UNCONSCIOUS' : Math.round((combatant.currentHp / combatant.maxHp) * 100) + '%' }}
+                  {{ combatant.currentHp === 0 ? $t('studio.combat.unconscious') : Math.round((combatant.currentHp / combatant.maxHp) * 100) + '%' }}
                 </span>
               </div>
               <q-linear-progress
@@ -188,7 +190,7 @@
                 dense
                 flat
                 color="deep-orange"
-                label="Condition"
+                :label="$t('studio.combat.condition')"
                 icon="mdi-alert-circle-outline"
               >
                 <q-list dense>
@@ -237,10 +239,13 @@
 <script lang="ts">
 import { computed, defineComponent } from 'vue'
 import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
 import { STANDARD_CONDITIONS, useCombatStore } from 'src/stores/combat-store'
+import EncounterBudgetPanel from './EncounterBudgetPanel.vue'
 
 export default defineComponent({
   name: 'CombatTrackerDrawer',
+  components: { EncounterBudgetPanel },
   props: {
     modelValue: {
       type: Boolean,
@@ -250,6 +255,7 @@ export default defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     const $q = useQuasar()
+    const { t } = useI18n()
     const combatStore = useCombatStore()
 
     const isOpen = computed({
@@ -259,18 +265,18 @@ export default defineComponent({
 
     const promptAddHero = () => {
       $q.dialog({
-        title: 'Add Hero / Adventurer',
-        message: 'Name:',
+        title: t('studio.combat.heroDialogTitle'),
+        message: t('studio.combat.heroNamePrompt'),
         prompt: {
-          model: 'Adventurer',
+          model: t('studio.combat.heroDefaultName'),
           type: 'text',
         },
         cancel: true,
         persistent: true,
       }).onOk((data: string) => {
         $q.dialog({
-          title: `${data}'s Stats`,
-          message: 'Max HP:',
+          title: t('studio.combat.heroStatsTitle', [data]),
+          message: t('studio.combat.heroHpPrompt'),
           prompt: {
             model: '25',
             type: 'number',

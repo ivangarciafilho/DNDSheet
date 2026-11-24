@@ -495,6 +495,24 @@ function characterMarkdownOf(char: CharacterActor): string {
     }
   }
 
+  if (char.provenance?.ruleset) {
+    lines.push(`**Ruleset** ${char.provenance.ruleset}${char.provenance.source ? ` (${char.provenance.source})` : ''}`)
+  }
+
+  if (char.originFeats && char.originFeats.length > 0) {
+    lines.push('### Origin Feats')
+    for (const f of char.originFeats) {
+      lines.push(`- **${f.name}**${f.notes ? `: ${f.notes}` : ''}`)
+    }
+  }
+
+  if (char.weaponMasteries && char.weaponMasteries.length > 0) {
+    lines.push('### Weapon Masteries')
+    for (const wm of char.weaponMasteries) {
+      lines.push(`- **${wm.weapon}** (${wm.mastery})${wm.notes ? ` — ${wm.notes}` : ''}`)
+    }
+  }
+
   if (char.inventory && char.inventory.length > 0) {
     lines.push('### Inventory & Equipment')
     for (const item of char.inventory) {
@@ -575,6 +593,24 @@ function characterPlainTextOf(char: CharacterActor): string {
     lines.push('FEATURES & TRAITS:')
     for (const f of char.features) {
       lines.push(`${f.name} (${f.source}): ${f.description}`)
+    }
+  }
+
+  if (char.provenance?.ruleset) {
+    lines.push(`Ruleset: ${char.provenance.ruleset}${char.provenance.source ? ` (${char.provenance.source})` : ''}`)
+  }
+
+  if (char.originFeats && char.originFeats.length > 0) {
+    lines.push('ORIGIN FEATS:')
+    for (const f of char.originFeats) {
+      lines.push(`- ${f.name}${f.notes ? `: ${f.notes}` : ''}`)
+    }
+  }
+
+  if (char.weaponMasteries && char.weaponMasteries.length > 0) {
+    lines.push('WEAPON MASTERIES:')
+    for (const wm of char.weaponMasteries) {
+      lines.push(`- ${wm.weapon} (${wm.mastery})${wm.notes ? ` - ${wm.notes}` : ''}`)
     }
   }
 

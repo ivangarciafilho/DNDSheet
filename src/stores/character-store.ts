@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import { CharacterActor, defaultCharacterActor, DndStat } from 'src/core/domain/types'
+import { type CharacterRuleset, type WeaponMasteryProperty } from 'src/core/domain/character-2024'
 import { characterProficiency, statModifier } from 'src/core/domain/math-utils'
 
 export const useCharacterStore = defineStore(
@@ -168,6 +169,42 @@ export const useCharacterStore = defineStore(
       actor.value.inventory = actor.value.inventory.filter((i) => i.id !== id)
     }
 
+    const setRuleset = (ruleset: CharacterRuleset, source?: string) => {
+      actor.value.provenance = {
+        ruleset,
+        ...(source?.trim() ? { source: source.trim() } : actor.value.provenance?.source ? { source: actor.value.provenance.source } : {}),
+      }
+    }
+
+    const addOriginFeat = (name = 'Alert', notes = '') => {
+      if (!actor.value.originFeats) actor.value.originFeats = []
+      actor.value.originFeats.push({
+        id: `of-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        name,
+        ...(notes.trim() ? { notes: notes.trim() } : {}),
+      })
+    }
+
+    const removeOriginFeat = (id: string) => {
+      if (!actor.value.originFeats) return
+      actor.value.originFeats = actor.value.originFeats.filter((f) => f.id !== id)
+    }
+
+    const addWeaponMastery = (weapon = 'Longsword', mastery: WeaponMasteryProperty = 'Sap', notes = '') => {
+      if (!actor.value.weaponMasteries) actor.value.weaponMasteries = []
+      actor.value.weaponMasteries.push({
+        id: `wm-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        weapon,
+        mastery,
+        ...(notes.trim() ? { notes: notes.trim() } : {}),
+      })
+    }
+
+    const removeWeaponMastery = (id: string) => {
+      if (!actor.value.weaponMasteries) return
+      actor.value.weaponMasteries = actor.value.weaponMasteries.filter((w) => w.id !== id)
+    }
+
     return {
       actor,
       resetCharacter,
@@ -186,6 +223,11 @@ export const useCharacterStore = defineStore(
       removeFeature,
       addItem,
       removeItem,
+      setRuleset,
+      addOriginFeat,
+      removeOriginFeat,
+      addWeaponMastery,
+      removeWeaponMastery,
     }
   },
   {

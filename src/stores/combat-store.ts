@@ -5,6 +5,7 @@ import {
   addCombatantPreserveTurn,
   applyDamage,
   applyHealing,
+  batchAddCombatantsPreserveTurn,
   Combatant,
   createCombatantFromMonster,
   createCombatantFromCharacter,
@@ -16,6 +17,13 @@ import {
   previousTurn,
   recordDeathSave,
 } from 'src/core/usecases/CombatTracker'
+import {
+  buildEncounterMarkdown,
+  buildEncounterSummaryJson,
+  calculateEncounterBudget,
+  parseEncounterSummaryJson,
+  type EncounterRuleset,
+} from 'src/core/domain/encounter-budget'
 import type { CharacterActor, Monster } from 'src/core/domain/types'
 import { useMonsterStore } from './monster-store'
 import { useMonsterSessionStore } from './monster-session'
@@ -46,6 +54,23 @@ export const useCombatStore = defineStore(
     const activeTurnIndex = ref(0)
     const activeCombatantId = ref<string | null>(null)
     const isEncounterActive = ref(false)
+    const encounterRuleset = ref<EncounterRuleset>('2024')
+    const partySize = ref(4)
+    const partyLevel = ref(5)
+
+    const encounterBudget = computed(() => {
+      const monsters = combatants.value
+        .filter((c) => c.isMonster)
+        .map((c) => ({
+          name: c.name,
+          cr: c.sourceSnapshot?.monsterSnapshot?.CR ?? '1',
+        }))
+      return calculateEncounterBudget(
+        monsters,
+        { size: partySize.value, level: partyLevel.value },
+        encounterRuleset.value,
+      )
+    })
 
     const sortedCombatants = computed(() => {
       return sortInitiative([...combatants.value])
@@ -194,15 +219,77 @@ export const useCombatStore = defineStore(
       isEncounterActive.value = false
     }
 
+    const addMonsterBatch = (count: number, initRolls?: number[]) => {
+      const safeCount = Math.max(1, Math.min(20, Math.round(count || 1)))
+      const monsterStore = useMonsterStore()
+      const sessionStore = useMonsterSessionStore()
+      const incoming = Array.from({ length: safeCount }, (_, i) => {
+        const init =
+          initRolls?.[i] ??
+          Math.floor(Math.random() * 20) + 1 + Math.floor((monsterStore.stats.DEX - 10) / 2)
+        return createCombatantFromMonster(monsterStore.$state as unknown as Monster, init, {
+          sourceDocumentId: sessionStore.documentId,
+          sourceRevision: sessionStore.contentRevision,
+        })
+      })
+      const next = batchAddCombatantsPreserveTurn(
+        combatants.value,
+        incoming,
+        activeCombatant.value?.id ?? activeCombatantId.value,
+        activeTurnIndex.value,
+      )
+      combatants.value = next.combatants
+      activeTurnIndex.value = next.activeTurnIndex
+      activeCombatantId.value = next.activeCombatantId
+      isEncounterActive.value = next.isEncounterActive
+    }
+
+    const exportEncounterJson = (title?: string) =>
+      JSON.stringify(buildEncounterSummaryJson(sortedCombatants.value, encounterBudget.value, title), null, 2)
+
+    const exportEncounterMarkdown = (title?: string) =>
+      buildEncounterMarkdown(sortedCombatants.value, encounterBudget.value, title)
+
+    const importEncounterRoster = (raw: unknown, mode: 'replace' | 'append' = 'replace') => {
+      const parsed = parseEncounterSummaryJson(raw)
+      if (!parsed.ok) return parsed
+      encounterRuleset.value = parsed.roster.ruleset
+      partySize.value = parsed.roster.partySize
+      partyLevel.value = parsed.roster.partyLevel
+      if (mode === 'replace') {
+        combatants.value = []
+        currentRound.value = 1
+        activeTurnIndex.value = 0
+        activeCombatantId.value = null
+        isEncounterActive.value = false
+      }
+      const next = batchAddCombatantsPreserveTurn(
+        combatants.value,
+        parsed.roster.combatants,
+        activeCombatant.value?.id ?? activeCombatantId.value,
+        activeTurnIndex.value,
+      )
+      combatants.value = next.combatants
+      activeTurnIndex.value = next.activeTurnIndex
+      activeCombatantId.value = next.activeCombatantId
+      isEncounterActive.value = next.isEncounterActive
+      return { ok: true as const, count: parsed.roster.combatants.length }
+    }
+
     return {
       combatants,
       currentRound,
       activeTurnIndex,
       activeCombatantId,
       isEncounterActive,
+      encounterRuleset,
+      partySize,
+      partyLevel,
+      encounterBudget,
       sortedCombatants,
       activeCombatant,
       addMonsterCombatant,
+      addMonsterBatch,
       addCharacterCombatant,
       addCustomCombatant,
       removeCombatant,
@@ -215,6 +302,9 @@ export const useCombatStore = defineStore(
       nextTurn,
       prevTurn,
       resetEncounter,
+      exportEncounterJson,
+      exportEncounterMarkdown,
+      importEncounterRoster,
     }
   },
   {

@@ -1,7 +1,7 @@
 // Visual regression (C6): renders fixtures × themes × layouts in two builds and compares the stat block screenshots byte for byte.
 // Same machine, same Chrome, same fonts: a refactor that changes nothing produces identical PNG bytes.
 // Usage: node --experimental-strip-types tools/qa/visual-diff.mjs <baselineUrl> <candidateUrl> <outDir> [port]
-import { spawn } from 'node:child_process'
+import { spawn, spawnSync } from 'node:child_process'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -30,7 +30,7 @@ fs.mkdirSync(outDir, { recursive: true })
 // VDIFF_CONTROL=1 nudges the candidate by 1px so a run can prove the comparison detects change.
 async function capture(url, port, control = false) {
   const profile = fs.mkdtempSync(path.join(os.tmpdir(), 'vdiff-'))
-  const chrome = spawn(CHROME, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--disable-gpu', '--no-sandbox', '--hide-scrollbars', '--force-device-scale-factor=1', '--window-size=1500,1400', 'about:blank'])
+  const chrome = spawn(CHROME, [`--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, '--headless=new', '--incognito', '--disable-gpu', '--no-sandbox', '--disable-extensions', '--no-first-run', '--no-default-browser-check', '--disable-background-networking', '--disable-component-update', '--disable-sync', '--metrics-recording-only', '--hide-scrollbars', '--force-device-scale-factor=1', '--window-size=1500,1400', 'about:blank'])
   const shots = new Map(); const errors = []
   try {
     let target
@@ -47,8 +47,9 @@ async function capture(url, port, control = false) {
     const freeze = `()=>{if(!document.getElementById('vdiff-freeze')){const s=document.createElement('style');s.id='vdiff-freeze';s.textContent='*,*::before,*::after{transition:none!important;animation:none!important;caret-color:transparent!important}'+(CONTROL?'#render .statblock{padding-left:1px!important}':'');document.head.appendChild(s)}}`.replace('CONTROL', String(control))
     const ready = async () => {
       let ok = false
-      for (let i = 0; i < 200; i++) {
+      for (let i = 0; i < 300; i++) {
         if (await evaluate('()=>location.protocol.startsWith("http")&&!!document.querySelector("#render .statblock")')) { ok = true; break }
+        if (i === 150) await cdp('Page.navigate', { url })
         await sleep(150)
       }
       if (!ok) {
@@ -79,7 +80,15 @@ async function capture(url, port, control = false) {
       }
     }
     ws.close()
-  } finally { chrome.kill(); await sleep(400); try { fs.rmSync(profile, { recursive: true, force: true }) } catch {} }
+  } finally {
+    if (process.platform === 'win32' && chrome.pid) {
+      spawnSync('taskkill', ['/PID', String(chrome.pid), '/T', '/F'], { stdio: 'ignore', windowsHide: true })
+    } else {
+      chrome.kill()
+    }
+    await sleep(400)
+    try { fs.rmSync(profile, { recursive: true, force: true }) } catch {}
+  }
   return { shots, errors }
 }
 

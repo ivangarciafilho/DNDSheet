@@ -1,11 +1,12 @@
 <template>
   <q-expansion-item
+    dark
     expand-separator
     data-editor-section="actions"
     icon="mdi-movie-open"
     label="Actions &amp; Traits Studio"
     caption="Unified studio for attacks, multiattack, traits, actions, bonus actions, reactions, legendary, mythic &amp; lair actions"
-    header-class="bg-brown-8 text-white text-weight-bold"
+    header-class="bg-brown-8 text-white text-weight-bold actions-studio-header"
   >
     <q-card class="bg-grey-10 text-white q-pa-sm">
       <!-- Category Filter Bar & Quick Add Header -->
@@ -146,3 +147,10 @@ export default defineComponent({
   },
 })
 </script>
+
+<style>
+.actions-studio-header .q-item__label--caption,
+.actions-studio-header .q-expansion-item__toggle-icon {
+  color: #ffffff;
+}
+</style>

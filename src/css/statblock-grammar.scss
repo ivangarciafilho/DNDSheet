@@ -167,14 +167,14 @@
   }
 
   .sb-plate {
-    display: block !important;
+    display: block;
     margin: 0 !important;
     padding: 0 !important;
     border: 2px solid var(--sb-frame) !important;
     border-radius: 4px !important;
     overflow: hidden;
     background: var(--sb-body-bg) !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
     text-indent: 0 !important;
     font-style: normal;
   }
@@ -185,11 +185,11 @@
   }
 
   .sb-row {
-    display: flex !important;
-    flex-direction: row !important;
-    flex-wrap: wrap !important;
-    align-items: stretch !important;
-    gap: 0 !important;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: 0;
     margin: 0 !important;
     border-bottom: 1px solid var(--sb-rule);
 
@@ -203,11 +203,11 @@
   }
 
   .sb-cell {
-    display: flex !important;
+    display: flex;
     flex: 0 1 auto;
     flex-wrap: wrap;
-    align-items: center !important;
-    justify-content: flex-start !important;
+    align-items: center;
+    justify-content: flex-start;
     gap: 0 0.3em;
     min-height: 24px !important;
     padding: 3px 8px !important;
@@ -221,8 +221,8 @@
     font-size: calc(0.8rem * var(--statblock-font-scale, 1));
     font-weight: 600;
     line-height: 1.25 !important;
-    white-space: normal !important;
-    overflow: visible !important;
+    white-space: normal;
+    overflow: visible;
     box-sizing: border-box;
 
     &:first-child {
@@ -294,21 +294,21 @@
   }
 
   .sb-body {
-    display: block !important;
+    display: block;
     margin: 0 !important;
     padding: 4px 8px !important;
-    border: 0 !important;
-    border-radius: 0 !important;
+    border: 0;
+    border-radius: 0;
     background: var(--sb-body-bg) !important;
     line-height: 1.45 !important;
     text-indent: 0 !important;
   }
 
   .sb-plate.sb-trait-streamlined {
-    display: block !important;
+    display: block;
     .sb-row {
-      display: flow-root !important;
-      position: relative !important;
+      display: flow-root;
+      position: relative;
       // Line stripes (set below for multi-line prose) sit over the cell colour, offset by the row padding.
       background: var(--sb-line-stripes, none) 0 3px / 100% calc(100% - 6px) no-repeat, var(--sb-cell-bg) !important;
       padding: 3px 8px !important;
@@ -320,11 +320,11 @@
       --sb-line: calc(1.42 * 1rem * var(--statblock-font-scale, 1));
 
       > .sb-cell.sb-head {
-        float: left !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        vertical-align: top !important;
-        white-space: nowrap !important;
+        float: left;
+        display: inline-flex;
+        align-items: center;
+        vertical-align: top;
+        white-space: nowrap;
         // The head covers the row's 3px top padding plus exactly one text line, so its bottom edge is
         // tangent to line 2: line 2 starts at the plate's left edge and nothing overlaps the head.
         min-height: 0 !important;
@@ -352,7 +352,7 @@
         margin: 0 !important;
 
         > .sb-text {
-          display: inline !important;
+          display: inline;
         }
       }
     }
@@ -412,23 +412,23 @@
   }
 
   .dnd-vitals-indented-subrow {
-    display: flex !important;
-    align-items: baseline !important;
+    display: flex;
+    align-items: baseline;
     padding: 1px 0 1px 18px !important;
     font-size: calc(0.86rem * var(--statblock-font-scale, 1)) !important;
     line-height: 1.35 !important;
     color: var(--sb-cell-ink, #58180d) !important;
-    box-sizing: border-box !important;
+    box-sizing: border-box;
 
     .dnd-subrow-bullet {
-      margin-right: 6px !important;
+      margin-right: 6px;
       font-size: calc(0.82rem * var(--statblock-font-scale, 1)) !important;
       color: var(--sb-badge-ink, #7a2012) !important;
-      opacity: 0.85 !important;
+      opacity: 0.85;
     }
 
     .dnd-subrow-content {
-      flex: 1 1 auto !important;
+      flex: 1 1 auto;
     }
   }
 
@@ -487,7 +487,7 @@
       var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
       var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
     ) !important;
-    background-attachment: local !important;
+    background-attachment: local;
   }
 }
 @import './statblock-grammar-1';

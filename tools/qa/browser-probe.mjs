@@ -51,17 +51,17 @@ export async function browserProbe(
     for (let i = 0; i < 300 && !target; i++) {
       if (launchError) throw launchError
       try {
-        const pages = await (await fetch(`http://127.0.0.1:${cdpPort}/json`)).json()
+        const pages = await (await fetch(`http://127.0.0.1:${cdpPort}/json`, { signal: AbortSignal.timeout(3000) })).json()
         target = pages.find((p) => p.type === 'page')
       } catch { /* Wait for Chrome to expose its page target. */ }
-      if (!target) await delay(100)
+      if (!target) await delay(150)
     }
     if (!target) throw Error('Chrome page target unavailable')
     ws = new WebSocket(target.webSocketDebuggerUrl)
     await new Promise((resolve, reject) => {
       const timer = setTimeout(
         () => reject(Error('CDP connection timeout')),
-        5000
+        15000
       )
       ws.onopen = () => {
         clearTimeout(timer)
@@ -85,7 +85,7 @@ export async function browserProbe(
           timer = setTimeout(() => {
             pending.delete(key)
             reject(Error(method + ' timed out'))
-          }, 60000)
+          }, 90000)
         pending.set(key, (m) => {
           clearTimeout(timer)
           pending.delete(key)

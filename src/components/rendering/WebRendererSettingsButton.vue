@@ -19,6 +19,20 @@
               ]"
             ></q-btn-toggle>
           </div>
+          <div class="col-12 flex items-center justify-between q-mb-sm" data-studio-theme-switch>
+            <div class="text-body1 q-mr-md">{{ $t('studio.settings.studioTheme') }}</div>
+            <q-btn-toggle
+              v-model="editorStore.studioTheme"
+              v-help="$t('studio.settings.studioThemeHint')"
+              no-caps
+              dense
+              toggle-color="primary"
+              :options="[
+                { label: $t('studio.settings.darkTheme'), value: 'dark', icon: 'dark_mode' },
+                { label: $t('studio.settings.lightTheme'), value: 'light', icon: 'light_mode' },
+              ]"
+            ></q-btn-toggle>
+          </div>
           <div class="col-12 flex items-center justify-between">
             <div class="text-body1 q-mr-md">{{ $t('editor.columns') }}</div>
             <q-btn-toggle
@@ -184,6 +198,15 @@
               dense
               color="primary"
               :label="$t('studio.settings.compactA4')"
+            />
+            <q-toggle
+              v-model="editorStore.a4MultiPagePrint"
+              v-help="$t('studio.settings.multiPagePrintHint')"
+              class="col-12 q-my-xs"
+              dense
+              color="primary"
+              data-a4-multipage-toggle
+              :label="$t('studio.settings.multiPagePrint')"
             />
           </template>
         </div>

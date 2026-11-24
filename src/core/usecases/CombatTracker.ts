@@ -184,7 +184,74 @@ export function toggleCondition(combatant: Combatant, condition: string): boolea
 }
 
 export function sortInitiative(combatants: Combatant[]): Combatant[] {
-  return [...combatants].sort((a, b) => b.initiative - a.initiative)
+  return [...combatants].sort((a, b) => {
+    if (b.initiative !== a.initiative) return b.initiative - a.initiative
+    const dexDiff = (b.sourceSnapshot?.stats?.DEX ?? 10) - (a.sourceSnapshot?.stats?.DEX ?? 10)
+    if (dexDiff !== 0) return dexDiff
+    const nameCmp = a.name.localeCompare(b.name)
+    if (nameCmp !== 0) return nameCmp
+    return a.id.localeCompare(b.id)
+  })
+}
+
+function baseCombatantName(name: string): string {
+  return name.replace(/\s+#\d+$/, '').trim()
+}
+
+export function batchAddCombatantsPreserveTurn(
+  combatants: readonly Combatant[],
+  incoming: readonly Combatant[],
+  activeCombatantId: string | null | undefined,
+  activeTurnIndex: number,
+): {
+  combatants: Combatant[]
+  activeTurnIndex: number
+  activeCombatantId: string | null
+  isEncounterActive: boolean
+} {
+  const beforeSorted = sortInitiative([...combatants])
+  const currentActorId = beforeSorted.length
+    ? (activeCombatantId ?? beforeSorted[activeTurnIndex % beforeSorted.length]?.id ?? null)
+    : null
+
+  const existingClone = combatants.map((c) => deepClone(c))
+  const incomingClones = incoming.map((c) => deepClone(c))
+  const seenIds = new Set(existingClone.map((c) => c.id))
+  for (const c of incomingClones) {
+    if (!c.id || seenIds.has(c.id)) {
+      c.id = `cbt-${uuidv4()}`
+    }
+    seenIds.add(c.id)
+  }
+
+  const all = [...existingClone, ...incomingClones]
+  const counts = new Map<string, number>()
+  for (const c of all) {
+    const base = baseCombatantName(c.name)
+    counts.set(base, (counts.get(base) ?? 0) + 1)
+  }
+  const ordinals = new Map<string, number>()
+  for (const c of all) {
+    const base = baseCombatantName(c.name)
+    if ((counts.get(base) ?? 0) > 1) {
+      const nextOrd = (ordinals.get(base) ?? 0) + 1
+      ordinals.set(base, nextOrd)
+      c.name = `${base} #${nextOrd}`
+    }
+  }
+
+  if (all.length === 0) {
+    return { combatants: [], activeTurnIndex: 0, activeCombatantId: null, isEncounterActive: false }
+  }
+  const nextSorted = sortInitiative(all)
+  const fallbackActorId = currentActorId ?? nextSorted[0]?.id ?? null
+  const migrated = migrateActiveTurnIndex(nextSorted, fallbackActorId, activeTurnIndex)
+  return {
+    combatants: all,
+    activeTurnIndex: migrated.activeTurnIndex,
+    activeCombatantId: migrated.activeCombatantId,
+    isEncounterActive: true,
+  }
 }
 
 export function migrateActiveTurnIndex(

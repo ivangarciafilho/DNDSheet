@@ -171,12 +171,26 @@
     <div class="row items-center q-gutter-xs">
       <template v-if="editorStore?.a4PreviewMode">
         <q-badge
+          v-if="editorStore.a4MultiPagePrint && a4Pagination?.isOverflowing"
+          color="indigo-8"
+          text-color="white"
+          class="text-weight-bold q-pa-xs"
+          data-a4-multipage-active
+        >
+          {{ a4Pagination.pageCount }}p
+        </q-badge>
+
+        <q-badge
           :color="a4PageOverflowPx > 0 ? 'amber-4' : 'green-9'"
           :text-color="a4PageOverflowPx > 0 ? 'grey-10' : 'white'"
+          :data-a4-overflow-indicator="a4Pagination?.isOverflowing ? 'true' : undefined"
           class="text-weight-bold q-pa-xs"
         >
           <q-icon :name="a4PageOverflowPx > 0 ? 'warning' : 'check_circle'" class="q-mr-xs" />
           {{ a4PageOverflowPx > 0 ? 'Content exceeds one A4 page' : 'Fits on one A4 page' }}
+          <q-tooltip v-if="a4Pagination?.isOverflowing">
+            {{ $t('studio.settings.overflowTooltip', [a4Pagination.pageCount, a4Pagination.overflowPx]) }}
+          </q-tooltip>
         </q-badge>
 
         <q-btn
@@ -196,6 +210,7 @@
 
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
+import type { A4PaginationMetrics } from 'src/core/domain/a4-pagination'
 import { useEditorStore } from 'src/stores/editor-store'
 
 // A4 preview toolbar above the sheet: preview toggle, occlusion/opacity popovers, layer studio, fit badge, print.
@@ -204,6 +219,7 @@ export default defineComponent({
   name: 'A4PreviewToolbar',
   props: {
     a4PageOverflowPx: { type: Number, required: true },
+    a4Pagination: { type: Object as PropType<A4PaginationMetrics>, required: false, default: undefined },
     printA4Sheet: { type: Function as PropType<() => void | Promise<void>>, required: true },
     openLayerStudio: { type: Function as PropType<() => void>, required: true },
   },

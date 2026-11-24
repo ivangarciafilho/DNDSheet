@@ -15,26 +15,28 @@ export interface StructuredReleaseMetadata {
 }
 
 export const LATEST_RELEASE_METADATA: StructuredReleaseMetadata = {
-  version: '2.5.0',
-  latestBuild: '272',
-  buildRange: [250, 272],
+  version: '2.7.0',
+  latestBuild: '273',
+  buildRange: [250, 273],
   locales: {
     'en-US': {
-      title: 'v2.5.0 (Builds 250–272)',
-      subtitle: 'Statblock Overhaul, Rules Converter Dialog, Focused Help & Zero-Any Ratchet - 11/2026',
+      title: 'v2.7.0 (Builds 250–273)',
+      subtitle: 'Track F Horizon: Encounter Budget, 2024 Heroes, Offline Importers, Multi-Page Print & Light Studio - 11/2026',
       bullets: [
-        'Modular editor & domain decomposition (0 files over 900 lines), site-wide CatalogSelect, 100% v-help tooltip coverage (556+ controls), and non-focus-stealing FocusedHelpBar.',
-        '100% Brazilian Portuguese (pt-BR) UI & help dictionary with dynamic Quasar locale sync, brace-parity tests, dark-mode WCAG contrast overhaul, AC rider composer with Natural Armor base, frameless portrait toggle, and BS-39 paired range support.',
-        'Rules Edition Converter Dialog (2014 <-> 2024) with single-step atomic undo, macro token pills, CR breakdown clipboard copy, extracted Open5e pure parsers, payload coercion warnings, and quality ratchet at 0 explicit anys and <= 360 total CSS !important declarations.',
+        'Encounter XP Budget calculator (2014 & 2024 DMG rules), deterministic initiative sorting, active-turn-safe batch combatant additions, and encounter JSON/Markdown import/export in Combat HUD.',
+        '2024 Revised 5e Hero Sheet support (Origin Feats & 8 Weapon Mastery properties isolated from monster CR calculation), 100.0% localized Combat/Hero/Offline UI (1,134/1,134 pt-BR keys), and 100% help coverage.',
+        'Zero-network offline importers for Foundry VTT Actor5e JSON, Homebrewery v3/Legacy Markdown, and Improved Initiative bundles with prototype-pollution and XSS sanitization.',
+        'Multi-page A4 print flow with non-printing break guides, WCAG AA Light Studio theme toggle, CSS priority-override burn-down (361 -> 310), and automated JS bundle budget enforcement.',
       ],
     },
     'pt-BR': {
-      title: 'v2.5.0 (Builds 250–272)',
-      subtitle: 'Revisão de Bloco, Conversor de Regras, Barra de Ajuda e Zero-Any - 11/2026',
+      title: 'v2.7.0 (Builds 250–273)',
+      subtitle: 'Trilha F Completa: Orçamento de Encontros, Heróis 2024, Importadores Offline, Impressão Multipágina e Estúdio Claro - 11/2026',
       bullets: [
-        'Decomposição modular de editor e domínio (0 arquivos acima de 900 linhas), CatalogSelect global, 100% de cobertura v-help e barra de ajuda contextual sem roubo de foco.',
-        'Interface e dicionário de ajuda 100% em português brasileiro (pt-BR) com sincronização dinâmica Quasar, validação de placeholders, contraste WCAG em modo escuro, compositores de CA com armadura natural, retrato sem moldura e alcance pareado BS-39.',
-        'Conversor de Edição de Regras (2014 <-> 2024) com desfazer atômico, pílulas de macro, cópia do detalhamento de ND, analisador Open5e puro, avisos de compatibilidade de arquivo e trava de qualidade em 0 any explícitos.',
+        'Calculadora de orçamento de XP (regras 2014 e 2024), ordenação determinística de iniciativa, adição em lote preservando o turno ativo e exportação/importação JSON/Markdown no Painel de Combate.',
+        'Suporte ao modo Herói 2024 (Talentos de Origem e 8 propriedades de Maestria em Armas isolados do cálculo de ND), interface 100% localizada em pt-BR (1.134/1.134 chaves) e 100% de cobertura de ajuda.',
+        'Importadores offline locais para JSON Foundry VTT Actor5e, Markdown Homebrewery v3/Legado e Improved Initiative com sanitização contra poluição de protótipo e XSS.',
+        'Fluxo de impressão A4 multipágina com guias de quebra, alternância de Tema Claro WCAG AA do estúdio, redução de regras prioritárias de CSS (361 -> 310) e trava automática de tamanho de pacote JS.',
       ],
     },
   },

@@ -12,6 +12,7 @@ import {
   type CanonicalCatalogEntry,
 } from '../../src/core/domain/catalogs/enumerations.ts'
 import { suggestFormulaRefs } from '../../src/core/domain/formula.ts'
+import { checkBundleBudgets } from '../../tools/bundle-budget.mjs'
 import { catalogFor, formulaReferences } from '../../src/core/domain/macro-catalog.ts'
 import { resolveMonsterBindings } from '../../src/core/domain/monster-bindings.ts'
 import type { Monster } from '../../src/core/domain/types.ts'
@@ -274,8 +275,31 @@ test('D4.2: runtime interaction latency budgets and CSS ratchet ceilings stay wi
   const ratchet = JSON.parse(fs.readFileSync('tools/ratchet.json', 'utf8')) as Record<string, number>
   assert.ok(ratchet.importantAppScss <= 18, `Expected importantAppScss <= 18, got ${ratchet.importantAppScss}`)
   assert.ok(ratchet.importantDarkContrast <= 13, `Expected importantDarkContrast <= 13, got ${ratchet.importantDarkContrast}`)
-  assert.ok(ratchet.importantTotal <= 361, `Expected importantTotal <= 361, got ${ratchet.importantTotal}`)
+  assert.ok(ratchet.importantTotal <= 330, `Expected importantTotal <= 330, got ${ratchet.importantTotal}`)
   assert.equal(ratchet.explicitAny, 0)
   assert.equal(ratchet.filesOver900Lines, 0)
   assert.equal(ratchet.vHtml, 0)
+})
+
+test('F4.3: checkBundleBudgets enforces chunk raw/gzip and total JS ceilings', () => {
+  const tmpDir = fs.mkdtempSync(path.join(path.resolve('.'), '.tmp-bundle-test-'))
+  try {
+    fs.writeFileSync(path.join(tmpDir, 'app.js'), 'console.log("small");\n')
+    const pass = checkBundleBudgets(tmpDir)
+    assert.equal(pass.ok, true)
+    assert.deepEqual(pass.violations, [])
+
+    const huge = Buffer.alloc(1600 * 1024, 'x').toString('utf8')
+    fs.writeFileSync(path.join(tmpDir, 'huge.js'), huge)
+    const fail = checkBundleBudgets(tmpDir, {
+      maxChunkRawBytes: 1536 * 1024,
+      maxChunkGzipBytes: 450 * 1024,
+      maxTotalJsRawBytes: 3400 * 1024,
+      maxTotalJsGzipBytes: 1000 * 1024,
+    })
+    assert.equal(fail.ok, false)
+    assert.ok(fail.violations.some((v) => v.includes('largest chunk raw huge.js')))
+  } finally {
+    fs.rmSync(tmpDir, { recursive: true, force: true })
+  }
 })

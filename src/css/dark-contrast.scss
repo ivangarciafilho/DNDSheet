@@ -1,52 +1,94 @@
-// C11: dark-studio contrast. Each rule recolours a Quasar utility class that Quasar itself declares !important,
-// so only !important can win; scoped to studio surfaces and kept out of parchment/sheet cards.
-/* High-contrast Material/Quasar token overrides scoped to dark studio UI surfaces */
-body.body--dark :is(#editor, #char-editor, #footer, .q-dialog .q-card, .q-drawer, .q-menu) {
-  .text-primary:not(.bg-primary):not(.q-checkbox__inner):not(.q-radio__inner):not(.q-toggle__inner):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
-  .q-field--dark.q-field--highlighted .q-field__label,
-  .q-field--dark.q-field--highlighted .q-field__control {
-    color: #64b5f6 !important;
+// Dual Dark + Light Studio semantic contrast tokens (ratchet budget ceiling: 13 rules).
+:root {
+  --studio-primary: #1565c0;
+  --studio-negative: #b71c1c;
+  --studio-accent: #6a1b9a;
+  --studio-active: #0d47a1;
+  --studio-positive: #1b5e20;
+  --studio-teal: #004d40;
+  --studio-indigo: #283593;
+  --studio-blue-grey: #37474f;
+  --studio-muted: #4a4a4a;
+  --studio-amber: #7c3f00;
+}
+
+body.body--dark,
+.bg-dark,
+.bg-grey-10,
+.bg-grey-9,
+.bg-brown-8 {
+  --studio-primary: #64b5f6;
+  --studio-negative: #f7a19a;
+  --studio-accent: #ce93d8;
+  --studio-active: #90caf9;
+  --studio-positive: #81c784;
+  --studio-teal: #80cbc4;
+  --studio-indigo: #b3bce8;
+  --studio-blue-grey: #b0bec5;
+  --studio-muted: #bdbdbd;
+  --studio-amber: #ffd54f;
+}
+
+$studio-surfaces: '#editor, #char-editor, #footer, .q-dialog .q-card, .q-drawer, .q-menu, [data-rules-conversion-dialog]';
+$light-dark-bg-excludes: ':not([class*="bg-"]):not(.bg-grey-7 *):not(.bg-grey-8 *):not(.bg-grey-9 *):not(.bg-grey-10 *):not(.bg-dark *):not(.bg-black *):not(.bg-brown-8 *):not(.bg-primary *):not(.bg-teal-9 *):not(.bg-blue-grey-7 *):not(.bg-blue-grey-8 *):not(.bg-green-9 *):not(.bg-deep-purple-9 *):not(.bg-purple-9 *):not(.bg-indigo-8 *):not(.bg-red-9 *):not(.bg-red-10 *):not(.dual-knob-crop-slider *):not(.gradient-overlay-controller *):not(.radial-offset-controller *):not(.macro-suggest-popup *):not(.a4-preview-toolbar *):not(.parchment-bg *):not(.character-sheet-card *)';
+
+/* Scoped semantic token enforcement across studio surfaces, preserving dark cards & parchment previews */
+body {
+  & :is(#{$studio-surfaces}) .text-primary:not(.bg-primary):not(.q-checkbox__inner):not(.q-radio__inner):not(.q-toggle__inner):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
+  & :is(#{$studio-surfaces}) .q-field--dark.q-field--highlighted .q-field__label,
+  & :is(#{$studio-surfaces}) .q-field--dark.q-field--highlighted .q-field__control,
+  &.body--light :is(#{$studio-surfaces}) :is(.text-blue-2, .text-blue-3, .text-blue-4, .text-light-blue-2, .text-light-blue-3, .text-light-blue-4)#{$light-dark-bg-excludes} {
+    color: var(--studio-primary) !important;
   }
 
-  .text-negative:not(.bg-negative):not(.bg-red-1):not(.bg-red-1 *):not(.bg-red-2):not(.bg-amber-1):not(.bg-amber-1 *):not(.bg-warning):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #f7a19a !important;
+  & :is(#{$studio-surfaces}) .text-negative:not(.bg-negative):not(.bg-red-1):not(.bg-red-1 *):not(.bg-red-2):not(.bg-amber-1):not(.bg-amber-1 *):not(.bg-warning):not(.parchment-bg *):not(.character-sheet-card *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-red-3, .text-red-4, .text-deep-orange, .text-deep-orange-3, .text-deep-orange-4, .text-orange, .text-orange-3, .text-orange-4)#{$light-dark-bg-excludes} {
+    color: var(--studio-negative) !important;
   }
 
-  .text-accent:not(.bg-accent):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
-  .text-purple:not(.bg-purple):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #ce93d8 !important;
+  & :is(#{$studio-surfaces}) .text-accent:not(.bg-accent):not(.bg-red-1 *):not(.bg-amber-1 *):not(.bg-green-1 *):not(.parchment-bg *):not(.character-sheet-card *),
+  & :is(#{$studio-surfaces}) .text-purple:not(.bg-purple):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-purple-2, .text-purple-3, .text-purple-4)#{$light-dark-bg-excludes} {
+    color: var(--studio-accent) !important;
   }
 
-  .q-item--active:not([class*="bg-"]) {
-    color: #90caf9 !important;
+  & :is(#{$studio-surfaces}) .q-item--active:not([class*="bg-"]) {
+    color: var(--studio-active) !important;
   }
 
-  .text-positive:not(.bg-positive):not(.bg-green-1 *):not(.bg-amber-1 *):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #81c784 !important;
+  & :is(#{$studio-surfaces}) .text-positive:not(.bg-positive):not(.bg-green-1 *):not(.bg-amber-1 *):not(.parchment-bg *):not(.character-sheet-card *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-green-2, .text-green-3, .text-green-4)#{$light-dark-bg-excludes} {
+    color: var(--studio-positive) !important;
   }
 
-  .text-teal:not(.bg-teal):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #80cbc4 !important;
+  & :is(#{$studio-surfaces}) .text-teal:not(.bg-teal):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-cyan, .text-teal-2, .text-teal-3, .text-teal-4, .text-cyan-2, .text-cyan-3, .text-cyan-4)#{$light-dark-bg-excludes} {
+    color: var(--studio-teal) !important;
   }
 
-  .text-indigo:not(.bg-indigo):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #b3bce8 !important;
+  & :is(#{$studio-surfaces}) .text-indigo:not(.bg-indigo):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-indigo-2, .text-indigo-3)#{$light-dark-bg-excludes} {
+    color: var(--studio-indigo) !important;
   }
 
-  .text-blue-grey:not(.bg-blue-grey):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
-    color: #b0bec5 !important;
+  & :is(#{$studio-surfaces}) .text-blue-grey:not(.bg-blue-grey):not([class*="bg-"]):not(.parchment-bg *):not(.character-sheet-card *) {
+    color: var(--studio-blue-grey) !important;
   }
 
-  .text-grey-6:not(.parchment-bg):not(.parchment-bg *):not(.character-sheet-card *):not(.bg-white *):not(.bg-grey-1 *):not(.bg-grey-2 *),
-  .text-grey-7:not(.parchment-bg):not(.parchment-bg *):not(.character-sheet-card *):not(.bg-white *):not(.bg-grey-1 *):not(.bg-grey-2 *) {
-    color: #bdbdbd !important;
+  & :is(#{$studio-surfaces}) :is(.text-grey-6, .text-grey-7):not(.parchment-bg):not(.parchment-bg *):not(.character-sheet-card *):not(.bg-white *):not(.bg-grey-1 *):not(.bg-grey-2 *),
+  &.body--light :is(#{$studio-surfaces}) :is(.text-grey-1, .text-grey-2, .text-grey-3, .text-grey-4, .text-grey-5)#{$light-dark-bg-excludes} {
+    color: var(--studio-muted) !important;
   }
 
-  .bg-positive:not(.text-grey-10):not(.text-dark):not(.text-black) {
+  &.body--light :is(#{$studio-surfaces}) :is(.text-amber, .text-amber-2, .text-amber-3, .text-amber-4, .text-amber-5, .text-amber-6, .text-amber-7, .text-amber-8, .text-amber-9, .text-amber-10, .text-yellow-3, .text-yellow-4, .text-yellow-5, .text-yellow-6, .text-yellow-7, .text-yellow-8, .text-yellow-9)#{$light-dark-bg-excludes} {
+    color: var(--studio-amber) !important;
+  }
+
+  & :is(#{$studio-surfaces}) .bg-positive:not(.text-grey-10):not(.text-dark):not(.text-black) {
     background-color: #2e7d32 !important;
   }
 
-  .bg-info:not(.text-grey-10):not(.text-dark):not(.text-black) {
+  & :is(#{$studio-surfaces}) .bg-info:not(.text-grey-10):not(.text-dark):not(.text-black) {
     background-color: #0277bd !important;
   }
 }

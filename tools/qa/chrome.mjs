@@ -5,6 +5,7 @@ import os from 'node:os'
 
 export const CHROME_HEADLESS_FLAGS = Object.freeze([
   '--headless=new',
+  '--incognito',
   '--disable-gpu',
   '--no-sandbox',
   '--disable-extensions',

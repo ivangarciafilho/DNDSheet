@@ -63,6 +63,51 @@
         <div class="q-pt-md text-caption">
           {{ $t('import.additional') }}
         </div>
+        <q-separator class="q-my-md" />
+        <div data-offline-import-section>
+          <div class="text-subtitle2 q-mb-xs">{{ $t('studio.offlineImport.heading') }}</div>
+          <div class="text-caption q-mb-sm">{{ $t('studio.offlineImport.hint') }}</div>
+          <q-input
+            v-model="rawImportText"
+            v-help="$t('studio.offlineImport.hint')"
+            type="textarea"
+            filled
+            autogrow
+            :input-style="{ maxHeight: '140px' }"
+            :placeholder="$t('studio.offlineImport.pastePlaceholder')"
+            data-offline-import-textarea
+          />
+          <div class="row q-gutter-sm q-mt-sm">
+            <q-btn
+              dense
+              unelevated
+              no-caps
+              color="primary"
+              icon="content_paste_go"
+              :disable="!rawImportText.trim()"
+              :label="$t('studio.offlineImport.importText')"
+              data-offline-import-paste-btn
+              @click="importOfflinePaste"
+            />
+            <q-btn
+              dense
+              outline
+              no-caps
+              color="secondary"
+              icon="upload_file"
+              :label="$t('studio.offlineImport.importFile')"
+              data-offline-import-file-btn
+              @click="offlineFileInput?.click()"
+            />
+            <input
+              ref="offlineFileInput"
+              type="file"
+              accept=".json,.md,.markdown,.txt"
+              style="display: none"
+              @change="onOfflineFilePicked"
+            />
+          </div>
+        </div>
       </q-card-section>
       <q-card-actions align="right">
         <q-btn
@@ -82,8 +127,12 @@ import { computed, nextTick, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useOpen5eImport } from './importers/useOpen5eImport'
 import { Open5eMonster, Open5eMonsterResponse } from './Open5eData'
+import { useFileLoader } from './useFileLoader'
 
 const { t } = useI18n()
+const { importRawTextStatblock, loadFile } = useFileLoader()
+const rawImportText = ref('')
+const offlineFileInput = ref<HTMLInputElement | null>(null)
 
 const API_ROOT = 'https://api.open5e.com/v1/monsters/'
 const monsterResults = ref<Open5eMonster[]>([])
@@ -200,5 +249,22 @@ const loadData = async () => {
 
     loadingData.value = false
   }, 100)
+}
+
+const importOfflinePaste = () => {
+  if (importRawTextStatblock(rawImportText.value)) {
+    rawImportText.value = ''
+    importDialog.value = false
+  }
+}
+
+const onOfflineFilePicked = (event: Event) => {
+  const input = event.target as HTMLInputElement | null
+  const file = input?.files?.[0]
+  if (file) {
+    loadFile(file)
+    importDialog.value = false
+  }
+  if (input) input.value = ''
 }
 </script>

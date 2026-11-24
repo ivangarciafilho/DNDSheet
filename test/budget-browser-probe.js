@@ -468,6 +468,61 @@ await browserProbe(async ({ evaluate, send, delay }) => {
   })()`)
   await delay(250)
 
+  // F4.2: Light Studio theme WCAG AA contrast audit across Monster editor, Character editor, CatalogSelect menu, FocusedHelpBar, and Combat drawer
+  await evaluate(`(() => {
+    const root = document.querySelector('#q-app')?.__vue_app__
+    root.config.globalProperties.$pinia._s.get('editor').studioTheme = 'light'
+  })()`)
+  await delay(350)
+  const lightOpenPoint = await evaluate(`(async () => {
+    const sel = document.querySelector('[data-editor-section="basics"] [data-catalog-select="creatureTypes"]')
+    const target = sel?.querySelector('.q-field__control') || sel
+    target.scrollIntoView({ block: 'center' })
+    await new Promise((r) => setTimeout(r, 80))
+    const r = target.getBoundingClientRect()
+    return { x: r.left + r.width / 2, y: r.top + r.height / 2 }
+  })()`)
+  await clickPoint(lightOpenPoint.x, lightOpenPoint.y)
+  await delay(250)
+  const lightMonsterUi = await scanUiContrast('light-studio-monster', ['#main-nav', '#editor', '#footer', '.q-menu', '[data-focused-help-bar]'])
+  assert.equal(lightMonsterUi.bodyDark, false, 'Expected Light Studio to deactivate body--dark')
+  assert.ok(lightMonsterUi.checkedTextNodes > 100, `Expected >100 checked text nodes in light monster scan, got ${lightMonsterUi.checkedTextNodes}`)
+  uiViolations.push(...lightMonsterUi.violations)
+  await pressEscape()
+
+  await evaluate(`(() => {
+    const root = document.querySelector('#q-app')?.__vue_app__
+    root.config.globalProperties.$pinia._s.get('editor').activeMode = 'character'
+  })()`)
+  await delay(350)
+  await evaluate(`(() => {
+    document.querySelectorAll('#char-editor .q-expansion-item > .q-expansion-item__container > .q-item')
+      .forEach((el) => { if (el.getAttribute('aria-expanded') !== 'true') el.click() })
+  })()`)
+  await delay(300)
+  const lightCharUi = await scanUiContrast('light-studio-character', ['#main-nav', '#char-editor', '#char-sheet', '#footer'])
+  assert.equal(lightCharUi.bodyDark, false)
+  assert.ok(lightCharUi.checkedTextNodes > 50, `Expected >50 checked text nodes in light character scan, got ${lightCharUi.checkedTextNodes}`)
+  uiViolations.push(...lightCharUi.violations)
+
+  await evaluate(`(() => {
+    const btn = [...document.querySelectorAll('header button')].find((b) => (b.innerHTML || '').includes('sword'))
+    btn?.click()
+  })()`)
+  await delay(300)
+  const lightCombatUi = await scanUiContrast('light-studio-combat', ['.q-drawer'])
+  assert.ok(lightCombatUi.checkedTextNodes >= 5)
+  uiViolations.push(...lightCombatUi.violations)
+  await evaluate(`(() => {
+    const closeBtn = [...document.querySelectorAll('.q-drawer button')].find((b) => /close/i.test((b.textContent || '') + ' ' + (b.getAttribute('aria-label') || '')))
+    closeBtn?.click()
+    const root = document.querySelector('#q-app')?.__vue_app__
+    const ed = root.config.globalProperties.$pinia._s.get('editor')
+    ed.activeMode = 'monster'
+    ed.studioTheme = 'dark'
+  })()`)
+  await delay(250)
+
   const summary = {
     keystrokeP95Ms: Number(metrics.keystrokeP95.toFixed(2)),
     completionOpenMs: Number(metrics.completionOpenMs.toFixed(2)),

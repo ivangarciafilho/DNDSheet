@@ -5,6 +5,7 @@ import fs from 'node:fs'
 import http from 'node:http'
 import path from 'node:path'
 import { gateSummaryPasses, gateInputFingerprint } from '../tools/gate-contract.mjs'
+import { checkBundleBudgets } from '../tools/bundle-budget.mjs'
 
 const OUT = path.resolve('.gate')
 const PAGES_BASE = '/DNDSheet'
@@ -66,7 +67,7 @@ const BROWSER_SUITE = [
   'node test/shared-casting-editor-browser-smoke.js', 'node test/print-parity-browser-smoke.js', 'node test/emergency-rich-mechanics-browser-smoke.js',
   'node test/emergency-containers-browser-smoke.js', 'node test/emergency-numeric-presentation-browser-smoke.js', 'node test/outcome-lifecycle-browser-smoke.js',
   'node test/statblock-help-browser-smoke.js', 'node --experimental-strip-types test/release-matrix-browser-smoke.js', 'node tools/qa/overflow-probe.js',
-  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs', 'node test/locale-browser-smoke.mjs', 'node test/description-containers-browser-smoke.mjs', 'node test/build269-features-browser-smoke.mjs',
+  'node test/macro-autocomplete-browser-smoke.mjs', 'node test/formatting-reaches-statblock-browser-smoke.mjs', 'node test/xss-statblock-browser-smoke.mjs', 'node test/locale-browser-smoke.mjs', 'node test/description-containers-browser-smoke.mjs', 'node test/build269-features-browser-smoke.mjs', 'node test/character-2024-browser-smoke.mjs',
   'node test/build248-envelope-workflow-browser-smoke.js', 'node test/build249-workflow-browser-smoke.js', 'node test/budget-browser-probe.js', 'node test/build250-workflow-browser-smoke.js',
 ].map((command) => `node tools/qa/retry-once.mjs ${command}`).join(' && ')
 
@@ -79,6 +80,7 @@ if (await run('build', 'npx quasar build')) {
   await run('fuzz', 'node test/exhaustive-ui-fuzz.js', { DNDSHEET_E2E_URL: url })
   await run('help', BROWSER_SUITE, { DNDSHEET_E2E_URL: url })
   await run('spell', 'node test/spell-plate-browser-smoke.js', { DNDSHEET_E2E_URL: url })
+  spa.closeAllConnections?.()
   spa.close()
 }
 if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`, DNDSHEET_BUILD_DIR: 'dist-pages' })) {
@@ -87,11 +89,14 @@ if (await run('pages-build', 'npx quasar build', { PUBLIC_PATH: `${PAGES_BASE}/`
   await check('pages-assets', async () => {
     const index = await (await fetch(`${origin}/index.html`)).text()
     const mask = await fetch(`${origin}/homebrew/masks/watercolor_splash_center.png`)
-    return index.includes(`${PAGES_BASE}/assets/`) && mask.status === 200
+    const bundle = checkBundleBudgets(path.join(path.resolve('dist-pages'), 'assets'))
+    if (!bundle.ok) throw new Error('Bundle budget exceeded: ' + bundle.violations.join('; '))
+    return index.includes(`${PAGES_BASE}/assets/`) && mask.status === 200 && bundle.ok
   })
   await run('pages-fuzz', `node test/exhaustive-ui-fuzz.js && ${BROWSER_SUITE}`, { DNDSHEET_E2E_URL: `${origin}/index.html#/` })
   // C6: the built stat block must match production pixel for pixel unless DNDSHEET_VISUAL_ACCEPT names the intended change.
   await run('visual', `node --experimental-strip-types tools/qa/visual-diff.mjs ${process.env.DNDSHEET_VISUAL_BASELINE || 'https://ivangarciafilho.github.io/DNDSheet/index.html#/'} ${origin}/index.html#/ .gate/visual`)
+  pages.closeAllConnections?.()
   pages.close()
 }
 

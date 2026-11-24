@@ -201,13 +201,13 @@
       margin-bottom: 1em;
       width: 100% !important;
       max-width: 100% !important;
-      box-sizing: border-box !important;
+      box-sizing: border-box;
 
       .stat-table {
         display: grid;
-        min-width: 0 !important;
+        min-width: 0;
         max-width: 100% !important;
-        box-sizing: border-box !important;
+        box-sizing: border-box;
         grid-template-columns: minmax(22px, 0.85fr) minmax(16px, 0.65fr) minmax(22px, 0.9fr) minmax(36px, 1.4fr);
         grid-template-rows: repeat(3, auto);
         grid-template-areas: 'blank blank mod save' 'stat-1 score-1 mod-1 save-1' 'stat-2 score-2 mod-2 save-2';
@@ -222,7 +222,7 @@
           color: #58180d;
           padding: 2px 1px !important;
           min-height: 24px;
-          min-width: 0 !important;
+          min-width: 0;
           box-sizing: border-box;
           white-space: nowrap;
           overflow: visible;

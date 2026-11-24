@@ -42,22 +42,22 @@
     .sb-spells-restricted-cell {
       padding: 0 !important;
       background: transparent !important;
-      display: flex !important;
-      flex-direction: column !important;
-      width: 100% !important;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
 
       .spell-level-line {
-        display: block !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
         padding: 2px 6px !important;
         line-height: 1.35 !important;
-        min-height: 0 !important;
+        min-height: 0;
         border-bottom: none !important;
         background: transparent;
 
         &:last-child {
-          border-bottom: none !important;
+          border-bottom: none;
         }
 
         &.is-striped,
@@ -81,7 +81,7 @@
             var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 4.35rem,
             var(--sb-stripe-shift, rgba(122, 31, 18, 0.06)) 5.8rem
           ) !important;
-          background-attachment: local !important;
+          background-attachment: local;
         }
       }
     }
@@ -255,19 +255,19 @@
 
 /* Modular Sectorized Action Outcomes Grid & Dice Tables */
 .action-outcomes-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
-  gap: 4px !important;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 4px;
   margin: 4px 0 !important;
-  width: 100% !important;
+  width: 100%;
 
   .outcome-sector {
     background: rgba(115, 24, 21, 0.04) !important;
     border: 1px solid rgba(115, 24, 21, 0.22) !important;
-    border-radius: 3px !important;
+    border-radius: 3px;
     padding: 3px 6px !important;
-    font-size: 0.9em !important;
-    line-height: 1.35 !important;
+    font-size: 0.9em;
+    line-height: 1.35;
 
     .outcome-target-badge {
       display: inline-block;
@@ -282,10 +282,10 @@
 }
 
 .outcome-dice-table {
-  width: 100% !important;
-  border-collapse: collapse !important;
+  width: 100%;
+  border-collapse: collapse;
   margin: 4px 0 !important;
-  font-size: 0.86em !important;
+  font-size: 0.86em;
 
   th, td {
     border: 1px solid rgba(115, 24, 21, 0.25) !important;
@@ -363,8 +363,8 @@
     margin: 1px 0 !important;
     line-height: calc(1.45rem * var(--statblock-font-scale, 1)) !important;
     text-indent: 0 !important;
-    overflow: visible !important;
-    box-sizing: border-box !important;
+    overflow: visible;
+    box-sizing: border-box;
 
     &:not(.sb-striped):not(.is-striped):not(.zebra-stripe-text) {
       background: transparent !important;

@@ -6,6 +6,7 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { gateSummaryPasses, gateInputFingerprint } from './gate-contract.mjs'
+import { checkBundleBudgets } from './bundle-budget.mjs'
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => (a.startsWith('--') ? [...acc, [a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : true]] : acc), []))
 const tree = path.resolve('.')
@@ -32,6 +33,8 @@ if (fs.existsSync(path.join(pages, 'spa'))) fail('dist-pages/spa exists; that is
 fs.writeFileSync(path.join(pages, '.nojekyll'), '')
 const pageFiles = walk(pages)
 if (pageFiles.length < 20) fail(`dist-pages has only ${pageFiles.length} files`)
+const bundle = checkBundleBudgets(path.join(pages, 'assets'))
+if (!bundle.ok) fail('bundle budget exceeded: ' + bundle.violations.join('; '))
 
 // 3. Commit and tag must exist and agree.
 const commit = args.commit || git(['rev-parse', 'build185-repairs'])

@@ -11,6 +11,7 @@ const numbers = []
 // A11.1 classes. Array-item monster facts stay blocked until stable-id paths exist (field-types.ts A9.2 note).
 function classify(rel, model, block = '') {
   if (rel.includes('/character/')) return 'literal: character sheet'
+  if (rel.includes('/combat/')) return 'literal: tracker state'
   if (/A4LayerStudio|a4-layers\/|widgets\/|portrait|editorStore/.test(rel + model)) return 'literal: presentation'
   if (/SpellsEditor|NewSpellDialog/.test(rel)) return 'literal: spell data'
   if (/CrAnnotationCard/.test(rel)) return 'literal: CR annotation'

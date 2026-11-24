@@ -24,24 +24,25 @@
       </defs>
     </svg>
 
-    <a4-preview-toolbar :a4-page-overflow-px="a4PageOverflowPx" :print-a4-sheet="printA4Sheet" :open-layer-studio="openLayerStudio" />
+    <a4-preview-toolbar :a4-page-overflow-px="a4PageOverflowPx" :a4-pagination="a4Pagination" :print-a4-sheet="printA4Sheet" :open-layer-studio="openLayerStudio" />
 
     <!-- Scaled A4 Page or Fluid Container -->
     <div
       ref="a4ViewportRef"
       :class="editorStore?.a4PreviewMode ? 'a4-preview-viewport' : 'standard-viewport'"
     >
-      <div :class="editorStore?.a4PreviewMode ? 'a4-scale-stage' : ''" :style="editorStore?.a4PreviewMode ? a4ScaleStageStyle : undefined">
+      <div :class="editorStore?.a4PreviewMode ? ['a4-scale-stage', { 'a4-stage-multipage': editorStore.a4MultiPagePrint && a4Pagination.isOverflowing }] : ''" :style="editorStore?.a4PreviewMode ? a4ScaleStageStyle : undefined">
         <div
           ref="a4PageRef"
           :class="editorStore?.a4PreviewMode ? [
             'a4-page-sheet',
             'a4-' + editorStore.a4Orientation,
             'a4-layout-' + resolvedA4Layout,
-            { 'a4-compact': editorStore.a4CompactDensity },
+            { 'a4-compact': editorStore.a4CompactDensity, 'a4-multipage': editorStore.a4MultiPagePrint && a4Pagination.isOverflowing },
             'theme-' + (editorStore?.visualTheme || 'wotc')
           ] : 'statblock-container'"
         >
+          <div v-for="(y, idx) in (editorStore?.a4PreviewMode && a4Pagination.isOverflowing ? a4Pagination.breakPositionsPx : [])" :key="'pg-' + idx" class="a4-page-break-guide" :style="{ top: `${y}px` }" aria-hidden="true"><span>Page {{ idx + 2 }}</span></div>
           <!-- A4 Composition Layers (Unified Stack with Dynamic Descending Z-Index) -->
           <template v-if="editorStore?.a4PreviewMode">
             <div
@@ -512,7 +513,7 @@ export default defineComponent({
       )
     })
 
-    const { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, portraitLayerObj, statblockLayerObj, a4StatblockWrapperStyle, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, scheduleStatblockFit, a4PortraitStyle, portraitCropContainerStyle, portraitImgStyle, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, checkA4Overflow, printA4Sheet } = useA4Composition({ monster, editorStore, renderRoot, columns, hasPortrait })
+    const { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, portraitLayerObj, statblockLayerObj, a4StatblockWrapperStyle, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, scheduleStatblockFit, a4PortraitStyle, portraitCropContainerStyle, portraitImgStyle, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, a4Pagination, checkA4Overflow, printA4Sheet } = useA4Composition({ monster, editorStore, renderRoot, columns, hasPortrait })
 
     const cascadingDefenses = computed(() => textRenderer.cascadingDefenses.value)
 
@@ -849,6 +850,7 @@ export default defineComponent({
       getLayerStyle,
       getLayerTextStyle,
       a4PageOverflowPx,
+      a4Pagination,
       printA4Sheet,
       openLayerStudio,
       a4BackgroundLayers,

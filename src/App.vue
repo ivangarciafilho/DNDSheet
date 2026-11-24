@@ -3,9 +3,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, provide } from 'vue'
+import { defineComponent, onMounted, provide, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useTextRenderer } from './components/rendering/useTextRenderer'
+import { useEditorStore } from './stores/editor-store'
 import { useMonsterStore } from './stores/monster-store'
 
 export default defineComponent({
@@ -19,8 +20,15 @@ export default defineComponent({
     const monsterStore = useMonsterStore()
     monsterStore.validate()
 
-    // Saved work lives in this browser for this address only (each port or domain has its own storage).
+    const editorStore = useEditorStore()
     const $q = useQuasar()
+    watch(
+      () => editorStore.studioTheme,
+      (theme) => {
+        $q.dark.set(theme !== 'light')
+      },
+      { immediate: true },
+    )
     const HINT_KEY = 'dndsheet.storageHintSeen'
     onMounted(() => {
       let seen = true

@@ -152,5 +152,30 @@ await browserProbe(async ({ evaluate, send, delay }) => {
  assert.equal(plainPrint.block.fontSize,plain.block.fontSize,'Plain print retains statblock font size')
  assert.equal(plainPrint.block.color,plain.block.color,'Plain print retains statblock color')
  assert.equal(plainPrint.exact,'exact','Plain print requests exact colors')
- console.log('A4 print parity:',JSON.stringify({png,cases:result,loadedLandscape:{pages:nominal,...overflow},plain:true}))
+
+ // F4.1: Multi-page A4 print + overflow guides for overflowing boss fixtures (portrait & landscape)
+ const boss=JSON.parse(fs.readFileSync(new URL('./fixtures/monsters/seraph.json',import.meta.url),'utf8'))
+ boss.name='Multipage Boss Witness'
+ boss.traits=Array.from({length:18},(_,i)=>({...boss.traits[0],id:'mp-trait-'+i,name:'Boss Trait '+(i+1),description:'Multipage flow validation clause preserves full legibility across print boundaries without truncating mechanics or scaling below readable thresholds. '.repeat(4)}))
+ await evaluate(`(()=>{const p=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia,m=p._s.get('monster'),e=p._s.get('editor');m.$patch(${JSON.stringify(boss)});e.a4PreviewMode=true;e.a4MultiPagePrint=true;e.a4Layout='statblock_only';e.statBlockColumns=1;e.a4CompactDensity=false;return true})()`)
+ const multiPage={}
+ for(const orientation of ['portrait','landscape']){
+  await send('Emulation.setEmulatedMedia',{media:'screen'})
+  await evaluate(`(()=>{const e=document.querySelector('#q-app').__vue_app__.config.globalProperties.$pinia._s.get('editor');e.a4Orientation='${orientation}';return true})()`)
+  await delay(400)
+  const screenInfo=await evaluate('(()=>({indicator:!!document.querySelector(\'[data-a4-overflow-indicator="true"]\'),guides:document.querySelectorAll(\'.a4-page-break-guide\').length}))()')
+  assert.ok(screenInfo.indicator&&screenInfo.guides>=1,`${orientation}: overflowing boss exposes overflow indicator and break guides on screen`)
+  await send('Emulation.setEmulatedMedia',{media:'print'})
+  await delay(250)
+  const guideDisplay=await evaluate('(()=>{const g=document.querySelector(\'.a4-page-break-guide\');return g?getComputedStyle(g).display:\'none\'})()')
+  assert.equal(guideDisplay,'none',`${orientation}: page break guides stay hidden when printing`)
+  const {result:mpPdf}=await send('Page.printToPDF',{printBackground:true,preferCSSPageSize:true,displayHeaderFooter:false})
+  const mpText=Buffer.from(mpPdf.data,'base64').toString('latin1')
+  const mpBoxes=[...mpText.matchAll(/\/MediaBox\s*\[\s*0\s+0\s+([\d.]+)\s+([\d.]+)\s*\]/g)].map(m=>m.slice(1).map(Number))
+  assert.ok(mpBoxes.length>=2,`${orientation}: expected >= 2 printed PDF pages in multi-page mode, got ${mpBoxes.length}`)
+  multiPage[orientation]={pages:mpBoxes.length,guides:screenInfo.guides}
+ }
+ await send('Emulation.setEmulatedMedia',{media:'screen'})
+ await evaluate('(()=>{const e=document.querySelector(\'#q-app\').__vue_app__.config.globalProperties.$pinia._s.get(\'editor\');e.a4MultiPagePrint=false;e.a4PreviewMode=false;return true})()')
+ console.log('A4 print parity:',JSON.stringify({png,cases:result,loadedLandscape:{pages:nominal,...overflow},multiPage,plain:true}))
 },{port:Number(process.env.DNDSHEET_PRINT_PARITY_CDP_PORT||9364)})

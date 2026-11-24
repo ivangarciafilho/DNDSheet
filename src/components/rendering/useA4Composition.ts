@@ -1,6 +1,7 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, StyleValue, watch } from 'vue'
 import type { CSSProperties } from 'vue'
 import { type A4CompositionLayer } from 'src/stores/editor-store'
+import { calculateA4Pagination } from 'src/core/domain/a4-pagination'
 import { appAsset } from 'src/core/domain/asset-url'
 import { formatCurvedGradientCss } from 'src/core/domain/gradient-curve'
 import type { ComputedRef, Ref } from 'vue'
@@ -620,9 +621,18 @@ export function useA4Composition({ monster, editorStore, renderRoot, columns, ha
     }
 
     const a4PageOverflowPx = ref<number>(0)
+    const a4PageScrollHeight = ref<number>(0)
+    const a4Pagination = computed(() =>
+      calculateA4Pagination(a4PageScrollHeight.value, editorStore.a4Orientation, editorStore.a4CompactDensity),
+    )
     const checkA4Overflow = () => {
-      if (!a4PageRef.value) return
+      if (!editorStore.a4PreviewMode || !a4PageRef.value) {
+        a4PageOverflowPx.value = 0
+        a4PageScrollHeight.value = 0
+        return
+      }
       const actualHeight = a4PageRef.value.scrollHeight || 0
+      a4PageScrollHeight.value = actualHeight
       const targetHeight = a4TargetHeightPx.value
       a4PageOverflowPx.value = Math.max(0, actualHeight - Math.ceil(targetHeight))
     }
@@ -639,6 +649,7 @@ export function useA4Composition({ monster, editorStore, renderRoot, columns, ha
         () => editorStore.a4StatblockWidth,
         () => editorStore.statblockFontScale,
         () => editorStore.a4PreviewMode,
+        () => editorStore.a4MultiPagePrint,
       ],
       () => {
         nextTick(() => checkA4Overflow())
@@ -650,6 +661,13 @@ export function useA4Composition({ monster, editorStore, renderRoot, columns, ha
       const page = a4PageRef.value
       if (!editorStore.a4PreviewMode || !page) return
       page.style.removeProperty('--a4-print-transform')
+      const stage = page.parentElement
+      if (stage) {
+        const paper = getComputedStyle(page)
+        stage.style.setProperty('--a4-print-paper', paper.backgroundColor)
+        stage.style.setProperty('--a4-print-paper-image', paper.backgroundImage)
+      }
+      if (editorStore.a4MultiPagePrint && a4Pagination.value.isOverflowing) return
       const paperWidth = (editorStore.a4Orientation === 'landscape' ? 297 : 210) * 96 / 25.4
       const paperHeight = a4TargetHeightPx.value
       const pageRect = page.getBoundingClientRect()
@@ -666,12 +684,6 @@ export function useA4Composition({ monster, editorStore, renderRoot, columns, ha
       const scaleX = (paperWidth - 2) / (right - left)
       const scaleY = (paperHeight - 2) / (bottom - top)
       page.style.setProperty('--a4-print-transform', `matrix(${scaleX},0,0,${scaleY},${1 - left * scaleX},${1 - top * scaleY})`)
-      const stage = page.parentElement
-      if (stage) {
-        const paper = getComputedStyle(page)
-        stage.style.setProperty('--a4-print-paper', paper.backgroundColor)
-        stage.style.setProperty('--a4-print-paper-image', paper.backgroundImage)
-      }
     }
 
     onMounted(() => window.addEventListener('beforeprint', fitA4ForPrint))
@@ -684,5 +696,5 @@ export function useA4Composition({ monster, editorStore, renderRoot, columns, ha
       window.print()
     }
 
-    return { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, ensureCoreLayers, portraitLayerObj, statblockLayerObj, getLayerZIndex, a4StatblockWrapperStyle, a4StatblockWidth, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, measureStatblockFit, fitFrame, scheduleStatblockFit, fitObserver, lastFitContainerWidth, fitResizeObserver, a4PortraitStyle, portraitCropContainerStyle, imageShapeTransform, portraitImgStyle, formatGradient, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, checkA4Overflow, fitA4ForPrint, printA4Sheet }
+    return { openLayerStudio, a4AllCustomLayers, a4BackgroundLayers, a4ForegroundLayers, a4PageRef, a4ViewportRef, a4TargetHeightPx, resolvedA4Layout, updateMeasuredHeight, a4ScaleStageStyle, ensureCoreLayers, portraitLayerObj, statblockLayerObj, getLayerZIndex, a4StatblockWrapperStyle, a4StatblockWidth, a4StatblockStyle, statblockFrame, statblockContent, fit, statblockFitActive, statblockFrameStyle, fittedStatblockStyle, measureStatblockFit, fitFrame, scheduleStatblockFit, fitObserver, lastFitContainerWidth, fitResizeObserver, a4PortraitStyle, portraitCropContainerStyle, imageShapeTransform, portraitImgStyle, formatGradient, getGradientOverlayStyle, getLayerStyle, getLayerTextStyle, a4PageOverflowPx, a4Pagination, checkA4Overflow, fitA4ForPrint, printA4Sheet }
 }

@@ -49,11 +49,11 @@
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-  .a4-scale-stage:has(.a4-portrait) {
+  .a4-scale-stage:not(.a4-stage-multipage):has(.a4-portrait) {
     width: 210mm !important;
     height: 297mm !important;
   }
-  .a4-scale-stage:has(.a4-landscape) {
+  .a4-scale-stage:not(.a4-stage-multipage):has(.a4-landscape) {
     width: 297mm !important;
     height: 210mm !important;
   }
@@ -68,7 +68,34 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-  .a4-page-overflow-marker {
+  .a4-page-overflow-marker,
+  .a4-page-break-guide {
     display: none !important;
+  }
+  .a4-scale-stage.a4-stage-multipage {
+    height: auto !important;
+    min-height: 0 !important;
+    break-inside: auto;
+    overflow: visible !important;
+  }
+  .a4-page-sheet.a4-multipage {
+    position: static;
+    display: block;
+    aspect-ratio: auto;
+    transform: none;
+    height: auto !important;
+    min-height: 0 !important;
+    break-inside: auto;
+    overflow: visible;
+  }
+  .a4-page-sheet.a4-multipage #render .statblock,
+  .a4-page-sheet.a4-multipage .sb-section {
+    break-inside: auto;
+  }
+  .a4-page-sheet.a4-multipage .sb-plate,
+  .a4-page-sheet.a4-multipage .sb-entry,
+  .a4-page-sheet.a4-multipage .random-table {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 }

@@ -2,6 +2,7 @@
 // Usage: node tools/ratchet.mjs [--update]   (--update records lower counts; it refuses to record a rise)
 import fs from 'node:fs'
 import path from 'node:path'
+import { checkBundleBudgets } from './bundle-budget.mjs'
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]))
 const files = walk('src').filter((f) => /\.(ts|vue|scss|css)$/.test(f)).map((f) => ({ rel: f.split(path.sep).join('/'), text: fs.readFileSync(f, 'utf8') }))
 const count = (re, pick = () => true) => files.filter(pick).reduce((n, f) => n + (f.text.match(re) || []).length, 0)
@@ -26,3 +27,11 @@ if (rose.length) {
   process.exit(1)
 }
 if (process.argv.includes('--update')) fs.writeFileSync(file, JSON.stringify(metrics, null, 2) + '\n')
+if (process.argv.includes('--bundle')) {
+  const bundle = checkBundleBudgets(path.resolve('dist-pages/assets'))
+  console.log(`Bundle: largest=${bundle.largestChunkName} ${(bundle.largestChunkRaw / 1024).toFixed(1)}KB raw / ${(bundle.largestChunkGzip / 1024).toFixed(1)}KB gz; total=${(bundle.totalJsRaw / 1024).toFixed(1)}KB raw / ${(bundle.totalJsGzip / 1024).toFixed(1)}KB gz`)
+  if (!bundle.ok) {
+    console.error('Bundle budget failed -> ' + bundle.violations.join('; '))
+    process.exit(1)
+  }
+}

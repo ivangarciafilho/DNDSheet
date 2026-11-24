@@ -79,6 +79,8 @@ export const useEditorStore = defineStore({
       condenseImmunities: false,
       activeMode: 'monster' as EditorMode,
       a4PreviewMode: false,
+      a4MultiPagePrint: false,
+      studioTheme: 'dark' as 'dark' | 'light',
       a4Orientation: 'portrait' as A4Orientation,
       a4Layout: 'auto' as A4Layout,
       a4Zoom: 100 as number | 'fit',

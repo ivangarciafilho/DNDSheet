@@ -130,9 +130,18 @@ export function defaultAttack(): DndAttack {
   }
 }
 
+import type {
+  CharacterOriginFeat,
+  CharacterProvenance,
+  CharacterWeaponMastery,
+} from './character-2024.ts'
+
 export interface CharacterActor {
   /** User-recorded totals; absent values retain explicitly labelled estimates. */
   combatVitals?: { armorClass?: number | null; speed?: number | null; armorClassSource?: string; speedSource?: string }
+  provenance?: CharacterProvenance
+  originFeats?: CharacterOriginFeat[]
+  weaponMasteries?: CharacterWeaponMastery[]
   id: string
   name: string
   class: string

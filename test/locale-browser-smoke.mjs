@@ -35,7 +35,7 @@ const result = await browserProbe(async ({ send, evaluate, waitFor }) => {
 
   await waitFor("localStorage.getItem('app.monster')?.includes('bs06-rider')", { label: 'app.monster persisted to localStorage' })
   await send('Page.reload')
-  await waitFor("!!document.querySelector('#render .statblock') && !!document.querySelector('#q-app')?.__vue_app__?.config?.globalProperties?.$pinia?._s?.get('monster')", { label: 'reloaded app and Pinia hydrated' })
+  await waitFor("!!document.querySelector('#render .statblock') && !!document.querySelector('#q-app')?.__vue_app__?.config?.globalProperties?.$pinia?._s?.get('monster')", { timeoutMs: 25000, label: 'reloaded app and Pinia hydrated' })
 
   const afterReload = await evaluate(`(()=>{
     const gp = document.querySelector('#q-app').__vue_app__.config.globalProperties

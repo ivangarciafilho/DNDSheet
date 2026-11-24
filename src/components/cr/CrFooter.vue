@@ -23,7 +23,7 @@
       <div class="top">
         <menu-hover>
           <template #default="{ activatorAttr, menuAttr }">
-            <q-chip v-bind="activatorAttr" color="red-10" icon="mdi-sword-cross"
+            <q-chip v-bind="activatorAttr" color="red-10" text-color="white" icon="mdi-sword-cross"
               >{{ Math.floor(crData.damagePerRound.value) }} (
               {{ crData.damageCr.value.cr }} CR)
               <q-menu v-bind="menuAttr" :offset="[0, 2]">
@@ -104,6 +104,7 @@
             <q-chip
               v-bind="activatorAttr"
               :color="crData.attackChipColor.value"
+              text-color="white"
               icon="mdi-bullseye-arrow"
               >{{ crData.maxAttackRender.value }} (
               {{ crData.attackCrDelta.value }} CR)
@@ -161,6 +162,7 @@
             <q-chip
               v-bind="activatorAttr"
               :color="crData.dcChipColor.value"
+              text-color="white"
               icon="fa-solid fa-wand-sparkles"
               >{{ crData.maxDc.value }} ( {{ crData.attackCrDelta.value }} CR)
 
@@ -367,6 +369,7 @@
         <q-badge
           v-if="lintIssues.length > 0"
           color="red-10"
+          text-color="white"
           floating
           rounded
         >

@@ -5,11 +5,11 @@
     aria-live="polite"
     data-focused-help-bar
   >
-    <q-icon name="help_outline" size="16px" color="light-blue-3" class="q-mr-xs col-auto" />
+    <q-icon name="help_outline" size="16px" class="focused-help-bar__icon q-mr-xs col-auto" />
     <div class="focused-help-bar__body text-caption">
-      <strong v-if="activeLabel" class="text-light-blue-2 q-mr-xs">{{ activeLabel }}:</strong>
-      <span v-else class="text-light-blue-2 text-weight-medium q-mr-xs">{{ $t('studio.focusedHelp.title') }}:</span>
-      <span class="text-grey-2">{{ activeText || $t('studio.focusedHelp.idleHint') }}</span>
+      <strong v-if="activeLabel" class="focused-help-bar__label q-mr-xs">{{ activeLabel }}:</strong>
+      <span v-else class="focused-help-bar__label text-weight-medium q-mr-xs">{{ $t('studio.focusedHelp.title') }}:</span>
+      <span class="focused-help-bar__text">{{ activeText || $t('studio.focusedHelp.idleHint') }}</span>
     </div>
   </div>
 </template>
@@ -55,13 +55,38 @@ onBeforeUnmount(() => {
 })
 </script>
 
+<style>
+.focused-help-bar {
+  --fhb-bg: #eef2ff;
+  --fhb-border: rgba(30, 64, 175, 0.35);
+  --fhb-accent: #1e3a8a;
+  --fhb-text: #111827;
+}
+
+body.body--dark .focused-help-bar {
+  --fhb-bg: rgba(30, 58, 138, 0.28);
+  --fhb-border: rgba(96, 165, 250, 0.4);
+  --fhb-accent: #b3e5fc;
+  --fhb-text: #f5f5f5;
+}
+</style>
+
 <style scoped>
 .focused-help-bar {
   max-width: 100%;
   box-sizing: border-box;
   overflow-wrap: anywhere;
-  background: rgba(30, 58, 138, 0.28);
-  border: 1px solid rgba(96, 165, 250, 0.4);
+  background: var(--fhb-bg);
+  border: 1px solid var(--fhb-border);
+}
+
+.focused-help-bar__icon,
+.focused-help-bar__label {
+  color: var(--fhb-accent);
+}
+
+.focused-help-bar__text {
+  color: var(--fhb-text);
 }
 
 .focused-help-bar__body {
