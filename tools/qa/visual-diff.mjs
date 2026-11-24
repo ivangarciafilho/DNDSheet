@@ -2,6 +2,7 @@
 // Same machine, same Chrome, same fonts: a refactor that changes nothing produces identical PNG bytes.
 // Usage: node --experimental-strip-types tools/qa/visual-diff.mjs <baselineUrl> <candidateUrl> <outDir> [port]
 import { spawn, spawnSync } from 'node:child_process'
+import { findChrome } from './chrome.mjs'
 import crypto from 'node:crypto'
 import fs from 'node:fs'
 import os from 'node:os'
@@ -11,7 +12,8 @@ import { pathToFileURL } from 'node:url'
 const root = process.cwd()
 const { migrateMonsterSchema } = await import(pathToFileURL(path.join(root, 'src/core/usecases/MigrateMonsterSchema.ts')).href)
 const [baseUrl, candUrl, outDir, portArg = '9261'] = process.argv.slice(2)
-const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+// Same lookup as every other browser check: DNDSHEET_CHROME_PATH / CHROME_PATH, then the platform default.
+const CHROME = findChrome()
 const sleep = ms => new Promise(r => setTimeout(r, ms))
 const FIXTURES = ['seraph', 'full', 'legacy-actions', 'seraph+dynamics']
 // Encounter-dynamics sections render only when these collections exist, which no shared fixture has.
