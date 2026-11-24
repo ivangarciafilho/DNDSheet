@@ -5,8 +5,8 @@
     <header class="compositor-card__head">
       <q-icon name="shield" size="20px" class="text-blue-4" />
       <div class="compositor-card__title">
-        <span class="text-weight-bold text-blue-3">Armor Class</span>
-        <span class="text-caption text-grey-5">Compositor &amp; defensive mechanics · real-time auto-sync</span>
+        <span class="text-weight-bold text-blue-3">Armor Class Compositor &amp; Defensive Mechanics</span>
+        <span class="text-caption text-grey-5">Real-Time Auto-Sync · value, base, modifiers, defensive rule and riders</span>
       </div>
       <q-space />
       <q-badge color="blue-8" class="text-weight-bold q-pa-xs" data-ac-headline>

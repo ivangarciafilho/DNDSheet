@@ -5,7 +5,7 @@
     <header class="compositor-card__head">
       <q-icon name="favorite" size="20px" class="text-red-4" />
       <div class="compositor-card__title">
-        <span class="text-weight-bold text-red-3">Hit Points</span>
+        <span class="text-weight-bold text-red-3">Hit Points Defenses &amp; Survival</span>
         <span class="text-caption text-grey-5">Hit Dice, survival defenses, mortality &amp; riders</span>
       </div>
       <q-space />
