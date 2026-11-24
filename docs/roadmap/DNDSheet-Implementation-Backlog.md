@@ -1584,3 +1584,4 @@ Delivered **22 tasks across 5 cohesive domains** closing A11.5 items a, b, c; ga
 - [ ] **G274-2** `compact` on remaining short numeric fields (spell slots, legendary count, composer DCs) · S
 - [ ] **G274-3** Attack presets in the composer role switcher · S
 - [ ] **G274-4** CR-aware attack preset damage · M
+- [ ] **G274-5** Light Studio contrast for HP survival panels, then open by default · S

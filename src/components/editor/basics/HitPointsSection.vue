@@ -81,13 +81,12 @@
     </div>
     </div>
 
-    <!-- Survival defenses (collapsible; opens by default) -->
+    <!-- Survival defenses (collapsible) -->
     <q-expansion-item
       v-help="'Configure Bloodied thresholds, Damage Threshold/Reduction, Regeneration, and Mortality rules.'"
       dense
       dense-toggle
       expand-separator
-      default-opened
       class="q-mt-xs rounded-borders"
       icon="health_and_safety"
       label="Survival & defenses"
