@@ -198,21 +198,23 @@ await browserProbe(async ({ evaluate, send }) => {
 
     const presetMenu = await until(() => document.querySelector('[data-workspace-preset-menu]'), 'preset dropdown');
     presetMenu.click();
-    const inkBtn = await until(() => document.querySelector('[data-workspace-preset="ink_saver"]'), 'Ink saver preset item');
+    const inkBtn = await until(() => document.querySelector('.q-menu [data-workspace-preset="ink_saver"]'), 'Ink saver preset item');
     inkBtn.click();
     await until(() => editor.visualTheme === 'printer' && editor.a4CompactDensity === true && editor.condenseImmunities === true,
       'Ink saver preset applied');
-    await wait(200);
+    await until(() => !document.querySelector('.q-menu'), 'preset menu closed');
+    await wait(150);
 
     presetMenu.click();
-    const artBtn = await until(() => document.querySelector('[data-workspace-preset="art_plate"]'), 'Art plate preset item');
+    const artBtn = await until(() => document.querySelector('.q-menu [data-workspace-preset="art_plate"]'), 'Art plate preset item');
     artBtn.click();
     await until(() => editor.visualTemplate === 'modern' && editor.a4StatblockOpacity === 85,
       'Art plate preset applied');
-    await wait(200);
+    await until(() => !document.querySelector('.q-menu'), 'preset menu closed');
+    await wait(150);
 
     presetMenu.click();
-    const screenBtn = await until(() => document.querySelector('[data-workspace-preset="screen"]'), 'Screen preset item');
+    const screenBtn = await until(() => document.querySelector('.q-menu [data-workspace-preset="screen"]'), 'Screen preset item');
     screenBtn.click();
     await until(() => editor.visualTheme === 'wotc' && editor.a4PreviewMode === false,
       'Screen preset applied');
