@@ -63,7 +63,8 @@ await browserProbe(async ({ evaluate, send }) => {
   // 1. Verify Pillar 1, Pillar 2, Toolbar, SectionStrip, View Presets, Library CRUD, and Backup Quarantine at desktop width
   const desktopResult = await evaluate(`(async () => {
     const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-    const until = async (fn, label, timeoutMs = 6000, onTimeout = null) => {
+    // Repository writes go through IndexedDB, which is slow in headless containers: allow 15 s.
+    const until = async (fn, label, timeoutMs = 15000, onTimeout = null) => {
       const steps = Math.ceil(timeoutMs / 40);
       for (let i = 0; i < steps; i++) {
         const value = fn();
