@@ -1,0 +1,172 @@
+{
+  "build": 273,
+  "version": "2.7.0",
+  "slug": "track-f-complete-encounter-importers-print-and-theme",
+  "date": "2026-11-24",
+  "branch": "build185-repairs",
+  "sourceCommit": "407023742bd0f7162f0cc64a74f8ecb29ed77cc7",
+  "baseCommit": "67dd4b9933e856377692f3963882950aa028155f",
+  "pagesCommit": "52c0656",
+  "tag": "rc-2.7.0-build-273-track-f-complete-encounter-importers-print-and-theme",
+  "productionUrl": "https://ivangarciafilho.github.io/DNDSheet/#/",
+  "gate": {
+    "ok": true,
+    "stepsPassed": 11,
+    "flaky": [
+      "2026-11-24T03:28:21.774Z http://127.0.0.1:9230/index.html#/ node test/native-monster-roundtrip-browser-smoke.mjs"
+    ],
+    "inputFingerprint": "84b43d186e5f87ad2c07949a31bdd7c8850a89573b382ca3a399f3f59d62f149",
+    "coreTests": {
+      "passed": 733,
+      "failed": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "subtests": 721
+    },
+    "eslint": {
+      "errors": 0,
+      "warnings": 0
+    },
+    "typecheck": {
+      "diagnostics": 0,
+      "srcDiagnostics": 0,
+      "new": 0,
+      "resolved": 683,
+      "baseline": 683,
+      "baselineBuild": "Build213 (e19a624)"
+    },
+    "helpCoverage": {
+      "percent": 100.0,
+      "covered": 570,
+      "total": 570,
+      "floorPercent": 100
+    },
+    "ptBrI18n": {
+      "covered": 1141,
+      "total": 1141,
+      "percent": 100.0,
+      "floor": 1130,
+      "quasarLangSynced": true
+    },
+    "ratchet": {
+      "importantAppScss": 18,
+      "importantDarkContrast": 12,
+      "importantTotal": 308,
+      "filesOver900Lines": 0,
+      "explicitAny": 0,
+      "todoFixme": 0,
+      "eslintDisables": 4,
+      "vHtml": 0
+    },
+    "fitInventory": {
+      "views": 10,
+      "clipped": 0
+    },
+    "bundleBudgets": {
+      "ok": true,
+      "fileCount": 40,
+      "largestChunkName": "index.f1db5caf.js",
+      "largestChunkRaw": 1041985,
+      "largestChunkGzip": 313195,
+      "totalJsRaw": 2788760,
+      "totalJsGzip": 812034
+    },
+    "spaBudgetProbe": {
+      "keystrokeP95Ms": 4.6,
+      "completionOpenMs": 26,
+      "catalogSelectOpenMs": 0,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "budgetProbe": {
+      "keystrokeP95Ms": 4.3,
+      "completionOpenMs": 24.7,
+      "catalogSelectOpenMs": 0,
+      "headContrast": 12.11,
+      "uiContrastViolations": 0
+    },
+    "visualDiff": {
+      "compared": 104,
+      "identical": 104,
+      "diffs": 0
+    },
+    "timingsSeconds": {
+      "core": 6,
+      "lint": 18,
+      "typecheck": 24,
+      "build": 30,
+      "fuzz": 199,
+      "help": 248,
+      "spell": 5,
+      "pagesBuild": 28,
+      "pagesAssets": 0,
+      "pagesFuzz": 492,
+      "visual": 197
+    }
+  },
+  "liveVerification": {
+    "status": 200,
+    "indexHtmlSha256": "82de2fdb37f63c82863e60b53600319ed31ce234d70765f3b9f5a064cbbb33f7",
+    "indexHtmlBytes": 1337,
+    "indexHtmlMatchesLocal": true,
+    "assetsVerified": [
+      {
+        "path": "assets/index.f1db5caf.js",
+        "status": 200,
+        "bytes": 1041985,
+        "sha256": "cfc5fd1d612742c1461a48af6b043223a4a934f0736d4389e6595c2cc8898693",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/index.50bc56f0.css",
+        "status": 200,
+        "bytes": 682567,
+        "sha256": "48f6ee488c3a52472f6e21bbe8d973c4a66ba60461352bffcc14e8d01cc8167a",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/MonsterBuilder.22255966.js",
+        "status": 200,
+        "bytes": 860182,
+        "sha256": "59b2089c2fa73f80f255b9a3b2994c939d1215144a1e6a5bdb4574ecac12b102",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/i18n.ae85b7f3.js",
+        "status": 200,
+        "bytes": 265,
+        "sha256": "d94e22b26a9fb5685b7b60a5125f0f80b8bd159f3d696b88473c2fde4776a4fe",
+        "matchesLocal": true
+      },
+      {
+        "path": "assets/quasar-lang.082b6152.js",
+        "status": 200,
+        "bytes": 2938,
+        "sha256": "0ec3768f2b7897a5a9b3ade8e5bccd3be0ab47335658dc2f185b7808ba9ff1fc",
+        "matchesLocal": true
+      }
+    ]
+  },
+  "workloadStatus": {
+    "normalizedAbhIds": { "total": 269, "checked": 269, "open": 0 },
+    "rawCheckboxes": { "total": 313, "checked": 313, "open": 0 },
+    "specBlindspots": { "total": 42, "closed": 42, "open": 0 },
+    "openOwnerGates": []
+  },
+  "trackCStatus": {
+    "closed": ["C1a", "C1b", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "C11", "C12"],
+    "inProgress": []
+  },
+  "trackDEStatus": {
+    "closedSubTasks": 15,
+    "openSubTasks": 0,
+    "percentComplete": 100.0,
+    "build272DeliveredItems": 24
+  },
+  "trackFStatus": {
+    "closedSubTasks": 12,
+    "openSubTasks": 0,
+    "percentComplete": 100.0,
+    "interleavedGuardsVerified": 5
+  }
+}

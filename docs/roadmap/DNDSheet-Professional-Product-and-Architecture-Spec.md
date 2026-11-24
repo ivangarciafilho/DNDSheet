@@ -1,3 +1,7 @@
+## Build 273 — Track F Complete (`v2.7.0`)
+
+The [Build 273 packet](DNDSheet-Build273-Track-F-Complete.md) and [publication receipt](DNDSheet-Build273-Publication-Receipt.json) record completion of **all Track A–F engineering work (`269/269` normalized `[ABH]` IDs, `313/313` raw checkboxes, `42/42` Spec blindspots, `13/13` Track C, `15/15` Track D/E, and `12/12` Track F + `5` interleaved guards)**: adds pure 2014/2024 Encounter XP budgeting & immutable Combat Tracker batch roster/export (`F1`), 2024 Character Sheet origin feats/weapon mastery & `1,141/1,141 (100.0%)` `pt-BR` parity (`F2`), guarded offline Foundry/Homebrewery/Improved Initiative importers (`F3`), multi-page A4 print guides (`a4-pagination.ts`), Dark/Light Studio theme switching with `0` UI contrast violations, CSS `!important` burn-down (`308`, `dark-contrast.scss: 12`), and production JS bundle budgets (`tools/bundle-budget.mjs`) (`F4`). Frozen 11-step gate PASS (`733/733` core tests, `0/0` ESLint, `0` TypeScript diagnostics, `570/570` help, `104/104` visual match, live Pages HTTP `200` + SHA-256 parity).
+
 ## Build 230 — Spell availability and A4 output
 
 The [Build 230 packet](DNDSheet-Build230-Spellcasting-Availability-and-A4.md) records preparation lists, restricted spell grouping, concise metamagic, single-page A4 print and PNG export. The normalized backlog remains 174 complete and 94 open.
@@ -2806,6 +2810,7 @@ stateDiagram-v2
 | B8 | Rules provenance | F-09 | B1 | 2–4 | ✅ build 248 |
 | B9 | Combat identity | F-10 | B1 | 2–5 | ✅ build 248 |
 | B10 | Character truth + final docs | F-11 | all | 2–5 | ✅ build 250 |
+| **C–F** | **Convergence, i18n, Rules Conversion, Encounter Budget, 2024 Character, Importers, Multi-Page Print & Dual Theme** | F-01…F-12 | B10 | Builds 252–273 | ✅ **build 273 (`v2.7.0`)** |
 
 ### 11.2 Dependency graph
 
@@ -3014,7 +3019,7 @@ A release is **done** when, on the same commit: (1) every loop in it is ✅ with
 | BS-30 | Multiclass slot table 2014 vs 2024 | Research | A12 | ✅ build 248 |
 | BS-31 | Multi-value selects (languages, conditions) chips wrap | UX-03 probe | A13 | ✅ build 249 |
 | BS-32 | Cost of ~700 `v-help` directives | Measure; prefer delegated host for lists | A13 | ✅ build 250 |
-| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ✅ build 268–272 (`pt-BR` `967/967 = 100.0%` + Quasar lang + brace parity + `FocusedHelpBar`) |
+| BS-33 | Help dictionary localisation | English only now — confirm | A13 | ✅ build 268–273 (`pt-BR` `1,141/1,141 = 100.0%` + Quasar lang + brace parity + Character/AI/Combat + `FocusedHelpBar`) |
 | BS-34 | Dense inputs with long labels | Overflow probe | A14 | ✅ build 250 |
 | BS-35 | A4 studio fixed canvas | Exempt with scroll affordance | A16 | ✅ build 250 |
 | BS-36 | Headless Chrome available for e2e on the device | Locate binary, version | A17 | ✅ build 248 |

@@ -8,8 +8,8 @@ Read from the code at Build217. Each table is the ground truth the matching Back
 |---|---|---|---|---|
 | `app.monster` | `monster-store` (`pinia-plugin-persistedstate`) | every store mutation | app start | the live monster; includes `randomTables` since Build209 |
 | `app.character` | `character-store` | store mutations | app start | |
-| `app.editor` | `editor-store` | store mutations | app start | presentation only (template, style, theme, columns) |
-| `app.combat` | `combat-store` | store mutations | app start | encounter state |
+| `app.editor` | `editor-store` | store mutations | app start | presentation & workspace chrome (template, style, theme, columns, `a4MultiPagePrint`, `studioTheme` dark/light) |
+| `app.combat` | `combat-store` | store mutations | app start | encounter state, immutable `sourceSnapshot` roster, encounter XP budget thresholds |
 | `app.spells` | `spells-store` | store mutations | app start | custom spells; migrates legacy `app.customSpells` once and removes it |
 | `app.templates` | `templates-store` | store mutations | app start | custom templates; migrates legacy `app.customTemplates` once and removes it |
 | `app.customSpells`, `app.customTemplates` | legacy v1 | — | `useV1Updater`, the two stores above | read once, then deleted |
@@ -17,10 +17,10 @@ Read from the code at Build217. Each table is the ground truth the matching Back
 | `dndsheet_monster_*` | `LocalStorageAdapter` | **nobody** | **nobody** | adapter is never instantiated outside `core/adapters` |
 | IndexedDB `DndSheetDB` / `monsters` | `IndexedDbStorageAdapter` | **nobody** | **nobody** | same: implemented and unit-sized, but not wired to any store or UI |
 
-Findings:
-- **The `StoragePort` layer is unused.** Persistence is entirely `pinia-plugin-persistedstate` on six keys. B5.3 (“repository wiring”) starts from zero wiring, not from a half-wired adapter.
-- **`ErrorCorrection.vue` resets** `app.monster`, `app.character`, `app.spells` and `app.templates`, but not `app.editor` or `app.combat`. Presentation and encounter state survive a recovery reset; decide whether that is intended (B5.2).
-- **Silent save failures:** `pinia-plugin-persistedstate` 3.2.3 wraps every write in `try/catch` and logs only when `debug` is set, which this app never sets. A `QuotaExceededError` (large portrait, many custom spells) therefore stops saving with no message to the user (B5.5).
+Findings (Build 217 baseline & Build 249–273 repository wiring):
+- **Guarded storage (`B5.8`, Build 218):** Every `pinia-plugin-persistedstate` store above routes through `createGuardedStorage()` (`src/core/domain/guarded-storage.ts`), which surfaces persistent throttled UI warnings on `QuotaExceededError` or write failure and safely reads empty state when storage is blocked.
+- **Repository & recovery (`B5.1`–`B5.7`, Builds 249 & 262):** `selectRepositoryBackend()` and `RepositoryStorage.ts` manage local repository persistence (`DNDSheetRepositoryMigrationV1` verify-then-mark, `DNDSheetRepositoryBackupV1` quarantine/rollback) and `CreatureLibraryDialog.vue`; `ErrorCorrection.vue` recovery reset (`B5.7`) also clears `app.editor` and `app.combat` since Build 262.
+- **Standalone domain adapters:** `LocalStorageAdapter` (`dndsheet_monster_*`) and `IndexedDbStorageAdapter` (`DndSheetDB` / `monsters`) are tested behind `StoragePort` alongside `RepositoryStorage`.
 
 ## B3.1 — Auto-Tune: what each recommendation writes
 

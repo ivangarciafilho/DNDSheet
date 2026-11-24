@@ -1,3 +1,11 @@
+## Build 273 — Track F 100% Complete (`v2.7.0`: Encounter Budget, 2024 Character Sheet, Offline Importers, Multi-Page A4 Print, Bundle Budgets & Dual Theme)
+
+Source `4070237`, Pages `52c0656`, RC tag `rc-2.7.0-build-273-track-f-complete-encounter-importers-print-and-theme`. Closes all `12/12` Track F sub-tasks + `5` interleaved guards (`F1` `encounter-budget.ts` + `EncounterBudgetPanel.vue` + `CombatTrackerDrawer.vue` batch roster & JSON/Markdown export; `F2` `character-2024.ts` + `Character2024Section.vue` + `character-2024-browser-smoke.mjs` + `1,141/1,141` `100.0%` `pt-BR`; `F3` guarded offline Foundry VTT JSON, Homebrewery v3 Markdown & Improved Initiative JSON importers; `F4` `a4-pagination.ts` + `print-page.scss` multi-page A4 print guides, Dark/Light Studio theme switcher with `0` UI contrast violations, `importantTotal: 308` [`dark-contrast.scss: 12`], `tools/bundle-budget.mjs`, and Chromium `--incognito` QA hardening). Full 11-step gate PASS (`733/733` core tests, `0/0` ESLint, `0` TypeScript diagnostics, `570/570` help, `104/104` visual match, live Pages SHA-256 parity). See docs/roadmap/DNDSheet-Build273-Track-F-Complete.md and docs/roadmap/DNDSheet-Build273-Publication-Receipt.json.
+
+## Builds 270–272 — Track C `13/13` & Track D/E `15/15` Complete (`C5` `pt-BR`, `C8` Zero-`any`, `RulesConversionDialog`, `FocusedHelpBar`, `RELEASE_NOTES`)
+
+Builds 270–272 (`e913cc1`, `ef06142`, `7663992` -> `1af0b90`) completed `C5` (`100%` `pt-BR` + Quasar lang), `C8` zero `explicitAny` / app `eslintDisables`, `BS-06` reload E2E (`42/42` Spec blindspots), `2014 ↔ 2024` `RulesConversionDialog` with atomic undo, `FocusedHelpBar`, macro token pills, CR breakdown copy, `open5e-parse`, `RELEASE_NOTES.ts`, and `importantTotal: 365 -> 361`. See docs/roadmap/DNDSheet-Build272-Track-D-E-Complete-Rules-Dialog-and-Ratchet.md.
+
 ## Build 269 — owner requests: AC riders, natural armor, frameless portrait, compact CR/PB, layer size strip, description containers fix
 
 See docs/roadmap/DNDSheet-Build269-Owner-Requests-AC-Riders.md.

@@ -14,18 +14,20 @@ Build228 adds foldable and removable spellcasting sources, independent learning 
 
 Build250 (`v2.5.0-statblock`) completes Track A & Track B engineering work (`267 / 269` `count-tasks` IDs, `311 / 313` raw checkboxes; only owner-gated decisions `B5.7` and `H16` remain): `BasicsEditor` decomposed into six domain panels under `src/components/editor/basics/`, site-wide `CatalogSelect` interaction kit & Exemption Registry, `100.0 %` (`554/554`) editor help coverage, `app.scss` `!important` debt cut from `505` to `44`, performance budgets, and live GitHub Pages deployment. See the [Build 250 delivery packet](docs/roadmap/DNDSheet-Build250-v250-Statblock-Overhaul-and-Workspace-Sweeps.md), [publication receipt](docs/roadmap/DNDSheet-Build250-Publication-Receipt.json), and [ADR-0003](docs/decisions/ADR-0003-Basics-Decomposition-Interaction-Kit-and-CSS-Grammar.md).
 
+Build 273 (`v2.7.0`, source `4070237`, Pages `52c0656`) completes **all remaining `[ABH]` ledger items (`269 / 269` normalized IDs, `313 / 313` raw checkboxes), `42 / 42` Spec blindspots, Track C (`13 / 13`), Track D & E (`15 / 15`), and all `12 / 12` Track F sub-tasks + `5` interleaved guard checks**: adds the 2014/2024 Encounter XP Budget calculator & immutable Combat Tracker batch roster/export (`F1`), 2024 Character Sheet origin feats/weapon mastery & `100.0%` (`1,141 / 1,141`) `pt-BR` + Quasar localization (`F2`), guarded offline importers for Foundry VTT JSON, Homebrewery v3 Markdown & Improved Initiative JSON (`F3`), multi-page A4 print guides, Dark/Light Studio theme switching (`0` UI contrast violations), CSS `!important` burn-down (`308`), and production bundle budget enforcement (`tools/bundle-budget.mjs`) (`F4`). See the [Build 273 delivery packet](docs/roadmap/DNDSheet-Build273-Track-F-Complete.md) and [publication receipt](docs/roadmap/DNDSheet-Build273-Publication-Receipt.json).
+
 ## What is available
 
-- One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities.
-- A unified Actions & Traits Studio for attacks, traits, actions, bonus actions, reactions, legendary, mythic and lair mechanics. Reactions retain their triggers.
-- Numeric references/formulas on supported monster fields, authored outcomes, random tables, phase configuration, templates and undo/redo. Remaining ownership and migration work is tracked explicitly in the roadmap.
-- Twelve selectable visual themes, classic/modern presentations and an A4 composition studio. Fixed artwork canvases use scrolling; full mobile and print acceptance is still tracked by panel.
-- Monster JSON round trips, Homebrewery Markdown, LaTeX, plain text, HTML, PNG, Foundry, Improved Initiative and Tarrasque exports. Target formats have different capabilities: see the [export inventory](docs/roadmap/DNDSheet-Export-Inventory.md).
-- Character identity, scores, resources, inventory, features and spells; JSON import/export and Markdown/plain text. Character class/species/equipment names are references, not a rules engine. AC and speed show explicit estimates unless you record totals and source notes.
+- One live monster sheet beside an editor for identity, defenses, checks, movement, senses, languages, spellcasting and structured combat abilities (`en-US` and `pt-BR`).
+- A unified Actions & Traits Studio for attacks, traits, actions, bonus actions, reactions, legendary, mythic and lair mechanics, plus `2014 ↔ 2024` rules conversion with atomic undo. Reactions retain their triggers.
+- Numeric references/formulas on supported monster fields, authored outcomes, random tables, phase configuration, templates and undo/redo.
+- Twelve selectable visual themes, classic/modern presentations, Dark & Light Studio editor themes, an A4 composition studio with multi-page print guides, and an encounter XP budget + batch Combat Tracker drawer (`F1`).
+- Monster `.5emm.json`, Homebrewery Markdown, LaTeX, plain text, HTML, PNG, Foundry, Improved Initiative and Tarrasque exports, plus guarded offline importers for `.5emm.json`, Foundry VTT JSON, Homebrewery v3 Markdown, Improved Initiative JSON and Open5e SRD (`F3`). See the [export inventory](docs/roadmap/DNDSheet-Export-Inventory.md).
+- Character identity, scores, resources, inventory, features, spells, 2024 origin feats & weapon mastery properties (`character-2024.ts`); `.character.json` import/export and Markdown/plain text. Character class/species/equipment names are references, not a rules engine. AC and speed show explicit estimates unless you record totals and source notes.
 
 ## Saving and recovery
 
-The current document is saved in browser storage. Failed saves show a warning. Export a `.5emm.json` monster or `.character.json` character backup before clearing browser data. Storage backends and recovery semantics are inventoried; a fully migrated document library is not yet shipped. The [reset page](https://ivangarciafilho.github.io/DNDSheet/#/reset) contains destructive recovery controls: back up first.
+The current document is saved in browser storage (`createGuardedStorage` on `app.*` keys). Failed saves show a loud persistent throttled warning. Export a `.5emm.json` monster, `.character.json` character, or encounter JSON backup before clearing browser data. Local repository selection (`selectRepositoryBackend()`), verify-then-mark migration (`DNDSheetRepositoryMigrationV1`), quarantine/rollback backups (`DNDSheetRepositoryBackupV1`), and Creature Library live in [RepositoryStorage](src/core/domain/RepositoryStorage.ts). The [reset page](https://ivangarciafilho.github.io/DNDSheet/#/reset) contains destructive recovery controls: back up first.
 
 Copy link may use an external shortener and can fall back to a long link; it is not guaranteed hosting for your document. Export formats are not equivalent backups.
 
@@ -36,10 +38,10 @@ Use a supported Node version from `package.json`, install application dependenci
 | Command | Purpose |
 |---|---|
 | `npm run dev` | Local editor |
-| `npm test` | Core tests, including five shared release fixtures |
-| `npm run typecheck` | Reject new diagnostics against the approved baseline; existing debt remains |
+| `npm test` | Core tests, including five shared release fixtures (`733/733` passing) |
+| `npm run typecheck` | Zero-tolerance TypeScript diagnostic check (`0` baseline diagnostics) |
 | `npm run build` | Production SPA |
-| `npm run gate` | Ten named frozen-source release checks, including SPA/Pages browser runs, theme/fixture matrix and fit inventory |
+| `npm run gate` | Eleven named frozen-source release checks (`core`, `lint`, `typecheck`, `build`, `fuzz`, `help`, `spell`, `pages-build`, `pages-assets` bundle budgets, `pages-fuzz`, `visual` 104/104 screenshot parity) |
 | `npm run audit:fit` | Five viewport widths × two effective viewport/raster scales; report clipping and explicit exemptions |
 | `npm run test:e2e:matrix` | Five reusable monsters × twelve themes; 120 computed AC head/body contrast samples |
 

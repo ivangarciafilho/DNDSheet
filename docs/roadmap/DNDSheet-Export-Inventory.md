@@ -41,3 +41,12 @@ Every way data leaves the app, read from `src/components/file/DownloadButton.vue
 Tarrasque pairs each source record with shared prose independently of the current sheet phase filter; identical names cannot redirect attack_bonus, damage_dice or damage_bonus. Phased leads keep cadence in the name and phase annotation in description. Reactions retain triggers. Class/innate spell rows are plain text. Header/description markup is stripped before entity decoding, preserving encoded literal brackets and table cell separators. Mythic rules use a supported narrative special ability; target-native automation for those rules is not claimed.
 
 The Improved Initiative adapter landed its shared arrays in218. Its arrays still inherit the sheet's active phase filtering. B4.7's prose-projection scope is complete after Tarrasque; a universal all-target phase/export-policy UI remains under B4.5/B4.2 and is not inferred from this release. Do not silently change those other target policies while fixing one adapter.
+
+## Build 273 — Encounter Roster Exports & Guarded Offline Importers (`F1.3`, `F3.1`–`F3.3`)
+
+| Flow | Module / Entry Point | Format | Validation & Safety Contract |
+|---|---|---|---|
+| Export Encounter JSON / Markdown | `src/core/domain/encounter-budget.ts`, `src/components/combat/CombatTrackerDrawer.vue` | `application/json`, `text/markdown` | Pure 2014 DMG & 2024 SRD 5.2.1 encounter budget + roster export; JSON roundtrip & re-import verified in `EncounterBudget.test.ts` |
+| Import Foundry VTT Actor JSON | `src/core/domain/foundry-import.ts`, `src/components/file/useFileLoader.ts`, `ImportButton.vue` | `.json` (Foundry 5e NPC) | Routed strictly through `stripDangerousKeys()`, `inspectMonsterPayload()`, and `parseCrTier()` with explicit coercion warnings (`FoundryImport.test.ts`) |
+| Import Homebrewery v3 Markdown | `src/core/domain/homebrewery-import.ts`, `useFileLoader.ts`, `ImportButton.vue` | `.md` / `.txt` (`{{monster`) | Reuses `open5e-parse.ts` helpers, strips emphasis, sanitizes imported prose via `safe-html` allowlists (`vHtml: 0`, `HomebreweryImport.test.ts`) |
+| Import Improved Initiative JSON | `src/core/domain/improved-init-import.ts`, `useFileLoader.ts`, `ImportButton.vue` | `.json` (Improved Init) | Bidirectional roundtrip with `useImprovedInitRenderer.ts`, strict payload guard & malformed-input recovery (`ImprovedInitImport.test.ts`) |
